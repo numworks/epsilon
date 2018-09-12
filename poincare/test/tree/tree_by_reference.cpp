@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
+#include <poincare/exception_checkpoint.h>
 #include <assert.h>
 
 #include "helpers.h"
@@ -60,11 +61,10 @@ QUIZ_CASE(tree_by_reference_can_be_returned) {
 }
 
 QUIZ_CASE(tree_by_reference_memory_failure) {
-  int memoryFailureHasBeenHandled = false;
-  jmp_buf jumpBuffer;
   int initialPoolSize = pool_size();
-  TreePool::sharedPool()->setJumpEnvironment(&jumpBuffer);
-  if (setjmp(jumpBuffer) == 0) {
+  int memoryFailureHasBeenHandled = false;
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
     TreeByReference tree = BlobByReference(1);
     while (true) {
       tree = PairByReference(tree, BlobByReference(1));

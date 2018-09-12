@@ -6,7 +6,6 @@
 #include <stddef.h>
 #include <string.h>
 #include <new>
-#include <setjmp.h>
 #if POINCARE_TREE_LOG
 #include <ostream>
 #include <iostream>
@@ -21,18 +20,12 @@ class TreeByReference;
 class TreePool {
   friend class TreeNode;
   friend class TreeByReference;
+  friend class ExceptionCheckpoint;
 public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
   static void RegisterPool(TreePool * pool) {  assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
 
-  TreePool() :
-    m_cursor(m_buffer),
-    m_currentJumpEnvironment(nullptr),
-    m_endOfPoolBeforeJump(nullptr)
-  {}
-  void setJumpEnvironment(jmp_buf * env);
-  jmp_buf * jumpEnvironment() { return m_currentJumpEnvironment; }
-  void resetJumpEnvironment();
+  TreePool() : m_cursor(m_buffer) {}
 
   // Node
   TreeNode * node(int identifier) const {
@@ -173,8 +166,6 @@ private:
   char m_buffer[BufferSize];
   IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
-  jmp_buf * m_currentJumpEnvironment; //TODO make static?
-  TreeNode * m_endOfPoolBeforeJump;
 #if POINCARE_ALLOW_STATIC_NODES
   TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
 #endif

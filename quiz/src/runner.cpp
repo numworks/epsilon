@@ -28,7 +28,11 @@ static inline void ion_main_inner() {
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];
     quiz_print(quiz_case_names[i]);
+    int initialPoolSize = Poincare::TreePool::sharedPool()->numberOfNodes();
+    quiz_assert(initialPoolSize == 0);
     c();
+    int currentPoolSize = Poincare::TreePool::sharedPool()->numberOfNodes();
+    quiz_assert(initialPoolSize == currentPoolSize);
     i++;
   }
   quiz_print("ALL TESTS FINISHED");

@@ -34,16 +34,16 @@ static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
 
-#if POINCARE_INTEGER_LOG
+#if POINCARE_TREE_LOG
 
-void Integer::log() const {
+void Integer::log(std::ostream & stream) const {
   double d = 0.0;
   double base = 1.0;
   for (int i = 0; i < m_numberOfDigits; i++) {
     d += digit(i)*base;
     base *= std::pow(2.0,32.0);
   }
-  std::cout << "Integer: " << d << std::endl;
+  stream << "Integer: " << d;
 }
 
 #endif

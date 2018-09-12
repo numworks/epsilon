@@ -181,9 +181,6 @@ public:
 protected:
   Expression(const ExpressionNode * n) : TreeByReference(n) {}
 
-  /* TODO: WARNING: explicit forbid implicit conversion but not direct
-   * initialization. For example, you can do Rational a(2); AbsoluteValue b(a);
-   * ...*/
   template<class T> T convert() const {
     /* This function allows to convert Expression to derived Expressions.
      * The asserts ensure that the Expression can only be casted to another

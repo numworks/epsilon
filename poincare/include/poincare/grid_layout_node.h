@@ -90,7 +90,7 @@ public:
   GridLayoutRef(const GridLayoutNode * n) : LayoutReference(n) {}
   GridLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
   void setDimensions(int rows, int columns);
-  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
+  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 private:

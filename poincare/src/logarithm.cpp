@@ -79,7 +79,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     return *this;
   }
   Expression f = simpleShallowReduce(context, angleUnit);
-  if (f.isUndefined()) {
+  if (f.type() != ExpressionNode::Type::Logarithm) {
     return f;
   }
 
@@ -92,10 +92,10 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
-    Expression newLog = shallowReduce(context, angleUnit);
     Multiplication mult(y);
-    newLog.replaceWithInPlace(mult);
-    mult.addChildAtIndexInPlace(newLog, 1, 1);
+    replaceWithInPlace(mult);
+    mult.addChildAtIndexInPlace(*this, 1, 1); // --> y*log(x,b)
+    shallowReduce(context, angleUnit); // reduce log (ie log(e, e) = 1)
     return mult.shallowReduce(context, angleUnit);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0

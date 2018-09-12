@@ -21,7 +21,6 @@ QUIZ_CASE(poincare_logarithm_evaluate) {
 }
 
 QUIZ_CASE(poincare_logarithm_simplify) {
-#if 0
   assert_parsed_expression_simplify_to("log(12925)", "2*log(5)+log(11)+log(47)");
   assert_parsed_expression_simplify_to("ln(12925)", "2*ln(5)+ln(11)+ln(47)");
   assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "(-2*log(5,6))+log(7,6)+3*log(11,6)+log(17,6)-log(47,6)");
@@ -44,5 +43,4 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(64,2)", "6");
   assert_parsed_expression_simplify_to("log(2,64)", "log(2,64)");
   assert_parsed_expression_simplify_to("log(1476225,5)", "2+10*log(3,5)");
-#endif
 }

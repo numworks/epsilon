@@ -91,8 +91,7 @@ void CalculationStore::tidy() {
 
 Expression CalculationStore::ansExpression(Context * context) {
   if (numberOfCalculations() == 0) {
-    static Rational defaultExpression(0);
-    return defaultExpression;
+    return Rational(0);
   }
   Calculation * lastCalculation = calculationAtIndex(numberOfCalculations()-1);
   /* Special case: the exact output is a Store/Equal expression.

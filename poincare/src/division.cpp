@@ -18,9 +18,15 @@ int DivisionNode::polynomialDegree(char symbolName) const {
   return childAtIndex(0)->polynomialDegree(symbolName);
 }
 
-bool DivisionNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  Type types[] = {Type::Division, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(e)->isOfType(types, 3);
+bool DivisionNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+    return true;
+  }
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+    return true;
+  }
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
 }
 
 LayoutRef DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

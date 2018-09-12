@@ -111,9 +111,15 @@ LayoutRef PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 
 // Serialize
 
-bool PowerNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  Type types[] = {Type::Power, ExpressionNode::Type::Factorial};
-  return static_cast<const ExpressionNode *>(e)->isOfType(types, 2);
+bool PowerNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+    return true;
+  }
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+    return true;
+  }
+  Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
 }
 
 // Simplify

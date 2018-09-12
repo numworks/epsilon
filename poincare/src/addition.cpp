@@ -28,9 +28,11 @@ int AdditionNode::getPolynomialCoefficients(char symbolName, Expression coeffici
 // Private
 
 // Layout
-bool AdditionNode::needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const {
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(parentNode)->isOfType(types, 6);
+bool AdditionNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+  if ((static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) || static_cast<const ExpressionNode *>(child)->type() == Type::Opposite) {
+    return true;
+  }
+  return false;
 }
 
 LayoutRef AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -78,14 +78,6 @@ Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUni
   return Decimal(this).shallowBeautify(context, angleUnit);
 }
 
-bool DecimalNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  if (!m_negative) {
-    return false;
-  }
-  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(e)->isOfType(types, 7);
-}
-
 LayoutRef DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);

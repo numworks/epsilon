@@ -23,7 +23,7 @@ public:
   Type type() const override { return Type::Factorial; }
 private:
   // Layout
-  bool needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const override;
+  bool childNeedsParenthesis(const SerializationHelperInterface * child) const override;
   LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication

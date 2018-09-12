@@ -27,6 +27,6 @@ static void assert_pool_size(int i) {
     assert(false);
   }
 #else
-  assert(pool_size() == i);
+  quiz_assert(pool_size() == i);
 #endif
 }

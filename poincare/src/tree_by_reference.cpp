@@ -231,12 +231,13 @@ void TreeByReference::setTo(const TreeByReference & tr) {
 }
 
 void TreeByReference::release(int identifier) {
-  if (identifier != TreeNode::NoNodeIdentifier) {
-    TreeNode * node = TreePool::sharedPool()->node(identifier);
-    assert(node != nullptr);
-    assert(node->identifier() == identifier);
-    node->release(node->numberOfChildren());
+  if (identifier == TreeNode::NoNodeIdentifier) {
+    return;
   }
+  TreeNode * node = TreePool::sharedPool()->node(identifier);
+  assert(node != nullptr);
+  assert(node->identifier() == identifier);
+  node->release(node->numberOfChildren());
 }
 
 }

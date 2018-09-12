@@ -5,12 +5,18 @@
  * backpointer to the resulting expression. */
 %parse-param { Poincare::Expression * expressionOutput }
 
+/* The value stored in each token is an Expresssion, which is a complex C++
+ * object. If we use a global variable to keep track of yylval, this object will
+ * be long-lived AND will need to be initialized at startup.
+ * Both those behaviors are annoying: the first one because you need to delete
+ * the object if an exception happens, the second one because of the static init
+ * order fiasco.
+ * Using a pure parser (i.e. one without any global variable) fixes this. */
+%pure-parser
+
 %{
 #include <poincare.h>
 
-
-// FIXME
-// TODO: This is copy-pasted. Share it in header
 
 /* YYSTYPE has to be defined in expression_lexer.y, expression.cpp and here
  * because the genereated code is included in expression_parser.cpp, not .hpp

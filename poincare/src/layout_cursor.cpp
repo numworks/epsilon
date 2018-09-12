@@ -50,7 +50,9 @@ bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {
 
 KDPoint LayoutCursor::middleLeftPoint() {
   KDPoint layoutOrigin = layoutReference().absoluteOrigin();
-  return layoutOrigin;
+  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layoutRef.layoutSize().width());
+  KDCoordinate y = layoutOrigin.y() + m_layoutRef.baseline() - k_cursorHeight/2;
+  return KDPoint(x,y);
 }
 
 /* Move */

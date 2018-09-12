@@ -13,8 +13,7 @@ GlobalContext::GlobalContext() :
 }
 
 Decimal GlobalContext::defaultExpression() {
-  static Decimal defaultExpression(Integer(0), 0);
-  return defaultExpression;
+  return Decimal(Integer(0), 0);
 }
 
 int GlobalContext::symbolIndex(const Symbol & symbol) const {

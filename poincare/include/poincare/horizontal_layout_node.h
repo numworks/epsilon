@@ -72,14 +72,14 @@ public:
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3);
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
   HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren);
-  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
+  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
   // Remove puts a child at the end of the pool
-  void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false) override {
+  void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false) {
     LayoutReference::removeChild(l, cursor, force);
   }
-  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) override {
+  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
     LayoutReference::removeChildAtIndex(index, cursor, force);
   }
   void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);

@@ -89,10 +89,10 @@ public:
   void collapseSiblings(LayoutCursor * cursor);
 protected:
   // Add
-  virtual void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
+  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
   // Remove
-  virtual void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false);
-  virtual void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
+  void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false);
+  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
 private:
   // Tree modification
   enum class HorizontalDirection {

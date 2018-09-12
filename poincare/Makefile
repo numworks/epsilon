@@ -258,6 +258,7 @@ tests += $(addprefix poincare/test/,\
   multiplication.cpp\
   nth_root_layout.cpp\
   number.cpp\
+  parentheses_layout.cpp\
   parser.cpp\
   power.cpp\
   properties.cpp\

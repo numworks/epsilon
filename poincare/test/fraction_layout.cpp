@@ -1,6 +1,5 @@
 #include <quiz.h>
 #include <poincare.h>
-#include <poincare_layouts.h>
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"
@@ -14,10 +13,10 @@ QUIZ_CASE(poincare_fraction_layout_create) {
    *                        |34
    * */
   HorizontalLayoutRef layout = static_cast<HorizontalLayoutRef>(LayoutHelper::String("1234+5", 6));
-  ExpressionLayoutCursor cursor(layout->editableChild(2), ExpressionLayoutCursor::Position::Left);
+  LayoutCursor cursor(layout.childAtIndex(2), LayoutCursor::Position::Left);
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_expression_layout_serialize_to(layout, "(12)/(34)+5");
-  quiz_assert(cursor.isEquivalentTo(ExpressionLayoutCursor(layout->editableChild(0)->editableChild(1), ExpressionLayoutCursor::Position::Left)));
+  quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
 }
 
 QUIZ_CASE(poincare_fraction_layout_delete) {
@@ -32,10 +31,10 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
         LayoutHelper::String("34", 2)
       )
     );
-  ExpressionLayoutCursor cursor1(layout1.editableChild(0)->editableChild(1), ExpressionLayoutCursor::Position::Left);
+  LayoutCursor cursor1(layout1.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left);
   cursor1.performBackspace();
   assert_expression_layout_serialize_to(layout1, "1234");
-  quiz_assert(cursor1.isEquivalentTo(ExpressionLayoutCursor(layout1.editableChild(1), ExpressionLayoutCursor::Position::Right)));
+  quiz_assert(cursor1.isEquivalentTo(LayoutCursor(layout1.childAtIndex(1), LayoutCursor::Position::Right)));
 
   /*      ø
    * 1 + --- -> "BackSpace" -> 1+|3
@@ -49,10 +48,10 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
         CharLayoutRef('3')
       )
     );
-  ExpressionLayoutCursor cursor2(layout2.editableChild(2)->editableChild(1), ExpressionLayoutCursor::Position::Left);
+  LayoutCursor cursor2(layout2.childAtIndex(2).childAtIndex(1), LayoutCursor::Position::Left);
   cursor2.performBackspace();
   assert_expression_layout_serialize_to(layout2, "1+3");
-  quiz_assert(cursor2.isEquivalentTo(ExpressionLayoutCursor(layout2.editableChild(1), ExpressionLayoutCursor::Position::Right)));
+  quiz_assert(cursor2.isEquivalentTo(LayoutCursor(layout2.childAtIndex(1), LayoutCursor::Position::Right)));
 }
 
 QUIZ_CASE(poincare_fraction_layout_serialize) {

@@ -26,10 +26,27 @@ QUIZ_CASE(tree_by_reference_are_discared_after_function_call) {
 
 QUIZ_CASE(tree_by_reference_can_be_copied) {
   int initialPoolSize = pool_size();
-  BlobByReference b(123);
-  assert_pool_size(initialPoolSize+1);
-  TreeByReference t = b;
-  assert_pool_size(initialPoolSize+1);
+  {
+    BlobByReference b(123);
+    assert_pool_size(initialPoolSize+1);
+    TreeByReference t = b;
+    assert_pool_size(initialPoolSize+1);
+  }
+  assert_pool_size(initialPoolSize);
+}
+
+QUIZ_CASE(tree_by_reference_can_be_moved) {
+  int initialPoolSize = pool_size();
+  {
+    TreeByReference t = BlobByReference(123);
+    assert_pool_size(initialPoolSize+1);
+  }
+  {
+    TreeByReference t = BlobByReference(123);
+    t = BlobByReference(456);
+    assert_pool_size(initialPoolSize+1);
+  }
+  assert_pool_size(initialPoolSize);
 }
 
 static TreeByReference blob_with_data_3() {

@@ -13,7 +13,6 @@ QUIZ_CASE(poincare_parser) {
   int initialPoolSize = pool_size();
   assert_parsed_expression_type("2+3", ExpressionNode::Type::Addition);
   assert_pool_size(initialPoolSize);
-#if 0
   assert_parsed_expression_evaluates_to<float>("-2-3", "-5");
   assert_parsed_expression_evaluates_to<float>("1.2*X^(1)", "3.261938");
   assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", Radian, Cartesian, 6); // WARNING: the 7th significant digits is wrong on simulator
@@ -29,7 +28,6 @@ QUIZ_CASE(poincare_parser) {
   assert_parsed_expression_evaluates_to<double>("sin(3)2(4+2)", "1.6934400967184", Radian);
   assert_parsed_expression_evaluates_to<float>("4/2*(2+3)", "10");
   assert_parsed_expression_evaluates_to<double>("4/2*(2+3)", "10");
-#endif
 }
 
 QUIZ_CASE(poincare_parser_memory_exhaustion) {

@@ -6,23 +6,6 @@
 
 namespace Poincare {
 
-/* Constructors */
-TreeByReference::TreeByReference(const TreeByReference & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
-  setIdentifierAndRetain(tr.identifier());
-}
-
-TreeByReference::TreeByReference(TreeByReference&& tr) : m_identifier(TreeNode::NoNodeIdentifier) {
-  setIdentifierAndRetain(tr.identifier());
-}
-
-TreeByReference::~TreeByReference() {
-  if (m_identifier != TreeNode::NoNodeIdentifier) {
-    assert(node()->identifier() == m_identifier);
-    TreeNode * n = node();
-    n->release(n->numberOfChildren());
-  }
-}
-
 /* Clone */
 
 TreeByReference TreeByReference::clone() const {
@@ -244,12 +227,15 @@ void TreeByReference::setTo(const TreeByReference & tr) {
   }
   int currentId = identifier();
   setIdentifierAndRetain(tr.identifier());
-  if (currentId != TreeNode::NoNodeIdentifier) {
-    TreeNode * previousNode = TreePool::sharedPool()->node(currentId);
-    if (previousNode != nullptr) {
-      // The node might have been deleted during an exception
-      previousNode->release(previousNode->numberOfChildren());
-    }
+  release(currentId);
+}
+
+void TreeByReference::release(int identifier) {
+  if (identifier != TreeNode::NoNodeIdentifier) {
+    TreeNode * node = TreePool::sharedPool()->node(identifier);
+    assert(node != nullptr);
+    assert(node->identifier() == identifier);
+    node->release(node->numberOfChildren());
   }
 }
 

@@ -63,7 +63,6 @@ public:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Serialization
-  bool needsParenthesesWithParent(const SerializationHelperInterface * e) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Layout

@@ -13,8 +13,15 @@ namespace Poincare {
 
 // Layout
 
-bool FactorialNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  return static_cast<const ExpressionNode *>(e)->type() == Type::Factorial;
+bool FactorialNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+    return true;
+  }
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+    return true;
+  }
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power, Type::Factorial};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 7);
 }
 
 // Simplification
@@ -57,12 +64,12 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
-  if (childAtIndex(0)->needsParenthesesWithParent(this)) {
+  if (childNeedsParenthesis(childAtIndex(0))) {
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
   numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (childAtIndex(0)->needsParenthesesWithParent(this)) {
+  if (childNeedsParenthesis(childAtIndex(0))) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }

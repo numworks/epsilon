@@ -67,9 +67,12 @@ Expression MultiplicationNode::setSign(Sign s, Context & context, Preferences::A
   return Multiplication(this).setSign(s, context, angleUnit);
 }
 
-bool MultiplicationNode::needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const {
-  Type types[] = {Type::Division, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(parentNode)->isOfType(types, 3);
+bool MultiplicationNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+    return true;
+  }
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
 }
 
 LayoutRef MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

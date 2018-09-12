@@ -53,14 +53,6 @@ size_t RationalNode::size() const {
 
 // Serialization Node
 
-bool RationalNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  if (denominator().isOne()) {
-    return false;
-  }
-  Type types[] = {Type::Division, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(e)->isOfType(types, 3);
-}
-
 #if POINCARE_TREE_LOG
 void RationalNode::logAttributes(std::ostream & stream) const {
   stream << " negative=\"" << m_negative << "\"";

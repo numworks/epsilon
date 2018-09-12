@@ -33,7 +33,6 @@ Expression Expression::parse(char const * string) {
      poincare_expression_yy_delete_buffer(buf);
   }
   buf = poincare_expression_yy_scan_string(string);
-  poincare_expression_yylval.expression.reset();
 
   Expression expression;
   if (poincare_expression_yyparse(&expression) != 0) {

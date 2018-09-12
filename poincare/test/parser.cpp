@@ -32,8 +32,6 @@ QUIZ_CASE(poincare_parser) {
 #endif
 }
 
-
-
 QUIZ_CASE(poincare_parser_memory_exhaustion) {
   int initialPoolSize = pool_size();
   int memoryFailureHasBeenHandled = false;

@@ -384,7 +384,7 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
-    addChildAtIndex(l, index, numberOfChildren(),cursor);
+    addChildAtIndex(l, index, numberOfChildren(), cursor);
   }
 }
 

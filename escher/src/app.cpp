@@ -1,5 +1,6 @@
 #include <escher/app.h>
 #include <escher/window.h>
+#include <poincare/tree_pool.h>
 extern "C" {
 #include <assert.h>
 }
@@ -19,6 +20,7 @@ const Image * App::Descriptor::icon() {
 void App::Snapshot::pack(App * app) {
   tidy();
   app->~App();
+  assert(Poincare::TreePool::sharedPool()->numberOfNodes() == 0);
 }
 
 void App::Snapshot::reset() {

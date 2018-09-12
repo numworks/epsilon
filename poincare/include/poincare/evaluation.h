@@ -37,12 +37,20 @@ template<typename T>
 class Evaluation : public TreeByReference {
 public:
   Evaluation() : TreeByReference() {}
-  template<class U> explicit operator U() const {
-    // See Expression::operator T() for explanations on this operator
-    // TODO add assertions to ensure that we cast only to evaluation subclasses
-    // Does not work :static_assert(sizeof(U) == sizeof(Evaluation<T>), "Size mismatch");
+#if 0
+  template<class U> U convert() const {
+    /* This function allows to convert Evaluation to derived Evaluation.
+     *
+     * We could have overriden the operator T(). However, even with the
+     * 'explicit' keyword (which prevents implicit casts), direct initilization
+     * are enable which can lead to weird code:
+     * ie, you can write: 'Complex<float> a(2); MatrixComplex<float> b(a);'
+     * */
+
+    static_assert(sizeof(U) == sizeof(Evaluation), "Size mismatch");
     return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
   }
+#endif
   EvaluationNode<T> * node() const {
     assert(!TreeByReference::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByReference::node());

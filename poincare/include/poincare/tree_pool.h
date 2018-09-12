@@ -59,8 +59,8 @@ public:
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream);
   void log() { treeLog(std::cout); }
-  int numberOfNodes() const;
 #endif
+  int numberOfNodes() const;
 
 private:
   constexpr static int BufferSize = 32768;

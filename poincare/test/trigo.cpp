@@ -103,11 +103,11 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("acos(-32)", "3.1415926535898-4.1586388532792*I", Radian);
   assert_parsed_expression_evaluates_to<float>("acos(-32)", "180-238.2725*I", Degree);
   // On R*i
-  //assert_parsed_expression_evaluates_to<float>("acos(3*I)", "1.5707963-1.818446*I", Radian);
-  //assert_parsed_expression_evaluates_to<float>("acos(3*I)", "90-104.1892*I", Degree);
+  assert_parsed_expression_evaluates_to<float>("acos(3*I)", "1.5708-1.8184*I", Radian, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("acos(3*I)", "89.9999-104.189*I", Degree, Cartesian, 6);
   // Symmetry: odd on imaginary
-  //assert_parsed_expression_evaluates_to<float>("acos(-3*I)", "1.5707963+1.818446*I", Radian);
-  //assert_parsed_expression_evaluates_to<float>("acos(-3*I)", "90+104.1892*I", Degree);
+  assert_parsed_expression_evaluates_to<float>("acos(-3*I)", "1.5708+1.8184*I", Radian, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("acos(-3*I)", "89.9999+104.189*I", Degree, Cartesian, 6);
   // On C
   assert_parsed_expression_evaluates_to<float>("acos(I-4)", "2.8894-2.0966*I", Radian, Cartesian, 5);
   assert_parsed_expression_evaluates_to<float>("acos(I-4)", "165.551-120.126*I", Degree, Cartesian, 6);

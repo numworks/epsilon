@@ -12,7 +12,7 @@ LayoutRef LayoutHelper::Infix(const Expression & expression, Preferences::PrintF
   int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
   HorizontalLayoutRef result;
-  result.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0);
+  result.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
   for (int i = 1; i < numberOfChildren; i++) {
     result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), result.numberOfChildren(), true);
     result.addOrMergeChildAtIndex(

@@ -36,6 +36,7 @@ public:
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
+  size_t deepSize(int realNumberOfChildren) const;
 
   // Ghost
   virtual bool isGhost() const { return false; }
@@ -137,7 +138,6 @@ protected:
     m_parentIdentifier(NoNodeIdentifier),
     m_referenceCounter(0)
   {}
-  size_t deepSize(int realNumberOfChildren) const;
 private:
   void updateParentIdentifierInChildren() const {
     changeParentIdentifierInChildren(m_identifier);

@@ -28,8 +28,6 @@ public:
     release(m_identifier);
   }
 
-  void reset() { m_identifier = TreeNode::NoNodeIdentifier; }
-
   /* Operators */
   TreeByReference & operator=(const TreeByReference & tr) {
     setTo(tr);

@@ -2,22 +2,14 @@
  * to deal with files anyway, so let's just disable this. */
 %option noyywrap
 
-/* WARNING:
- * If you think about using the bison-bridge option, note that this assumes
- * that the bison parser is reentrant (pure-parser option).
- *
- * Note also that bison and flex (when not reentrant) communicate with each
- * other by using global variables such as yylval or yylineno, these variables
- * will also be prefixed (here we have poicare_expression_yylval).
- *
- * When using a reentrant parser, these variables become pointers and are
- * not prefixed (this is probably a bug in bison, or at least is a bug in my
- * opinion).
- *
- * Using reentrant parsers and lexer is not useful for us as we neither use
- * multiple inputs, different threads calling the lexer-parser nor do we read
- * nested files.
+/* We're using the bison-bridge option because the bison parser is reentrant,
+ * as specified by the "pure-parser" option. Using the bison-bridge option
+ * prevents Flex from using global variables such as yylval. Instead, those
+ * become local pointers that are passed by Bison to Flex.
+ * In practice, when using bison-bridge, you shall simply use yylval as a
+ * pointer.
  */
+%option bison-bridge
 
 /* Normally, on each new input file the scanner calls isatty() in an attempt to
  * determine whether the scanner's input source is interactive and thus should
@@ -88,82 +80,82 @@ using namespace Poincare;
    * refered to Pi symbols. This artefact leads to the following lexer rules
    * starting with \x. */
 
-(([0-9]*[.]?[0-9]+)|([0-9]+[.]?[0-9]*))(\x8d\-?[0-9]+)? { poincare_expression_yylval.expression = Poincare::Number::ParseDigits(yytext, yyleng); return DIGITS; }
-[A-Za-z] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-M[0-9] { poincare_expression_yylval.character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
-u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
-u\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }
-v\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::vn; return SYMBOL; }
-v\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::vn1; return SYMBOL; }
-u\_\{n\} { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
-u\_\{n\+1\} { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }
-v\_\{n\} { poincare_expression_yylval.character = Symbol::SpecialSymbols::vn; return SYMBOL; }
-v\_\{n\+1\} { poincare_expression_yylval.character = Symbol::SpecialSymbols::vn1; return SYMBOL; }
-V1 { poincare_expression_yylval.character = Symbol::SpecialSymbols::V1; return SYMBOL; }
-N1 { poincare_expression_yylval.character = Symbol::SpecialSymbols::N1; return SYMBOL; }
-V2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::V2; return SYMBOL; }
-N2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::N2; return SYMBOL; }
-V3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::V3; return SYMBOL; }
-N3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::N3; return SYMBOL; }
-X1 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X1; return SYMBOL; }
-Y1 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y1; return SYMBOL; }
-X2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X2; return SYMBOL; }
-Y2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y2; return SYMBOL; }
-X3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X3; return SYMBOL; }
-Y3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y3; return SYMBOL; }
-acos { poincare_expression_yylval.expression = ArcCosine(); return FUNCTION; }
-acosh { poincare_expression_yylval.expression = HyperbolicArcCosine(); return FUNCTION; }
-abs { poincare_expression_yylval.expression = AbsoluteValue(); return FUNCTION; }
-ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
-arg { poincare_expression_yylval.expression = ComplexArgument(); return FUNCTION; }
-asin { poincare_expression_yylval.expression = ArcSine(); return FUNCTION; }
-asinh { poincare_expression_yylval.expression = HyperbolicArcSine(); return FUNCTION; }
-atan { poincare_expression_yylval.expression = ArcTangent(); return FUNCTION; }
-atanh { poincare_expression_yylval.expression = HyperbolicArcTangent(); return FUNCTION; }
-binomial { poincare_expression_yylval.expression = BinomialCoefficient(); return FUNCTION; }
-ceil { poincare_expression_yylval.expression = Ceiling(); return FUNCTION; }
-confidence { poincare_expression_yylval.expression = ConfidenceInterval(); return FUNCTION; }
-diff { poincare_expression_yylval.expression = Derivative(); return FUNCTION; }
-dim { poincare_expression_yylval.expression = MatrixDimension(); return FUNCTION; }
-conj { poincare_expression_yylval.expression = Conjugate(); return FUNCTION; }
-det { poincare_expression_yylval.expression = Determinant(); return FUNCTION; }
-cos { poincare_expression_yylval.expression = Cosine(); return FUNCTION; }
-cosh { poincare_expression_yylval.expression = HyperbolicCosine(); return FUNCTION; }
-factor { poincare_expression_yylval.expression = Factor(); return FUNCTION; }
-floor { poincare_expression_yylval.expression = Floor(); return FUNCTION; }
-frac { poincare_expression_yylval.expression = FracPart(); return FUNCTION; }
-gcd { poincare_expression_yylval.expression = GreatCommonDivisor(); return FUNCTION; }
-im { poincare_expression_yylval.expression = ImaginaryPart(); return FUNCTION; }
-int { poincare_expression_yylval.expression = Integral(); return FUNCTION; }
-inverse { poincare_expression_yylval.expression = MatrixInverse(); return FUNCTION; }
-lcm { poincare_expression_yylval.expression = LeastCommonMultiple(); return FUNCTION; }
-ln { poincare_expression_yylval.expression = NaperianLogarithm(); return FUNCTION; }
+(([0-9]*[.]?[0-9]+)|([0-9]+[.]?[0-9]*))(\x8d\-?[0-9]+)? { yylval->expression = Poincare::Number::ParseDigits(yytext, yyleng); return DIGITS; }
+[A-Za-z] { yylval->character = yytext[0]; return SYMBOL; }
+M[0-9] { yylval->character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
+u\(n\) { yylval->character = Symbol::SpecialSymbols::un; return SYMBOL; }
+u\(n\+1\) { yylval->character = Symbol::SpecialSymbols::un1; return SYMBOL; }
+v\(n\) { yylval->character = Symbol::SpecialSymbols::vn; return SYMBOL; }
+v\(n\+1\) { yylval->character = Symbol::SpecialSymbols::vn1; return SYMBOL; }
+u\_\{n\} { yylval->character = Symbol::SpecialSymbols::un; return SYMBOL; }
+u\_\{n\+1\} { yylval->character = Symbol::SpecialSymbols::un1; return SYMBOL; }
+v\_\{n\} { yylval->character = Symbol::SpecialSymbols::vn; return SYMBOL; }
+v\_\{n\+1\} { yylval->character = Symbol::SpecialSymbols::vn1; return SYMBOL; }
+V1 { yylval->character = Symbol::SpecialSymbols::V1; return SYMBOL; }
+N1 { yylval->character = Symbol::SpecialSymbols::N1; return SYMBOL; }
+V2 { yylval->character = Symbol::SpecialSymbols::V2; return SYMBOL; }
+N2 { yylval->character = Symbol::SpecialSymbols::N2; return SYMBOL; }
+V3 { yylval->character = Symbol::SpecialSymbols::V3; return SYMBOL; }
+N3 { yylval->character = Symbol::SpecialSymbols::N3; return SYMBOL; }
+X1 { yylval->character = Symbol::SpecialSymbols::X1; return SYMBOL; }
+Y1 { yylval->character = Symbol::SpecialSymbols::Y1; return SYMBOL; }
+X2 { yylval->character = Symbol::SpecialSymbols::X2; return SYMBOL; }
+Y2 { yylval->character = Symbol::SpecialSymbols::Y2; return SYMBOL; }
+X3 { yylval->character = Symbol::SpecialSymbols::X3; return SYMBOL; }
+Y3 { yylval->character = Symbol::SpecialSymbols::Y3; return SYMBOL; }
+acos { yylval->expression = ArcCosine(); return FUNCTION; }
+acosh { yylval->expression = HyperbolicArcCosine(); return FUNCTION; }
+abs { yylval->expression = AbsoluteValue(); return FUNCTION; }
+ans { yylval->character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
+arg { yylval->expression = ComplexArgument(); return FUNCTION; }
+asin { yylval->expression = ArcSine(); return FUNCTION; }
+asinh { yylval->expression = HyperbolicArcSine(); return FUNCTION; }
+atan { yylval->expression = ArcTangent(); return FUNCTION; }
+atanh { yylval->expression = HyperbolicArcTangent(); return FUNCTION; }
+binomial { yylval->expression = BinomialCoefficient(); return FUNCTION; }
+ceil { yylval->expression = Ceiling(); return FUNCTION; }
+confidence { yylval->expression = ConfidenceInterval(); return FUNCTION; }
+diff { yylval->expression = Derivative(); return FUNCTION; }
+dim { yylval->expression = MatrixDimension(); return FUNCTION; }
+conj { yylval->expression = Conjugate(); return FUNCTION; }
+det { yylval->expression = Determinant(); return FUNCTION; }
+cos { yylval->expression = Cosine(); return FUNCTION; }
+cosh { yylval->expression = HyperbolicCosine(); return FUNCTION; }
+factor { yylval->expression = Factor(); return FUNCTION; }
+floor { yylval->expression = Floor(); return FUNCTION; }
+frac { yylval->expression = FracPart(); return FUNCTION; }
+gcd { yylval->expression = GreatCommonDivisor(); return FUNCTION; }
+im { yylval->expression = ImaginaryPart(); return FUNCTION; }
+int { yylval->expression = Integral(); return FUNCTION; }
+inverse { yylval->expression = MatrixInverse(); return FUNCTION; }
+lcm { yylval->expression = LeastCommonMultiple(); return FUNCTION; }
+ln { yylval->expression = NaperianLogarithm(); return FUNCTION; }
 log { return LOGFUNCTION; }
-permute { poincare_expression_yylval.expression = PermuteCoefficient(); return FUNCTION; }
-prediction95 { poincare_expression_yylval.expression = PredictionInterval(); return FUNCTION; }
-prediction { poincare_expression_yylval.expression = SimplePredictionInterval(); return FUNCTION; }
-product { poincare_expression_yylval.expression = Product(); return FUNCTION; }
-quo { poincare_expression_yylval.expression = DivisionQuotient(); return FUNCTION; }
-random { poincare_expression_yylval.expression = Random(); return FUNCTION; }
-randint { poincare_expression_yylval.expression = Randint(); return FUNCTION; }
-re { poincare_expression_yylval.expression = RealPart(); return FUNCTION; }
-rem { poincare_expression_yylval.expression = DivisionRemainder(); return FUNCTION; }
-root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
-round { poincare_expression_yylval.expression = Round(); return FUNCTION; }
-sin { poincare_expression_yylval.expression = Sine(); return FUNCTION; }
-sinh { poincare_expression_yylval.expression = HyperbolicSine(); return FUNCTION; }
-sum { poincare_expression_yylval.expression = Sum(); return FUNCTION; }
-tan { poincare_expression_yylval.expression = Tangent(); return FUNCTION; }
-tanh { poincare_expression_yylval.expression = HyperbolicTangent(); return FUNCTION; }
-trace { poincare_expression_yylval.expression = MatrixTrace(); return FUNCTION; }
-transpose { poincare_expression_yylval.expression = MatrixTranspose(); return FUNCTION; }
-undef { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
-inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
-\x8a { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\x8c { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\x8f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+permute { yylval->expression = PermuteCoefficient(); return FUNCTION; }
+prediction95 { yylval->expression = PredictionInterval(); return FUNCTION; }
+prediction { yylval->expression = SimplePredictionInterval(); return FUNCTION; }
+product { yylval->expression = Product(); return FUNCTION; }
+quo { yylval->expression = DivisionQuotient(); return FUNCTION; }
+random { yylval->expression = Random(); return FUNCTION; }
+randint { yylval->expression = Randint(); return FUNCTION; }
+re { yylval->expression = RealPart(); return FUNCTION; }
+rem { yylval->expression = DivisionRemainder(); return FUNCTION; }
+root { yylval->expression = NthRoot(); return FUNCTION; }
+round { yylval->expression = Round(); return FUNCTION; }
+sin { yylval->expression = Sine(); return FUNCTION; }
+sinh { yylval->expression = HyperbolicSine(); return FUNCTION; }
+sum { yylval->expression = Sum(); return FUNCTION; }
+tan { yylval->expression = Tangent(); return FUNCTION; }
+tanh { yylval->expression = HyperbolicTangent(); return FUNCTION; }
+trace { yylval->expression = MatrixTrace(); return FUNCTION; }
+transpose { yylval->expression = MatrixTranspose(); return FUNCTION; }
+undef { yylval->expression = Undefined(); return UNDEFINED; }
+inf { yylval->expression = Undefined(); return UNDEFINED; }
+\x8a { yylval->character = yytext[0]; return SYMBOL; }
+\x8c { yylval->character = yytext[0]; return SYMBOL; }
+\x8f { yylval->character = yytext[0]; return SYMBOL; }
 \x90 { return STO; }
-\x91 { poincare_expression_yylval.expression = SquareRoot(); return FUNCTION; }
+\x91 { yylval->expression = SquareRoot(); return FUNCTION; }
 = { return EQUAL; }
 \+ { return PLUS; }
 \- { return MINUS; }
@@ -181,7 +173,7 @@ inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \] { return RIGHT_BRACKET; }
 \, { return COMMA; }
 \_ { return UNDERSCORE; }
-\x97 { poincare_expression_yylval.expression = EmptyExpression(); return EMPTY; }
+\x97 { yylval->expression = EmptyExpression(); return EMPTY; }
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

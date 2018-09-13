@@ -112,6 +112,7 @@ mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); static
  * accepted and 1000-...256times...-0E10000 = 1E10256, 10256 does not overflow
  * an int32_t). */
 number : DIGITS { $$ = $1; }
+       | DIGITS DIGITS { YYERROR; }
        ;
 
 symb   : SYMBOL { $$ = $1; }

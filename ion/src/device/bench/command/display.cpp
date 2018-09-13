@@ -64,7 +64,7 @@ void Display(const char * input) {
   }
 
   char response[16] = {'D', 'E', 'L', 'T', 'A', '='};
-  Poincare::Integer(numberOfInvalidPixels).writeTextInBuffer(response+6, sizeof(response)-6);
+  Poincare::Integer(numberOfInvalidPixels).serialize(response+6, sizeof(response)-6);
   reply(response);
 }
 

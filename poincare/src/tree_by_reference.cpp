@@ -237,7 +237,11 @@ void TreeByReference::release(int identifier) {
     return;
   }
   TreeNode * node = TreePool::sharedPool()->node(identifier);
-  assert(node != nullptr);
+  if (node == nullptr) {
+    /* The identifier is valid, but not the node: there must have been an
+     * exception that deleted the pool. */
+    return;
+  }
   assert(node->identifier() == identifier);
   node->release(node->numberOfChildren());
 }

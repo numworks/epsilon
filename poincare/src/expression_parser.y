@@ -80,9 +80,8 @@ using namespace Poincare;
 %left COMMA
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
-%nonassoc UNDEFINED
+%nonassoc TERM
 %nonassoc SYMBOL
-%nonassoc EMPTY
 %nonassoc UNDEFINED_SYMBOL
 
 /* During error recovery, some symbols need to be discarded. No destructor need
@@ -91,20 +90,17 @@ using namespace Poincare;
 
 %%
 
-Root:
-  final_exp {
-    *expressionOutput = $1;
-  }
-  ;
+Root: final_exp { *expressionOutput = $1; }
+    ;
 
-lstData: exp { $$ = Matrix($1); }
+lstData: exp               { $$ = Matrix($1); }
        | lstData COMMA exp { $$ = $1; static_cast<Matrix &>($$).addChildAtIndexInPlace($3, $$.numberOfChildren(), $$.numberOfChildren()); }
        ;
 
 /* MATRICES_ARE_DEFINED */
-
 mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); static_cast<Matrix &>($$).addChildrenAsRowInPlace($2, 0); }
        | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3.numberOfChildren() != static_cast<Matrix &>($1).numberOfColumns()) { YYERROR; } ; $$ = $1; static_cast<Matrix &>($$).addChildrenAsRowInPlace($3, $$.numberOfChildren()); }
+       ;
 
 /* When approximating expressions to double, results are bounded by 1E308 (and
  * 1E-308 for small numbers). We thus accept decimals whose exponents are in
@@ -116,18 +112,17 @@ mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); static
  * accepted and 1000-...256times...-0E10000 = 1E10256, 10256 does not overflow
  * an int32_t). */
 number : DIGITS { $$ = $1; }
-
-symb   : SYMBOL         { $$ = $1; }
        ;
 
-term   : EMPTY          { $$ = $1; }
-       | symb           { $$ = $1; }
-       | UNDEFINED      { $$ = $1; }
-       | number         { $$ = $1; }
+symb   : SYMBOL { $$ = $1; }
+       ;
+
+term   : TERM   { $$ = $1; }
+       | symb   { $$ = $1; }
+       | number { $$ = $1; }
        | LOGFUNCTION UNDERSCORE LEFT_BRACE exp RIGHT_BRACE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Logarithm($7, $4); }
        | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; $$.setChildrenInPlace($3); }
-/* Special case for logarithm, as we do not now at first if it needs 1 or 2
- * children */
+/* Special case for logarithm, as we do not at first if it needs 1 or 2 children */
        | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }
        | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { if ($1.numberOfChildren() != 0) { YYERROR; } $$ = $1; }
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Parenthesis($2); }
@@ -135,11 +130,11 @@ term   : EMPTY          { $$ = $1; }
        | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }
        ;
 
-bang   : term               { $$ = $1; }
-       | term BANG          { $$ = Factorial($1); }
+bang   : term      { $$ = $1; }
+       | term BANG { $$ = Factorial($1); }
        ;
 
-factor : bang               { $$ = $1; }
+factor : bang { $$ = $1; }
        | bang pow %prec IMPLICIT_MULTIPLY { $$ = Multiplication($1, $2); }
        ;
 
@@ -148,17 +143,17 @@ pow    : factor             { $$ = $1; }
        | bang POW MINUS pow { $$ = Power($1,Opposite($4)); }
        ;
 
-exp    : pow                { $$ = $1; }
-       | exp DIVIDE exp     { $$ = Division($1,$3); }
-       | exp MULTIPLY exp   { $$ = Multiplication($1,$3); }
-       | exp MINUS exp      { $$ = Subtraction($1,$3); }
+exp    : pow              { $$ = $1; }
+       | exp DIVIDE exp   { $$ = Division($1,$3); }
+       | exp MULTIPLY exp { $$ = Multiplication($1,$3); }
+       | exp MINUS exp    { $$ = Subtraction($1,$3); }
        | MINUS exp %prec UNARY_MINUS { $$ = Opposite($2); }
        | exp PLUS exp     { $$ = Addition($1,$3); }
        ;
 
-final_exp : exp             { $$ = $1; }
-          | exp STO symb   { if (static_cast<Symbol&>($3).name() == Symbol::SpecialSymbols::Ans) { YYERROR; } ; $$ = Store($1, static_cast<Symbol &>($3)); }
-          | exp EQUAL exp   { $$ = Equal($1, $3); }
+final_exp : exp           { $$ = $1; }
+          | exp STO symb  { if (static_cast<Symbol&>($3).name() == Symbol::SpecialSymbols::Ans) { YYERROR; } ; $$ = Store($1, static_cast<Symbol &>($3)); }
+          | exp EQUAL exp { $$ = Equal($1, $3); }
           ;
 %%
 

@@ -60,7 +60,11 @@ public:
     }
   }
   void setLayoutNode(LayoutNode * n) {
-    if (n != m_layoutRef.node()) {
+    if (n->identifier() != m_layoutRef.identifier()) {
+      /* Compare the identifiers and not the nodes because m_layoutRef might
+       * temporarily be pointing to a GhostNode. In this case,
+       * m_layoutRef.node() would crash because of the assertion that the node
+       * is not ghost. */
       m_layoutRef = LayoutRef(n);
     }
   }

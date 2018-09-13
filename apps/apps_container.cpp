@@ -83,17 +83,6 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
-  Poincare::ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp)) {
-    return dispatchEventInner(event);
-  } else {
-    switchTo(appSnapshotAtIndex(0));
-    //displayMemoryExhaustionPopUp(); TODO
-    return true;
-  }
-}
-
-bool AppsContainer::dispatchEventInner(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = updateAlphaLock();
   bool didProcessEvent = false;
 
@@ -182,6 +171,17 @@ void AppsContainer::run() {
     switchTo(appSnapshotAtIndex(0));
   }
 #endif
+
+  /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
+   * called. During a longjump, the stack pointer is set to this stored stack
+   * pointer value, so the method where we call setjump must remain in the call
+   * tree for the jump to work. */
+  Poincare::ExceptionCheckpoint ecp;
+  if (!ExceptionRun(ecp)) {
+    switchTo(appSnapshotAtIndex(0));
+    activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f); //TODO this is debug
+    //displayMemoryExhaustionPopUp(); TODO
+  }
   Container::run();
   switchTo(nullptr);
 }

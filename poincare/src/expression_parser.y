@@ -38,65 +38,11 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 #define YYCOPY(To, From, Count) memcpy(To, From, (Count)*sizeof(*(From)))
 
 using namespace Poincare;
-#if 0
-//TODO move comments
-
-/* All symbols (both terminals and non-terminals) may have a value associated
- * with them. In our case, it's going to be either an Expression (for example,
- * when parsing (a/b) we want to create a new Division), or a string (this will
- * be useful to retrieve the value of Integers for example). */
-%union {
-  Poincare::Expression expression;
-  Poincare::Symbol symbol;
-/*
-  Poincare::ListData * listData;
-  Poincare::MatrixData * matrixData;
-  Poincare::StaticHierarchy<0> * function;
-*/
-
-  /* Caution: all the const char * are NOT guaranteed to be NULL-terminated!
-   * While Flex guarantees that yytext is NULL-terminated when building tokens,
-   * it does so by temporarily swapping in a NULL terminated in the input text.
-   * Of course that hack has vanished by the time the pointer is fed into Bison.
-   * We thus record the length of the char fed into Flex in a structure and give
-   * it to the object constructor called by Bison along with the char *. */
-  struct {
-     char * address;
-     int length;
-  } string;
-  char character;
-}
-#endif
 
 %}
 
-
 /* The INTEGER token uses the "string" part of the union to store its value */
-%token <expression> DIGITS
-%token <expression> SYMBOL
-%token <expression> FUNCTION
-%token <expression> LOGFUNCTION
-%token <expression> UNDEFINED
-%token <expression> EMPTY
 
-/* Operator tokens */
-%token PLUS
-%token MINUS
-%token MULTIPLY
-%token DIVIDE
-%token POW
-%token BANG
-%token LEFT_PARENTHESIS
-%token RIGHT_PARENTHESIS
-%token LEFT_BRACE
-%token RIGHT_BRACE
-%token LEFT_BRACKET
-%token RIGHT_BRACKET
-%token COMMA
-%token UNDERSCORE
-%token STO
-%token EQUAL
-%token UNDEFINED_SYMBOL
 
 /* Make the operators left associative.
  * This makes 1 - 2 - 5’  be ‘(1 - 2) - 5’ instead of ‘1 - (2 - 5)’.
@@ -115,8 +61,7 @@ using namespace Poincare;
 /* Note that in bison, precedence of parsing depend on the order they are defined in here, the last
  * one has the highest precedence. */
 
-%nonassoc EQUAL
-%nonassoc STO
+%nonassoc EQUAL STO
 %left PLUS
 %left MINUS
 %left MULTIPLY
@@ -138,36 +83,11 @@ using namespace Poincare;
 %nonassoc UNDEFINED
 %nonassoc SYMBOL
 %nonassoc EMPTY
+%nonassoc UNDEFINED_SYMBOL
 
-/* The "exp" symbol uses the "expression" part of the union. */
-%type <expression> final_exp;
-%type <expression> term;
-%type <expression> bang;
-%type <expression> factor;
-%type <expression> pow;
-%type <expression> exp;
-%type <expression> number;
-%type <expression> symb;
-%type <expression> lstData;
-/* MATRICES_ARE_DEFINED */
-%type <expression> mtxData;
-
-/* FIXME: no destructors, Expressions are GCed */
-/* During error recovery, some symbols need to be discarded. We need to tell
- * Bison how to get rid of them. Depending on the type of the symbol, it may
- * have some heap-allocated data that need to be discarded. */
-
-/*
-
-%destructor { delete $$; } FUNCTION
-%destructor { delete $$; } UNDEFINED final_exp exp pow factor bang term number EMPTY
-%destructor { delete $$; } lstData
-*/
-/* MATRICES_ARE_DEFINED */
-/*
-%destructor { delete $$; } mtxData
-%destructor { delete $$; } symb
-*/
+/* During error recovery, some symbols need to be discarded. No destructor need
+ * to be specified to Bison because all symbols are Poincare::Expression that
+ * are garbage collected. */
 
 %%
 
@@ -197,18 +117,6 @@ mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); static
  * an int32_t). */
 number : DIGITS { $$ = $1; }
 
-/*
-       | DOT DIGITS { $$ = Decimal(Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
-       | DIGITS DOT DIGITS { $$ = Decimal(Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Decimal::exponent($1.address, $1.length, $3.address, $3.length, nullptr, 0, false)); }
-       | DOT DIGITS EE DIGITS { if ($4.length > 4) { YYERROR; }; int exponent = Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
-       | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
-       | DIGITS EE DIGITS { if ($3.length > 4) { YYERROR; }; int exponent = Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
-       | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
-       | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Decimal(Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
-       | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Decimal(Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
-       ;
-*/
-
 symb   : SYMBOL         { $$ = $1; }
        ;
 
@@ -224,7 +132,6 @@ term   : EMPTY          { $$ = $1; }
        | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { if ($1.numberOfChildren() != 0) { YYERROR; } $$ = $1; }
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */
-
        | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }
        ;
 

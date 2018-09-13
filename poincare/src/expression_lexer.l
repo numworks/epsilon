@@ -149,8 +149,8 @@ tan { *yylval = Tangent(); return FUNCTION; }
 tanh { *yylval = HyperbolicTangent(); return FUNCTION; }
 trace { *yylval = MatrixTrace(); return FUNCTION; }
 transpose { *yylval = MatrixTranspose(); return FUNCTION; }
-undef { *yylval = Undefined(); return UNDEFINED; }
-inf { *yylval = Undefined(); return UNDEFINED; }
+undef { *yylval = Undefined(); return TERM; }
+inf { *yylval = Infinity(false); return TERM; }
 \x8a { *yylval = Poincare::Symbol(yytext[0]); return SYMBOL; }
 \x8c { *yylval = Poincare::Symbol(yytext[0]); return SYMBOL; }
 \x8f { *yylval = Poincare::Symbol(yytext[0]); return SYMBOL; }
@@ -173,7 +173,7 @@ inf { *yylval = Undefined(); return UNDEFINED; }
 \] { return RIGHT_BRACKET; }
 \, { return COMMA; }
 \_ { return UNDERSCORE; }
-\x97 { *yylval = EmptyExpression(); return EMPTY; }
+\x97 { *yylval = EmptyExpression(); return TERM; }
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

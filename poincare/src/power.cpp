@@ -482,10 +482,12 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         Power p = Power(factor, rCopy);
 
         // |a|^r*(sign(a)*b*...)^r
-        Multiplication root = Multiplication(p, clone());
-        p.shallowReduce(context, angleUnit);
-        root.childAtIndex(1).shallowReduce(context, angleUnit);
+        Power thisRef = *this;
+        Multiplication root = Multiplication(p);
         replaceWithInPlace(root);
+        root.addChildAtIndexInPlace(thisRef, 1, 1);
+        p.shallowReduce(context, angleUnit);
+        thisRef.shallowReduce(context, angleUnit);
         return root.shallowReduce(context, angleUnit);
       }
     }
@@ -506,11 +508,12 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         return *this;
       }
       Power p1 = Power(childAtIndex(0).clone(), a.childAtIndex(0).clone());
-      Power p2 = clone().convert<Power>();
-      p2.childAtIndex(1).convert<Addition>().removeChildAtIndexInPlace(0); // p2 = a^(c+...)
-      Multiplication m = Multiplication(p1, p2);
-      p1.simplifyRationalRationalPower(context, angleUnit);
+      Power thisRef = *this;
+      childAtIndex(1).convert<Addition>().removeChildAtIndexInPlace(0); // p2 = a^(c+...)
+      Multiplication m = Multiplication(p1);
       replaceWithInPlace(m);
+      m.addChildAtIndexInPlace(thisRef, 1, 1);
+      p1.simplifyRationalRationalPower(context, angleUnit);
       return m.shallowReduce(context, angleUnit);
     }
   }

@@ -131,19 +131,29 @@ bool DoublePairStore::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i)
 }
 
 uint32_t DoublePairStore::storeChecksum() const {
-  /* Ideally, we would only compute the checksum of the first m_numberOfPairs
-   * pairs. However, the two values of a pair are not stored consecutively. We
-   * thus compute the checksum on all pairs and ensure to set the pair at 0
-   * when removing them. */
-  size_t dataLengthInBytes = k_numberOfSeries*k_maxNumberOfPairs*k_numberOfColumnsPerSeries*sizeof(double);
-  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
+  uint32_t checkSumPerSeries[k_numberOfSeries];
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    checkSumPerSeries[i] = storeChecksumForSeries(i);
+  }
+  return Ion::crc32(checkSumPerSeries, k_numberOfSeries);
 }
 
 uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
-  size_t dataLengthInBytes = k_maxNumberOfPairs*k_numberOfColumnsPerSeries*sizeof(double);
-  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  return Ion::crc32((uint32_t *)m_data[series], dataLengthInBytes/sizeof(uint32_t));
+  /* Ideally, we would compute the checksum of the first m_numberOfPairs pairs.
+   * However, the two values of a pair are not stored consecutively. We thus
+   * compute the checksum of the x values of the pairs, then we compute the
+   * checksum of the y values of the pairs, and finally we compute the checksum
+   * of the checksums.
+   * We cannot simply put "empty" values to 0 and compute the checksum of the
+   * whole data, because adding or removing (0, 0) "real" data pairs would not
+   * change the checksum. */
+  size_t dataLengthInBytesPerDataColumn = m_numberOfPairs[series]*sizeof(double);
+  assert((dataLengthInBytesPerDataColumn & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  uint32_t checkSumPerColumn[k_numberOfColumnsPerSeries];
+  for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
+    checkSumPerColumn[i] = Ion::crc32((uint32_t *)m_data[series][i], dataLengthInBytesPerDataColumn/sizeof(uint32_t));
+  }
+  return Ion::crc32(checkSumPerColumn, k_numberOfColumnsPerSeries);
 }
 
 double DoublePairStore::defaultValue(int series, int i, int j) const {

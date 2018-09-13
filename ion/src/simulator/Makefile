@@ -1,6 +1,5 @@
 objs += $(addprefix ion/src/simulator/, \
   init.o\
-  led.o\
 )
 
 objs += $(addprefix ion/src/simulator/boot/, main.o)
@@ -17,6 +16,7 @@ objs += $(addprefix ion/src/shared/, \
   dummy/backlight.o \
   dummy/battery.o \
   dummy/fcc_id.o \
+  dummy/led.o \
   dummy/serial_number.o \
   dummy/usb.o \
 )

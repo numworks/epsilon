@@ -4,6 +4,12 @@
 #include <escher.h>
 #include "exam_pop_up_controller_delegate.h"
 
+class HighContrastButton : public Button {
+public:
+  using Button::Button;
+  virtual KDColor highlightedBackgroundColor() const override { return Palette::YellowDark; }
+};
+
 class ExamPopUpController : public ViewController {
 public:
   ExamPopUpController(ExamPopUpControllerDelegate * delegate);
@@ -31,8 +37,8 @@ private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-    Button m_cancelButton;
-    Button m_okButton;
+    HighContrastButton m_cancelButton;
+    HighContrastButton m_okButton;
     MessageTextView m_warningTextView;
     MessageTextView m_messageTextView1;
     MessageTextView m_messageTextView2;

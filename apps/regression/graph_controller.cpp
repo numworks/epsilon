@@ -9,6 +9,7 @@ using namespace Shared;
 
 static inline float min(float x, float y) { return (x<y ? x : y); }
 static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline int maxInt(int x, int y) { return (x>y ? x : y); }
 
 namespace Regression {
 
@@ -66,6 +67,10 @@ void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
   m_view.setCursorView(&m_roundCursorView);
   m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
+}
+
+Poincare::Context * GraphController::globalContext() {
+  return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
 }
 
 CurveView * GraphController::curveView() {
@@ -154,11 +159,11 @@ void GraphController::reloadBannerView() {
 
   // Set formula
   Model * model = m_store->modelForSeries(selectedSeriesIndex());
-  m_bannerView.setMessageAtIndex(model->formulaMessage(), 3);
+  I18n::Message formula = model->formulaMessage();
+  m_bannerView.setMessageAtIndex(formula, 3);
 
   // Get the coefficients
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globContext);
+  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
   bool coefficientsAreDefined = true;
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     if (std::isnan(coefficients[i])) {
@@ -167,13 +172,22 @@ void GraphController::reloadBannerView() {
     }
   }
   if (!coefficientsAreDefined) {
+    // Force the "Data not suitable" message to be on the next line
+    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width/(KDText::charSize(m_bannerView.fontSize()).width())- strlen(I18n::translate(formula)), 0);
+    numberOfChar = 0;
+    for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
+      buffer[numberOfChar++] = ' ';
+    }
+    buffer[numberOfChar] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 4);
+
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-     m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 4);
-     for (int i = 5; i < m_bannerView.numberOfTextviews(); i++) {
-        char empty[] = {0};
-        m_bannerView.setLegendAtIndex(empty, i);
-     }
-     return;
+    m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 5);
+    for (int i = 6; i < m_bannerView.numberOfTextviews(); i++) {
+      char empty[] = {0};
+      m_bannerView.setLegendAtIndex(empty, i);
+    }
+    return;
   }
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
@@ -258,9 +272,8 @@ bool GraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
-  m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globContext);
+    m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+  double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
@@ -270,7 +283,7 @@ bool GraphController::moveCursorVertically(int direction) {
   int closestRegressionSeries = -1;
   int closestDotSeries = -1;
   int dotSelected = -1;
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  Poincare::Context * globContext = globalContext();
 
   if (*m_selectedDotIndex == -1) {
     // The current cursor is on a regression

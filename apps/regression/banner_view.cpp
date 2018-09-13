@@ -2,16 +2,19 @@
 
 namespace Regression {
 
+constexpr KDColor BannerView::k_textColor;
+constexpr KDColor BannerView::k_backgroundColor;
+
 BannerView::BannerView() :
-  m_dotNameView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_xView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_yView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_regressionTypeView(KDText::FontSize::Small, (I18n::Message)0, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_subText1(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_subText2(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_subText3(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_subText4(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_subText5(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle)
+  m_dotNameView(k_fontSize, 0.0f, 0.5f, k_textColor, k_backgroundColor),
+  m_xView(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_yView(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_regressionTypeView(k_fontSize, (I18n::Message)0, 0.0f, 0.5f, k_textColor,k_backgroundColor),
+  m_subText1(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText2(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText3(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText4(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText5(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor)
 {
 }
 

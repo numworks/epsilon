@@ -9,7 +9,7 @@ public:
   public:
     REGS_BOOL_FIELD(HSION, 0);
     REGS_BOOL_FIELD(HSEON, 16);
-    REGS_BOOL_FIELD(HSERDY, 17);
+    REGS_BOOL_FIELD_R(HSERDY, 17);
     REGS_BOOL_FIELD(PLLON, 24);
     REGS_BOOL_FIELD(PLLRDY, 25);
   };
@@ -56,7 +56,7 @@ public:
       AHBDividedBy8 = 6,
       AHBDividedBy16 = 7
     };
-    void setPPRE1(APBPrescaler p) volatile { setBitRange(12, 10, (uint32_t)p); }
+    void setPPRE1(APBPrescaler r) volatile { setBitRange(12, 10, (uint32_t)r); }
   };
 
   class AHB1ENR : public Register32 {
@@ -107,6 +107,19 @@ public:
     REGS_BOOL_FIELD(SYSCFGEN, 14);
   };
 
+  class AHB1LPENR : public Register32 {
+  public:
+    using Register32::Register32;
+    REGS_BOOL_FIELD(GPIOBLPEN, 1);
+    REGS_BOOL_FIELD(GPIOCLPEN, 2);
+  };
+
+  class APB1LPENR : public Register32 {
+  public:
+    using Register32::Register32;
+    REGS_BOOL_FIELD(TIM3LPEN, 1);
+  };
+
   class DCKCFGR2 : Register32 {
   public:
     REGS_BOOL_FIELD(CK48MSEL, 27);
@@ -122,6 +135,8 @@ public:
   REGS_REGISTER_AT(AHB3ENR, 0x38);
   REGS_REGISTER_AT(APB1ENR, 0x40);
   REGS_REGISTER_AT(APB2ENR, 0x44);
+  REGS_REGISTER_AT(AHB1LPENR, 0x50);
+  REGS_REGISTER_AT(APB1LPENR, 0x60);
   REGS_REGISTER_AT(DCKCFGR2, 0x94);
 private:
   constexpr uint32_t Base() const {

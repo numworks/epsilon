@@ -42,7 +42,7 @@ private:
 #endif
       Matrix
     };
-    constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
+    constexpr static int k_maxNumberOfDisplayedRows = 6; //240/Matrix::ToolboxRowHeight
 #if LIST_VARIABLES
     constexpr static int k_numberOfMenuRows = 3;
 #else

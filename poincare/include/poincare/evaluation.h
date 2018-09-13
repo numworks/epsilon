@@ -46,7 +46,6 @@ public:
      * are enable which can lead to weird code:
      * ie, you can write: 'Complex<float> a(2); MatrixComplex<float> b(a);'
      * */
-
     static_assert(sizeof(U) == sizeof(Evaluation), "Size mismatch");
     return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
   }

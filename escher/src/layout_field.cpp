@@ -76,7 +76,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (resultExpression.isUninitialized()) {
       m_contentView.cursor()->insertText(text);
     } else {
-      LayoutRef resultLayoutRef = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
+      LayoutRef resultLayoutRef = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
       if (currentNumberOfLayouts + resultLayoutRef.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
         return true;
       }

@@ -16,7 +16,6 @@ Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complex
 
 template Evaluation<float> Evaluation<float>::childAtIndex(int i) const;
 template Evaluation<double> Evaluation<double>::childAtIndex(int i) const;
-
 template Expression Evaluation<float>::complexToExpression(Preferences::ComplexFormat) const;
 template Expression Evaluation<double>::complexToExpression(Preferences::ComplexFormat) const;
 

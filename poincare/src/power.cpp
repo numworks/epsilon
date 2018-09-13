@@ -492,8 +492,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       }
     }
   }
-
-  // a^(b+c) -> Rational(a^b)*a^c with a and b rational and a != 0
+  // a^(b+c+...) -> Rational(a^b)*a^c with a and b rational and a != 0
   if (!letPowerAtRoot
       && childAtIndex(0).type() == ExpressionNode::Type::Rational
       && !childAtIndex(0).convert<Rational>().isZero()

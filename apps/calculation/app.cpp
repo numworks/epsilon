@@ -75,9 +75,8 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::E
       return true;
     }
 
-    int bufferLength = Calculation::k_printedExpressionSize;
-    char bufferForParsing[bufferLength];
-    layoutField->serialize(bufferForParsing, bufferLength);
+    char bufferForParsing[Calculation::k_printedExpressionSize];
+    layoutField->serialize(bufferForParsing, Calculation::k_printedExpressionSize);
 
     if (!textInputIsCorrect(bufferForParsing)) {
       displayWarning(I18n::Message::SyntaxError);

@@ -510,7 +510,7 @@ void Multiplication::factorizeExponent(int i, int j, Context & context, Preferen
    * example, it turns Multiplication(2^x,3^x) into Multiplication(6^x). */
 
   // Step 1: Find the new base
-  Expression m = Multiplication(Base(childAtIndex(i)).clone(), Base(childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
+  Expression m = Multiplication(Base(childAtIndex(i)), Base(childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
   // Step 2: Get rid of one of the children
   removeChildAtIndexInPlace(j);
   // Step 3: Replace the other child

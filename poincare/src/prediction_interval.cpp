@@ -90,6 +90,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0.clone(), Multiplication(Rational(-1), m.clone())), 0, 0);
   matrix.addChildAtIndexInPlace(Addition(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
+  replaceWithInPlace(matrix);
   return matrix.deepReduce(context, angleUnit);
 }
 

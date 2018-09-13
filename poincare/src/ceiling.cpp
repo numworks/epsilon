@@ -60,7 +60,7 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r = c.clone().convert<Rational>();
+  Rational r = c.convert<Rational>();
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isInfinity());
   if (div.remainder.isZero()) {

@@ -224,11 +224,10 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 // Private
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
-  if (l->isEmpty()) {
-    return false;
-  }
   if (m_numberOfChildren > 0) {
-    HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), cursor);
+    HorizontalLayoutRef thisRef = HorizontalLayoutRef(this);
+    thisRef.removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), cursor);
+    *currentNumberOfChildren = thisRef.numberOfChildren();
   }
   return true;
 }
@@ -384,7 +383,13 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
-    addChildAtIndex(l, index, numberOfChildren(), cursor);
+    addChildAtIndex(l, index, numberOfChildren(), cursor, removeEmptyChildren);
+  }
+}
+
+void HorizontalLayoutRef::addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren) {
+  if (!removeEmptyChildren || !l.isEmpty()) {
+    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 }
 

@@ -316,7 +316,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else {
     newName = text;
   }
-  Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(newName);
+  Script::ErrorStatus error = Script::nameCompliant(newName) ? m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(newName) : Script::ErrorStatus::NonCompliantName;
   if (error == Script::ErrorStatus::None) {
     updateAddScriptRowDisplay();
     textField->setText(newName);

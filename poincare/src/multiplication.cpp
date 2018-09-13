@@ -265,21 +265,12 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * which also are multiplications themselves. */
   mergeMultiplicationChildrenInPlace();
 
-  /* Step 2: If any of the child is zero, the multiplication result is zero */
-  for (int i = 0; i < numberOfChildren(); i++) {
-    const Expression c = childAtIndex(i);
-    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
-      replaceWithInPlace(c);
-      return c;
-    }
-  }
-
-  // Step 3: Sort the children
+  // Step 2: Sort the children
   sortChildrenInPlace(ExpressionNode::SimplificationOrder, canBeInterrupted);
 
 #if MATRIX_EXACT_REDUCING
 #if 0 // OLD CODE
-  /* Step 3bis: get rid of matrix */
+  /* Step 2bis: get rid of matrix */
   int n = 1;
   int m = 1;
   /* All children have been simplified so if any child contains a matrix, it
@@ -353,7 +344,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
 #endif
 #endif
 
-  /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
+  /* Step 3: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
@@ -380,7 +371,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     i++;
   }
 
-  /* Step 5: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
+  /* Step 4: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
    *opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -404,7 +395,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * shallowReduce */
   sortChildrenInPlace(ExpressionNode::SimplificationOrder, canBeInterrupted);
 
-  /* Step 6: We remove rational children that appeared in the middle of sorted
+  /* Step 5: We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
    * factorization can lead to new ones. Indeed:
    * pi^(-1)*pi-> 1
@@ -435,11 +426,23 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     }
     i++;
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(0).convert<Rational>().isOne() && numberOfChildren() > 1) {
-    removeChildAtIndexInPlace(0);
+
+   /* Step 5: If the first child is zero, the multiplication result is zero. We
+    * do this after merging the rational children, because the merge takes care
+    * of turning 0*inf into undef.
+    * If the first child is 1, we remove it if there are other children. */
+  {
+    const Expression c = childAtIndex(0);
+    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
+      replaceWithInPlace(c);
+      return c;
+    }
+    if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
+      removeChildAtIndexInPlace(0);
+    }
   }
 
-  /* Step 7: Expand multiplication over addition children if any. For example,
+  /* Step 6: Expand multiplication over addition children if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
    * the parent is a multiplication to avoid missing factorization such as
    * (x+y)^(-1)*((a+b)*(x+y)).

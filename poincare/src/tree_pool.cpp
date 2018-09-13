@@ -144,6 +144,8 @@ void TreePool::treeLog(std::ostream & stream) {
   stream << std::endl;
 }
 
+#endif
+
 int TreePool::numberOfNodes() const {
   int count = 0;
   TreeNode * firstNode = first();
@@ -154,8 +156,6 @@ int TreePool::numberOfNodes() const {
   }
   return count;
 }
-
-#endif
 
 void * TreePool::alloc(size_t size) {
   if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {

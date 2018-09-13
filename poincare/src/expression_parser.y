@@ -73,7 +73,7 @@ using namespace Poincare;
 
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <expression> DIGITS
-%token <character> SYMBOL
+%token <expression> SYMBOL
 %token <expression> FUNCTION
 %token <expression> LOGFUNCTION
 %token <expression> UNDEFINED
@@ -209,7 +209,7 @@ number : DIGITS { $$ = $1; }
        ;
 */
 
-symb   : SYMBOL         { $$ = Symbol($1); }
+symb   : SYMBOL         { $$ = $1; }
        ;
 
 term   : EMPTY          { $$ = $1; }

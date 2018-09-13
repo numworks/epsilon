@@ -6,7 +6,7 @@
  * define YYSTYPE. */
 
 struct OurNodeValue{
-    Poincare::Expression expression;
-    char character;
+  Poincare::Expression expression;
 };
+
 #define YYSTYPE OurNodeValue

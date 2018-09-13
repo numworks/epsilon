@@ -59,7 +59,6 @@ private:
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
-  bool dispatchEventInner(Ion::Events::Event event);
 
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;

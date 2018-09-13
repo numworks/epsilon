@@ -8,7 +8,9 @@
 
 /* Usage:
  *
- * CAUTION : A scope MUST be created directly around the ExceptionCheckpoint
+ * CAUTION : A scope MUST be created directly around the ExceptionCheckpoint, to
+ * be able to nest exceptions. Indeed, the scope calls the exception destructor,
+ * which sets s_topmostExceptionCheckpoint to "parent".
 
 void errorCatcher() {
   Poincare::ExceptionCheckpoint ecp;

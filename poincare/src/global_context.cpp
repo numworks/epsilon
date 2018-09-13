@@ -7,84 +7,76 @@
 
 namespace Poincare {
 
-GlobalContext::GlobalContext() :
-  m_matrixLayouts{}
-{
-}
-
-Decimal GlobalContext::defaultExpression() {
-  return Decimal(Integer(0), 0);
-}
-
-int GlobalContext::symbolIndex(const Symbol & symbol) const {
-  if (Symbol::isMatrixSymbol(symbol.name())) {
-    return symbol.name() - (char)Symbol::SpecialSymbols::M0;
-  }
-  if (Symbol::isScalarSymbol(symbol.name())) {
-    return symbol.name() - 'A';
-  }
-  return -1;
+GlobalContext::FileName GlobalContext::fileNameForSymbol(const Symbol & s) const {
+  FileName fn;
+  fn.nameWithExtension[0] = s.name();
+  constexpr char extension[] = ".exp";
+  strlcpy(fn.nameWithExtension+1, extension, k_extensionSize);
+  return fn;
 }
 
 const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
+  // Constant symbols
   if (symbol.name() == Ion::Charset::SmallPi) {
     return Float<double>(M_PI);
   }
   if (symbol.name() == Ion::Charset::Exponential) {
     return Float<double>(M_E);
   }
-  int index = symbolIndex(symbol);
-  if (Symbol::isMatrixSymbol(symbol.name())) {
-    return m_matrixExpressions[index];
+  // Look up the file system for symbol
+  FileName symbolFileName = fileNameForSymbol(symbol);
+  Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordNamed(symbolFileName.nameWithExtension);
+  if (record.isNull())  {
+    // Default A-Z value: 0
+    if (Symbol::isScalarSymbol(symbol.name())) {
+      return Decimal(Integer(0), 0);
+    }
+    // No other default value
+    return Expression(); // unitialized Expression
   }
-  if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
-    return Expression();
-  }
-  if (!m_expressions[index].isUninitialized()) {
-    return m_expressions[index];
-  }
-  return defaultExpression();
+  // Build Expression in the Tree Pool
+  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(record.value().buffer, record.value().size)));
 }
 
 LayoutRef GlobalContext::layoutForSymbol(const Symbol & symbol, int numberOfSignificantDigits) {
   if (Symbol::isMatrixSymbol(symbol.name())) {
-    int index = symbolIndex(symbol);
-    if (m_matrixLayouts[index].isUninitialized()) {
-      m_matrixLayouts[index] = m_matrixExpressions[index].createLayout(Preferences::PrintFloatMode::Decimal, numberOfSignificantDigits);
+    Expression e = expressionForSymbol(symbol);
+    if (!e.isUninitialized()) {
+      return e.createLayout(Preferences::PrintFloatMode::Decimal, numberOfSignificantDigits);
     }
-    return m_matrixLayouts[index];
   }
   return LayoutRef();
 }
 
 void GlobalContext::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
-  int index = symbolIndex(symbol);
+  // Initiate Record features
+  FileName symbolFileName = fileNameForSymbol(symbol);
+
+  // evaluate before deleting anything (to be able to evaluate A+2->A)
+  Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat());
+  // Delete any record with same name (as it is going to be override)
+  Ion::Storage::sharedStorage()->recordNamed(symbolFileName.nameWithExtension).destroy();
+
  if (Symbol::isMatrixSymbol(symbol.name())) {
-    int indexMatrix = symbol.name() - (char)Symbol::SpecialSymbols::M0;
-    assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
-    Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()); // evaluate before deleting anything (to be able to evaluate M1+2->M1)
-    // Reinitialize the matrix layout
-    m_matrixLayouts[indexMatrix] = LayoutReference();
-    if (!evaluation.isUninitialized()) {
-      if (evaluation.type() != ExpressionNode::Type::Matrix) {
-        m_matrixExpressions[indexMatrix] = Matrix(evaluation);
-      } else {
-        m_matrixExpressions[indexMatrix] = evaluation;
-      }
+   // Matrix symbol: force evaluation to be a Matrix
+    if (!evaluation.isUninitialized() && evaluation.type() != ExpressionNode::Type::Matrix) {
+      evaluation = Matrix(evaluation);
     }
-    return;
-  }
-  if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
-    return;
-  }
-  Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()); // evaluate before deleting anything (to be able to evaluate A+2->A)
-  if (evaluation.isUninitialized()) {
-    return;
-  }
-  if (evaluation.type() == ExpressionNode::Type::Matrix) {
-    m_expressions[index] = Undefined();
+  } else if (Symbol::isScalarSymbol(symbol.name())) {
+    // Scalar symbol: force evaluation not to be a Matrix
+    if (!evaluation.isUninitialized() && evaluation.type() == ExpressionNode::Type::Matrix) {
+      evaluation = Undefined();
+    }
   } else {
-    m_expressions[index] = evaluation;
+    // Other symbols than A-Z or M0-M9 are not stored yet TODO
+    evaluation = Expression();
+  }
+  if (!evaluation.isUninitialized()) {
+    Ion::Storage::Record::ErrorStatus err = Ion::Storage::sharedStorage()->createRecord(symbolFileName.nameWithExtension, evaluation.addressInPool(), evaluation.size());
+    if (err != Ion::Storage::Record::ErrorStatus::None) {
+      assert(err == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
+      // TODO: return false to set flag that the file system is full?
+    }
   }
 }
 

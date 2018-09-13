@@ -48,7 +48,7 @@ public:
   void removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumberOfChildren);
 
   TreeNode * deepCopy(TreeNode * node);
-  TreeNode * copyTreeFromAddress(void * address, size_t size);
+  TreeNode * copyTreeFromAddress(const void * address, size_t size);
 
 #if POINCARE_ALLOW_STATIC_NODES
   void registerStaticNodeIfRequired(TreeNode * node);

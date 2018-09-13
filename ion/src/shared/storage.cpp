@@ -278,25 +278,22 @@ bool Storage::isNameTaken(const char * name, Record * recordToExclude) {
   return false;
 }
 
-bool Storage::nameCompliant(const char * name) const {
-  /* The name format is [a-z0-9_]*(\.)?[a-z0-9_]+ */
+bool Storage::nameCompliant(const char * name) {
+  /* The name format is .*(\.)?[a-z]+ */
   bool dot = false;
   const char * currentChar = name;
   while (*currentChar != 0) {
     if (*currentChar == '.') {
-      if (dot) {
-        return false;
-      } else {
-        dot = true;
-      }
+      dot = true;
+      currentChar++;
     }
-    if ((*currentChar >= 'a' && *currentChar <= 'z') || *currentChar == '_' || (*currentChar >= '0' && *currentChar <= '9') || *currentChar == '.') {
+    if (!dot || (*currentChar >= 'a' && *currentChar <= 'z')) {
       currentChar++;
       continue;
     }
     return false;
   }
-  return name != currentChar;
+  return name != currentChar && dot;
 }
 
 char * Storage::endBuffer() {

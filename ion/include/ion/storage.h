@@ -86,7 +86,7 @@ private:
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
 
   bool isNameTaken(const char * name, Record * recordToExclude = nullptr);
-  bool nameCompliant(const char * name) const;
+  static bool nameCompliant(const char * name);
   char * endBuffer();
   size_t sizeOfRecord(const char * name, size_t size) const;
   bool slideBuffer(char * position, int delta);

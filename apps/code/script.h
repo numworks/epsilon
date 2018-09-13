@@ -17,6 +17,8 @@ public:
 
   const char * readContent() const;
 
+  static bool nameCompliant(const char * name);
+
   constexpr static size_t k_importationStatusSize = 1;
 };
 

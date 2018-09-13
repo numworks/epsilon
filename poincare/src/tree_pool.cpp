@@ -95,7 +95,7 @@ TreeNode * TreePool::deepCopy(TreeNode * node) {
   return copyTreeFromAddress(static_cast<void *>(node), size);
 }
 
-TreeNode * TreePool::copyTreeFromAddress(void * address, size_t size) {
+TreeNode * TreePool::copyTreeFromAddress(const void * address, size_t size) {
   void * ptr = alloc(size);
   memcpy(ptr, address, size);
   TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);

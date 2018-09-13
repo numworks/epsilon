@@ -11,28 +11,24 @@ namespace Poincare {
 
 class Integer;
 
-/* The global context only stores symbols A-Z, L1-L9 and M1-M9 */
+/* The global context only stores symbols A-Z, L0-L9 and M0-M9 */
 
 class GlobalContext : public Context {
 public:
-  GlobalContext();
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression expressionForSymbol(const Symbol & symbol) override;
   LayoutRef layoutForSymbol(const Symbol & symbol, int numberOfSignificantDigits);
   void setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
-  static constexpr uint16_t k_maxNumberOfListExpressions = 10;
+  //static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
 private:
-  static Decimal defaultExpression();
-  int symbolIndex(const Symbol & symbol) const;
-  Expression m_expressions[k_maxNumberOfScalarExpressions];
-  /* Matrix has to be uninitialized by default which forces them to be
-   * Expression. */
-  Expression m_matrixExpressions[k_maxNumberOfMatrixExpressions];
-  /* Matrix layout memoization */
-  LayoutRef m_matrixLayouts[k_maxNumberOfMatrixExpressions];
+  static constexpr int k_extensionSize = 4+1;
+  struct FileName {
+    char nameWithExtension[k_extensionSize+1];
+  };
+  FileName fileNameForSymbol(const Symbol & s) const;
 };
 
 }

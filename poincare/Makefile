@@ -86,7 +86,6 @@ objs += $(addprefix poincare/src/,\
   layout_helper.o\
   least_common_multiple.o\
   logarithm.o\
-  opposite.o\
   matrix.o\
   matrix_complex.o\
   matrix_dimension.o\
@@ -98,12 +97,13 @@ objs += $(addprefix poincare/src/,\
   naperian_logarithm.o\
   nth_root.o\
   number.o\
+  opposite.o\
   parenthesis.o\
   permute_coefficient.o\
   power.o\
-  print_float.o\
   prediction_interval.o\
   preferences.o\
+  print_float.o\
   product.o\
   randint.o\
   random.o\
@@ -120,120 +120,9 @@ objs += $(addprefix poincare/src/,\
   sum.o\
   symbol.o\
   tangent.o\
+  tree_by_reference.o\
   tree_node.o\
   tree_pool.o\
-  tree_by_reference.o\
-  trigonometry.o\
-  undefined.o\
-  variable_context.o\
-)
-
-objsExpected += $(addprefix poincare/src/,\
-  binomial_coefficient_layout_node.o\
-  bracket_layout_node.o\
-  bracket_pair_layout_node.o\
-  char_layout_node.o\
-  condensed_sum_layout_node.o\
-  conjugate_layout_node.o\
-  empty_layout_node.o\
-  fraction_layout_node.o\
-  grid_layout_node.o\
-  horizontal_layout_node.o\
-  integral_layout_node.o\
-  layout_cursor.o\
-  layout_node.o\
-  layout_reference.o\
-  left_parenthesis_layout_node.o\
-  left_square_bracket_layout_node.o\
-  matrix_layout_node.o\
-  nth_root_layout_node.o\
-  parenthesis_layout_node.o\
-  product_layout_node.o\
-  right_parenthesis_layout_node.o\
-  right_square_bracket_layout_node.o\
-  sequence_layout_node.o\
-  sum_layout_node.o\
-  vertical_offset_layout_node.o\
-)
-
-objsExpected += $(addprefix poincare/src/,\
-  absolute_value.o\
-  addition.o\
-  approximation_helper.o\
-  arc_cosine.o\
-  arc_sine.o\
-  arc_tangent.o\
-  arithmetic.o\
-  binomial_coefficient.o\
-  bounded_static_hierarchy.o\
-  ceiling.o\
-  complex_argument.o\
-  confidence_interval.o\
-  conjugate.o\
-  cosine.o\
-  decimal.o\
-  derivative.o\
-  determinant.o\
-  division_quotient.o\
-  division_remainder.o\
-  division.o\
-  dynamic_hierarchy.o\
-  empty_expression.o\
-  equal.o\
-  evaluation.o\
-  expression_lexer.o\
-  expression_parser.o\
-  expression.o\
-  factor.o\
-  factorial.o\
-  floor.o\
-  frac_part.o\
-  global_context.o\
-  great_common_divisor.o\
-  hyperbolic_arc_cosine.o\
-  hyperbolic_arc_sine.o\
-  hyperbolic_arc_tangent.o\
-  hyperbolic_cosine.o\
-  hyperbolic_sine.o\
-  hyperbolic_tangent.o\
-  imaginary_part.o\
-  integer.o\
-  integral.o\
-  layout_helper.o\
-  list_data.o\
-  least_common_multiple.o\
-  logarithm.o\
-  matrix_data.o\
-  matrix_dimension.o\
-  matrix_inverse.o\
-  matrix_trace.o\
-  matrix_transpose.o\
-  matrix.o\
-  multiplication.o\
-  naperian_logarithm.o\
-  nth_root.o\
-  opposite.o\
-  parenthesis.o\
-  permute_coefficient.o\
-  power.o\
-  prediction_interval.o\
-  preferences.o\
-  print_float.o\
-  product.o\
-  randint.o\
-  random.o\
-  rational.o\
-  real_part.o\
-  round.o\
-  sequence.o\
-  simplification_helper.o\
-  sine.o\
-  square_root.o\
-  static_hierarchy.o\
-  store.o\
-  sum.o\
-  symbol.o\
-  tangent.o\
   trigonometry.o\
   undefined.o\
   variable_context.o\
@@ -272,33 +161,6 @@ tests += $(addprefix poincare/test/,\
   vertical_offset_layout.cpp\
 )
 
-testsExpected += $(addprefix poincare/test/,\
-  addition.cpp\
-  arithmetic.cpp\
-  binomial_coefficient_layout.cpp\
-  complex_to_expression.cpp\
-  convert_expression_to_text.cpp\
-  division.cpp\
-  factorial.cpp\
-  fraction_layout.cpp\
-  function.cpp\
-  helper.cpp\
-  integer.cpp\
-  logarithm.cpp\
-  matrix.cpp\
-  multiplication.cpp\
-  nth_root_layout.cpp\
-  parser.cpp\
-  power.cpp\
-  properties.cpp\
-  rational.cpp\
-  simplify_mix.cpp\
-  store.cpp\
-  subtraction.cpp\
-  symbol.cpp\
-  trigo.cpp\
-  vertical_offset_layout.cpp\
-)
 #  simplify_utils.cpp\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS

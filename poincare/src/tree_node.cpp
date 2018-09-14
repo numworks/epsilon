@@ -8,12 +8,6 @@ namespace Poincare {
 // Node operations
 
 void TreeNode::release(int currentNumberOfChildren) {
-#if POINCARE_ALLOW_STATIC_NODES
-  if (isStatic()) {
-    // Do not release static nodes
-    return;
-  }
-#endif
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     deleteParentIdentifierInChildren();

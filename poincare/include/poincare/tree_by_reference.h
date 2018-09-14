@@ -56,9 +56,6 @@ public:
 
   bool isGhost() const { return node()->isGhost(); }
   bool isUninitialized() const { return m_identifier == TreeNode::NoNodeIdentifier; }
-#if POINCARE_ALLOW_STATIC_NODES
-  bool isStatic() const { return node()->isStatic(); }
-#endif
 
   /* Hierarchy */
   bool hasChild(TreeByReference t) const;

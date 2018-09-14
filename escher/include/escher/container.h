@@ -27,7 +27,7 @@ public:
   virtual void run();
   App * activeApp();
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  virtual void switchTo(App::Snapshot * snapshot, bool forceSwitch = false);
+  virtual void switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
 private:

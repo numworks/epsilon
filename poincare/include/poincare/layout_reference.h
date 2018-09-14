@@ -15,9 +15,6 @@ class LayoutReference : public TreeByReference {
   friend class LayoutCursor;
   friend class VerticalOffsetLayoutNode;
 public:
-  using TreeByReference::operator==;
-  using TreeByReference::operator!=;
-
   LayoutReference() : TreeByReference() {}
   LayoutReference(const LayoutNode * node) : TreeByReference(node) {}
   LayoutReference clone() const;

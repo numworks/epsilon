@@ -78,7 +78,7 @@ public:
   bool isEven() const { return ((digit(0) & 1) == 0); }
 
   constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
-  int extractedInt() const { assert(m_numberOfDigits <= 1 && digit(0) <= k_maxExtractableInteger); return m_negative ? -digit(0) : digit(0); }
+  int extractedInt() const { assert(m_numberOfDigits == 0 || (m_numberOfDigits <= 1 && digit(0) <= k_maxExtractableInteger)); return m_numberOfDigits == 0 ? 0 : (m_negative ? -digit(0) : digit(0)); }
 
   // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);

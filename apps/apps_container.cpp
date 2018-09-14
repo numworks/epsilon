@@ -143,7 +143,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-void AppsContainer::switchTo(App::Snapshot * snapshot, bool forceSwitch) {
+void AppsContainer::switchTo(App::Snapshot * snapshot) {
   if (activeApp() && snapshot != activeApp()->snapshot()) {
     resetShiftAlphaStatus();
   }
@@ -155,7 +155,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot, bool forceSwitch) {
   if (snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
   }
-  Container::switchTo(snapshot, forceSwitch);
+  Container::switchTo(snapshot);
 }
 
 void AppsContainer::run() {
@@ -177,7 +177,8 @@ void AppsContainer::run() {
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
   if (!ExceptionRun(ecp)) {
-    switchTo(activeApp()->snapshot(), true);
+    activeApp()->snapshot()->reset();
+    switchTo(appSnapshotAtIndex(0));
     activeApp()->displayWarning(I18n::Message::AppMemoryFull);
   }
   Container::run();

@@ -8,8 +8,7 @@ using namespace Poincare;
 namespace Regression {
 
 LayoutReference LinearModel::layout() {
-  static LayoutReference layout;
-  if (layout.isUninitialized()) {
+  if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
@@ -17,9 +16,9 @@ LayoutReference LinearModel::layout() {
       CharLayoutRef('+', KDText::FontSize::Small),
       CharLayoutRef('b', KDText::FontSize::Small),
     };
-    layout = HorizontalLayoutRef(layoutChildren, 5);
+    m_layout = HorizontalLayoutRef(layoutChildren, 5);
   }
-  return layout;
+  return m_layout;
 }
 
 double LinearModel::evaluate(double * modelCoefficients, double x) const {

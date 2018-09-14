@@ -9,8 +9,7 @@ using namespace Shared;
 namespace Regression {
 
 LayoutReference CubicModel::layout() {
-  static LayoutReference layout;
-  if (layout.isUninitialized()) {
+  if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
@@ -34,9 +33,9 @@ LayoutReference CubicModel::layout() {
       CharLayoutRef('+', KDText::FontSize::Small),
       CharLayoutRef('d', KDText::FontSize::Small),
     };
-    layout = HorizontalLayoutRef(layoutChildren, 15);
+    m_layout = HorizontalLayoutRef(layoutChildren, 15);
   }
-  return layout;
+  return m_layout;
 }
 
 Expression CubicModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {

@@ -22,6 +22,9 @@ class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePai
 public:
   Store();
 
+  // Clean pool
+  void tidy();
+
   // Regression
   void setSeriesRegressionType(int series, Model::Type type);
   Model::Type seriesRegressionType(int series) {

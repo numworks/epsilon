@@ -8,8 +8,7 @@ using namespace Poincare;
 namespace Regression {
 
 LayoutReference LogarithmicModel::layout() {
-  static LayoutReference layout;
-  if (layout.isUninitialized()) {
+  if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
@@ -21,9 +20,9 @@ LayoutReference LogarithmicModel::layout() {
       CharLayoutRef('+', KDText::FontSize::Small),
       CharLayoutRef('b', KDText::FontSize::Small)
     };
-    layout = HorizontalLayoutRef(layoutChildren, 9);
+    m_layout = HorizontalLayoutRef(layoutChildren, 9);
   }
-  return layout;
+  return m_layout;
 }
 
 double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {

@@ -7,8 +7,7 @@ using namespace Poincare;
 namespace Regression {
 
 LayoutReference LogisticModel::layout() {
-  static LayoutReference layout;
-  if (layout.isUninitialized()) {
+  if (m_layout.isUninitialized()) {
     const LayoutReference exponentLayoutChildren[] = {
       CharLayoutRef('-', KDText::FontSize::Small),
       CharLayoutRef('b', KDText::FontSize::Small),
@@ -26,12 +25,12 @@ LayoutReference LogisticModel::layout() {
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    layout = FractionLayoutRef(
+    m_layout = FractionLayoutRef(
        CharLayoutRef('c', KDText::FontSize::Small),
        HorizontalLayoutRef(layoutChildren, 6)
       );
   }
-  return layout;
+  return m_layout;
 }
 
 double LogisticModel::evaluate(double * modelCoefficients, double x) const {

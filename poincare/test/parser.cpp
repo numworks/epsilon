@@ -30,6 +30,11 @@ QUIZ_CASE(poincare_parser) {
   assert_parsed_expression_evaluates_to<double>("4/2*(2+3)", "10");
 }
 
+QUIZ_CASE(poincare_do_not_parse_implicitly_multiplied_numbers) {
+  Expression e = Expression::parse(".1.2");
+  quiz_assert(e.isUninitialized());
+}
+
 QUIZ_CASE(poincare_parser_memory_exhaustion) {
   int initialPoolSize = pool_size();
   int memoryFailureHasBeenHandled = false;

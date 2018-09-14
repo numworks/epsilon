@@ -31,12 +31,19 @@ KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const  {
 WarningController::WarningController(Responder * parentResponder, I18n::Message warningMessage) :
   ViewController(parentResponder),
   m_contentView(),
-  m_warningMessage(warningMessage)
+  m_warningMessage(warningMessage),
+  m_exitOnOKBackEXE(false)
 {
 }
 
 void WarningController::setLabel(I18n::Message label) {
   m_contentView.setLabel(label);
+  m_exitOnOKBackEXE = false;
+}
+
+void WarningController::setLabelAndSpecialExitKeys(I18n::Message message) {
+  setLabel(message);
+  m_exitOnOKBackEXE = true;
 }
 
 const char * WarningController::title() {
@@ -48,6 +55,14 @@ View * WarningController::view() {
 }
 
 bool WarningController::handleEvent(Ion::Events::Event event) {
+  if (m_exitOnOKBackEXE) {
+    if (event != Ion::Events::OK
+        && event != Ion::Events::EXE
+        && event != Ion::Events::Back)
+    {
+      return false;
+    }
+  }
   app()->dismissModalViewController();
   return true;
 }

@@ -81,10 +81,10 @@ void Integer::freeDigits(native_uint_t * digits) {
 /* WARNING: This constructor takes ownership of the digits array! */
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) :
   m_negative(numberOfDigits == 0 ? false : negative),
-  m_numberOfDigits(!enableOverflow && numberOfDigits > Integer::k_maxNumberOfDigits ? k_maxNumberOfDigits+1 : numberOfDigits),
+  m_numberOfDigits(!enableOverflow && numberOfDigits > k_maxNumberOfDigits ? k_maxNumberOfDigits+1 : numberOfDigits),
   m_digits(digits)
 {
-  if ((m_numberOfDigits <= 1|| (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigitsBase10)) && m_digits) {
+  if ((m_numberOfDigits <= 1|| (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigits)) && m_digits) {
     freeDigits(m_digits);
     if (m_numberOfDigits == 1) {
       m_digit = digits[0];

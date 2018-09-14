@@ -9,12 +9,12 @@
 
 namespace Poincare {
 
-template<int I>
+template<int T>
 class LogarithmNode : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
-  int numberOfChildren() const override { assert(I == 1 || I == 2); return I; }
+  int numberOfChildren() const override { assert(T == 1 || T == 2); return T; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Logarithm";
@@ -33,15 +33,15 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
-  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
      * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
      * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
-    return Complex<T>(std::log10(c));
+    return Complex<U>(std::log10(c));
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename U> Evaluation<U> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 class Logarithm : public Expression {

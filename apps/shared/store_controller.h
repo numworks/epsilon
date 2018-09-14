@@ -15,6 +15,7 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
   StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header);
+  View * view() override { return &m_contentView; }
 
   virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();

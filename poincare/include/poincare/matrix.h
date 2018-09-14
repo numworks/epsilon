@@ -51,8 +51,11 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
-  int m_numberOfRows;
-  int m_numberOfColumns;
+  /* We could store 2 uint8_t but multiplying m_numberOfRows and
+   * m_numberOfColumns could then lead to overflow. As we are unlikely to use
+   * greater matrix than 100*100, uint16_t is fine. */
+  uint16_t m_numberOfRows;
+  uint16_t m_numberOfColumns;
 };
 
 class Matrix : public Expression {

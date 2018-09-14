@@ -11,6 +11,10 @@ using namespace Shared;
 
 namespace Regression {
 
+void Model::tidy() {
+  m_layout = LayoutReference();
+}
+
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   Expression yExpression = Decimal(y);
   PoincareHelpers::Simplify(&yExpression, *context);

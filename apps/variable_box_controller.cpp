@@ -196,6 +196,10 @@ void VariableBoxController::ContentViewController::resetPage() {
 
 void VariableBoxController::ContentViewController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
+  // Tidy the layouts used to display the VariableBoxController to clean TreePool
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setLayoutRef(LayoutRef());
+  }
   ViewController::viewDidDisappear();
 }
 

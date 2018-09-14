@@ -47,7 +47,6 @@ private:
     ExpressionField * expressionField() { return &m_expressionField; }
   private:
     static constexpr int k_bufferLength = TextField::maxBufferSize();
-    Poincare::LayoutRef m_layout;
     char m_textBuffer[k_bufferLength];
     ExpressionField m_expressionField;
   };

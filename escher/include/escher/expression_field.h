@@ -9,7 +9,7 @@
 
 class ExpressionField : public Responder, public View {
 public:
-  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::LayoutRef layout, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;

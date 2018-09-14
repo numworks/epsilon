@@ -1,13 +1,11 @@
 #include <escher/input_view_controller.h>
 #include <escher/app.h>
 #include <escher/palette.h>
-#include <poincare/horizontal_layout_node.h>
 #include <assert.h>
 
 InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_layout(Poincare::HorizontalLayoutRef()),
-  m_expressionField(this, m_textBuffer, k_bufferLength, m_layout, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(this, m_textBuffer, k_bufferLength, textFieldDelegate, layoutFieldDelegate)
 {
   m_textBuffer[0] = 0;
 }

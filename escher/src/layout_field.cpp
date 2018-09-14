@@ -3,10 +3,20 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
+#include <poincare/horizontal_layout_node.h>
 #include <assert.h>
 #include <string.h>
 
 using namespace Poincare;
+
+LayoutField::ContentView::ContentView() :
+  m_cursor(),
+  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_cursorView(),
+  m_isEditing(false)
+{
+  clearLayout();
+}
 
 void LayoutField::ContentView::layoutCursorSubview() {
   if (!m_isEditing) {

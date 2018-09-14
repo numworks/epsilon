@@ -388,7 +388,12 @@ void HorizontalLayoutReference::addOrMergeChildAtIndex(LayoutReference l, int in
 }
 
 void HorizontalLayoutReference::addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren) {
-  if (!removeEmptyChildren || !l.isEmpty()) {
+  if (!removeEmptyChildren
+      || !l.isEmpty()
+      || numberOfChildren() == 0
+      || (index < numberOfChildren()
+        && childAtIndex(index).mustHaveLeftSibling()))
+  {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 }

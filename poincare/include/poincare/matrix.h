@@ -74,8 +74,8 @@ public:
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
-  using TreeByReference::addChildAtIndexInPlace;
-  void addChildrenAsRowInPlace(TreeByReference t, int i);
+  using TreeHandle::addChildAtIndexInPlace;
+  void addChildrenAsRowInPlace(TreeHandle t, int i);
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */

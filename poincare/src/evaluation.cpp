@@ -5,7 +5,7 @@ namespace Poincare {
 
 template<typename T>
 Evaluation<T> Evaluation<T>::childAtIndex(int i) const {
-  TreeByReference c = TreeByReference::childAtIndex(i);
+  TreeHandle c = TreeHandle::childAtIndex(i);
   return static_cast<Evaluation<T> &>(c);
 }
 

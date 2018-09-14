@@ -11,7 +11,7 @@ LayoutReference LayoutReference::clone() const {
   if (isUninitialized()) {
     return LayoutReference();
   }
-  TreeByReference c = TreeByReference::clone();
+  TreeHandle c = TreeHandle::clone();
   LayoutReference cast = LayoutReference(static_cast<LayoutNode *>(c.node()));
   cast.invalidAllSizesPositionsAndBaselines();
   return cast;
@@ -29,7 +29,7 @@ LayoutCursor LayoutReference::equivalentCursor(LayoutCursor * cursor) {
 }
 
 LayoutReference LayoutReference::childAtIndex(int i) {
-  TreeByReference c = TreeByReference::childAtIndex(i);
+  TreeHandle c = TreeHandle::childAtIndex(i);
   return static_cast<LayoutReference &>(c);
 }
 

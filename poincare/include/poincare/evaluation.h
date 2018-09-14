@@ -6,7 +6,7 @@ extern "C" {
 #include <stdint.h>
 }
 #include <poincare/preferences.h>
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 #include <poincare/tree_node.h>
 
 namespace Poincare {
@@ -34,9 +34,9 @@ public:
 };
 
 template<typename T>
-class Evaluation : public TreeByReference {
+class Evaluation : public TreeHandle {
 public:
-  Evaluation() : TreeByReference() {}
+  Evaluation() : TreeHandle() {}
 #if 0
   template<class U> U convert() const {
     /* This function allows to convert Evaluation to derived Evaluation.
@@ -51,8 +51,8 @@ public:
   }
 #endif
   EvaluationNode<T> * node() const {
-    assert(!TreeByReference::node()->isGhost());
-    return static_cast<EvaluationNode<T> *>(TreeByReference::node());
+    assert(!TreeHandle::node()->isGhost());
+    return static_cast<EvaluationNode<T> *>(TreeHandle::node());
   }
 
   /* Hierarchy */
@@ -64,7 +64,7 @@ public:
   std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
 protected:
-  Evaluation(EvaluationNode<T> * n) : TreeByReference(n) {}
+  Evaluation(EvaluationNode<T> * n) : TreeHandle(n) {}
 };
 
 }

@@ -119,7 +119,7 @@ objs += $(addprefix poincare/src/,\
   sum.o\
   symbol.o\
   tangent.o\
-  tree_by_reference.o\
+  tree_handle.o\
   tree_node.o\
   tree_pool.o\
   trigonometry.o\
@@ -128,7 +128,7 @@ objs += $(addprefix poincare/src/,\
 )
 
 tests += $(addprefix poincare/test/,\
-  tree/tree_by_reference.cpp\
+  tree/tree_handle.cpp\
   addition.cpp\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\

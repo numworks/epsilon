@@ -29,32 +29,32 @@ LayoutReference LogarithmNode<2>::createLayout(Preferences::PrintFloatMode float
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-template<int I>
-Expression LogarithmNode<I>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+template<int T>
+Expression LogarithmNode<T>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Logarithm(this).shallowReduce(context, angleUnit);
 }
 
-template<int I>
-Expression LogarithmNode<I>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+template<int T>
+Expression LogarithmNode<T>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Logarithm(this).shallowBeautify(context, angleUnit);
 }
 
 template<>
-template<typename T> Evaluation<T> LogarithmNode<1>::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  return ApproximationHelper::Map(this, context, angleUnit, computeOnComplex<T>);
+template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  return ApproximationHelper::Map(this, context, angleUnit, computeOnComplex<U>);
 }
 
 template<>
-template<typename T> Evaluation<T> LogarithmNode<2>::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> x = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> n = childAtIndex(1)->approximate(T(), context, angleUnit);
-  std::complex<T> result = std::complex<T>(NAN, NAN);
-  if (x.type() == EvaluationNode<T>::Type::Complex && n.type() == EvaluationNode<T>::Type::Complex) {
-    std::complex<T> xc = (static_cast<Complex<T>&>(x)).stdComplex();
-    std::complex<T> nc = (static_cast<Complex<T>&>(n)).stdComplex();
-    result = DivisionNode::compute<T>(computeOnComplex(xc, angleUnit).stdComplex(), computeOnComplex(nc, angleUnit).stdComplex()).stdComplex();
+template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<U> x = childAtIndex(0)->approximate(U(), context, angleUnit);
+  Evaluation<U> n = childAtIndex(1)->approximate(U(), context, angleUnit);
+  std::complex<U> result = std::complex<U>(NAN, NAN);
+  if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
+    std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
+    std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
+    result = DivisionNode::compute<U>(computeOnComplex(xc, angleUnit).stdComplex(), computeOnComplex(nc, angleUnit).stdComplex()).stdComplex();
   }
-  return Complex<T>(result);
+  return Complex<U>(result);
 }
 
 Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){

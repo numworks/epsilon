@@ -7,10 +7,10 @@
 
 namespace Poincare {
 
-class NthRootLayoutRef;
+class NthRootLayoutReference;
 
 class NthRootLayoutNode : public LayoutNode {
-  friend class NthRootLayoutRef;
+  friend class NthRootLayoutReference;
 public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
@@ -66,12 +66,12 @@ private:
   bool m_hasIndex;
 };
 
-class NthRootLayoutRef : public LayoutReference {
+class NthRootLayoutReference : public LayoutReference {
 public:
-  explicit NthRootLayoutRef(LayoutRef radicand);
-  NthRootLayoutRef(LayoutRef radicand, LayoutRef index);
+  explicit NthRootLayoutReference(LayoutReference radicand);
+  NthRootLayoutReference(LayoutReference radicand, LayoutReference index);
 private:
-  NthRootLayoutRef();
+  NthRootLayoutReference();
 };
 
 }

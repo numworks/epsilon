@@ -49,9 +49,9 @@ private:
   LayoutNode * superscriptLayout() { return childAtIndex(2); }
 };
 
-class CondensedSumLayoutRef : public LayoutReference {
+class CondensedSumLayoutReference : public LayoutReference {
 public:
-  CondensedSumLayoutRef(LayoutRef base, LayoutRef subscript, LayoutRef superscript);
+  CondensedSumLayoutReference(LayoutReference base, LayoutReference subscript, LayoutReference superscript);
 };
 
 }

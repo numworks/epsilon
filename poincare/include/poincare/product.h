@@ -19,7 +19,7 @@ public:
 private:
   const char * name() const override { return "product"; }
   float emptySequenceValue() const override { return 1.0f; }
-  LayoutRef createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const override;
+  LayoutReference createSequenceLayout(LayoutReference argumentLayout, LayoutReference subscriptLayout, LayoutReference superscriptLayout) const override;
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);
   }

@@ -10,7 +10,7 @@ class LayoutFieldDelegate {
 public:
   virtual bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) = 0;
-  virtual bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutRef layoutR, Ion::Events::Event event) { return false; }
+  virtual bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutReference layoutR, Ion::Events::Event event) { return false; }
   virtual bool layoutFieldDidAbortEditing(LayoutField * layoutField) { return false; }
   virtual void layoutFieldDidChangeSize(LayoutField * layoutField) {}
   virtual Toolbox * toolboxForLayoutField(LayoutField * layoutField) = 0;

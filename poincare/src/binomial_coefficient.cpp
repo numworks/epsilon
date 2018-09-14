@@ -14,7 +14,7 @@ Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences
 }
 
 LayoutReference BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return BinomialCoefficientLayoutRef(
+  return BinomialCoefficientLayoutReference(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

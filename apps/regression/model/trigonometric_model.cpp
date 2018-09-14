@@ -12,22 +12,22 @@ namespace Regression {
 LayoutReference TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
-      CharLayoutRef('a', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('s', KDText::FontSize::Small),
-      CharLayoutRef('i', KDText::FontSize::Small),
-      CharLayoutRef('n', KDText::FontSize::Small),
-      CharLayoutRef('(', KDText::FontSize::Small),
-      CharLayoutRef('b', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('X', KDText::FontSize::Small),
-      CharLayoutRef('+', KDText::FontSize::Small),
-      CharLayoutRef('c', KDText::FontSize::Small),
-      CharLayoutRef(')', KDText::FontSize::Small),
-      CharLayoutRef('+', KDText::FontSize::Small),
-      CharLayoutRef('d', KDText::FontSize::Small)
+      CharLayoutReference('a', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('s', KDText::FontSize::Small),
+      CharLayoutReference('i', KDText::FontSize::Small),
+      CharLayoutReference('n', KDText::FontSize::Small),
+      CharLayoutReference('(', KDText::FontSize::Small),
+      CharLayoutReference('b', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('X', KDText::FontSize::Small),
+      CharLayoutReference('+', KDText::FontSize::Small),
+      CharLayoutReference('c', KDText::FontSize::Small),
+      CharLayoutReference(')', KDText::FontSize::Small),
+      CharLayoutReference('+', KDText::FontSize::Small),
+      CharLayoutReference('d', KDText::FontSize::Small)
     };
-    m_layout = HorizontalLayoutRef(layoutChildren, 14);
+    m_layout = HorizontalLayoutReference(layoutChildren, 14);
   }
   return m_layout;
 }

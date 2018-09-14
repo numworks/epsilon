@@ -15,9 +15,9 @@ LayoutReference CartesianComplexFormat(KDText::FontSize fontSize) {
 LayoutReference PolarComplexFormat(KDText::FontSize fontSize) {
   const char base[] = {'r', Ion::Charset::Exponential};
   const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-  return HorizontalLayoutRef(
+  return HorizontalLayoutReference(
       LayoutHelper::String(base, sizeof(base), fontSize),
-      VerticalOffsetLayoutRef(LayoutHelper::String(superscript, sizeof(superscript), fontSize), VerticalOffsetLayoutNode::Type::Superscript)
+      VerticalOffsetLayoutReference(LayoutHelper::String(superscript, sizeof(superscript), fontSize), VerticalOffsetLayoutNode::Type::Superscript)
      );
 }
 

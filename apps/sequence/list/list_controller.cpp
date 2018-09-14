@@ -204,13 +204,13 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setLayoutRef(sequence->layoutRef());
+    myCell->setLayoutReference(sequence->layoutRef());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setLayoutRef(sequence->firstInitialConditionLayout());
+    myCell->setLayoutReference(sequence->firstInitialConditionLayout());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setLayoutRef(sequence->secondInitialConditionLayout());
+    myCell->setLayoutReference(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;

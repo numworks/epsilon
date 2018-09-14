@@ -277,7 +277,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
 
 // Layout
 
-HorizontalLayoutRef Integer::createLayout() const {
+HorizontalLayoutReference Integer::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
   return LayoutHelper::String(buffer, numberOfChars);

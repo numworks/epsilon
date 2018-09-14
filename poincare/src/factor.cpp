@@ -13,7 +13,7 @@ extern "C" {
 
 namespace Poincare {
 
-LayoutRef FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

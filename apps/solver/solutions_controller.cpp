@@ -66,9 +66,9 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout(),
   m_contentView(this)
 {
-  m_delta2Layout = HorizontalLayoutRef(VerticalOffsetLayoutRef(CharLayoutRef('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDText::FontSize::Small));
+  m_delta2Layout = HorizontalLayoutReference(VerticalOffsetLayoutReference(CharLayoutReference('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDText::FontSize::Small));
   char deltaB[] = {Ion::Charset::CapitalDelta, '=', 'b'};
-  static_cast<HorizontalLayoutRef&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDText::FontSize::Small), 0, false);
+  static_cast<HorizontalLayoutReference&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDText::FontSize::Small), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
@@ -145,7 +145,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   if (i == 0) {
     if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
-      deltaCell->setLayoutRef(m_delta2Layout);
+      deltaCell->setLayoutReference(m_delta2Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
       symbolCell->setFontSize(KDText::FontSize::Large);

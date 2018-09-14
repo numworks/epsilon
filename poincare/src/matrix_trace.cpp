@@ -13,7 +13,7 @@ Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleU
   return MatrixTrace(this).shallowReduce(context, angleUnit);
 }
 
-LayoutRef MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(MatrixTrace(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

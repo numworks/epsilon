@@ -25,7 +25,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell(),
   m_store(store)
 {
-  m_r2Layout = HorizontalLayoutRef(CharLayoutRef('r', KDText::FontSize::Small), VerticalOffsetLayoutRef(CharLayoutRef('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript));
+  m_r2Layout = HorizontalLayoutReference(CharLayoutReference('r', KDText::FontSize::Small), VerticalOffsetLayoutReference(CharLayoutReference('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript));
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
@@ -125,7 +125,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     int numberRows = numberOfRows();
     if (shouldDisplayRAndR2 && j == numberRows-1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
-      myCell->setLayoutRef(m_r2Layout);
+      myCell->setLayoutReference(m_r2Layout);
       return;
     }
     MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;

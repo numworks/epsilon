@@ -58,7 +58,7 @@ public:
   int serialize(char * buffer, int bufferSize) const;
 
   //Layout
-  HorizontalLayoutRef createLayout() const;
+  HorizontalLayoutReference createLayout() const;
 
   // Approximation
   template<typename T> T approximate() const;

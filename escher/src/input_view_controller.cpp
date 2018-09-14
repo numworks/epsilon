@@ -76,7 +76,7 @@ bool InputViewController::layoutFieldDidReceiveEvent(LayoutField * layoutField, 
   return m_layoutFieldDelegate->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool InputViewController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutRef layoutR, Ion::Events::Event event) {
+bool InputViewController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutReference layoutR, Ion::Events::Event event) {
   inputViewDidFinishEditing();
   m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, layoutR, event);
   return true;

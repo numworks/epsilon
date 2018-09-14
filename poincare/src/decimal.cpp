@@ -78,7 +78,7 @@ Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUni
   return Decimal(this).shallowBeautify(context, angleUnit);
 }
 
-LayoutRef DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);

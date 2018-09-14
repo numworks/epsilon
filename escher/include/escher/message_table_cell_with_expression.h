@@ -9,7 +9,7 @@ public:
   MessageTableCellWithExpression(I18n::Message message = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small);
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
-  void setLayoutRef(Poincare::LayoutRef layout);
+  void setLayoutReference(Poincare::LayoutReference layout);
 private:
   ExpressionView m_subtitleView;
 };

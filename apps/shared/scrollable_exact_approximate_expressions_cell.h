@@ -22,7 +22,7 @@ public:
   Responder * responder() override {
     return this;
   }
-  Poincare::LayoutRef layoutRef() const override { return m_view.layoutRef(); }
+  Poincare::LayoutReference layoutRef() const override { return m_view.layoutRef(); }
   void didBecomeFirstResponder() override;
   constexpr static KDCoordinate k_margin = 5;
 private:

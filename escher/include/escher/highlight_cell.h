@@ -18,8 +18,8 @@ public:
   virtual const char * text() const {
     return nullptr;
   }
-  virtual Poincare::LayoutRef layoutRef() const {
-    return Poincare::LayoutRef();
+  virtual Poincare::LayoutReference layoutRef() const {
+    return Poincare::LayoutReference();
   }
 protected:
   bool m_highlighted;

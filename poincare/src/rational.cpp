@@ -90,13 +90,13 @@ Expression RationalNode::setSign(Sign s, Context & context, Preferences::AngleUn
 
 // Layout
 
-LayoutRef RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayoutRef numeratorLayout = signedNumerator().createLayout();
+LayoutReference RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayoutReference numeratorLayout = signedNumerator().createLayout();
   if (denominator().isOne()) {
     return numeratorLayout;
   }
-  HorizontalLayoutRef denominatorLayout = denominator().createLayout();
-  return FractionLayoutRef(numeratorLayout, denominatorLayout);
+  HorizontalLayoutReference denominatorLayout = denominator().createLayout();
+  return FractionLayoutReference(numeratorLayout, denominatorLayout);
 }
 
 // Approximation

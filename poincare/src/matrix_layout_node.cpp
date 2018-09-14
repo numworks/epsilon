@@ -11,7 +11,7 @@ namespace Poincare {
 
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
-    LayoutRef thisRef(this);
+    LayoutReference thisRef(this);
     addEmptyRow(EmptyLayoutNode::Color::Grey);
     addEmptyColumn(EmptyLayoutNode::Color::Grey);
   }
@@ -137,7 +137,7 @@ KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  MatrixLayoutRef thisRef = MatrixLayoutRef(this);
+  MatrixLayoutReference thisRef = MatrixLayoutReference(this);
   bool shouldRemoveGreySquares = false;
   int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
   int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
@@ -266,10 +266,10 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   }
 }
 
-MatrixLayoutRef::MatrixLayoutRef(const MatrixLayoutNode * n) : GridLayoutRef(n) {}
-MatrixLayoutRef::MatrixLayoutRef() : GridLayoutRef(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
-MatrixLayoutRef::MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
-  MatrixLayoutRef()
+MatrixLayoutReference::MatrixLayoutReference(const MatrixLayoutNode * n) : GridLayoutReference(n) {}
+MatrixLayoutReference::MatrixLayoutReference() : GridLayoutReference(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
+MatrixLayoutReference::MatrixLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4) :
+  MatrixLayoutReference()
 {
   addChildAtIndexInPlace(l1, 0, 0);
   addChildAtIndexInPlace(l2, 1, 1);

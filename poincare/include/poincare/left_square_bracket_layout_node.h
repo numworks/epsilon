@@ -27,9 +27,9 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class LeftSquareBracketLayoutRef : public LayoutReference {
+class LeftSquareBracketLayoutReference : public LayoutReference {
 public:
-  LeftSquareBracketLayoutRef();
+  LeftSquareBracketLayoutReference();
 };
 
 }

@@ -7,7 +7,7 @@ namespace Shared {
 
 namespace PoincareHelpers {
 
-inline Poincare::LayoutRef CreateLayout(const Poincare::Expression e)  {
+inline Poincare::LayoutReference CreateLayout(const Poincare::Expression e)  {
   return e.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
 }
 

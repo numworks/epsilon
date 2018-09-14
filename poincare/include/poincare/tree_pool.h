@@ -11,8 +11,6 @@
 #include <iostream>
 #endif
 
-#define POINCARE_ALLOW_STATIC_NODES 0
-
 namespace Poincare {
 
 class TreeByReference;
@@ -29,13 +27,6 @@ public:
 
   // Node
   TreeNode * node(int identifier) const {
-#if POINCARE_ALLOW_STATIC_NODES
-    if (identifier <= TreeNode::FirstStaticNodeIdentifier) {
-      int index = indexOfStaticNode(identifier);
-      assert(index >= 0 && index < MaxNumberOfStaticNodes);
-      return m_staticNodes[index];
-    }
-#endif
     assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
     return m_nodeForIdentifier[identifier];
   }
@@ -50,11 +41,6 @@ public:
   TreeNode * deepCopy(TreeNode * node);
   TreeNode * copyTreeFromAddress(const void * address, size_t size);
 
-#if POINCARE_ALLOW_STATIC_NODES
-  void registerStaticNodeIfRequired(TreeNode * node);
-  void registerStaticNode(TreeNode * node);
-#endif
-
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream);
@@ -65,9 +51,6 @@ public:
 private:
   constexpr static int BufferSize = 32768;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
-#if POINCARE_ALLOW_STATIC_NODES
-  constexpr static int MaxNumberOfStaticNodes = 200; // TODO: count how may are needed
-#endif
   static TreePool * SharedStaticPool;
 
   // TreeNode
@@ -81,11 +64,6 @@ private:
   void renameNode(TreeNode * node, bool unregisterPreviousIdentifier = true) {
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
-
-#if POINCARE_ALLOW_STATIC_NODES
-  int identifierOfStaticNodeAtIndex(int index) const { return TreeNode::FirstStaticNodeIdentifier-index;} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.
-  int indexOfStaticNode(int id) const { return -(id - TreeNode::FirstStaticNodeIdentifier);}
-#endif
 
   // Iterators
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
@@ -167,9 +145,6 @@ private:
   char m_buffer[BufferSize];
   IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
-#if POINCARE_ALLOW_STATIC_NODES
-  TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
-#endif
 };
 
 }

@@ -22,16 +22,10 @@ class TreeNode {
   friend class TreePool;
 public:
   static constexpr int NoNodeIdentifier = -1;
-#if POINCARE_ALLOW_STATIC_NODES
-  static constexpr int FirstStaticNodeIdentifier = -2;
-#endif
 
   virtual ~TreeNode() {}
 
   // Attributes
-#if POINCARE_ALLOW_STATIC_NODES
-  bool isStatic() const { return m_identifier <= FirstStaticNodeIdentifier; }
-#endif
   void setParentIdentifier(int parentID) { m_parentIdentifier = parentID; }
   void deleteParentIdentifier() { m_parentIdentifier = NoNodeIdentifier; }
   virtual size_t size() const = 0;

@@ -13,8 +13,8 @@
 #include <poincare/symbol.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
-#include <poincare/horizontal_layout_node.h>
-#include <poincare/vertical_offset_layout_node.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
 #include <cmath>
 #include <math.h>
 #include <ion.h>

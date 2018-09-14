@@ -3,7 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/layout_reference.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/horizontal_layout.h>
 
 namespace Poincare {
 

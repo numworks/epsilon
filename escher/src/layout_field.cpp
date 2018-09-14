@@ -3,7 +3,7 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/horizontal_layout.h>
 #include <assert.h>
 #include <string.h>
 

@@ -3,7 +3,7 @@
 #include <poincare/division.h>
 #include <poincare/subtraction.h>
 #include <poincare/matrix_complex.h>
-#include <poincare/matrix_layout_node.h>
+#include <poincare/matrix_layout.h>
 #include <cmath>
 #include <float.h>
 #include <string.h>

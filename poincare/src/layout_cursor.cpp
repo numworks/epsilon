@@ -1,14 +1,14 @@
 #include <poincare/layout_cursor.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/empty_layout_node.h>
-#include <poincare/fraction_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/char_layout.h>
+#include <poincare/empty_layout.h>
+#include <poincare/fraction_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/layout_reference.h>
-#include <poincare/left_parenthesis_layout_node.h>
-#include <poincare/matrix_layout_node.h>
-#include <poincare/nth_root_layout_node.h>
-#include <poincare/right_parenthesis_layout_node.h>
-#include <poincare/vertical_offset_layout_node.h>
+#include <poincare/left_parenthesis_layout.h>
+#include <poincare/matrix_layout.h>
+#include <poincare/nth_root_layout.h>
+#include <poincare/right_parenthesis_layout.h>
+#include <poincare/vertical_offset_layout.h>
 #include <ion/charset.h>
 #include <stdio.h>
 

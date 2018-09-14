@@ -1,6 +1,6 @@
 #include <poincare/product.h>
 #include <poincare/multiplication.h>
-#include <poincare/product_layout_node.h>
+#include <poincare/product_layout.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>

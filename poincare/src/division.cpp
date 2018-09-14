@@ -1,5 +1,5 @@
 #include <poincare/division.h>
-#include <poincare/fraction_layout_node.h>
+#include <poincare/fraction_layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>

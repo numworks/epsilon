@@ -26,7 +26,7 @@ Poincare::Expression ExpressionModel::expression(Poincare::Context * context) co
   return m_expression;
 }
 
-LayoutRef ExpressionModel::layoutRef() {
+LayoutReference ExpressionModel::layoutRef() {
   if (m_layoutRef.isUninitialized()) {
     Expression nonSimplifiedExpression = Expression::parse(m_text);
     m_layoutRef = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
@@ -47,12 +47,12 @@ void ExpressionModel::setContent(const char * c) {
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
    * the m_layout and m_expression. */
-  m_layoutRef = LayoutRef();
+  m_layoutRef = LayoutReference();
   m_expression = Expression();
 }
 
 void ExpressionModel::tidy() {
-  m_layoutRef = LayoutRef();
+  m_layoutRef = LayoutReference();
   m_expression = Expression();
 }
 

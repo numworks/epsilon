@@ -21,7 +21,7 @@ public:
   Type type() const override { return Type::MatrixTranspose; }
 private:
   // Layout
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "transpose"; }
   // Simplification

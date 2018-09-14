@@ -9,25 +9,25 @@ namespace Regression {
 LayoutReference LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
     const LayoutReference exponentLayoutChildren[] = {
-      CharLayoutRef('-', KDText::FontSize::Small),
-      CharLayoutRef('b', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('X', KDText::FontSize::Small)
+      CharLayoutReference('-', KDText::FontSize::Small),
+      CharLayoutReference('b', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('X', KDText::FontSize::Small)
     };
     const LayoutReference layoutChildren[] = {
-      CharLayoutRef('1', KDText::FontSize::Small),
-      CharLayoutRef('+', KDText::FontSize::Small),
-      CharLayoutRef('a', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('e', KDText::FontSize::Small),
-      VerticalOffsetLayoutRef(
-          HorizontalLayoutRef(exponentLayoutChildren, 4),
+      CharLayoutReference('1', KDText::FontSize::Small),
+      CharLayoutReference('+', KDText::FontSize::Small),
+      CharLayoutReference('a', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('e', KDText::FontSize::Small),
+      VerticalOffsetLayoutReference(
+          HorizontalLayoutReference(exponentLayoutChildren, 4),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = FractionLayoutRef(
-       CharLayoutRef('c', KDText::FontSize::Small),
-       HorizontalLayoutRef(layoutChildren, 6)
+    m_layout = FractionLayoutReference(
+       CharLayoutReference('c', KDText::FontSize::Small),
+       HorizontalLayoutReference(layoutChildren, 6)
       );
   }
   return m_layout;

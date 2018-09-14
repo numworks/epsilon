@@ -43,7 +43,7 @@ HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtLocation(0, index) == 2) {
-    static_cast<ExpressionTableCell *>(cell)->setLayoutRef(m_addedCellLayout[index]);
+    static_cast<ExpressionTableCell *>(cell)->setLayoutReference(m_addedCellLayout[index]);
     return;
   }
   MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
@@ -73,20 +73,20 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
   const char * otherSequenceName = SequenceStore::k_sequenceNames[1-sequenceIndex];
   for (int j = 0; j < recurrenceDepth; j++) {
     const char * indice = j == 0 ? "n" : "n+1";
-    m_addedCellLayout[j] = HorizontalLayoutRef(
-        CharLayoutRef(sequenceName[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutRef(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+    m_addedCellLayout[j] = HorizontalLayoutReference(
+        CharLayoutReference(sequenceName[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutReference(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
       );
-    m_addedCellLayout[j+recurrenceDepth] = HorizontalLayoutRef(
-        CharLayoutRef(otherSequenceName[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutRef(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+    m_addedCellLayout[j+recurrenceDepth] = HorizontalLayoutReference(
+        CharLayoutReference(otherSequenceName[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutReference(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
-    m_addedCellLayout[2*recurrenceDepth] = HorizontalLayoutRef(
-        CharLayoutRef(otherSequenceName[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutRef(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+    m_addedCellLayout[2*recurrenceDepth] = HorizontalLayoutReference(
+        CharLayoutReference(otherSequenceName[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutReference(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
 }

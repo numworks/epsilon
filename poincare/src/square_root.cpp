@@ -9,7 +9,7 @@
 namespace Poincare {
 
 LayoutReference SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return NthRootLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return NthRootLayoutReference(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");

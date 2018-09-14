@@ -8,7 +8,7 @@ class Clipboard {
 public:
   static Clipboard * sharedClipboard();
   void store(const char * storedText);
-  void store(Poincare::LayoutRef layoutR);
+  void store(Poincare::LayoutReference layoutR);
   const char * storedText();
   void reset();
 private:

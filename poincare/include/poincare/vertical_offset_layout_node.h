@@ -57,9 +57,9 @@ private:
   Type m_type;
 };
 
-class VerticalOffsetLayoutRef : public LayoutReference {
+class VerticalOffsetLayoutReference : public LayoutReference {
 public:
-  VerticalOffsetLayoutRef(LayoutRef l, VerticalOffsetLayoutNode::Type type);
+  VerticalOffsetLayoutReference(LayoutReference l, VerticalOffsetLayoutNode::Type type);
 };
 
 }

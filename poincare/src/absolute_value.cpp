@@ -15,8 +15,8 @@ Complex<T> AbsoluteValueNode::computeOnComplex(const std::complex<T> c, Preferen
   return Complex<T>(std::abs(c));
 }
 
-LayoutRef AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return AbsoluteValueLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+LayoutReference AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return AbsoluteValueLayoutReference(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

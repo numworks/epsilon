@@ -57,9 +57,9 @@ private:
   LayoutNode * denominatorLayout() { return childAtIndex(1); }
 };
 
-class FractionLayoutRef : public LayoutReference {
+class FractionLayoutReference : public LayoutReference {
 public:
-  FractionLayoutRef(LayoutRef numerator, LayoutRef denominator);
+  FractionLayoutReference(LayoutReference numerator, LayoutReference denominator);
 };
 
 }

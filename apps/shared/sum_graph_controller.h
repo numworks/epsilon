@@ -70,7 +70,7 @@ private:
     void layoutSubviews() override;
     void layoutSubviews(Step step);
     ExpressionView m_sum;
-    Poincare::LayoutRef m_sumLayoutRef;
+    Poincare::LayoutReference m_sumLayoutReference;
     MessageTextView m_legend;
     TextField m_editableZone;
     char m_draftText[TextField::maxBufferSize()];

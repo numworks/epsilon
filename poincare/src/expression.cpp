@@ -230,8 +230,8 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, int b
 
 /* Layout Helper */
 
-LayoutRef Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return isUninitialized() ? LayoutRef() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+LayoutReference Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return isUninitialized() ? LayoutReference() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
 }
 
 int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return isUninitialized() ? 0 : node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }

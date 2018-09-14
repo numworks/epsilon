@@ -11,7 +11,7 @@
 namespace Poincare {
 
 LayoutReference CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return CeilingLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return CeilingLayoutReference(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

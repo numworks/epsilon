@@ -12,11 +12,11 @@ class SequenceNode : public ExpressionNode {
 public:
   int numberOfChildren() const override { return 3; }
 private:
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
-  virtual LayoutRef createSequenceLayout(LayoutRef subscriptLayout, LayoutRef superscriptLayout, LayoutRef argumentLayout) const = 0;
+  virtual LayoutReference createSequenceLayout(LayoutReference subscriptLayout, LayoutReference superscriptLayout, LayoutReference argumentLayout) const = 0;
   virtual const char * name() const = 0;
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

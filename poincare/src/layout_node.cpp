@@ -96,13 +96,13 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Delete the layout (or replace it with an EmptyLayout).
-  LayoutRef(p).removeChild(LayoutRef(this), cursor);
+  LayoutReference(p).removeChild(LayoutReference(this), cursor);
   // WARNING: Do no use "this" afterwards
 }
 
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force) {
-    LayoutRef(this).replaceChildWithEmpty(LayoutRef(l), cursor);
+    LayoutReference(this).replaceChildWithEmpty(LayoutReference(l), cursor);
     return false;
   }
   return true;
@@ -165,7 +165,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
   scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
 
   // If there is a valid result
-  LayoutRef resultRef(childResult);
+  LayoutReference resultRef(childResult);
   if ((*childResultPtr) != nullptr) {
     *shouldRecomputeLayout = childResult->addGreySquaresToAllMatrixAncestors();
     // WARNING: Do not use "this" afterwards
@@ -213,13 +213,13 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 
 bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   bool changedSquares = false;
-  LayoutRef currentAncestor = LayoutRef(parent());
+  LayoutReference currentAncestor = LayoutReference(parent());
   while (!currentAncestor.isUninitialized()) {
     if (currentAncestor.isMatrix()) {
       if (add) {
-        MatrixLayoutRef(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
+        MatrixLayoutReference(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
       } else {
-        MatrixLayoutRef(static_cast<MatrixLayoutNode *>(currentAncestor.node())).removeGreySquares();
+        MatrixLayoutReference(static_cast<MatrixLayoutNode *>(currentAncestor.node())).removeGreySquares();
       }
       changedSquares = true;
     }

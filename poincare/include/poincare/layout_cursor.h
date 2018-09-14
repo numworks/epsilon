@@ -7,7 +7,7 @@
 namespace Poincare {
 
 class HorizontalLayoutNode;
-class VerticalOffsetLayoutRef;
+class VerticalOffsetLayoutReference;
 
 class LayoutCursor {
   friend class LayoutReference;
@@ -32,7 +32,7 @@ public:
     m_position(Position::Right)
   {}
 
-  LayoutCursor(LayoutRef layoutR, Position position = Position::Right) :
+  LayoutCursor(LayoutReference layoutR, Position position = Position::Right) :
     m_layoutRef(layoutR.node()),
     m_position(position)
   {}
@@ -50,11 +50,11 @@ public:
   bool isDefined() const { return !m_layoutRef.isUninitialized(); }
 
   // Getters and setters
-  LayoutRef layoutReference() { return m_layoutRef; }
+  LayoutReference layoutReference() { return m_layoutRef; }
   LayoutNode * layoutNode() { return m_layoutRef.node(); } // TODO  Make private + friend classes ?
 
   int layoutIdentifier() { return m_layoutRef.identifier(); }
-  void setLayoutReference(LayoutRef r) {
+  void setLayoutReference(LayoutReference r) {
     if (r != m_layoutRef) {
       m_layoutRef = r;
     }
@@ -65,7 +65,7 @@ public:
        * temporarily be pointing to a GhostNode. In this case,
        * m_layoutRef.node() would crash because of the assertion that the node
        * is not ghost. */
-      m_layoutRef = LayoutRef(n);
+      m_layoutRef = LayoutReference(n);
     }
   }
   void setTo(LayoutCursor * other) {
@@ -114,7 +114,7 @@ public:
   void addFractionLayoutAndCollapseSiblings();
   void addXNTCharLayout();
   void insertText(const char * text);
-  void addLayoutAndMoveCursor(LayoutRef l);
+  void addLayoutAndMoveCursor(LayoutReference l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }
   void performBackspace() { m_layoutRef.deleteBeforeCursor(this); }
@@ -123,10 +123,10 @@ public:
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   KDCoordinate layoutHeight();
-  void privateAddEmptyPowerLayout(VerticalOffsetLayoutRef v);
+  void privateAddEmptyPowerLayout(VerticalOffsetLayoutReference v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
-  LayoutRef m_layoutRef;
+  LayoutReference m_layoutRef;
   Position m_position;
 };
 

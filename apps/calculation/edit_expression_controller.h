@@ -29,7 +29,7 @@ public:
 
   /* LayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(::LayoutField * layoutField, Poincare::LayoutRef layoutR, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(::LayoutField * layoutField, Poincare::LayoutReference layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(::LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(::LayoutField * layoutField) override;
 
@@ -52,7 +52,7 @@ private:
   };
   void reloadView();
   bool inputViewDidReceiveEvent(Ion::Events::Event event);
-  bool inputViewDidFinishEditing(const char * text, Poincare::LayoutRef layoutR);
+  bool inputViewDidFinishEditing(const char * text, Poincare::LayoutReference layoutR);
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;

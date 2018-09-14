@@ -47,10 +47,10 @@ double TermSumController::cursorNextStep(double x, int direction) {
 }
 
 LayoutReference TermSumController::createFunctionLayout(const char * functionName) {
-  return HorizontalLayoutRef(
-      CharLayoutRef(functionName[0], KDText::FontSize::Small),
-        VerticalOffsetLayoutRef(
-          CharLayoutRef('n', KDText::FontSize::Small),
+  return HorizontalLayoutReference(
+      CharLayoutReference(functionName[0], KDText::FontSize::Small),
+        VerticalOffsetLayoutReference(
+          CharLayoutReference('n', KDText::FontSize::Small),
           VerticalOffsetLayoutNode::Type::Subscript
         )
       );

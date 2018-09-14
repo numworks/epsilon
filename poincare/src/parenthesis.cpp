@@ -7,7 +7,7 @@ int ParenthesisNode::polynomialDegree(char symbolName) const {
   return childAtIndex(0)->polynomialDegree(symbolName);
 }
 
-LayoutRef ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 

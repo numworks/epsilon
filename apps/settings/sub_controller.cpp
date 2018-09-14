@@ -27,7 +27,7 @@ SubController::SubController(Responder * parentResponder) :
   m_complexFormatLayout[0] = Helpers::CartesianComplexFormat(KDText::FontSize::Large);
   m_complexFormatLayout[1] = Helpers::PolarComplexFormat(KDText::FontSize::Large);
   for (int i = 0; i < 2; i++) {
-    m_complexFormatCells[i].setLayoutRef(m_complexFormatLayout[i]);
+    m_complexFormatCells[i].setLayoutReference(m_complexFormatLayout[i]);
   }
   m_editableCell.setMessage(I18n::Message::SignificantFigures);
   m_editableCell.setMessageFontSize(KDText::FontSize::Large);

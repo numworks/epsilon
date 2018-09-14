@@ -73,10 +73,10 @@ private:
   bool m_margins;
 };
 
-class EmptyLayoutRef : public LayoutReference {
+class EmptyLayoutReference : public LayoutReference {
 public:
-  EmptyLayoutRef(const EmptyLayoutNode * n);
-  EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true);
+  EmptyLayoutReference(const EmptyLayoutNode * n);
+  EmptyLayoutReference(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }

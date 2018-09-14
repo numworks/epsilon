@@ -17,7 +17,7 @@ Expression UndefinedNode::setSign(Sign s, Context & context, Preferences::AngleU
   return Undefined();
 }
 
-LayoutRef UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[6];
   int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 6, numberOfSignificantDigits, floatDisplayMode);
   return LayoutHelper::String(buffer, numberOfChars);

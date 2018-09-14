@@ -10,15 +10,15 @@ namespace Regression {
 LayoutReference PowerModel::layout() {
   if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
-      CharLayoutRef('a', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('X', KDText::FontSize::Small),
-      VerticalOffsetLayoutRef(
-          CharLayoutRef('b', KDText::FontSize::Small),
+      CharLayoutReference('a', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('X', KDText::FontSize::Small),
+      VerticalOffsetLayoutReference(
+          CharLayoutReference('b', KDText::FontSize::Small),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
       };
-    m_layout = HorizontalLayoutRef(layoutChildren, 4);
+    m_layout = HorizontalLayoutReference(layoutChildren, 4);
   }
   return m_layout;
 }

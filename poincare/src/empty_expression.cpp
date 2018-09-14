@@ -10,8 +10,8 @@ int EmptyExpressionNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Char(buffer, bufferSize, Ion::Charset::Empty);
 }
 
-LayoutRef EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return EmptyLayoutRef();
+LayoutReference EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return EmptyLayoutReference();
 }
 
 template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {

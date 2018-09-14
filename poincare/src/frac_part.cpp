@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-LayoutRef FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

@@ -39,9 +39,9 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class ConjugateLayoutRef : public LayoutReference {
+class ConjugateLayoutReference : public LayoutReference {
 public:
-  explicit ConjugateLayoutRef(LayoutRef l) : LayoutReference(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>()) {
+  explicit ConjugateLayoutReference(LayoutReference l) : LayoutReference(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);
   }
 };

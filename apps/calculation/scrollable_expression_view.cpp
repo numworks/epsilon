@@ -10,8 +10,8 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
 {
 }
 
-void ScrollableExpressionView::setLayoutRef(LayoutRef layoutRef) {
-  m_expressionView.setLayoutRef(layoutRef);
+void ScrollableExpressionView::setLayoutReference(LayoutReference layoutRef) {
+  m_expressionView.setLayoutReference(layoutRef);
   layoutSubviews();
 }
 

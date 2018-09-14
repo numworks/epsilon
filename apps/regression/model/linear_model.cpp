@@ -10,13 +10,13 @@ namespace Regression {
 LayoutReference LinearModel::layout() {
   if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
-      CharLayoutRef('a', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('X', KDText::FontSize::Small),
-      CharLayoutRef('+', KDText::FontSize::Small),
-      CharLayoutRef('b', KDText::FontSize::Small),
+      CharLayoutReference('a', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('X', KDText::FontSize::Small),
+      CharLayoutReference('+', KDText::FontSize::Small),
+      CharLayoutReference('b', KDText::FontSize::Small),
     };
-    m_layout = HorizontalLayoutRef(layoutChildren, 5);
+    m_layout = HorizontalLayoutReference(layoutChildren, 5);
   }
   return m_layout;
 }

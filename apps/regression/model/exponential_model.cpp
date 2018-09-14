@@ -9,19 +9,19 @@ namespace Regression {
 LayoutReference ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
-      CharLayoutRef('a', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('e', KDText::FontSize::Small),
-      VerticalOffsetLayoutRef(
-          HorizontalLayoutRef(
-            CharLayoutRef('b', KDText::FontSize::Small),
-            CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-            CharLayoutRef('X', KDText::FontSize::Small)
+      CharLayoutReference('a', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('e', KDText::FontSize::Small),
+      VerticalOffsetLayoutReference(
+          HorizontalLayoutReference(
+            CharLayoutReference('b', KDText::FontSize::Small),
+            CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+            CharLayoutReference('X', KDText::FontSize::Small)
           ),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = HorizontalLayoutRef(layoutChildren, 4);
+    m_layout = HorizontalLayoutReference(layoutChildren, 4);
   }
   return m_layout;
 }

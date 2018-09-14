@@ -21,9 +21,9 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class SumLayoutRef : public LayoutReference {
+class SumLayoutReference : public LayoutReference {
 public:
-  SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
+  SumLayoutReference(LayoutReference argument, LayoutReference lowerB, LayoutReference upperB) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<SumLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, argument);

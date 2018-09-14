@@ -1,5 +1,5 @@
 #include <poincare/conjugate.h>
-#include <poincare/conjugate_layout_node.h>
+#include <poincare/conjugate_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <assert.h>

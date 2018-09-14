@@ -3,31 +3,31 @@
 
 #define MATRICES_ARE_DEFINED 1
 
-#include <poincare/absolute_value_layout_node.h>
-#include <poincare/binomial_coefficient_layout_node.h>
-#include <poincare/bracket_pair_layout_node.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/ceiling_layout_node.h>
-#include <poincare/condensed_sum_layout_node.h>
-#include <poincare/conjugate_layout_node.h>
-#include <poincare/empty_layout_node.h>
-#include <poincare/floor_layout_node.h>
-#include <poincare/fraction_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
-#include <poincare/integral_layout_node.h>
+#include <poincare/absolute_value_layout.h>
+#include <poincare/binomial_coefficient_layout.h>
+#include <poincare/bracket_pair_layout.h>
+#include <poincare/char_layout.h>
+#include <poincare/ceiling_layout.h>
+#include <poincare/condensed_sum_layout.h>
+#include <poincare/conjugate_layout.h>
+#include <poincare/empty_layout.h>
+#include <poincare/floor_layout.h>
+#include <poincare/fraction_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/integral_layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/layout_node.h>
+#include <poincare/layout.h>
 #include <poincare/layout_reference.h>
-#include <poincare/left_parenthesis_layout_node.h>
-#include <poincare/left_square_bracket_layout_node.h>
-#include <poincare/matrix_layout_node.h>
-#include <poincare/nth_root_layout_node.h>
-#include <poincare/product_layout_node.h>
-#include <poincare/right_parenthesis_layout_node.h>
-#include <poincare/right_square_bracket_layout_node.h>
-#include <poincare/square_bracket_layout_node.h>
-#include <poincare/sum_layout_node.h>
-#include <poincare/vertical_offset_layout_node.h>
+#include <poincare/left_parenthesis_layout.h>
+#include <poincare/left_square_bracket_layout.h>
+#include <poincare/matrix_layout.h>
+#include <poincare/nth_root_layout.h>
+#include <poincare/product_layout.h>
+#include <poincare/right_parenthesis_layout.h>
+#include <poincare/right_square_bracket_layout.h>
+#include <poincare/square_bracket_layout.h>
+#include <poincare/sum_layout.h>
+#include <poincare/vertical_offset_layout.h>
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>

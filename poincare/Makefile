@@ -3,33 +3,33 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
 objs += $(addprefix poincare/src/,\
-  binomial_coefficient_layout_node.o\
-  bracket_layout_node.o\
-  bracket_pair_layout_node.o\
-  ceiling_layout_node.o\
-  char_layout_node.o\
-  condensed_sum_layout_node.o\
-  conjugate_layout_node.o\
-  empty_layout_node.o\
-  floor_layout_node.o\
-  fraction_layout_node.o\
-  grid_layout_node.o\
-  horizontal_layout_node.o\
-  integral_layout_node.o\
+  binomial_coefficient_layout.o\
+  bracket_layout.o\
+  bracket_pair_layout.o\
+  ceiling_layout.o\
+  char_layout.o\
+  condensed_sum_layout.o\
+  conjugate_layout.o\
+  empty_layout.o\
+  floor_layout.o\
+  fraction_layout.o\
+  grid_layout.o\
+  horizontal_layout.o\
+  integral_layout.o\
   layout_cursor.o\
-  layout_node.o\
+  layout.o\
   layout_reference.o\
-  left_parenthesis_layout_node.o\
-  left_square_bracket_layout_node.o\
-  matrix_layout_node.o\
-  nth_root_layout_node.o\
-  parenthesis_layout_node.o\
-  product_layout_node.o\
-  right_parenthesis_layout_node.o\
-  right_square_bracket_layout_node.o\
-  sequence_layout_node.o\
-  sum_layout_node.o\
-  vertical_offset_layout_node.o\
+  left_parenthesis_layout.o\
+  left_square_bracket_layout.o\
+  matrix_layout.o\
+  nth_root_layout.o\
+  parenthesis_layout.o\
+  product_layout.o\
+  right_parenthesis_layout.o\
+  right_square_bracket_layout.o\
+  sequence_layout.o\
+  sum_layout.o\
+  vertical_offset_layout.o\
 )
 
 objs += $(addprefix poincare/src/,\

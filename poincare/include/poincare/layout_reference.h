@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_REFERENCE_H
 #define POINCARE_LAYOUT_REFERENCE_H
 
-#include <poincare/layout_node.h>
+#include <poincare/layout.h>
 #include <poincare/tree_by_reference.h>
 
 namespace Poincare {

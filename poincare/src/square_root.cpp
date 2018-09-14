@@ -1,7 +1,7 @@
 #include <poincare/square_root.h>
 #include <poincare/power.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/nth_root_layout_node.h>
+#include <poincare/nth_root_layout.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>

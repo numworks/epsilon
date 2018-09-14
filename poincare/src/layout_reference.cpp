@@ -1,9 +1,9 @@
 #include <poincare/layout_reference.h>
-#include <poincare/bracket_pair_layout_node.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/empty_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
-#include <poincare/layout_node.h>
+#include <poincare/bracket_pair_layout.h>
+#include <poincare/char_layout.h>
+#include <poincare/empty_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
 namespace Poincare {

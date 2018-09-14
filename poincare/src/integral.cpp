@@ -1,6 +1,6 @@
 #include <poincare/integral.h>
 #include <poincare/complex.h>
-#include <poincare/integral_layout_node.h>
+#include <poincare/integral_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>

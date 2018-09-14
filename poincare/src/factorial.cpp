@@ -1,6 +1,6 @@
 #include <poincare/factorial.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>

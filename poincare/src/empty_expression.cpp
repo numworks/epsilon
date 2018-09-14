@@ -1,6 +1,6 @@
 #include <poincare/empty_expression.h>
 #include <poincare/complex.h>
-#include <poincare/empty_layout_node.h>
+#include <poincare/empty_layout.h>
 #include <poincare/serialization_helper.h>
 #include <ion/charset.h>
 

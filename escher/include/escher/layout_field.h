@@ -12,9 +12,9 @@
 
 class LayoutField : public ScrollableView, public ScrollViewDataSource {
 public:
-  LayoutField(Responder * parentResponder, Poincare::LayoutRef layoutR, LayoutFieldDelegate * delegate = nullptr) :
+  LayoutField(Responder * parentResponder, LayoutFieldDelegate * delegate = nullptr) :
     ScrollableView(parentResponder, &m_contentView, this),
-    m_contentView(layoutR),
+    m_contentView(),
     m_delegate(delegate)
   {}
   void setDelegate(LayoutFieldDelegate * delegate) { m_delegate = delegate; }
@@ -65,15 +65,7 @@ private:
 
   class ContentView : public View {
   public:
-    ContentView(Poincare::LayoutRef layoutR) :
-      m_cursor(layoutR, Poincare::LayoutCursor::Position::Right),
-      m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite),
-      m_cursorView(),
-      m_isEditing(false)
-    {
-      m_expressionView.setLayoutRef(layoutR);
-    }
-
+    ContentView();
     bool isEditing() const { return m_isEditing; }
     void setEditing(bool isEditing) {
       m_isEditing = isEditing;

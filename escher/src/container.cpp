@@ -14,8 +14,8 @@ Container::~Container() {
   }
 }
 
-void Container::switchTo(App::Snapshot * snapshot) {
-  if (m_activeApp && snapshot == m_activeApp->snapshot()) {
+void Container::switchTo(App::Snapshot * snapshot, bool forceSwitch) {
+  if (!forceSwitch && m_activeApp && snapshot == m_activeApp->snapshot()) {
     return;
   }
   if (m_activeApp) {

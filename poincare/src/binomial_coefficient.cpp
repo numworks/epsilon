@@ -1,5 +1,5 @@
 #include <poincare/binomial_coefficient.h>
-#include <poincare/binomial_coefficient_layout_node.h>
+#include <poincare/binomial_coefficient_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>

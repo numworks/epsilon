@@ -1,9 +1,9 @@
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
-#include <poincare/left_parenthesis_layout_node.h>
-#include <poincare/right_parenthesis_layout_node.h>
-#include <poincare/vertical_offset_layout_node.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/left_parenthesis_layout.h>
+#include <poincare/right_parenthesis_layout.h>
+#include <poincare/vertical_offset_layout.h>
 #include <assert.h>
 
 namespace Poincare {

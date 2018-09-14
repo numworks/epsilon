@@ -1,6 +1,6 @@
 #include <poincare/sum.h>
 #include <poincare/addition.h>
-#include <poincare/sum_layout_node.h>
+#include <poincare/sum_layout.h>
 
 extern "C" {
 #include <assert.h>

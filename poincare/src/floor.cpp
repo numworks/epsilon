@@ -1,5 +1,5 @@
 #include <poincare/floor.h>
-#include <poincare/floor_layout_node.h>
+#include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>

@@ -1,5 +1,5 @@
 #include <poincare/ceiling.h>
-#include <poincare/ceiling_layout_node.h>
+#include <poincare/ceiling_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>

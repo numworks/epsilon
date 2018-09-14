@@ -2,7 +2,7 @@
 #define POINCARE_LAYOUT_CURSOR_H
 
 #include <poincare/layout_reference.h>
-#include <poincare/layout_node.h>
+#include <poincare/layout.h>
 
 namespace Poincare {
 

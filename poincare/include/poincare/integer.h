@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <assert.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/horizontal_layout.h>
 
 namespace Poincare {
 

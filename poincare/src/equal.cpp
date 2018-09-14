@@ -8,8 +8,8 @@
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>

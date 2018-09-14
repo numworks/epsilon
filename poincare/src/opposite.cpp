@@ -1,6 +1,6 @@
 #include <poincare/opposite.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <cmath>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>

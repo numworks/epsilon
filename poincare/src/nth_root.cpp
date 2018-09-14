@@ -2,7 +2,7 @@
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/undefined.h>
-#include <poincare/nth_root_layout_node.h>
+#include <poincare/nth_root_layout.h>
 #include <assert.h>
 #include <cmath>
 

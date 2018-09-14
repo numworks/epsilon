@@ -3,9 +3,9 @@
 #include <poincare/rational.h>
 #include <poincare/parenthesis.h>
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
-#include <poincare/vertical_offset_layout_node.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
 #include <ion.h>
 #include <cmath>
 #include <assert.h>

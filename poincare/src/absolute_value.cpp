@@ -1,6 +1,6 @@
 #include <poincare/absolute_value.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/absolute_value_layout_node.h>
+#include <poincare/absolute_value_layout.h>
 #include <assert.h>
 #include <cmath>
 

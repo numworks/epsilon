@@ -13,11 +13,11 @@
 
 namespace Poincare {
 
-class TreeByReference;
+class TreeHandle;
 
 class TreePool {
   friend class TreeNode;
-  friend class TreeByReference;
+  friend class TreeHandle;
   friend class ExceptionCheckpoint;
 public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }

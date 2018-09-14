@@ -2,7 +2,7 @@
 #define POINCARE_TEST_BLOB_NODE_H
 
 #include <poincare/tree_node.h>
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 
 namespace Poincare {
 
@@ -21,14 +21,14 @@ private:
   int m_data;
 };
 
-class BlobByReference : public TreeByReference {
+class BlobByReference : public TreeHandle {
 public:
-  BlobByReference(int data = 0) : TreeByReference(TreePool::sharedPool()->createTreeNode<BlobNode>()) {
+  BlobByReference(int data = 0) : TreeHandle(TreePool::sharedPool()->createTreeNode<BlobNode>()) {
     node()->setData(data);
   }
   int data() { return node()->data(); }
 private:
-  BlobNode * node() const { return static_cast<BlobNode *>(TreeByReference::node()); }
+  BlobNode * node() const { return static_cast<BlobNode *>(TreeHandle::node()); }
 };
 
 }

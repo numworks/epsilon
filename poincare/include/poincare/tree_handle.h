@@ -6,35 +6,35 @@
 
 namespace Poincare {
 
-/* TreeByReference constructors that take only one argument and this argument is
- * a TreeByReference should be marked explicit. This prevents the code from
+/* TreeHandle constructors that take only one argument and this argument is
+ * a TreeHandle should be marked explicit. This prevents the code from
  * compiling with, for instance: Logarithm l = clone() (which would be
  * equivalent to Logarithm l = Logarithm(clone())). */
 
-class TreeByReference {
+class TreeHandle {
   friend class TreeNode;
   friend class TreePool;
 public:
   /* Constructors */
-  TreeByReference(const TreeByReference & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
+  TreeHandle(const TreeHandle & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
 
-  TreeByReference(TreeByReference && tr) : m_identifier(tr.m_identifier) {
+  TreeHandle(TreeHandle && tr) : m_identifier(tr.m_identifier) {
     tr.m_identifier = TreeNode::NoNodeIdentifier;
   }
 
-  ~TreeByReference() {
+  ~TreeHandle() {
     release(m_identifier);
   }
 
   /* Operators */
-  TreeByReference & operator=(const TreeByReference & tr) {
+  TreeHandle & operator=(const TreeHandle & tr) {
     setTo(tr);
     return *this;
   }
 
-  TreeByReference & operator=(TreeByReference && tr) {
+  TreeHandle & operator=(TreeHandle && tr) {
     release(m_identifier);
     m_identifier = tr.m_identifier;
     tr.m_identifier = TreeNode::NoNodeIdentifier;
@@ -42,11 +42,11 @@ public:
   }
 
   /* Comparison */
-  inline bool operator==(const TreeByReference& t) { return m_identifier == t.identifier(); }
-  inline bool operator!=(const TreeByReference& t) { return m_identifier != t.identifier(); }
+  inline bool operator==(const TreeHandle& t) { return m_identifier == t.identifier(); }
+  inline bool operator!=(const TreeHandle& t) { return m_identifier != t.identifier(); }
 
   /* Clone */
-  TreeByReference clone() const;
+  TreeHandle clone() const;
 
   int identifier() const { return m_identifier; }
   TreeNode * node() const;
@@ -58,13 +58,13 @@ public:
   bool isUninitialized() const { return m_identifier == TreeNode::NoNodeIdentifier; }
 
   /* Hierarchy */
-  bool hasChild(TreeByReference t) const;
-  bool hasSibling(TreeByReference t) const { return node()->hasSibling(t.node()); }
-  bool hasAncestor(TreeByReference t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
+  bool hasChild(TreeHandle t) const;
+  bool hasSibling(TreeHandle t) const { return node()->hasSibling(t.node()); }
+  bool hasAncestor(TreeHandle t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
   int numberOfChildren() const { return node()->numberOfChildren(); }
-  int indexOfChild(TreeByReference t) const;
-  TreeByReference parent() const;
-  TreeByReference childAtIndex(int i) const;
+  int indexOfChild(TreeHandle t) const;
+  TreeHandle parent() const;
+  TreeHandle childAtIndex(int i) const;
   void setParentIdentifier(int id) { node()->setParentIdentifier(id); }
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() { node()->deleteParentIdentifierInChildren(); }
@@ -74,16 +74,16 @@ public:
 
   /* Hierarchy operations */
   // Replace
-  void replaceWithInPlace(TreeByReference t);
-  void replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild);
-  void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild);
+  void replaceWithInPlace(TreeHandle t);
+  void replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild);
+  void replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChild);
   void replaceChildAtIndexWithGhostInPlace(int index) {
     assert(index >= 0 && index < numberOfChildren());
     replaceChildWithGhostInPlace(childAtIndex(index));
   }
-  void replaceChildWithGhostInPlace(TreeByReference t);
+  void replaceChildWithGhostInPlace(TreeHandle t);
   // Merge
-  void mergeChildrenAtIndexInPlace(TreeByReference t, int i);
+  void mergeChildrenAtIndexInPlace(TreeHandle t, int i);
   // Swap
   void swapChildrenInPlace(int i, int j);
 
@@ -94,17 +94,17 @@ public:
 
 protected:
   /* Constructor */
-  TreeByReference(const TreeNode * node);
-  TreeByReference(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
+  TreeHandle(const TreeNode * node);
+  TreeHandle(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId);
-  void setTo(const TreeByReference & tr);
+  void setTo(const TreeHandle & tr);
 
   /* Hierarchy operations */
   // Add
-  void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
+  void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
   void removeChildAtIndexInPlace(int i);
-  void removeChildInPlace(TreeByReference t, int childNumberOfChildren);
+  void removeChildInPlace(TreeHandle t, int childNumberOfChildren);
   void removeChildrenInPlace(int currentNumberOfChildren);
 
   int m_identifier;

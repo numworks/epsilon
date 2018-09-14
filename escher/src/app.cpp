@@ -96,8 +96,8 @@ void App::dismissModalViewController() {
   m_modalViewController.dismissModalViewController();
 }
 
-void App::displayWarning(I18n::Message warningMessage) {
-  m_warningController.setLabelAndSpecialExitKeys(warningMessage);
+void App::displayWarning(I18n::Message warningMessage, bool specialExitKeys) {
+  m_warningController.setLabel(warningMessage, specialExitKeys);
   m_modalViewController.displayModalViewController(&m_warningController, 0.5f, 0.5f);
 }
 

@@ -9,8 +9,7 @@
 class WarningController : public ViewController {
 public:
   WarningController(Responder * parentResponder, I18n::Message warningMessage);
-  void setLabel(I18n::Message message);
-  void setLabelAndSpecialExitKeys(I18n::Message message);
+  void setLabel(I18n::Message message, bool specialExitKeys);
   const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;

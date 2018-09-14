@@ -36,14 +36,9 @@ WarningController::WarningController(Responder * parentResponder, I18n::Message 
 {
 }
 
-void WarningController::setLabel(I18n::Message label) {
+void WarningController::setLabel(I18n::Message label, bool specialExitKeys) {
   m_contentView.setLabel(label);
-  m_exitOnOKBackEXE = false;
-}
-
-void WarningController::setLabelAndSpecialExitKeys(I18n::Message message) {
-  setLabel(message);
-  m_exitOnOKBackEXE = true;
+  m_exitOnOKBackEXE = specialExitKeys;
 }
 
 const char * WarningController::title() {

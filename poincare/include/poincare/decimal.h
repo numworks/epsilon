@@ -41,7 +41,6 @@ public:
     this->signedMantissa().log(stream);
     stream << "\"";
     stream << " exponent=\"" << m_exponent << "\"";
-    stream << "\"";
   }
 #endif
 

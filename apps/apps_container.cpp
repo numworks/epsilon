@@ -179,7 +179,7 @@ void AppsContainer::run() {
   if (!ExceptionRun(ecp)) {
     activeApp()->snapshot()->reset();
     switchTo(appSnapshotAtIndex(0));
-    activeApp()->displayWarning(I18n::Message::AppMemoryFull);
+    activeApp()->displayWarning(I18n::Message::AppMemoryFull, true);
   }
   Container::run();
   switchTo(nullptr);

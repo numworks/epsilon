@@ -42,8 +42,8 @@ public:
   }
 
   /* Comparison */
-  inline bool operator==(TreeByReference t) { return m_identifier == t.identifier(); }
-  inline bool operator!=(TreeByReference t) { return m_identifier != t.identifier(); }
+  inline bool operator==(const TreeByReference& t) { return m_identifier == t.identifier(); }
+  inline bool operator!=(const TreeByReference& t) { return m_identifier != t.identifier(); }
 
   /* Clone */
   TreeByReference clone() const;

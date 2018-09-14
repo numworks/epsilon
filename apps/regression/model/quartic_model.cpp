@@ -9,8 +9,7 @@ using namespace Shared;
 namespace Regression {
 
 LayoutReference QuarticModel::layout() {
-  static LayoutReference layout;
-  if (layout.isUninitialized()) {
+  if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
@@ -42,9 +41,9 @@ LayoutReference QuarticModel::layout() {
       CharLayoutRef('+', KDText::FontSize::Small),
       CharLayoutRef('e', KDText::FontSize::Small),
     };
-    layout = HorizontalLayoutRef(layoutChildren, 20);
+    m_layout = HorizontalLayoutRef(layoutChildren, 20);
   }
-  return layout;
+  return m_layout;
 }
 
 Expression QuarticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {

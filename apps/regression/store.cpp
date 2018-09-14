@@ -28,6 +28,12 @@ Store::Store() :
   }
 }
 
+void Store::tidy() {
+  for (int i = 0; i < Model::k_numberOfModels; i++) {
+    regressionModel(i)->tidy();
+  }
+}
+
 /* Regressions */
 void Store::setSeriesRegressionType(int series, Model::Type type) {
   assert(series >= 0 && series < k_numberOfSeries);

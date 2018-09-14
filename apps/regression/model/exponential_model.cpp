@@ -7,8 +7,7 @@ using namespace Poincare;
 namespace Regression {
 
 LayoutReference ExponentialModel::layout() {
-  static LayoutReference layout;
-  if (layout.isUninitialized()) {
+  if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
@@ -22,9 +21,9 @@ LayoutReference ExponentialModel::layout() {
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    layout = HorizontalLayoutRef(layoutChildren, 4);
+    m_layout = HorizontalLayoutRef(layoutChildren, 4);
   }
-  return layout;
+  return m_layout;
 }
 
 double ExponentialModel::evaluate(double * modelCoefficients, double x) const {

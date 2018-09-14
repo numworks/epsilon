@@ -47,6 +47,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 void App::Snapshot::tidy() {
   m_store.setDelegate(nullptr);
+  m_store.tidy();
 }
 
 App::App(Container * container, Snapshot * snapshot) :

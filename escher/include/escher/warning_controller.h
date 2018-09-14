@@ -10,6 +10,7 @@ class WarningController : public ViewController {
 public:
   WarningController(Responder * parentResponder, I18n::Message warningMessage);
   void setLabel(I18n::Message message);
+  void setLabelAndSpecialExitKeys(I18n::Message message);
   const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -30,6 +31,7 @@ private:
 
   ContentView m_contentView;
   I18n::Message m_warningMessage;
+  bool m_exitOnOKBackEXE;
 };
 
 #endif

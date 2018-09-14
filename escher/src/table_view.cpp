@@ -134,8 +134,7 @@ const char * TableView::ContentView::className() const {
 #endif
 
 int TableView::ContentView::numberOfSubviews() const {
-  int result = numberOfDisplayableRows() * numberOfDisplayableColumns();
-  return result;
+  return m_tableView->bounds() == KDRectZero ? 0 : numberOfDisplayableRows() * numberOfDisplayableColumns();
 }
 
 int TableView::ContentView::absoluteColumnNumberFromSubviewIndex(int index) const {

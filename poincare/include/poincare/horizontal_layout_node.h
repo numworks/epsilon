@@ -59,7 +59,8 @@ private:
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
-  int m_numberOfChildren;
+  // See comment on NAryExpressionNode
+  uint16_t m_numberOfChildren;
 };
 
 class HorizontalLayoutRef : public LayoutReference {

@@ -130,7 +130,7 @@ Integer::Integer(double_native_int_t i) {
   m_negative = i < 0;
 }
 
-Integer::Integer(const char * digits, size_t length, bool negative) :
+Integer::Integer(const char * digits, uint8_t length, bool negative) :
   Integer(0)
 {
   if (digits != nullptr && digits[0] == '-') {
@@ -140,7 +140,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
   }
   if (digits != nullptr) {
     Integer base(10);
-    for (size_t i = 0; i < length; i++) {
+    for (uint8_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
       *this = Addition(*this, Integer(*digits-'0'));
       digits++;
@@ -182,7 +182,7 @@ Integer::Integer(const Integer& other) {
     m_digit = other.m_digit;
   } else {
     native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-    for (size_t i = 0; i < other.m_numberOfDigits; i++) {
+    for (uint8_t i = 0; i < other.m_numberOfDigits; i++) {
       digits[i] = other.m_digits[i];
     }
     m_digits = digits;
@@ -219,7 +219,7 @@ Integer& Integer::operator=(const Integer& other) {
       m_digit = other.m_digit;
     } else {
       native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-      for (size_t i = 0; i < other.m_numberOfDigits; i++) {
+      for (uint8_t i = 0; i < other.m_numberOfDigits; i++) {
         digits[i] = other.m_digits[i];
       }
       m_digits = digits;
@@ -326,7 +326,7 @@ T Integer::approximate() const {
    * the resulting uint64_t (as required by IEEE754). */
   assert(IEEE754<T>::size()-numberOfBitsInLastDigit >= 0 && IEEE754<T>::size()-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
   mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBitsInLastDigit));
-  size_t digitIndex = 2;
+  uint8_t digitIndex = 2;
   int numberOfBits = numberOfBitsInLastDigit;
   /* Complete the mantissa by inserting, from left to right, every digit of the
    * Integer from the most significant one to the last from. We break when
@@ -448,23 +448,23 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
     return Integer::Overflow(a.m_negative != b.m_negative);
   }
 
-  size_t size = min(a.m_numberOfDigits + b.m_numberOfDigits, k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
+  uint8_t size = min(a.m_numberOfDigits + b.m_numberOfDigits, k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
   native_uint_t * digits = allocDigits(size);
   memset(digits, 0, size*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
-  for (size_t i = 0; i < a.m_numberOfDigits; i++) {
+  for (uint8_t i = 0; i < a.m_numberOfDigits; i++) {
     double_native_uint_t aDigit = a.digit(i);
     carry = 0;
-    for (size_t j = 0; j < b.m_numberOfDigits; j++) {
+    for (uint8_t j = 0; j < b.m_numberOfDigits; j++) {
       double_native_uint_t bDigit = b.digit(j);
       /* The fact that aDigit and bDigit are double_native is very important,
        * otherwise the product might end up being computed on single_native size
        * and then zero-padded. */
       double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
       native_uint_t * l = (native_uint_t *)&p;
-      if (i+j < (size_t) k_maxNumberOfDigits+oneDigitOverflow) {
+      if (i+j < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
         digits[i+j] = l[0];
       } else {
         if (l[0] != 0) {
@@ -474,7 +474,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
         }      }
       carry = l[1];
     }
-    if (i+b.m_numberOfDigits < (size_t) k_maxNumberOfDigits+oneDigitOverflow) {
+    if (i+b.m_numberOfDigits < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
       digits[i+b.m_numberOfDigits] += carry;
     } else {
       if (carry != 0) {
@@ -514,18 +514,18 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     return Integer::Overflow(a.m_negative != b.m_negative);
   }
 
-  size_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
+  uint8_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
   if (!subtract) {
     // Addition can overflow
     size++;
   }
   native_uint_t * digits = allocDigits(max(size, k_maxNumberOfDigits+oneDigitOverflow));
   bool carry = false;
-  for (size_t i = 0; i < size; i++) {
+  for (uint8_t i = 0; i < size; i++) {
     native_uint_t aDigit = (i >= a.m_numberOfDigits ? 0 : a.digit(i));
     native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
-    if (i < (size_t) (k_maxNumberOfDigits + oneDigitOverflow)) {
+    if (i < (uint8_t) (k_maxNumberOfDigits + oneDigitOverflow)) {
       digits[i] = result;
     } else {
       if (result != 0) {
@@ -551,7 +551,7 @@ Integer Integer::multiplyByPowerOf2(uint8_t pow) const {
   assert(pow < 32);
   native_uint_t * digits = allocDigits(m_numberOfDigits+1);
   native_uint_t carry = 0;
-  for (size_t i = 0; i < m_numberOfDigits; i++) {
+  for (uint8_t i = 0; i < m_numberOfDigits; i++) {
     digits[i] = digit(i) << pow | carry;
     carry = pow == 0 ? 0 : digit(i) >> (32-pow);
   }

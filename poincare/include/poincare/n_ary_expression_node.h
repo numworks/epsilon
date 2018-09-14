@@ -26,7 +26,9 @@ public:
   Expression squashUnaryHierarchyInPlace();
 
 protected:
-  int m_numberOfChildren;
+  /* With a pool of size < 120k and TreeNode of size 20, a node can't have more
+   * than 6144 children which fit in uint16_t. */
+  uint16_t m_numberOfChildren;
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;

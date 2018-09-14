@@ -47,8 +47,9 @@ public:
   MatrixComplex<T> inverse() const;
   MatrixComplex<T> transpose() const;
 private:
-  int m_numberOfRows;
-  int m_numberOfColumns;
+  // See comment on Matrix
+  uint16_t m_numberOfRows;
+  uint16_t m_numberOfColumns;
 };
 
 template<typename T>

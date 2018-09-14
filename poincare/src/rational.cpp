@@ -15,7 +15,7 @@ namespace Poincare {
 
 /* Rational Node */
 
-void RationalNode::setDigits(const native_uint_t * numeratorDigits, size_t numeratorSize, const native_uint_t * denominatorDigits, size_t denominatorSize, bool negative) {
+void RationalNode::setDigits(const native_uint_t * numeratorDigits, uint8_t numeratorSize, const native_uint_t * denominatorDigits, uint8_t denominatorSize, bool negative) {
   m_negative = negative;
   m_numberOfDigitsNumerator = numeratorSize;
   m_numberOfDigitsDenominator = denominatorSize;
@@ -41,9 +41,9 @@ Integer RationalNode::denominator() const {
 
 // Tree Node
 
-static inline size_t RationalSize(size_t numeratorNumberOfDigits, size_t denominatorNumberOfDigits) {
-  size_t realNumeratorSize = numeratorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : numeratorNumberOfDigits;
-  size_t realDenominatorSize = denominatorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : denominatorNumberOfDigits;
+static inline size_t RationalSize(uint8_t numeratorNumberOfDigits, uint8_t denominatorNumberOfDigits) {
+  uint8_t realNumeratorSize = numeratorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : numeratorNumberOfDigits;
+  uint8_t realDenominatorSize = denominatorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : denominatorNumberOfDigits;
   return sizeof(RationalNode) + sizeof(native_uint_t)*(realNumeratorSize + realDenominatorSize);
 }
 
@@ -201,7 +201,7 @@ Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
   return Rational(newNumerator, newDenominator);
 }
 
-Rational::Rational(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative) :
+Rational::Rational(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative) :
   Number(TreePool::sharedPool()->createTreeNode<RationalNode>(RationalSize(numeratorSize, denominatorSize)))
 {
   static_cast<RationalNode *>(node())->setDigits(i, numeratorSize, j, denominatorSize, negative);

@@ -261,7 +261,7 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
   Integer numerator(integralPart, integralPartLength, false);
   assert(!numerator.isInfinity());
   // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
-  if (integralPartLength == 1 && integralPart[0] == '0') {
+  if (fractionalPart != nullptr && integralPartLength == 1 && integralPart[0] == '0') {
     integralPartLength = 0;
     while (*fractionalPart == '0') {
       fractionalPart++;

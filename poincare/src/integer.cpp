@@ -130,7 +130,7 @@ Integer::Integer(double_native_int_t i) {
   m_negative = i < 0;
 }
 
-Integer::Integer(const char * digits, uint8_t length, bool negative) :
+Integer::Integer(const char * digits, size_t length, bool negative) :
   Integer(0)
 {
   if (digits != nullptr && digits[0] == '-') {
@@ -140,7 +140,7 @@ Integer::Integer(const char * digits, uint8_t length, bool negative) :
   }
   if (digits != nullptr) {
     Integer base(10);
-    for (uint8_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
       *this = Addition(*this, Integer(*digits-'0'));
       digits++;

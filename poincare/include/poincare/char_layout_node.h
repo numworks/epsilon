@@ -54,10 +54,10 @@ private:
   KDText::FontSize m_fontSize;
 };
 
-class CharLayoutRef : public LayoutReference {
+class CharLayoutReference : public LayoutReference {
 public:
-  CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
-  KDText::FontSize fontSize() const { return const_cast<CharLayoutRef *>(this)->node()->fontSize(); }
+  CharLayoutReference(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
+  KDText::FontSize fontSize() const { return const_cast<CharLayoutReference *>(this)->node()->fontSize(); }
 private:
   using LayoutReference::node;
   CharLayoutNode * node() { return static_cast<CharLayoutNode *>(LayoutReference::node());}

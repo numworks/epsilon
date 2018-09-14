@@ -123,7 +123,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << expressionLayout << "----"  << endl;
 #endif
-  LayoutRef el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  LayoutReference el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   int bufferSize = 255;
   char buffer[bufferSize];
   el.serialize(buffer, bufferSize);
@@ -133,7 +133,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
   quiz_assert(strcmp(expressionLayout, buffer) == 0);
 }
 
-void assert_expression_layout_serialize_to(Poincare::LayoutRef layout, const char * serialization) {
+void assert_expression_layout_serialize_to(Poincare::LayoutReference layout, const char * serialization) {
   int bufferSize = 255;
   char buffer[bufferSize];
   layout.serialize(buffer, bufferSize);

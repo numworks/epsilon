@@ -172,7 +172,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       m_complexFormatLayout = Helpers::PolarComplexFormat(KDText::FontSize::Small);
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
-    myExpCell->setLayoutRef(m_complexFormatLayout);
+    myExpCell->setLayoutReference(m_complexFormatLayout);
     return;
   }
   if (index == 4) {

@@ -8,14 +8,14 @@
 
 namespace Poincare {
 
-class GridLayoutRef;
+class GridLayoutReference;
 class MatrixLayoutNode;
 
 class GridLayoutNode : public LayoutNode {
   friend class MatrixLayoutNode;
   friend class BinomialCoefficientLayoutNode;
-  friend class BinomialCoefficientLayoutRef;
-  friend class GridLayoutRef;
+  friend class BinomialCoefficientLayoutReference;
+  friend class GridLayoutReference;
 public:
   GridLayoutNode() :
     LayoutNode(),
@@ -85,10 +85,10 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 
-class GridLayoutRef : public LayoutReference {
+class GridLayoutReference : public LayoutReference {
 public:
-  GridLayoutRef(const GridLayoutNode * n) : LayoutReference(n) {}
-  GridLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
+  GridLayoutReference(const GridLayoutNode * n) : LayoutReference(n) {}
+  GridLayoutReference() : LayoutReference(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
   void setDimensions(int rows, int columns);
   void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);

@@ -9,13 +9,13 @@ namespace Poincare {
 
 namespace LayoutHelper {
   /* Expression to Layout */
-  LayoutRef Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
-  LayoutRef Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  LayoutReference Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  LayoutReference Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
 
   /* Create special layouts */
-  LayoutRef Parentheses(LayoutRef layout, bool cloneLayout);
-  HorizontalLayoutRef String(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
-  LayoutRef Logarithm(LayoutRef argument, LayoutRef index);
+  LayoutReference Parentheses(LayoutReference layout, bool cloneLayout);
+  HorizontalLayoutReference String(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
+  LayoutReference Logarithm(LayoutReference argument, LayoutReference index);
 };
 
 }

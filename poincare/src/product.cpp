@@ -9,8 +9,8 @@ extern "C" {
 
 namespace Poincare {
 
-LayoutRef ProductNode::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
-  return ProductLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
+LayoutReference ProductNode::createSequenceLayout(LayoutReference argumentLayout, LayoutReference subscriptLayout, LayoutReference superscriptLayout) const {
+  return ProductLayoutReference(argumentLayout, subscriptLayout, superscriptLayout);
 }
 
 template<typename T>

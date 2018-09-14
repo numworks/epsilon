@@ -26,9 +26,9 @@ protected:
   bool renderTopBar() const override { return false; }
 };
 
-class FloorLayoutRef : public LayoutReference {
+class FloorLayoutReference : public LayoutReference {
 public:
-  explicit FloorLayoutRef(LayoutRef l) : LayoutReference(TreePool::sharedPool()->createTreeNode<FloorLayoutNode>()) {
+  explicit FloorLayoutReference(LayoutReference l) : LayoutReference(TreePool::sharedPool()->createTreeNode<FloorLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);
   }
 };

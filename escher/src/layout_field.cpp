@@ -25,8 +25,8 @@ void LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  HorizontalLayoutRef h;
-  m_expressionView.setLayoutRef(h);
+  HorizontalLayoutReference h;
+  m_expressionView.setLayoutReference(h);
   m_cursor.setLayoutReference(h);
 }
 
@@ -52,7 +52,7 @@ void LayoutField::ContentView::layoutCursorSubview() {
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
-  LayoutRef pointedLayoutR = m_cursor.layoutReference();
+  LayoutReference pointedLayoutR = m_cursor.layoutReference();
   LayoutCursor::Position cursorPosition = m_cursor.position();
   LayoutCursor eqCursor = pointedLayoutR.equivalentCursor(&m_cursor);
   if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layoutReference())) {
@@ -114,30 +114,30 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (resultExpression.isUninitialized()) {
       m_contentView.cursor()->insertText(text);
     } else {
-      LayoutRef resultLayoutRef = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-      if (currentNumberOfLayouts + resultLayoutRef.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+      LayoutReference resultLayoutReference = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+      if (currentNumberOfLayouts + resultLayoutReference.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
         return true;
       }
       // Find the pointed layout.
-      LayoutRef pointedLayoutRef;
+      LayoutReference pointedLayoutReference;
       if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
         /* Special case: if the text is "random()", the cursor should not be set
          * inside the parentheses. */
-        pointedLayoutRef = resultLayoutRef;
-      } else if (resultLayoutRef.isHorizontal()) {
+        pointedLayoutReference = resultLayoutReference;
+      } else if (resultLayoutReference.isHorizontal()) {
         /* If the layout is horizontal, pick the first open parenthesis. For now,
          * all horizontal layouts in MathToolbox have parentheses. */
-        for (int i = 0; i < resultLayoutRef.numberOfChildren(); i++) {
-          LayoutRef l = resultLayoutRef.childAtIndex(i);
+        for (int i = 0; i < resultLayoutReference.numberOfChildren(); i++) {
+          LayoutReference l = resultLayoutReference.childAtIndex(i);
           if (l.isLeftParenthesis()) {
-            pointedLayoutRef = l;
+            pointedLayoutReference = l;
             break;
           }
         }
       }
       /* Insert the layout. If pointedLayout is uninitialized, the cursor will
        * be on the right of the inserted layout. */
-      insertLayoutAtCursor(resultLayoutRef, pointedLayoutRef, forceCursorRightOfText);
+      insertLayoutAtCursor(resultLayoutReference, pointedLayoutReference, forceCursorRightOfText);
     }
   }
   return true;
@@ -254,7 +254,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   return false;
 }
 
-void LayoutField::scrollRightOfLayout(LayoutRef layoutR) {
+void LayoutField::scrollRightOfLayout(LayoutReference layoutR) {
   KDRect layoutRect(layoutR.absoluteOrigin().translatedBy(m_contentView.expressionView()->drawingOrigin()), layoutR.layoutSize());
   scrollToBaselinedRect(layoutRect, layoutR.baseline());
 }
@@ -269,7 +269,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayoutR, bool forceCursorRightOfLayout) {
+void LayoutField::insertLayoutAtCursor(LayoutReference layoutR, LayoutReference pointedLayoutR, bool forceCursorRightOfLayout) {
   if (layoutR.isUninitialized()) {
     return;
   }
@@ -278,7 +278,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
 
   bool layoutWillBeMerged = layoutR.isHorizontal();
-  LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutRef();
+  LayoutReference lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutReference();
 
   // Add the layout
   m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);

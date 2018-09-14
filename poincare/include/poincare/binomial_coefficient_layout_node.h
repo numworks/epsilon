@@ -42,9 +42,9 @@ private:
   LayoutNode * kLayout() { return childAtIndex(1); }
 };
 
-class BinomialCoefficientLayoutRef : public LayoutReference {
+class BinomialCoefficientLayoutReference : public LayoutReference {
 public:
-  BinomialCoefficientLayoutRef(LayoutRef n, LayoutRef k) :
+  BinomialCoefficientLayoutReference(LayoutReference n, LayoutReference k) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, n);

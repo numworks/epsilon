@@ -61,7 +61,7 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewT
   setHighlighted(isHighlighted());
 }
 
-Poincare::LayoutRef ScrollableExactApproximateExpressionsView::ContentCell::layoutRef() const {
+Poincare::LayoutReference ScrollableExactApproximateExpressionsView::ContentCell::layoutRef() const {
   if (m_selectedSubviewType == SubviewType::ExactOutput) {
     return m_exactExpressionView.layoutRef();
   } else {
@@ -105,8 +105,8 @@ ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressions
 }
 
 void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::LayoutReference approximateLayout, Poincare::LayoutReference exactLayout) {
-  m_contentCell.approximateExpressionView()->setLayoutRef(approximateLayout);
-  m_contentCell.exactExpressionView()->setLayoutRef(exactLayout);
+  m_contentCell.approximateExpressionView()->setLayoutReference(approximateLayout);
+  m_contentCell.exactExpressionView()->setLayoutReference(exactLayout);
   m_contentCell.layoutSubviews();
 }
 

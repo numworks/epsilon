@@ -23,9 +23,9 @@ private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
 
-class ProductLayoutRef : public LayoutReference {
+class ProductLayoutReference : public LayoutReference {
 public:
-  ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
+  ProductLayoutReference(LayoutReference argument, LayoutReference lowerB, LayoutReference upperB) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, argument);

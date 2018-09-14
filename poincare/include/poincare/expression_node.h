@@ -136,7 +136,7 @@ public:
   virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const;
 
   /* Layout Helper */
-  virtual LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
+  virtual LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
 
   /* Evaluation Helper */
   typedef float SinglePrecision;

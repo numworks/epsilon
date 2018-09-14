@@ -21,9 +21,9 @@ int MatrixNode::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(numberOfChildren() > 0);
-  MatrixLayoutRef layout;
+  MatrixLayoutReference layout;
   for (int i = 0; i < numberOfChildren(); i++) {
     layout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
   }

@@ -63,16 +63,16 @@ private:
   uint16_t m_numberOfChildren;
 };
 
-class HorizontalLayoutRef : public LayoutReference {
+class HorizontalLayoutReference : public LayoutReference {
   friend class HorizontalLayoutNode;
 public:
-  HorizontalLayoutRef(HorizontalLayoutNode * n) : LayoutReference(n) {}
-  HorizontalLayoutRef();
-  explicit HorizontalLayoutRef(LayoutRef l);
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2);
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3);
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
-  HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren);
+  HorizontalLayoutReference(HorizontalLayoutNode * n) : LayoutReference(n) {}
+  HorizontalLayoutReference();
+  explicit HorizontalLayoutReference(LayoutReference l);
+  HorizontalLayoutReference(LayoutReference l1, LayoutReference l2);
+  HorizontalLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3);
+  HorizontalLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4);
+  HorizontalLayoutReference(const LayoutReference * children, size_t numberOfChildren);
   void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);
   // Remove puts a child at the end of the pool
   void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false) {
@@ -81,8 +81,8 @@ public:
   void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
     LayoutReference::removeChildAtIndex(index, cursor, force);
   }
-  void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
-  void mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+  void addOrMergeChildAtIndex(LayoutReference l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+  void mergeChildrenAtIndex(HorizontalLayoutReference h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
 private:
   void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };

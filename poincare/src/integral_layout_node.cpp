@@ -119,8 +119,8 @@ void IntegralLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left))) {
     // Case: Left of the integrand. Delete the layout, keep the integrand.
-    LayoutRef thisRef = LayoutRef(this);
-    LayoutRef integrand = LayoutRef(integrandLayout());
+    LayoutReference thisRef = LayoutReference(this);
+    LayoutReference integrand = LayoutReference(integrandLayout());
     thisRef.replaceChildWithGhostInPlace(integrand);
     // WARNING: Do not use "this" afterwards
     cursor->setLayoutReference(thisRef.childAtIndex(0));

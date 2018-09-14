@@ -10,7 +10,7 @@ void Clipboard::store(const char * storedText) {
   strlcpy(m_textBuffer, storedText, TextField::maxBufferSize());
 }
 
-void Clipboard::store(Poincare::LayoutRef layoutR) {
+void Clipboard::store(Poincare::LayoutReference layoutR) {
   layoutR.serialize(m_textBuffer, TextField::maxBufferSize());
 }
 

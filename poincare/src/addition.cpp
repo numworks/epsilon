@@ -35,7 +35,7 @@ bool AdditionNode::childNeedsParenthesis(const SerializationHelperInterface * ch
   return false;
 }
 
-LayoutRef AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

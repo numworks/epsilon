@@ -52,9 +52,9 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class IntegralLayoutRef : public LayoutReference {
+class IntegralLayoutReference : public LayoutReference {
 public:
-  IntegralLayoutRef(LayoutRef integrand, LayoutRef lowerBound, LayoutRef upperBound) :
+  IntegralLayoutReference(LayoutReference integrand, LayoutReference lowerBound, LayoutReference upperBound) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, integrand);

@@ -61,7 +61,7 @@ void CharLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
   ctx->drawString(string, p, m_fontSize, expressionColor, backgroundColor);
 }
 
-CharLayoutRef::CharLayoutRef(char c, KDText::FontSize fontSize) :
+CharLayoutReference::CharLayoutReference(char c, KDText::FontSize fontSize) :
   LayoutReference(TreePool::sharedPool()->createTreeNode<CharLayoutNode>())
 {
   node()->setChar(c);

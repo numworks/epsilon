@@ -7,11 +7,11 @@
 
 namespace Poincare {
 
-class MatrixLayoutRef;
+class MatrixLayoutReference;
 
 class MatrixLayoutNode : public GridLayoutNode {
   friend class LayoutReference;
-  friend class MatrixLayoutRef;
+  friend class MatrixLayoutReference;
 public:
   using GridLayoutNode::GridLayoutNode;
 
@@ -54,12 +54,12 @@ private:
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
-class MatrixLayoutRef : public GridLayoutRef {
+class MatrixLayoutReference : public GridLayoutReference {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutRef(const MatrixLayoutNode * n);
-  MatrixLayoutRef();
-  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
+  MatrixLayoutReference(const MatrixLayoutNode * n);
+  MatrixLayoutReference();
+  MatrixLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4);
   bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }

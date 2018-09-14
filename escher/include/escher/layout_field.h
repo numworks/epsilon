@@ -27,7 +27,7 @@ public:
   void reload();
   bool hasText() const { return layoutRef().hasText(); }
   int serialize(char * buffer, int bufferLength) { return layoutRef().serialize(buffer, bufferLength); }
-  Poincare::LayoutRef layoutRef() const { return m_contentView.expressionView()->layoutRef(); }
+  Poincare::LayoutReference layoutRef() const { return m_contentView.expressionView()->layoutRef(); }
   char XNTChar() { return m_contentView.cursor()->layoutReference().XNTChar(); }
 
   // ScrollableView
@@ -59,9 +59,9 @@ protected:
 private:
   constexpr static int k_maxNumberOfLayouts = 152;
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
-  void scrollRightOfLayout(Poincare::LayoutRef layoutR);
+  void scrollRightOfLayout(Poincare::LayoutReference layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::LayoutRef layoutR, Poincare::LayoutRef pointedLayoutRef, bool forceCursorRightOfLayout = false);
+  void insertLayoutAtCursor(Poincare::LayoutReference layoutR, Poincare::LayoutReference pointedLayoutReference, bool forceCursorRightOfLayout = false);
 
   class ContentView : public View {
   public:

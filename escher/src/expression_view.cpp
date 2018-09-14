@@ -12,7 +12,7 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 {
 }
 
-void ExpressionView::setLayoutRef(LayoutRef layoutR) {
+void ExpressionView::setLayoutReference(LayoutReference layoutR) {
   m_layoutRef = layoutR;
   markRectAsDirty(bounds());
 }

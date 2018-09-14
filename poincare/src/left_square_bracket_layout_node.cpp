@@ -8,6 +8,6 @@ void LeftSquareBracketLayoutNode::render(KDContext * ctx, KDPoint p, KDColor exp
   ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y() + childHeight(), k_bracketWidth, k_lineThickness), expressionColor);
 }
 
-LeftSquareBracketLayoutRef::LeftSquareBracketLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<LeftSquareBracketLayoutNode>()) {}
+LeftSquareBracketLayoutReference::LeftSquareBracketLayoutReference() : LayoutReference(TreePool::sharedPool()->createTreeNode<LeftSquareBracketLayoutNode>()) {}
 
 }

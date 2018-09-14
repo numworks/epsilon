@@ -99,8 +99,6 @@ private:
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
 };
 
-typedef LayoutReference LayoutRef;
-
 }
 
 #endif

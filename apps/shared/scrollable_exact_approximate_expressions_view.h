@@ -26,7 +26,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  Poincare::LayoutRef layoutRef() const {
+  Poincare::LayoutReference layoutRef() const {
     return m_contentCell.layoutRef();
   }
 private:
@@ -52,7 +52,7 @@ private:
     void setSelectedSubviewType(SubviewType subviewType);
     void layoutSubviews() override;
     int numberOfSubviews() const override;
-    Poincare::LayoutRef layoutRef() const override;
+    Poincare::LayoutReference layoutRef() const override;
   private:
     View * subviewAtIndex(int index) override;
     constexpr static KDCoordinate k_digitHorizontalMargin = 10;

@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-LayoutRef SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutReference SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return createSequenceLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 

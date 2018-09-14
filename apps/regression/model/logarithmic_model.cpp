@@ -10,17 +10,17 @@ namespace Regression {
 LayoutReference LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
     const LayoutReference layoutChildren[] = {
-      CharLayoutRef('a', KDText::FontSize::Small),
-      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutRef('l', KDText::FontSize::Small),
-      CharLayoutRef('n', KDText::FontSize::Small),
-      CharLayoutRef('(', KDText::FontSize::Small),
-      CharLayoutRef('X', KDText::FontSize::Small),
-      CharLayoutRef(')', KDText::FontSize::Small),
-      CharLayoutRef('+', KDText::FontSize::Small),
-      CharLayoutRef('b', KDText::FontSize::Small)
+      CharLayoutReference('a', KDText::FontSize::Small),
+      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutReference('l', KDText::FontSize::Small),
+      CharLayoutReference('n', KDText::FontSize::Small),
+      CharLayoutReference('(', KDText::FontSize::Small),
+      CharLayoutReference('X', KDText::FontSize::Small),
+      CharLayoutReference(')', KDText::FontSize::Small),
+      CharLayoutReference('+', KDText::FontSize::Small),
+      CharLayoutReference('b', KDText::FontSize::Small)
     };
-    m_layout = HorizontalLayoutRef(layoutChildren, 9);
+    m_layout = HorizontalLayoutReference(layoutChildren, 9);
   }
   return m_layout;
 }

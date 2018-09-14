@@ -42,14 +42,14 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
 
 KDCoordinate Calculation::height(Context * context) {
   if (m_height < 0) {
-    LayoutRef inputLayout = createInputLayout();
+    LayoutReference inputLayout = createInputLayout();
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
-    LayoutRef approximateLayout = createApproximateOutputLayout(context);
+    LayoutReference approximateLayout = createApproximateOutputLayout(context);
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     if (shouldOnlyDisplayApproximateOutput(context)) {
       m_height = inputHeight+approximateOutputHeight;
     } else {
-      LayoutRef exactLayout = createExactOutputLayout(context);
+      LayoutReference exactLayout = createExactOutputLayout(context);
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       m_height = inputHeight + outputHeight;
@@ -77,7 +77,7 @@ Expression Calculation::input() {
   return m_input;
 }
 
-LayoutRef Calculation::createInputLayout() {
+LayoutReference Calculation::createInputLayout() {
   return input().createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
 }
 
@@ -118,7 +118,7 @@ Expression Calculation::exactOutput(Context * context) {
   return m_exactOutput;
 }
 
-LayoutRef Calculation::createExactOutputLayout(Context * context) {
+LayoutReference Calculation::createExactOutputLayout(Context * context) {
   return PoincareHelpers::CreateLayout(exactOutput(context));
 }
 
@@ -132,7 +132,7 @@ Expression Calculation::approximateOutput(Context * context) {
   return m_approximateOutput;
 }
 
-LayoutRef Calculation::createApproximateOutputLayout(Context * context) {
+LayoutReference Calculation::createApproximateOutputLayout(Context * context) {
   return PoincareHelpers::CreateLayout(approximateOutput(context));
 }
 

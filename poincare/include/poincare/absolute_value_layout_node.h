@@ -30,9 +30,9 @@ private:
   bool renderBottomBar() const override { return false; }
 };
 
-class AbsoluteValueLayoutRef : public LayoutReference {
+class AbsoluteValueLayoutReference : public LayoutReference {
 public:
-  explicit AbsoluteValueLayoutRef(LayoutRef l) :
+  explicit AbsoluteValueLayoutReference(LayoutReference l) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, l);

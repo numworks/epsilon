@@ -2,7 +2,7 @@
 #define POINCARE_TEST_PAIR_NODE_H
 
 #include <poincare/tree_node.h>
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 
 namespace Poincare {
 
@@ -17,9 +17,9 @@ public:
 #endif
 };
 
-class PairByReference : public TreeByReference {
+class PairByReference : public TreeHandle {
 public:
-  PairByReference(TreeByReference t1, TreeByReference t2) : TreeByReference(TreePool::sharedPool()->createTreeNode<PairNode>()) {
+  PairByReference(TreeHandle t1, TreeHandle t2) : TreeHandle(TreePool::sharedPool()->createTreeNode<PairNode>()) {
     replaceChildAtIndexInPlace(0, t1);
     replaceChildAtIndexInPlace(1, t2);
   }

@@ -21,7 +21,7 @@ namespace Poincare {
 
 /* Constructor & Destructor */
 
-Expression Expression::clone() const { TreeByReference c = TreeByReference::clone(); return static_cast<Expression&>(c); }
+Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
 
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
@@ -65,7 +65,7 @@ bool Expression::shouldStopProcessing() {
 /* Hierarchy */
 
 Expression Expression::childAtIndex(int i) const {
-  TreeByReference c = TreeByReference::childAtIndex(i);
+  TreeHandle c = TreeHandle::childAtIndex(i);
   return static_cast<Expression &>(c);
 }
 
@@ -165,7 +165,7 @@ Expression Expression::defaultShallowReduce(Context & context, Preferences::Angl
 }
 
 Expression Expression::parent() const {
-  TreeByReference p = TreeByReference::parent();
+  TreeHandle p = TreeHandle::parent();
   return static_cast<Expression &>(p);
 }
 

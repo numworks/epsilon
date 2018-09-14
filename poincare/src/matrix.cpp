@@ -95,7 +95,7 @@ void Matrix::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-void Matrix::addChildrenAsRowInPlace(TreeByReference t, int i) {
+void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
   int previousNumberOfColumns = numberOfColumns();
   if (previousNumberOfColumns > 0) {
     assert(t.numberOfChildren() == numberOfColumns());

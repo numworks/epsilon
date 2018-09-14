@@ -1,4 +1,4 @@
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 #include <poincare/ghost_reference.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
@@ -8,38 +8,38 @@ namespace Poincare {
 
 /* Clone */
 
-TreeByReference TreeByReference::clone() const {
+TreeHandle TreeHandle::clone() const {
   /* TODO Remove ?
   if (isUninitialized()) {
-    return TreeByReference();
+    return TreeHandle();
   }*/
   TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(node());
   nodeCopy->deleteParentIdentifier();
-  return TreeByReference(nodeCopy);
+  return TreeHandle(nodeCopy);
 }
 
 /* Hierarchy operations */
-TreeNode * TreeByReference::node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
+TreeNode * TreeHandle::node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
 
-size_t TreeByReference::size() const { return node()->deepSize(node()->numberOfChildren()); }
+size_t TreeHandle::size() const { return node()->deepSize(node()->numberOfChildren()); }
 
-TreeByReference TreeByReference::parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeByReference() : TreeByReference(node()->parent()); }
+TreeHandle TreeHandle::parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeHandle() : TreeHandle(node()->parent()); }
 
-int TreeByReference::indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }
+int TreeHandle::indexOfChild(TreeHandle t) const { return node()->indexOfChild(t.node()); }
 
-bool TreeByReference::hasChild(TreeByReference t) const { return node()->hasChild(t.node()); }
+bool TreeHandle::hasChild(TreeHandle t) const { return node()->hasChild(t.node()); }
 
-TreeByReference TreeByReference::childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
+TreeHandle TreeHandle::childAtIndex(int i) const { return TreeHandle(node()->childAtIndex(i)); }
 
-void TreeByReference::replaceWithInPlace(TreeByReference t) {
+void TreeHandle::replaceWithInPlace(TreeHandle t) {
   assert(!isUninitialized());
-  TreeByReference p = parent();
+  TreeHandle p = parent();
   if (!p.isUninitialized()) {
     p.replaceChildInPlace(*this, t);
   }
 }
 
-void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild) {
+void TreeHandle::replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
   assert(!oldChild.isUninitialized());
   assert(!newChild.isUninitialized());
   assert(hasChild(oldChild));
@@ -65,18 +65,18 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   oldChild.deleteParentIdentifier();
 }
 
-void TreeByReference::replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
+void TreeHandle::replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChild) {
   assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-  TreeByReference oldChild = childAtIndex(oldChildIndex);
+  TreeHandle oldChild = childAtIndex(oldChildIndex);
   replaceChildInPlace(oldChild, newChild);
 }
 
-void TreeByReference::replaceChildWithGhostInPlace(TreeByReference t) {
+void TreeHandle::replaceChildWithGhostInPlace(TreeHandle t) {
   GhostReference ghost;
   return replaceChildInPlace(t, ghost);
 }
 
-void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
+void TreeHandle::mergeChildrenAtIndexInPlace(TreeHandle t, int i) {
   /* mergeChildrenAtIndexInPlace should only be called with a tree that can
    * have any number of children, so there is no need to replace the stolen
    * children with ghosts. */
@@ -101,7 +101,7 @@ void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
   }
 }
 
-void TreeByReference::swapChildrenInPlace(int i, int j) {
+void TreeHandle::swapChildrenInPlace(int i, int j) {
   assert(i >= 0 && i < numberOfChildren());
   assert(j >= 0 && j < numberOfChildren());
   if (i == j) {
@@ -109,14 +109,14 @@ void TreeByReference::swapChildrenInPlace(int i, int j) {
   }
   int firstChildIndex = i < j ? i : j;
   int secondChildIndex = i > j ? i : j;
-  TreeByReference firstChild = childAtIndex(firstChildIndex);
-  TreeByReference secondChild = childAtIndex(secondChildIndex);
+  TreeHandle firstChild = childAtIndex(firstChildIndex);
+  TreeHandle secondChild = childAtIndex(secondChildIndex);
   TreePool::sharedPool()->move(firstChild.node()->nextSibling(), secondChild.node(), secondChild.numberOfChildren());
   TreePool::sharedPool()->move(childAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
 }
 
 #if POINCARE_TREE_LOG
-void TreeByReference::log() const {
+void TreeHandle::log() const {
   node()->log(std::cout);
   std::cout << std::endl;
 }
@@ -125,7 +125,7 @@ void TreeByReference::log() const {
 /* Protected */
 
 // Add
-void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
+void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren) {
   assert(!isUninitialized());
   assert(!t.isUninitialized());
   assert(index >= 0 && index <= currentNumberOfChildren);
@@ -149,14 +149,14 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
 
 // Remove
 
-void TreeByReference::removeChildAtIndexInPlace(int i) {
+void TreeHandle::removeChildAtIndexInPlace(int i) {
   assert(!isUninitialized());
   assert(i >= 0 && i < numberOfChildren());
-  TreeByReference t = childAtIndex(i);
+  TreeHandle t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
 }
 
-void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChildren) {
+void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {
   assert(!isUninitialized());
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
   t.node()->release(childNumberOfChildren);
@@ -164,7 +164,7 @@ void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChi
   node()->decrementNumberOfChildren();
 }
 
-void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
+void TreeHandle::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(!isUninitialized());
   deleteParentIdentifierInChildren();
   TreePool::sharedPool()->removeChildren(node(), currentNumberOfChildren);
@@ -172,8 +172,8 @@ void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
 
 /* Private */
 
-void TreeByReference::detachFromParent() {
-  TreeByReference myParent = parent();
+void TreeHandle::detachFromParent() {
+  TreeHandle myParent = parent();
   if (!myParent.isUninitialized()) {
     int idxInParent = myParent.indexOfChild(*this);
     myParent.replaceChildAtIndexWithGhostInPlace(idxInParent);
@@ -182,22 +182,22 @@ void TreeByReference::detachFromParent() {
 }
 
 
-TreeByReference::TreeByReference(const TreeNode * node) : TreeByReference() {
+TreeHandle::TreeHandle(const TreeNode * node) : TreeHandle() {
   if (node != nullptr) {
     setIdentifierAndRetain(node->identifier());
   }
 }
 
-void TreeByReference::setIdentifierAndRetain(int newId) {
+void TreeHandle::setIdentifierAndRetain(int newId) {
   m_identifier = newId;
   if (!isUninitialized()) {
     node()->retain();
   }
 }
 
-void TreeByReference::setTo(const TreeByReference & tr) {
+void TreeHandle::setTo(const TreeHandle & tr) {
   /* We cannot use (*this)==tr because tr would need to be casted to
-   * TreeByReference, which calls setTo and triggers an infinite loop */
+   * TreeHandle, which calls setTo and triggers an infinite loop */
   if (identifier() == tr.identifier()) {
     return;
   }
@@ -206,7 +206,7 @@ void TreeByReference::setTo(const TreeByReference & tr) {
   release(currentId);
 }
 
-void TreeByReference::release(int identifier) {
+void TreeHandle::release(int identifier) {
   if (identifier == TreeNode::NoNodeIdentifier) {
     return;
   }

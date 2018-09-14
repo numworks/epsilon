@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/expression_node.h>
@@ -13,7 +13,7 @@ namespace Poincare {
 
 class Context;
 
-class Expression : public TreeByReference {
+class Expression : public TreeHandle {
   // TODO clean friends
   friend class AbsoluteValue;
   friend class Addition;
@@ -87,7 +87,7 @@ template<typename T>
 public:
   static bool isExpression() { return true; }
   /* Constructor & Destructor */
-  Expression() : TreeByReference() {}
+  Expression() : TreeHandle() {}
   Expression clone() const;
   static Expression parse(char const * string);
 
@@ -179,7 +179,7 @@ public:
   Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
 
 protected:
-  Expression(const ExpressionNode * n) : TreeByReference(n) {}
+  Expression(const ExpressionNode * n) : TreeHandle(n) {}
 
   template<class T> T convert() const {
     /* This function allows to convert Expression to derived Expressions.
@@ -200,17 +200,17 @@ protected:
 
   /* Reference */
   ExpressionNode * node() const {
-    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
-    return static_cast<ExpressionNode *>(TreeByReference::node());
+    assert(TreeHandle::node() == nullptr || !TreeHandle::node()->isGhost());
+    return static_cast<ExpressionNode *>(TreeHandle::node());
   }
 
   /* Hierarchy */
-  Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
+  Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
   Expression parent() const; // TODO try to inline
   void defaultSetChildrenInPlace(Expression other);
-  void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) = delete;
+  void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren) = delete;
   void removeChildAtIndexInPlace(int i) = delete;
-  void removeChildInPlace(TreeByReference t, int childNumberOfChildren) = delete;
+  void removeChildInPlace(TreeHandle t, int childNumberOfChildren) = delete;
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */

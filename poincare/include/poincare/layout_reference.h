@@ -2,25 +2,25 @@
 #define POINCARE_LAYOUT_REFERENCE_H
 
 #include <poincare/layout.h>
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 
 namespace Poincare {
 
 class LayoutCursor;
 
-class LayoutReference : public TreeByReference {
+class LayoutReference : public TreeHandle {
   friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
   friend class LayoutNode;
   friend class LayoutCursor;
   friend class VerticalOffsetLayoutNode;
 public:
-  LayoutReference() : TreeByReference() {}
-  LayoutReference(const LayoutNode * node) : TreeByReference(node) {}
+  LayoutReference() : TreeHandle() {}
+  LayoutReference(const LayoutNode * node) : TreeHandle(node) {}
   LayoutReference clone() const;
   LayoutNode * node() const {
-    assert(isUninitialized() || !TreeByReference::node()->isGhost());
-    return static_cast<LayoutNode *>(TreeByReference::node());
+    assert(isUninitialized() || !TreeHandle::node()->isGhost());
+    return static_cast<LayoutNode *>(TreeHandle::node());
   }
 
   // Rendering

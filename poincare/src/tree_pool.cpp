@@ -1,5 +1,5 @@
 #include <poincare/tree_pool.h>
-#include <poincare/tree_by_reference.h>
+#include <poincare/tree_handle.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/test/tree/blob_node.h>
 #include <poincare/test/tree/pair_node.h>

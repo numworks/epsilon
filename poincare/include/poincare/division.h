@@ -10,7 +10,7 @@ namespace Poincare {
 class Division;
 
 class DivisionNode : public ExpressionNode {
-template<int I>
+template<int T>
   friend class LogarithmNode;
 public:
 

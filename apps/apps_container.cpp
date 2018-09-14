@@ -143,7 +143,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-void AppsContainer::switchTo(App::Snapshot * snapshot) {
+void AppsContainer::switchTo(App::Snapshot * snapshot, bool forceSwitch) {
   if (activeApp() && snapshot != activeApp()->snapshot()) {
     resetShiftAlphaStatus();
   }
@@ -155,7 +155,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   if (snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
   }
-  Container::switchTo(snapshot);
+  Container::switchTo(snapshot, forceSwitch);
 }
 
 void AppsContainer::run() {
@@ -177,9 +177,8 @@ void AppsContainer::run() {
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
   if (!ExceptionRun(ecp)) {
-    switchTo(appSnapshotAtIndex(0));
-    activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f); //TODO this is debug
-    //displayMemoryExhaustionPopUp(); TODO
+    switchTo(activeApp()->snapshot(), true);
+    activeApp()->displayWarning(I18n::Message::AppMemoryFull);
   }
   Container::run();
   switchTo(nullptr);

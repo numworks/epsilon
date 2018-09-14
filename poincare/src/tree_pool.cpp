@@ -33,33 +33,6 @@ void TreePool::freeIdentifier(int identifier) {
   }
 }
 
-#if POINCARE_ALLOW_STATIC_NODES
-void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
-  if (node->identifier() == -1) {
-    registerStaticNode(node);
-  }
-}
-
-void TreePool::registerStaticNode(TreeNode * node) {
-#if 0
-  if (nodeID < 0) {
-    int nodeIndex = indexOfStaticNode(nodeID);
-    assert(m_staticNodes[nodeIndex] == nullptr && nodeIndex < MaxNumberOfStaticNodes);
-    m_staticNodes[nodeIndex] = node;
-    node->rename(nodeID, false);
-    return;
-  }
-#endif
-  int generatedNodeIndex = 0;
-  while (m_staticNodes[generatedNodeIndex] != nullptr && generatedNodeIndex < MaxNumberOfStaticNodes) {
-    generatedNodeIndex++;
-  }
-  assert(generatedNodeIndex < MaxNumberOfStaticNodes);
-  m_staticNodes[generatedNodeIndex] = node;
-  node->rename(identifierOfStaticNodeAtIndex(generatedNodeIndex), false);
-}
-#endif
-
 template <typename T>
 T * TreePool::createTreeNode(size_t size) {
   T * node = new(alloc(size)) T();

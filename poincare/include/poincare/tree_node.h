@@ -43,7 +43,7 @@ public:
 
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
-  void retain() { m_referenceCounter++; } // It doesn't matter if the node is static
+  void retain() { m_referenceCounter++; }
   void release(int currentNumberOfChildren);
   void rename(int identifier, bool unregisterPreviousIdentifier);
 

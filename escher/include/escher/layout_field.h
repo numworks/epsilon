@@ -67,12 +67,7 @@ private:
   public:
     ContentView();
     bool isEditing() const { return m_isEditing; }
-    void setEditing(bool isEditing) {
-      m_isEditing = isEditing;
-      markRectAsDirty(bounds());
-      layoutSubviews();
-    }
-
+    void setEditing(bool isEditing);
     void setBackgroundColor(KDColor c) { m_expressionView.setBackgroundColor(c); }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(); }
@@ -80,27 +75,17 @@ private:
     Poincare::LayoutCursor * cursor() { return &m_cursor; }
     const ExpressionView * expressionView() const { return &m_expressionView; }
     ExpressionView * editableExpressionView() { return &m_expressionView; }
-    void clearLayout() { m_cursor.clearLayout(); }
+    void clearLayout();
     /* View */
-    KDSize minimalSizeForOptimalDisplay() const override {
-      KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
-      return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth, evSize.height());
-    }
+    KDSize minimalSizeForOptimalDisplay() const override;
   private:
     enum class Position {
       Top,
       Bottom
     };
     int numberOfSubviews() const override { return 2; }
-    View * subviewAtIndex(int index) override {
-      assert(index >= 0 && index < 2);
-      View * m_views[] = {&m_expressionView, &m_cursorView};
-      return m_views[index];
-    }
-    void layoutSubviews() override {
-      m_expressionView.setFrame(bounds());
-      layoutCursorSubview();
-    }
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
     void layoutCursorSubview();
     Poincare::LayoutCursor m_cursor;
     ExpressionView m_expressionView;

@@ -18,6 +18,34 @@ LayoutField::ContentView::ContentView() :
   clearLayout();
 }
 
+void LayoutField::ContentView::setEditing(bool isEditing) {
+  m_isEditing = isEditing;
+  markRectAsDirty(bounds());
+  layoutSubviews();
+}
+
+void LayoutField::ContentView::clearLayout() {
+  HorizontalLayoutRef h;
+  m_expressionView.setLayoutRef(h);
+  m_cursor.setLayoutReference(h);
+}
+
+KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
+  KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
+  return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth, evSize.height());
+}
+
+View * LayoutField::ContentView::subviewAtIndex(int index) {
+  assert(index >= 0 && index < 2);
+  View * m_views[] = {&m_expressionView, &m_cursorView};
+  return m_views[index];
+}
+
+void LayoutField::ContentView::layoutSubviews() {
+  m_expressionView.setFrame(bounds());
+  layoutCursorSubview();
+}
+
 void LayoutField::ContentView::layoutCursorSubview() {
   if (!m_isEditing) {
     m_cursorView.setFrame(KDRectZero);

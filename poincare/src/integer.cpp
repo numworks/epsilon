@@ -484,7 +484,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
       }
     }
   }
-  while (digits[size-1] == 0 && size>0) {
+  while (size>0 && digits[size-1] == 0) {
     size--;
   }
   return Integer(digits, size, a.m_negative != b.m_negative, oneDigitOverflow);
@@ -541,7 +541,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     }
   }
   size = min(size, k_maxNumberOfDigits+oneDigitOverflow);
-  while (digits[size-1] == 0 && size>0) {
+  while (size>0 && digits[size-1] == 0) {
     size--;
   }
   return Integer(digits, size, false, oneDigitOverflow);

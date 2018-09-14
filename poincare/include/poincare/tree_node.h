@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <strings.h>
+#include <stdint.h>
 #if POINCARE_TREE_LOG
 #include <ostream>
 #endif
@@ -143,9 +144,9 @@ private:
     changeParentIdentifierInChildren(m_identifier);
   }
   void changeParentIdentifierInChildren(int id) const;
-  int m_identifier;
-  int m_parentIdentifier;
-  int m_referenceCounter;
+  int16_t m_identifier;
+  int16_t m_parentIdentifier;
+  int8_t m_referenceCounter;
 };
 
 }

@@ -13,7 +13,7 @@ public:
     m_negative(false),
     m_numberOfDigitsNumerator(0),
     m_numberOfDigitsDenominator(0) {}
-  virtual void setDigits(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
+  virtual void setDigits(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
 
   Integer signedNumerator() const;
   Integer unsignedNumerator() const;
@@ -61,8 +61,8 @@ private:
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
-  size_t m_numberOfDigitsNumerator;
-  size_t m_numberOfDigitsDenominator;
+  uint8_t m_numberOfDigitsNumerator;
+  uint8_t m_numberOfDigitsDenominator;
   native_uint_t m_digits[0];
 };
 
@@ -109,7 +109,7 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
-  Rational(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
+  Rational(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */

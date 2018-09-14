@@ -23,7 +23,7 @@ public:
     m_exponent(0),
     m_numberOfDigitsInMantissa(0) {}
 
-  virtual void setValue(const native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative);
+  virtual void setValue(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative);
 
   Integer signedMantissa() const;
   Integer unsignedMantissa() const;
@@ -77,7 +77,7 @@ private:
   void setNegative(bool negative) { m_negative = negative; }
   bool m_negative;
   int m_exponent;
-  size_t m_numberOfDigitsInMantissa;
+  uint8_t m_numberOfDigitsInMantissa;
   native_uint_t m_mantissa[0];
 };
 

@@ -24,7 +24,7 @@ void removeZeroAtTheEnd(Integer * i) {
   assert(!i->isInfinity());
 }
 
-void DecimalNode::setValue(const native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative) {
+void DecimalNode::setValue(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative) {
   m_negative = negative;
   m_exponent = exponent;
   m_numberOfDigitsInMantissa = mantissaSize;

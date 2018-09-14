@@ -35,7 +35,7 @@ public:
   Integer(native_int_t i = 0);
   Integer(double_native_int_t i);
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
-  Integer(const char * digits, size_t length, bool negative);
+  Integer(const char * digits, uint8_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
   static Integer Overflow(bool negative) { return Integer((native_uint_t *)nullptr, k_maxNumberOfDigits+1, negative); }
   ~Integer();
@@ -52,7 +52,7 @@ public:
 
   // Getters
   const native_uint_t * digits() const { return usesImmediateDigit() ? &m_digit : m_digits; }
-  size_t numberOfDigits() const { return m_numberOfDigits; }
+  uint8_t numberOfDigits() const { return m_numberOfDigits; }
 
   // Serialization
   int serialize(char * buffer, int bufferSize) const;
@@ -143,7 +143,7 @@ private:
   }
 
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
-  native_uint_t digit(size_t i) const {
+  native_uint_t digit(uint8_t i) const {
     assert(i >= 0 && i < m_numberOfDigits);
     return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }
@@ -154,7 +154,7 @@ private:
   bool isOverflow() const { return m_numberOfDigits == k_maxNumberOfDigits + 1 && m_digits == nullptr; }
 
   bool m_negative;
-  size_t m_numberOfDigits; // In base native_uint_t
+  uint8_t m_numberOfDigits; // In base native_uint_t
   union {
     native_uint_t * m_digits; // Little-endian
     native_uint_t m_digit;

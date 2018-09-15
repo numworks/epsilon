@@ -24,9 +24,15 @@ void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
 }
 
-void Controller::ContentView::reloadBottomRightCorner(SimpleTableViewDataSource * dataSource) {
-  /* We mark the bottom right corner (where an empty space can be) as dirty. */
-  markRectAsDirty(KDRect(dataSource->cellWidth()*2, dataSource->cellHeight(), dataSource->cellWidth(), dataSource->cellHeight()));
+void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons, int numberOfColumns) {
+  if (numberOfIcons % numberOfColumns) {
+    /* We mark the missing icons on the last row as dirty. */
+    for (int i = 0; i < numberOfColumns; i++) {
+      if (i >= numberOfIcons % numberOfColumns) {
+        markRectAsDirty(KDRect(dataSource->cellWidth()*i, dataSource->cellHeight(), dataSource->cellWidth(), dataSource->cellHeight()));
+      }
+    }
+  }
 }
 
 int Controller::ContentView::numberOfSubviews() const {
@@ -128,16 +134,16 @@ int Controller::numberOfIcons() {
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  /* If the number of apps (including home) is odd, when we display the
-   * rightest icon, the icon below is empty. As no icon is thus redrawn on the
-   * previous one, the cell is not cleaned. We need to redraw a white rect on
-   * the cell to hide the dirtyness below. Ideally, we would have redrawn all
+  /* If the number of apps (including home) is != 3*n+1, when we display the
+   * lowest icons, the other(s) are empty. As no icon is thus redrawn on the
+   * previous ones, the cell is not cleaned. We need to redraw a white rect on
+   * the cells to hide the leftover icons. Ideally, we would have redrawn all
    * the background in white and then redraw visible cells. However, the
    * redrawing takes time and is visible at scrolling. Here, we avoid the
    * background complete redrawing but the code is a bit
    * clumsy. */
-  if (m_container->numberOfApps()%2 == 1 && t->selectedRow() == numberOfRows() -1) {
-    m_view.reloadBottomRightCorner(this);
+  if (t->selectedRow() == numberOfRows()-1) {
+    m_view.reloadBottomRow(this, m_container->numberOfApps()-1, k_numberOfColumns);
   }
   /* To prevent the selectable table view to select cells that are unvisible,
    * we reselect the previous selected cell as soon as the selected cell is

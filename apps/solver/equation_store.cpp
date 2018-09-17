@@ -166,7 +166,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
-        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
+        char buffer[Shared::ExpressionModel::k_expressionBufferSize];
+        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, buffer, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
       }
     }
   }

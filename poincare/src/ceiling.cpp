@@ -54,8 +54,11 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
     if (s.name() == Ion::Charset::Exponential) {
       result = Rational(3);
     }
-    replaceWithInPlace(result);
-    return result;
+    if (!result.isUninitialized()) {
+      replaceWithInPlace(result);
+      return result;
+    }
+    return *this;
   }
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;

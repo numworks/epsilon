@@ -29,6 +29,7 @@ public:
   int typeAtLocation(int i, int j) override;
 
 protected:
+  constexpr static int k_maxMessageSize = 100;
   class Stack {
   public:
     class State {

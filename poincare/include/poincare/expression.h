@@ -200,7 +200,7 @@ protected:
 
   /* Reference */
   ExpressionNode * node() const {
-    assert(TreeHandle::node() == nullptr || !TreeHandle::node()->isGhost());
+    assert(identifier() != TreeNode::NoNodeIdentifier || !TreeHandle::node()->isGhost());
     return static_cast<ExpressionNode *>(TreeHandle::node());
   }
 

@@ -54,8 +54,11 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
     if (s.name() == Ion::Charset::Exponential) {
       result = Rational(2);
     }
-    replaceWithInPlace(result);
-    return result;
+    if (!result.isUninitialized()) {
+      replaceWithInPlace(result);
+      return result;
+    }
+    return *this;
   }
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;

@@ -150,7 +150,8 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
-  m_equalSign = exactOutput(context).isEqualToItsApproximationLayout(approximateOutput(context), k_printedExpressionSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  char buffer[k_printedExpressionSize];
+  m_equalSign = exactOutput(context).isEqualToItsApproximationLayout(approximateOutput(context), buffer, k_printedExpressionSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

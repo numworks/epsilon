@@ -602,6 +602,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   half_native_uint_t b = denominator.halfDigit(denominator.numberOfHalfDigits()-1);
   half_native_uint_t halfBase = 1 << (16-1);
   int pow = 0;
+  assert(b != 0);
   while (!(b & halfBase)) {
     b = b << 1;
     pow++;

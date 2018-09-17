@@ -53,9 +53,11 @@ void VariableBoxController::ContentViewController::viewWillAppear() {
   m_scriptStore->scanScriptsForFunctionsAndVariables(
     this,
     [](void * context, const char * functionName, int scriptIndex) {
+      if (strlen(functionName)+1 > k_maxScriptObjectNameSize) { return; }
       VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
       cvc->addFunctionAtIndex(functionName, scriptIndex);},
     [](void * context, const char * variableName, int scriptIndex) {
+      if (strlen(variableName)+1 > k_maxScriptObjectNameSize) { return; }
       VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
       cvc->addVariableAtIndex(variableName, scriptIndex);});
 }
@@ -119,7 +121,8 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
 
 void VariableBoxController::ContentViewController::insertTextInCaller(const char * text) {
   int commandBufferMaxSize = strlen(text)+1;
-  char commandBuffer[commandBufferMaxSize];
+  char commandBuffer[k_maxScriptObjectNameSize];
+  assert(commandBufferMaxSize <= k_maxScriptObjectNameSize);
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer, commandBufferMaxSize, true);
   m_textInputCaller->handleEventWithText(commandBuffer);
 }

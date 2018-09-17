@@ -43,6 +43,7 @@ private:
     int reusableCellCount() override;
     void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   private:
+    constexpr static int k_maxScriptObjectNameSize = 100;
     constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
     constexpr static int k_maxScriptNodesCount = 32;
     void insertTextInCaller(const char * text);

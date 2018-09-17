@@ -118,7 +118,8 @@ bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   // Translate the message and remove the arguments
   const char * text = I18n::translate(messageTree->insertedText());
   int maxTextToInsertLength = strlen(text) + 1;
-  char textToInsert[maxTextToInsertLength];
+  assert(maxTextToInsertLength <= k_maxMessageSize);
+  char textToInsert[k_maxMessageSize];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
 
   sender()->handleEventWithText(textToInsert);

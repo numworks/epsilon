@@ -2,7 +2,7 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <escher.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 #include "expression_field.h"
 #include "../shared/text_field_delegate.h"
 #include "../shared/layout_field_delegate.h"
@@ -29,7 +29,7 @@ public:
 
   /* LayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(::LayoutField * layoutField, Poincare::LayoutReference layoutR, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(::LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(::LayoutField * layoutField) override;
 
@@ -52,7 +52,7 @@ private:
   };
   void reloadView();
   bool inputViewDidReceiveEvent(Ion::Events::Event event);
-  bool inputViewDidFinishEditing(const char * text, Poincare::LayoutReference layoutR);
+  bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;

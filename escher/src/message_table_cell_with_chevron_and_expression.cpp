@@ -17,8 +17,8 @@ void MessageTableCellWithChevronAndExpression::setHighlighted(bool highlight) {
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCellWithChevronAndExpression::setLayoutReference(Poincare::LayoutReference layoutR) {
-  m_subtitleView.setLayoutReference(layoutR);
+void MessageTableCellWithChevronAndExpression::setLayout(Poincare::Layout layoutR) {
+  m_subtitleView.setLayout(layoutR);
   reloadCell();
   layoutSubviews();
 }

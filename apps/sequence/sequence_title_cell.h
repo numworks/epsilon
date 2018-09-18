@@ -8,12 +8,12 @@ namespace Sequence {
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
   SequenceTitleCell();
-  void setLayout(Poincare::LayoutReference layout);
+  void setLayout(Poincare::Layout layout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
-  Poincare::LayoutReference layoutRef() const override {
-    return m_titleTextView.layoutRef();
+  Poincare::Layout layout() const override {
+    return m_titleTextView.layout();
   }
 private:
   int numberOfSubviews() const override;

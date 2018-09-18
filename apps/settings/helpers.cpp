@@ -7,17 +7,17 @@ using namespace Poincare;
 namespace Settings {
 namespace Helpers {
 
-LayoutReference CartesianComplexFormat(KDText::FontSize fontSize) {
+Layout CartesianComplexFormat(KDText::FontSize fontSize) {
   const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
   return LayoutHelper::String(text, sizeof(text), fontSize);
 }
 
-LayoutReference PolarComplexFormat(KDText::FontSize fontSize) {
+Layout PolarComplexFormat(KDText::FontSize fontSize) {
   const char base[] = {'r', Ion::Charset::Exponential};
   const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-  return HorizontalLayoutReference(
+  return HorizontalLayout(
       LayoutHelper::String(base, sizeof(base), fontSize),
-      VerticalOffsetLayoutReference(LayoutHelper::String(superscript, sizeof(superscript), fontSize), VerticalOffsetLayoutNode::Type::Superscript)
+      VerticalOffsetLayout(LayoutHelper::String(superscript, sizeof(superscript), fontSize), VerticalOffsetLayoutNode::Type::Superscript)
      );
 }
 

@@ -92,15 +92,15 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) 
 
 // Layout
 
-LayoutReference PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   ExpressionNode * indiceOperand = childAtIndex(1);
   // Delete eventual parentheses of the indice in the pretty print
   if (indiceOperand->type() == ExpressionNode::Type::Parenthesis) {
     indiceOperand = indiceOperand->childAtIndex(0);
   }
-  HorizontalLayoutReference result = HorizontalLayoutReference();
+  HorizontalLayout result = HorizontalLayout();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(VerticalOffsetLayoutReference(
+  result.addChildAtIndex(VerticalOffsetLayout(
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
         VerticalOffsetLayoutNode::Type::Superscript),
       result.numberOfChildren(),

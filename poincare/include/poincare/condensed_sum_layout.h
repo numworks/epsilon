@@ -2,9 +2,8 @@
 #define POINCARE_CONDENSED_SUM_LAYOUT_NODE_H
 
 #include <poincare/layout_cursor.h>
-#include <poincare/layout.h>
 #include <poincare/layout_helper.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
@@ -49,9 +48,9 @@ private:
   LayoutNode * superscriptLayout() { return childAtIndex(2); }
 };
 
-class CondensedSumLayoutReference : public LayoutReference {
+class CondensedSumLayout : public Layout {
 public:
-  CondensedSumLayoutReference(LayoutReference base, LayoutReference subscript, LayoutReference superscript);
+  CondensedSumLayout(Layout base, Layout subscript, Layout superscript);
 };
 
 }

@@ -6,22 +6,22 @@ using namespace Poincare;
 
 namespace Regression {
 
-LayoutReference ExponentialModel::layout() {
+Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
-    const LayoutReference layoutChildren[] = {
-      CharLayoutReference('a', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('e', KDText::FontSize::Small),
-      VerticalOffsetLayoutReference(
-          HorizontalLayoutReference(
-            CharLayoutReference('b', KDText::FontSize::Small),
-            CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-            CharLayoutReference('X', KDText::FontSize::Small)
+    const Layout layoutChildren[] = {
+      CharLayout('a', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('e', KDText::FontSize::Small),
+      VerticalOffsetLayout(
+          HorizontalLayout(
+            CharLayout('b', KDText::FontSize::Small),
+            CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+            CharLayout('X', KDText::FontSize::Small)
           ),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = HorizontalLayoutReference(layoutChildren, 4);
+    m_layout = HorizontalLayout(layoutChildren, 4);
   }
   return m_layout;
 }

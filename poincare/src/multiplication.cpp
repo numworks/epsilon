@@ -75,7 +75,7 @@ bool MultiplicationNode::childNeedsParenthesis(const SerializationHelperInterfac
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
 }
 
-LayoutReference MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
   return LayoutHelper::Infix(Multiplication(this), floatDisplayMode, numberOfSignificantDigits, middleDotString);
 }

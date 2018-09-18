@@ -17,7 +17,7 @@ Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::Angl
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
 }
 
-LayoutReference SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

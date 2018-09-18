@@ -23,10 +23,10 @@ private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
 
-class ProductLayoutReference : public LayoutReference {
+class ProductLayout : public Layout {
 public:
-  ProductLayoutReference(LayoutReference argument, LayoutReference lowerB, LayoutReference upperB) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
+  ProductLayout(Layout argument, Layout lowerB, Layout upperB) :
+    Layout(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, argument);
     replaceChildAtIndexInPlace(1, lowerB);

@@ -12,7 +12,7 @@ using namespace Shared;
 namespace Regression {
 
 void Model::tidy() {
-  m_layout = LayoutReference();
+  m_layout = Layout();
 }
 
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {

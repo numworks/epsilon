@@ -6,8 +6,8 @@
 namespace Settings {
 namespace Helpers {
 
-Poincare::LayoutReference CartesianComplexFormat(KDText::FontSize fontSize);
-Poincare::LayoutReference PolarComplexFormat(KDText::FontSize fontSize);
+Poincare::Layout CartesianComplexFormat(KDText::FontSize fontSize);
+Poincare::Layout PolarComplexFormat(KDText::FontSize fontSize);
 
 }
 }

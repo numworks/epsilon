@@ -150,16 +150,16 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   if (!evaluation.isUninitialized()) {
     /* TODO: implement list contexts */
     // TODO: handle matrix and scalar!
-    LayoutReference layoutR = layoutRefForIndex(index);
+    Layout layoutR = layoutForIndex(index);
     const Matrix matrixEvaluation = static_cast<const Matrix&>(evaluation);
-    myCell->setLayoutReference(layoutR);
+    myCell->setLayout(layoutR);
     char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
     int numberOfChars = PrintFloat::convertFloatToText<float>(matrixEvaluation.numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
     buffer[numberOfChars++] = 'x';
     PrintFloat::convertFloatToText<float>(matrixEvaluation.numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
-    myCell->setLayoutReference(LayoutReference());
+    myCell->setLayout(Layout());
     myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
   }
 }
@@ -168,7 +168,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   if (m_currentPage == Page::RootMenu || m_currentPage == Page::Scalar) {
     return Metric::ToolboxRowHeight;
   }
-  LayoutReference layoutR = layoutRefForIndex(index);
+  Layout layoutR = layoutForIndex(index);
   if (!layoutR.isUninitialized()) {
     return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
   }
@@ -198,7 +198,7 @@ void VariableBoxController::ContentViewController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
   // Tidy the layouts used to display the VariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setLayoutReference(LayoutReference());
+    m_leafCells[i].setLayout(Layout());
   }
   ViewController::viewDidDisappear();
 }
@@ -258,17 +258,17 @@ const Expression VariableBoxController::ContentViewController::expressionForInde
   return Expression();
 }
 
-LayoutReference VariableBoxController::ContentViewController::layoutRefForIndex(int index) {
+Layout VariableBoxController::ContentViewController::layoutForIndex(int index) {
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
     return m_context->layoutForSymbol(symbol, Constant::ShortNumberOfSignificantDigits);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {
-    return LayoutReference();
+    return Layout();
   }
 #endif
-  return LayoutReference();
+  return Layout();
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :

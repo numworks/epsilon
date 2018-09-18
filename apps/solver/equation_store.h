@@ -45,7 +45,7 @@ public:
    * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
    * The boolean exactLayout indicates if we want the exact layout or the
    * approximate one. */
-  Poincare::LayoutReference exactSolutionLayoutAtIndex(int i, bool exactLayout);
+  Poincare::Layout exactSolutionLayoutAtIndex(int i, bool exactLayout);
   /* Exact layout and approximate layout of an exact solution can be:
    * - identical: for instance, 5 and 5
    * - equal: for instance 1/2 and 0.5
@@ -86,8 +86,8 @@ private:
   Type m_type;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables+1];
   int m_numberOfSolutions;
-  Poincare::LayoutReference m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
-  Poincare::LayoutReference m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
+  Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
+  Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
   bool m_exactSolutionIdentity[k_maxNumberOfExactSolutions];
   bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
   double m_intervalApproximateSolutions[2];

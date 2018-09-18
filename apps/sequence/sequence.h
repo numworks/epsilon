@@ -24,8 +24,8 @@ public:
   const char * secondInitialConditionText();
   Poincare::Expression firstInitialConditionExpression(Poincare::Context * context) const;
   Poincare::Expression secondInitialConditionExpression(Poincare::Context * context) const;
-  Poincare::LayoutReference firstInitialConditionLayout();
-  Poincare::LayoutReference secondInitialConditionLayout();
+  Poincare::Layout firstInitialConditionLayout();
+  Poincare::Layout secondInitialConditionLayout();
   /* WARNING: after calling setType, setContent, setFirstInitialConditionContent
    * or setSecondInitialConditionContent, the sequence context needs to
    * invalidate the cache because the sequences evaluations might have changed. */
@@ -34,10 +34,10 @@ public:
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
   int numberOfElements();
-  Poincare::LayoutReference nameLayout();
-  Poincare::LayoutReference definitionName();
-  Poincare::LayoutReference firstInitialConditionName();
-  Poincare::LayoutReference secondInitialConditionName();
+  Poincare::Layout nameLayout();
+  Poincare::Layout definitionName();
+  Poincare::Layout firstInitialConditionName();
+  Poincare::Layout secondInitialConditionName();
   bool isDefined() override;
   bool isEmpty() override;
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
@@ -61,12 +61,12 @@ private:
   char m_secondInitialConditionText[TextField::maxBufferSize()];
   mutable Poincare::Expression m_firstInitialConditionExpression;
   mutable Poincare::Expression m_secondInitialConditionExpression;
-  Poincare::LayoutReference m_firstInitialConditionLayout;
-  Poincare::LayoutReference m_secondInitialConditionLayout;
-  Poincare::LayoutReference m_nameLayout;
-  Poincare::LayoutReference m_definitionName;
-  Poincare::LayoutReference m_firstInitialConditionName;
-  Poincare::LayoutReference m_secondInitialConditionName;
+  Poincare::Layout m_firstInitialConditionLayout;
+  Poincare::Layout m_secondInitialConditionLayout;
+  Poincare::Layout m_nameLayout;
+  Poincare::Layout m_definitionName;
+  Poincare::Layout m_firstInitialConditionName;
+  Poincare::Layout m_secondInitialConditionName;
   int m_initialRank;
 };
 

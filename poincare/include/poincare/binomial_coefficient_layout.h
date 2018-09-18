@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 #include <poincare/grid_layout.h>
 
 namespace Poincare {
@@ -42,10 +41,10 @@ private:
   LayoutNode * kLayout() { return childAtIndex(1); }
 };
 
-class BinomialCoefficientLayoutReference : public LayoutReference {
+class BinomialCoefficientLayout : public Layout {
 public:
-  BinomialCoefficientLayoutReference(LayoutReference n, LayoutReference k) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())
+  BinomialCoefficientLayout(Layout n, Layout k) :
+    Layout(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, n);
     replaceChildAtIndexInPlace(1, k);

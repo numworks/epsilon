@@ -17,7 +17,6 @@
 #include <poincare/integral_layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/left_square_bracket_layout.h>
 #include <poincare/matrix_layout.h>

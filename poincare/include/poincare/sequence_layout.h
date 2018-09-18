@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 
 namespace Poincare {
 

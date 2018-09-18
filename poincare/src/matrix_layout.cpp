@@ -11,7 +11,7 @@ namespace Poincare {
 
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
-    LayoutReference thisRef(this);
+    Layout thisRef(this);
     addEmptyRow(EmptyLayoutNode::Color::Grey);
     addEmptyColumn(EmptyLayoutNode::Color::Grey);
   }
@@ -137,12 +137,12 @@ KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  MatrixLayoutReference thisRef = MatrixLayoutReference(this);
+  MatrixLayout thisRef = MatrixLayout(this);
   bool shouldRemoveGreySquares = false;
   int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
   int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
   for (int childIndex = firstIndex; childIndex < lastIndex; childIndex++) {
-    if (cursor->layoutReference().hasAncestor(thisRef.childAtIndex(childIndex), true)) {
+    if (cursor->layouterence().hasAncestor(thisRef.childAtIndex(childIndex), true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;
@@ -266,10 +266,10 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   }
 }
 
-MatrixLayoutReference::MatrixLayoutReference(const MatrixLayoutNode * n) : GridLayoutReference(n) {}
-MatrixLayoutReference::MatrixLayoutReference() : GridLayoutReference(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
-MatrixLayoutReference::MatrixLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4) :
-  MatrixLayoutReference()
+MatrixLayout::MatrixLayout(const MatrixLayoutNode * n) : GridLayout(n) {}
+MatrixLayout::MatrixLayout() : GridLayout(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
+MatrixLayout::MatrixLayout(Layout l1, Layout l2, Layout l3, Layout l4) :
+  MatrixLayout()
 {
   addChildAtIndexInPlace(l1, 0, 0);
   addChildAtIndexInPlace(l2, 1, 1);

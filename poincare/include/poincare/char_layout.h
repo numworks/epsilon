@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 #include <ion/charset.h>
 
 namespace Poincare {
@@ -54,13 +53,13 @@ private:
   KDText::FontSize m_fontSize;
 };
 
-class CharLayoutReference : public LayoutReference {
+class CharLayout : public Layout {
 public:
-  CharLayoutReference(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
-  KDText::FontSize fontSize() const { return const_cast<CharLayoutReference *>(this)->node()->fontSize(); }
+  CharLayout(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
+  KDText::FontSize fontSize() const { return const_cast<CharLayout *>(this)->node()->fontSize(); }
 private:
-  using LayoutReference::node;
-  CharLayoutNode * node() { return static_cast<CharLayoutNode *>(LayoutReference::node());}
+  using Layout::node;
+  CharLayoutNode * node() { return static_cast<CharLayoutNode *>(Layout::node());}
 };
 
 }

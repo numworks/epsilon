@@ -99,7 +99,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layout
   return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, LayoutReference layoutR, Ion::Events::Event event) {
+bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {
   return inputViewDidFinishEditing(nullptr, layoutR);
 }
 
@@ -149,7 +149,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
 }
 
 
-bool EditExpressionController::inputViewDidFinishEditing(const char * text, LayoutReference layoutR) {
+bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
   App * calculationApp = (App *)app();
   if (layoutR.isUninitialized()) {
     assert(text);

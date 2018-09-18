@@ -38,7 +38,7 @@ private:
   constexpr static int k_totalNumberOfCell = (Ion::Display::Height-2*k_topBottomMargin-Metric::TitleBarHeight-Metric::StackTitleHeight)/Metric::ParameterCellHeight;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];
-  Poincare::LayoutReference m_complexFormatLayout[2];
+  Poincare::Layout m_complexFormatLayout[2];
   MessageTableCellWithEditableText m_editableCell;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   SelectableTableView m_selectableTableView;

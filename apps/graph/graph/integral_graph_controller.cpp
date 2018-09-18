@@ -36,7 +36,7 @@ double IntegralGraphController::cursorNextStep(double x, int direction) {
   return (direction > 0 ? x + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit : x - m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit);
 }
 
-LayoutReference IntegralGraphController::createFunctionLayout(const char * functionName) {
+Layout IntegralGraphController::createFunctionLayout(const char * functionName) {
   char buffer[7] = "0(x)dx";
   buffer[0] = functionName[0];
   return LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);

@@ -36,7 +36,7 @@ private:
   constexpr static int k_maxApproximatePowerMatrix = 1000;
 
   // Layout
-  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Serialize
   bool childNeedsParenthesis(const SerializationHelperInterface * child) const override;

@@ -13,7 +13,7 @@ Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUn
   return Infinity(this).setSign(s, context, angleUnit);
 }
 
-LayoutReference InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[5];
   int numberOfChars = serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);

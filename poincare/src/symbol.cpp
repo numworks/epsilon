@@ -79,35 +79,35 @@ int SymbolNode::simplificationOrderSameType(const ExpressionNode * e, bool canBe
   return -1;
 }
 
-LayoutReference SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name == Symbol::SpecialSymbols::Ans) {
     return LayoutHelper::String("ans", 3);
   }
   if (m_name == Symbol::SpecialSymbols::un) {
-    return HorizontalLayoutReference(
-        CharLayoutReference('u'),
-        VerticalOffsetLayoutReference(
-          CharLayoutReference('n'),
+    return HorizontalLayout(
+        CharLayout('u'),
+        VerticalOffsetLayout(
+          CharLayout('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == Symbol::SpecialSymbols::un1) {
-    return HorizontalLayoutReference(
-      CharLayoutReference('u'),
-      VerticalOffsetLayoutReference(
+    return HorizontalLayout(
+      CharLayout('u'),
+      VerticalOffsetLayout(
         LayoutHelper::String("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == Symbol::SpecialSymbols::vn) {
-    return HorizontalLayoutReference(
-        CharLayoutReference('v'),
-        VerticalOffsetLayoutReference(
-          CharLayoutReference('n'),
+    return HorizontalLayout(
+        CharLayout('v'),
+        VerticalOffsetLayout(
+          CharLayout('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == Symbol::SpecialSymbols::vn1) {
-    return HorizontalLayoutReference(
-      CharLayoutReference('v'),
-      VerticalOffsetLayoutReference(
+    return HorizontalLayout(
+      CharLayout('v'),
+      VerticalOffsetLayout(
         LayoutHelper::String("n+1", 3),
           VerticalOffsetLayoutNode::Type::Subscript));
   }

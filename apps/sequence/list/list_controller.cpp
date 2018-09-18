@@ -62,7 +62,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   }
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   KDCoordinate defaultHeight = 2*k_expressionCellVerticalMargin + (sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight);
-  LayoutReference layout = sequence->layoutRef();
+  Layout layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
   }
@@ -204,13 +204,13 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setLayoutReference(sequence->layoutRef());
+    myCell->setLayout(sequence->layout());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setLayoutReference(sequence->firstInitialConditionLayout());
+    myCell->setLayout(sequence->firstInitialConditionLayout());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setLayoutReference(sequence->secondInitialConditionLayout());
+    myCell->setLayout(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;

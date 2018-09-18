@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
@@ -73,10 +72,10 @@ private:
   bool m_margins;
 };
 
-class EmptyLayoutReference : public LayoutReference {
+class EmptyLayout : public Layout {
 public:
-  EmptyLayoutReference(const EmptyLayoutNode * n);
-  EmptyLayoutReference(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true);
+  EmptyLayout(const EmptyLayoutNode * n);
+  EmptyLayout(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }
@@ -85,7 +84,7 @@ public:
     node()->setColor(color);
   }
 private:
-  EmptyLayoutNode * node() const { return static_cast<EmptyLayoutNode *>(LayoutReference::node()); }
+  EmptyLayoutNode * node() const { return static_cast<EmptyLayoutNode *>(Layout::node()); }
 };
 
 }

@@ -1,16 +1,15 @@
 #ifndef POINCARE_LAYOUT_CURSOR_H
 #define POINCARE_LAYOUT_CURSOR_H
 
-#include <poincare/layout_reference.h>
 #include <poincare/layout.h>
 
 namespace Poincare {
 
 class HorizontalLayoutNode;
-class VerticalOffsetLayoutReference;
+class VerticalOffsetLayout;
 
 class LayoutCursor {
-  friend class LayoutReference;
+  friend class Layout;
   friend class HorizontalLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
@@ -28,48 +27,48 @@ public:
   };
 
   LayoutCursor() :
-    m_layoutRef(),
+    m_layout(),
     m_position(Position::Right)
   {}
 
-  LayoutCursor(LayoutReference layoutR, Position position = Position::Right) :
-    m_layoutRef(layoutR.node()),
+  LayoutCursor(Layout layoutR, Position position = Position::Right) :
+    m_layout(layoutR.node()),
     m_position(position)
   {}
 
   LayoutCursor(LayoutNode * node, Position position = Position::Right) :
-    m_layoutRef(node),
+    m_layout(node),
     m_position(position)
   {} //TODO make this private and friend class layout_node
 
   LayoutCursor clone() const {
-    return LayoutCursor(m_layoutRef, m_position);
+    return LayoutCursor(m_layout, m_position);
   }
 
   // Definition
-  bool isDefined() const { return !m_layoutRef.isUninitialized(); }
+  bool isDefined() const { return !m_layout.isUninitialized(); }
 
   // Getters and setters
-  LayoutReference layoutReference() { return m_layoutRef; }
-  LayoutNode * layoutNode() { return m_layoutRef.node(); } // TODO  Make private + friend classes ?
+  Layout layouterence() { return m_layout; }
+  LayoutNode * layoutNode() { return m_layout.node(); } // TODO  Make private + friend classes ?
 
-  int layoutIdentifier() { return m_layoutRef.identifier(); }
-  void setLayoutReference(LayoutReference r) {
-    if (r != m_layoutRef) {
-      m_layoutRef = r;
+  int layoutIdentifier() { return m_layout.identifier(); }
+  void setLayout(Layout r) {
+    if (r != m_layout) {
+      m_layout = r;
     }
   }
   void setLayoutNode(LayoutNode * n) {
-    if (n->identifier() != m_layoutRef.identifier()) {
-      /* Compare the identifiers and not the nodes because m_layoutRef might
+    if (n->identifier() != m_layout.identifier()) {
+      /* Compare the identifiers and not the nodes because m_layout might
        * temporarily be pointing to a GhostNode. In this case,
-       * m_layoutRef.node() would crash because of the assertion that the node
+       * m_layout.node() would crash because of the assertion that the node
        * is not ghost. */
-      m_layoutRef = LayoutReference(n);
+      m_layout = Layout(n);
     }
   }
   void setTo(LayoutCursor * other) {
-     m_layoutRef = other->layoutReference();
+     m_layout = other->layouterence();
      m_position = other->position();
   }
   Position position() const { return m_position; }
@@ -114,19 +113,19 @@ public:
   void addFractionLayoutAndCollapseSiblings();
   void addXNTCharLayout();
   void insertText(const char * text);
-  void addLayoutAndMoveCursor(LayoutReference l);
+  void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }
-  void performBackspace() { m_layoutRef.deleteBeforeCursor(this); }
+  void performBackspace() { m_layout.deleteBeforeCursor(this); }
   void clearLayout();
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   KDCoordinate layoutHeight();
-  void privateAddEmptyPowerLayout(VerticalOffsetLayoutReference v);
+  void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
-  LayoutReference m_layoutRef;
+  Layout m_layout;
   Position m_position;
 };
 

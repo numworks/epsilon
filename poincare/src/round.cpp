@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-LayoutReference RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

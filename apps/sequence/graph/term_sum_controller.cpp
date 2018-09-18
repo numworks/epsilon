@@ -46,11 +46,11 @@ double TermSumController::cursorNextStep(double x, int direction) {
   return std::round(m_cursor->x()+delta);
 }
 
-LayoutReference TermSumController::createFunctionLayout(const char * functionName) {
-  return HorizontalLayoutReference(
-      CharLayoutReference(functionName[0], KDText::FontSize::Small),
-        VerticalOffsetLayoutReference(
-          CharLayoutReference('n', KDText::FontSize::Small),
+Layout TermSumController::createFunctionLayout(const char * functionName) {
+  return HorizontalLayout(
+      CharLayout(functionName[0], KDText::FontSize::Small),
+        VerticalOffsetLayout(
+          CharLayout('n', KDText::FontSize::Small),
           VerticalOffsetLayoutNode::Type::Subscript
         )
       );

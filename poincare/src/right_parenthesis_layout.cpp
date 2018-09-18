@@ -59,6 +59,6 @@ void RightParenthesisLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expr
   RenderWithChildHeight(ParenthesisLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
 }
 
-RightParenthesisLayoutReference::RightParenthesisLayoutReference() : LayoutReference(TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>()) {}
+RightParenthesisLayout::RightParenthesisLayout() : Layout(TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>()) {}
 
 }

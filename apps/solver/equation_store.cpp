@@ -29,7 +29,7 @@ void EquationStore::tidy() {
   tidySolution();
 }
 
-Poincare::LayoutReference EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
+Poincare::Layout EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
   assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
   if (exactLayout) {
     return m_exactSolutionExactLayouts[i];
@@ -311,8 +311,8 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
 
 void EquationStore::tidySolution() {
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
-    m_exactSolutionExactLayouts[i] = LayoutReference();
-    m_exactSolutionApproximateLayouts[i] = LayoutReference();
+    m_exactSolutionExactLayouts[i] = Layout();
+    m_exactSolutionApproximateLayouts[i] = Layout();
   }
 }
 

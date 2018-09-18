@@ -16,7 +16,7 @@ void Model::tidy() {
 }
 
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
-  Expression yExpression = Decimal(y);
+  Expression yExpression = Number::DecimalNumber(y);
   PoincareHelpers::Simplify(&yExpression, *context);
   Expression modelExpression = simplifiedExpression(modelCoefficients, context);
   double result = modelExpression.nextIntersection('x', xMin, step, xMax, *context, Preferences::sharedPreferences()->angleUnit(), yExpression).abscissa;

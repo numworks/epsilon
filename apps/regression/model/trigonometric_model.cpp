@@ -41,14 +41,14 @@ Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, 
   Expression result =
     Addition(
       Multiplication(
-        Decimal(a),
+        Number::DecimalNumber(a),
         Sine(
           Addition(
             Multiplication(
-              Decimal(b),
+              Number::DecimalNumber(b),
               Symbol('x')),
-            Decimal(c)))),
-      Decimal(d));
+            Number::DecimalNumber(c)))),
+      Number::DecimalNumber(d));
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

@@ -55,28 +55,28 @@ Expression QuarticModel::simplifiedExpression(double * modelCoefficients, Poinca
   Expression addChildren[] = {
     // a*x^4
     Multiplication(
-      Decimal(a),
+      Number::DecimalNumber(a),
       Power(
         Symbol('x'),
         Decimal(4.0))),
     // b*x^3
     Multiplication(
-      Decimal(b),
+      Number::DecimalNumber(b),
       Power(
         Symbol('x'),
         Decimal(3.0))),
     // c*x^2
     Multiplication(
-      Decimal(c),
+      Number::DecimalNumber(c),
       Power(
         Symbol('x'),
         Decimal(2.0))),
     // d*x
     Multiplication(
-      Decimal(d),
+      Number::DecimalNumber(d),
       Symbol('x')),
     // e
-    Decimal(e)
+    Number::DecimalNumber(e)
   };
   Expression result = Addition(addChildren, 5);
   PoincareHelpers::Simplify(&result, *context);

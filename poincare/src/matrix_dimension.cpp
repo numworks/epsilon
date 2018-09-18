@@ -11,7 +11,7 @@ Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::An
   return MatrixDimension(this).shallowReduce(context, angleUnit);
 }
 
-LayoutReference MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

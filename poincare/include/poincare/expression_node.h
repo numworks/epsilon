@@ -3,7 +3,7 @@
 
 #include <poincare/tree_node.h>
 #include <poincare/evaluation.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 #include <poincare/serialization_helper_interface.h>
 #include <poincare/context.h>
 #include <stdint.h>
@@ -136,7 +136,7 @@ public:
   virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const;
 
   /* Layout Helper */
-  virtual LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
+  virtual Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
 
   /* Evaluation Helper */
   typedef float SinglePrecision;

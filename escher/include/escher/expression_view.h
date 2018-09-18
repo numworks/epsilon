@@ -3,7 +3,7 @@
 
 #include <escher/view.h>
 #include <kandinsky/color.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 
 /* This class does not handle the expression layout as the size of the layout is
  * needed to compute the size of table cells hosting the expression. As the size
@@ -15,8 +15,8 @@ class ExpressionView : public View {
 public:
   ExpressionView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-  Poincare::LayoutReference layoutRef() const { return m_layoutRef; }
-  void setLayoutReference(Poincare::LayoutReference layoutRef);
+  Poincare::Layout layout() const { return m_layout; }
+  void setLayout(Poincare::Layout layout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
@@ -32,7 +32,7 @@ private:
    * layout is always possessed by a controller which only gives a pointer to
    * the expression view (without cloning it). The named controller is then
    * responsible for freeing the expression layout when required. */
-  mutable Poincare::LayoutReference m_layoutRef; // TODO find better way to have minimalSizeForOptimalDisplay const
+  mutable Poincare::Layout m_layout; // TODO find better way to have minimalSizeForOptimalDisplay const
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

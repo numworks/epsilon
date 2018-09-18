@@ -12,7 +12,7 @@ Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::A
   return DivisionQuotient(this).shallowReduce(context, angleUnit);
 }
 
-LayoutReference DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

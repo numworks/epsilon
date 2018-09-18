@@ -22,7 +22,7 @@ public:
   Responder * responder() override {
     return this;
   }
-  Poincare::LayoutReference layoutRef() const override;
+  Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
@@ -36,9 +36,9 @@ public:
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
-  Poincare::LayoutReference m_inputLayout;
-  Poincare::LayoutReference m_exactOutputLayout;
-  Poincare::LayoutReference m_approximateOutputLayout;
+  Poincare::Layout m_inputLayout;
+  Poincare::Layout m_exactOutputLayout;
+  Poincare::Layout m_approximateOutputLayout;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   SubviewType m_selectedSubviewType;

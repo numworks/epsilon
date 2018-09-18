@@ -25,7 +25,7 @@ public:
   static constexpr int k_numberOfModels = 9;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual ~Model() = default;
-  virtual Poincare::LayoutReference layout() = 0;
+  virtual Poincare::Layout layout() = 0;
   // Reinitialize m_layout to empty the pool
   void tidy();
   // simplifiedExpression is overrided only by Models that override levelSet
@@ -39,7 +39,7 @@ public:
 protected:
   // Fit
   virtual bool dataSuitableForFit(Store * store, int series) const;
-  Poincare::LayoutReference m_layout;
+  Poincare::Layout m_layout;
 private:
   // Model attributes
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;

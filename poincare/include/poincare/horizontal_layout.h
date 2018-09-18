@@ -1,7 +1,6 @@
 #ifndef POINCARE_HORIZONTAL_LAYOUT_NODE_H
 #define POINCARE_HORIZONTAL_LAYOUT_NODE_H
 
-#include <poincare/layout_reference.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
@@ -11,7 +10,7 @@ namespace Poincare {
  * instance, use addOrMergeChildAtIndex to add a LayoutNode safely. */
 
 class HorizontalLayoutNode : public LayoutNode {
-  friend class LayoutReference;
+  friend class Layout;
 public:
 
   HorizontalLayoutNode() :
@@ -63,26 +62,26 @@ private:
   uint16_t m_numberOfChildren;
 };
 
-class HorizontalLayoutReference : public LayoutReference {
+class HorizontalLayout : public Layout {
   friend class HorizontalLayoutNode;
 public:
-  HorizontalLayoutReference(HorizontalLayoutNode * n) : LayoutReference(n) {}
-  HorizontalLayoutReference();
-  explicit HorizontalLayoutReference(LayoutReference l);
-  HorizontalLayoutReference(LayoutReference l1, LayoutReference l2);
-  HorizontalLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3);
-  HorizontalLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4);
-  HorizontalLayoutReference(const LayoutReference * children, size_t numberOfChildren);
-  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);
+  HorizontalLayout(HorizontalLayoutNode * n) : Layout(n) {}
+  HorizontalLayout();
+  explicit HorizontalLayout(Layout l);
+  HorizontalLayout(Layout l1, Layout l2);
+  HorizontalLayout(Layout l1, Layout l2, Layout l3);
+  HorizontalLayout(Layout l1, Layout l2, Layout l3, Layout l4);
+  HorizontalLayout(const Layout * children, size_t numberOfChildren);
+  void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);
   // Remove puts a child at the end of the pool
-  void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false) {
-    LayoutReference::removeChild(l, cursor, force);
+  void removeChild(Layout l, LayoutCursor * cursor, bool force = false) {
+    Layout::removeChild(l, cursor, force);
   }
   void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
-    LayoutReference::removeChildAtIndex(index, cursor, force);
+    Layout::removeChildAtIndex(index, cursor, force);
   }
-  void addOrMergeChildAtIndex(LayoutReference l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
-  void mergeChildrenAtIndex(HorizontalLayoutReference h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+  void addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+  void mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
 private:
   void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };

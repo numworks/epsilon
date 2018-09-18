@@ -13,7 +13,7 @@ float TangentNode::characteristicXRange(Context & context, Preferences::AngleUni
   return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
 
-LayoutReference TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

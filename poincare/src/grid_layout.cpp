@@ -97,13 +97,13 @@ void GridLayoutNode::didAddChildAtIndex(int newNumberOfChildren) {
 
 // Protected
 void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
-  GridLayoutReference thisRef = GridLayoutReference(this);
+  GridLayout thisRef = GridLayout(this);
   int previousNumberOfChildren = numberOfChildren();
   int columnsCount = m_numberOfColumns;
   int previousRowCount = m_numberOfRows;
   for (int i = 0; i < columnsCount; i++) {
     thisRef.addChildAtIndex(
-        EmptyLayoutReference(color),
+        EmptyLayout(color),
         previousNumberOfChildren,
         previousNumberOfChildren + i,
         nullptr);
@@ -113,13 +113,13 @@ void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
 }
 
 void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
-  GridLayoutReference thisRef = GridLayoutReference(this);
+  GridLayout thisRef = GridLayout(this);
   int previousNumberOfChildren = numberOfChildren();
   int rowsCount = m_numberOfRows;
   int futureColumnsCount = m_numberOfColumns + 1;
   for (int i = 0; i < rowsCount; i++) {
     thisRef.addChildAtIndex(
-        EmptyLayoutReference(color),
+        EmptyLayout(color),
         i*futureColumnsCount + futureColumnsCount-1,
         previousNumberOfChildren + i,
         nullptr);
@@ -130,7 +130,7 @@ void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
 
 void GridLayoutNode::deleteRowAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfRows);
-  LayoutReference thisRef = LayoutReference(this);
+  Layout thisRef = Layout(this);
   for (int i = 0; i < m_numberOfColumns; i++) {
     thisRef.removeChildAtIndexInPlace(index * m_numberOfColumns);
   }
@@ -139,7 +139,7 @@ void GridLayoutNode::deleteRowAtIndex(int index) {
 
 void GridLayoutNode::deleteColumnAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfColumns);
-  LayoutReference thisRef = LayoutReference(this);
+  Layout thisRef = Layout(this);
   for (int i = (m_numberOfRows - 1) * m_numberOfColumns + index; i > -1; i-= m_numberOfColumns) {
     thisRef.removeChildAtIndexInPlace(i);
   }
@@ -262,7 +262,7 @@ KDCoordinate GridLayoutNode::width() const {
 }
 
 // Grid Layout Reference
-void GridLayoutReference::setDimensions(int rows, int columns) {
+void GridLayout::setDimensions(int rows, int columns) {
   assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);

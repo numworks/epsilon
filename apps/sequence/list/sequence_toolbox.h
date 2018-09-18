@@ -18,7 +18,7 @@ private:
   bool selectAddedCell(int selectedRow);
   int mathToolboxIndex(int index);
   ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
-  Poincare::LayoutReference m_addedCellLayout[k_maxNumberOfDisplayedRows];
+  Poincare::Layout m_addedCellLayout[k_maxNumberOfDisplayedRows];
   int m_numberOfAddedCells;
 };
 

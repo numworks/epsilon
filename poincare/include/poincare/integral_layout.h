@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 #include <kandinsky/text.h>
 
 namespace Poincare {
@@ -52,10 +51,10 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class IntegralLayoutReference : public LayoutReference {
+class IntegralLayout : public Layout {
 public:
-  IntegralLayoutReference(LayoutReference integrand, LayoutReference lowerBound, LayoutReference upperBound) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())
+  IntegralLayout(Layout integrand, Layout lowerBound, Layout upperBound) :
+    Layout(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, integrand);
     replaceChildAtIndexInPlace(1, lowerBound);

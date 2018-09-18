@@ -8,7 +8,7 @@ namespace Regression {
 class QuarticModel : public Model {
 public:
   using Model::Model;
-  Poincare::LayoutReference layout() override;
+  Poincare::Layout layout() override;
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context) override;
   I18n::Message formulaMessage() const override { return I18n::Message::QuarticRegressionFormula; }
   double evaluate(double * modelCoefficients, double x) const override;

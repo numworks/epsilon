@@ -17,7 +17,7 @@ objs += $(addprefix poincare/src/,\
   integral_layout.o\
   layout_cursor.o\
   layout.o\
-  layout_reference.o\
+  layout_node.o\
   left_parenthesis_layout.o\
   left_square_bracket_layout.o\
   matrix_layout.o\

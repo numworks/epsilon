@@ -24,7 +24,7 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e = Expression::parse(k_models[i+1]);
     m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Constant::ShortNumberOfSignificantDigits);
-    m_modelCells[i].setLayoutReference(m_layouts[i]);
+    m_modelCells[i].setLayout(m_layouts[i]);
   }
 }
 

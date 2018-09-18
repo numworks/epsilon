@@ -135,11 +135,11 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
       && cursor->position() == LayoutCursor::Position::Left)
   {
     // Case: Left of the radicand. Delete the layout, keep the radicand.
-    LayoutReference radicand = LayoutReference(radicandLayout());
-    LayoutReference thisRef = LayoutReference(this);
+    Layout radicand = Layout(radicandLayout());
+    Layout thisRef = Layout(this);
     thisRef.replaceChildWithGhostInPlace(radicand);
     // WARNING: Do not call "this" afterwards
-    cursor->setLayoutReference(thisRef.childAtIndex(0));
+    cursor->setLayout(thisRef.childAtIndex(0));
     thisRef.replaceWith(radicand, cursor);
     return;
   }
@@ -269,16 +269,16 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   }
 }
 
-NthRootLayoutReference::NthRootLayoutReference(LayoutReference radicand) : NthRootLayoutReference() {
+NthRootLayout::NthRootLayout(Layout radicand) : NthRootLayout() {
   replaceChildAtIndexInPlace(0, radicand);
 }
 
-NthRootLayoutReference::NthRootLayoutReference(LayoutReference radicand, LayoutReference index) : NthRootLayoutReference() {
+NthRootLayout::NthRootLayout(Layout radicand, Layout index) : NthRootLayout() {
   replaceChildAtIndexInPlace(0, radicand);
   addChildAtIndexInPlace(index, 1, 1);
   static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
 }
 
-NthRootLayoutReference::NthRootLayoutReference() : LayoutReference(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {}
+NthRootLayout::NthRootLayout() : Layout(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {}
 
 }

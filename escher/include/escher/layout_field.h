@@ -7,7 +7,7 @@
 #include <escher/text_cursor_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
 class LayoutField : public ScrollableView, public ScrollViewDataSource {
@@ -25,10 +25,10 @@ public:
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
   }
   void reload();
-  bool hasText() const { return layoutRef().hasText(); }
-  int serialize(char * buffer, int bufferLength) { return layoutRef().serialize(buffer, bufferLength); }
-  Poincare::LayoutReference layoutRef() const { return m_contentView.expressionView()->layoutRef(); }
-  char XNTChar() { return m_contentView.cursor()->layoutReference().XNTChar(); }
+  bool hasText() const { return layout().hasText(); }
+  int serialize(char * buffer, int bufferLength) { return layout().serialize(buffer, bufferLength); }
+  Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
+  char XNTChar() { return m_contentView.cursor()->layouterence().XNTChar(); }
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {
@@ -59,9 +59,9 @@ protected:
 private:
   constexpr static int k_maxNumberOfLayouts = 152;
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
-  void scrollRightOfLayout(Poincare::LayoutReference layoutR);
+  void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::LayoutReference layoutR, Poincare::LayoutReference pointedLayoutReference, bool forceCursorRightOfLayout = false);
+  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Layout pointedLayout, bool forceCursorRightOfLayout = false);
 
   class ContentView : public View {
   public:

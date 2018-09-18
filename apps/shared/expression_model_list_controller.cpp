@@ -23,17 +23,17 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
     return Metric::StoreRowHeight;
   }
   ExpressionModel * m = modelStore()->modelAtIndex(j);
-  if (m->layoutRef().isUninitialized()) {
+  if (m->layout().isUninitialized()) {
     return Metric::StoreRowHeight;
   }
-  KDCoordinate modelSize = m->layoutRef().layoutSize().height();
+  KDCoordinate modelSize = m->layout().layoutSize().height();
   return modelSize + Metric::StoreRowHeight - KDText::charSize().height();
 }
 
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
   ExpressionModel * m = modelStore()->modelAtIndex(j);
-  myCell->setLayoutReference(m->layoutRef());
+  myCell->setLayout(m->layout());
 }
 
 /* Responder */

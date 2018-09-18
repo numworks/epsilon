@@ -8,32 +8,32 @@ using namespace Shared;
 
 namespace Regression {
 
-LayoutReference CubicModel::layout() {
+Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
-    const LayoutReference layoutChildren[] = {
-      CharLayoutReference('a', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('X', KDText::FontSize::Small),
-      VerticalOffsetLayoutReference(
-          CharLayoutReference('3', KDText::FontSize::Small),
+    const Layout layoutChildren[] = {
+      CharLayout('a', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('X', KDText::FontSize::Small),
+      VerticalOffsetLayout(
+          CharLayout('3', KDText::FontSize::Small),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('b', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('X', KDText::FontSize::Small),
-      VerticalOffsetLayoutReference(
-          CharLayoutReference('2', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('b', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('X', KDText::FontSize::Small),
+      VerticalOffsetLayout(
+          CharLayout('2', KDText::FontSize::Small),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('c', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('X', KDText::FontSize::Small),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('d', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('c', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('X', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('d', KDText::FontSize::Small),
     };
-    m_layout = HorizontalLayoutReference(layoutChildren, 15);
+    m_layout = HorizontalLayout(layoutChildren, 15);
   }
   return m_layout;
 }

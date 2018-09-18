@@ -37,8 +37,8 @@ bool OppositeNode::childNeedsParenthesis(const SerializationHelperInterface * ch
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
 }
 
-LayoutReference OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayoutReference result = HorizontalLayoutReference(CharLayoutReference('-'));
+Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayout result = HorizontalLayout(CharLayout('-'));
   if (childAtIndex(0)->type() == Type::Opposite) {
     result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {

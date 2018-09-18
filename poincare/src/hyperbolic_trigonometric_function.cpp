@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-LayoutReference HyperbolicTrigonometricFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout HyperbolicTrigonometricFunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(HyperbolicTrigonometricFunction(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

@@ -10,7 +10,7 @@ Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit
   return Random(this).setSign(s, context, angleUnit);
 }
 
-LayoutReference RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

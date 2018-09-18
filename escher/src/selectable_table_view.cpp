@@ -128,7 +128,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       Clipboard::sharedClipboard()->store(text);
       return true;
     }
-    Poincare::LayoutReference layoutR = cell->layoutRef();
+    Poincare::Layout layoutR = cell->layout();
     if (!layoutR.isUninitialized()) {
       Clipboard::sharedClipboard()->store(layoutR);
       return true;

@@ -13,8 +13,8 @@ Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences
   return BinomialCoefficient(this).shallowReduce(context, angleUnit);
 }
 
-LayoutReference BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return BinomialCoefficientLayoutReference(
+Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return BinomialCoefficientLayout(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

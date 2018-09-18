@@ -25,9 +25,9 @@ void LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  HorizontalLayoutReference h;
-  m_expressionView.setLayoutReference(h);
-  m_cursor.setLayoutReference(h);
+  HorizontalLayout h;
+  m_expressionView.setLayout(h);
+  m_cursor.setLayout(h);
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -52,11 +52,11 @@ void LayoutField::ContentView::layoutCursorSubview() {
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
-  LayoutReference pointedLayoutR = m_cursor.layoutReference();
+  Layout pointedLayoutR = m_cursor.layouterence();
   LayoutCursor::Position cursorPosition = m_cursor.position();
   LayoutCursor eqCursor = pointedLayoutR.equivalentCursor(&m_cursor);
-  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layoutReference())) {
-    pointedLayoutR = eqCursor.layoutReference();
+  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layouterence())) {
+    pointedLayoutR = eqCursor.layouterence();
     cursorPosition = eqCursor.position();
   }
   KDPoint cursoredExpressionViewOrigin = pointedLayoutR.absoluteOrigin();
@@ -70,7 +70,7 @@ void LayoutField::ContentView::layoutCursorSubview() {
 
 void LayoutField::reload() {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  layoutRef().invalidAllSizesPositionsAndBaselines();
+  layout().invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->layoutFieldDidChangeSize(this);
@@ -114,30 +114,30 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (resultExpression.isUninitialized()) {
       m_contentView.cursor()->insertText(text);
     } else {
-      LayoutReference resultLayoutReference = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-      if (currentNumberOfLayouts + resultLayoutReference.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+      Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+      if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
         return true;
       }
       // Find the pointed layout.
-      LayoutReference pointedLayoutReference;
+      Layout pointedLayout;
       if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
         /* Special case: if the text is "random()", the cursor should not be set
          * inside the parentheses. */
-        pointedLayoutReference = resultLayoutReference;
-      } else if (resultLayoutReference.isHorizontal()) {
+        pointedLayout = resultLayout;
+      } else if (resultLayout.isHorizontal()) {
         /* If the layout is horizontal, pick the first open parenthesis. For now,
          * all horizontal layouts in MathToolbox have parentheses. */
-        for (int i = 0; i < resultLayoutReference.numberOfChildren(); i++) {
-          LayoutReference l = resultLayoutReference.childAtIndex(i);
+        for (int i = 0; i < resultLayout.numberOfChildren(); i++) {
+          Layout l = resultLayout.childAtIndex(i);
           if (l.isLeftParenthesis()) {
-            pointedLayoutReference = l;
+            pointedLayout = l;
             break;
           }
         }
       }
       /* Insert the layout. If pointedLayout is uninitialized, the cursor will
        * be on the right of the inserted layout. */
-      insertLayoutAtCursor(resultLayoutReference, pointedLayoutReference, forceCursorRightOfText);
+      insertLayoutAtCursor(resultLayout, pointedLayout, forceCursorRightOfText);
     }
   }
   return true;
@@ -185,14 +185,14 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
     setEditing(false);
-    if (m_delegate->layoutFieldDidFinishEditing(this, layoutRef(), event)) {
+    if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       clearLayout();
     }
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     setEditing(true);
-    m_contentView.cursor()->setLayoutReference(layoutRef());
+    m_contentView.cursor()->setLayout(layout());
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     return true;
   }
@@ -235,16 +235,16 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
   } else if (event == Ion::Events::ShiftLeft) {
     *shouldRecomputeLayout = true;
-    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
+    if (m_contentView.cursor()->layouterence().removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
-    result.setLayoutReference(layoutRef());
+    result.setLayout(layout());
     result.setPosition(LayoutCursor::Position::Left);
   } else if (event == Ion::Events::ShiftRight) {
-    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
+    if (m_contentView.cursor()->layouterence().removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
-    result.setLayoutReference(layoutRef());
+    result.setLayout(layout());
     result.setPosition(LayoutCursor::Position::Right);
   }
   if (result.isDefined()) {
@@ -254,7 +254,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   return false;
 }
 
-void LayoutField::scrollRightOfLayout(LayoutReference layoutR) {
+void LayoutField::scrollRightOfLayout(Layout layoutR) {
   KDRect layoutRect(layoutR.absoluteOrigin().translatedBy(m_contentView.expressionView()->drawingOrigin()), layoutR.layoutSize());
   scrollToBaselinedRect(layoutRect, layoutR.baseline());
 }
@@ -269,7 +269,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(LayoutReference layoutR, LayoutReference pointedLayoutR, bool forceCursorRightOfLayout) {
+void LayoutField::insertLayoutAtCursor(Layout layoutR, Layout pointedLayoutR, bool forceCursorRightOfLayout) {
   if (layoutR.isUninitialized()) {
     return;
   }
@@ -278,7 +278,7 @@ void LayoutField::insertLayoutAtCursor(LayoutReference layoutR, LayoutReference 
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
 
   bool layoutWillBeMerged = layoutR.isHorizontal();
-  LayoutReference lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutReference();
+  Layout lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
   // Add the layout
   m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
@@ -287,19 +287,19 @@ void LayoutField::insertLayoutAtCursor(LayoutReference layoutR, LayoutReference 
   if(!forceCursorRightOfLayout) {
     if (!pointedLayoutR.isUninitialized() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
       // Make sure the layout was inserted (its parent is not uninitialized)
-      m_contentView.cursor()->setLayoutReference(pointedLayoutR);
+      m_contentView.cursor()->setLayout(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     } else if (!layoutWillBeMerged) {
-      m_contentView.cursor()->setLayoutReference(layoutR.layoutToPointWhenInserting());
+      m_contentView.cursor()->setLayout(layoutR.layoutToPointWhenInserting());
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     }
   } else if (!layoutWillBeMerged) {
-    m_contentView.cursor()->setLayoutReference(layoutR);
+    m_contentView.cursor()->setLayout(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
 
   // Handle matrices
-  m_contentView.cursor()->layoutReference().addGreySquaresToAllMatrixAncestors();
+  m_contentView.cursor()->layouterence().addGreySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();

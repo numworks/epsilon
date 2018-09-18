@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
@@ -57,9 +56,9 @@ private:
   Type m_type;
 };
 
-class VerticalOffsetLayoutReference : public LayoutReference {
+class VerticalOffsetLayout : public Layout {
 public:
-  VerticalOffsetLayoutReference(LayoutReference l, VerticalOffsetLayoutNode::Type type);
+  VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type);
 };
 
 }

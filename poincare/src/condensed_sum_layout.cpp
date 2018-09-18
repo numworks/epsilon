@@ -40,8 +40,8 @@ KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child) {
   return KDPoint(x,y);
 }
 
-CondensedSumLayoutReference::CondensedSumLayoutReference(LayoutReference base, LayoutReference subscript, LayoutReference superscript) :
-  LayoutReference(TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>())
+CondensedSumLayout::CondensedSumLayout(Layout base, Layout subscript, Layout superscript) :
+  Layout(TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>())
 {
   replaceChildAtIndexInPlace(0, base);
   replaceChildAtIndexInPlace(1, subscript);

@@ -19,7 +19,7 @@ public:
 private:
   const char * name() const override { return "sum"; }
   float emptySequenceValue() const override { return 0.0f; }
-  LayoutReference createSequenceLayout(LayoutReference argumentLayout, LayoutReference subscriptLayout, LayoutReference superscriptLayout) const override;
+  Layout createSequenceLayout(Layout argumentLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);
   }

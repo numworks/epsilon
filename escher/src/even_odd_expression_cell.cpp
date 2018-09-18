@@ -23,8 +23,8 @@ void EvenOddExpressionCell::setEven(bool even) {
   m_expressionView.setBackgroundColor(backgroundColor());
 }
 
-void EvenOddExpressionCell::setLayoutReference(LayoutReference layoutR) {
-  m_expressionView.setLayoutReference(layoutR);
+void EvenOddExpressionCell::setLayout(Layout layoutR) {
+  m_expressionView.setLayout(layoutR);
 }
 
 void EvenOddExpressionCell::setBackgroundColor(KDColor backgroundColor) {

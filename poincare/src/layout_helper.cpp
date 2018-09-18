@@ -8,10 +8,10 @@
 
 namespace Poincare {
 
-LayoutReference LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
-  HorizontalLayoutReference result;
+  HorizontalLayout result;
   result.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
   for (int i = 1; i < numberOfChildren; i++) {
     result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), result.numberOfChildren(), true);
@@ -23,18 +23,18 @@ LayoutReference LayoutHelper::Infix(const Expression & expression, Preferences::
   return result;
 }
 
-LayoutReference LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
-  HorizontalLayoutReference result;
+Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+  HorizontalLayout result;
   // Add the operator name.
   result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
-  HorizontalLayoutReference args;
+  HorizontalLayout args;
   int numberOfChildren = expression.numberOfChildren();
   if (numberOfChildren > 0) {
     args.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfChildren; i++) {
-      args.addChildAtIndex(CharLayoutReference(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
+      args.addChildAtIndex(CharLayout(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
       args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
   }
@@ -43,28 +43,28 @@ LayoutReference LayoutHelper::Prefix(const Expression & expression, Preferences:
   return result;
 }
 
-LayoutReference LayoutHelper::Parentheses(LayoutReference layoutRef, bool cloneLayout) {
-  HorizontalLayoutReference result;
-  result.addChildAtIndex(LeftParenthesisLayoutReference(), 0, 0, nullptr);
-  if (!layoutRef.isUninitialized()) {
-    result.addOrMergeChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, true);
+Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
+  HorizontalLayout result;
+  result.addChildAtIndex(LeftParenthesisLayout(), 0, 0, nullptr);
+  if (!layout.isUninitialized()) {
+    result.addOrMergeChildAtIndex(cloneLayout ? layout.clone() : layout, 1, true);
   }
-  result.addChildAtIndex(RightParenthesisLayoutReference(), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(RightParenthesisLayout(), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   return result;
 }
 
-HorizontalLayoutReference LayoutHelper::String(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
+HorizontalLayout LayoutHelper::String(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
   assert(bufferSize > 0);
-  HorizontalLayoutReference resultLayout;
+  HorizontalLayout resultLayout;
   for (int i = 0; i < bufferSize; i++) {
-    resultLayout.addChildAtIndex(CharLayoutReference(buffer[i], fontSize), i, i, nullptr);
+    resultLayout.addChildAtIndex(CharLayout(buffer[i], fontSize), i, i, nullptr);
   }
   return resultLayout;
 }
 
-LayoutReference LayoutHelper::Logarithm(LayoutReference argument, LayoutReference index) {
-  HorizontalLayoutReference resultLayout = String("log", 3);
-  VerticalOffsetLayoutReference offsetLayout = VerticalOffsetLayoutReference(index, VerticalOffsetLayoutNode::Type::Subscript);
+Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
+  HorizontalLayout resultLayout = String("log", 3);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(index, VerticalOffsetLayoutNode::Type::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
   return resultLayout;

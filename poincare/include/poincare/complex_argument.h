@@ -22,7 +22,7 @@ public:
   Type type() const override { return Type::ComplexArgument; }
 private:
   // Layout
-  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;  const char * name() const { return "arg"; }
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;

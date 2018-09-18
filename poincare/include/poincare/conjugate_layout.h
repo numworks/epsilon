@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
@@ -39,9 +38,9 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class ConjugateLayoutReference : public LayoutReference {
+class ConjugateLayout : public Layout {
 public:
-  explicit ConjugateLayoutReference(LayoutReference l) : LayoutReference(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>()) {
+  explicit ConjugateLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);
   }
 };

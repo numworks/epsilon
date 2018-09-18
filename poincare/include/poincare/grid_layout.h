@@ -1,21 +1,20 @@
 #ifndef POINCARE_GRID_LAYOUT_NODE_H
 #define POINCARE_GRID_LAYOUT_NODE_H
 
-#include <poincare/layout_reference.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/empty_layout.h>
 
 namespace Poincare {
 
-class GridLayoutReference;
+class GridLayout;
 class MatrixLayoutNode;
 
 class GridLayoutNode : public LayoutNode {
   friend class MatrixLayoutNode;
   friend class BinomialCoefficientLayoutNode;
-  friend class BinomialCoefficientLayoutReference;
-  friend class GridLayoutReference;
+  friend class BinomialCoefficientLayout;
+  friend class GridLayout;
 public:
   GridLayoutNode() :
     LayoutNode(),
@@ -85,16 +84,16 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 
-class GridLayoutReference : public LayoutReference {
+class GridLayout : public Layout {
 public:
-  GridLayoutReference(const GridLayoutNode * n) : LayoutReference(n) {}
-  GridLayoutReference() : LayoutReference(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
+  GridLayout(const GridLayoutNode * n) : Layout(n) {}
+  GridLayout() : Layout(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
   void setDimensions(int rows, int columns);
-  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
-    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
+  void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
+    Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 private:
-  virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(LayoutReference::node()); }
+  virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(Layout::node()); }
   void setNumberOfRows(int rows) {
     assert(rows >= 0);
     node()->setNumberOfRows(rows);

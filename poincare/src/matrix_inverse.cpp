@@ -14,7 +14,7 @@ Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::Angl
   return MatrixInverse(this).shallowReduce(context, angleUnit);
 }
 
-LayoutReference MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

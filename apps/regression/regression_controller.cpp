@@ -85,7 +85,7 @@ void RegressionController::willDisplayCellAtLocation(HighlightCell * cell, int i
   I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometrical, I18n::Message::Logistic};
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
   castedCell->setMessage(messages[j]);
-  castedCell->setLayoutReference(m_store->regressionModel((Model::Type) j)->layout());
+  castedCell->setLayout(m_store->regressionModel((Model::Type) j)->layout());
 }
 
 }

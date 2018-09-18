@@ -9,25 +9,25 @@ using namespace Shared;
 
 namespace Regression {
 
-LayoutReference TrigonometricModel::layout() {
+Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
-    const LayoutReference layoutChildren[] = {
-      CharLayoutReference('a', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('s', KDText::FontSize::Small),
-      CharLayoutReference('i', KDText::FontSize::Small),
-      CharLayoutReference('n', KDText::FontSize::Small),
-      CharLayoutReference('(', KDText::FontSize::Small),
-      CharLayoutReference('b', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('X', KDText::FontSize::Small),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('c', KDText::FontSize::Small),
-      CharLayoutReference(')', KDText::FontSize::Small),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('d', KDText::FontSize::Small)
+    const Layout layoutChildren[] = {
+      CharLayout('a', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('s', KDText::FontSize::Small),
+      CharLayout('i', KDText::FontSize::Small),
+      CharLayout('n', KDText::FontSize::Small),
+      CharLayout('(', KDText::FontSize::Small),
+      CharLayout('b', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('X', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('c', KDText::FontSize::Small),
+      CharLayout(')', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('d', KDText::FontSize::Small)
     };
-    m_layout = HorizontalLayoutReference(layoutChildren, 14);
+    m_layout = HorizontalLayout(layoutChildren, 14);
   }
   return m_layout;
 }

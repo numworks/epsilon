@@ -15,7 +15,7 @@ public:
   ::EvenOddCell * evenOddCell() {
     return &m_contentCell;
   }
-  void setLayouts(Poincare::LayoutReference approximatelayout, Poincare::LayoutReference exactLayout);
+  void setLayouts(Poincare::Layout approximatelayout, Poincare::Layout exactLayout);
   void setEqualMessage(I18n::Message equalSignMessage);
   SubviewType selectedSubviewType() {
     return m_contentCell.selectedSubviewType();
@@ -26,8 +26,8 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  Poincare::LayoutReference layoutRef() const {
-    return m_contentCell.layoutRef();
+  Poincare::Layout layout() const {
+    return m_contentCell.layout();
   }
 private:
   class ContentCell : public ::EvenOddCell {
@@ -52,7 +52,7 @@ private:
     void setSelectedSubviewType(SubviewType subviewType);
     void layoutSubviews() override;
     int numberOfSubviews() const override;
-    Poincare::LayoutReference layoutRef() const override;
+    Poincare::Layout layout() const override;
   private:
     View * subviewAtIndex(int index) override;
     constexpr static KDCoordinate k_digitHorizontalMargin = 10;

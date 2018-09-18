@@ -113,12 +113,12 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
     size = KDText::FontSize::Small;
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
-  m_layouts[j] = HorizontalLayoutReference(
-        CharLayoutReference(nextName[0], size),
-        VerticalOffsetLayoutReference(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), size), VerticalOffsetLayoutNode::Type::Subscript)
+  m_layouts[j] = HorizontalLayout(
+        CharLayout(nextName[0], size),
+        VerticalOffsetLayout(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), size), VerticalOffsetLayoutNode::Type::Subscript)
       );
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
-  myCell->setLayoutReference(m_layouts[j]);
+  myCell->setLayout(m_layouts[j]);
 }
 
 void TypeParameterController::setSequence(Sequence * sequence) {

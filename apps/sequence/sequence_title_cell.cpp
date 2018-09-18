@@ -12,8 +12,8 @@ SequenceTitleCell::SequenceTitleCell() :
 {
 }
 
-void SequenceTitleCell::setLayout(Poincare::LayoutReference layout) {
-  m_titleTextView.setLayoutReference(layout);
+void SequenceTitleCell::setLayout(Poincare::Layout layout) {
+  m_titleTextView.setLayout(layout);
 }
 
 void SequenceTitleCell::setHighlighted(bool highlight) {

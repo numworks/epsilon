@@ -8,7 +8,7 @@
 namespace Poincare {
 
 class ExpressionLayout;
-class LayoutReference;
+class Layout;
 class LayoutNode;
 class Integer;
 struct IntegerDivision;
@@ -58,7 +58,7 @@ public:
   int serialize(char * buffer, int bufferSize) const;
 
   //Layout
-  HorizontalLayoutReference createLayout() const;
+  HorizontalLayout createLayout() const;
 
   // Approximation
   template<typename T> T approximate() const;

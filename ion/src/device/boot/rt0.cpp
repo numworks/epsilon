@@ -49,6 +49,10 @@ void start() {
    * For example, static C++ objects are very likely to manipulate float values */
   Ion::Device::initFPU();
 
+#if 0
+  Ion::Device::initMPU();
+#endif
+
   /* Call static C++ object constructors
    * The C++ compiler creates an initialization function for each static object.
    * The linker then stores the address of each of those functions consecutively

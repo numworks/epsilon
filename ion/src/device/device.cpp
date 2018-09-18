@@ -18,6 +18,10 @@ extern "C" {
 
 #define USE_SD_CARD 0
 
+extern "C" {
+  extern const void * _stack_end;
+}
+
 // Public Ion methods
 
 /* TODO: The delay methods 'msleep' and 'usleep' are currently dependent on the
@@ -96,6 +100,19 @@ void initFPU() {
   // FIXME: The pipeline should be flushed at this point
 }
 
+#if 0
+void initMPU() {
+  /* Region 0 reprensents the last 128 bytes of the stack: accessing this
+   * memory means we are really likely to overflow the stack very soon. */
+  MPU.RNR()->setREGION(0x00);
+  MPU.RBAR()->setADDR(&_stack_end);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::Bytes128);
+  MPU.RASR()->setENABLE(true);
+  MPU.RASR()->setAP(0x000); // Forbid access
+  MPU.CTRL()->setPRIVDEFENA(true);
+  MPU.CTRL()->setENABLE(true);
+}
+#endif
 void coreReset() {
   // Perform a full core reset
   CM4.AIRCR()->requestReset();

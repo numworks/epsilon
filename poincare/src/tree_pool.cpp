@@ -1,6 +1,7 @@
 #include <poincare/tree_pool.h>
-#include <poincare/tree_handle.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/helpers.h>
+#include <poincare/tree_handle.h>
 #include <poincare/test/tree/blob_node.h>
 #include <poincare/test/tree/pair_node.h>
 #include <poincare.h>
@@ -10,21 +11,6 @@
 namespace Poincare {
 
 TreePool * TreePool::SharedStaticPool;
-
-static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
-  if (src < dst && dst < src + len) {
-    /* Copy backwards to avoid overwrites */
-    src += len;
-    dst += len;
-    while (len--) {
-      *--dst = *--src;
-    }
-  } else {
-    while (len--) {
-      *dst++ = *src++;
-    }
-  }
-}
 
 void TreePool::freeIdentifier(int identifier) {
   if (identifier >= 0 && identifier < MaxNumberOfNodes) {
@@ -86,14 +72,16 @@ void TreePool::removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumber
 }
 
 void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveSize) {
-  if (source == destination || moveSize == 0) {
-    return;
-  }
+  assert(moveSize % 4 == 0);
+  assert((long)source % 4 == 0);
+  assert((long)destination % 4 == 0);
 
-  char * destinationAddress = reinterpret_cast<char *>(destination);
-  char * sourceAddress = reinterpret_cast<char *>(source);
-  if (insert(destinationAddress, sourceAddress, moveSize)) {
-    updateNodeForIdentifierFromNode(destinationAddress < sourceAddress ? destination : source);
+  uint32_t * src = reinterpret_cast<uint32_t *>(source);
+  uint32_t * dst = reinterpret_cast<uint32_t *>(destination);
+  size_t len = moveSize/4;
+
+  if (Helpers::Rotate(dst, src, len)) {
+    updateNodeForIdentifierFromNode(dst < src ? destination : source);
   }
 }
 
@@ -153,31 +141,6 @@ void TreePool::dealloc(TreeNode * node, size_t size) {
 
   // Step 2: Update m_nodeForIdentifier for all nodes downstream
   updateNodeForIdentifierFromNode(node);
-}
-
-bool TreePool::insert(char * destination, char * source, size_t length) {
-  if (source == destination || (destination > source && destination < source + length)) {
-    return false;
-  }
-
-  assert(length % 4 == 0);
-  assert((long)source % 4 == 0);
-  assert((long)destination % 4 == 0);
-
-  uint32_t * src = reinterpret_cast<uint32_t *>(source);
-  uint32_t * dst = reinterpret_cast<uint32_t *>(destination);
-  size_t len = length/4;
-  char tempBuffer[BufferSize];
-  uint32_t * tmp = reinterpret_cast<uint32_t *>(tempBuffer);
-  memmove32(reinterpret_cast<uint32_t *>(tmp), src, len);
-  if (dst < src) {
-    memmove32(dst + len, dst, src - dst);
-    memmove32(dst, tmp, len);
-  } else {
-    memmove32(src, src + len, dst - (src + len));
-    memmove32(dst - len, tmp, len);
-  }
-  return true;
 }
 
 void TreePool::addGhostChildrenAndRename(TreeNode * node) {

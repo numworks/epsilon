@@ -34,6 +34,7 @@ objs += $(addprefix poincare/src/,\
 objs += $(addprefix poincare/src/,\
   init.o\
   exception_checkpoint.o\
+  helpers.o\
 )
 
 objs += $(addprefix poincare/src/,\

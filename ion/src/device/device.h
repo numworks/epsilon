@@ -8,6 +8,9 @@ void init();
 void shutdown();
 
 void initFPU();
+#if 0
+void initMPU();
+#endif
 void coreReset();
 void jumpReset();
 

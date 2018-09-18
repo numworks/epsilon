@@ -24,7 +24,6 @@ public:
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
   }
-  void reload();
   bool hasText() const { return layout().hasText(); }
   int serialize(char * buffer, int bufferLength) { return layout().serialize(buffer, bufferLength); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
@@ -53,6 +52,7 @@ public:
   }
 
 protected:
+  void reload(KDSize previousSize);
   virtual bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
 

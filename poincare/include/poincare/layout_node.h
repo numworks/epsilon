@@ -36,6 +36,7 @@ public:
   KDPoint absoluteOrigin();
   KDSize layoutSize();
   KDCoordinate baseline();
+  //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
 
   // SerializationHelperInterface

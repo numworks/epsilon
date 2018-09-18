@@ -9,18 +9,18 @@ public:
   };
   class SCR : Register32 {
   public:
-    enum class Burst {
+    enum class Burst : uint8_t {
       Single = 0,
       Incremental4 = 1,
       Incremental8 = 2,
       Incremental16 = 3
     };
-    enum class DataSize {
+    enum class DataSize : uint8_t {
       Byte = 0,
       HalfWord = 1,
       Word = 2
     };
-    enum class Direction {
+    enum class Direction : uint8_t {
       PeripheralToMemory = 0,
       MemoryToPeripheral = 1,
       MemoryToMemory = 2

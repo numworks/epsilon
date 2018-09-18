@@ -40,5 +40,6 @@ monitor reset halt
 break init
 break abort
 break __assert
+watch *(int *)(&_stack_end)
 
 continue

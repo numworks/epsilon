@@ -28,15 +28,15 @@ void RationalNode::setDigits(const native_uint_t * numeratorDigits, uint8_t nume
 }
 
 Integer RationalNode::signedNumerator() const {
-  return Integer((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative);
+  return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative);
 }
 
 Integer RationalNode::unsignedNumerator() const {
-  return Integer((native_uint_t *)m_digits, m_numberOfDigitsNumerator, false);
+  return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, false);
 }
 
 Integer RationalNode::denominator() const {
-  return Integer(((native_uint_t *)m_digits+m_numberOfDigitsNumerator), m_numberOfDigitsDenominator, false);
+  return Integer::BuildInteger(((native_uint_t *)m_digits+m_numberOfDigitsNumerator), m_numberOfDigitsDenominator, false);
 }
 
 // Tree Node

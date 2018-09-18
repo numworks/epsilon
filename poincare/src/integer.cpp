@@ -78,6 +78,14 @@ void Integer::freeDigits(native_uint_t * digits) {
 
 // Constructor
 
+Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) {
+  native_uint_t * newDigits = allocDigits(numberOfDigits);
+  for (uint8_t i = 0; i < numberOfDigits; i++) {
+    newDigits[i] = digits[i];
+  }
+  return Integer(newDigits, numberOfDigits, negative, enableOverflow);
+}
+
 /* WARNING: This constructor takes ownership of the digits array! */
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) :
   m_negative(numberOfDigits == 0 ? false : negative),
@@ -181,11 +189,11 @@ Integer::Integer(const Integer& other) {
   if (other.usesImmediateDigit()) {
     m_digit = other.m_digit;
   } else {
-    native_uint_t * digits = allocDigits(other.m_numberOfDigits);
+    native_uint_t * newDigits = allocDigits(other.m_numberOfDigits);
     for (uint8_t i = 0; i < other.m_numberOfDigits; i++) {
-      digits[i] = other.m_digits[i];
+      newDigits[i] = other.m_digits[i];
     }
-    m_digits = digits;
+    m_digits = newDigits;
   }
   m_numberOfDigits = other.m_numberOfDigits;
   m_negative = other.m_negative;

@@ -34,11 +34,12 @@ public:
   /* Constructors & Destructors */
   Integer(native_int_t i = 0);
   Integer(double_native_int_t i);
-  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(const char * digits, size_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
   static Integer Overflow(bool negative) { return Integer((native_uint_t *)nullptr, k_maxNumberOfDigits+1, negative); }
+  static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   ~Integer();
+
 
 #if POINCARE_TREE_LOG
   void log(std::ostream & stream = std::cout) const;
@@ -101,6 +102,8 @@ public:
   constexpr static int k_maxNumberOfIntegerSimutaneously = 16;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
+
+  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
 
   // Dynamic allocation
   /* In order to guarantee the potential existence of 16 Integers simutaneously,

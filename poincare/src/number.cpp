@@ -21,10 +21,10 @@ double NumberNode::doubleApproximation() const {
     case Type::Infinity:
       return sign() == Sign::Negative ? -INFINITY : INFINITY;
     case Type::Float:
-      if (sizeof(*this) == sizeof(FloatNode<float>)) {
+      if (size() == sizeof(FloatNode<float>)) {
         return static_cast<const FloatNode<float> *>(this)->value();
       } else {
-        assert(sizeof(*this) == sizeof(FloatNode<double>));
+        assert(size() == sizeof(FloatNode<double>));
         return static_cast<const FloatNode<double> *>(this)->value();
       }
     case Type::Rational:

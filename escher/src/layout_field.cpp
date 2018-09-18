@@ -68,8 +68,7 @@ void LayoutField::ContentView::layoutCursorSubview() {
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
 }
 
-void LayoutField::reload() {
-  KDSize previousSize = minimalSizeForOptimalDisplay();
+void LayoutField::reload(KDSize previousSize) {
   layout().invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
@@ -147,6 +146,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   bool didHandleEvent = false;
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
+  KDSize previousSize = minimalSizeForOptimalDisplay();
   if (privateHandleMoveEvent(event, &moveEventChangedLayout)) {
     if (!isEditing()) {
       setEditing(true);
@@ -163,7 +163,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       m_contentView.cursorPositionChanged();
       scrollToCursor();
     } else {
-      reload();
+      reload(previousSize);
     }
     return true;
   }
@@ -274,6 +274,8 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Layout pointedLayoutR, bo
     return;
   }
 
+  KDSize previousSize = minimalSizeForOptimalDisplay();
+
   // Handle empty layouts
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
 
@@ -305,7 +307,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Layout pointedLayoutR, bo
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
 
   // Reload
-  reload();
+  reload(previousSize);
   if (!layoutWillBeMerged) {
     scrollRightOfLayout(layoutR);
   } else {

@@ -10,7 +10,7 @@ class LayoutFieldDelegate : public ::LayoutFieldDelegate {
 public:
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutReference layoutR, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
   Toolbox * toolboxForLayoutField(LayoutField * layoutField) override;

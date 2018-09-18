@@ -66,8 +66,8 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
 }
 
 bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  EmptyLayoutReference thisRef(this);
-  LayoutReference siblingRef(sibling); // Create the reference now, as the node might be moved
+  EmptyLayout thisRef(this);
+  Layout siblingRef(sibling); // Create the reference now, as the node might be moved
   if (m_color == Color::Grey) {
     /* The parent is a MatrixLayout, and the current empty row or column is
      * being filled in, so add a new empty row or column. */
@@ -94,9 +94,9 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor
   }
 }
 
-EmptyLayoutReference::EmptyLayoutReference(const EmptyLayoutNode * n) : LayoutReference(n) {}
-EmptyLayoutReference::EmptyLayoutReference(EmptyLayoutNode::Color color, bool visible, KDText::FontSize fontSize, bool margins) :
-  LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
+EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
+EmptyLayout::EmptyLayout(EmptyLayoutNode::Color color, bool visible, KDText::FontSize fontSize, bool margins) :
+  Layout(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
 {
   node()->setColor(color);
   node()->setVisible(visible);

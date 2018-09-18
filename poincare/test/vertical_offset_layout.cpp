@@ -9,9 +9,9 @@ using namespace Poincare;
 QUIZ_CASE(poincare_vertical_offset_layout_serialize) {
   assert_parsed_expression_layout_serialize_to_self("(2)^(3)");
 
-  HorizontalLayoutReference layout = HorizontalLayoutReference(
-    CharLayoutReference('2'),
-      VerticalOffsetLayoutReference(
+  HorizontalLayout layout = HorizontalLayout(
+    CharLayout('2'),
+      VerticalOffsetLayout(
         LayoutHelper::String("4+5", 3),
         VerticalOffsetLayoutNode::Type::Superscript
       )

@@ -161,7 +161,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   return true;
 }
 
-bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutReference layout, Ion::Events::Event event) {
+bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
   reloadButtonMessage();
   return true;
 }

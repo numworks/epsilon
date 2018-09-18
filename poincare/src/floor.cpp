@@ -10,8 +10,8 @@
 
 namespace Poincare {
 
-LayoutReference FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return FloorLayoutReference(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return FloorLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

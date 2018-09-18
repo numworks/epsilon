@@ -9,7 +9,7 @@ namespace Shared {
 class ScrollableExactApproximateExpressionsCell : public ::EvenOddCell, public Responder {
 public:
   ScrollableExactApproximateExpressionsCell(Responder * parentResponder = nullptr);
-  void setLayouts(Poincare::LayoutReference approximateLayout, Poincare::LayoutReference exactLayout) {
+  void setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout) {
     return m_view.setLayouts(approximateLayout, exactLayout);
   }
   void setEqualMessage(I18n::Message equalSignMessage) {
@@ -22,7 +22,7 @@ public:
   Responder * responder() override {
     return this;
   }
-  Poincare::LayoutReference layoutRef() const override { return m_view.layoutRef(); }
+  Poincare::Layout layout() const override { return m_view.layout(); }
   void didBecomeFirstResponder() override;
   constexpr static KDCoordinate k_margin = 5;
 private:

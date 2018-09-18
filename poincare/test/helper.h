@@ -29,4 +29,4 @@ void assert_parsed_expression_serialize_to(Poincare::Expression expression, cons
 
 // Layouts
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout);
-void assert_expression_layout_serialize_to(Poincare::LayoutReference layout, const char * serialization);
+void assert_expression_layout_serialize_to(Poincare::Layout layout, const char * serialization);

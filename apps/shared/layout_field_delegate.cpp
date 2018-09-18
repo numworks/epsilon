@@ -12,7 +12,7 @@ bool LayoutFieldDelegate::layoutFieldDidReceiveEvent(LayoutField * layoutField, 
   return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool LayoutFieldDelegate::layoutFieldDidFinishEditing(LayoutField * layoutField, LayoutReference layoutR, Ion::Events::Event event) {
+bool LayoutFieldDelegate::layoutFieldDidFinishEditing(LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {
   return expressionFieldDelegateApp()->layoutFieldDidFinishEditing(layoutField, layoutR, event);
 }
 

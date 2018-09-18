@@ -34,9 +34,9 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class RightParenthesisLayoutReference : public LayoutReference {
+class RightParenthesisLayout : public Layout {
 public:
-  RightParenthesisLayoutReference();
+  RightParenthesisLayout();
 };
 
 }

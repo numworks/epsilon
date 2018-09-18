@@ -53,7 +53,7 @@ private:
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);
     const Poincare::Expression expressionForIndex(int index);
-    Poincare::LayoutReference layoutRefForIndex(int index);
+    Poincare::Layout layoutForIndex(int index);
     Poincare::GlobalContext * m_context;
     Responder * m_sender;
     int m_firstSelectedRow;

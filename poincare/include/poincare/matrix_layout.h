@@ -3,15 +3,15 @@
 
 #include <poincare/grid_layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 
 namespace Poincare {
 
-class MatrixLayoutReference;
+class MatrixLayout;
 
 class MatrixLayoutNode : public GridLayoutNode {
-  friend class LayoutReference;
-  friend class MatrixLayoutReference;
+  friend class Layout;
+  friend class MatrixLayout;
 public:
   using GridLayoutNode::GridLayoutNode;
 
@@ -54,17 +54,17 @@ private:
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
-class MatrixLayoutReference : public GridLayoutReference {
+class MatrixLayout : public GridLayout {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutReference(const MatrixLayoutNode * n);
-  MatrixLayoutReference();
-  MatrixLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4);
+  MatrixLayout(const MatrixLayoutNode * n);
+  MatrixLayout();
+  MatrixLayout(Layout l1, Layout l2, Layout l3, Layout l4);
   bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }
 private:
-  MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(LayoutReference::node()); }
+  MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(Layout::node()); }
 };
 
 }

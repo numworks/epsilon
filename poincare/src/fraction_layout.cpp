@@ -90,20 +90,20 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->layoutNode() == denominatorLayout()) {
     /* Case: Left of the denominator. Replace the fraction with a horizontal
      * juxtaposition of the numerator and the denominator. */
-    LayoutReference thisRef = LayoutReference(this);
+    Layout thisRef = Layout(this);
     assert(cursor->position() == LayoutCursor::Position::Left);
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
       /* Case: Numerator and denominator are empty. Move the cursor and replace
        * the fraction with an empty layout. */
-      thisRef.replaceWith(EmptyLayoutReference(), cursor);
+      thisRef.replaceWith(EmptyLayout(), cursor);
       // WARNING: Do no use "this" afterwards
       return;
     }
     /* Else, replace the fraction with a juxtaposition of the numerator and
      * denominator. Place the cursor in the middle of the juxtaposition, which
      * is right of the numerator. */
-    LayoutReference numeratorRef = LayoutReference(numeratorLayout());
-    LayoutReference denominatorRef = LayoutReference(denominatorLayout());
+    Layout numeratorRef = Layout(numeratorLayout());
+    Layout denominatorRef = Layout(denominatorLayout());
     thisRef.replaceChildWithGhostInPlace(numeratorRef);
     // WARNING: Do no use "this" afterwards
     thisRef.replaceChildWithGhostInPlace(denominatorRef);
@@ -216,8 +216,8 @@ void FractionLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize().width()-2*Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
 }
 
-FractionLayoutReference::FractionLayoutReference(LayoutReference numerator, LayoutReference denominator) :
-  LayoutReference(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
+FractionLayout::FractionLayout(Layout numerator, Layout denominator) :
+  Layout(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
 {
   replaceChildAtIndexInPlace(0, numerator);
   replaceChildAtIndexInPlace(1, denominator);

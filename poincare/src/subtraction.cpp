@@ -30,7 +30,7 @@ bool SubtractionNode::childNeedsParenthesis(const SerializationHelperInterface *
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
 }
 
-LayoutReference SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Infix(Subtraction(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

@@ -86,8 +86,8 @@ void Sequence::setType(Type type) {
 
 void Sequence::setInitialRank(int rank) {
   m_initialRank = rank;
-  m_firstInitialConditionName = LayoutReference();
-  m_secondInitialConditionName = LayoutReference();
+  m_firstInitialConditionName = Layout();
+  m_secondInitialConditionName = Layout();
 }
 
 Poincare::Expression Sequence::firstInitialConditionExpression(Context * context) const {
@@ -104,7 +104,7 @@ Poincare::Expression Sequence::secondInitialConditionExpression(Context * contex
   return m_secondInitialConditionExpression;
 }
 
-Poincare::LayoutReference Sequence::firstInitialConditionLayout() {
+Poincare::Layout Sequence::firstInitialConditionLayout() {
   if (m_firstInitialConditionLayout.isUninitialized()) {
     Expression nonSimplifedExpression = Expression::parse(m_firstInitialConditionText);
     if (!nonSimplifedExpression.isUninitialized()) {
@@ -114,7 +114,7 @@ Poincare::LayoutReference Sequence::firstInitialConditionLayout() {
   return m_firstInitialConditionLayout;
 }
 
-Poincare::LayoutReference Sequence::secondInitialConditionLayout() {
+Poincare::Layout Sequence::secondInitialConditionLayout() {
   if (m_secondInitialConditionLayout.isUninitialized()) {
     Expression nonSimplifedExpression = Expression::parse(m_secondInitialConditionText);
     if (!nonSimplifedExpression.isUninitialized()) {
@@ -127,13 +127,13 @@ Poincare::LayoutReference Sequence::secondInitialConditionLayout() {
 void Sequence::setFirstInitialConditionContent(const char * c) {
   strlcpy(m_firstInitialConditionText, c, sizeof(m_firstInitialConditionText));
   m_firstInitialConditionExpression = Expression();
-  m_firstInitialConditionLayout = LayoutReference();
+  m_firstInitialConditionLayout = Layout();
 }
 
 void Sequence::setSecondInitialConditionContent(const char * c) {
   strlcpy(m_secondInitialConditionText, c, sizeof(m_secondInitialConditionText));
   m_secondInitialConditionExpression = Expression();
-  m_secondInitialConditionLayout = LayoutReference();
+  m_secondInitialConditionLayout = Layout();
 }
 
 char Sequence::symbol() const {
@@ -144,65 +144,65 @@ int Sequence::numberOfElements() {
   return (int)m_type + 1;
 }
 
-Poincare::LayoutReference Sequence::nameLayout() {
+Poincare::Layout Sequence::nameLayout() {
   if (m_nameLayout.isUninitialized()) {
-    m_nameLayout = HorizontalLayoutReference(
-        CharLayoutReference(name()[0], KDText::FontSize::Small),
-        VerticalOffsetLayoutReference(CharLayoutReference('n', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Subscript)
+    m_nameLayout = HorizontalLayout(
+        CharLayout(name()[0], KDText::FontSize::Small),
+        VerticalOffsetLayout(CharLayout('n', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   return m_nameLayout;
 }
 
-Poincare::LayoutReference Sequence::definitionName() {
+Poincare::Layout Sequence::definitionName() {
   if (m_definitionName.isUninitialized()) {
     if (m_type == Type::Explicit) {
-      m_definitionName = HorizontalLayoutReference(
-        CharLayoutReference(name()[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutReference(LayoutHelper::String("n", 1, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      m_definitionName = HorizontalLayout(
+        CharLayout(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayout(LayoutHelper::String("n", 1, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
       );
     }
     if (m_type == Type::SingleRecurrence) {
-      m_definitionName = HorizontalLayoutReference(
-        CharLayoutReference(name()[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutReference(LayoutHelper::String("n+1", 3, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      m_definitionName = HorizontalLayout(
+        CharLayout(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayout(LayoutHelper::String("n+1", 3, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
       );
     }
     if (m_type == Type::DoubleRecurrence) {
-      m_definitionName = HorizontalLayoutReference(
-        CharLayoutReference(name()[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutReference(LayoutHelper::String("n+2", 3, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      m_definitionName = HorizontalLayout(
+        CharLayout(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayout(LayoutHelper::String("n+2", 3, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
       );
     }
   }
   return m_definitionName;
 }
 
-Poincare::LayoutReference Sequence::firstInitialConditionName() {
+Poincare::Layout Sequence::firstInitialConditionName() {
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(m_initialRank).serialize(buffer, k_initialRankNumberOfDigits+1);
   if (m_firstInitialConditionName.isUninitialized()
       && (m_type == Type::SingleRecurrence
        || m_type == Type::DoubleRecurrence))
   {
-    LayoutReference indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);
-    m_firstInitialConditionName = HorizontalLayoutReference(
-        CharLayoutReference(name()[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutReference(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
+    Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);
+    m_firstInitialConditionName = HorizontalLayout(
+        CharLayout(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayout(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   return m_firstInitialConditionName;
 }
 
-Poincare::LayoutReference Sequence::secondInitialConditionName() {
+Poincare::Layout Sequence::secondInitialConditionName() {
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(m_initialRank+1).serialize(buffer, k_initialRankNumberOfDigits+1);
   if (m_secondInitialConditionName.isUninitialized()) {
     if (m_type == Type::DoubleRecurrence) {
-      LayoutReference indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);
-      m_secondInitialConditionName = HorizontalLayoutReference(
-        CharLayoutReference(name()[0], KDText::FontSize::Large),
-        VerticalOffsetLayoutReference(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
+      Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);
+      m_secondInitialConditionName = HorizontalLayout(
+        CharLayout(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayout(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
       );
     }
   }
@@ -310,14 +310,14 @@ double Sequence::sumBetweenBounds(double start, double end, Context * context) c
 
 void Sequence::tidy() {
   Function::tidy();
-  m_firstInitialConditionLayout = LayoutReference();
-  m_secondInitialConditionLayout = LayoutReference();
+  m_firstInitialConditionLayout = Layout();
+  m_secondInitialConditionLayout = Layout();
   m_firstInitialConditionExpression = Expression();
   m_secondInitialConditionExpression = Expression();
-  m_nameLayout = LayoutReference();
-  m_definitionName = LayoutReference();
-  m_firstInitialConditionName = LayoutReference();
-  m_secondInitialConditionName = LayoutReference();
+  m_nameLayout = Layout();
+  m_definitionName = Layout();
+  m_firstInitialConditionName = Layout();
+  m_secondInitialConditionName = Layout();
 }
 
 template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;

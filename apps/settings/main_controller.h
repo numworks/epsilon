@@ -35,7 +35,7 @@ private:
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithChevronAndExpression m_complexFormatCell;
   MessageTableCellWithGauge m_brightnessCell;
-  Poincare::LayoutReference m_complexFormatLayout;
+  Poincare::Layout m_complexFormatLayout;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;
   SubController m_subController;

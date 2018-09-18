@@ -24,11 +24,11 @@ public:
   const char * exactOutputText();
   const char * approximateOutputText();
   Poincare::Expression input();
-  Poincare::LayoutReference createInputLayout();
+  Poincare::Layout createInputLayout();
   Poincare::Expression approximateOutput(Poincare::Context * context);
   Poincare::Expression exactOutput(Poincare::Context * context);
-  Poincare::LayoutReference createExactOutputLayout(Poincare::Context * context);
-  Poincare::LayoutReference createApproximateOutputLayout(Poincare::Context * context);
+  Poincare::Layout createExactOutputLayout(Poincare::Context * context);
+  Poincare::Layout createApproximateOutputLayout(Poincare::Context * context);
   bool isEmpty();
   void tidy();
   bool shouldOnlyDisplayApproximateOutput(Poincare::Context * context);

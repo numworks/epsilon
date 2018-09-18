@@ -7,16 +7,16 @@ using namespace Poincare;
 
 namespace Regression {
 
-LayoutReference LinearModel::layout() {
+Layout LinearModel::layout() {
   if (m_layout.isUninitialized()) {
-    const LayoutReference layoutChildren[] = {
-      CharLayoutReference('a', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('X', KDText::FontSize::Small),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('b', KDText::FontSize::Small),
+    const Layout layoutChildren[] = {
+      CharLayout('a', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('X', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('b', KDText::FontSize::Small),
     };
-    m_layout = HorizontalLayoutReference(layoutChildren, 5);
+    m_layout = HorizontalLayout(layoutChildren, 5);
   }
   return m_layout;
 }

@@ -24,7 +24,7 @@ public:
 private:
   // Layout
   bool childNeedsParenthesis(const SerializationHelperInterface * child) const override;
-  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;

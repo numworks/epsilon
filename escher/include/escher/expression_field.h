@@ -5,7 +5,7 @@
 #include <escher/layout_field_delegate.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 
 class ExpressionField : public Responder, public View {
 public:

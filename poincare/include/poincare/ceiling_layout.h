@@ -27,9 +27,9 @@ protected:
   bool renderBottomBar() const override { return false; }
 };
 
-class CeilingLayoutReference : public LayoutReference {
+class CeilingLayout : public Layout {
 public:
-  explicit CeilingLayoutReference(LayoutReference l) : LayoutReference(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>()) {
+  explicit CeilingLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);
   }
 };

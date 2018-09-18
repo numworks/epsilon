@@ -6,28 +6,28 @@ using namespace Poincare;
 
 namespace Regression {
 
-LayoutReference LogisticModel::layout() {
+Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
-    const LayoutReference exponentLayoutChildren[] = {
-      CharLayoutReference('-', KDText::FontSize::Small),
-      CharLayoutReference('b', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('X', KDText::FontSize::Small)
+    const Layout exponentLayoutChildren[] = {
+      CharLayout('-', KDText::FontSize::Small),
+      CharLayout('b', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('X', KDText::FontSize::Small)
     };
-    const LayoutReference layoutChildren[] = {
-      CharLayoutReference('1', KDText::FontSize::Small),
-      CharLayoutReference('+', KDText::FontSize::Small),
-      CharLayoutReference('a', KDText::FontSize::Small),
-      CharLayoutReference(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayoutReference('e', KDText::FontSize::Small),
-      VerticalOffsetLayoutReference(
-          HorizontalLayoutReference(exponentLayoutChildren, 4),
+    const Layout layoutChildren[] = {
+      CharLayout('1', KDText::FontSize::Small),
+      CharLayout('+', KDText::FontSize::Small),
+      CharLayout('a', KDText::FontSize::Small),
+      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayout('e', KDText::FontSize::Small),
+      VerticalOffsetLayout(
+          HorizontalLayout(exponentLayoutChildren, 4),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = FractionLayoutReference(
-       CharLayoutReference('c', KDText::FontSize::Small),
-       HorizontalLayoutReference(layoutChildren, 6)
+    m_layout = FractionLayout(
+       CharLayout('c', KDText::FontSize::Small),
+       HorizontalLayout(layoutChildren, 6)
       );
   }
   return m_layout;

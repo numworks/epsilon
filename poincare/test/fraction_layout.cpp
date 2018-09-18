@@ -12,7 +12,7 @@ QUIZ_CASE(poincare_fraction_layout_create) {
    * 12|34+5 -> "Divide" -> --- + 5
    *                        |34
    * */
-  HorizontalLayoutReference layout = static_cast<HorizontalLayoutReference>(LayoutHelper::String("1234+5", 6));
+  HorizontalLayout layout = static_cast<HorizontalLayout>(LayoutHelper::String("1234+5", 6));
   LayoutCursor cursor(layout.childAtIndex(2), LayoutCursor::Position::Left);
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_expression_layout_serialize_to(layout, "(12)/(34)+5");
@@ -25,8 +25,8 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
    * --- -> "BackSpace" -> 12|34
    * |34
    * */
-  HorizontalLayoutReference layout1 = HorizontalLayoutReference(
-      FractionLayoutReference(
+  HorizontalLayout layout1 = HorizontalLayout(
+      FractionLayout(
         LayoutHelper::String("12", 2),
         LayoutHelper::String("34", 2)
       )
@@ -40,12 +40,12 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
    * 1 + --- -> "BackSpace" -> 1+|3
    *     |3
    * */
-  HorizontalLayoutReference layout2 = HorizontalLayoutReference(
-      CharLayoutReference('1'),
-      CharLayoutReference('+'),
-      FractionLayoutReference(
-        EmptyLayoutReference(),
-        CharLayoutReference('3')
+  HorizontalLayout layout2 = HorizontalLayout(
+      CharLayout('1'),
+      CharLayout('+'),
+      FractionLayout(
+        EmptyLayout(),
+        CharLayout('3')
       )
     );
   LayoutCursor cursor2(layout2.childAtIndex(2).childAtIndex(1), LayoutCursor::Position::Left);
@@ -55,8 +55,8 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
 }
 
 QUIZ_CASE(poincare_fraction_layout_serialize) {
-  FractionLayoutReference layout = FractionLayoutReference(
-      CharLayoutReference('1'),
+  FractionLayout layout = FractionLayout(
+      CharLayout('1'),
       LayoutHelper::String("2+3", 3)
     );
   assert_expression_layout_serialize_to(layout, "(1)/(2+3)");

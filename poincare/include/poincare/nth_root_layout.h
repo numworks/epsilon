@@ -3,14 +3,13 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
-class NthRootLayoutReference;
+class NthRootLayout;
 
 class NthRootLayoutNode : public LayoutNode {
-  friend class NthRootLayoutReference;
+  friend class NthRootLayout;
 public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
@@ -66,12 +65,12 @@ private:
   bool m_hasIndex;
 };
 
-class NthRootLayoutReference : public LayoutReference {
+class NthRootLayout : public Layout {
 public:
-  explicit NthRootLayoutReference(LayoutReference radicand);
-  NthRootLayoutReference(LayoutReference radicand, LayoutReference index);
+  explicit NthRootLayout(Layout radicand);
+  NthRootLayout(Layout radicand, Layout index);
 private:
-  NthRootLayoutReference();
+  NthRootLayout();
 };
 
 }

@@ -225,7 +225,7 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
   if (m_numberOfChildren > 0) {
-    HorizontalLayoutReference thisRef = HorizontalLayoutReference(this);
+    HorizontalLayout thisRef = HorizontalLayout(this);
     thisRef.removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), cursor);
     *currentNumberOfChildren = thisRef.numberOfChildren();
   }
@@ -233,7 +233,7 @@ bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int 
 }
 
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  HorizontalLayoutReference thisRef(this);
+  HorizontalLayout thisRef(this);
   int newChildIndex = cursor->position() == LayoutCursor::Position::Left ? 0 : numberOfChildren();
   thisRef.addOrMergeChildAtIndex(sibling, newChildIndex, true, cursor);
   return false;
@@ -244,7 +244,7 @@ bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor
     assert(childAtIndex(0) == l);
     LayoutNode * p = parent();
     if (p != nullptr) {
-      LayoutReference(p).removeChild(HorizontalLayoutReference(this), cursor);
+      Layout(p).removeChild(HorizontalLayout(this), cursor);
       // WARNING: Do not call "this" afterwards
       return false;
     }
@@ -257,7 +257,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
    * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
 
   if (!force && index == 0 && numberOfChildren() > 0 && childAtIndex(0)->mustHaveLeftSibling()) {
-    LayoutReference(this).addChildAtIndex(EmptyLayoutReference(), 0, numberOfChildren(), cursor);
+    Layout(this).addChildAtIndex(EmptyLayout(), 0, numberOfChildren(), cursor);
   }
 }
 
@@ -268,7 +268,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   if (force) {
     return true;
   }
-  HorizontalLayoutReference thisRef(this);
+  HorizontalLayout thisRef(this);
   int oldChildIndex = indexOfChild(oldChild);
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
@@ -277,10 +277,10 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
       thisRef.removeChild(oldChild, nullptr);
       if (cursor != nullptr) {
         if (oldChildIndex == 0) {
-          cursor->setLayoutReference(thisRef);
+          cursor->setLayout(thisRef);
           cursor->setPosition(LayoutCursor::Position::Left);
         } else {
-          cursor->setLayoutReference(thisRef.childAtIndex(oldChildIndex -1));
+          cursor->setLayout(thisRef.childAtIndex(oldChildIndex -1));
           cursor->setPosition(LayoutCursor::Position::Right);
         }
       }
@@ -300,7 +300,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
     thisRef.removeChild(oldChild, nullptr);
     // WARNING: do not call "this" afterwards
     if (cursor != nullptr) {
-      cursor->setLayoutReference(thisRef);
+      cursor->setLayout(thisRef);
       cursor->setPosition(LayoutCursor::Position::Left);
     }
     return false;
@@ -336,7 +336,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
       }
     }
     bool oldChildRemovedAtMerge = oldChild->isEmpty();
-    thisRef.mergeChildrenAtIndex(HorizontalLayoutReference(static_cast<HorizontalLayoutNode *>(newChild)), indexForInsertion + 1, true);
+    thisRef.mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(newChild)), indexForInsertion + 1, true);
     // WARNING: do not call "this" afterwards
     if (!oldChildRemovedAtMerge) {
       thisRef.removeChildAtIndex(indexForInsertion, cursor);
@@ -350,55 +350,55 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   return true;
 }
 
-// HorizontalLayoutReference
+// HorizontalLayout
 
-HorizontalLayoutReference::HorizontalLayoutReference() : LayoutReference(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
+HorizontalLayout::HorizontalLayout() : Layout(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
 
-HorizontalLayoutReference::HorizontalLayoutReference(LayoutReference l) : HorizontalLayoutReference() {
+HorizontalLayout::HorizontalLayout(Layout l) : HorizontalLayout() {
   addChildAtIndexInPlace(l, 0, 0);
 }
 
-HorizontalLayoutReference::HorizontalLayoutReference(LayoutReference l1, LayoutReference l2) : HorizontalLayoutReference() {
+HorizontalLayout::HorizontalLayout(Layout l1, Layout l2) : HorizontalLayout() {
   addChildAtIndexInPlace(l1, 0, 0);
   addChildAtIndexInPlace(l2, 1, 1);
 }
-HorizontalLayoutReference::HorizontalLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3) : HorizontalLayoutReference() {
+HorizontalLayout::HorizontalLayout(Layout l1, Layout l2, Layout l3) : HorizontalLayout() {
   addChildAtIndexInPlace(l1, 0, 0);
   addChildAtIndexInPlace(l2, 1, 1);
   addChildAtIndexInPlace(l3, 2, 2);
 }
-HorizontalLayoutReference::HorizontalLayoutReference(LayoutReference l1, LayoutReference l2, LayoutReference l3, LayoutReference l4) : HorizontalLayoutReference() {
+HorizontalLayout::HorizontalLayout(Layout l1, Layout l2, Layout l3, Layout l4) : HorizontalLayout() {
   addChildAtIndexInPlace(l1, 0, 0);
   addChildAtIndexInPlace(l2, 1, 1);
   addChildAtIndexInPlace(l3, 2, 2);
   addChildAtIndexInPlace(l4, 3, 3);
 }
-HorizontalLayoutReference::HorizontalLayoutReference(const LayoutReference * children, size_t numberOfChildren) : HorizontalLayoutReference() {
+HorizontalLayout::HorizontalLayout(const Layout * children, size_t numberOfChildren) : HorizontalLayout() {
   for (size_t i = 0; i < numberOfChildren; i++) {
     addChildAtIndexInPlace(children[i], i, i);
   }
 }
 
-void HorizontalLayoutReference::addOrMergeChildAtIndex(LayoutReference l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   if (l.isHorizontal()) {
-    mergeChildrenAtIndex(HorizontalLayoutReference(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
+    mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
     addChildAtIndex(l, index, numberOfChildren(), cursor, removeEmptyChildren);
   }
 }
 
-void HorizontalLayoutReference::addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren) {
+void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren) {
   if (!removeEmptyChildren
       || !l.isEmpty()
       || numberOfChildren() == 0
       || (index < numberOfChildren()
         && childAtIndex(index).mustHaveLeftSibling()))
   {
-    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
+    Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 }
 
-void HorizontalLayoutReference::mergeChildrenAtIndex(HorizontalLayoutReference h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   int newIndex = index;
 
   // Remove h if it is a child
@@ -423,7 +423,7 @@ void HorizontalLayoutReference::mergeChildrenAtIndex(HorizontalLayoutReference h
   assert(newIndex >= 0 && newIndex <= numberOfChildren());
 
   // Prepare the next cursor position
-  LayoutReference nextPointedLayout;
+  Layout nextPointedLayout;
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
   if (newIndex < numberOfChildren()) {
     nextPointedLayout = childAtIndex(newIndex);
@@ -457,18 +457,18 @@ void HorizontalLayoutReference::mergeChildrenAtIndex(HorizontalLayoutReference h
 
   // Set the cursor
   if (cursor != nullptr) {
-    cursor->setLayoutReference(nextPointedLayout);
+    cursor->setLayout(nextPointedLayout);
     cursor->setPosition(nextPosition);
   }
 }
 
-void HorizontalLayoutReference::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
+void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
   int childrenCount = currentNumberOfChildren == nullptr ? numberOfChildren() : *currentNumberOfChildren;
   assert(*index >= 0 && *index <= childrenCount);
   /* If empty, remove the child that would be on the right of the inserted
    * layout. */
   if (*index < childrenCount) {
-    LayoutReference c = childAtIndex(*index);
+    Layout c = childAtIndex(*index);
     if (c.isEmpty()) {
       removeChild(c, cursor, true);
       childrenCount--;
@@ -480,7 +480,7 @@ void HorizontalLayoutReference::removeEmptyChildBeforeInsertionAtIndex(int * ind
   /* If empty, remove the child that would be on the left of the inserted
    * layout. */
   if (shouldRemoveOnLeft && *index - 1 >= 0 && *index - 1 < childrenCount) {
-    LayoutReference c = childAtIndex(*index - 1);
+    Layout c = childAtIndex(*index - 1);
     if (c.isEmpty()) {
       removeChild(c, cursor, true);
       *index = *index - 1;

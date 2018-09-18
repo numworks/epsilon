@@ -17,7 +17,7 @@ Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::An
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
 }
 
-LayoutReference CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

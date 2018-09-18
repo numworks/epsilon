@@ -58,7 +58,7 @@ private:
   EquationStore * m_equationStore;
   EvenOddBufferTextCell m_symbolCells[EquationStore::k_maxNumberOfSolutions];
   EvenOddExpressionCell m_deltaCell;
-  Poincare::LayoutReference m_delta2Layout;
+  Poincare::Layout m_delta2Layout;
   Shared::ScrollableExactApproximateExpressionsCell m_exactValueCells[EquationStore::k_maxNumberOfExactSolutions];
   EvenOddBufferTextCell m_approximateValueCells[EquationStore::k_maxNumberOfApproximateSolutions];
   ContentView m_contentView;

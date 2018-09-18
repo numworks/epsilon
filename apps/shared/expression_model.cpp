@@ -11,7 +11,7 @@ namespace Shared {
 ExpressionModel::ExpressionModel() :
   m_text{0},
   m_expression(),
-  m_layoutRef()
+  m_layout()
 {
 }
 
@@ -26,12 +26,12 @@ Poincare::Expression ExpressionModel::expression(Poincare::Context * context) co
   return m_expression;
 }
 
-LayoutReference ExpressionModel::layoutRef() {
-  if (m_layoutRef.isUninitialized()) {
+Layout ExpressionModel::layout() {
+  if (m_layout.isUninitialized()) {
     Expression nonSimplifiedExpression = Expression::parse(m_text);
-    m_layoutRef = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
+    m_layout = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
   }
-  return m_layoutRef;
+  return m_layout;
 }
 
 bool ExpressionModel::isDefined() {
@@ -47,12 +47,12 @@ void ExpressionModel::setContent(const char * c) {
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
    * the m_layout and m_expression. */
-  m_layoutRef = LayoutReference();
+  m_layout = Layout();
   m_expression = Expression();
 }
 
 void ExpressionModel::tidy() {
-  m_layoutRef = LayoutReference();
+  m_layout = Layout();
   m_expression = Expression();
 }
 

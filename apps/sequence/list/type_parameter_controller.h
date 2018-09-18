@@ -31,7 +31,7 @@ private:
   ExpressionTableCellWithPointer m_expliciteCell;
   ExpressionTableCellWithPointer m_singleRecurrenceCell;
   ExpressionTableCellWithPointer m_doubleRecurenceCell;
-  Poincare::LayoutReference m_layouts[k_totalNumberOfCell];
+  Poincare::Layout m_layouts[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   SequenceStore * m_sequenceStore;
   Sequence * m_sequence;

@@ -21,8 +21,8 @@ int IntegralNode::polynomialDegree(char symbolName) const {
   return ExpressionNode::polynomialDegree(symbolName);
 }
 
-LayoutReference IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return IntegralLayoutReference(
+Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return IntegralLayout(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));

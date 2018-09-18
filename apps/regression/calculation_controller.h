@@ -69,7 +69,7 @@ private:
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool hasLinearRegression() const;
   int maxNumberOfCoefficients() const;
-  Poincare::LayoutReference m_r2Layout;
+  Poincare::Layout m_r2Layout;
   SelectableTableView m_selectableTableView;
   Shared::MarginEvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCell m_r2TitleCell;

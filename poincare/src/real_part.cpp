@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-LayoutReference RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

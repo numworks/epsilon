@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-LayoutReference ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

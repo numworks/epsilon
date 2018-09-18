@@ -38,14 +38,14 @@ const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(record.value().buffer, record.value().size)));
 }
 
-LayoutReference GlobalContext::layoutForSymbol(const Symbol & symbol, int numberOfSignificantDigits) {
+Layout GlobalContext::layoutForSymbol(const Symbol & symbol, int numberOfSignificantDigits) {
   if (Symbol::isMatrixSymbol(symbol.name())) {
     Expression e = expressionForSymbol(symbol);
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal, numberOfSignificantDigits);
     }
   }
-  return LayoutReference();
+  return Layout();
 }
 
 void GlobalContext::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {

@@ -3,7 +3,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/layout_reference.h>
+#include <poincare/layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/nth_root_layout.h>
@@ -25,15 +25,15 @@ KDCoordinate LayoutCursor::baseline() {
   if (layoutHeight() == 0) {
     return k_cursorHeight/2;
   }
-  KDCoordinate layoutBaseline = m_layoutRef.baseline();
-  LayoutReference equivalentLayoutReference = m_layoutRef.equivalentCursor(this).layoutReference();
-  if (equivalentLayoutReference.isUninitialized()) {
+  KDCoordinate layoutBaseline = m_layout.baseline();
+  Layout equivalentLayout = m_layout.equivalentCursor(this).layouterence();
+  if (equivalentLayout.isUninitialized()) {
     return layoutBaseline;
   }
-  if (m_layoutRef.hasChild(equivalentLayoutReference)) {
-    return equivalentLayoutReference.baseline();
-  } else if (m_layoutRef.hasSibling(equivalentLayoutReference)) {
-    return max(layoutBaseline, equivalentLayoutReference.baseline());
+  if (m_layout.hasChild(equivalentLayout)) {
+    return equivalentLayout.baseline();
+  } else if (m_layout.hasSibling(equivalentLayout)) {
+    return max(layoutBaseline, equivalentLayout.baseline());
   }
   return layoutBaseline;
 }
@@ -49,9 +49,9 @@ bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {
 /* Position */
 
 KDPoint LayoutCursor::middleLeftPoint() {
-  KDPoint layoutOrigin = layoutReference().absoluteOrigin();
-  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layoutRef.layoutSize().width());
-  KDCoordinate y = layoutOrigin.y() + m_layoutRef.baseline() - k_cursorHeight/2;
+  KDPoint layoutOrigin = layouterence().absoluteOrigin();
+  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_layout.layoutSize().width());
+  KDCoordinate y = layoutOrigin.y() + m_layout.baseline() - k_cursorHeight/2;
   return KDPoint(x,y);
 }
 
@@ -73,67 +73,67 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 /* Layout modification */
 
 void LayoutCursor::addEmptyExponentialLayout() {
-  EmptyLayoutReference emptyLayout;
-  HorizontalLayoutReference sibling = HorizontalLayoutReference(
-      CharLayoutReference(Ion::Charset::Exponential),
-      VerticalOffsetLayoutReference(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
-  m_layoutRef.addSibling(this, sibling, false);
-  m_layoutRef = emptyLayout;
+  EmptyLayout emptyLayout;
+  HorizontalLayout sibling = HorizontalLayout(
+      CharLayout(Ion::Charset::Exponential),
+      VerticalOffsetLayout(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+  m_layout.addSibling(this, sibling, false);
+  m_layout = emptyLayout;
 }
 
 void LayoutCursor::addEmptyMatrixLayout() {
-  MatrixLayoutReference matrixLayout = MatrixLayoutReference(
-      EmptyLayoutReference(EmptyLayoutNode::Color::Yellow),
-      EmptyLayoutReference(EmptyLayoutNode::Color::Grey),
-      EmptyLayoutReference(EmptyLayoutNode::Color::Grey),
-      EmptyLayoutReference(EmptyLayoutNode::Color::Grey));
-  m_layoutRef.addSibling(this, matrixLayout, false);
-  m_layoutRef = matrixLayout.childAtIndex(0);
+  MatrixLayout matrixLayout = MatrixLayout(
+      EmptyLayout(EmptyLayoutNode::Color::Yellow),
+      EmptyLayout(EmptyLayoutNode::Color::Grey),
+      EmptyLayout(EmptyLayoutNode::Color::Grey),
+      EmptyLayout(EmptyLayoutNode::Color::Grey));
+  m_layout.addSibling(this, matrixLayout, false);
+  m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {
-  HorizontalLayoutReference child1 = HorizontalLayoutReference(EmptyLayoutReference());
-  NthRootLayoutReference newChild = NthRootLayoutReference(child1);
-  m_layoutRef.addSibling(this, newChild, false);
-  m_layoutRef = newChild.childAtIndex(0);
-  ((LayoutReference *)&newChild)->collapseSiblings(this);
+  HorizontalLayout child1 = HorizontalLayout(EmptyLayout());
+  NthRootLayout newChild = NthRootLayout(child1);
+  m_layout.addSibling(this, newChild, false);
+  m_layout = newChild.childAtIndex(0);
+  ((Layout *)&newChild)->collapseSiblings(this);
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayoutReference offsetLayout = VerticalOffsetLayoutReference(EmptyLayoutReference(), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(EmptyLayout(), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
-  m_layoutRef = offsetLayout.childAtIndex(0);
+  m_layout = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayoutReference offsetLayout = VerticalOffsetLayoutReference(CharLayoutReference('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(CharLayout('2'), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
-  EmptyLayoutReference emptyLayout;
-  HorizontalLayoutReference sibling = HorizontalLayoutReference(
-      CharLayoutReference(Ion::Charset::MiddleDot),
-      CharLayoutReference('1'),
-      CharLayoutReference('0'),
-      VerticalOffsetLayoutReference(
+  EmptyLayout emptyLayout;
+  HorizontalLayout sibling = HorizontalLayout(
+      CharLayout(Ion::Charset::MiddleDot),
+      CharLayout('1'),
+      CharLayout('0'),
+      VerticalOffsetLayout(
         emptyLayout,
         VerticalOffsetLayoutNode::Type::Superscript));
-  m_layoutRef.addSibling(this, sibling, false);
-  m_layoutRef = emptyLayout;
+  m_layout.addSibling(this, sibling, false);
+  m_layout = emptyLayout;
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
-  HorizontalLayoutReference child1 = HorizontalLayoutReference(EmptyLayoutReference());
-  HorizontalLayoutReference child2 = HorizontalLayoutReference(EmptyLayoutReference());
-  FractionLayoutReference newChild = FractionLayoutReference(child1, child2);
-  m_layoutRef.addSibling(this, newChild, true);
-  LayoutReference(newChild.node()).collapseSiblings(this);
+  HorizontalLayout child1 = HorizontalLayout(EmptyLayout());
+  HorizontalLayout child2 = HorizontalLayout(EmptyLayout());
+  FractionLayout newChild = FractionLayout(child1, child2);
+  m_layout.addSibling(this, newChild, true);
+  Layout(newChild.node()).collapseSiblings(this);
 }
 
 void LayoutCursor::addXNTCharLayout() {
-  m_layoutRef.addSibling(this, CharLayoutReference(m_layoutRef.XNTChar()), true);
+  m_layout.addSibling(this, CharLayout(m_layout.XNTChar()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
@@ -141,97 +141,97 @@ void LayoutCursor::insertText(const char * text) {
   if (textLength <= 0) {
     return;
   }
-  LayoutReference newChild;
-  LayoutReference pointedChild;
+  Layout newChild;
+  Layout pointedChild;
   bool specialUnderScore = false;
   for (int i = 0; i < textLength; i++) {
     if (text[i] == Ion::Charset::Empty) {
       continue;
     }
     if (text[i] == Ion::Charset::MultiplicationSign) {
-      newChild = CharLayoutReference(Ion::Charset::MiddleDot);
+      newChild = CharLayout(Ion::Charset::MiddleDot);
     } else if (text[i] == '(') {
-      newChild = LeftParenthesisLayoutReference();
+      newChild = LeftParenthesisLayout();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
     } else if (text[i] == ')') {
-      newChild = RightParenthesisLayoutReference();
+      newChild = RightParenthesisLayout();
     } else if (text[i] == '_') {
       specialUnderScore = (i < textLength) && (text[i+1] == '{');
       if (!specialUnderScore) {
-         newChild = CharLayoutReference('_');
+         newChild = CharLayout('_');
       } else {
         continue;
       }
     } else if (text[i] == '{' && specialUnderScore) {
-      newChild = CharLayoutReference('('); //TODO ?? Was a char layout before, not a parenthesis left
+      newChild = CharLayout('('); //TODO ?? Was a char layout before, not a parenthesis left
     } else if (text[i] == '}' && specialUnderScore) {
-      newChild = CharLayoutReference(')'); //TODO
+      newChild = CharLayout(')'); //TODO
       specialUnderScore = false;
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
 #if 0
     else if (text[i] == '[') {
-      newChild = LeftSquareBracketLayoutReference();
+      newChild = LeftSquareBracketLayout();
     } else if (text[i] == ']') {
-      newChild = RightSquareBracketLayoutReference();
+      newChild = RightSquareBracketLayout();
     }
 #endif
     else {
-      newChild = CharLayoutReference(text[i]);
+      newChild = CharLayout(text[i]);
     }
-    m_layoutRef.addSibling(this, newChild, true);
+    m_layout.addSibling(this, newChild, true);
   }
   if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
-    m_layoutRef = pointedChild;
+    m_layout = pointedChild;
   }
 }
 
-void LayoutCursor::addLayoutAndMoveCursor(LayoutReference l) {
+void LayoutCursor::addLayoutAndMoveCursor(Layout l) {
   bool layoutWillBeMerged = l.isHorizontal();
-  m_layoutRef.addSibling(this, l, true);
+  m_layout.addSibling(this, l, true);
   if (!layoutWillBeMerged) {
     l.collapseSiblings(this);
   }
 }
 
 void LayoutCursor::clearLayout() {
-  LayoutReference rootLayoutR = m_layoutRef.root();
+  Layout rootLayoutR = m_layout.root();
   assert(rootLayoutR.isHorizontal());
   rootLayoutR.removeChildrenInPlace(rootLayoutR.numberOfChildren());
-  m_layoutRef = rootLayoutR;
+  m_layout = rootLayoutR;
 }
 
 /* Private */
 
 KDCoordinate LayoutCursor::layoutHeight() {
-  LayoutReference equivalentLayoutReference = m_layoutRef.equivalentCursor(this).layoutReference();
-  if (!equivalentLayoutReference.isUninitialized() && m_layoutRef.hasChild(equivalentLayoutReference)) {
-    return equivalentLayoutReference.layoutSize().height();
+  Layout equivalentLayout = m_layout.equivalentCursor(this).layouterence();
+  if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
+    return equivalentLayout.layoutSize().height();
   }
-  KDCoordinate pointedLayoutHeight = m_layoutRef.layoutSize().height();
-  if (!equivalentLayoutReference.isUninitialized() && m_layoutRef.hasSibling(equivalentLayoutReference)) {
-    KDCoordinate equivalentLayoutHeight = equivalentLayoutReference.layoutSize().height();
-    KDCoordinate pointedLayoutBaseline = m_layoutRef.baseline();
-    KDCoordinate equivalentLayoutBaseline = equivalentLayoutReference.baseline();
+  KDCoordinate pointedLayoutHeight = m_layout.layoutSize().height();
+  if (!equivalentLayout.isUninitialized() && m_layout.hasSibling(equivalentLayout)) {
+    KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
+    KDCoordinate pointedLayoutBaseline = m_layout.baseline();
+    KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
     return max(pointedLayoutBaseline, equivalentLayoutBaseline)
       + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
 }
 
-void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayoutReference v) {
+void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
   // If there is already a base
   if (baseForNewPowerLayout()) {
-    m_layoutRef.addSibling(this, v, true);
+    m_layout.addSibling(this, v, true);
     return;
   }
   // Else, add an empty base
-  EmptyLayoutReference e = EmptyLayoutReference();
-  HorizontalLayoutReference newChild = HorizontalLayoutReference(e, v);
-  m_layoutRef.addSibling(this, newChild, true);
+  EmptyLayout e = EmptyLayout();
+  HorizontalLayout newChild = HorizontalLayout(e, v);
+  m_layout.addSibling(this, newChild, true);
 }
 
 bool LayoutCursor::baseForNewPowerLayout() {
@@ -239,22 +239,22 @@ bool LayoutCursor::baseForNewPowerLayout() {
    * be the base of a new power layout: the base layout should be anything but
    * an horizontal layout with no child. */
   if (m_position == Position::Right) {
-    return !(m_layoutRef.isHorizontal() && m_layoutRef.numberOfChildren() == 0);
+    return !(m_layout.isHorizontal() && m_layout.numberOfChildren() == 0);
   } else {
     assert(m_position == Position::Left);
-    if (m_layoutRef.isHorizontal()) {
+    if (m_layout.isHorizontal()) {
       return false;
     }
-    if (m_layoutRef.isEmpty()) {
+    if (m_layout.isEmpty()) {
       /* If the cursor is on the left of an EmptyLayout, move it to its right,
        * the empty layout will take care of changing its color and adding a new
        * row/column to its parent matrix if needed. */
       m_position = Position::Right;
       return true;
     }
-    LayoutCursor equivalentLayoutCursor = m_layoutRef.equivalentCursor(this);
-    if (equivalentLayoutCursor.layoutReference().isUninitialized()
-        || (equivalentLayoutCursor.layoutReference().isHorizontal()
+    LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
+    if (equivalentLayoutCursor.layouterence().isUninitialized()
+        || (equivalentLayoutCursor.layouterence().isHorizontal()
           && equivalentLayoutCursor.position() == Position::Left))
     {
       return false;
@@ -266,14 +266,14 @@ bool LayoutCursor::baseForNewPowerLayout() {
 bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   /* Find Empty layouts adjacent to the cursor: Check the pointed layout and the
    * equivalent cursor positions */
-  LayoutReference adjacentEmptyLayout;
+  Layout adjacentEmptyLayout;
 
-  if (m_layoutRef.isEmpty()) {
+  if (m_layout.isEmpty()) {
     // Check the pointed layout
-    adjacentEmptyLayout = m_layoutRef;
+    adjacentEmptyLayout = m_layout;
   } else {
     // Check the equivalent cursor position
-    LayoutReference equivalentPointedLayout = m_layoutRef.equivalentCursor(this).layoutReference();
+    Layout equivalentPointedLayout = m_layout.equivalentCursor(this).layouterence();
     if (!equivalentPointedLayout.isUninitialized() && equivalentPointedLayout.isEmpty()) {
       adjacentEmptyLayout = equivalentPointedLayout;
     }

@@ -42,11 +42,11 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   reloadScroll();
 }
 
-Poincare::LayoutReference HistoryViewCell::layoutRef() const {
+Poincare::Layout HistoryViewCell::layout() const {
   if (m_selectedSubviewType == SubviewType::Input) {
     return m_inputLayout;
   } else {
-    return m_scrollableOutputView.layoutRef();
+    return m_scrollableOutputView.layout();
   }
 }
 
@@ -95,13 +95,13 @@ void HistoryViewCell::layoutSubviews() {
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
   m_inputLayout = calculation->createInputLayout();
-  m_inputView.setLayoutReference(m_inputLayout);
+  m_inputView.setLayout(m_inputLayout);
   App * calculationApp = (App *)app();
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
   if (!m_exactOutputLayout.isUninitialized()) {
-    m_exactOutputLayout = Poincare::LayoutReference();
+    m_exactOutputLayout = Poincare::Layout();
   }
   if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
     m_exactOutputLayout = calculation->createExactOutputLayout(calculationApp->localContext());

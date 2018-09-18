@@ -8,8 +8,8 @@
 
 namespace Poincare {
 
-LayoutReference SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return NthRootLayoutReference(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");

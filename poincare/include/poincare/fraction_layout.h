@@ -3,7 +3,6 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
@@ -57,9 +56,9 @@ private:
   LayoutNode * denominatorLayout() { return childAtIndex(1); }
 };
 
-class FractionLayoutReference : public LayoutReference {
+class FractionLayout : public Layout {
 public:
-  FractionLayoutReference(LayoutReference numerator, LayoutReference denominator);
+  FractionLayout(Layout numerator, Layout denominator);
 };
 
 }

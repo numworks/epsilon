@@ -157,7 +157,7 @@ Rational::Rational(Integer num, Integer den) : Number() {
   new (this) Rational(num.digits(), num.numberOfDigits(), den.digits(), den.numberOfDigits(), negative);
 }
 
-Rational::Rational(const Integer numerator) : Number() {
+Rational::Rational(const Integer & numerator) : Number() {
   native_uint_t one = 1;
   new (this) Rational(numerator.digits(), numerator.numberOfDigits(), &one, 1, numerator.isNegative());
 }

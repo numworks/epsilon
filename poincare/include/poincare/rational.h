@@ -74,7 +74,7 @@ public:
   /* The constructor build a irreductible fraction */
   Rational(const RationalNode * node) : Number(node) {}
   Rational(Integer num, Integer den);
-  Rational(const Integer numerator);
+  Rational(const Integer & numerator);
   Rational(native_int_t i);
   Rational(native_int_t i, native_int_t j) : Rational(Integer(i), Integer(j)) {}
 

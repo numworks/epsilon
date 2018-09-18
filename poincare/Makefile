@@ -138,6 +138,7 @@ tests += $(addprefix poincare/test/,\
   division.cpp\
   expression.cpp\
   factorial.cpp\
+  float.cpp\
   fraction_layout.cpp\
   function.cpp\
   helper.cpp\

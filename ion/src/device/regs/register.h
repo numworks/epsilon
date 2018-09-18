@@ -50,7 +50,7 @@ typedef Register<uint32_t> Register32;
 typedef Register<uint64_t> Register64;
 
 #define REGS_FIELD_R(name,type,high,low) type get##name() volatile { return (type)getBitRange(high,low); };
-#define REGS_FIELD_W(name,type,high,low) void set##name(type v) volatile { setBitRange(high, low, (uint8_t)v); };
+#define REGS_FIELD_W(name,type,high,low) void set##name(type v) volatile { static_assert(sizeof(type) <= 2, "Invalid size"); setBitRange(high, low, static_cast<uint16_t>(v)); };
 #define REGS_FIELD(name,type,high,low) REGS_FIELD_R(name,type,high,low); REGS_FIELD_W(name,type,high,low);
 #define REGS_TYPE_FIELD(name,high,low) REGS_FIELD(name,name,high,low)
 #define REGS_BOOL_FIELD(name,bit) REGS_FIELD(name,bool,bit,bit)

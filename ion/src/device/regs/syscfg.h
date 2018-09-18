@@ -9,7 +9,7 @@ class SYSCFG {
 public:
   class MEMRMP : Register32 {
   public:
-    enum class MemMode {
+    enum class MemMode : uint8_t {
       MainFlashmemory = 0,
       SystemFlashmemory = 1,
       EmbeddedSRAM = 3

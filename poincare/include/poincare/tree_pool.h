@@ -108,7 +108,6 @@ private:
   // Pool memory
   void * alloc(size_t size);
   void dealloc(TreeNode * ptr, size_t size);
-  bool insert(char * destination, char * source, size_t length);
   void moveNodes(TreeNode * destination, TreeNode * source, size_t moveLength);
 
   // Identifiers

@@ -74,7 +74,7 @@ using namespace Poincare;
   * by flex temporarily swapping the last character. Afterwards the pointer is
   * still valid but the string isn't null-terminated anymore.
   */
-  /* We designed our own extended-ASCII to include requiered symbols in less
+  /* We designed our own extended-ASCII to include required symbols in less
    * than 255 glyphs. The file ion/include/ion/charset.h lists all added
    * non-ASCII symbols with their char associated. For example, the char \x89
    * refered to Pi symbols. This artefact leads to the following lexer rules

@@ -56,13 +56,6 @@ void assert_expression_prints_to(Expression e, const char * result, Preferences:
   delete[] taggedBuffer;
 }
 
-template<typename T>
-void assert_approximation_prints_to(Float<T> e, const char * result) {
-  GlobalContext globalContext;
-  Expression approximation = e.template approximate<T>(globalContext, Radian, Cartesian);
-  assert_expression_prints_to(approximation, result, DecimalMode, (sizeof(T) == sizeof(float) ? 7 : 14));
-}
-
 QUIZ_CASE(assert_float_prints_to) {
   /* We expect 7 significative numbers but do not display 0 */
   assert_float_prints_to(123.456f, "1.23456E2");
@@ -173,26 +166,26 @@ QUIZ_CASE(poincare_decimal_to_text) {
 }
 
 QUIZ_CASE(poincare_approximation_to_text) {
-  assert_approximation_prints_to(Float<double>(-1.23456789E30), "-1.23456789E30");
-  assert_approximation_prints_to(Float<double>(1.23456789E30), "1.23456789E30");
-  assert_approximation_prints_to(Float<double>(-1.23456789E-30), "-1.23456789E-30");
-  assert_approximation_prints_to(Float<double>(-1.2345E-3), "-0.0012345");
-  assert_approximation_prints_to(Float<double>(1.2345E-3), "0.0012345");
-  assert_approximation_prints_to(Float<double>(1.2345E3), "1234.5");
-  assert_approximation_prints_to(Float<double>(-1.2345E3), "-1234.5");
-  assert_approximation_prints_to(Float<double>(0.99999999999995), "9.9999999999995E-1");
-  assert_approximation_prints_to(Float<double>(0.00000099999999999995), "9.9999999999995E-7");
-  assert_approximation_prints_to(Float<double>(0.0000009999999999901200121020102010201201201021099995), "9.9999999999012E-7");
-  assert_approximation_prints_to(Float<float>(1.2345E-1), "0.12345");
-  assert_approximation_prints_to(Float<float>(1), "1");
-  assert_approximation_prints_to(Float<float>(0.9999999999999995), "1");
-  assert_approximation_prints_to(Float<float>(1.2345E6), "1234500");
-  assert_approximation_prints_to(Float<float>(-1.2345E6), "-1234500");
-  assert_approximation_prints_to(Float<float>(0.0000009999999999999995), "0.000001");
-  assert_approximation_prints_to(Float<float>(-1.2345E-1), "-0.12345");
+  assert_expression_prints_to(Float<double>(-1.23456789E30), "-1.23456789E30", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>(1.23456789E30), "1.23456789E30", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>(-1.23456789E-30), "-1.23456789E-30", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>(-1.2345E-3), "-0.0012345", DecimalMode);
+  assert_expression_prints_to(Float<double>(1.2345E-3), "0.0012345", DecimalMode);
+  assert_expression_prints_to(Float<double>(1.2345E3), "1234.5", DecimalMode);
+  assert_expression_prints_to(Float<double>(-1.2345E3), "-1234.5", DecimalMode);
+  assert_expression_prints_to(Float<double>(0.99999999999995), "9.9999999999995E-1", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>(0.00000099999999999995), "9.9999999999995E-7", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>(0.0000009999999999901200121020102010201201201021099995), "9.9999999999012E-7", DecimalMode, 14);
+  assert_expression_prints_to(Float<float>(1.2345E-1), "0.12345", DecimalMode);
+  assert_expression_prints_to(Float<float>(1), "1", DecimalMode);
+  assert_expression_prints_to(Float<float>(0.9999999999999995), "1", DecimalMode);
+  assert_expression_prints_to(Float<float>(1.2345E6), "1234500", DecimalMode);
+  assert_expression_prints_to(Float<float>(-1.2345E6), "-1234500", DecimalMode);
+  assert_expression_prints_to(Float<float>(0.0000009999999999999995), "0.000001", DecimalMode);
+  assert_expression_prints_to(Float<float>(-1.2345E-1), "-0.12345", DecimalMode);
 
-  assert_approximation_prints_to<double>(Float<double>(INFINITY), "inf");
-  assert_approximation_prints_to<float>(Float<float>(0.0f), "0");
-  assert_approximation_prints_to<float>(Float<float>(NAN), "undef");
+  assert_expression_prints_to(Float<double>(INFINITY), "inf", DecimalMode);
+  assert_expression_prints_to(Float<float>(0.0f), "0", DecimalMode);
+  assert_expression_prints_to(Float<float>(NAN), "undef", DecimalMode);
 
 }

@@ -1,4 +1,5 @@
 #include <poincare/float.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -21,6 +22,18 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool can
     return 1;
   }
   return 0;
+}
+
+template<typename T>
+int FloatNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return PrintFloat::convertFloatToText(m_value, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
+}
+
+template<typename T>
+Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  char buffer[PrintFloat::k_maxFloatBufferLength];
+  int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatBufferLength, floatDisplayMode, numberOfSignificantDigits);
+  return LayoutHelper::String(buffer, numberOfChars);
 }
 
 template<typename T>

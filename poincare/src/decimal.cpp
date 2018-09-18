@@ -32,11 +32,11 @@ void DecimalNode::setValue(const native_uint_t * mantissaDigits, uint8_t mantiss
 }
 
 Integer DecimalNode::signedMantissa() const {
-  return Integer((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, m_negative);
+  return Integer::BuildInteger((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, m_negative);
 }
 
 Integer DecimalNode::unsignedMantissa() const {
-  return Integer((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, false);
+  return Integer::BuildInteger((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, false);
 }
 
 size_t DecimalNode::size() const {

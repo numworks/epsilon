@@ -37,14 +37,14 @@ Expression QuadraticModel::simplifiedExpression(double * modelCoefficients, Poin
   // a*x^2+b*x+c
   Expression addChildren[] = {
     Multiplication(
-      Decimal(a),
+      Number::DecimalNumber(a),
       Power(
         Symbol('x'),
         Decimal(2.0))),
     Multiplication(
-      Decimal(b),
+      Number::DecimalNumber(b),
       Symbol('x')),
-    Decimal(c)
+    Number::DecimalNumber(c)
   };
   Expression result = Addition(addChildren, 3);
   PoincareHelpers::Simplify(&result, *context);

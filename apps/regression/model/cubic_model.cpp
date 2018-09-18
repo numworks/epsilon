@@ -45,19 +45,19 @@ Expression CubicModel::simplifiedExpression(double * modelCoefficients, Poincare
   double d = modelCoefficients[3];
   Expression addChildren[] = {
     Multiplication(
-      Decimal(a),
+      Number::DecimalNumber(a),
       Power(
         Symbol('x'),
         Decimal(3.0))),
     Multiplication(
-      Decimal(b),
+      Number::DecimalNumber(b),
       Power(
         Symbol('x'),
         Decimal(2.0))),
     Multiplication(
-      Decimal(c),
+      Number::DecimalNumber(c),
       Symbol('x')),
-    Decimal(d)
+    Number::DecimalNumber(d)
     };
   // a*x^3+b*x^2+c*x+d
   Expression result = Addition(addChildren, 4);

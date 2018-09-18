@@ -141,6 +141,7 @@ tests += $(addprefix poincare/test/,\
   fraction_layout.cpp\
   function.cpp\
   helper.cpp\
+  helpers.cpp\
   integer.cpp\
   layouts.cpp\
   logarithm.cpp\

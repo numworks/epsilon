@@ -10,6 +10,7 @@
 #include "fsmc.h"
 #include "gpio.h"
 #include "itm.h"
+#include "mpu.h"
 #include "nvic.h"
 #include "pwr.h"
 #include "rcc.h"

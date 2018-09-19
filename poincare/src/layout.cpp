@@ -43,6 +43,7 @@ void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * curso
   replaceChildInPlace(oldChild, newChild);
   if (cursor != nullptr) {
     cursor->setLayout(newChild);
+    cursor->setPosition(LayoutCursor::Position::Right);
   }
   node()->didReplaceChildAtIndex(childIndex, cursor, force);
 }

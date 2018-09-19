@@ -8,12 +8,13 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_rational_constructor) {
   int initialPoolSize = pool_size();
-  Rational a(Integer("123"), Integer("324"));
-  Rational b(Integer("3456"));
+  Rational a("123","324");
+  Rational b("3456");
   Rational c(123,324);
   Rational d(3456789);
-  Rational e(Integer::Overflow(false));
-  Rational f(Integer::Overflow(false), Integer::Overflow(false));
+  Integer overflow = Integer::Overflow(false);
+  Rational e(overflow);
+  Rational f(overflow, overflow);
   assert_pool_size(initialPoolSize+6);
 }
 
@@ -66,7 +67,7 @@ static inline void assert_add_to(const Rational i, const Rational j, const Ratio
 QUIZ_CASE(poincare_rational_addition) {
   assert_add_to(Rational(1,2), Rational(1), Rational(3,2));
   assert_add_to(Rational("18446744073709551616","4294967296"), Rational(8,9), Rational("38654705672","9"));
-  assert_add_to(Rational("18446744073709551616","4294967296"), Rational(-8,9), Rational("38654705656",9));
+  assert_add_to(Rational("18446744073709551616","4294967296"), Rational(-8,9), Rational("38654705656","9"));
 }
 
 static inline void assert_pow_to(const Rational i,const Integer j, const Rational k) {
@@ -137,7 +138,9 @@ QUIZ_CASE(poincare_rational_serialize) {
   assert_parsed_expression_serialize_to(Rational(-2, 3), "-2/3");
   assert_parsed_expression_serialize_to(Rational("2345678909876"), "2345678909876");
   assert_parsed_expression_serialize_to(Rational("-2345678909876", "5"), "-2345678909876/5");
-  assert_parsed_expression_serialize_to(Rational(Integer(MaxIntegerString)), MaxIntegerString);
-  assert_parsed_expression_serialize_to(Rational(Integer(1), Integer::Overflow(false)), "1/inf");
-  assert_parsed_expression_serialize_to(Rational(Integer::Overflow(false)), "inf");
+  assert_parsed_expression_serialize_to(Rational(MaxIntegerString), MaxIntegerString);
+  Integer one(1);
+  Integer overflow = Integer::Overflow(false);
+  assert_parsed_expression_serialize_to(Rational(one, overflow), "1/inf");
+  assert_parsed_expression_serialize_to(Rational(overflow), "inf");
 }

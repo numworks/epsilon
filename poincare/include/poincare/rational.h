@@ -77,6 +77,7 @@ public:
   Rational(const Integer & numerator);
   Rational(native_int_t i);
   Rational(native_int_t i, native_int_t j);
+  Rational(const char * iString, const char * jString);
 
   // TreeNode
   RationalNode * node() const { return static_cast<RationalNode *>(Number::node()); }

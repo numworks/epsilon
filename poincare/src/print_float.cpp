@@ -7,6 +7,7 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
+#include <limits.h>
 }
 #include <cmath>
 #include <ion.h>
@@ -90,32 +91,18 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);
 
-  Preferences::PrintFloatMode displayMode = mode;
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Preferences::PrintFloatMode::Decimal) {
-    displayMode = Preferences::PrintFloatMode::Scientific;
-  }
-
-  // Number of char available for the mantissa
-  int availableCharsForMantissaWithoutSign = numberOfSignificantDigits + 1;
-  int availableCharsForMantissaWithSign = f >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
+  /* Part I: Mantissa */
 
   // Compute mantissa
-  /* The number of digits in an mantissa is capped because the maximal int64_t
-   * is 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
-   * that we stay beyond this threshold during computation. */
-  assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 63.0f)));
-
-  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == Preferences::PrintFloatMode::Scientific ?
-                                   exponentInBase10 + 1 : 1;
-
-  T unroundedMantissa = f * std::pow((T)10.0, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
+  T unroundedMantissa = f * std::pow((T)10.0, (T)(numberOfSignificantDigits - 1 - exponentInBase10));
+  // Round mantissa to get the right number of significant digits
   T mantissa = std::round(unroundedMantissa);
 
-  /* if availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal
+  /* if numberOfSignificantDigits -1 - exponentInBase10
    * is too big (or too small), mantissa is now inf. We handle this case by
    * using logarithm function. */
   if (std::isnan(mantissa) || std::isinf(mantissa)) {
-    mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
+    mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(numberOfSignificantDigits -1 - exponentInBase10)));
     mantissa = std::copysign(mantissa, f);
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
@@ -124,24 +111,57 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
    * "exponentBase10(unroundedMantissa) != exponentBase10(mantissa)",
    * however, unroundedMantissa can have a different exponent than expected
    * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000) */
-  if (f != 0 && IEEE754<T>::exponentBase10(mantissa)-exponentInBase10 != availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal) {
+  if (f != 0 && IEEE754<T>::exponentBase10(mantissa)-exponentInBase10 != numberOfSignificantDigits - 1 - exponentInBase10) {
     exponentInBase10++;
   }
 
-  // Update the display mode if the exponent changed
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Preferences::PrintFloatMode::Decimal) {
-    displayMode = Preferences::PrintFloatMode::Scientific;
+  if (mode == Preferences::PrintFloatMode::Decimal && exponentInBase10 >= numberOfSignificantDigits) {
+    /* Exception 1: avoid inventing digits to fill the printed float: when
+     * displaying 12345 with 2 significant digis in Decimal mode for instance.
+     * This exception is caught by convertFloatToText and forces the mode to
+     * Scientific */
+    return INT_MAX;
   }
-
-  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == Preferences::PrintFloatMode::Scientific ?
-    1 : exponentInBase10+1;
-  decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
 
   // Correct the number of digits in mantissa after rounding
-  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == Preferences::PrintFloatMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
-  if (IEEE754<T>::exponentBase10(mantissa) >= mantissaExponentInBase10) {
-    mantissa = mantissa/10;
+  if (IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
+    mantissa = mantissa/10.0;
   }
+
+  // Number of chars for the mantissa
+  int numberOfCharsForMantissaWithoutSign = exponentInBase10 >= 0 || mode == Preferences::PrintFloatMode::Scientific ? numberOfSignificantDigits : numberOfSignificantDigits - exponentInBase10;
+
+  /* The number of digits in an mantissa is capped because the maximal int64_t
+   * is 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
+   * that we stay beyond this threshold during computation. */
+  assert(numberOfSignificantDigits < std::log10(std::pow(2.0f, 63.0f)));
+
+  // Supress the 0 on the right side of the mantissa
+  Integer dividend = Integer((int64_t)mantissa);
+  Integer quotient = Integer::Division(dividend, Integer(10)).quotient;
+  Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
+  int minimumNumberOfCharsInMantissa = 1;
+  while (digit.isZero() && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
+      (numberOfCharsForMantissaWithoutSign > exponentInBase10+1 || mode == Preferences::PrintFloatMode::Scientific)) {
+    numberOfCharsForMantissaWithoutSign--;
+    dividend = quotient;
+    quotient = Integer::Division(dividend, Integer(10)).quotient;
+    digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
+  }
+
+  /* Part II: Decimal marker */
+
+  // Force a decimal marker if there is fractional part
+  bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific && numberOfCharsForMantissaWithoutSign > 1) || (mode == Preferences::PrintFloatMode::Decimal && numberOfCharsForMantissaWithoutSign > exponentInBase10 +1);
+  if (decimalMarker) {
+    numberOfCharsForMantissaWithoutSign++;
+  }
+
+  /* Find the position of the decimal marker position */
+  int decimalMarkerPosition = exponentInBase10 < 0 || mode == Preferences::PrintFloatMode::Scientific ? 1 : exponentInBase10+1;
+  decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
+
+  /* Part III: Exponent */
 
   int numberOfCharExponent = exponentInBase10 != 0 ? std::log10(std::fabs((T)exponentInBase10)) + 1 : 1;
   if (exponentInBase10 < 0){
@@ -149,42 +169,30 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
     numberOfCharExponent++;
   }
 
-  // Supress the 0 on the right side of the mantissa
-  Integer dividend = Integer((int64_t)std::fabs(mantissa));
-  Integer quotient = Integer::Division(dividend, Integer(10)).quotient;
-  Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
-  int minimumNumberOfCharsInMantissa = 1;
-  while (digit.isZero() && availableCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
-      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == Preferences::PrintFloatMode::Scientific)) {
-    mantissa = mantissa/10;
-    availableCharsForMantissaWithoutSign--;
-    availableCharsForMantissaWithSign--;
-    dividend = quotient;
-    quotient = Integer::Division(dividend, Integer(10)).quotient;
-    digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
-  }
-
-  // Suppress the decimal marker if no fractional part
-  if ((displayMode == Preferences::PrintFloatMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2)
-      || (displayMode == Preferences::PrintFloatMode::Scientific && availableCharsForMantissaWithoutSign == 2)) {
-    availableCharsForMantissaWithSign--;
-  }
-
+  /* Part III: print mantissa*10^exponent*/
+  int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
   // Print mantissa
-  assert(!Integer((int64_t)mantissa).isInfinity());
-  assert(availableCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, Integer((int64_t)mantissa), decimalMarkerPosition);
-  if (displayMode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {
-    buffer[availableCharsForMantissaWithSign] = 0;
-    return availableCharsForMantissaWithSign;
+  assert(!dividend.isInfinity());
+  if (numberOfCharsForMantissaWithSign >= PrintFloat::k_maxFloatBufferLength) {
+    /* Exception 3: if we are about to overflow the buffer, we escape by
+     * returning a big int. This will be caught by 'convertFloatToText' which
+     * will force displayMode to Scientific. */
+    assert(mode == Preferences::PrintFloatMode::Decimal);
+    return INT_MAX;
+  }
+  assert(numberOfCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
+  PrintFloat::printBase10IntegerWithDecimalMarker(buffer, numberOfCharsForMantissaWithSign, dividend, decimalMarkerPosition);
+  if (mode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {
+    buffer[numberOfCharsForMantissaWithSign] = 0;
+    return numberOfCharsForMantissaWithSign;
   }
   // Print exponent
-  assert(availableCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
-  buffer[availableCharsForMantissaWithSign] = Ion::Charset::Exponent;
-  assert(numberOfCharExponent+availableCharsForMantissaWithSign+1 < PrintFloat::k_maxFloatBufferLength);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, Integer(exponentInBase10), -1);
-  buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
-  return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
+  assert(numberOfCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
+  buffer[numberOfCharsForMantissaWithSign] = Ion::Charset::Exponent;
+  assert(numberOfCharExponent+numberOfCharsForMantissaWithSign+1 < PrintFloat::k_maxFloatBufferLength);
+  PrintFloat::printBase10IntegerWithDecimalMarker(buffer+numberOfCharsForMantissaWithSign+1, numberOfCharExponent, Integer(exponentInBase10), -1);
+  buffer[numberOfCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
+  return (numberOfCharsForMantissaWithSign+1+numberOfCharExponent);
 }
 
 template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode);

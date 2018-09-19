@@ -177,7 +177,9 @@ void AppsContainer::run() {
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
   if (!ExceptionRun(ecp)) {
-    activeApp()->snapshot()->reset();
+    if (activeApp() != nullptr) {
+      activeApp()->snapshot()->reset();
+    }
     switchTo(appSnapshotAtIndex(0));
     activeApp()->displayWarning(I18n::Message::AppMemoryFull, true);
   }

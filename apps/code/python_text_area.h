@@ -5,11 +5,13 @@
 
 namespace Code {
 
+class App;
+
 class PythonTextArea : public TextArea {
 public:
-  PythonTextArea(Responder * parentResponder, KDText::FontSize fontSize) :
+  PythonTextArea(Responder * parentResponder, App * pythonDelegate, KDText::FontSize fontSize) :
     TextArea(parentResponder, &m_contentView, fontSize),
-    m_contentView(fontSize)
+    m_contentView(pythonDelegate, fontSize)
   {
   }
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
@@ -17,9 +19,9 @@ public:
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(KDText::FontSize fontSize) :
+    ContentView(App * pythonDelegate, KDText::FontSize fontSize) :
       TextArea::ContentView(fontSize),
-      m_pythonHeap(nullptr)
+      m_pythonDelegate(pythonDelegate)
     {
     }
     void loadSyntaxHighlighter();
@@ -28,8 +30,7 @@ protected:
     void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const override;
     KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak) const override;
   private:
-    static constexpr size_t k_pythonHeapSize = 4096;
-    char * m_pythonHeap;
+    App * m_pythonDelegate;
   };
 private:
   const ContentView * nonEditableContentView() const override { return &m_contentView; }

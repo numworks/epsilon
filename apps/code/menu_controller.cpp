@@ -8,7 +8,7 @@
 
 namespace Code {
 
-MenuController::MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer) :
+MenuController::MenuController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, ButtonRowController * footer) :
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),
@@ -23,7 +23,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   }, this), KDText::FontSize::Large),
   m_selectableTableView(this, this, this, this),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
-  m_editorController(this),
+  m_editorController(this, pythonDelegate),
   m_reloadConsoleWhenBecomingFirstResponder(false),
   m_shouldDisplayAddScriptRow(true)
 {

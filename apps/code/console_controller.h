@@ -12,20 +12,17 @@
 
 namespace Code {
 
+class App;
+
 class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
   static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 
-  ConsoleController(Responder * parentResponder, ScriptStore * scriptStore
+  ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
       , bool m_lockOnConsole
 #endif
       );
-  ~ConsoleController();
-  ConsoleController(const ConsoleController& other) = delete;
-  ConsoleController(ConsoleController&& other) = delete;
-  ConsoleController operator=(const ConsoleController& other) = delete;
-  ConsoleController& operator=(ConsoleController&& other) = delete;
 
   bool loadPythonEnvironment(bool autoImportScripts = true);
   void unloadPythonEnvironment();
@@ -81,20 +78,19 @@ private:
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
   static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
-  static constexpr int k_pythonHeapSize = 16384;
   static constexpr int k_outputAccumulationBufferSize = 100;
   void flushOutputAccumulationBufferToStore();
   void appendTextToOutputAccumulationBuffer(const char * text, size_t length);
   void emptyOutputAccumulationBuffer();
   size_t firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
+  App * m_pythonDelegate;
   int m_rowHeight;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
   SelectableTableView m_selectableTableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
-  char * m_pythonHeap;
   char m_outputAccumulationBuffer[k_outputAccumulationBufferSize];
   /* The Python machine might call printText several times to print a single
    * string. We thus use m_outputAccumulationBuffer to store and concatenate the

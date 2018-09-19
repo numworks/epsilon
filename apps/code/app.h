@@ -36,12 +36,26 @@ public:
 #endif
     ScriptStore m_scriptStore;
   };
+  ~App();
   StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
   PythonToolbox * pythonToolbox() { return &m_toolbox; }
   bool handleEvent(Ion::Events::Event event) override;
   bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
+  // Python delegate
+  bool isPythonUser(const void * pythonUser) { return m_pythonUser == pythonUser; }
+  void initPythonWithUser(const void * pythonUser);
+  void deinitPython();
 private:
+  /* Python delegate:
+   * MicroPython requires a heap. To avoid dynamic allocation, we keep a working
+   * buffer here and we give to controllers that load Python environment. We
+   * also memoize the last Python user to avoid re-initiating MicroPython when
+   * unneeded. */
+  static constexpr int k_pythonHeapSize = 16384;
+  char m_pythonHeap[k_pythonHeapSize];
+  const void * m_pythonUser;
+
   App(Container * container, Snapshot * snapshot);
   ConsoleController m_consoleController;
   ButtonRowController m_listFooter;

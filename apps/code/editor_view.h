@@ -8,7 +8,7 @@ namespace Code {
 
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
-  EditorView(Responder * parentResponder);
+  EditorView(Responder * parentResponder, App * pythonDelegate);
   void setTextAreaDelegate(TextAreaDelegate * delegate) {
     m_textArea.setDelegate(delegate);
   }

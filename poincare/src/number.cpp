@@ -102,9 +102,9 @@ Number Number::FloatNumber(double d) {
 }
 
 Number Number::BinaryOperation(const Number & i, const Number & j, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
-  if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
-  // Rational + Rational
-    Rational a = rationalOp(Rational(static_cast<const Rational&>(i)), Rational(static_cast<const Rational&>(j)));
+  if (i.type() == ExpressionNode::Type::Rational && j.type() == ExpressionNode::Type::Rational) {
+    // Rational + Rational
+    Rational a = rationalOp(static_cast<const Rational&>(i), static_cast<const Rational&>(j));
     if (!a.numeratorOrDenominatorIsInfinity()) {
       return a;
     }

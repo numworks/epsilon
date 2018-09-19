@@ -145,7 +145,7 @@ Expression RationalNode::denominator(Context & context, Preferences::AngleUnit a
 
 // Constructors
 
-Rational::Rational(Integer num, Integer den) : Number() {
+Rational::Rational(Integer & num, Integer & den) : Number() {
   assert(!den.isZero());
   if (!num.isOne() && !den.isOne()) {
     // Avoid computing GCD if possible
@@ -170,6 +170,12 @@ Rational::Rational(native_int_t i) : Number()  {
   }
   native_uint_t absI = i < 0 ? -i : i;
   new (this) Rational(&absI, 1, &one, 1, i < 0);
+}
+
+Rational::Rational(native_int_t i, native_int_t j) : Number() {
+  Integer iInteger(i);
+  Integer jInteger(j);
+  new (this) Rational(iInteger, jInteger);
 }
 
 bool Rational::numeratorOrDenominatorIsInfinity() const {

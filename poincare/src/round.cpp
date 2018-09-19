@@ -60,7 +60,8 @@ Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Rational mult = Rational::Multiplication(r1, err);
     IntegerDivision d = Integer::Division(mult.signedIntegerNumerator(), mult.integerDenominator());
     Integer rounding = d.quotient;
-    if (Rational::NaturalOrder(Rational(d.remainder, mult.integerDenominator()), Rational(1,2)) >= 0) {
+    Integer multDenominator = mult.integerDenominator();
+    if (Rational::NaturalOrder(Rational(d.remainder, multDenominator), Rational(1,2)) >= 0) {
       rounding = Integer::Addition(rounding, Integer(1));
     }
     Rational result = Rational::Multiplication(rounding, Rational::IntegerPower(Rational(1,10), r2.signedIntegerNumerator()));

@@ -115,7 +115,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         return e;
       }
       // Step 4.5. Build the new result.
-      Expression newR = Rational(div.remainder, r.integerDenominator());
+      Integer rDenominator = r.integerDenominator();
+      Expression newR = Rational(div.remainder, rDenominator);
       Expression rationalParent = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0) : e;
       rationalParent.replaceChildAtIndexInPlace(0, newR);
       newR.shallowReduce(context, angleUnit);

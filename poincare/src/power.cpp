@@ -741,13 +741,15 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     return Power(Rational(i), r.clone());
   }
   Rational p1 = Rational(r2);
-  Integer one = isDenominator ? Integer(-1) : Integer(1);
-  Rational p2 = Rational(one, r.integerDenominator());
+  Integer oneExponent = isDenominator ? Integer(-1) : Integer(1);
+  Integer rDenominator = r.integerDenominator();
+  Rational p2 = Rational(oneExponent, rDenominator);
   Power p = Power(p1, p2);
   if (r1.isEqualTo(Integer(1)) && !i.isNegative()) {
     return p;
   }
-  Rational r3 = isDenominator ? Rational(Integer(1), r1) : Rational(r1);
+  Integer one(1);
+  Rational r3 = isDenominator ? Rational(one, r1) : Rational(r1);
   Multiplication m;
   m.addChildAtIndexInPlace(r3, 0, 0);
   if (!r2.isOne()) {
@@ -783,10 +785,11 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
         return result;
       }
       Power sqrt = Power(Rational(pq), Rational(1, 2));
+      Integer one(1);
       if (castedChild1.isHalf()) {
-        result = Multiplication(Rational(Integer(1), q), sqrt);
+        result = Multiplication(Rational(one, q), sqrt);
       } else {
-        result = Multiplication(Rational(Integer(1), p), sqrt); // We use here the assertion that p != 0
+        result = Multiplication(Rational(one, p), sqrt); // We use here the assertion that p != 0
       }
       sqrt.shallowReduce(context, angleUnit);
     }
@@ -857,7 +860,8 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
       return result; // Escape
     }
     numerator = numerator.deepReduce(context, angleUnit);
-    result = Multiplication(numerator, Rational(Integer(1), denominator));
+    Integer one(1);
+    result = Multiplication(numerator, Rational(one, denominator));
   }
 
   if (!result.isUninitialized()) {

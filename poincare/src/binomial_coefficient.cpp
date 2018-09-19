@@ -103,7 +103,9 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   k = kBis.isLowerThan(k) ? kBis : k;
   int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
   for (int i = 0; i < clippedK; i++) {
-    Rational factor = Rational(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i)));
+    Integer nMinusI = Integer::Subtraction(n, Integer(i));
+    Integer kMinusI = Integer::Subtraction(k, Integer(i));
+    Rational factor = Rational(nMinusI, kMinusI);
     result = Rational::Multiplication(result, factor);
   }
   // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89

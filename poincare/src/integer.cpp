@@ -186,7 +186,7 @@ Integer::Integer(Integer && other) {
 
 Integer::Integer(const Integer& other) {
   // Copy other's data
-  if (other.usesImmediateDigit()) {
+  if (other.usesImmediateDigit() || other.isOverflow()) {
     m_digit = other.m_digit;
   } else {
     native_uint_t * newDigits = allocDigits(other.m_numberOfDigits);
@@ -223,7 +223,7 @@ Integer& Integer::operator=(const Integer& other) {
   if (this != &other) {
     releaseDynamicIvars();
     // Copy other's ivars
-    if (other.usesImmediateDigit()) {
+    if (other.usesImmediateDigit() || other.isOverflow()) {
       m_digit = other.m_digit;
     } else {
       native_uint_t * digits = allocDigits(other.m_numberOfDigits);

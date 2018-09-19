@@ -12,7 +12,7 @@ class ScriptParameterController;
 
 class EditorController : public ViewController, public TextAreaDelegate {
 public:
-  EditorController(MenuController * menuController);
+  EditorController(MenuController * menuController, App * pythonDelegate);
   void setScript(Script script);
 
   /* ViewController */

@@ -77,16 +77,22 @@ void App::Snapshot::setOpt(const char * name, char * value) {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
-  m_consoleController(nullptr, snapshot->scriptStore()
+  m_pythonHeap{},
+  m_pythonUser(nullptr),
+  m_consoleController(nullptr, this, snapshot->scriptStore()
 #if EPSILON_GETOPT
       , snapshot->lockOnConsole()
 #endif
       ),
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
-  m_menuController(&m_listFooter, snapshot->scriptStore(), &m_listFooter),
+  m_menuController(&m_listFooter, this, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
   m_variableBoxController(&m_menuController, snapshot->scriptStore())
 {
+}
+
+App::~App() {
+  deinitPython();
 }
 
 bool App::handleEvent(Ion::Events::Event event) {
@@ -115,6 +121,19 @@ bool App::textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event eve
     return true;
   }
   return false;
+}
+
+void App::initPythonWithUser(const void * pythonUser) {
+  assert(m_pythonUser == nullptr);
+  m_pythonUser = pythonUser;
+  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+}
+
+void App::deinitPython() {
+  if (m_pythonUser) {
+    MicroPython::deinit();
+    m_pythonUser = nullptr;
+  }
 }
 
 }

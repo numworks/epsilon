@@ -8,10 +8,10 @@ namespace Code {
 
 constexpr KDText::FontSize editorFontSize = KDText::FontSize::Large;
 
-EditorView::EditorView(Responder * parentResponder) :
+EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder, editorFontSize),
+  m_textArea(parentResponder, pythonDelegate, editorFontSize),
   m_gutterView(editorFontSize)
 {
   m_textArea.setScrollViewDelegate(this);

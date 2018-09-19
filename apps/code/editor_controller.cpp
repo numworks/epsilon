@@ -8,9 +8,9 @@
 
 namespace Code {
 
-EditorController::EditorController(MenuController * menuController) :
+EditorController::EditorController(MenuController * menuController, App * pythonDelegate) :
   ViewController(nullptr),
-  m_editorView(this),
+  m_editorView(this, pythonDelegate),
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {

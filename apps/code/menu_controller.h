@@ -13,7 +13,7 @@ class ScriptParameterController;
 
 class MenuController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public ButtonRowDelegate {
 public:
-  MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
+  MenuController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, ButtonRowController * footer);
   ConsoleController * consoleController();
   StackViewController * stackViewController();
   void willExitResponderChain(Responder * nextFirstResponder) override;

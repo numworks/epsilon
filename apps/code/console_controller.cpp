@@ -15,7 +15,7 @@ namespace Code {
 
 static const char * sStandardPromptText = ">>> ";
 
-ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore
+ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
       , bool lockOnConsole
 #endif
@@ -24,11 +24,11 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   SelectableTableViewDataSource(),
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
+  m_pythonDelegate(pythonDelegate),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
   m_editCell(this, this),
-  m_pythonHeap(nullptr),
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
@@ -44,22 +44,12 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   }
 }
 
-ConsoleController::~ConsoleController() {
-  unloadPythonEnvironment();
-}
-
 bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
   if(pythonEnvironmentIsLoaded()) {
     return true;
   }
   emptyOutputAccumulationBuffer();
-  m_pythonHeap = (char *)malloc(k_pythonHeapSize);
-  if (m_pythonHeap == nullptr) {
-    // In DEBUG mode, the assert at the end of malloc would have already failed
-    // and the program crashed.
-    return false;
-  }
-  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+  m_pythonDelegate->initPythonWithUser(this);
   MicroPython::registerScriptProvider(m_scriptStore);
   m_importScriptsWhenViewAppears = autoImportScripts;
   return true;
@@ -68,14 +58,12 @@ bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
 void ConsoleController::unloadPythonEnvironment() {
   if (pythonEnvironmentIsLoaded()) {
     m_consoleStore.startNewSession();
-    MicroPython::deinit();
-    free(m_pythonHeap);
-    m_pythonHeap = nullptr;
+    m_pythonDelegate->deinitPython();
   }
 }
 
 bool ConsoleController::pythonEnvironmentIsLoaded() {
-  return (m_pythonHeap != nullptr);
+  return m_pythonDelegate->isPythonUser(this);
 }
 
 void ConsoleController::autoImport() {

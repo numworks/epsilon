@@ -1,4 +1,5 @@
 #include "python_text_area.h"
+#include "app.h"
 
 extern "C" {
 #include "py/nlr.h"
@@ -75,19 +76,11 @@ static inline size_t TokenLength(mp_lexer_t * lex) {
 }
 
 void PythonTextArea::ContentView::loadSyntaxHighlighter() {
-  assert(m_pythonHeap == nullptr);
-  m_pythonHeap = static_cast<char *>(malloc(k_pythonHeapSize));
-  if (m_pythonHeap != nullptr) {
-    MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
-  }
+  m_pythonDelegate->initPythonWithUser(this);
 }
 
 void PythonTextArea::ContentView::unloadSyntaxHighlighter() {
-  if (m_pythonHeap != nullptr) {
-    MicroPython::deinit();
-    free(m_pythonHeap);
-    m_pythonHeap = nullptr;
-  }
+  m_pythonDelegate->deinitPython();
 }
 
 void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const {
@@ -105,7 +98,7 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const {
   LOG_DRAW("Drawing \"%.*s\"\n", length, text);
 
-  if (m_pythonHeap == nullptr) {
+  if (!m_pythonDelegate->isPythonUser(this)) {
     drawStringAt(
       ctx,
       line,

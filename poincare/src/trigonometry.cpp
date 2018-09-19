@@ -223,6 +223,18 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   return e;
 }
 
+/* TODO: We use the cheat table to look for known simplifications (e.g.
+ * cos(0)=1). To look for a simplification, we parse, simplify and compare all
+ * known values to the input expression, which is slow. To make this faster, we
+ * have several options:
+ * - Compare double values instead of trees (a hash table)
+ * - Store parsed Trees and compare buffers:
+ *   - By parsing all expressions at initialization and storing them (takes a
+ *     lot of RAM)
+ *   - By having constexpr constructor of TreeNodes (not possible because
+ *     TreeNode has a virtual destructor) and storing Trees in Flash memory
+ * - Use a prefix Tree to search for a match (also called Trie) */
+
 static_assert('\x8A' == Ion::Charset::SmallPi, "Unicode error");
 constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][5] =
 // Angle in Radian | Angle in Degree | Cosine | Sine | Tangent

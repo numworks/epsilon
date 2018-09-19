@@ -17,8 +17,7 @@ QUIZ_CASE(poincare_division_evaluate) {
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]/2", "[[0.5,1][1.5,2][2.5,3]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]", "[[-1,6.6666666666667E-1][1,0]]");
   assert_parsed_expression_evaluates_to<double>("3/[[3,4][5,6]]", "[[-9,6][7.5,-4.5]]");
-  // TODO: add this test when inverse of complex matrix is implemented
-  //assert_parsed_expression_evaluates_to<double>("(3+4i)/[[1,2+i][3,4][5,6]]", "[[(-9)-12*I,6+8*I][7/5+10*I,(-4.5)-6*I]]");
+  assert_parsed_expression_evaluates_to<double>("(3+4I)/[[1,I][3,4]]", "[[4*I,1][-3*I,I]]");
 #endif
   assert_parsed_expression_evaluates_to<float>("1E20/(1E20+1E20I)", "0.5-0.5*I");
   assert_parsed_expression_evaluates_to<double>("1E155/(1E155+1E155I)", "0.5-0.5*I");

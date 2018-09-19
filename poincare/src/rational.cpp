@@ -178,6 +178,12 @@ Rational::Rational(native_int_t i, native_int_t j) : Number() {
   new (this) Rational(iInteger, jInteger);
 }
 
+Rational::Rational(const char * iString, const char * jString) : Number() {
+  Integer iInteger(iString);
+  Integer jInteger(jString);
+  new (this) Rational(iInteger, jInteger);
+}
+
 bool Rational::numeratorOrDenominatorIsInfinity() const {
   return signedIntegerNumerator().isInfinity() || integerDenominator().isInfinity();
 }

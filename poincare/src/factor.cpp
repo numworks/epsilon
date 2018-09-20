@@ -62,25 +62,23 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m;
-  if (i.isOne()) {
+  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
+  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
+  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  if (numberOfPrimeFactors == 0) {
     m.addChildAtIndexInPlace(Rational(i), 0, 0);
     return m;
   }
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  int index = 0;
-  if (coefficients[0].isMinusOne()) {
+  if (numberOfPrimeFactors < 0) {
     // Exception: the decomposition failed
     return m;
   }
-  while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
+  for (int index = 0; index < numberOfPrimeFactors; index++) {
     Expression factor = Rational(factors[index]);
     if (!coefficients[index].isOne()) {
       factor = Power(factor, Rational(coefficients[index]));
     }
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
-    index++;
   }
   return m;
 }

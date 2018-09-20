@@ -19,7 +19,7 @@ public:
    * small integer optimization. Thereby, the tables will not allocate any
    * Integer on the static Integer table that limit the number of Integer
    * simultaneously alive. */
-  static void PrimeFactorization(const Integer & i, Integer outputFactors[], Integer outputCoefficients[], int outputLength);
+  static int PrimeFactorization(const Integer & i, Integer outputFactors[], Integer outputCoefficients[], int outputLength);
   constexpr static int k_numberOfPrimeFactors = 1000;
   constexpr static int k_maxNumberOfPrimeFactors = 32;
 private:

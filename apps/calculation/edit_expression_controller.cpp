@@ -160,8 +160,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  ((ContentView *)view())->expressionField()->setEditing(true);
-  ((ContentView *)view())->expressionField()->setText("");
+  ((ContentView *)view())->expressionField()->setEditing(true, true);
   return true;
 }
 

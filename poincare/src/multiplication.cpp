@@ -22,16 +22,16 @@ ExpressionNode::Sign MultiplicationNode::sign() const {
     return Sign::Unknown;
   }
   int sign = 1;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    sign *= (int)childAtIndex(i)->sign();
+  for (ExpressionNode * c : children()) {
+    sign *= (int)(c->sign());
   }
   return (Sign)sign;
 }
 
 int MultiplicationNode::polynomialDegree(char symbolName) const {
   int degree = 0;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    int d = childAtIndex(i)->polynomialDegree(symbolName);
+  for (ExpressionNode * c : children()) {
+    int d = c->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;
     }

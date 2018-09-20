@@ -39,13 +39,14 @@ bool MatrixComplexNode<T>::isUndefined() const {
 template<typename T>
 Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   Matrix matrix = Matrix::EmptyMatrix();
-  for (int i = 0; i < numberOfChildren(); i++) {
-    EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(i);
-    if (child->type() == EvaluationNode<T>::Type::Complex) {
-      matrix.addChildAtIndexInPlace(child->complexToExpression(complexFormat), i, i);
+  int i = 0;
+  for (EvaluationNode<T> * c : this->children()) {
+    if (c->type() == EvaluationNode<T>::Type::Complex) {
+      matrix.addChildAtIndexInPlace(c->complexToExpression(complexFormat), i, i);
     } else {
       matrix.addChildAtIndexInPlace(Undefined(), i, i);
     }
+    i++;
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());
   return matrix;
@@ -87,12 +88,13 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
     return MatrixComplex<T>::Undefined();
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
-  for (int i = 0; i < numberOfChildren(); i++) {
-    EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(i);
-    if (child->type() != EvaluationNode<T>::Type::Complex) {
+  int i = 0;
+  for (EvaluationNode<T> * c : this->children()) {
+    if (c->type() != EvaluationNode<T>::Type::Complex) {
       return MatrixComplex<T>::Undefined();
     }
     operandsCopy[i] = complexAtIndex(i);
+    i++;
   }
   int result = Matrix::ArrayInverse(operandsCopy, m_numberOfRows, m_numberOfColumns);
   if (result == 0) {

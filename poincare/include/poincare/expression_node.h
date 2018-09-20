@@ -158,6 +158,7 @@ public:
 protected:
   /* Hierarchy */
   ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(TreeNode::parent()); }
+  Direct<ExpressionNode> children() const { return Direct<ExpressionNode>(this); }
 
   /* SerializationHelperInterface */
   SerializationHelperInterface * serializableChildAtIndex(int i) const override { return childAtIndex(i); }

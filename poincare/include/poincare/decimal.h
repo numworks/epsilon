@@ -86,7 +86,7 @@ class Decimal final : public Number {
 friend class Number;
 friend class DecimalNode;
 public:
-  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength);
+  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentIsNegative = false);
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
   Decimal(DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);

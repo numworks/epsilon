@@ -220,8 +220,7 @@ template<typename T> T DecimalNode::templatedApproximate() const {
   return f*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1));
 }
 
-int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength) {
-  bool exponentNegative = false;
+int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
   if (exponentLength > 0 && exponent[0] == '-') {
     exponent++;
     exponentNegative = true;

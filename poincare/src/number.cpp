@@ -80,6 +80,32 @@ Number Number::ParseDigits(const char * digits, size_t length) {
   return Decimal(integral, integralLength, fractional, fractionalLength, exp);
 }
 
+Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
+  // Integer
+  if (exponentLength == 0 && decimalLenght == 0) {
+    Integer i(integralPart, integralLength, false);
+    if (!i.isInfinity()) {
+      return Rational(i);
+    }
+  }
+  int exp;
+  // Avoid overflowing int
+  if (exponentLength < Decimal::k_maxExponentLength) {
+    exp = Decimal::Exponent(integralPart, integralLength, decimalPart, decimalLenght, exponentPart, exponentLength, exponentIsNegative);
+  } else {
+    exp = exponentIsNegative ? -1 : 1;
+  }
+  // Avoid Decimal with exponent > k_maxExponentLength
+  if (exponentLength >= Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
+    if (exp < 0) {
+      return Decimal(0.0);
+    } else {
+      return Infinity(false);
+    }
+  }
+  return Decimal(integralPart, integralLength, decimalPart, decimalLenght, exp);
+}
+
 template <typename T>
 Number Number::DecimalNumber(T f) {
   if (std::isnan(f)) {

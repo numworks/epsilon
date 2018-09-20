@@ -211,8 +211,6 @@ KDCoordinate HorizontalLayoutNode::computeBaseline() {
 KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
   assert(hasChild(l));
   KDCoordinate x = 0;
-  int index = indexOfChild(l);
-  assert(index > -1);
   for (LayoutNode * c : children()) {
     if (c == l) {
       break;

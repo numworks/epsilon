@@ -43,4 +43,9 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(64,2)", "6");
   assert_parsed_expression_simplify_to("log(2,64)", "log(2,64)");
   assert_parsed_expression_simplify_to("log(1476225,5)", "2+10*log(3,5)");
+
+  assert_parsed_expression_simplify_to("log(100)", "2");
+  assert_parsed_expression_simplify_to("log(1000000)", "6");
+  assert_parsed_expression_simplify_to("log(70992768,14)", "5+2*log(2,14)+log(3,14)+log(11,14)");
+  assert_parsed_expression_simplify_to("log(1/6991712,14)", "(-5)-log(13,14)");
 }

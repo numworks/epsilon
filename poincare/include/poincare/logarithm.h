@@ -3,6 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/integer.h>
+#include <poincare/addition.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -61,7 +62,8 @@ public:
 
 private:
   Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-  Expression splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
+  Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
+  Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   bool parentIsAPowerOfSameBase() const;
 };
 

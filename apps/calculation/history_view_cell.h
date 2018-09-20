@@ -36,6 +36,7 @@ public:
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  Calculation * m_calculation;
   Poincare::Layout m_inputLayout;
   Poincare::Layout m_exactOutputLayout;
   Poincare::Layout m_approximateOutputLayout;

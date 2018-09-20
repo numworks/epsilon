@@ -21,6 +21,11 @@ Calculation::Calculation() :
 {
 }
 
+bool Calculation::operator==(const Calculation& c) {
+  return strcmp(m_inputText, c.m_inputText) == 0
+      && strcmp(m_approximateOutputText, c.m_approximateOutputText) == 0;
+}
+
 void Calculation::reset() {
   m_inputText[0] = 0;
   m_exactOutputText[0] = 0;

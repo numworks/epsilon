@@ -114,7 +114,6 @@ public:
     return p == nullptr ? Ion::Charset::Empty : p->XNTChar();
   }
 
-  // TODO: put private
   virtual bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) { return true; }
   virtual bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) { return true; }
   virtual void willAddSiblingToEmptyChildAtIndex(int childIndex) {}

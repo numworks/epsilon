@@ -151,7 +151,7 @@ void TreeNode::log(std::ostream & stream, bool recursive) {
   stream << "<";
   logNodeName(stream);
   stream << " id=\"" << m_identifier << "\"";
-  stream << " refCount=\"" << m_referenceCounter << "\"";
+  stream << " refCount=\"" << (int16_t)m_referenceCounter << "\"";
   stream << " size=\"" << size() << "\"";
   logAttributes(stream);
   stream << ">";

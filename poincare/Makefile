@@ -130,6 +130,12 @@ objs += $(addprefix poincare/src/,\
   variable_context.o\
 )
 
+objs += $(addprefix poincare/src/parsing/,\
+  parser.o\
+  parser_reductions.o\
+  tokenizer.o\
+)
+
 tests += $(addprefix poincare/test/,\
   tree/tree_handle.cpp\
   tree/helpers.cpp\

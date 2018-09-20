@@ -27,7 +27,7 @@ public:
   bool hasText() const { return layout().hasText(); }
   int serialize(char * buffer, int bufferLength) { return layout().serialize(buffer, bufferLength); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
-  char XNTChar() { return m_contentView.cursor()->layouterence().XNTChar(); }
+  char XNTChar() { return m_contentView.cursor()->layoutReference().XNTChar(); }
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {

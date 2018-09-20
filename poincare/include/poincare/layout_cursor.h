@@ -57,7 +57,7 @@ public:
   bool isDefined() const { return !m_layout.isUninitialized(); }
 
   // Getters and setters
-  Layout layouterence() { return m_layout; }
+  Layout layoutReference() { return m_layout; }
 
   int layoutIdentifier() { return m_layout.identifier(); }
   void setLayout(Layout r) {
@@ -66,7 +66,7 @@ public:
     }
   }
   void setTo(LayoutCursor * other) {
-     m_layout = other->layouterence();
+     m_layout = other->layoutReference();
      m_position = other->position();
   }
   Position position() const { return m_position; }

@@ -94,7 +94,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
   }
   castedParent.addOrMergeChildAtIndex(rightChild, idxInParent, true);
   castedParent.addOrMergeChildAtIndex(leftChild, idxInParent, true, putCursorInTheMiddle ? cursor : nullptr);
-  p.removeChild(*this, cursor->layouterence() == *this ? cursor : nullptr);
+  p.removeChild(*this, cursor->layoutReference() == *this ? cursor : nullptr);
 }
 
 void Layout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {

@@ -1,5 +1,6 @@
 #include "variable_box_controller.h"
 #include "script.h"
+#include "app.h"
 #include "../shared/toolbox_helpers.h"
 #include <apps/i18n.h>
 #include <assert.h>
@@ -11,10 +12,10 @@ namespace Code {
 
 /* ContentViewController */
 
-VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, MenuController * menuController, ScriptStore * scriptStore) :
+VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore) :
   ViewController(parentResponder),
   m_scriptNodesCount(0),
-  m_menuController(menuController),
+  m_pythonDelegate(pythonDelegate),
   m_scriptStore(scriptStore),
   m_selectableTableView(this)
 {
@@ -47,8 +48,15 @@ const char * VariableBoxController::ContentViewController::title() {
   return  I18n::translate(I18n::Message::FunctionsAndVariables);
 }
 
+void VariableBoxController::ContentViewController::didEnterResponderChain(Responder * previousFirstResponder) {
+  m_pythonDelegate->initPythonWithUser(this);
+}
+
+void VariableBoxController::ContentViewController::willExitResponderChain(Responder * nextFirstResponder) {
+  m_pythonDelegate->deinitPython();
+}
+
 void VariableBoxController::ContentViewController::viewWillAppear() {
-  m_menuController->loadPythonIfNeeded();
   m_scriptNodesCount = 0;
   m_scriptStore->scanScriptsForFunctionsAndVariables(
     this,
@@ -127,9 +135,9 @@ void VariableBoxController::ContentViewController::insertTextInCaller(const char
   m_textInputCaller->handleEventWithText(commandBuffer);
 }
 
-VariableBoxController::VariableBoxController(MenuController * menuController, ScriptStore * scriptStore) :
+VariableBoxController::VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore) :
   StackViewController(nullptr, &m_contentViewController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
-  m_contentViewController(this, menuController, scriptStore)
+  m_contentViewController(this, pythonDelegate, scriptStore)
 {
 }
 

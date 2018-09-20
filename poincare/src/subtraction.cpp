@@ -10,8 +10,8 @@ namespace Poincare {
 
 int SubtractionNode::polynomialDegree(char symbolName) const {
   int degree = 0;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    int d = childAtIndex(i)->polynomialDegree(symbolName);
+  for (ExpressionNode * e : children()) {
+    int d = e->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;
     }

@@ -14,8 +14,8 @@ Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::Angle
 }
 
 int ExpressionNode::polynomialDegree(char symbolName) const {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i)->polynomialDegree(symbolName) != 0) {
+  for (ExpressionNode * c : children()) {
+    if (c->polynomialDegree(symbolName) != 0) {
       return -1;
     }
   }
@@ -28,8 +28,8 @@ int ExpressionNode::getPolynomialCoefficients(char symbolName, Expression coeffi
 
 int ExpressionNode::getVariables(isVariableTest isVariable, char * variables) const {
  int numberOfVariables = 0;
- for (int i = 0; i < numberOfChildren(); i++) {
-   int n = childAtIndex(i)->getVariables(isVariable, variables);
+  for (ExpressionNode * c : children()) {
+   int n = c->getVariables(isVariable, variables);
    if (n < 0) {
      return -1;
    }
@@ -43,8 +43,8 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
    * one and the other are x-independant. We keep the biggest interesting range
    * among the childAtIndex interesting ranges. */
   float range = 0.0f;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    float opRange = childAtIndex(i)->characteristicXRange(context, angleUnit);
+  for (ExpressionNode * c : children()) {
+    float opRange = c->characteristicXRange(context, angleUnit);
     if (std::isnan(opRange)) {
       return NAN;
     } else if (range < opRange) {
@@ -71,15 +71,17 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const Express
 }
 
 int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
-  for (int i = 0; i < numberOfChildren(); i++) {
+  int index = 0;
+  for (ExpressionNode * c : children()) {
     // The NULL node is the least node type.
-    if (e->numberOfChildren() <= i) {
+    if (e->numberOfChildren() <= index) {
       return 1;
     }
-    int childIOrder = SimplificationOrder(childAtIndex(i), e->childAtIndex(i), canBeInterrupted);
+    int childIOrder = SimplificationOrder(c, e->childAtIndex(index), canBeInterrupted);
     if (childIOrder != 0) {
       return childIOrder;
     }
+    index++;
   }
   // The NULL node is the least node type.
   if (e->numberOfChildren() > numberOfChildren()) {

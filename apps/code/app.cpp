@@ -87,7 +87,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, this, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
-  m_variableBoxController(&m_menuController, snapshot->scriptStore())
+  m_variableBoxController(this, snapshot->scriptStore())
 {
 }
 
@@ -124,9 +124,10 @@ bool App::textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event eve
 }
 
 void App::initPythonWithUser(const void * pythonUser) {
-  assert(m_pythonUser == nullptr);
+  if (!m_pythonUser) {
+    MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+  }
   m_pythonUser = pythonUser;
-  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
 }
 
 void App::deinitPython() {

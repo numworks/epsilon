@@ -11,7 +11,7 @@ namespace Code {
 
 class VariableBoxController : public StackViewController {
 public:
-  VariableBoxController(MenuController * menuController, ScriptStore * scriptStore);
+  VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore);
   void didBecomeFirstResponder() override;
   void setTextInputCaller(TextInput * textInput);
   void viewWillAppear() override;
@@ -19,7 +19,7 @@ public:
 private:
   class ContentViewController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
   public:
-    ContentViewController(Responder * parentResponder, MenuController * menuController, ScriptStore * scriptStore);
+    ContentViewController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore);
     void setTextInputCaller(TextInput * textInput);
     void reloadData();
 
@@ -33,6 +33,8 @@ private:
     void viewDidDisappear() override;
 
     /* Responder */
+    void didEnterResponderChain(Responder * previousFirstResponder) override;
+    void willExitResponderChain(Responder * nextFirstResponder) override;
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
 
@@ -49,7 +51,7 @@ private:
     void insertTextInCaller(const char * text);
     int m_scriptNodesCount;
     ScriptNode m_scriptNodes[k_maxScriptNodesCount];
-    MenuController * m_menuController;
+    App * m_pythonDelegate;
     ScriptStore * m_scriptStore;
     TextInput * m_textInputCaller;
     ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];

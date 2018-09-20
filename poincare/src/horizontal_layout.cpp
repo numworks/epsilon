@@ -213,9 +213,12 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
   KDCoordinate x = 0;
   int index = indexOfChild(l);
   assert(index > -1);
-  if (index > 0) {
-    LayoutNode * previousChild = childAtIndex(index-1);
-    x = previousChild->origin().x() + previousChild->layoutSize().width();
+  for (LayoutNode * c : children()) {
+    if (c == l) {
+      break;
+    }
+    KDSize childSize = c->layoutSize();
+    x += childSize.width();
   }
   KDCoordinate y = baseline() - l->baseline();
   return KDPoint(x, y);

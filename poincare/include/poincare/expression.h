@@ -14,7 +14,6 @@ namespace Poincare {
 class Context;
 
 class Expression : public TreeHandle {
-  // TODO clean friends
   friend class AbsoluteValue;
   friend class Addition;
   friend class ArcCosine;
@@ -24,8 +23,10 @@ class Expression : public TreeHandle {
   friend class BinomialCoefficient;
   friend class Ceiling;
   friend class ComplexArgument;
+  friend class ConfidenceInterval;
   friend class Conjugate;
   friend class Cosine;
+  friend class Decimal;
   friend class Derivative;
   friend class Determinant;
   friend class Division;
@@ -43,6 +44,7 @@ class Expression : public TreeHandle {
   friend class Integral;
   friend class LeastCommonMultiple;
   friend class Logarithm;
+  friend class Matrix;
   friend class MatrixDimension;
   friend class MatrixInverse;
   friend class MatrixTrace;
@@ -50,6 +52,7 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class NaperianLogarithm;
   friend class NthRoot;
+  friend class Number;
   friend class Opposite;
   friend class Parenthesis;
   friend class PermuteCoefficient;
@@ -60,30 +63,25 @@ class Expression : public TreeHandle {
   friend class Sine;
   friend class SquareRoot;
   friend class Store;
-  friend class Tangent;
-
-  friend class ExpressionNode;
-  friend class EqualNode;
-  friend class SymbolNode;
-  friend class StoreNode;
-  friend class ConfidenceInterval;
-  friend class Multiplication;
   friend class Subtraction;
-  friend class Addition;
-  friend class AdditionNode;
-  friend class IntegralNode;
-  friend class Number;
   friend class Symbol;
-  friend class Decimal;
-  friend class DerivativeNode;
-  friend class NAryExpressionNode;
-  friend class Matrix;
+  friend class Tangent;
   friend class Trigonometry;
-template<int T>
+
+  friend class AdditionNode;
+  friend class DerivativeNode;
+  friend class EqualNode;
+  template<typename T>
+  friend class ExceptionExpressionNode;
+  friend class ExpressionNode;
+  friend class IntegralNode;
+  template<int T>
   friend class LogarithmNode;
   friend class NaperianLogarithmNode;
-template<typename T>
-  friend class ExceptionExpressionNode;
+  friend class NAryExpressionNode;
+  friend class StoreNode;
+  friend class SymbolNode;
+
 public:
   static bool isExpression() { return true; }
   /* Constructor & Destructor */

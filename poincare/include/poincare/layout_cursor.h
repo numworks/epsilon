@@ -10,7 +10,20 @@ class VerticalOffsetLayout;
 
 class LayoutCursor {
   friend class Layout;
+  friend class BinomialCoefficientLayoutNode;
+  friend class BracketLayoutNode;
+  friend class BracketPairLayoutNode;
+  friend class ConjugateLayoutNode;
+  friend class EmptyLayoutNode;
+  friend class FractionLayoutNode;
+  friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
+  friend class IntegralLayoutNode;
+  friend class LayoutNode;
+  friend class MatrixLayoutNode;
+  friend class NthRootLayoutNode;
+  friend class SequenceLayoutNode;
+  friend class VerticalOffsetLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
@@ -36,11 +49,6 @@ public:
     m_position(position)
   {}
 
-  LayoutCursor(LayoutNode * node, Position position = Position::Right) :
-    m_layout(node),
-    m_position(position)
-  {} //TODO make this private and friend class layout_node
-
   LayoutCursor clone() const {
     return LayoutCursor(m_layout, m_position);
   }
@@ -50,21 +58,11 @@ public:
 
   // Getters and setters
   Layout layouterence() { return m_layout; }
-  LayoutNode * layoutNode() { return m_layout.node(); } // TODO  Make private + friend classes ?
 
   int layoutIdentifier() { return m_layout.identifier(); }
   void setLayout(Layout r) {
     if (r != m_layout) {
       m_layout = r;
-    }
-  }
-  void setLayoutNode(LayoutNode * n) {
-    if (n->identifier() != m_layout.identifier()) {
-      /* Compare the identifiers and not the nodes because m_layout might
-       * temporarily be pointing to a GhostNode. In this case,
-       * m_layout.node() would crash because of the assertion that the node
-       * is not ghost. */
-      m_layout = Layout(n);
     }
   }
   void setTo(LayoutCursor * other) {
@@ -121,6 +119,20 @@ public:
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
+  LayoutCursor(LayoutNode * node, Position position = Position::Right) :
+    m_layout(node),
+    m_position(position)
+  {}
+  LayoutNode * layoutNode() { return m_layout.node(); }
+  void setLayoutNode(LayoutNode * n) {
+    if (n->identifier() != m_layout.identifier()) {
+      /* Compare the identifiers and not the nodes because m_layout might
+       * temporarily be pointing to a GhostNode. In this case,
+       * m_layout.node() would crash because of the assertion that the node
+       * is not ghost. */
+      m_layout = Layout(n);
+    }
+  }
   KDCoordinate layoutHeight();
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();

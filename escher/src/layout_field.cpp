@@ -52,11 +52,11 @@ void LayoutField::ContentView::layoutCursorSubview() {
     return;
   }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
-  Layout pointedLayoutR = m_cursor.layouterence();
+  Layout pointedLayoutR = m_cursor.layoutReference();
   LayoutCursor::Position cursorPosition = m_cursor.position();
   LayoutCursor eqCursor = pointedLayoutR.equivalentCursor(&m_cursor);
-  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layouterence())) {
-    pointedLayoutR = eqCursor.layouterence();
+  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layoutReference())) {
+    pointedLayoutR = eqCursor.layoutReference();
     cursorPosition = eqCursor.position();
   }
   KDPoint cursoredExpressionViewOrigin = pointedLayoutR.absoluteOrigin();
@@ -235,13 +235,13 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
     result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
   } else if (event == Ion::Events::ShiftLeft) {
     *shouldRecomputeLayout = true;
-    if (m_contentView.cursor()->layouterence().removeGreySquaresFromAllMatrixAncestors()) {
+    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
     result.setLayout(layout());
     result.setPosition(LayoutCursor::Position::Left);
   } else if (event == Ion::Events::ShiftRight) {
-    if (m_contentView.cursor()->layouterence().removeGreySquaresFromAllMatrixAncestors()) {
+    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
     result.setLayout(layout());
@@ -301,7 +301,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Layout pointedLayoutR, bo
   }
 
   // Handle matrices
-  m_contentView.cursor()->layouterence().addGreySquaresToAllMatrixAncestors();
+  m_contentView.cursor()->layoutReference().addGreySquaresToAllMatrixAncestors();
 
   // Handle empty layouts
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();

@@ -20,9 +20,10 @@ public:
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+protected:
+  static constexpr KDCoordinate k_cellHeight = 20;
 private:
   TextFieldDelegateApp * textFieldDelegateApp() override;
-  static constexpr KDCoordinate k_cellHeight = 20;
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;

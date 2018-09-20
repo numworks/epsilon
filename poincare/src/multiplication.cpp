@@ -152,7 +152,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
 
   /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
    * This also turns 2/3*a into 2*a*3^(-1) */
-  Expression thisExp = mergeNegativePower(context, angleUnit); //TODO
+  Expression thisExp = mergeNegativePower(context, angleUnit);
   if (thisExp.type() == ExpressionNode::Type::Power) {
     return thisExp.shallowBeautify(context, angleUnit);
   }
@@ -222,7 +222,6 @@ int Multiplication::getPolynomialCoefficients(char symbolName, Expression coeffi
       }
       /* a(j) and b(j) are used only to compute coefficient at rank >= j, we
        * can delete them as we compute new coefficient by decreasing ranks. */
-      // TODO remove if (j <= degI) { delete intermediateCoefficients[j]; };
       coefficients[j] = a;
     }
     // new coefficients[0] = a(0)*b(0)
@@ -585,15 +584,9 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
           }
           sub.shallowReduce(context, angleUnit);
           mergeInChildByFactorizingBase(i, factor, context, angleUnit);
-          // TODO: we use to shallowReduce childAtIndex(i) here? Needed ?
         } else if (sub.sign() == ExpressionNode::Sign::Unknown) {
-          // TODO: we use to shallowReduce childAtIndex(i) here? Needed ?
           mergeInChildByFactorizingBase(i, factor, context, angleUnit);
         }
-        /* Reducing the new child i can lead to creating a new multiplication
-         * (ie 2^(1+2*3^(1/2)) -> 2*2^(2*3^(1/2)). We thus have to get rid of
-         * nested multiplication: */
-        //mergeMultiplicationOperands(); // TODO: required ???
         return;
       }
     }

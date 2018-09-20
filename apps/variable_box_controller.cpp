@@ -84,6 +84,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     if (m_currentPage == Page::Matrix) {
       const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow());
       m_context->setExpressionForSymbolName(Expression(), symbol, *m_context);
+      m_matrixLayouts[selectedRow()] = Layout();
     }
     m_selectableTableView.reloadData();
     return true;
@@ -138,29 +139,29 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   char label[3];
   putLabelAtIndexInBuffer(index, label);
   myCell->setLabel(label);
-  const Expression evaluation = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
+    const Expression evaluation = expressionForIndex(index);
     char buffer[PrintFloat::k_maxComplexBufferLength];
     PoincareHelpers::Serialize(evaluation, buffer, PrintFloat::k_maxComplexBufferLength, Constant::ShortNumberOfSignificantDigits);
     myCell->setSubtitle(buffer);
     return;
   }
+  assert(m_currentPage == Page::Matrix);
   myCell->displayExpression(true);
-  if (!evaluation.isUninitialized()) {
-    /* TODO: implement list contexts */
-    // TODO: handle matrix and scalar!
-    Layout layoutR = layoutForIndex(index);
-    const Matrix matrixEvaluation = static_cast<const Matrix&>(evaluation);
-    myCell->setLayout(layoutR);
-    char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
-    int numberOfChars = PrintFloat::convertFloatToText<float>(matrixEvaluation.numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
-    buffer[numberOfChars++] = 'x';
-    PrintFloat::convertFloatToText<float>(matrixEvaluation.numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
-    myCell->setSubtitle(buffer);
-  } else {
-    myCell->setLayout(Layout());
+  /* TODO: implement list contexts */
+  // TODO: handle matrix and scalar!
+  Layout layoutR = matrixLayoutAtIndex(index);
+  myCell->setLayout(layoutR);
+  if (layoutR.isUninitialized()) {
     myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
+  } else {
+    char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
+    MatrixLayout matrixLayout = static_cast<MatrixLayout &>(layoutR);
+    int numberOfChars = PrintFloat::convertFloatToText<float>(matrixLayout.numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
+    buffer[numberOfChars++] = 'x';
+    PrintFloat::convertFloatToText<float>(matrixLayout.numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
+    myCell->setSubtitle(buffer);
   }
 }
 
@@ -168,7 +169,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   if (m_currentPage == Page::RootMenu || m_currentPage == Page::Scalar) {
     return Metric::ToolboxRowHeight;
   }
-  Layout layoutR = layoutForIndex(index);
+  Layout layoutR = matrixLayoutAtIndex(index);
   if (!layoutR.isUninitialized()) {
     return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
   }
@@ -196,6 +197,10 @@ void VariableBoxController::ContentViewController::resetPage() {
 
 void VariableBoxController::ContentViewController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
+  // Tidy the memoized layouts to clean TreePool
+  for (int i = 0; i < GlobalContext::k_maxNumberOfMatrixExpressions; i++) {
+    m_matrixLayouts[i] = Layout();
+  }
   // Tidy the layouts used to display the VariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
@@ -258,17 +263,15 @@ const Expression VariableBoxController::ContentViewController::expressionForInde
   return Expression();
 }
 
-Layout VariableBoxController::ContentViewController::layoutForIndex(int index) {
-  if (m_currentPage == Page::Matrix) {
-    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->layoutForSymbol(symbol, Constant::ShortNumberOfSignificantDigits);
+Layout VariableBoxController::ContentViewController::matrixLayoutAtIndex(int index) {
+  assert(m_currentPage == Page::Matrix);
+  if (m_matrixLayouts[index].isUninitialized()) {
+    const Expression evaluation = expressionForIndex(index);
+    if (!evaluation.isUninitialized()) {
+      m_matrixLayouts[index] = evaluation.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+    }
   }
-#if LIST_VARIABLES
-  if (m_currentPage == Page::List) {
-    return Layout();
-  }
-#endif
-  return Layout();
+  return m_matrixLayouts[index];
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :

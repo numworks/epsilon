@@ -66,7 +66,7 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
-    if (!r0.integerDenominator().isOne() || r0.integerDenominator().isNegative()) {
+    if (!r0.integerDenominator().isOne() || r0.isNegative()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
       return result;
@@ -74,7 +74,7 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne() || r1.integerDenominator().isNegative()) {
+    if (!r1.integerDenominator().isOne() || r1.isNegative()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
       return result;

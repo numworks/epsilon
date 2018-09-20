@@ -168,7 +168,6 @@ void TreeNode::log(std::ostream & stream, bool recursive) {
 
 size_t TreeNode::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {
-    // TODO: Error handling
     return
       reinterpret_cast<char *>(nextSibling())
       -

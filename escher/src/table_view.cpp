@@ -76,8 +76,10 @@ KDCoordinate TableView::ContentView::columnWidth(int i) const {
 }
 
 void TableView::ContentView::resizeToFitContent() {
-  layoutSubviews();
-  setSize(KDSize(width(), height()));
+  if (!(m_tableView->bounds() == KDRectZero)) {
+    layoutSubviews();
+    setSize(KDSize(width(), height()));
+  }
 }
 
 KDCoordinate TableView::ContentView::height() const {
@@ -134,7 +136,7 @@ const char * TableView::ContentView::className() const {
 #endif
 
 int TableView::ContentView::numberOfSubviews() const {
-  return m_tableView->bounds() == KDRectZero ? 0 : numberOfDisplayableRows() * numberOfDisplayableColumns();
+  return numberOfDisplayableRows() * numberOfDisplayableColumns();
 }
 
 int TableView::ContentView::absoluteColumnNumberFromSubviewIndex(int index) const {

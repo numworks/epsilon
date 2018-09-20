@@ -143,7 +143,6 @@ void LayoutCursor::insertText(const char * text) {
   }
   Layout newChild;
   Layout pointedChild;
-  bool specialUnderScore = false;
   for (int i = 0; i < textLength; i++) {
     if (text[i] == Ion::Charset::Empty) {
       continue;
@@ -157,18 +156,6 @@ void LayoutCursor::insertText(const char * text) {
       }
     } else if (text[i] == ')') {
       newChild = RightParenthesisLayout();
-    } else if (text[i] == '_') {
-      specialUnderScore = (i < textLength) && (text[i+1] == '{');
-      if (!specialUnderScore) {
-         newChild = CharLayout('_');
-      } else {
-        continue;
-      }
-    } else if (text[i] == '{' && specialUnderScore) {
-      newChild = CharLayout('('); //TODO ?? Was a char layout before, not a parenthesis left
-    } else if (text[i] == '}' && specialUnderScore) {
-      newChild = CharLayout(')'); //TODO
-      specialUnderScore = false;
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */

@@ -119,12 +119,20 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
       return a.shallowReduce(context, angleUnit);
     }
   }
-  // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
+  // log(r) with r Rational
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Rational) {
-    const Rational r = static_cast<Rational &>(c);
-    Expression n = splitInteger(r.signedIntegerNumerator(), false, context, angleUnit);
-    Expression d = splitInteger(r.integerDenominator(), true, context, angleUnit);
-    Addition a = Addition(n, d);
+    Rational r = static_cast<Rational &>(c);
+    Addition a;
+    // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
+    if (numberOfChildren() == 1 || (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().integerDenominator().isOne())) {
+      Integer b = numberOfChildren() == 2 ? childAtIndex(1).convert<Rational>().signedIntegerNumerator() : Integer(10);
+      Integer newNumerator = simplifyLogarithmIntegerBaseInteger(r.signedIntegerNumerator(), b, a, false);
+      Integer newDenomitor = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);
+      r = Rational(newNumerator, newDenomitor);
+    }
+    // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
+    a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(), false, context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
+    a.addChildAtIndexInPlace(splitLogarithmInteger(r.integerDenominator(), true, context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
     replaceWithInPlace(a);
     return a.shallowReduce(context, angleUnit);
   }
@@ -191,7 +199,20 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   return false;
 }
 
-Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
+Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator) {
+  // log_b(i) = c+ log_b(i') with i = b^c*i'
+  assert(!i.isNegative() && !base.isNegative());
+  IntegerDivision div = Integer::Division(i, base);
+  Rational one(1);
+  while (!div.quotient.isInfinity() && div.remainder.isZero()) {
+    i = div.quotient;
+    a.addChildAtIndexInPlace(isDenominator ? Rational(-1) : Rational(1), a.numberOfChildren(), a.numberOfChildren()); // a++
+    div = Integer::Division(i, base);
+  }
+  return i;
+}
+
+Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(!i.isNegative());
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];

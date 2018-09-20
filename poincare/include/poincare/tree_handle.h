@@ -6,6 +6,14 @@
 
 namespace Poincare {
 
+/* TODO: implement an iterator over the children, so we can use "for (TreeHandle
+ * c : children)" instead of a for loop over the child index. This should be
+ * faster, as we do not have to recompute childAtIndex(i) at each iteration.
+ * Caution:
+ *  - The iterator should be specialized for Expression, Layout...
+ *  - We cannot compose with a TreeNode iterator as the node pointers might
+ *  change during the loop. */
+
 /* TreeHandle constructors that take only one argument and this argument is
  * a TreeHandle should be marked explicit. This prevents the code from
  * compiling with, for instance: Logarithm l = clone() (which would be

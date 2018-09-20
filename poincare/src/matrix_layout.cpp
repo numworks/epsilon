@@ -142,7 +142,7 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
   int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
   int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
   for (int childIndex = firstIndex; childIndex < lastIndex; childIndex++) {
-    if (cursor->layouterence().hasAncestor(thisRef.childAtIndex(childIndex), true)) {
+    if (cursor->layoutReference().hasAncestor(thisRef.childAtIndex(childIndex), true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;

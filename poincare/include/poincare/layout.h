@@ -30,7 +30,6 @@ public:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
     return node()->render(ctx, p, expressionColor, backgroundColor);
   }
-  //TODO: check these methods are needed here, not just in Node
   KDSize layoutSize() { return node()->layoutSize(); }
   KDPoint absoluteOrigin() { return node()->absoluteOrigin(); }
   KDCoordinate baseline() { return node()->baseline(); }
@@ -40,7 +39,6 @@ public:
   int serialize(char * buffer, int bufferSize) const { return node()->serialize(buffer, bufferSize); }
 
   // Layout properties
-  KDPoint positionOfChild(Layout child) { return node()->positionOfChild(child.node()); }
   bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
   bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }
   bool isHorizontal() const { return const_cast<Layout *>(this)->node()->isHorizontal(); }

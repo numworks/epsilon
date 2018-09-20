@@ -9,10 +9,7 @@ namespace Poincare {
 /* Clone */
 
 TreeHandle TreeHandle::clone() const {
-  /* TODO Remove ?
-  if (isUninitialized()) {
-    return TreeHandle();
-  }*/
+  assert(!isUninitialized());
   TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(node());
   nodeCopy->deleteParentIdentifier();
   return TreeHandle(nodeCopy);

@@ -53,7 +53,7 @@ private:
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);
     const Poincare::Expression expressionForIndex(int index);
-    Poincare::Layout layoutForIndex(int index);
+    Poincare::Layout matrixLayoutAtIndex(int index);
     Poincare::GlobalContext * m_context;
     Responder * m_sender;
     int m_firstSelectedRow;
@@ -61,6 +61,8 @@ private:
     Page m_currentPage;
     VariableBoxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
     MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+    // Matrix layout memoization
+    Poincare::Layout m_matrixLayouts[Poincare::GlobalContext::k_maxNumberOfMatrixExpressions];
     SelectableTableView m_selectableTableView;
   };
   ContentViewController m_contentViewController;

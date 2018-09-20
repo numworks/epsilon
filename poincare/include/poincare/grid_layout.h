@@ -22,6 +22,8 @@ public:
     m_numberOfColumns(0)
   {}
 
+  int numberOfRows() const { return m_numberOfRows; }
+  int numberOfColumns() const { return m_numberOfColumns; }
   virtual void setNumberOfRows(int numberOfRows) { m_numberOfRows = numberOfRows; }
   virtual void setNumberOfColumns(int numberOfColumns) { m_numberOfColumns = numberOfColumns; }
   KDSize gridSize() const { return KDSize(width(), height()); }
@@ -92,6 +94,8 @@ public:
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
     Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
+  int numberOfRows() const { return node()->numberOfRows(); }
+  int numberOfColumns() const { return node()->numberOfColumns(); }
 private:
   virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(Layout::node()); }
   void setNumberOfRows(int rows) {

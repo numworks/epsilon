@@ -194,14 +194,13 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
 Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(!i.isNegative());
-  if (i.isOne()) {
-    return Rational(0);
-  }
-  assert(!i.isOne());
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  if (coefficients[0].isMinusOne()) {
+  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  if (numberOfPrimeFactors == 0) {
+    return Rational(0);
+  }
+  if (numberOfPrimeFactors < 0) {
     /* We could not break i in prime factor (either it might take too many
      * factors or too much time). */
     Expression e = clone();
@@ -213,8 +212,7 @@ Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & cont
     return m;
   }
   Addition a;
-  int index = 0;
-  while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
+  for (int index = 0; index < numberOfPrimeFactors; index++) {
     if (isDenominator) {
       coefficients[index].setNegative(true);
     }
@@ -224,7 +222,6 @@ Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & cont
     e.simpleShallowReduce(context, angleUnit);
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(context, angleUnit);
-    index++;
   }
   return a;
 }

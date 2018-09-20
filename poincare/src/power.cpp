@@ -717,9 +717,8 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-
-  if (coefficients[0].isMinusOne()) {
+  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  if (numberOfPrimeFactors <= 0) {
     /* We could not break i in prime factors (it might take either too many
      * factors or too much time). */
     Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, context, angleUnit);
@@ -728,13 +727,11 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
 
   Integer r1(1);
   Integer r2(1);
-  int index = 0;
-  while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
+  for (int index = 0; index < numberOfPrimeFactors; index++) {
     Integer n = Integer::Multiplication(coefficients[index], r.signedIntegerNumerator());
     IntegerDivision div = Integer::Division(n, r.integerDenominator());
     r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));
     r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
-    index++;
   }
   if (r2.isInfinity() || r1.isInfinity()) {
     // we overflow Integer at one point: we abort

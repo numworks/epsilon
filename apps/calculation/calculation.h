@@ -16,6 +16,7 @@ public:
     Equal
   };
   Calculation();
+  bool operator==(const Calculation& c);
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
   void setContent(const char * c, Poincare::Context * context, Poincare::Expression ansExpression);

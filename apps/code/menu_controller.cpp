@@ -14,13 +14,11 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   m_scriptStore(scriptStore),
   m_addNewScriptCell(),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
-    MenuController * menu = (MenuController *)context;
-    if (menu->consoleController()->loadPythonEnvironment()) {
-      menu->stackViewController()->push(menu->consoleController());
-      return;
-    }
-    //TODO: Pop up warning message: not enough space to load Python
-  }, this), KDText::FontSize::Large),
+        MenuController * menu = (MenuController *)context;
+        menu->consoleController()->setAutoImport(true);
+        menu->stackViewController()->push(menu->consoleController());
+        return;
+        }, this), KDText::FontSize::Large),
   m_selectableTableView(this, this, this, this),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
   m_editorController(this, pythonDelegate),
@@ -146,16 +144,11 @@ void MenuController::reloadConsole() {
   m_reloadConsoleWhenBecomingFirstResponder = false;
 }
 
-void MenuController::loadPythonIfNeeded() {
-  consoleController()->loadPythonEnvironment(false);
-}
-
 void MenuController::openConsoleWithScript(Script script) {
   reloadConsole();
-  if (consoleController()->loadPythonEnvironment(false)) {
-    stackViewController()->push(consoleController());
-    consoleController()->autoImportScript(script, true);
-  }
+  consoleController()->setAutoImport(false);
+  stackViewController()->push(consoleController());
+  consoleController()->autoImportScript(script, true);
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }
 

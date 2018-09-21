@@ -43,6 +43,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
   // Python delegate
+  bool pythonIsInited() { return m_pythonUser != nullptr; }
   bool isPythonUser(const void * pythonUser) { return m_pythonUser == pythonUser; }
   void initPythonWithUser(const void * pythonUser);
   void deinitPython();

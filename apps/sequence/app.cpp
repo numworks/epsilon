@@ -50,14 +50,6 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-SequenceStore * App::Snapshot::sequenceStore() {
-  return &m_sequenceStore;
-}
-
-CurveViewRange * App::Snapshot::graphRange() {
-  return &m_graphRange;
-}
-
 void App::Snapshot::tidy() {
   m_sequenceStore.tidy();
   m_graphRange.setDelegate(nullptr);

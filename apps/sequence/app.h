@@ -27,8 +27,8 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    SequenceStore * sequenceStore();
-    CurveViewRange * graphRange();
+    SequenceStore * sequenceStore() { return &m_sequenceStore; }
+    CurveViewRange * graphRange() { return &m_graphRange; }
   private:
     void tidy() override;
     SequenceStore m_sequenceStore;

@@ -41,19 +41,13 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void EditorController::didEnterResponderChain(Responder * previousFirstResponder) {
-  m_editorView.loadSyntaxHighlighter();
-}
-
-void EditorController::willExitResponderChain(Responder * nextFirstResponder) {
-  m_editorView.unloadSyntaxHighlighter();
-}
 
 void EditorController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_editorView);
 }
 
 void EditorController::viewWillAppear() {
+  m_editorView.loadSyntaxHighlighter();
   m_editorView.setCursorLocation(strlen(m_editorView.text()));
 }
 

@@ -82,21 +82,21 @@ QUIZ_CASE(poincare_rational_power) {
 // Simplify
 
 QUIZ_CASE(poincare_rational_simplify) {
-  // 1/MaxIntegerString
+  // 1/MaxIntegerString()
   char buffer[400] = "1/";
-  strlcpy(buffer+2, MaxIntegerString, 400-2);
+  strlcpy(buffer+2, MaxIntegerString(), 400-2);
   assert_parsed_expression_simplify_to(buffer, buffer);
-  // 1/OverflowedIntegerString
-  strlcpy(buffer+2, BigOverflowedIntegerString, 400-2);
+  // 1/OverflowedIntegerString()
+  strlcpy(buffer+2, BigOverflowedIntegerString(), 400-2);
   assert_parsed_expression_simplify_to(buffer, "1/inf");
-  // MaxIntegerString
-  assert_parsed_expression_simplify_to(MaxIntegerString, MaxIntegerString);
-  // OverflowedIntegerString
-  assert_parsed_expression_simplify_to(BigOverflowedIntegerString, "inf");
-  assert_parsed_expression_simplify_to(BigOverflowedIntegerString, "inf");
-  // -OverflowedIntegerString
+  // MaxIntegerString()
+  assert_parsed_expression_simplify_to(MaxIntegerString(), MaxIntegerString());
+  // OverflowedIntegerString()
+  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), "inf");
+  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), "inf");
+  // -OverflowedIntegerString()
   buffer[0] = '-';
-  strlcpy(buffer+1, BigOverflowedIntegerString, 400-1);
+  strlcpy(buffer+1, BigOverflowedIntegerString(), 400-1);
   assert_parsed_expression_simplify_to(buffer, "-inf");
 
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
@@ -138,7 +138,7 @@ QUIZ_CASE(poincare_rational_serialize) {
   assert_parsed_expression_serialize_to(Rational(-2, 3), "-2/3");
   assert_parsed_expression_serialize_to(Rational("2345678909876"), "2345678909876");
   assert_parsed_expression_serialize_to(Rational("-2345678909876", "5"), "-2345678909876/5");
-  assert_parsed_expression_serialize_to(Rational(MaxIntegerString), MaxIntegerString);
+  assert_parsed_expression_serialize_to(Rational(MaxIntegerString()), MaxIntegerString());
   Integer one(1);
   Integer overflow = Integer::Overflow(false);
   assert_parsed_expression_serialize_to(Rational(one, overflow), "1/inf");

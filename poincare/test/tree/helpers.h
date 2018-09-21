@@ -1,32 +1,11 @@
-#include "blob_node.h"
-#include "pair_node.h"
-
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif
 
-static inline int pool_size() {
-  return Poincare::TreePool::sharedPool()->numberOfNodes();
-}
-#if POINCARE_TREE_LOG
-static inline void log_pool() {
-  Poincare::TreePool::sharedPool()->treeLog(std::cout);
-}
-static void log_pool_tree() {
-  Poincare::TreePool::sharedPool()->treeLog(std::cout);
-}
+int pool_size();
+void assert_pool_size(int i);
 
-#endif
-
-static void assert_pool_size(int i) {
 #if POINCARE_TREE_LOG
-  int poolSize = pool_size();
-  if (poolSize != i) {
-    std::cout << "Expected pool of size " << i << " but got " << poolSize << std::endl;
-    log_pool();
-    quiz_assert(false);
-  }
-#else
-  quiz_assert(pool_size() == i);
+void log_pool();
+void log_pool_tree();
 #endif
-}

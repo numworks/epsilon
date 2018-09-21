@@ -9,7 +9,7 @@ namespace Calculation {
 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
-  m_calculation(nullptr),
+  m_calculation(),
   m_inputLayout(),
   m_exactOutputLayout(),
   m_approximateOutputLayout(),
@@ -95,10 +95,10 @@ void HistoryViewCell::layoutSubviews() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
-  if (m_calculation != nullptr && *calculation == *m_calculation) {
+  if (*calculation == m_calculation) {
     return;
   }
-  m_calculation = calculation;
+  m_calculation = *calculation;
   m_inputLayout = calculation->createInputLayout();
   m_inputView.setLayout(m_inputLayout);
   App * calculationApp = (App *)app();

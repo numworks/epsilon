@@ -3,6 +3,7 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
+#include <poincare/infinity.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
@@ -141,17 +142,45 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
 
 Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
+  // log(0,0)->Undefined
+  if (numberOfChildren() == 2 && childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isZero() && static_cast<Rational &>(c).isZero()) {
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
+  }
+  // log(x,1)->Undefined
+  if (numberOfChildren() == 2 && childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isOne()) {
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
+  }
   // log(x,x)->1
   if (numberOfChildren() == 2 && c.isIdenticalTo(childAtIndex(1))) {
     Expression result = Rational(1);
     replaceWithInPlace(result);
     return result;
   }
+  // log(x,0)->0
+  if (numberOfChildren() == 2 && childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isZero()) {
+    Expression result = Rational(0);
+    replaceWithInPlace(result);
+    return result;
+  }
   if (c.type() == ExpressionNode::Type::Rational) {
     const Rational r = static_cast<Rational &>(c);
-    // log(0) = undef
+    // log(0, x) = -inf if x > 1 || inf x < 1 || undef if x < 0
     if (r.isZero()) {
-      Expression result = Undefined();
+      bool isNegative = true;
+      Expression result;
+      if (numberOfChildren() == 2) {
+        Evaluation<float> baseApproximation = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
+        std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
+        if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
+          result = Undefined();
+        }
+        isNegative = logDenominator.real() > 0.0;
+      }
+      result = result.isUninitialized() ? Infinity(isNegative) : result;
       replaceWithInPlace(result);
       return result;
     }
@@ -202,6 +231,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
 Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator) {
   // log_b(i) = c+ log_b(i') with i = b^c*i'
   assert(!i.isNegative() && !base.isNegative());
+  assert(!i.isZero() && !base.isZero() && !base.isOne());
   IntegerDivision div = Integer::Division(i, base);
   Rational one(1);
   while (!div.quotient.isInfinity() && div.remainder.isZero()) {

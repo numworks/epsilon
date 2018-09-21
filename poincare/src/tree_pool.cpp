@@ -73,8 +73,8 @@ void TreePool::removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumber
 
 void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveSize) {
   assert(moveSize % 4 == 0);
-  assert((long)source % 4 == 0);
-  assert((long)destination % 4 == 0);
+  assert((((uintptr_t)source) % 4) == 0);
+  assert((((uintptr_t)destination) % 4) == 0);
 
   uint32_t * src = reinterpret_cast<uint32_t *>(source);
   uint32_t * dst = reinterpret_cast<uint32_t *>(destination);

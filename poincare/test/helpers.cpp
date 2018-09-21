@@ -22,14 +22,14 @@ QUIZ_CASE(poincare_helpers_insert_simple_swap) {
   }
 
   Poincare::Helpers::Rotate(&buf[0], &buf[1], 1);
-  assert(buf[0] == 1);
-  assert(buf[1] == 0);
-  assert(buf[2] == 2);
+  quiz_assert(buf[0] == 1);
+  quiz_assert(buf[1] == 0);
+  quiz_assert(buf[2] == 2);
 
   Poincare::Helpers::Rotate(&buf[2], &buf[0], 1);
-  assert(buf[0] == 0);
-  assert(buf[1] == 1);
-  assert(buf[2] == 2);
+  quiz_assert(buf[0] == 0);
+  quiz_assert(buf[1] == 1);
+  quiz_assert(buf[2] == 2);
 }
 
 static inline void test_rotate(uint32_t buf[], size_t bufSize, size_t dstIndex, size_t srcIndex, size_t len) {

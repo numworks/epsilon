@@ -72,7 +72,7 @@ QUIZ_CASE(tree_handle_memory_failure) {
   } else {
     memoryFailureHasBeenHandled = true;
   }
-  assert(memoryFailureHasBeenHandled);
+  quiz_assert(memoryFailureHasBeenHandled);
   assert_pool_size(initialPoolSize);
 }
 

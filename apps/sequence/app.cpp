@@ -31,10 +31,17 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   FunctionApp::Snapshot::reset();
+  /* reset might be called when activating the exam mode from the settings or
+   * when a memory exception occurs. In both cases, we do not want to
+   * computeYAuto in GraphRange::setDefault, so we need to set its delegate to
+   * nullptr. */
+  m_graphRange.setDelegate(nullptr);
   m_graphRange.setDefault();
-  /* We do not need to invalidate the sequence context cache here as the
-   * context is not allocated yet when reset is call (from the application
-   * settings). */
+  /* We do not need to invalidate the sequence context cache here:
+   * - The context is not allocated yet when reset is call from the application
+   *   settings.
+   * - The cache will be destroyed if the reset call comes from a memory
+   *   exception. */
   m_sequenceStore.removeAll();
 }
 

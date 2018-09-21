@@ -107,11 +107,6 @@ public:
   virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
-  // Useful to avoid parsing incorrect expressions as cos(2,3,4)
-  virtual bool hasValidNumberOfOperands(int nbChildren) const { return numberOfChildren() == nbChildren; }
-
-  /* Comparison */
-
   /* Simplification */
   /* SimplificationOrder returns:
    *   1 if e1 > e2

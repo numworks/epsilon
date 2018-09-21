@@ -340,7 +340,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         return result;
       }
       if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
-        Expression result = Undefined();
+        Expression result = Undefined(); // TODO: could be infinity?
         replaceWithInPlace(result);
         return result;
       }

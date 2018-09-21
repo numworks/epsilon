@@ -29,12 +29,14 @@ public:
     m_footer(Magic) { }
   const char * version() const {
     assert(m_storageAddress != nullptr);
+    assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     return m_version;
   }
   const char * patchLevel() const {
     assert(m_storageAddress != nullptr);
+    assert(m_storageSize != 0);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     return m_patchLevel;

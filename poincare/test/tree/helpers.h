@@ -24,7 +24,7 @@ static void assert_pool_size(int i) {
   if (poolSize != i) {
     std::cout << "Expected pool of size " << i << " but got " << poolSize << std::endl;
     log_pool();
-    assert(false);
+    quiz_assert(false);
   }
 #else
   quiz_assert(pool_size() == i);

@@ -13,8 +13,8 @@ extern "C" {
 
 namespace Poincare {
 
-int OppositeNode::polynomialDegree(char symbolName) const {
-  return childAtIndex(0)->polynomialDegree(symbolName);
+int OppositeNode::polynomialDegree(Context & context, char symbolName) const {
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
 ExpressionNode::Sign OppositeNode::sign() const {

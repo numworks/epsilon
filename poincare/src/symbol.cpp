@@ -30,18 +30,18 @@ Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression & exp
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-int SymbolNode::polynomialDegree(char symbol) const {
-  if (m_name == symbol) {
+int SymbolNode::polynomialDegree(Context & context, char symbolName) const {
+  if (m_name == symbolName) {
     return 1;
   }
   return 0;
 }
 
-int SymbolNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  return Symbol(this).getPolynomialCoefficients(symbolName, coefficients);
+int SymbolNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+  return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int SymbolNode::getVariables(isVariableTest isVariable, char * variables) const {
+int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables) const {
  size_t variablesLength = strlen(variables);
  if (isVariable(m_name)) {
    char * currentChar = variables;
@@ -318,7 +318,7 @@ Expression Symbol::replaceSymbolWithExpression(char symbol, Expression & express
   return *this;
 }
 
-int Symbol::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
+int Symbol::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
   if (name() == symbolName) {
     coefficients[0] = Rational(0);
     coefficients[1] = Rational(1);

@@ -44,14 +44,14 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   }
 }
 
-bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
+bool ConsoleController::loadPythonEnvironment() {
   if(pythonEnvironmentIsLoaded()) {
     return true;
   }
   emptyOutputAccumulationBuffer();
   m_pythonDelegate->initPythonWithUser(this);
   MicroPython::registerScriptProvider(m_scriptStore);
-  m_importScriptsWhenViewAppears = autoImportScripts;
+  m_importScriptsWhenViewAppears = m_autoImportScripts;
   return true;
 }
 
@@ -104,6 +104,7 @@ const char * ConsoleController::inputText(const char * prompt) {
 }
 
 void ConsoleController::viewWillAppear() {
+  loadPythonEnvironment();
   assert(pythonEnvironmentIsLoaded());
   m_sandboxIsDisplayed = false;
   if (m_importScriptsWhenViewAppears) {
@@ -114,6 +115,10 @@ void ConsoleController::viewWillAppear() {
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
   m_editCell.setText("");
+}
+
+void ConsoleController::didEnterResponderChain(Responder * previousFirstResponder) {
+  loadPythonEnvironment();
 }
 
 void ConsoleController::didBecomeFirstResponder() {

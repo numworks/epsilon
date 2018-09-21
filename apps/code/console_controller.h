@@ -24,10 +24,11 @@ public:
 #endif
       );
 
-  bool loadPythonEnvironment(bool autoImportScripts = true);
+  bool loadPythonEnvironment();
   void unloadPythonEnvironment();
   bool pythonEnvironmentIsLoaded();
 
+  void setAutoImport(bool autoImport) { m_autoImportScripts = autoImport; }
   void autoImport();
   void autoImportScript(Script script, bool force = false);
   void runAndPrintForCommand(const char * command);
@@ -37,6 +38,7 @@ public:
   // ViewController
   View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
@@ -100,6 +102,7 @@ private:
   ScriptStore * m_scriptStore;
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
+  bool m_autoImportScripts;
 #if EPSILON_GETOPT
   bool m_locked;
 #endif

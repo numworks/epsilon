@@ -49,11 +49,11 @@ const char * VariableBoxController::ContentViewController::title() {
 }
 
 void VariableBoxController::ContentViewController::didEnterResponderChain(Responder * previousFirstResponder) {
-  m_pythonDelegate->initPythonWithUser(this);
-}
-
-void VariableBoxController::ContentViewController::willExitResponderChain(Responder * nextFirstResponder) {
-  m_pythonDelegate->deinitPython();
+  /* This Code::VariableBoxController should always be called from an
+   * environment where Python has already been inited. This way, we do not
+   * deinit Python when leaving the VariableBoxController, so we do not lose the
+   * environment that was loaded when entering the VariableBoxController. */
+  assert(m_pythonDelegate->pythonIsInited());
 }
 
 void VariableBoxController::ContentViewController::viewWillAppear() {

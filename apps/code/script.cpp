@@ -26,7 +26,7 @@ const char * Script::readContent() const {
 }
 
 bool Script::nameCompliant(const char * name) {
-  /* The name format is [a-z0-9_.]* */
+  /* The name format is [a-z0-9_\.]+ */
   const char * currentChar = name;
   while (*currentChar != 0) {
     if ((*currentChar >= 'a' && *currentChar <= 'z') || *currentChar == '_' || (*currentChar >= '0' && *currentChar <= '9') || *currentChar == '.') {

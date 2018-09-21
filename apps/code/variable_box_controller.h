@@ -34,7 +34,6 @@ private:
 
     /* Responder */
     void didEnterResponderChain(Responder * previousFirstResponder) override;
-    void willExitResponderChain(Responder * nextFirstResponder) override;
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
 

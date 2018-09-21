@@ -130,6 +130,7 @@ objs += $(addprefix poincare/src/,\
 
 tests += $(addprefix poincare/test/,\
   tree/tree_handle.cpp\
+  tree/helpers.cpp\
   addition.cpp\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\

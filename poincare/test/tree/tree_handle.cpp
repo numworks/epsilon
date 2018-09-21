@@ -2,6 +2,8 @@
 #include <poincare.h>
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>
+#include "blob_node.h"
+#include "pair_node.h"
 
 #include "helpers.h"
 

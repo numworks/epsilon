@@ -13,23 +13,23 @@ Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::Angle
   return Expression();
 }
 
-int ExpressionNode::polynomialDegree(char symbolName) const {
+int ExpressionNode::polynomialDegree(Context & context, char symbolName) const {
   for (ExpressionNode * c : children()) {
-    if (c->polynomialDegree(symbolName) != 0) {
+    if (c->polynomialDegree(context, symbolName) != 0) {
       return -1;
     }
   }
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  return Expression(this).defaultGetPolynomialCoefficients(symbolName, coefficients);
+int ExpressionNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+  return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int ExpressionNode::getVariables(isVariableTest isVariable, char * variables) const {
+int ExpressionNode::getVariables(Context & context, isVariableTest isVariable, char * variables) const {
  int numberOfVariables = 0;
   for (ExpressionNode * c : children()) {
-   int n = c->getVariables(isVariable, variables);
+   int n = c->getVariables(context, isVariable, variables);
    if (n < 0) {
      return -1;
    }

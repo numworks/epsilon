@@ -19,7 +19,7 @@ public:
 
   // ExpressionNode
   Type type() const override { return Type::Equal; }
-  int polynomialDegree(char symbolName) const override { return -1; }
+  int polynomialDegree(Context & context, char symbolName) const override { return -1; }
 private:
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;

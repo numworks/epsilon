@@ -9,15 +9,15 @@
 
 namespace Poincare {
 
-int IntegralNode::polynomialDegree(char symbolName) const {
-  if (childAtIndex(0)->polynomialDegree(symbolName) == 0
-      && childAtIndex(1)->polynomialDegree(symbolName) == 0
-      && childAtIndex(2)->polynomialDegree(symbolName) == 0)
+int IntegralNode::polynomialDegree(Context & context, char symbolName) const {
+  if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
+      && childAtIndex(1)->polynomialDegree(context, symbolName) == 0
+      && childAtIndex(2)->polynomialDegree(context, symbolName) == 0)
   {
     // If no child depends on the symbol, the polynomial degree is 0.
     return 0;
   }
-  return ExpressionNode::polynomialDegree(symbolName);
+  return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
 Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

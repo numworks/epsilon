@@ -3,8 +3,8 @@
 
 namespace Poincare {
 
-int ParenthesisNode::polynomialDegree(char symbolName) const {
-  return childAtIndex(0)->polynomialDegree(symbolName);
+int ParenthesisNode::polynomialDegree(Context & context, char symbolName) const {
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
 Layout ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

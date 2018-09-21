@@ -11,11 +11,11 @@
 
 namespace Poincare {
 
-int DivisionNode::polynomialDegree(char symbolName) const {
-  if (childAtIndex(1)->polynomialDegree(symbolName) != 0) {
+int DivisionNode::polynomialDegree(Context & context, char symbolName) const {
+  if (childAtIndex(1)->polynomialDegree(context, symbolName) != 0) {
     return -1;
   }
-  return childAtIndex(0)->polynomialDegree(symbolName);
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
 bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {

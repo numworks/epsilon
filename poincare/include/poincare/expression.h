@@ -121,14 +121,14 @@ public:
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
-  int polynomialDegree(char symbolName) const { return this->node()->polynomialDegree(symbolName); }
+  int polynomialDegree(Context & context, char symbolName) const { return this->node()->polynomialDegree(context, symbolName); }
   /* getVariables fills the table variables with the variable present in the
    * expression and returns the number of entries in filled in variables.
    * For instance getVariables('x+y+2*w/cos(4)') would result in
    * variables = « xyw »  and would return 3. If the final number of
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
-  int getVariables(ExpressionNode::isVariableTest isVariable, char * variables) const { return node()->getVariables(isVariable, variables); }
+  int getVariables(Context & context, ExpressionNode::isVariableTest isVariable, char * variables) const { return node()->getVariables(context, isVariable, variables); }
   static bool DependsOnVariables(const Expression e, Context & context);
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
@@ -213,7 +213,7 @@ protected:
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(symbolName, coefficients); }
+  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
@@ -231,7 +231,7 @@ private:
 
   /* Properties */
   Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression);
-  int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;
+  int defaultGetPolynomialCoefficients(Context & context, char symbol, Expression expression[]) const;
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

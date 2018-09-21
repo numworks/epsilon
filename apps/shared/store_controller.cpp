@@ -266,7 +266,8 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   // Fetch the series used in the formula to compute the size of the filled in series
   char variables[Expression::k_maxNumberOfVariables];
   variables[0] = 0;
-  formula.getVariables(isVariable, variables);
+  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
+  formula.getVariables(*(appsContainer->globalContext()), isVariable, variables);
   int numberOfValuesToCompute = -1;
   int index = 0;
   while (variables[index] != 0) {

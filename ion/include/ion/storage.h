@@ -63,7 +63,7 @@ public:
   Record recordWithExtensionAtIndex(const char * extension, int index);
   Record recordNamed(const char * name);
   typedef uint16_t record_size_t;
-  constexpr static size_t k_storageSize = 4096;
+  constexpr static size_t k_storageSize = 16384;
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);

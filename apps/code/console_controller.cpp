@@ -105,7 +105,6 @@ const char * ConsoleController::inputText(const char * prompt) {
 
 void ConsoleController::viewWillAppear() {
   loadPythonEnvironment();
-  assert(pythonEnvironmentIsLoaded());
   m_sandboxIsDisplayed = false;
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;
@@ -115,10 +114,6 @@ void ConsoleController::viewWillAppear() {
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);
   m_editCell.setText("");
-}
-
-void ConsoleController::didEnterResponderChain(Responder * previousFirstResponder) {
-  loadPythonEnvironment();
 }
 
 void ConsoleController::didBecomeFirstResponder() {

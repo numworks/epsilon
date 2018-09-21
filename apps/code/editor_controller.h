@@ -18,8 +18,6 @@ public:
   /* ViewController */
   View * view() override { return &m_editorView; }
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

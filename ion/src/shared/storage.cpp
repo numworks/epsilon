@@ -279,7 +279,7 @@ bool Storage::isNameTaken(const char * name, Record * recordToExclude) {
 }
 
 bool Storage::nameCompliant(const char * name) {
-  /* The name format is .*(\.)?[a-z]+ */
+  /* The name format is [^.]*\.[a-z]* */
   bool dot = false;
   const char * currentChar = name;
   while (*currentChar != 0) {

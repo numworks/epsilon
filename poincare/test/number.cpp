@@ -10,10 +10,10 @@ using namespace Poincare;
 QUIZ_CASE(poincare_number_parser) {
   // Integer
   assert_parsed_expression_is("123456789012345678765434567", Rational("123456789012345678765434567"));
-  assert_parsed_expression_is(MaxIntegerString, Rational(MaxIntegerString));
+  assert_parsed_expression_is(MaxIntegerString(), Rational(MaxIntegerString()));
 
   // Integer parsed in Decimal because they overflow Integer
-  assert_parsed_expression_is(OverflowedIntegerString, Decimal(Integer("17976931348623"), 308));
+  assert_parsed_expression_is(OverflowedIntegerString(), Decimal(Integer("17976931348623"), 308));
   assert_parsed_expression_is("179769313486235590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216", Decimal(Integer("17976931348624"), 308));
 
   // Decimal with rounding when digits are above 14

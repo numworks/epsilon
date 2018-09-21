@@ -25,6 +25,7 @@ public:
     m_version{EPSILON_VERSION},
     m_patchLevel{PATCH_LEVEL},
     m_storageAddress(storageAddress),
+    m_storageSize(Ion::Storage::k_storageSize),
     m_footer(Magic) { }
   const char * version() const {
     assert(m_storageAddress != nullptr);
@@ -44,6 +45,7 @@ private:
   const char m_version[8];
   const char m_patchLevel[8];
   void * m_storageAddress;
+  size_t m_storageSize;
   uint32_t m_footer;
 };
 

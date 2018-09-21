@@ -22,7 +22,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Derivative; }
-  int polynomialDegree(char symbolName) const override;
+  int polynomialDegree(Context & context, char symbolName) const override;
 
 private:
   // Layout

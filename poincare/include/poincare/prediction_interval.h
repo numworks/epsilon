@@ -23,7 +23,7 @@ public:
 
   // Properties
   Type type() const override { return Type::PredictionInterval; }
-  int polynomialDegree(char symbolName) const override { return -1; }
+  int polynomialDegree(Context & context, char symbolName) const override { return -1; }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

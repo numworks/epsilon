@@ -28,10 +28,10 @@ ExpressionNode::Sign MultiplicationNode::sign() const {
   return (Sign)sign;
 }
 
-int MultiplicationNode::polynomialDegree(char symbolName) const {
+int MultiplicationNode::polynomialDegree(Context & context, char symbolName) const {
   int degree = 0;
   for (ExpressionNode * c : children()) {
-    int d = c->polynomialDegree(symbolName);
+    int d = c->polynomialDegree(context, symbolName);
     if (d < 0) {
       return -1;
     }
@@ -40,8 +40,8 @@ int MultiplicationNode::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int MultiplicationNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  return Multiplication(this).getPolynomialCoefficients(symbolName, coefficients);
+int MultiplicationNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+  return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 template<typename T>
@@ -195,8 +195,8 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
   return thisExp;
 }
 
-int Multiplication::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  int deg = polynomialDegree(symbolName);
+int Multiplication::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+  int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
   }
@@ -210,7 +210,7 @@ int Multiplication::getPolynomialCoefficients(char symbolName, Expression coeffi
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
   for (int i = 0; i < numberOfChildren(); i++) {
     // childAtIndex(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
-    int degI = childAtIndex(i).getPolynomialCoefficients(symbolName, intermediateCoefficients);
+    int degI = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
     assert(degI <= Expression::k_maxPolynomialDegree);
     for (int j = deg; j > 0; j--) {
       // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...

@@ -9,10 +9,10 @@
 
 namespace Poincare {
 
-int AdditionNode::polynomialDegree(char symbolName) const {
+int AdditionNode::polynomialDegree(Context & context, char symbolName) const {
   int degree = 0;
   for (ExpressionNode * e : children()) {
-    int d = e->polynomialDegree(symbolName);
+    int d = e->polynomialDegree(context, symbolName);
     if (d < 0) {
       return -1;
     }
@@ -21,8 +21,8 @@ int AdditionNode::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int AdditionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  return Addition(this).getPolynomialCoefficients(symbolName, coefficients);
+int AdditionNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+  return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 // Private
@@ -60,8 +60,8 @@ const Number Addition::NumeralFactor(const Expression & e) {
   return Rational(1);
 }
 
-int Addition::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  int deg = polynomialDegree(symbolName);
+int Addition::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+  int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
   }
@@ -70,7 +70,7 @@ int Addition::getPolynomialCoefficients(char symbolName, Expression coefficients
   }
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   for (int i = 0; i < numberOfChildren(); i++) {
-    int d = childAtIndex(i).getPolynomialCoefficients(symbolName, intermediateCoefficients);
+    int d = childAtIndex(i).getPolynomialCoefficients(context, symbolName, intermediateCoefficients);
     assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
       static_cast<Addition&>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());

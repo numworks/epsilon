@@ -1,7 +1,5 @@
 #include <quiz.h>
 #include <assert.h>
-#include <iostream>
-
 #include <poincare/helpers.h>
 #include "helper.h"
 

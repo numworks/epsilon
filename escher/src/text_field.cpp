@@ -325,7 +325,7 @@ void TextField::scrollToCursor() {
 bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
   size_t previousTextLength = strlen(text());
 
-  size_t eventTextSize = max(strlen(eventText) + 1, TextField::maxBufferSize());
+  size_t eventTextSize = min(strlen(eventText) + 1, TextField::maxBufferSize());
   char buffer[TextField::maxBufferSize()];
   size_t bufferIndex = 0;
 

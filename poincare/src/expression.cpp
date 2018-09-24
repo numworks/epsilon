@@ -120,12 +120,23 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
   while (*x != 0) {
     int degree = equation.getPolynomialReducedCoefficients(*x, polynomialCoefficients, context, angleUnit);
-    if (degree == 1) {
-      coefficients[index] = polynomialCoefficients[1];
-    } else {
-      assert(degree == 0);
-      coefficients[index] = Rational(0);
+    switch (degree) {
+      case 0:
+        coefficients[index] = Rational(0);
+        break;
+      case 1:
+        coefficients[index] = polynomialCoefficients[1];
+        break;
+      default:
+        /* degree is supposed to be 0 or 1. Otherwise, it means that equation
+         * is 'undefined' due to the reduction of 0*inf for example.
+         * (ie, x*y*inf = 0) */
+        assert(equation.type() == ExpressionNode::Type::Undefined);
+        return false;
     }
+    /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
+     * The equation supposed to be linear in all variables, so we can look for
+     * the coefficients linked to the other variables in a_0. */
     equation = polynomialCoefficients[0];
     x++;
     index++;
@@ -141,14 +152,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
     }
     isMultivariablePolynomial |= coefficients[i].recursivelyMatches(DependsOnVariables, context);
   }
-  if (isMultivariablePolynomial) {
-    for (int i = 0; i < index; i++) {
-      coefficients[i] = Expression();
-    }
-    constant[0] = Expression();
-    return false;
-  }
-  return true;
+  return !isMultivariablePolynomial;
 }
 
 // Private

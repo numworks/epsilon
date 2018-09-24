@@ -116,8 +116,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
         m = Integer::Division(m, Integer(10)).quotient;
       }
     }
-    removeZeroAtTheEnd(&m);
   }
+  removeZeroAtTheEnd(&m);
   if (m_negative) {
     buffer[currentChar++] = '-';
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
@@ -283,9 +283,19 @@ template <typename T>
 Decimal::Decimal(T f) : Number() {
   assert(!std::isnan(f) && !std::isinf(f));
   int exp = IEEE754<T>::exponentBase10(f);
-  int64_t mantissaf = std::round((double)f * std::pow((double)10.0, (double)(-exp+PrintFloat::k_numberOfStoredSignificantDigits+1)));
-  Integer m(mantissaf);
-  new (this) Decimal(Integer(mantissaf), exp);
+  /* mantissa = f*10^(-exponent+k_numberOfStoredSignificantDigits+1). We compute
+   * this operations in 2 steps as
+   * 10^(-exponent+k_numberOfStoredSignificantDigits+1) can be infinity.*/
+  double mantissaf = f * std::pow(10.0, (double)(-exp));
+  mantissaf = mantissaf * std::pow((double)10.0, (double)(PrintFloat::k_numberOfStoredSignificantDigits-1));
+  /* If m > 99999999999999.5, the mantissa stored will be 1 (as we keep only
+   * 14 significative numbers from double. In that case, the exponent must be
+   * increment as well. */
+  static double biggestMantissaFromDouble = std::pow((double)10.0, (double)(PrintFloat::k_numberOfStoredSignificantDigits))-0.5;
+  if (mantissaf >= biggestMantissaFromDouble) {
+    exp++;
+  }
+  new (this) Decimal(Integer((int64_t)(std::round(mantissaf))), exp);
 }
 
 Decimal::Decimal(Integer m, int e) :

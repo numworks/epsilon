@@ -252,10 +252,11 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(Decimal(0.00000099999999999995), "9.9999999999995E-7", ScientificMode, 14);
   assert_expression_prints_to(Decimal(0.000000999999999999995), "0.000001", DecimalMode);
   assert_expression_prints_to(Decimal(0.000000999999999901200121020102010201201201021099995), "9.999999999012E-7", DecimalMode, 14);
-  assert_expression_prints_to(Decimal(9999999999999.6), "9999999999999.6", DecimalMode, 14);
-  assert_expression_prints_to(Decimal(99999999999999.6), "1E14", DecimalMode, 14);
-  assert_expression_prints_to(Decimal(999999999999999.6), "1E15", DecimalMode, 14);
-  assert_expression_prints_to(Decimal(9999999999999999.6), "1E16", DecimalMode, 14);
+  assert_expression_prints_to(Decimal(9999999999999.54), "9999999999999.5", DecimalMode, 14);
+  assert_expression_prints_to(Decimal(99999999999999.54), "1E14", DecimalMode, 14);
+  assert_expression_prints_to(Decimal(999999999999999.54), "1E15", DecimalMode, 14);
+  assert_expression_prints_to(Decimal(9999999999999999.54), "1E16", DecimalMode, 14);
+  assert_expression_prints_to(Decimal(-9.702365051313E-297), "-9.702365051313E-297", DecimalMode, 14);
 }
 
 QUIZ_CASE(poincare_approximation_to_text) {

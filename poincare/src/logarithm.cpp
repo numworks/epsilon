@@ -143,7 +143,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
 Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
   // log(0,0)->Undefined
-  if (numberOfChildren() == 2 && childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isZero() && static_cast<Rational &>(c).isZero()) {
+  if (numberOfChildren() == 2 && c.type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isZero() && static_cast<Rational &>(c).isZero()) {
     Expression result = Undefined();
     replaceWithInPlace(result);
     return result;

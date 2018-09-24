@@ -591,10 +591,10 @@ Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
 
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
   if (denominator.isOverflow()) {
-    return {.quotient = Integer(0), .remainder = Integer::Overflow(false)};
+    return {.quotient = Integer::Overflow(false), .remainder = Integer::Overflow(false)};
   }
   if(numerator.isOverflow()) {
-    return {.quotient = Integer::Overflow(false), .remainder = Integer(0)};
+    return {.quotient = Integer::Overflow(false), .remainder = Integer::Overflow(false)};
   }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */

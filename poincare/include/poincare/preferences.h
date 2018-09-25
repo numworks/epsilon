@@ -20,13 +20,11 @@ public:
   };
   enum class ComplexFormat {
     Cartesian = 0,
-    Polar = 1,
-    Default = 2
+    Polar = 1
   };
   enum class AngleUnit {
     Degree = 0,
-    Radian = 1,
-    Default = 2
+    Radian = 1
   };
   Preferences();
   static Preferences * sharedPreferences();

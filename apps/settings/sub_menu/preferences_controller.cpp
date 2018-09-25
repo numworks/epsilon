@@ -45,51 +45,52 @@ int PreferencesController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-Layout layoutForPreferences(I18n::Message message, int rowIndex) {
+Layout layoutForPreferences(I18n::Message message) {
   switch (message) {
-    case I18n::Message::AngleUnit:
+    // Angle Unit
+    case I18n::Message::Degres:
     {
-      if (rowIndex == 0) {
-        const char degEx[] = {'9', '0', Ion::Charset::Degree};
-        return LayoutHelper::String(degEx, sizeof(degEx), KDText::FontSize::Small);
-      }
+      const char degEx[] = {'9', '0', Ion::Charset::Degree};
+      return LayoutHelper::String(degEx, sizeof(degEx), KDText::FontSize::Small);
+    }
+    case I18n::Message::Radian:
+    {
       const char pi[] = {Ion::Charset::SmallPi};
       return FractionLayout(
           LayoutHelper::String(pi, sizeof(pi), KDText::FontSize::Small),
           LayoutHelper::String("2", 1, KDText::FontSize::Small)
         );
     }
-    case I18n::Message::DisplayMode:
+    // Display Mode format
+    case I18n::Message::Decimal:
+      return LayoutHelper::String("12.34", 5, KDText::FontSize::Small);
+    case I18n::Message::Scientific:
     {
-      if (rowIndex == 0) {
-        return LayoutHelper::String("12.34", 5, KDText::FontSize::Small);
-      }
       const char text[] = {'1','.', '2', '3', '4', Ion::Charset::Exponent, '1'};
       return LayoutHelper::String(text, sizeof(text), KDText::FontSize::Small);
     }
-    case I18n::Message::EditionMode:
-    {
-      if (rowIndex == 0) {
-        return LayoutHelper::String("1+2/3", 5, KDText::FontSize::Small);
-      }
+    // Edition mode
+    case I18n::Message::Edition2D:
       return HorizontalLayout(
           LayoutHelper::String("1+", 2, KDText::FontSize::Small),
           FractionLayout(LayoutHelper::String("2", 1, KDText::FontSize::Small), LayoutHelper::String("3", 1, KDText::FontSize::Small))
-          );
-
-    }
-    case I18n::Message::ComplexFormat:
+        );
+    case I18n::Message::EditionLinear:
+      return LayoutHelper::String("1+2/3", 5, KDText::FontSize::Small);
+    // Complex format
+    case I18n::Message::Cartesian:
     {
-      if (rowIndex == 0) {
-        const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};
-        return LayoutHelper::String(text, sizeof(text), KDText::FontSize::Small);
-      }
+      const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};
+      return LayoutHelper::String(text, sizeof(text), KDText::FontSize::Small);
+    }
+    case I18n::Message::Polar:
+    {
       const char base[] = {'r', Ion::Charset::Exponential};
       const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta};
       return HorizontalLayout(
           LayoutHelper::String(base, sizeof(base), KDText::FontSize::Small),
           VerticalOffsetLayout(LayoutHelper::String(superscript, sizeof(superscript), KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript)
-          );
+        );
     }
     default:
       assert(false);
@@ -100,7 +101,7 @@ Layout layoutForPreferences(I18n::Message message, int rowIndex) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithExpression * myCell = (MessageTableCellWithExpression *)cell;
-  myCell->setLayout(layoutForPreferences(m_messageTreeModel->label(), index));
+  myCell->setLayout(layoutForPreferences(m_messageTreeModel->children(index)->label()));
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {

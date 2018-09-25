@@ -2,11 +2,10 @@
 #include "../app.h"
 
 using namespace Shared;
-using namespace Poincare;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+GraphController::GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
@@ -44,7 +43,7 @@ float GraphController::interestingXRange() {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
-    float fRange = f->expression(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Preferences::sharedPreferences()->angleUnit());
+    float fRange = f->expression(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
     }

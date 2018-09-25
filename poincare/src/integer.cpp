@@ -504,6 +504,11 @@ int8_t Integer::ucmp(const Integer & a, const Integer & b) {
   } else if (a.m_numberOfDigits > b.m_numberOfDigits) {
     return 1;
   }
+  if (a.isOverflow() && b.isOverflow()) {
+    return 0;
+  }
+  assert(!a.isOverflow());
+  assert(!b.isOverflow());
   for (uint16_t i = 0; i < a.m_numberOfDigits; i++) {
     // Digits are stored most-significant last
     native_uint_t aDigit = a.digit(a.m_numberOfDigits-i-1);

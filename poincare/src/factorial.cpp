@@ -13,7 +13,7 @@ namespace Poincare {
 
 // Layout
 
-bool FactorialNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
     return true;
   }

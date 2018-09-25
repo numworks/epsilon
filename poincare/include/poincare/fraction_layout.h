@@ -43,7 +43,7 @@ public:
 
 protected:
   // SerializationInterface
-  bool childNeedsParenthesis(const SerializationHelperInterface * child) const override { return true; }
+  bool childNeedsParenthesis(const TreeNode * child) const override { return true; }
   // LayoutNode
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;

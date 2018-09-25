@@ -83,6 +83,9 @@ void Integer::freeDigits(native_uint_t * digits) {
 // Constructor
 
 Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) {
+  if ((!digits || !enableOverflow) && numberOfDigits == k_maxNumberOfDigits+1) {
+    return Overflow(negative);
+  }
   native_uint_t * newDigits = allocDigits(numberOfDigits);
   for (uint8_t i = 0; i < numberOfDigits; i++) {
     newDigits[i] = digits[i];
@@ -96,7 +99,7 @@ Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative,
   m_numberOfDigits(!enableOverflow && numberOfDigits > k_maxNumberOfDigits ? k_maxNumberOfDigits+1 : numberOfDigits),
   m_digits(digits)
 {
-  if ((m_numberOfDigits <= 1|| (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigits)) && m_digits) {
+  if ((m_numberOfDigits <= 1 || (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigits)) && m_digits) {
     freeDigits(m_digits);
     if (m_numberOfDigits == 1) {
       m_digit = digits[0];
@@ -411,6 +414,9 @@ IntegerDivision Integer::Division(const Integer & numerator, const Integer & den
 Integer Integer::Power(const Integer & i, const Integer & j) {
   // TODO: optimize with dichotomia
   assert(!j.isNegative());
+  if (j.isOverflow()) {
+    return Overflow(false);
+  }
   Integer index(j);
   Integer result(1);
   while (!index.isZero()) {
@@ -422,6 +428,9 @@ Integer Integer::Power(const Integer & i, const Integer & j) {
 
 Integer Integer::Factorial(const Integer & i) {
   assert(!i.isNegative());
+  if (i.isOverflow()) {
+    return Overflow(false);
+  }
   Integer j(2);
   Integer result(1);
   while (ucmp(i,j) >= 0) {
@@ -587,6 +596,7 @@ Integer Integer::divideByPowerOf2(uint8_t pow) const {
   return Integer(digits, digits[m_numberOfDigits-1] > 0 ? m_numberOfDigits : m_numberOfDigits-1, false, true);
 }
 
+// return this*(2^16)^pow
 Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
   int nbOfHalfDigits = numberOfHalfDigits();
   half_native_uint_t * digits = (half_native_uint_t *)allocDigits(m_numberOfDigits+(pow+1)/2);
@@ -602,7 +612,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   if (denominator.isOverflow()) {
     return {.quotient = Integer::Overflow(false), .remainder = Integer::Overflow(false)};
   }
-  if(numerator.isOverflow()) {
+  if (numerator.isOverflow()) {
     return {.quotient = Integer::Overflow(false), .remainder = Integer::Overflow(false)};
   }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann

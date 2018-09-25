@@ -45,7 +45,7 @@ static inline void ion_main_inner() {
 
 void ion_main(int argc, char * argv[]) {
   // Initialize Poincare::TreePool::sharedPool
-  Poincare::init();
+  Poincare::Init();
 
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {

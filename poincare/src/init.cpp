@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-void init() {
+void Init() {
   // Create and register the shared static pool
   static TreePool pool;
   TreePool::RegisterPool(&pool);

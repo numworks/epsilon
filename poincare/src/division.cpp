@@ -18,7 +18,7 @@ int DivisionNode::polynomialDegree(char symbolName) const {
   return childAtIndex(0)->polynomialDegree(symbolName);
 }
 
-bool DivisionNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
     return true;
   }

@@ -173,7 +173,7 @@ inf { *yylval = Infinity(false); return TERM; }
 \] { return RIGHT_BRACKET; }
 \, { return COMMA; }
 \_ { return UNDERSCORE; }
-\x97 { *yylval = EmptyExpression(); return TERM; }
+\x98 { *yylval = EmptyExpression(); return TERM; }
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

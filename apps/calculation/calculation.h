@@ -43,9 +43,6 @@ private:
   char m_inputText[k_printedExpressionSize];
   char m_exactOutputText[k_printedExpressionSize];
   char m_approximateOutputText[k_printedExpressionSize];
-  Poincare::Expression m_input;
-  Poincare::Expression m_exactOutput;
-  Poincare::Expression m_approximateOutput;
   KDCoordinate m_height;
   EqualSign m_equalSign;
 };

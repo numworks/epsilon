@@ -6,8 +6,8 @@ namespace Poincare {
 class Preferences {
 public:
   enum class EditionMode {
-    Edition1D,
-    Edition2D
+    Edition2D,
+    Edition1D
   };
   /* The 'PrintFlotMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the

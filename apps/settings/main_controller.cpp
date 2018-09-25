@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Settings {
 
 const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Radian)};
-const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Message::EditionLinear), SettingsMessageTree(I18n::Message::Edition2D)};
+const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};

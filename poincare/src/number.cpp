@@ -56,7 +56,7 @@ Number Number::ParseDigits(const char * digits, size_t length) {
   }
   // Integer
   if (exponentLength == 0 && fractionalLength == 0) {
-    Integer i(digits, length, false);
+    Integer i(integral, integralLength, false);
     if (!i.isInfinity()) {
       return Rational(i);
     }

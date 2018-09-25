@@ -231,6 +231,7 @@ template DivisionNode * Poincare::TreePool::createTreeNode<DivisionNode>(size_t 
 template DivisionQuotientNode * Poincare::TreePool::createTreeNode<DivisionQuotientNode>(size_t size);
 template DivisionRemainderNode * Poincare::TreePool::createTreeNode<DivisionRemainderNode>(size_t size);
 template EmptyExpressionNode * Poincare::TreePool::createTreeNode<EmptyExpressionNode>(size_t size);
+template FunctionNode * Poincare::TreePool::createTreeNode<FunctionNode>(size_t size);
 template HyperbolicArcCosineNode * Poincare::TreePool::createTreeNode<HyperbolicArcCosineNode>(size_t size);
 template HyperbolicArcSineNode * Poincare::TreePool::createTreeNode<HyperbolicArcSineNode>(size_t size);
 template HyperbolicArcTangentNode * Poincare::TreePool::createTreeNode<HyperbolicArcTangentNode>(size_t size);

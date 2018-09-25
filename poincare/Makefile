@@ -70,6 +70,7 @@ objs += $(addprefix poincare/src/,\
   float.o\
   floor.o\
   frac_part.o\
+  function.o\
   global_context.o\
   great_common_divisor.o\
   hyperbolic_arc_cosine.o\

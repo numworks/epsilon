@@ -51,6 +51,7 @@ public:
     Factor,
     Floor,
     FracPart,
+    Function,
     GreatCommonDivisor,
     HyperbolicArcCosine,
     HyperbolicArcSine,

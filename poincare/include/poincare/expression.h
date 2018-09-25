@@ -37,6 +37,7 @@ class Expression : public TreeHandle {
   friend class Factorial;
   friend class Floor;
   friend class FracPart;
+  friend class Function;
   friend class GlobalContext;
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
@@ -74,6 +75,7 @@ class Expression : public TreeHandle {
   template<typename T>
   friend class ExceptionExpressionNode;
   friend class ExpressionNode;
+  friend class FunctionNode;
   friend class IntegralNode;
   template<int T>
   friend class LogarithmNode;

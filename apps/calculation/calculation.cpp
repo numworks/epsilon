@@ -13,9 +13,6 @@ Calculation::Calculation() :
   m_inputText(),
   m_exactOutputText(),
   m_approximateOutputText(),
-  m_input(),
-  m_exactOutput(),
-  m_approximateOutput(),
   m_height(-1),
   m_equalSign(EqualSign::Unknown)
 {
@@ -35,14 +32,14 @@ void Calculation::reset() {
 
 void Calculation::setContent(const char * c, Context * context, Expression ansExpression) {
   reset();
-  m_input = Expression::parse(c).replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, ansExpression);
+  Expression input = Expression::parse(c).replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
-  PoincareHelpers::Serialize(m_input, m_inputText, sizeof(m_inputText));
-  m_exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
-  PoincareHelpers::Serialize(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
-  m_approximateOutput = PoincareHelpers::Approximate<double>(m_exactOutput, *context);
-  PoincareHelpers::Serialize(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
+  PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
+  Expression exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
+  PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
+  Expression approximateOutput = PoincareHelpers::Approximate<double>(exactOutput, *context);
+  PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
 KDCoordinate Calculation::height(Context * context) {
@@ -76,10 +73,7 @@ const char * Calculation::approximateOutputText() {
 }
 
 Expression Calculation::input() {
-  if (m_input.isUninitialized()) {
-    m_input = Expression::parse(m_inputText);
-  }
-  return m_input;
+  return Expression::parse(m_inputText);
 }
 
 Layout Calculation::createInputLayout() {
@@ -102,25 +96,20 @@ bool Calculation::isEmpty() {
 
 void Calculation::tidy() {
   /* Uninitialized all Expression stored to free the Pool */
-  m_input = Expression();
-  m_exactOutput = Expression();
-  m_approximateOutput = Expression();
   m_height = -1;
   m_equalSign = EqualSign::Unknown;
 }
 
 Expression Calculation::exactOutput(Context * context) {
-  if (m_exactOutput.isUninitialized()) {
-    /* Because the angle unit might have changed, we do not simplify again. We
-     * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
-     * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
-     * 'cos(pi/4) = 0.999906' (which is true in degree). */
-    m_exactOutput = Expression::parse(m_exactOutputText);
-    if (m_exactOutput.isUninitialized()) {
-      m_exactOutput = Undefined();
-    }
+  /* Because the angle unit might have changed, we do not simplify again. We
+   * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
+   * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
+   * 'cos(pi/4) = 0.999906' (which is true in degree). */
+  Expression exactOutput = Expression::parse(m_exactOutputText);
+  if (exactOutput.isUninitialized()) {
+    return Undefined();
   }
-  return m_exactOutput;
+  return exactOutput;
 }
 
 Layout Calculation::createExactOutputLayout(Context * context) {
@@ -128,13 +117,10 @@ Layout Calculation::createExactOutputLayout(Context * context) {
 }
 
 Expression Calculation::approximateOutput(Context * context) {
-  if (m_approximateOutput.isUninitialized()) {
-    /* To ensure that the expression 'm_output' is a matrix or a complex, we
-     * call 'evaluate'. */
-    Expression exp = Expression::parse(m_approximateOutputText);
-    m_approximateOutput = PoincareHelpers::Approximate<double>(exp, *context);
-  }
-  return m_approximateOutput;
+  /* To ensure that the expression 'm_output' is a matrix or a complex, we
+   * call 'evaluate'. */
+  Expression exp = Expression::parse(m_approximateOutputText);
+  return PoincareHelpers::Approximate<double>(exp, *context);
 }
 
 Layout Calculation::createApproximateOutputLayout(Context * context) {

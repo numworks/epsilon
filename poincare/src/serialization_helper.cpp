@@ -4,9 +4,9 @@
 
 namespace Poincare {
 
-static void serializeChild(const SerializationHelperInterface * childInterface, const SerializationHelperInterface * interface, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
+static void serializeChild(const TreeNode * childNode, const TreeNode * parentNode, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
   // Write the child with parentheses if needed
-  bool addParentheses = interface->childNeedsParenthesis(childInterface);
+  bool addParentheses = parentNode->childNeedsParenthesis(childNode);
   if (addParentheses) {
     buffer[*numberOfChar] = '(';
     *numberOfChar = *numberOfChar + 1;
@@ -14,7 +14,7 @@ static void serializeChild(const SerializationHelperInterface * childInterface, 
       return;
     }
   }
-  *numberOfChar += childInterface->serialize(buffer + *numberOfChar, bufferSize - *numberOfChar, floatDisplayMode, numberOfDigits);
+  *numberOfChar += childNode->serialize(buffer + *numberOfChar, bufferSize - *numberOfChar, floatDisplayMode, numberOfDigits);
   if (*numberOfChar >= bufferSize-1) {
     return;
   }
@@ -25,7 +25,7 @@ static void serializeChild(const SerializationHelperInterface * childInterface, 
 }
 
 int SerializationHelper::Infix(
-    const SerializationHelperInterface * interface,
+    const TreeNode * node,
     char * buffer,
     int bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -44,13 +44,13 @@ int SerializationHelper::Infix(
     return 0;
   }
 
-  // Get some information on the interface
+  // Get some information on the node
   int numberOfChar = 0;
-  int numberOfChildren = interface->numberOfSerializableChildren();
+  int numberOfChildren = node->numberOfChildren();
   assert(numberOfChildren > 0);
 
   // Write the first child, with parentheses if needed
-  serializeChild(interface->serializableChildAtIndex(firstChildIndex), interface, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
+  serializeChild(node->childAtIndex(firstChildIndex), node, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -63,7 +63,7 @@ int SerializationHelper::Infix(
       return bufferSize-1;
     }
     // Write the child, with parentheses if needed
-    serializeChild(interface->serializableChildAtIndex(i), interface, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
+    serializeChild(node->childAtIndex(i), node, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -75,7 +75,7 @@ int SerializationHelper::Infix(
 }
 
 int SerializationHelper::Prefix(
-    const SerializationHelperInterface * interface,
+    const TreeNode * node,
     char * buffer,
     int bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -104,7 +104,7 @@ int SerializationHelper::Prefix(
     return bufferSize-1;
   }
 
-  int childrenCount = interface->numberOfSerializableChildren();
+  int childrenCount = node->numberOfChildren();
   if (childrenCount > 0) {
     if (!writeFirstChild) {
       assert(childrenCount > 1);
@@ -112,7 +112,7 @@ int SerializationHelper::Prefix(
     int firstChildIndex = writeFirstChild ? 0 : 1;
 
     // Write the first child
-    numberOfChar += interface->serializableChildAtIndex(firstChildIndex)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
+    numberOfChar += node->childAtIndex(firstChildIndex)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -123,7 +123,7 @@ int SerializationHelper::Prefix(
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
       }
-      numberOfChar += interface->serializableChildAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
+      numberOfChar += node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
       }

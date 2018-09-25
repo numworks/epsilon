@@ -37,7 +37,7 @@ private:
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Layout
-  bool childNeedsParenthesis(const SerializationHelperInterface * child) const override;
+  bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Serialize

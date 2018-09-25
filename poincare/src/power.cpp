@@ -111,7 +111,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 
 // Serialize
 
-bool PowerNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+bool PowerNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
     return true;
   }

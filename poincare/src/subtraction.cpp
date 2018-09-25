@@ -22,7 +22,7 @@ int SubtractionNode::polynomialDegree(char symbolName) const {
 
 // Private
 
-bool SubtractionNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
     return true;
   }

@@ -26,7 +26,8 @@ enum Charset : char {
   MultiplicationSign = (char)148,
   MiddleDot = (char)149,
   AlmostEqual = (char)150,
-  Empty = (char)151 // This char is used to be parsed into EmptyExpression.
+  Degree = (char)151,
+  Empty = (char)152 // This char is used to be parsed into EmptyExpression.
 };
 
 }

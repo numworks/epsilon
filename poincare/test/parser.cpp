@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
+#include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 #include <ion.h>
 #include <cmath>
@@ -47,6 +48,7 @@ QUIZ_CASE(poincare_parser_memory_exhaustion) {
         a.addChildAtIndexInPlace(e, 0, a.numberOfChildren());
       }
     } else {
+      Poincare::Tidy();
       memoryFailureHasBeenHandled = true;
     }
   }

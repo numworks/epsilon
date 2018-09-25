@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-void print_expression(const Expression * e, int indentationLevel = 0);
+void print_expression(const Expression e, int indentationLevel = 0);
 void print_prime_factorization(Integer * outputFactors, Integer * outputCoefficients, int outputLength);
 
 }

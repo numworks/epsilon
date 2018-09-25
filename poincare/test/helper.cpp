@@ -92,13 +92,13 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   Expression e = parse_expression(expression);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << " Entry expression: " << expression << "----"  << endl;
+  print_expression(e, 0);
 #endif
   Expression m = process(e, globalContext, angleUnit, complexFormat);
   char buffer[500];
   m.serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
   translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
-  print_expression(e, 0);
   cout << "---- serialize to: " << buffer << " ----"  << endl;
   cout << "----- compared to: " << result << " ----\n"  << endl;
 #endif

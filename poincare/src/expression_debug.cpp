@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-void print_expression(const Expression * e, int indentationLevel) {
+void print_expression(const Expression e, int indentationLevel) {
   if (indentationLevel>0) {
     for (int i=0; i<indentationLevel-1; i++) {
       std::cout << "  ";
@@ -16,15 +16,12 @@ void print_expression(const Expression * e, int indentationLevel) {
     std::cout << "|-";
   }
   GlobalContext context;
-  switch (e->type()) {
+  switch (e.type()) {
     case ExpressionNode::Type::AbsoluteValue:
       std::cout << "AbsoluteValue";
       break;
     case ExpressionNode::Type::Addition:
       std::cout << "Addition";
-      break;
-    case ExpressionNode::Type::Approximation:
-      std::cout << "Approximation";
       break;
     case ExpressionNode::Type::ArcCosine:
       std::cout << "ArcCosine";
@@ -55,7 +52,7 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Decimal:
       std::cout << "Decimal(";
-      std::cout << e->approximateToScalar<double>(context, Preferences::AngleUnit::Radian);
+      std::cout << e.approximateToScalar<double>(context, Preferences::AngleUnit::Radian);
       std::cout << ")";
       break;
     case ExpressionNode::Type::Derivative:
@@ -84,6 +81,11 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Factorial:
       std::cout << "Factorial";
+      break;
+    case ExpressionNode::Type::Float:
+      std::cout << "Float(";
+      std::cout << e.approximateToScalar<double>(context, Preferences::AngleUnit::Radian);
+      std::cout << ")";
       break;
     case ExpressionNode::Type::Floor:
       std::cout << "Floor";
@@ -115,6 +117,11 @@ void print_expression(const Expression * e, int indentationLevel) {
     case ExpressionNode::Type::ImaginaryPart:
       std::cout << "ImaginaryPart";
       break;
+    case ExpressionNode::Type::Infinity:
+      std::cout << "Infinity(";
+      std::cout << (e.sign() == ExpressionNode::Sign::Negative ? "Negative" : "Positive");
+      std::cout << ")";
+      break;
     case ExpressionNode::Type::Integral:
       std::cout << "Integral";
       break;
@@ -126,9 +133,9 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Matrix:
       std::cout << "Matrix(Rows: ";
-      std::cout << static_cast<const Matrix *>(e)->numberOfRows();
+      std::cout << static_cast<const Matrix &>(e).numberOfRows();
       std::cout << ", Columns: ";
-      std::cout << static_cast<const Matrix *>(e)->numberOfColumns();
+      std::cout << static_cast<const Matrix &>(e).numberOfColumns();
       std::cout << ")";
       break;
     case ExpressionNode::Type::MatrixDimension:
@@ -178,9 +185,9 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Rational:
       std::cout << "Rational(";
-      std::cout << static_cast<const Rational * >(e)->numerator().approximate<double>();
+      std::cout << static_cast<const Rational &>(e).signedIntegerNumerator().approximate<double>();
       std::cout << ", ";
-      std::cout << static_cast<const Rational * >(e)->denominator().approximate<double>();
+      std::cout << static_cast<const Rational &>(e).integerDenominator().approximate<double>();
       std::cout << ")";
       break;
     case ExpressionNode::Type::RealPart:
@@ -188,9 +195,6 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Round:
       std::cout << "Round";
-      break;
-    case ExpressionNode::Type::SimplificationRoot:
-      std::cout << "SimplificationRoot";
       break;
     case ExpressionNode::Type::Sine:
       std::cout << "Sine";
@@ -209,7 +213,7 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Symbol:
       std::cout << "Symbol(";
-      switch (((Symbol*)e)->name()) {
+      switch (static_cast<const Symbol &>(e).name()) {
         case Ion::Charset::SmallPi:
           std::cout << "PI";
           break;
@@ -220,7 +224,7 @@ void print_expression(const Expression * e, int indentationLevel) {
           std::cout << "e";
           break;
         default:
-          std::cout << ((Symbol*)e)->name();
+          std::cout << static_cast<const Symbol &>(e).name();
       }
       std::cout << ")";
       break;
@@ -230,16 +234,19 @@ void print_expression(const Expression * e, int indentationLevel) {
     case ExpressionNode::Type::Undefined:
       std::cout << "Undefined";
       break;
+    case ExpressionNode::Type::Uninitialized:
+      std::cout << "Uninitialized";
+      break;
   }
-  std::cout << " at " << (void *)e << " with parent " << (void *)(e->parent()) << std::endl;
-  for (int i=0; i<e->numberOfChildren(); i++) {
-    print_expression(e->childAtIndex(i), indentationLevel+1);
+  std::cout << " (identifier: " << e.identifier() << ")" << std::endl;
+  for (int i=0; i<e.numberOfChildren(); i++) {
+    print_expression(e.childAtIndex(i), indentationLevel+1);
   }
 }
 
 void print_prime_factorization(Integer * outputFactors, Integer * outputCoefficients, int outputLength) {
   for (int index = 0; index < outputLength; index++) {
-    if (outputCoefficients[index].isEqualTo(Integer(0))) {
+    if (outputCoefficients[index].isEqualTo(Integer(0)) || outputCoefficients[index].isLowerThan(Integer(0))) {
       break;
     }
     std::cout << outputFactors[index].approximate<double>();

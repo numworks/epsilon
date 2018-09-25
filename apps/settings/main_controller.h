@@ -2,9 +2,12 @@
 #define SETTINGS_MAIN_CONTROLLER_H
 
 #include <escher.h>
-#include "sub_controller.h"
 #include "settings_message_tree.h"
-#include "language_controller.h"
+#include "sub_menu/about_controller.h"
+#include "sub_menu/display_mode_controller.h"
+#include "sub_menu/exam_mode_controller.h"
+#include "sub_menu/language_controller.h"
+#include "sub_menu/preferences_controller.h"
 
 namespace Settings {
 
@@ -31,15 +34,17 @@ private:
 #else
   constexpr static int k_totalNumberOfCell = 8;
 #endif
-  constexpr static int k_numberOfSimpleChevronCells = 6;
+  constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
-  MessageTableCellWithChevronAndExpression m_complexFormatCell;
   MessageTableCellWithGauge m_brightnessCell;
-  Poincare::Layout m_complexFormatLayout;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;
-  SubController m_subController;
+  PreferencesController m_preferencesController;
+  DisplayModeController m_displayModeController;
   LanguageController m_languageController;
+  ExamModeController m_examModeController;
+  AboutController m_aboutController;
+
 };
 
 }

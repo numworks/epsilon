@@ -1,5 +1,4 @@
 #include "main_controller.h"
-#include "helpers.h"
 #include "../global_preferences.h"
 #include "../i18n.h"
 #include <assert.h>
@@ -42,13 +41,14 @@ MainController::MainController(Responder * parentResponder) :
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
   m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
 #endif
-  m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
   m_brightnessCell(I18n::Message::Default, KDText::FontSize::Large),
-  m_complexFormatLayout(),
   m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
-  m_subController(this),
-  m_languageController(this, 13)
+  m_preferencesController(this),
+  m_displayModeController(this),
+  m_languageController(this, 13),
+  m_examModeController(this),
+  m_aboutController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
@@ -97,9 +97,30 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    m_subController.setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+    GenericSubController * subController = nullptr;
+    switch (selectedRow()) {
+      case 1:
+        subController = &m_displayModeController;
+        break;
+      case 4:
+      case 5:
+        assert(false);
+      case 6:
+        subController = &m_examModeController;
+        break;
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
+      case 8:
+#else
+      case 7:
+#endif
+        subController = &m_aboutController;
+        break;
+      default:
+        subController = &m_preferencesController;
+    }
+    subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
     StackViewController * stack = stackController();
-    stack->push(&m_subController);
+    stack->push(subController);
     return true;
   }
   return false;
@@ -128,15 +149,13 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-  if (type == 2) {
-    return &m_brightnessCell;
-  }
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  if (type == 3) {
+  if (type == 2) {
     return &m_updateCell;
   }
 #endif
-  return &m_complexFormatCell;
+  assert(type == 1);
+  return &m_brightnessCell;
 }
 
 int MainController::reusableCellCount(int type) {
@@ -147,15 +166,12 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 3) {
-    return 1;
-  }
   if (j == 4) {
-    return 2;
+    return 1;
   }
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
   if (j == 7) {
-    return 3;
+    return 2;
   }
 #endif
   return 0;
@@ -164,17 +180,6 @@ int MainController::typeAtLocation(int i, int j) {
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_messageTreeModel->children(index)->label());
-
-  if (index == 3) {
-    if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian) {
-      m_complexFormatLayout = Helpers::CartesianComplexFormat(KDText::FontSize::Small);
-    } else {
-      m_complexFormatLayout = Helpers::PolarComplexFormat(KDText::FontSize::Small);
-    }
-    MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
-    myExpCell->setLayout(m_complexFormatLayout);
-    return;
-  }
   if (index == 4) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
@@ -195,20 +200,23 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
 #endif
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
+  int childIndex = -1;
   switch (index) {
     case 0:
-      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->angleUnit())->label());
+      childIndex = (int)Preferences::sharedPreferences()->angleUnit();
       break;
     case 1:
-      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
+      childIndex = (int)Preferences::sharedPreferences()->displayMode();
       break;
     case 2:
-      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->editionMode())->label());
+      childIndex = (int)Preferences::sharedPreferences()->editionMode();
       break;
-    default:
-      myTextCell->setSubtitle(I18n::Message::Default);
+    case 3:
+      childIndex = (int)Preferences::sharedPreferences()->complexFormat();
       break;
   }
+  I18n::Message message = childIndex >= 0 ? m_messageTreeModel->children(index)->children(childIndex)->label() : I18n::Message::Default;
+  myTextCell->setSubtitle(message);
 }
 
 void MainController::viewWillAppear() {

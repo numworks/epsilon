@@ -12,8 +12,23 @@ DisplayModeController::DisplayModeController(Responder * parentResponder) :
   PreferencesController(parentResponder),
   m_editableCell(&m_selectableTableView, this, m_draftTextBuffer)
 {
-  m_editableCell.setMessage(I18n::Message::SignificantFigures);
-  m_editableCell.setMessageFontSize(KDText::FontSize::Large);
+  m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
+  m_editableCell.messageTableCellWithEditableText()->setMessageFontSize(KDText::FontSize::Large);
+}
+
+KDCoordinate DisplayModeController::rowHeight(int j) {
+  if (j == numberOfRows()-1) {
+    return Metric::ParameterCellHeight+MessageTableCellWithEditableTextWithSeparator::k_margin;
+  }
+  return Metric::ParameterCellHeight;
+}
+
+KDCoordinate DisplayModeController::cumulatedHeightFromIndex(int j) {
+  return TableViewDataSource::cumulatedHeightFromIndex(j);
+}
+
+int DisplayModeController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  return TableViewDataSource::indexFromCumulatedHeight(offsetY);
 }
 
 HighlightCell * DisplayModeController::reusableCell(int index, int type) {
@@ -43,11 +58,11 @@ int DisplayModeController::typeAtLocation(int i, int j) {
 void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   /* Number of significants figure row */
   if (index == numberOfRows()-1) {
-    GenericSubController::willDisplayCellForIndex(cell, index);
-    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
+    MessageTableCellWithEditableTextWithSeparator * myCell = (MessageTableCellWithEditableTextWithSeparator *)cell;
+    GenericSubController::willDisplayCellForIndex(myCell->messageTableCellWithEditableText(), index);
     char buffer[3];
     Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, 3);
-    myCell->setAccessoryText(buffer);
+    myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
     return;
   }
   PreferencesController::willDisplayCellForIndex(cell, index);

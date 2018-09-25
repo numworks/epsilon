@@ -54,6 +54,10 @@ void Integer::log(std::ostream & stream) const {
 static uint16_t sbusyIntegerBuffer = 0;
 static native_uint_t sIntegerBuffer[(Integer::k_maxNumberOfDigits+1)*Integer::k_maxNumberOfIntegerSimutaneously];
 
+void Integer::TidyIntegerBuffer() {
+  sbusyIntegerBuffer = 0;
+}
+
 native_uint_t * Integer::allocDigits(int numberOfDigits) {
   assert(numberOfDigits <= k_maxNumberOfDigits+1);
   uint16_t bitIndex = 1 << (16-1);

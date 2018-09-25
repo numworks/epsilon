@@ -10,6 +10,7 @@ app_objs += $(addprefix apps/settings/,\
   sub_menu/exam_mode_controller.o\
   sub_menu/generic_sub_controller.o\
   sub_menu/language_controller.o\
+  sub_menu/message_table_cell_with_editable_text_with_separator.o\
   sub_menu/preferences_controller.o\
 )
 

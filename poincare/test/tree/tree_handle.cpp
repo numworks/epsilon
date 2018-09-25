@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <poincare.h>
+#include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>
 #include "blob_node.h"
@@ -72,6 +73,7 @@ QUIZ_CASE(tree_handle_memory_failure) {
       tree = PairByReference(tree, BlobByReference(1));
     }
   } else {
+    Poincare::Tidy();
     memoryFailureHasBeenHandled = true;
   }
   quiz_assert(memoryFailureHasBeenHandled);

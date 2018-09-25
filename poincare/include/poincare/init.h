@@ -5,6 +5,8 @@ namespace Poincare {
 
 void init();
 
+void Tidy();
+
 }
 
 #endif

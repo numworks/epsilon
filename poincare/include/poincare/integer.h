@@ -39,6 +39,7 @@ public:
   static Integer Overflow(bool negative) { return Integer((native_uint_t *)nullptr, k_maxNumberOfDigits+1, negative); }
   static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   ~Integer();
+  static void TidyIntegerBuffer();
 
 
 #if POINCARE_TREE_LOG

@@ -29,6 +29,7 @@
 #include <poincare/float.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>
+#include <poincare/function.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>
 #include <poincare/hyperbolic_arc_cosine.h>

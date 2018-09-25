@@ -116,8 +116,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
         m = Integer::Division(m, Integer(10)).quotient;
       }
     }
+    removeZeroAtTheEnd(&m);
   }
-  removeZeroAtTheEnd(&m);
   if (m_negative) {
     buffer[currentChar++] = '-';
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
@@ -299,9 +299,10 @@ Decimal::Decimal(T f) : Number() {
   new (this) Decimal(Integer((int64_t)(std::round(mantissaf))), exp);
 }
 
-Decimal::Decimal(Integer m, int e) :
-  Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e) {}
-
+Decimal::Decimal(Integer m, int e) : Number() {
+  removeZeroAtTheEnd(&m);
+  new (this) Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e);
+}
 
 Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
   node()->setValue(m.digits(), m.numberOfDigits(), e, m.isNegative());
@@ -321,7 +322,6 @@ Expression Decimal::shallowReduce(Context & context, Preferences::AngleUnit angl
   // this = e
   int exp = node()->exponent();
   Integer numerator = node()->signedMantissa();
-  removeZeroAtTheEnd(&numerator);
   int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(numerator);
   Integer denominator(1);
   if (exp >= numberOfDigits-1) {

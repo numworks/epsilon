@@ -2,7 +2,7 @@
 #define SETTINGS_LANGUAGE_CONTROLLER_H
 
 #include <escher.h>
-#include "../shared/language_controller.h"
+#include "../../shared/language_controller.h"
 
 namespace Settings {
 

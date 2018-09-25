@@ -276,6 +276,7 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
     fractionalPart++;
   }
   numerator = rounding ? Integer::Addition(numerator, Integer(1)) : numerator;
+  exponent = numerator.isZero() ? 0 : exponent;
   new (this) Decimal(numerator, exponent);
 }
 

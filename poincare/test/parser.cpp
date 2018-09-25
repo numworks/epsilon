@@ -14,6 +14,34 @@ QUIZ_CASE(poincare_parser) {
   int initialPoolSize = pool_size();
   assert_parsed_expression_type("2+3", ExpressionNode::Type::Addition);
   assert_pool_size(initialPoolSize);
+
+  // Parse digits
+  assert_parsed_expression_is("0", Rational(0));
+  assert_parsed_expression_is("0.1", Decimal(0.1));
+  assert_parsed_expression_is("1.", Rational(1));
+  assert_parsed_expression_is(".1", Decimal(0.1));
+  assert_parsed_expression_is("0E2", Decimal(0.0));
+  assert_parsed_expression_is("0.1E2", Decimal(10.0));
+  assert_parsed_expression_is("1.E2", Decimal(100.0));
+  assert_parsed_expression_is(".1E2", Decimal(10.0));
+  assert_parsed_expression_is("0E-2", Decimal(0.0));
+  assert_parsed_expression_is("0.1E-2", Decimal(0.001));
+  assert_parsed_expression_is("1.E-2", Decimal(0.01));
+  assert_parsed_expression_is(".1E-2", Decimal(0.001));
+
+  assert_parsed_expression_evaluates_to<float>("-0", "0");
+  assert_parsed_expression_evaluates_to<float>("-0.1", "-0.1");
+  assert_parsed_expression_evaluates_to<float>("-1.", "-1");
+  assert_parsed_expression_evaluates_to<float>("-.1", "-0.1");
+  assert_parsed_expression_evaluates_to<float>("-0E2", "0");
+  assert_parsed_expression_evaluates_to<float>("-0.1E2", "-10");
+  assert_parsed_expression_evaluates_to<float>("-1.E2", "-100");
+  assert_parsed_expression_evaluates_to<float>("-.1E2", "-10");
+  assert_parsed_expression_evaluates_to<float>("-0E-2", "0");
+  assert_parsed_expression_evaluates_to<float>("-0.1E-2", "-0.001");
+  assert_parsed_expression_evaluates_to<float>("-1.E-2", "-0.01");
+  assert_parsed_expression_evaluates_to<float>("-.1E-2", "-0.001");
+
   assert_parsed_expression_evaluates_to<float>("-2-3", "-5");
   assert_parsed_expression_evaluates_to<float>("1.2*X^(1)", "3.261938");
   assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", Radian, Cartesian, 6); // WARNING: the 7th significant digits is wrong on simulator

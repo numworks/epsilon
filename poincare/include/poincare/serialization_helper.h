@@ -1,14 +1,14 @@
 #ifndef POINCARE_SERIALIZATION_HELPER_H
 #define POINCARE_SERIALIZATION_HELPER_H
 
-#include <poincare/serialization_helper_interface.h>
+#include <poincare/tree_node.h>
 
 namespace Poincare {
 
 namespace SerializationHelper {
   /* SerializableReference to Text */
   int Infix(
-      const SerializationHelperInterface * interface,
+      const TreeNode * node,
       char * buffer,
       int bufferSize,
       Preferences::PrintFloatMode floatDisplayMode,
@@ -18,7 +18,7 @@ namespace SerializationHelper {
       int lastChildIndex = -1);
 
   int Prefix(
-      const SerializationHelperInterface * interface,
+      const TreeNode * node,
       char * buffer,
       int bufferSize,
       Preferences::PrintFloatMode floatDisplayMode,

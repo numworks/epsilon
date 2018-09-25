@@ -8,6 +8,7 @@
 #if POINCARE_TREE_LOG
 #include <ostream>
 #endif
+#include <poincare/preferences.h>
 
 /* What's in a TreeNode, really?
  *  - a vtable pointer
@@ -61,6 +62,10 @@ public:
   }
   // AddChild collateral effect
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
+
+  // Serialization
+  virtual int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const { assert(false); return 0; }
+  virtual bool childNeedsParenthesis(const TreeNode * child) const { return false; };
 
   template <typename T>
   class Iterator {

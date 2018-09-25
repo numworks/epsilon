@@ -4,7 +4,6 @@
 #include <poincare/tree_node.h>
 #include <poincare/evaluation.h>
 #include <poincare/layout.h>
-#include <poincare/serialization_helper_interface.h>
 #include <poincare/context.h>
 #include <stdint.h>
 
@@ -13,7 +12,7 @@ namespace Poincare {
 /* Methods preceded by '*!*' interfere with the expression pool, which can make
  * 'this' outdated. They should only be called in a wrapper on Expression. */
 
-class ExpressionNode : public TreeNode, public SerializationHelperInterface {
+class ExpressionNode : public TreeNode {
   friend class AdditionNode;
   friend class DivisionNode;
   friend class NAryExpressionNode;
@@ -159,10 +158,6 @@ protected:
   /* Hierarchy */
   ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(TreeNode::parent()); }
   Direct<ExpressionNode> children() const { return Direct<ExpressionNode>(this); }
-
-  /* SerializationHelperInterface */
-  SerializationHelperInterface * serializableChildAtIndex(int i) const override { return childAtIndex(i); }
-  int numberOfSerializableChildren() const override { return numberOfChildren(); }
 };
 
 }

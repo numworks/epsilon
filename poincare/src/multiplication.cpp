@@ -67,7 +67,7 @@ Expression MultiplicationNode::setSign(Sign s, Context & context, Preferences::A
   return Multiplication(this).setSign(s, context, angleUnit);
 }
 
-bool MultiplicationNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
     return true;
   }

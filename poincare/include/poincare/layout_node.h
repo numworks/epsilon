@@ -2,7 +2,6 @@
 #define POINCARE_LAYOUT_NODE_H
 
 #include <poincare/tree_node.h>
-#include <poincare/serialization_helper_interface.h>
 #include <kandinsky.h>
 #include <ion/charset.h>
 
@@ -11,7 +10,7 @@ namespace Poincare {
 class LayoutCursor;
 class Layout;
 
-class LayoutNode : public TreeNode, public SerializationHelperInterface {
+class LayoutNode : public TreeNode {
   friend class Layout;
 public:
   enum class VerticalDirection {
@@ -38,10 +37,6 @@ public:
   KDCoordinate baseline();
   //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
-
-  // SerializationHelperInterface
-  SerializationHelperInterface * serializableChildAtIndex(int i) const override { return childAtIndex(i); }
-  int numberOfSerializableChildren() const override { return numberOfChildren(); }
 
   // Tree
   LayoutNode * parent() const override { return static_cast<LayoutNode *>(TreeNode::parent()); }

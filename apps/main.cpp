@@ -4,7 +4,7 @@
 
 void ion_main(int argc, char * argv[]) {
   // Initialize Poincare::TreePool::sharedPool
-  Poincare::init();
+  Poincare::Init();
 
 #if EPSILON_GETOPT
   for (int i=1; i<argc; i++) {

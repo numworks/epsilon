@@ -48,7 +48,17 @@ int PreferencesController::reusableCellCount(int type) {
 Layout layoutForPreferences(I18n::Message message, int rowIndex) {
   switch (message) {
     case I18n::Message::AngleUnit:
-      return Layout();
+    {
+      if (rowIndex == 0) {
+        const char degEx[] = {'9', '0', Ion::Charset::Degree};
+        return LayoutHelper::String(degEx, sizeof(degEx), KDText::FontSize::Small);
+      }
+      const char pi[] = {Ion::Charset::SmallPi};
+      return FractionLayout(
+          LayoutHelper::String(pi, sizeof(pi), KDText::FontSize::Small),
+          LayoutHelper::String("2", 1, KDText::FontSize::Small)
+        );
+    }
     case I18n::Message::DisplayMode:
     {
       if (rowIndex == 0) {

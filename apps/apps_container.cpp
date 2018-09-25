@@ -1,6 +1,7 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <ion.h>
+#include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 
 extern "C" {
@@ -181,6 +182,7 @@ void AppsContainer::run() {
       activeApp()->snapshot()->reset();
     }
     switchTo(appSnapshotAtIndex(0));
+    Poincare::Tidy();
     activeApp()->displayWarning(I18n::Message::AppMemoryFull, true);
   }
   Container::run();

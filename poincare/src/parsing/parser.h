@@ -2,50 +2,30 @@
 #define POINCARE_PARSING_PARSER_H
 
 #include "tokenizer.h"
-#include "stack.h"
+#include <poincare/expression.h>
+
+#include <poincare/addition.h>
+#include <poincare/division.h>
+#include <poincare/equal.h>
+#include <poincare/factorial.h>
+#include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
+#include <poincare/number.h>
+#include <poincare/power.h>
+#include <poincare/square_root.h>
+#include <poincare/store.h>
+#include <poincare/subtraction.h>
 
 namespace Poincare {
 
-class Parser {
+class Parser : public Tokenizer {
 public:
-  using ExpressionStack = Stack<Expression,100>;
-  using TokenStack = Stack<Token,100>;
-
-  Parser(const char * input) :
-    m_tokenizer(input),
-    m_lookahead(m_tokenizer.popToken()),
-    m_tokenStack(),
-    m_expressionStack()
-  {}
+  Parser(const char * input) : Tokenizer(input) {}
   Expression parse();
-
-  enum class TokenTag {
-    None,
-    UnaryMinus,
-    IdentifierIsFunction
-  };
-  static void TokenSetTag(Token * t, TokenTag tag) {
-    t->setTag(static_cast<int>(tag));
-  }
-  static bool TokenHasTag(const Token & t, TokenTag tag) {
-    return t.tag() == static_cast<int>(tag);
-  }
-
 private:
-  typedef void (*Reduction)(ExpressionStack * stack, const Token & token);
-  static const Reduction sReductions[];
-
-  void shift();
-  bool needsReduction();
-  void reduce();
-
-  Tokenizer m_tokenizer;
-  Token m_lookahead;
-  TokenStack m_tokenStack;
-  ExpressionStack m_expressionStack;
+  Expression shift(Expression leftHandSide, Token lookahead, Token::Type stoppingType = Token::Type::EndOfStream);
+  bool comparePrecedence(Token currentToken, Token::Type stoppingType) const;
 };
-
-Expression Parse(const char * input);
 
 }
 

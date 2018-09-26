@@ -134,7 +134,7 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, "undef") == 0) {
     return true;
   }
-  return input().isApproximate(*context);
+  return input().isApproximate(*context) || exactOutput(context).isApproximate(*context);
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

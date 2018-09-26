@@ -22,7 +22,6 @@ public:
    enum class Type : uint8_t {
     Uninitialized = 0,
     Undefined = 1,
-    Integer = 2,
     Rational,
     Decimal,
     Float,

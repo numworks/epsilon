@@ -312,6 +312,7 @@ Expression Symbol::replaceSymbolWithExpression(char symbol, Expression & express
     if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
       value = Parenthesis(value);
     }
+    replaceWithInPlace(value);
     return value;
   }
   return *this;

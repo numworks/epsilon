@@ -11,8 +11,6 @@ namespace Poincare {
 class SymbolNode final : public ExpressionNode {
   friend class Store;
 public:
-  SymbolNode() : m_char(0) {}
-
   void setName(const char * name) { strlcpy(m_name, name, strlen(name)+1); }
   const char * name() const { return m_name; }
 
@@ -52,10 +50,15 @@ public:
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 
+  /* Symbol properties */
+  bool isPi() const { return isSymbolChar(Ion::Charset::SmallPi); }
+  bool isExponential() const { return isSymbolChar(Ion::Charset::Exponential); }
+  bool isIComplex() const { return isSymbolChar(Ion::Charset::IComplex); }
 private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  bool isSymbolChar(char c) const { const char symbolName[2] = {c, 0}; return strcmp(m_name, symbolName) == 0; }
 
-  char m_name[];
+  char m_name[0];
 };
 
 class Symbol final : public Expression {
@@ -69,13 +72,16 @@ public:
     UnknownX = 1,
   };
   Symbol(const char * name = "");
+  Symbol(char name);
   Symbol(const SymbolNode * node) : Expression(node) {}
 
   // Symbol properties
-  static SpecialSymbols matrixSymbol(char index);
-  static bool isVariableSymbol(char c);
-  static bool isSeriesSymbol(char c);
-  static bool isRegressionSymbol(char c);
+  bool isPi() const { return node()->isPi(); }
+  bool isExponential() const { return node()->isExponential(); }
+  bool isIComplex() const { return node()->isIComplex(); }
+  static bool isVariableSymbol(const char * c);
+  static bool isSeriesSymbol(const char * c);
+  static bool isRegressionSymbol(const char * c);
   bool isApproximate(Context & context) const;
 
   // Expression

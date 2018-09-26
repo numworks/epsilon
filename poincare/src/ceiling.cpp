@@ -48,10 +48,10 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   if (c.type() == ExpressionNode::Type::Symbol) {
     Symbol s = static_cast<Symbol&>(c);
     Expression result;
-    if (s.name() == Ion::Charset::SmallPi) {
+    if (s.isPi()) {
       result = Rational(4);
     }
-    if (s.name() == Ion::Charset::Exponential) {
+    if (s.isExponential()) {
       result = Rational(3);
     }
     if (!result.isUninitialized()) {

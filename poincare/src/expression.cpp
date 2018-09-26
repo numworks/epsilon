@@ -101,10 +101,6 @@ bool Expression::IsMatrix(const Expression e, Context & context) {
   return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<const Symbol&>(e).name()));
 }
 
-bool Expression::DependsOnVariables(const Expression e, Context & context) {
-  return e.type() == ExpressionNode::Type::Symbol && Symbol::isVariableSymbol(static_cast<const Symbol&>(e).name());
-}
-
 bool Expression::getLinearCoefficients(char * variables, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!recursivelyMatches(IsMatrix, context));
   char * x = variables;

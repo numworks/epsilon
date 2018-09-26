@@ -131,7 +131,6 @@ public:
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
   int getVariables(Context & context, ExpressionNode::isVariableTest isVariable, char * variables) const { return node()->getVariables(context, isVariable, variables); }
-  static bool DependsOnVariables(const Expression e, Context & context);
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same

@@ -272,6 +272,7 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  assert(!recursivelyMatches(IsMatrix, context));
   for (int i = 0; i < numberOfChildren(); i++) {
     childAtIndex(i).deepReduce(context, angleUnit);
   }

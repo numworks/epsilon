@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression & expression) {
+Expression ExpressionNode::replaceSymbolWithExpression(const char * symbol, Expression & expression) {
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 

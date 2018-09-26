@@ -65,7 +65,9 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   } else {
     assert(m_exponent == other->m_exponent);
     assert(exponent() == other->exponent());
-    unsignedComparison = Integer::NaturalOrder(unsignedMantissa(), other->unsignedMantissa());
+    double approx0 = templatedApproximate<double>();
+    double approx1 = other->templatedApproximate<double>();
+    return (approx0 == approx1 ? 0 : (approx0 < approx1 ? -1 : 1));
   }
   return ((int)sign())*unsignedComparison;
 }
@@ -199,12 +201,12 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   return currentChar;
 }
 
-template<typename T> Evaluation<T> DecimalNode::templatedApproximate() const {
+template<typename T> T DecimalNode::templatedApproximate() const {
   Integer m = signedMantissa();
   T f = m.approximate<T>();
   int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(m);
   T result = f*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1));
-  return Complex<T>(m_negative ? -result : result);
+  return m_negative ? -result : result;
 }
 
 int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength) {

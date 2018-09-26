@@ -51,10 +51,10 @@ public:
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return templatedApproximate<float>();
+    return Complex<float>(templatedApproximate<float>());
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return templatedApproximate<double>();
+    return Complex<double>(templatedApproximate<double>());
   }
 
   // Comparison
@@ -73,7 +73,7 @@ private:
   // Worst case is -1.2345678901234E-1000
   constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
   int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
-  template<typename T> Evaluation<T> templatedApproximate() const;
+  template<typename T> T templatedApproximate() const;
   void setNegative(bool negative) { m_negative = negative; }
   bool m_negative;
   int m_exponent;

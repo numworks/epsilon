@@ -32,8 +32,8 @@ public:
   Type type() const override { return Type::Symbol; }
   Sign sign() const override;
   Expression replaceSymbolWithExpression(const char * symbol, Expression & expression) override;
-  int polynomialDegree(Context & context, char symbolName) const override;
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context & context, isVariableTest isVariable, char * variables) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
@@ -81,7 +81,7 @@ public:
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression replaceSymbolWithExpression(const char * symbol, Expression & expression);
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 
   // Symbol
   const char * name() const { return node()->name(); }

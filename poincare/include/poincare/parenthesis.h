@@ -20,7 +20,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Parenthesis; }
-  int polynomialDegree(Context & context, char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

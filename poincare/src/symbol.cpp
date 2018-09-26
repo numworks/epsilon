@@ -34,14 +34,14 @@ Expression SymbolNode::replaceSymbolWithExpression(const char * symbol, Expressi
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-int SymbolNode::polynomialDegree(Context & context, char symbolName) const {
-  if (m_name == symbolName) {
+int SymbolNode::polynomialDegree(Context & context, const char * symbolName) const {
+  if (strcmp(m_name,symbolName) == 0) {
     return 1;
   }
   return 0;
 }
 
-int SymbolNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int SymbolNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
@@ -196,7 +196,7 @@ Expression Symbol::replaceSymbolWithExpression(const char * symbol, Expression &
   return *this;
 }
 
-int Symbol::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   if (name() == symbolName) {
     coefficients[0] = Rational(0);
     coefficients[1] = Rational(1);

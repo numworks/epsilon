@@ -105,7 +105,8 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   assert(!recursivelyMatches(IsMatrix, context));
   char * x = variables;
   while (*x != 0) {
-    int degree = polynomialDegree(context, *x);
+    const char symbol[] = {*x, 0};
+    int degree = polynomialDegree(context, symbol);
     if (degree > 1 || degree < 0) {
       return false;
     }
@@ -116,7 +117,8 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   int index = 0;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
   while (*x != 0) {
-    int degree = equation.getPolynomialReducedCoefficients(*x, polynomialCoefficients, context, angleUnit);
+    const char symbol[] = {*x, 0};
+    int degree = equation.getPolynomialReducedCoefficients(symbol, polynomialCoefficients, context, angleUnit);
     switch (degree) {
       case 0:
         coefficients[index] = Rational(0);
@@ -189,7 +191,7 @@ Expression Expression::defaultReplaceSymbolWithExpression(const char * symbol, E
   return *this;
 }
 
-int Expression::defaultGetPolynomialCoefficients(Context & context, char symbol, Expression coefficients[]) const {
+int Expression::defaultGetPolynomialCoefficients(Context & context, const char * symbol, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbol);
   if (deg == 0) {
     coefficients[0] = clone();
@@ -198,7 +200,7 @@ int Expression::defaultGetPolynomialCoefficients(Context & context, char symbol,
   return -1;
 }
 
-int Expression::getPolynomialReducedCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
+int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].deepReduce(context, angleUnit);

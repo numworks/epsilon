@@ -22,7 +22,7 @@ public:
 
   // ExpressionNode
   Type type() const override { return Type::Store; }
-  int polynomialDegree(Context & context, char symbolName) const override { return -1; }
+  int polynomialDegree(Context & context, const char * symbolName) const override { return -1; }
 
 private:
   // Simplification

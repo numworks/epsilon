@@ -116,6 +116,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
         m = Integer::Division(m, Integer(10)).quotient;
       }
     }
+    /* For example 1.999 with 3 significant digits: the mantissa 1999 is rounded
+     * to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
     removeZeroAtTheEnd(&m);
   }
   if (m_negative) {
@@ -284,25 +286,33 @@ template <typename T>
 Decimal::Decimal(T f) : Number() {
   assert(!std::isnan(f) && !std::isinf(f));
   int exp = IEEE754<T>::exponentBase10(f);
-  /* mantissa = f*10^(-exponent+k_numberOfStoredSignificantDigits+1). We compute
+  /* We keep 7 significant digits for if the the Decimal was built from a float
+   * and 14 significant digits if it was built from a double. This roughly
+   * correspond to the respective precision of float and double. */
+  int numberOfSignificantDigits = sizeof(T) == sizeof(float) ? PrintFloat::k_numberOfPrintedSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
+  /* mantissa = f*10^(-exponent+numberOfSignificantDigits-1). We compute
    * this operations in 2 steps as
-   * 10^(-exponent+k_numberOfStoredSignificantDigits+1) can be infinity.*/
+   * 10^(-exponent+numberOfSignificantDigits+1) can be infinity.*/
   double mantissaf = f * std::pow(10.0, (double)(-exp));
-  mantissaf = mantissaf * std::pow((double)10.0, (double)(PrintFloat::k_numberOfStoredSignificantDigits-1));
-  /* If m > 99999999999999.5, the mantissa stored will be 1 (as we keep only
+  mantissaf = mantissaf * std::pow((double)10.0, (double)(numberOfSignificantDigits-1));
+  /* If m > 99999999999999.5 or 9999999,5, the mantissa stored will be 1 (as we keep only
    * 14 significative numbers from double. In that case, the exponent must be
    * increment as well. */
-  static double biggestMantissaFromDouble = std::pow((double)10.0, (double)(PrintFloat::k_numberOfStoredSignificantDigits))-0.5;
-  if (mantissaf >= biggestMantissaFromDouble) {
+  static double biggestMantissaFromDouble = std::pow((double)10.0, (double)(numberOfSignificantDigits))-0.5;
+  if (std::fabs(mantissaf) >= biggestMantissaFromDouble) {
     exp++;
   }
-  new (this) Decimal(Integer((int64_t)(std::round(mantissaf))), exp);
+  Integer m = Integer((int64_t)(std::round(mantissaf)));
+  /* We get rid of extra 0 at the end of the mantissa. */
+  removeZeroAtTheEnd(&m);
+  new (this) Decimal(m, exp);
 }
 
-Decimal::Decimal(Integer m, int e) : Number() {
-  removeZeroAtTheEnd(&m);
-  new (this) Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e);
-}
+/* We do not get rid of the useless 0s ending the mantissa here because we want
+ * to keep them if they were entered by the user. */
+Decimal::Decimal(Integer m, int e) :
+  Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e) {}
+
 
 Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
   node()->setValue(m.digits(), m.numberOfDigits(), e, m.isNegative());
@@ -322,6 +332,9 @@ Expression Decimal::shallowReduce(Context & context, Preferences::AngleUnit angl
   // this = e
   int exp = node()->exponent();
   Integer numerator = node()->signedMantissa();
+  /* To avoid uselessly big numerator and denominator, we get rid of useless 0s
+   * ending the mantissa before reducing to Rational. */
+  removeZeroAtTheEnd(&numerator);
   int numberOfDigits = Integer::NumberOfBase10DigitsWithoutSign(numerator);
   Integer denominator(1);
   if (exp >= numberOfDigits-1) {

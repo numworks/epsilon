@@ -143,7 +143,7 @@ public:
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression replaceSymbolWithExpression(char symbol, Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+  Expression replaceSymbolWithExpression(const char * symbol, Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -231,7 +231,7 @@ private:
   template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
 
   /* Properties */
-  Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression);
+  Expression defaultReplaceSymbolWithExpression(const char * symbol, Expression expression);
   int defaultGetPolynomialCoefficients(Context & context, char symbol, Expression expression[]) const;
 
   /* Expression roots/extrema solver*/

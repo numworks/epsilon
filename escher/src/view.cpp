@@ -10,19 +10,6 @@ View::View() :
 {
 }
 
-View::~View() {
-  for (int i = 0; i < numberOfSubviews(); i++) {
-    View * subview = subviewAtIndex(i);
-    if (subview != nullptr) {
-      subview->m_superview = nullptr;
-    }
-  }
-}
-
-void View::resetSuperview() {
-  m_superview = nullptr;
-}
-
 void View::drawRect(KDContext * ctx, KDRect rect) const {
   // By default, a view doesn't do anything
   // It's transparent!
@@ -121,7 +108,6 @@ void View::setSize(KDSize size) {
   setFrame(KDRect(m_frame.origin(), size));
 }
 
-
 void View::setFrame(KDRect frame) {
   if (frame == m_frame) {
     return;
@@ -181,15 +167,6 @@ KDRect View::absoluteVisibleFrame() const {
 
 KDSize View::minimalSizeForOptimalDisplay() const  {
   return KDSizeZero;
-}
-
-int View::numberOfSubviews() const {
-  return 0;
-}
-
-View * View::subviewAtIndex(int index) {
-  assert(false);
-  return nullptr;
 }
 
 void View::layoutSubviews() {

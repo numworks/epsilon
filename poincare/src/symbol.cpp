@@ -21,10 +21,10 @@ ExpressionNode::Sign SymbolNode::sign() const {
   if (context.expressionForSymbol(this) != nullptr) {
     return context.expressionForSymbol(this)->sign(context);
   }*/
-  if (m_name[0] == Ion::Charset::SmallPi) {
+  if (isPi()) {
     return Sign::Positive;
   }
-  if (m_name[0] == Ion::Charset::Exponential) {
+  if (isExponential()) {
     return Sign::Positive;
   }
   return Sign::Unknown;
@@ -48,9 +48,10 @@ int SymbolNode::getPolynomialCoefficients(Context & context, const char * symbol
 int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables) const {
  size_t variablesLength = strlen(variables);
  if (isVariable(m_name)) {
+   assert(m_name[1] == 0);
    char * currentChar = variables;
    while (*currentChar != 0) {
-     if (*currentChar == m_name) {
+     if (*currentChar == m_name[0]) {
        return variablesLength;
      }
      currentChar++;
@@ -66,7 +67,8 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
 }
 
 float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (m_name[0] == SpecialSymbols::UnknownX) {
+  if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
+    assert(m_name[1] == 0);
     return NAN;
   }
   return 0.0;
@@ -74,7 +76,7 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
 
 int SymbolNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   assert(e->type() == Type::Symbol);
-  return strlcmp(m_name, static_cast<const SymbolNode *>(e)->name());
+  return strcmp(m_name, static_cast<const SymbolNode *>(e)->name());
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -121,7 +123,8 @@ Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit a
 }
 
 bool SymbolNode::shouldBeReplaceWhileReducing(Context & context) const {
-  if (m_name[0] == Ion::Charset::SmallPi || m_name[0] == Ion::Charset::Exponential || Ion::Charset::IComplex) {
+  if (isIComplex() || isPi() || isExponential()) {
+    assert(m_name[1] == 0);
     return false;
   }
   return true;
@@ -129,7 +132,8 @@ bool SymbolNode::shouldBeReplaceWhileReducing(Context & context) const {
 
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  if (m_name == Ion::Charset::IComplex) {
+  if (isIComplex()) {
+    assert(m_name[1] == 0);
     return Complex<T>(0.0, 1.0);
   }
   const Expression e = context.expressionForSymbol(Symbol(m_name));
@@ -139,30 +143,39 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-bool Symbol::isVariableSymbol(char c)  {
-  if (c >= 'a' && c <= 'z') {
+Symbol::Symbol(const char * name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(sizeof(SymbolNode)+strlen(name)+1)) {
+  node()->setName(name);
+}
+
+Symbol::Symbol(char name) : Expression() {
+  char symbolName[2] = {name, 0};
+  new (this) Symbol(symbolName);
+}
+
+bool Symbol::isVariableSymbol(const char * c)  {
+  if (c[0] >= 'a' && c[0] <= 'z' && c[1] == 0) {
     return true;
   }
   return false;
 }
 
-bool Symbol::isSeriesSymbol(char c) {
-  // TODO
-  return false;
-  if (c >= (char)SpecialSymbols::V1 && c <= (char)SpecialSymbols::N3) {
+bool Symbol::isSeriesSymbol(const char * c) {
+  // [NV][1-3]
+  if ((c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {
     return true;
   }
   return false;
 }
 
-bool Symbol::isRegressionSymbol(char c) {
-  if (c >= (char)SpecialSymbols::X1 && c <= (char)SpecialSymbols::Y3) {
+bool Symbol::isRegressionSymbol(const char * c) {
+  // [XY][1-3]
+  if ((c[0] == 'X' || c[0] == 'Y') && c[1] >= '1' && c[1] <= '3') {
     return true;
   }
   return false;
 }
 
-bool Symbol::isApproximate(Context & context) {
+bool Symbol::isApproximate(Context & context) const {
   Expression e = context.expressionForSymbol(*this);
   return e.isApproximate(context);
 }
@@ -197,7 +210,7 @@ Expression Symbol::replaceSymbolWithExpression(const char * symbol, Expression &
 }
 
 int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
-  if (name() == symbolName) {
+  if (strcmp(name(), symbolName) == 0) {
     coefficients[0] = Rational(0);
     coefficients[1] = Rational(1);
     return 1;

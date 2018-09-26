@@ -80,7 +80,7 @@ using namespace Poincare;
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
 %nonassoc TERM
-%nonassoc SYMBOL
+%nonassoc SYMBOL FINAL_SYMBOL
 %nonassoc UNDEFINED_SYMBOL
 
 /* During error recovery, some symbols need to be discarded. No destructor need
@@ -115,12 +115,14 @@ number : DIGITS { $$ = $1; }
        ;
 
 symb   : SYMBOL { $$ = $1; }
+       | FINAL_SYMBOL { $$ = $1; }
        ;
 
 term   : TERM   { $$ = $1; }
        | symb   { $$ = $1; }
        | number { $$ = $1; }
        | LOGFUNCTION UNDERSCORE LEFT_BRACE exp RIGHT_BRACE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Logarithm($7, $4); }
+       | SYMBOL LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
        | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; $$.setChildrenInPlace($3); }
 /* Special case for logarithm, as we do not at first if it needs 1 or 2 children */
        | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }

@@ -51,7 +51,11 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context
   return e.approximateToEvaluation<double>(context, angleUnit);
 }
 
-Function::Function() : Function(TreePool::sharedPool()->createTreeNode<FunctionNode>()) {}
+Function::Function(const char * name) :
+  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>())
+{
+  setName(name);
+}
 
 Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Expression::defaultShallowReduce(context, angleUnit);

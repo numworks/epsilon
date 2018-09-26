@@ -82,28 +82,27 @@ using namespace Poincare;
    * starting with \x. */
 
 (([0-9]*[.]?[0-9]+)|([0-9]+[.]?[0-9]*))(\x8d\-?[0-9]+)? { *yylval = Poincare::Number::ParseDigits(yytext, yyleng); return DIGITS; }
-[A-Za-z] { *yylval = Poincare::Symbol(yytext[0]); return SYMBOL; }
-M[0-9] { *yylval = Poincare::Symbol(Symbol::matrixSymbol(yytext[1])); return SYMBOL; }
-u\(n\) { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un); return SYMBOL; }
-u\(n\+1\) { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un1); return SYMBOL; }
-v\(n\) { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn); return SYMBOL; }
-v\(n\+1\) { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn1); return SYMBOL; }
-u\_\{n\} { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un); return SYMBOL; }
-u\_\{n\+1\} { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un1); return SYMBOL; }
-v\_\{n\} { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn); return SYMBOL; }
-v\_\{n\+1\} { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn1); return SYMBOL; }
-V1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::V1); return SYMBOL; }
-N1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::N1); return SYMBOL; }
-V2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::V2); return SYMBOL; }
-N2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::N2); return SYMBOL; }
-V3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::V3); return SYMBOL; }
-N3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::N3); return SYMBOL; }
-X1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::X1); return SYMBOL; }
-Y1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::Y1); return SYMBOL; }
-X2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::X2); return SYMBOL; }
-Y2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::Y2); return SYMBOL; }
-X3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::X3); return SYMBOL; }
-Y3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::Y3); return SYMBOL; }
+ /* For now, we decided not to parse u(0), because it seems a little complex. */
+u\(n\)      { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un); return FINAL_SYMBOL; }
+u\(n\+1\)   { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un1); return FINAL_SYMBOL; }
+v\(n\)      { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn); return FINAL_SYMBOL; }
+v\(n\+1\)   { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn1); return FINAL_SYMBOL; }
+u\_\{n\}    { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un); return FINAL_SYMBOL; }
+u\_\{n\+1\} { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::un1); return FINAL_SYMBOL; }
+v\_\{n\}    { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn); return FINAL_SYMBOL; }
+v\_\{n\+1\} { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::vn1); return FINAL_SYMBOL; }
+V1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::V1); return FINAL_SYMBOL; }
+N1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::N1); return FINAL_SYMBOL; }
+V2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::V2); return FINAL_SYMBOL; }
+N2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::N2); return FINAL_SYMBOL; }
+V3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::V3); return FINAL_SYMBOL; }
+N3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::N3); return FINAL_SYMBOL; }
+X1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::X1); return FINAL_SYMBOL; }
+Y1 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::Y1); return FINAL_SYMBOL; }
+X2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::X2); return FINAL_SYMBOL; }
+Y2 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::Y2); return FINAL_SYMBOL; }
+X3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::X3); return FINAL_SYMBOL; }
+Y3 { *yylval = Poincare::Symbol(Symbol::SpecialSymbols::Y3); return FINAL_SYMBOL; }
 acos { *yylval = ArcCosine(); return FUNCTION; }
 acosh { *yylval = HyperbolicArcCosine(); return FUNCTION; }
 abs { *yylval = AbsoluteValue(); return FUNCTION; }
@@ -176,6 +175,12 @@ inf { *yylval = Infinity(false); return TERM; }
 \_ { return UNDERSCORE; }
 \x98 { *yylval = EmptyExpression(); return TERM; }
 [ ]+ /* Ignore whitespaces */
+ /* The rule to lex any symbol is defined after all other rules so that, for instance, sin is lexed as a Sinus and not as sin symbol */
+u { return UNDEFINED_SYMBOL; }
+v { return UNDEFINED_SYMBOL; }
+w { return UNDEFINED_SYMBOL; }
+ /*TODO prevent u,v or w symbol with something like ((?![uvw])[A-Za-z\_][A-Za-z\_0-9]*)  ? */
+([A-Za-z\_][A-Za-z\_0-9]*) { *yylval = Poincare::Symbol(yytext, yyleng); return SYMBOL; }
 . { return UNDEFINED_SYMBOL; }
 
 %%

@@ -9,7 +9,7 @@ class FunctionNode : public SymbolNode  {
 public:
   // TreeNode
   size_t size() const override { return sizeof(FunctionNode); }
-  int numberOfChildren() const override { return 1; } //TODO allow any number of children?
+  int numberOfChildren() const override { return 1; } //TODO allow any number of children? Needs templating
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Function";
@@ -36,9 +36,9 @@ private:
 
 class Function : public Symbol {
 public:
-  Function();
+  explicit Function(const char * name);
   Function(const FunctionNode * n) : Symbol(n) {}
-  explicit Function(Expression operand) : Function() {
+  explicit Function(const char * name, Expression operand) : Function(name) {
     replaceChildAtIndexInPlace(0, operand);
   }
 

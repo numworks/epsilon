@@ -18,7 +18,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Undefined; }
-  int polynomialDegree(Context & context, char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation

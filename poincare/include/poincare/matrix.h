@@ -36,7 +36,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Matrix; }
-  int polynomialDegree(Context & context, char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {

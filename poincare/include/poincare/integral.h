@@ -19,7 +19,7 @@ public:
 
   // ExpressionNode
   Type type() const override { return Type::Integral; }
-  int polynomialDegree(Context & context, char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

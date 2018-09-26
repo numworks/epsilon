@@ -22,8 +22,8 @@ public:
   // Properties
   Type type() const override { return Type::Multiplication; }
   Sign sign() const override;
-  int polynomialDegree(Context & context, char symbolName) const override;
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c*d); }
@@ -83,7 +83,7 @@ public:
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   // Simplification

@@ -150,7 +150,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   } else {
     /* 2- Polynomial & Monovariable? */
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
-    char x = m_variables[0];
+    const char x[] = {m_variables[0], 0};
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(x, polynomialCoefficients, *context, preferences->angleUnit());
     if (degree == 2) {

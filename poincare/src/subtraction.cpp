@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-int SubtractionNode::polynomialDegree(Context & context, char symbolName) const {
+int SubtractionNode::polynomialDegree(Context & context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * e : children()) {
     int d = e->polynomialDegree(context, symbolName);

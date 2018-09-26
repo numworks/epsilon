@@ -1,8 +1,5 @@
 #include "tokenizer.h"
 
-#include <poincare/rational.h> // FIXME: Change me for Number
-#include <poincare/symbol.h>
-
 namespace Poincare {
 
 bool Tokenizer::canPopChar(char c) {
@@ -27,7 +24,7 @@ Token Tokenizer::popNumber() {
   const char * integerPartText = m_text;
   size_t integerPartLength = popInteger();
 
-  const char * decimalPartText = m_text;
+/*  const char * decimalPartText = m_text;
   size_t decimalPartLength = 0;
   if (canPopChar('.')) {
     decimalPartLength = popInteger();
@@ -49,9 +46,11 @@ Token Tokenizer::popNumber() {
   }
 
   Token result(Token::Type::Number);
-  //result.setExpression(Number(integerPartText, integerPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
-  // FIXME!!!!
-  result.setExpression(Rational(1));
+  //TODO result.setExpression(Number(integerPartText, integerPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
+  return result;*/
+  Token result(Token::Type::Number);
+  result.setText(integerPartText);
+  result.setLength(integerPartLength);
   return result;
 }
 
@@ -68,8 +67,7 @@ Token Tokenizer::popIdentifier() {
     c = popChar();
   }
   Token result(Token::Type::Identifier);
-  //result.setExpression(Identifier(text, length));
-  result.setExpression(Symbol('a')); // FIXME
+  //TODO result.setExpression(Identifier(text, length));
   return result;
 }
 
@@ -118,7 +116,7 @@ Token Tokenizer::popToken() { // associative array?
     return Token(Token::Type::Number);
   }
   if (canPopChar('\x90')) {
-    return Token(Token::Type::Sto);
+    return Token(Token::Type::Store);
   }
   if (canPopChar('\x91')) {
     return Token(Token::Type::SquareRoot);
@@ -129,7 +127,7 @@ Token Tokenizer::popToken() { // associative array?
   if (isLetter(c)) {
     return popIdentifier();
   }
-  return Token();
+  return Token(); // TODO error
 }
 
 }

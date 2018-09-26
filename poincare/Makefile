@@ -132,7 +132,6 @@ objs += $(addprefix poincare/src/,\
 
 objs += $(addprefix poincare/src/parsing/,\
   parser.o\
-  parser_reductions.o\
   tokenizer.o\
 )
 

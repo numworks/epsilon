@@ -2,7 +2,11 @@
 
 namespace Poincare {
 
-static bool tokenTypesCanBeImplicitlyMultiplied(Token::Type t1, Token::Type t2) {
+Expression Parser::parse() {
+  return shift(Expression(), popToken(), Token::Type::EndOfStream);
+}
+
+static inline bool tokenTypesCanBeImplicitlyMultiplied(Token::Type t1, Token::Type t2) {
   return
     (t1 == Token::Type::RightParenthesis || t1 == Token::Type::Number || t1 == Token::Type::Identifier)
     &&
@@ -10,51 +14,103 @@ static bool tokenTypesCanBeImplicitlyMultiplied(Token::Type t1, Token::Type t2) 
   ;
 }
 
-static bool minusTokenIsUnaryIfAfter(Token::Type t) {
-  return false; //TODO
-}
+Expression Parser::shift(Expression leftHandSide, Token currentToken, Token::Type stoppingType) {
 
-void Parser::reduce() {
-  Token popped = m_tokenStack.pop();
-  // if(popped.is(Token::Type::Identifier)) TODO
-  if(tokenTypesCanBeImplicitlyMultiplied(popped.type(), m_lookahead.type())){
-    m_tokenStack.push(Token(Token::Type::Times));
-    // this makes implicit multiplication have higher precedence than division, power, square root
+  if (currentToken.type() == Token::Type::EndOfStream) {
+    return leftHandSide;
   }
-  //if minusTokenIsUnaryIfAfter
-  sReductions[static_cast<int>(popped.type())](&m_expressionStack, popped);
-}
 
-void Parser::shift() {
-  m_tokenStack.push(m_lookahead);
-  m_lookahead = m_tokenizer.popToken();
-}
+  Token nextToken = popToken();
 
-bool Parser::needsReduction() {
-  /* This method compares the precedence of m_tokenStack.top() and m_lookahead.
-   * Its return value decides whether to reduce m_tokenStack.
-   * In addition to precedence comparison, the method may handle associativity of binary operators:
-   *   1+1+1 yields 1+(1+1)
-   *   2-5-7 yields (2-5)-7
-   *   2/3/4 yields (2/3)/4
-   * but this b  */
-  //TODO opposite and power are not symmetric
-  return (!m_lookahead.isLeftGroupingToken()) && (!m_tokenStack.isEmpty()) && (m_tokenStack.top().type() >= m_lookahead.type());
-}
+  if (tokenTypesCanBeImplicitlyMultiplied(currentToken.type(), nextToken.type())) {
+    // TODO implicit multiplication
+  }
 
-Expression Parser::parse(){
-  while(!m_lookahead.isEndOfStream()) {
-    shift();
-    while (needsReduction()) {
-      reduce();
+  // If currentToken ... FIXME trouver une bonne description: constitutes an operand?
+  if (currentToken.type() == Token::Type::Number) {
+    //assert(leftHandSide.isUndefined());
+    return shift(Number::ParseDigits(currentToken.text(), currentToken.length()), nextToken, stoppingType);
+  }
+  /*if (currentToken.isLeftGroupingToken()) {
+    assert(leftHandSide.isUndefined());
+    return shift(Parenthesis(), nextToken, Token::Type::RightParenthesis); // FIXME grouping tokens
+  }*/
+
+  // If currentToken does not require rightHandSide
+  if (currentToken.type() == Token::Type::Bang) {
+    return shift(Factorial(leftHandSide), nextToken);
+  }
+  /*if (currentToken.type() == Token::Type::Identifier) {
+    if (nextToken.type() == Token::Type::LeftParenthesis) {
+      // FIXME return shift(Function(rightHandSide), nextToken);
+    } else {
+      return shift(Identifier(currentToken.text(), currentToken.length()), nextToken);
+    }
+  }*/
+
+  // If currentToken requires a rightHandSide expression
+
+  // First, build rightHandSide
+  Expression rightHandSide = shift(Expression(), nextToken, currentToken.type());
+  if (comparePrecedence(currentToken, stoppingType)) {
+    return leftHandSide;
+  }
+
+  // Then construct the whole expression and continue
+  if (currentToken.type() == Token::Type::Plus) {
+    return shift(Addition(leftHandSide, rightHandSide), nextToken, stoppingType);
+  }
+  if (currentToken.type() == Token::Type::Minus) {
+    if (leftHandSide.isUndefined()) {
+      return shift(Opposite(rightHandSide), nextToken, stoppingType);
+    } else {
+      return shift(Subtraction(leftHandSide, rightHandSide), nextToken, stoppingType);
     }
   }
-  assert(m_expressionStack.size() == 1); // FIXME: Handle as parsing error
-  return m_expressionStack.pop();
+  if (currentToken.type() == Token::Type::Times) {
+    return shift(Multiplication(leftHandSide, rightHandSide), nextToken);
+  }
+  if (currentToken.type() == Token::Type::Slash) {
+    return shift(Division(leftHandSide, rightHandSide), nextToken);
+  }
+  if (currentToken.type() == Token::Type::Power) {
+    return shift(Power(leftHandSide, rightHandSide), nextToken);
+  }
+  if (currentToken.type() == Token::Type::SquareRoot) {
+    //assert(leftHandSide.isUndefined());
+    return shift(SquareRoot(rightHandSide), nextToken);
+  }
+
+  // TODO remaining tokens: comma, equal, store
 }
 
-Expression Parse(const char * input){
-  return Parser(input).parse();
+bool Parser::comparePrecedence(Token currentToken, Token::Type stoppingType) const {
+  /* Returns true if nextToken is of higher precedence than currentToken TODO */
+  return
+    // First, parse what is after the left grouping token
+    // until the corresponding right grouping token appears
+    /*!nextToken.isLeftGroupingToken()
+    &&
+    // If nextToken is an unary minus
+    !(nextToken.is(Token::Type::Minus)
+      &&
+      TokenHasTag(nextToken, TokenTag::UnaryMinus))
+    &&
+    (
+      (
+        currentToken.is(Token::Type::Minus) &&
+        TokenHasTag(currentToken, TokenTag::UnaryMinus) &&
+        (nextToken.type() < Token::Type::Power)
+      ) ||*/
+      // A token with higher precedence should be reduced first
+      (currentToken.type() > stoppingType) /*||
+      // Handle left-associative operators
+      (
+        (currentToken.type() == nextToken.type()) &&
+        TokenIsLeftAssociative(currentToken)
+      )
+    )*/
+  ;
 }
 
 }

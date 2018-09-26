@@ -13,7 +13,7 @@ Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::Angle
   return Expression();
 }
 
-int ExpressionNode::polynomialDegree(Context & context, char symbolName) const {
+int ExpressionNode::polynomialDegree(Context & context, const char * symbolName) const {
   for (ExpressionNode * c : children()) {
     if (c->polynomialDegree(context, symbolName) != 0) {
       return -1;
@@ -22,7 +22,7 @@ int ExpressionNode::polynomialDegree(Context & context, char symbolName) const {
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int ExpressionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 

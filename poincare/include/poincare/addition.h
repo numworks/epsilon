@@ -26,8 +26,8 @@ public:
 
   // Properties
   Type type() const override { return Type::Addition; }
-  int polynomialDegree(Context & context, char symbolName) const override;
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Evaluation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c+d); }
@@ -81,7 +81,7 @@ public:
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 private:
   static const Number NumeralFactor(const Expression & e);
   static inline int NumberOfNonNumeralFactors(const Expression & e);

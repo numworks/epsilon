@@ -104,7 +104,7 @@ QUIZ_CASE(poincare_get_variables) {
   assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
 }
 
-void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
+void assert_parsed_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
@@ -123,12 +123,12 @@ void assert_parsed_expression_has_polynomial_coefficient(const char * expression
 
 QUIZ_CASE(poincare_get_polynomial_coefficients) {
   const char * coefficient0[] = {"2", "1", "1", 0};
-  assert_parsed_expression_has_polynomial_coefficient("x^2+x+2", 'x', coefficient0);
+  assert_parsed_expression_has_polynomial_coefficient("x^2+x+2", "x", coefficient0);
   const char * coefficient1[] = {"12+(-6)*P", "12", "3", 0}; //3*x^2+12*x-6*π+12
-  assert_parsed_expression_has_polynomial_coefficient("3*(x+2)^2-6*P", 'x', coefficient1);
+  assert_parsed_expression_has_polynomial_coefficient("3*(x+2)^2-6*P", "x", coefficient1);
   // TODO: decomment when enable 3-degree polynomes
   //const char * coefficient2[] = {"2+32*x", "2", "6", "2", 0}; //2*n^3+6*n^2+2*n+2+32*x
-  //assert_parsed_expression_has_polynomial_coefficient("2*(n+1)^3-4n+32*x", 'n', coefficient2);
+  //assert_parsed_expression_has_polynomial_coefficient("2*(n+1)^3-4n+32*x", "n", coefficient2);
   const char * coefficient3[] = {"1", "-P", "1", 0}; //x^2-Pi*x+1
-  assert_parsed_expression_has_polynomial_coefficient("x^2-P*x+1", 'x', coefficient3);
+  assert_parsed_expression_has_polynomial_coefficient("x^2-P*x+1", "x", coefficient3);
 }

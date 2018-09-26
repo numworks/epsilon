@@ -13,7 +13,7 @@ extern "C" {
 
 namespace Poincare {
 
-int OppositeNode::polynomialDegree(Context & context, char symbolName) const {
+int OppositeNode::polynomialDegree(Context & context, const char * symbolName) const {
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 

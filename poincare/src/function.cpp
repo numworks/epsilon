@@ -7,12 +7,12 @@
 
 namespace Poincare {
 
-int FunctionNode::polynomialDegree(Context & context, char symbolName) const {
+int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Expression e = context.expressionForSymbol(Function(this));
   return e.polynomialDegree(context, symbolName);
 }
 
-int FunctionNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   Expression e = context.expressionForSymbol(Function(this));
   return e.getPolynomialCoefficients(context, symbolName, coefficients);
 }

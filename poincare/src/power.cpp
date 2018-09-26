@@ -48,7 +48,7 @@ Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit 
   return Power(this).setSign(s, context, angleUnit);
 }
 
-int PowerNode::polynomialDegree(Context & context, char symbolName) const {
+int PowerNode::polynomialDegree(Context & context, const char * symbolName) const {
   int deg = ExpressionNode::polynomialDegree(context, symbolName);
   if (deg == 0) {
     return deg;
@@ -72,7 +72,7 @@ int PowerNode::polynomialDegree(Context & context, char symbolName) const {
   return -1;
 }
 
-int PowerNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
@@ -206,7 +206,7 @@ Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences
   return result;
 }
 
-int Power::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int Power::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg <= 0) {
     return Expression::defaultGetPolynomialCoefficients(context, symbolName, coefficients);

@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-int UndefinedNode::polynomialDegree(Context & context, char symbolName) const {
+int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) const {
   return -1;
 }
 

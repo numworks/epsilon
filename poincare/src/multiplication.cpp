@@ -28,7 +28,7 @@ ExpressionNode::Sign MultiplicationNode::sign() const {
   return (Sign)sign;
 }
 
-int MultiplicationNode::polynomialDegree(Context & context, char symbolName) const {
+int MultiplicationNode::polynomialDegree(Context & context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * c : children()) {
     int d = c->polynomialDegree(context, symbolName);
@@ -40,7 +40,7 @@ int MultiplicationNode::polynomialDegree(Context & context, char symbolName) con
   return degree;
 }
 
-int MultiplicationNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int MultiplicationNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
@@ -195,7 +195,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
   return thisExp;
 }
 
-int Multiplication::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int Multiplication::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;

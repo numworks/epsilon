@@ -123,7 +123,7 @@ public:
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
-  int polynomialDegree(Context & context, char symbolName) const { return this->node()->polynomialDegree(context, symbolName); }
+  int polynomialDegree(Context & context, const char * symbolName) const { return this->node()->polynomialDegree(context, symbolName); }
   /* getVariables fills the table variables with the variable present in the
    * expression and returns the number of entries in filled in variables.
    * For instance getVariables('x+y+2*w/cos(4)') would result in
@@ -214,7 +214,7 @@ protected:
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
-  int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
@@ -232,7 +232,7 @@ private:
 
   /* Properties */
   Expression defaultReplaceSymbolWithExpression(const char * symbol, Expression expression);
-  int defaultGetPolynomialCoefficients(Context & context, char symbol, Expression expression[]) const;
+  int defaultGetPolynomialCoefficients(Context & context, const char * symbol, Expression expression[]) const;
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

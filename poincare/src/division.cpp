@@ -11,7 +11,7 @@
 
 namespace Poincare {
 
-int DivisionNode::polynomialDegree(Context & context, char symbolName) const {
+int DivisionNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(1)->polynomialDegree(context, symbolName) != 0) {
     return -1;
   }

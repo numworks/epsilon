@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-int AdditionNode::polynomialDegree(Context & context, char symbolName) const {
+int AdditionNode::polynomialDegree(Context & context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * e : children()) {
     int d = e->polynomialDegree(context, symbolName);
@@ -21,7 +21,7 @@ int AdditionNode::polynomialDegree(Context & context, char symbolName) const {
   return degree;
 }
 
-int AdditionNode::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int AdditionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
@@ -60,7 +60,7 @@ const Number Addition::NumeralFactor(const Expression & e) {
   return Rational(1);
 }
 
-int Addition::getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const {
+int Addition::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;

@@ -17,7 +17,7 @@ void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfColumns(newNumberOfChildren);
 }
 
-int MatrixNode::polynomialDegree(Context & context, char symbolName) const {
+int MatrixNode::polynomialDegree(Context & context, const char * symbolName) const {
   return -1;
 }
 

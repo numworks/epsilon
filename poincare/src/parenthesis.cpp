@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-int ParenthesisNode::polynomialDegree(Context & context, char symbolName) const {
+int ParenthesisNode::polynomialDegree(Context & context, const char * symbolName) const {
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 

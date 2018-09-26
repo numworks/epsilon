@@ -182,7 +182,7 @@ Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences:
   return node()->approximate(U(), context, angleUnit);
 }
 
-Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) {
+Expression Expression::defaultReplaceSymbolWithExpression(const char * symbol, Expression expression) {
   for (int i = 0; i < numberOfChildren(); i++) {
     childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
   }

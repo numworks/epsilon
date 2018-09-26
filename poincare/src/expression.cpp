@@ -186,9 +186,8 @@ Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences:
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) {
-  int nbChildren = numberOfChildren();
-  for (int i = 0; i < nbChildren; i++) {
-    replaceChildAtIndexInPlace(i, childAtIndex(i).replaceSymbolWithExpression(symbol, expression));
+  for (int i = 0; i < numberOfChildren(); i++) {
+    childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
   }
   return *this;
 }

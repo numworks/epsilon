@@ -48,7 +48,7 @@ Storage::Record::Record(const char * name) {
 
   // CRC32 of the tail of name
   uint32_t tailName = 0;
-  strlcpy((char *)&tailName, name+crc32TruncatedInputSize*sizeof(uint32_t), 2);
+  strlcpy((char *)&tailName, name+crc32TruncatedInputSize*sizeof(uint32_t), sizeof(uint32_t)/sizeof(char));
   crc32Results[1] = Ion::crc32(&tailName, 1);
   m_nameCRC32 = Ion::crc32(crc32Results, 2);
 }

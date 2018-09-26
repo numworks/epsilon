@@ -5,17 +5,19 @@
 
 namespace Poincare {
 
+/* TODO: should we keep the size of SymbolNode as a member to speed up TreePool
+ * scan? */
+
 class SymbolNode final : public ExpressionNode {
   friend class Store;
 public:
-  SymbolNode() : m_name(0) {}
+  SymbolNode() : m_char(0) {}
 
-
-  void setName(const char name) { m_name = name; }
-  char name() const { return m_name; }
+  void setName(const char * name) { strlcpy(m_name, name, strlen(name)+1); }
+  const char * name() const { return m_name; }
 
   // TreeNode
-  size_t size() const override { return sizeof(SymbolNode); }
+  size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -43,7 +45,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  bool hasAnExactRepresentation(Context & context) const;
+  bool shouldBeReplaceWhileReducing(Context & context) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Approximation */
@@ -53,7 +55,7 @@ public:
 private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 
-  char m_name;
+  char m_name[];
 };
 
 class Symbol final : public Expression {
@@ -63,50 +65,18 @@ public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
      * characters but events as 'end of text', 'backspace'... */
-    Ans = 1,
-    un = 2,
-    un1 = 3,
-    un2 = 4,
-    vn = 5,
-    vn1 = 6,
-    vn2 = 7,
-    M0 = 8,
-    M1 = 9,
-    M2,
-    M3,
-    M4,
-    M5,
-    M6,
-    M7,
-    M8,
-    M9 = 17,
-    V1,
-    N1,
-    V2,
-    N2,
-    V3,
-    N3 = 23,
-    X1 = 24,
-    Y1,
-    X2,
-    Y2,
-    X3,
-    Y3 = 29
+    //Ans = 1,
+    UnknownX = 1,
   };
-  Symbol(const char name = 0) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
-    node()->setName(name);
-  }
+  Symbol(const char * name = "");
   Symbol(const SymbolNode * node) : Expression(node) {}
 
   // Symbol properties
-  static const char * textForSpecialSymbols(char name);
   static SpecialSymbols matrixSymbol(char index);
-  static bool isMatrixSymbol(char c);
-  static bool isScalarSymbol(char c);
   static bool isVariableSymbol(char c);
   static bool isSeriesSymbol(char c);
   static bool isRegressionSymbol(char c);
-  static bool isApproximate(char c, Context & context);
+  bool isApproximate(Context & context) const;
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
@@ -114,7 +84,7 @@ public:
   int getPolynomialCoefficients(Context & context, char symbolName, Expression coefficients[]) const;
 
   // Symbol
-  char name() const { return node()->name(); }
+  const char * name() const { return node()->name(); }
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

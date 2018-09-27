@@ -268,7 +268,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, variables, k_maxSizeOfStoreSymbols);
+  int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char **)variables, k_maxSizeOfStoreSymbols);
   assert(nbOfVariables >= 0);
   int numberOfValuesToCompute = -1;
   int index = 0;

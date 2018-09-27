@@ -83,7 +83,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
       m_context->setExpressionForSymbolName(Expression(), symbolName, *m_context);
     }
     if (m_currentPage == Page::Matrix) {
-      const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow()); // TODO do not build an expression, just compute its name
+      const Symbol symbol = "M0"; // FIXME: dummy variable box controller
       m_context->setExpressionForSymbolName(Expression(), symbol.name(), *m_context);
       m_matrixLayouts[selectedRow()] = Layout();
     }
@@ -98,13 +98,12 @@ int VariableBoxController::ContentViewController::numberOfRows() {
     case Page::RootMenu:
       return k_numberOfMenuRows;
     case Page::Scalar:
-      return GlobalContext::k_maxNumberOfScalarExpressions;
+      return 100; // FIXME
 #if LIST_VARIABLES
     case Page::List:
-      return GlobalContext::k_maxNumberOfListExpressions;
 #endif
     case Page::Matrix:
-      return GlobalContext::k_maxNumberOfMatrixExpressions;
+      return 100; //FIXME
     default:
       return 0;
   }
@@ -199,7 +198,7 @@ void VariableBoxController::ContentViewController::resetPage() {
 void VariableBoxController::ContentViewController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
   // Tidy the memoized layouts to clean TreePool
-  for (int i = 0; i < GlobalContext::k_maxNumberOfMatrixExpressions; i++) {
+  for (int i = 0; i < 10; i++) { // FIXME
     m_matrixLayouts[i] = Layout();
   }
   // Tidy the layouts used to display the VariableBoxController to clean TreePool

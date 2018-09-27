@@ -10,6 +10,15 @@ Storage::Record::ErrorStatus putRecordInSharedStorage(const char * baseName, con
   return Storage::sharedStorage()->createRecordWithExtension(baseName, extension, data, dataSize);
 }
 
+QUIZ_CASE(ion_storage_records_crc32) {
+  const char * baseNameRecord = "ionTestStorage";
+  const char * extensionRecord = "record1";
+  const char * fullNameRecord = "ionTestStorage.record1";
+  Storage::Record a(baseNameRecord, extensionRecord);
+  Storage::Record b(fullNameRecord);
+  quiz_assert(a==b);
+}
+
 QUIZ_CASE(ion_storage_store_and_destroy_record) {
   size_t initialStorageAvailableStage = Storage::sharedStorage()->availableSize();
 

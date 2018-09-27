@@ -115,6 +115,7 @@ void TreePool::treeLog(std::ostream & stream) {
 #endif
 
 int TreePool::numberOfNodes() const {
+  ((TreePool *) this)->log();
   int count = 0;
   TreeNode * firstNode = first();
   TreeNode * lastNode = last();

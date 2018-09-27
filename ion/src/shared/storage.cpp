@@ -96,6 +96,27 @@ size_t Storage::availableSize() {
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
 }
 
+Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
+  size_t recordSize = sizeOfRecordWithFullName(fullName, size);
+  if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
+   return Record::ErrorStatus::NotEnoughSpaceAvailable;
+  }
+  if (isFullNameTaken(fullName)) {
+    return Record::ErrorStatus::NameTaken;
+  }
+  // Find the end of data
+  char * newRecord = endBuffer();
+  // Fill totalSize
+  newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
+  // Fill name
+  newRecord += overrideFullNameAtPosition(newRecord, fullName);
+  // Fill data
+  newRecord += overrideValueAtPosition(newRecord, data, size);
+  // Next Record is null-sized
+  overrideSizeAtPosition(newRecord, 0);
+  return Record::ErrorStatus::None;
+}
+
 Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
   size_t recordSize = sizeOfRecordWithBaseNameAndExtension(baseName, extension, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {

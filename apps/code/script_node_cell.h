@@ -34,7 +34,7 @@ protected:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     virtual KDSize minimalSizeForOptimalDisplay() const override;
     const char * text() const override {
-      return m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).name();
+      return m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName();
     }
   private:
     constexpr static const KDFont * k_font = KDFont::SmallFont;

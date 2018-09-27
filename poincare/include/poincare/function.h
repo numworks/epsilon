@@ -20,7 +20,7 @@ public:
   Type type() const override { return Type::Function; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
-  int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
+  int getVariables(Context & context, isVariableTest isVariable, char * variables[], int maxSizeVariable) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
 private:

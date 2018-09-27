@@ -45,7 +45,7 @@ int SymbolNode::getPolynomialCoefficients(Context & context, const char * symbol
   return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables[], int maxSizeVariable) const {
  size_t variablesLength = 0;
  while(variables[variablesLength++][0] != 0) {}
  if (isVariable(m_name)) {

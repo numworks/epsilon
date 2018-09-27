@@ -73,6 +73,10 @@ QUIZ_CASE(equation_solve) {
   const char * equations0[] = {"x+y+z+a+b+c+d=0", 0};
   assert_equation_system_exact_solve_to(equations0, EquationStore::Error::TooManyVariables, EquationStore::Type::LinearSystem, {""}, nullptr, 0);
 
+  // x+y+z+a+b+c+d = 0
+  const char * equations01[] = {"tototototot=0", 0};
+  assert_equation_system_exact_solve_to(equations0, EquationStore::Error::VariableNameTooLong, EquationStore::Type::VariableNameTooLong, {""}, nullptr, 0);
+
   // x^2+y = 0
   const char * equations1[] = {"x^2+y=0", 0};
   assert_equation_system_exact_solve_to(equations1, EquationStore::Error::NonLinearSystem, EquationStore::Type::LinearSystem, {""}, nullptr, 0);

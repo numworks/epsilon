@@ -105,6 +105,7 @@ private:
 
   bool isFullNameTaken(const char * fullName, const Record * recordToExclude = nullptr);
   bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
+  bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
   static bool fullNameCompliant(const char * name);
   bool fullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
   char * endBuffer();

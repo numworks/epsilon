@@ -898,7 +898,7 @@ bool Power::parentIsALogarithmOfSameBase() const {
 
 bool Power::isNthRootOfUnity() const {
   // We check we are equal to e^(i*pi) or e^(i*pi*rational)
-  if (childAtIndex(0).type() != ExpressionNode::Type::Symbol || childAtIndex(0).convert<Symbol>().name() != Ion::Charset::Exponential) {
+  if (childAtIndex(0).type() != ExpressionNode::Type::Symbol || !childAtIndex(0).convert<Symbol>().isExponential()) {
     return false;
   }
   if (childAtIndex(1).type() != ExpressionNode::Type::Multiplication) {
@@ -908,11 +908,11 @@ bool Power::isNthRootOfUnity() const {
     return false;
   }
   const Expression i = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-1);
-  if (i.type() != ExpressionNode::Type::Symbol || static_cast<const Symbol &>(i).name() != Ion::Charset::IComplex) {
+  if (i.type() != ExpressionNode::Type::Symbol || !static_cast<const Symbol &>(i).isIComplex()) {
     return false;
   }
   const Expression pi = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-2);
-  if (pi.type() != ExpressionNode::Type::Symbol || static_cast<const Symbol &>(pi).name() != Ion::Charset::SmallPi) {
+  if (pi.type() != ExpressionNode::Type::Symbol || !static_cast<const Symbol &>(pi).isPi()) {
     return false;
   }
   if (numberOfChildren() == 2) {

@@ -10,7 +10,7 @@
 namespace Sequence {
 
 template<typename T>
-class CacheContext : public Poincare::VariableContext<T> {
+class CacheContext : public Poincare::VariableContext {
 public:
   CacheContext(Poincare::Context * parentContext);
   const Poincare::Expression expressionForSymbol(const Poincare::Symbol & symbol) override;

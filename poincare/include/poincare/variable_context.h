@@ -6,10 +6,10 @@
 
 namespace Poincare {
 
-template<typename T>
 class VariableContext : public Context {
 public:
   VariableContext(const char * name, Context * parentContext = nullptr);
+  template<typename T>
   void setApproximationForVariable(T value);
 
   // Context
@@ -18,7 +18,7 @@ public:
 
 private:
   const char * m_name;
-  Float<T> m_value;
+  Expression m_value;
   Context * m_parentContext;
 };
 

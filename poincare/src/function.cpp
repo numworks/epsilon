@@ -10,32 +10,31 @@ namespace Poincare {
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Expression e = context.expressionForSymbol(Function(this));
 /*TODO Context should be float or double ?*/
-  VariableContext<float> newContext = xContext<float>(context);
+  VariableContext newContext = xContext(context);
   return e.polynomialDegree(newContext, symbolName);
 }
 
 int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   Expression e = context.expressionForSymbol(Function(this));
-  VariableContext<float> newContext = xContext<float>(context);
+  VariableContext newContext = xContext(context);
   return e.getPolynomialCoefficients(newContext, symbolName, coefficients);
 }
 
 int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables[], int maxSizeVariable) const {
   Expression e = context.expressionForSymbol(Function(this));
-  VariableContext<float> newContext = xContext<float>(context);
+  VariableContext newContext = xContext(context);
   return e.getVariables(newContext, isVariable, variables, maxSizeVariable);
 }
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
-  VariableContext<float> newContext = xContext<float>(context);
+  VariableContext newContext = xContext(context);
   return e.characteristicXRange(newContext, angleUnit);
 }
 
-template<typename T>
-VariableContext<T> FunctionNode::xContext(Context & parentContext) const {
+VariableContext FunctionNode::xContext(Context & parentContext) const {
   const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
-  VariableContext<T> xContext = VariableContext<T>(x, &parentContext);
+  VariableContext xContext = VariableContext(x, &parentContext);
   xContext.setExpressionForSymbolName(Expression(childAtIndex(0)), x, xContext);
   return xContext;
 }
@@ -54,13 +53,13 @@ Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
-  VariableContext<float> newContext = xContext<float>(context);
+  VariableContext newContext = xContext(context);
   return e.approximateToEvaluation<float>(newContext, angleUnit);
 }
 
 Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
-  VariableContext<double> newContext = xContext<double>(context);
+  VariableContext newContext = xContext(context);
   return e.approximateToEvaluation<double>(newContext, angleUnit);
 }
 

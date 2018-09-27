@@ -12,6 +12,8 @@
 
 namespace Poincare {
 
+constexpr char Symbol::k_ans[];
+
 size_t SymbolNode::size() const {
   return sizeof(SymbolNode)+strlen(m_name)+1;
 }

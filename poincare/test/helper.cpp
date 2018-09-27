@@ -83,7 +83,7 @@ void assert_parsed_expression_polynomial_degree(const char * expression, int deg
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
   e = e.simplify(globalContext, Radian);
-  quiz_assert(e.polynomialDegree(symbolName) == degree);
+  quiz_assert(e.polynomialDegree(globalContext, symbolName) == degree);
 }
 
 typedef Expression (*ProcessExpression)(Expression, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);

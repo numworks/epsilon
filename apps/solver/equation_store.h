@@ -19,7 +19,8 @@ public:
     EquationUndefined = -1,
     TooManyVariables = -2,
     NonLinearSystem = -3,
-    RequireApproximateSolution = -4
+    RequireApproximateSolution = -4,
+    VariableNameTooLong
   };
   /* EquationStore */
   EquationStore();

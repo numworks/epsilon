@@ -111,9 +111,9 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     if (numberOfVariables == -1) {
       return Error::TooManyVariables;
     }
-    /*if (numberOfVariables == -2) {
+    if (numberOfVariables == -2) {
       return Error::VariableNameTooLong;
-    }*/
+    }
   }
 
   /* 1- Linear System? */

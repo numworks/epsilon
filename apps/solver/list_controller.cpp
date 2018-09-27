@@ -179,6 +179,9 @@ void ListController::resolveEquations() {
     case EquationStore::Error::TooManyVariables:
       app()->displayWarning(I18n::Message::TooManyVariables);
       return;
+    case EquationStore::Error::VariableNameTooLong:
+      app()->displayWarning(I18n::Message::VariableNameTooLong);
+      return;
     case EquationStore::Error::NonLinearSystem:
       app()->displayWarning(I18n::Message::NonLinearSystem);
       return;

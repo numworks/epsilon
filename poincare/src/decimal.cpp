@@ -47,8 +47,12 @@ void DecimalNode::initToMatchSize(size_t goalSize) {
   assert(size() == goalSize);
 }
 
+static size_t DecimalSize(uint8_t numberOfDigitsInMantissa) {
+  return sizeof(DecimalNode)+ sizeof(native_uint_t)*numberOfDigitsInMantissa;
+}
+
 size_t DecimalNode::size() const {
-  return sizeof(DecimalNode)+ sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
+  return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
 Expression DecimalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
@@ -320,7 +324,7 @@ Decimal::Decimal(T f) : Number() {
 /* We do not get rid of the useless 0s ending the mantissa here because we want
  * to keep them if they were entered by the user. */
 Decimal::Decimal(Integer m, int e) :
-  Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e) {}
+  Decimal(DecimalSize(m.numberOfDigits()), m, e) {}
 
 
 Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {

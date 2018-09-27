@@ -13,10 +13,10 @@ constexpr char GlobalContext::funcExtension[];
 
 const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   // Constant symbols
-  if (symbol.name()[0] == Ion::Charset::SmallPi && symbol.name()[1] == 0) {
+  if (symbol.isPi()) {
     return Float<double>(M_PI);
   }
-  if (symbol.name()[0] == Ion::Charset::Exponential && symbol.name()[1] == 0) {
+  if (symbol.isExponential()) {
     return Float<double>(M_E);
   }
   // Look up the file system for symbol

@@ -80,7 +80,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).numberOfChildren() == 2
         && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Symbol
-        && e.childAtIndex(0).childAtIndex(1).convert<Symbol>().name() == Ion::Charset::SmallPi
+        && e.childAtIndex(0).childAtIndex(1).convert<Symbol>().isPi()
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
       || (angleUnit == Preferences::AngleUnit::Degree
         && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))

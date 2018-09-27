@@ -264,14 +264,16 @@ int StoreController::maxNumberOfElements() const {
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series
-  char variables[Expression::k_maxNumberOfVariables];
-  variables[0] = 0;
+  constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
+  char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
+  variables[0][0] = 0;
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  formula.getVariables(*(appsContainer->globalContext()), isVariable, variables);
+  int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, variables, k_maxSizeOfStoreSymbols);
+  assert(nbOfVariables >= 0);
   int numberOfValuesToCompute = -1;
   int index = 0;
-  while (variables[index] != 0) {
-    const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
+  while (variables[index][0] != 0) {
+    const char * seriesName = variables[index];
     assert(strlen(seriesName) == 2);
     int series = (int)(seriesName[1] - '0') - 1;
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);

@@ -84,7 +84,7 @@ private:
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
-  char m_variables[Poincare::Expression::k_maxNumberOfVariables+1];
+  char m_variables[Poincare::Expression::k_maxNumberOfVariables+1][Equation::k_maxVariableSize];
   int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];

@@ -124,14 +124,16 @@ public:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
   int polynomialDegree(Context & context, const char * symbolName) const { return this->node()->polynomialDegree(context, symbolName); }
-  /* getVariables fills the table variables with the variable present in the
-   * expression and returns the number of entries in filled in variables.
-   * For instance getVariables('x+y+2*w/cos(4)') would result in
-   * variables = « xyw »  and would return 3. If the final number of
-   * variables would overflow the maxNumberOfVariables, getVariables return -1 */
+  /* getVariables fills the matrix variables with the symbols present in the
+   * expression that passes the test isVariable. It returns the number of
+   * entries filled in variables. For instance, getVariables of
+   * 'x+y+2*w/cos(4)' would result in variables = {"x", "y", "w"} and would
+   * return 3. If the final numberof variables would overflow the
+   * maxNumberOfVariables, getVariables return -1. If one of the variable
+   * lengths overflow the maxVariableLength; getVariables return -2. */
   static constexpr int k_maxNumberOfVariables = 6;
-  int getVariables(Context & context, ExpressionNode::isVariableTest isVariable, char * variables) const { return node()->getVariables(context, isVariable, variables); }
-  /* getLinearCoefficients return false if the expression is not linear with
+  int getVariables(Context & context, ExpressionNode::isVariableTest isVariable, char * variables, int maxVariableLength) const { return node()->getVariables(context, isVariable, variables, maxVariableLength); }
+0  /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */

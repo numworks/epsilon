@@ -26,12 +26,12 @@ int ExpressionNode::getPolynomialCoefficients(Context & context, const char * sy
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int ExpressionNode::getVariables(Context & context, isVariableTest isVariable, char * variables) const {
+int ExpressionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
  int numberOfVariables = 0;
   for (ExpressionNode * c : children()) {
-   int n = c->getVariables(context, isVariable, variables);
+   int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
    if (n < 0) {
-     return -1;
+     return n;
    }
    numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
  }

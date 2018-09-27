@@ -9,32 +9,43 @@ namespace Poincare {
 
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.polynomialDegree(context, symbolName);
+/*TODO Context should be float or double ?*/
+  VariableContext<float> newContext = xContext<float>(context);
+  return e.polynomialDegree(newContext, symbolName);
 }
 
 int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.getPolynomialCoefficients(context, symbolName, coefficients);
+  VariableContext<float> newContext = xContext<float>(context);
+  return e.getPolynomialCoefficients(newContext, symbolName, coefficients);
 }
 
 int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables[], int maxSizeVariable) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.getVariables(context, isVariable, variables, maxSizeVariable);
+  VariableContext<float> newContext = xContext<float>(context);
+  return e.getVariables(newContext, isVariable, variables, maxSizeVariable);
 }
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.characteristicXRange(context, angleUnit);
+  VariableContext<float> newContext = xContext<float>(context);
+  return e.characteristicXRange(newContext, angleUnit);
+}
+
+template<typename T>
+VariableContext<T> FunctionNode::xContext(Context & parentContext) const {
+  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
+  VariableContext<T> xContext = VariableContext<T>(x, &parentContext);
+  xContext.setExpressionForSymbolName(Expression(childAtIndex(0)), x, xContext);
+  return xContext;
 }
 
 Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  char nameString[2] = {name(), 0}; //TODO Fix this when longer name
-  return LayoutHelper::Prefix(Function(this), floatDisplayMode, numberOfSignificantDigits, nameString);
+  return LayoutHelper::Prefix(Function(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  char nameString[2] = {name(), 0}; //TODO Fix this when longer name
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, nameString);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
@@ -43,18 +54,20 @@ Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.approximateToEvaluation<float>(context, angleUnit);
+  VariableContext<float> newContext = xContext<float>(context);
+  return e.approximateToEvaluation<float>(newContext, angleUnit);
 }
 
 Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.approximateToEvaluation<double>(context, angleUnit);
+  VariableContext<double> newContext = xContext<double>(context);
+  return e.approximateToEvaluation<double>(newContext, angleUnit);
 }
 
 Function::Function(const char * name) :
   Function(TreePool::sharedPool()->createTreeNode<FunctionNode>())
 {
-  setName(name);
+  static_cast<FunctionNode *>(Expression::node())->setName(name, strlen(name));
 }
 
 Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

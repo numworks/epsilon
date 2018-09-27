@@ -146,14 +146,11 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Symbol::Symbol(const char * name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(sizeof(SymbolNode)+strlen(name)+1)) {
-  node()->setName(name);
+Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(sizeof(SymbolNode)+length+1)) {
+  node()->setName(name, length);
 }
 
-Symbol::Symbol(char name) : Expression() {
-  char symbolName[2] = {name, 0};
-  new (this) Symbol(symbolName);
-}
+Symbol::Symbol(char name) : Symbol(&name, 1) {}
 
 bool Symbol::isVariableSymbol(const char * c)  {
   if (c[0] >= 'a' && c[0] <= 'z' && c[1] == 0) {

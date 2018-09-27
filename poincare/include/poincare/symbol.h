@@ -11,7 +11,7 @@ namespace Poincare {
 class SymbolNode final : public ExpressionNode {
   friend class Store;
 public:
-  void setName(const char * name) { strlcpy(m_name, name, strlen(name)+1); }
+  void setName(const char * name, int length) { strlcpy(m_name, name, length+1); }
   const char * name() const { return m_name; }
 
   // TreeNode
@@ -70,7 +70,7 @@ public:
      * characters but events as 'end of text', 'backspace'... */
     UnknownX = 1,
   };
-  Symbol(const char * name = "");
+  Symbol(const char * name = "", int length = 0);
   Symbol(char name);
   Symbol(const SymbolNode * node) : Expression(node) {}
 

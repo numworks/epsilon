@@ -57,8 +57,4 @@ Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, d
   return expression(context).nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), function->expression(context));
 }
 
-char CartesianFunction::symbol() const {
-  return 'x';
-}
-
 }

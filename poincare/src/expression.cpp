@@ -330,8 +330,8 @@ U Expression::approximateToScalar(const char * text, Context& context, Preferenc
 
 template<typename U>
 U Expression::approximateWithValueForSymbol(const char * symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const {
-  VariableContext<U> variableContext = VariableContext<U>(symbol, &context);
-  variableContext.setApproximationForVariable(x);
+  VariableContext variableContext = VariableContext(symbol, &context);
+  variableContext.setApproximationForVariable<U>(x);
   return approximateToScalar<U>(variableContext, angleUnit);
 }
 

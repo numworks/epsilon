@@ -25,8 +25,7 @@ public:
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
 private:
-  template<typename T>
-  VariableContext<T> xContext(Context & parentContext) const;
+  VariableContext xContext(Context & parentContext) const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

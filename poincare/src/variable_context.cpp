@@ -6,33 +6,30 @@
 
 namespace Poincare {
 
-template<typename T>
-VariableContext<T>::VariableContext(const char * name, Context * parentContext) :
+VariableContext::VariableContext(const char * name, Context * parentContext) :
   m_name(name),
-  m_value(Float<T>(NAN)),
+  m_value(),
   m_parentContext(parentContext)
 {
 }
 
 template<typename T>
-void VariableContext<T>::setApproximationForVariable(T value) {
+void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>(value);
 }
 
-template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
+void VariableContext::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
   if (strcmp(symbolName, m_name) == 0) {
     if (expression.isUninitialized()) {
       return;
     }
-    m_value = Float<T>(expression.approximateToScalar<T>(context, Preferences::sharedPreferences()->angleUnit()));
+    m_value = expression.clone();
   } else {
     m_parentContext->setExpressionForSymbolName(expression, symbolName, context);
   }
 }
 
-template<typename T>
-const Expression VariableContext<T>::expressionForSymbol(const Symbol & symbol) {
+const Expression VariableContext::expressionForSymbol(const Symbol & symbol) {
   if (strcmp(symbol.name(), m_name) == 0) {
     return m_value;
   } else {
@@ -40,7 +37,7 @@ const Expression VariableContext<T>::expressionForSymbol(const Symbol & symbol) 
   }
 }
 
-template class Poincare::VariableContext<float>;
-template class Poincare::VariableContext<double>;
+template void VariableContext::setApproximationForVariable(float);
+template void VariableContext::setApproximationForVariable(double);
 
 }

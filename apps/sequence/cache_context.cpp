@@ -8,7 +8,7 @@ namespace Sequence {
 
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
-  VariableContext<T>("n", parentContext),
+  VariableContext("n", parentContext),
   m_values{{NAN, NAN},
     {NAN, NAN}}
 {
@@ -21,7 +21,7 @@ const Expression CacheContext<T>::expressionForSymbol(const Symbol & symbol) {
    && (strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0)) {
     return Float<T>(m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)]);
   }
-  return VariableContext<T>::expressionForSymbol(symbol);
+  return VariableContext::expressionForSymbol(symbol);
 }
 
 template<typename T>

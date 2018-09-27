@@ -24,7 +24,7 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return Complex<T>::Undefined();
   }
-  VariableContext<T> nContext = VariableContext<T>('n', &context);
+  VariableContext<T> nContext = VariableContext<T>("n", &context);
   Evaluation<T> result = Complex<T>((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
     if (Expression::shouldStopProcessing()) {

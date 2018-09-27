@@ -101,24 +101,21 @@ bool Expression::IsMatrix(const Expression e, Context & context) {
   return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<const Symbol&>(e).name()));
 }
 
-bool Expression::getLinearCoefficients(char * variables, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
+bool Expression::getLinearCoefficients(char variables[], Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!recursivelyMatches(IsMatrix, context));
-  char * x = variables;
-  while (*x != 0) {
-    const char symbol[] = {*x, 0};
-    int degree = polynomialDegree(context, symbol);
+  int index = 0;
+  while (variables[index][0] != 0) {
+    int degree = polynomialDegree(context, variables[index]);
     if (degree > 1 || degree < 0) {
       return false;
     }
-    x++;
+    index++;
   }
   Expression equation = *this;
-  x = variables;
   int index = 0;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
-  while (*x != 0) {
-    const char symbol[] = {*x, 0};
-    int degree = equation.getPolynomialReducedCoefficients(symbol, polynomialCoefficients, context, angleUnit);
+  while (variables[index][0] != 0) {
+    int degree = equation.getPolynomialReducedCoefficients(variables[index], polynomialCoefficients, context, angleUnit);
     switch (degree) {
       case 0:
         coefficients[index] = Rational(0);
@@ -137,7 +134,6 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
      * The equation supposed to be linear in all variables, so we can look for
      * the coefficients linked to the other variables in a_0. */
     equation = polynomialCoefficients[0];
-    x++;
     index++;
   }
   constant[0] = Opposite(equation.clone()).deepReduce(context, angleUnit);

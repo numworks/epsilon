@@ -42,7 +42,6 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
-  GlobalContext context;
   Integer outputFactors[100];
   Integer outputCoefficients[100];
 #if POINCARE_TESTS_PRINT_EXPRESSIONS

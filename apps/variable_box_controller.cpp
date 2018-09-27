@@ -252,7 +252,7 @@ const Expression VariableBoxController::ContentViewController::expressionForInde
     return m_context->expressionForSymbol(symbol);
   }
   if (m_currentPage == Page::Matrix) {
-    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
+    const Symbol symbol = Symbol("M0",2); // FIXME Symbol::matrixSymbol('0'+(char)index);
     return m_context->expressionForSymbol(symbol);
   }
 #if LIST_VARIABLES

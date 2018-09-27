@@ -68,7 +68,6 @@ public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
      * characters but events as 'end of text', 'backspace'... */
-    //Ans = 1,
     UnknownX = 1,
   };
   Symbol(const char * name = "");

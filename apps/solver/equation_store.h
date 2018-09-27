@@ -32,8 +32,8 @@ public:
   Type type() const {
     return m_type;
   }
-  char variableAtIndex(size_t i) {
-    assert(i < strlen(m_variables));
+  const char * variableAtIndex(size_t i) {
+    assert(i < Poincare::Expression::k_maxNumberOfVariables && m_variables[i][0] != 0);
     return m_variables[i];
   }
   int numberOfSolutions() const {
@@ -84,7 +84,7 @@ private:
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
-  char m_variables[Poincare::Expression::k_maxNumberOfVariables+1][Equation::k_maxVariableSize];
+  char m_variables[Poincare::Expression::k_maxNumberOfVariables][Equation::k_maxVariableSize];
   int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];

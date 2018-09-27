@@ -152,16 +152,16 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       deltaCell->setLayout(m_delta2Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
-      symbolCell->setFont(KDFont::LargeFont);
-      char bufferSymbol[10]; // hold at maximum Delta = b^2-4ac
+      symbolCell->setFontSize(KDFont::LargeFont);
+      char bufferSymbol[Equation::k_maxVariableSize+1]; // Hold at maximum Delta = b^2-4ac or the variable name + a digit
       switch (m_equationStore->type()) {
         case EquationStore::Type::LinearSystem:
-          bufferSymbol[0] = m_equationStore->variableAtIndex(j);
-          bufferSymbol[1] = 0;
+          strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Equation::k_maxVariableSize);
           break;
         default:
+          int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Equation::k_maxVariableSize);
           bufferSymbol[0] = m_equationStore->variableAtIndex(0);
-          bufferSymbol[1] = j+'0';
+          bufferSymbol[length++] = j+'0';
           bufferSymbol[2] = 0;
           break;
       }

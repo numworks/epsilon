@@ -6,12 +6,11 @@
 #include <poincare/float.h>
 #include <poincare/decimal.h>
 #include <poincare/symbol.h>
+#include <ion/storage.h>
 
 namespace Poincare {
 
 class Integer;
-
-/* The global context only stores symbols A-Z, L0-L9 and M0-M9 */
 
 class GlobalContext final : public Context {
 public:
@@ -19,15 +18,17 @@ public:
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression expressionForSymbol(const Symbol & symbol) override;
   void setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) override;
-  static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
+  static constexpr uint16_t k_maxNumberOfExpressions = 36;
+  static constexpr uint16_t k_maxNumberOfFunctions = 10;
+  //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;
   //static constexpr uint16_t k_maxNumberOfListExpressions = 10;
-  static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
 private:
-  static constexpr int k_extensionSize = 4+1;
-  struct FileName {
-    char nameWithExtension[k_extensionSize+1];
-  };
-  FileName fileNameForSymbol(const Symbol & s) const;
+  static constexpr char expExtension[] = ".exp";
+  static constexpr char funcExtension[] = ".func";
+  //static constexpr char seqExtension[] = ".seq";
+  static const char * ExtensionForExpression(const Expression & exp);
+  static Ion::Storage::Record RecordWithName(const char * name);
+  static const Expression ExpressionForRecord(const Ion::Storage::Record & record);
 };
 
 }

@@ -70,6 +70,7 @@ public:
   int numberOfRecordsWithExtension(const char * extension);
 
   // Record creation
+  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size);
   Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size);
 
   // Record getters

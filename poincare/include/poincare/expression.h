@@ -144,7 +144,7 @@ public:
    * expression. */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialReducedCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(const char * symbol, Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Comparison */

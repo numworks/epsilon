@@ -14,8 +14,19 @@ namespace Poincare {
 
 constexpr char Symbol::k_ans[];
 
+/* TreePool uses adresses and sizes that are multiples of 4 in order to make
+ * node moves faster.*/
+size_t SymbolSize(size_t nameLength) {
+  size_t realSize = sizeof(SymbolNode)+nameLength+1;
+  size_t alignment = 4;
+  size_t modulo = realSize % alignment;
+  size_t result = realSize + (modulo == 0 ? 0 : alignment - modulo);
+  assert(result % 4 == 0);
+  return result;
+}
+
 size_t SymbolNode::size() const {
-  return sizeof(SymbolNode)+strlen(m_name)+1;
+  return SymbolSize(strlen(m_name));
 }
 
 ExpressionNode::Sign SymbolNode::sign() const {
@@ -148,7 +159,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(sizeof(SymbolNode)+length+1)) {
+Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(SymbolSize(length))) {
   node()->setName(name, length);
 }
 

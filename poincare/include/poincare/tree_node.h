@@ -18,6 +18,9 @@
  *  - a reference counter
  */
 
+/* CAUTION: To make node operations faster, the pool needs all adresses and
+ * sizes of TreeNodes to be a multiple of 4. */
+
 namespace Poincare {
 
 #if __EMSCRIPTEN__

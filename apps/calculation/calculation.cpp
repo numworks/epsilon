@@ -34,7 +34,7 @@ void Calculation::reset() {
 
 void Calculation::setContent(const char * c, Context * context, Expression ansExpression) {
   reset();
-  Expression input = Expression::parse(c).replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, ansExpression);
+  Expression input = Expression::parse(c).replaceSymbolWithExpression("ans", ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
   PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));

@@ -160,7 +160,6 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
           break;
         default:
           int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Equation::k_maxVariableSize);
-          bufferSymbol[0] = m_equationStore->variableAtIndex(0);
           bufferSymbol[length++] = j+'0';
           bufferSymbol[2] = 0;
           break;

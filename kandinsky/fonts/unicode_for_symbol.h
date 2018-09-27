@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define NUMBER_OF_SYMBOLS 25
+#define NUMBER_OF_SYMBOLS 33
 
 extern wchar_t codePointForSymbol[NUMBER_OF_SYMBOLS];
 

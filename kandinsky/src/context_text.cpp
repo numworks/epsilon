@@ -1,5 +1,6 @@
 #include <kandinsky/context.h>
 #include <kandinsky/text.h>
+#include <ion/charset.h>
 #include "small_font.h"
 #include "large_font.h"
 
@@ -22,7 +23,13 @@ KDPoint KDContext::writeString(const char * text, KDPoint p, KDText::FontSize si
 
   const char * end = text+maxLength;
   while(*text != 0 && text != end) {
-    writeChar(*text, position, size, textColor, backgroundColor, transparentBackground);
+    if (*text >= Ion::Charset::DiacriticalFirst && *text <= Ion::Charset::DiacriticalLast) {
+      position = position.translatedBy(characterSize.opposite());
+      writeChar(*text, position, size, textColor, backgroundColor, true);
+    }
+    else {
+      writeChar(*text, position, size, textColor, backgroundColor, transparentBackground);
+    }
     if (*text == '\n') {
       position = KDPoint(0, position.y()+characterHeight);
     } else if (*text == '\t') {

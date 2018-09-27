@@ -27,7 +27,17 @@ enum Charset : char {
   MiddleDot = (char)149,
   AlmostEqual = (char)150,
   Degree = (char)151,
-  Empty = (char)152 // This char is used to be parsed into EmptyExpression.
+  Empty = (char)152, // This char is used to be parsed into EmptyExpression.
+
+  DiacriticalAccentGrave = (char)153,
+  DiacriticalAccentAcute = (char)154,
+  DiacriticalAccentCircumflex = (char)155,
+  DiacriticalAccentTilde = (char)156,
+  DiacriticalAccentRing = (char)157,
+  DiacriticalAccentCaron = (char)158,
+
+  DiacriticalFirst = DiacriticalAccentGrave,
+  DiacriticalLast = DiacriticalAccentCaron
 };
 
 }

@@ -15,19 +15,30 @@ ion_special_characters = {
     u'≤': "Ion::Charset::LessEqual",
     u'≈': "Ion::Charset::AlmostEqual",
     u'ø': "Ion::Charset::Empty",
-    u'•': "Ion::Charset::MiddleDot"
+    u'•': "Ion::Charset::MiddleDot",
+
+    u'\u0300': "Ion::Charset::DiacriticalAccentGrave",
+    u'\u0301': "Ion::Charset::DiacriticalAccentAcute",
+    u'\u0302': "Ion::Charset::DiacriticalAccentCircumflex",
+    u'\u0303': "Ion::Charset::DiacriticalAccentTilde",
+    u'\u030a': "Ion::Charset::DiacriticalAccentRing",
+    u'\u030c': "Ion::Charset::DiacriticalAccentCaron"
 }
 
 def ion_char(i18n_letter):
     if i18n_letter == '\'':
-        return "'\\\''"
+        return ["'\\\''"]
     if ord(i18n_letter) < 128:
-        return "'" + i18n_letter + "'"
-    if i18n_letter in ion_special_characters:
-        return ion_special_characters[i18n_letter]
-    normalized = unicodedata.normalize("NFD", i18n_letter).encode('ascii', 'ignore')
+        return ["'" + i18n_letter + "'"]
+    normalized = []
+    for i in unicodedata.normalize("NFD", i18n_letter):
+        if i in ion_special_characters:
+            normalized.append(ion_special_characters[i])
+        elif ord(i) < 128:
+            normalized.append("'" + i + "'")
+
     #sys.stderr.write("Warning: Normalizing unicode character \"" + i18n_letter + "\" -> \"" + normalized + "\"\n")
-    return "'" + normalized.decode() + "'"
+    return normalized
 
 def source_definition(i18n_string):
     ion_characters = []
@@ -38,7 +49,7 @@ def source_definition(i18n_string):
             newChar = "'\\"+i18n_string[i]+"'"
             ion_characters.append(newChar)
         else:
-            ion_characters.append(ion_char(i18n_string[i]))
+            ion_characters += ion_char(i18n_string[i])
         i = i+1
     ion_characters.append("0")
     return "{" + ", ".join(ion_characters) + "}"

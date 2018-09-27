@@ -7,7 +7,7 @@
 namespace Poincare {
 
 template<typename T>
-VariableContext<T>::VariableContext(char name, Context * parentContext) :
+VariableContext<T>::VariableContext(const char * name, Context * parentContext) :
   m_name(name),
   m_value(Float<T>(NAN)),
   m_parentContext(parentContext)
@@ -21,7 +21,7 @@ void VariableContext<T>::setApproximationForVariable(T value) {
 
 template<typename T>
 void VariableContext<T>::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
-  if (symbol.name() == m_name) {
+  if (strcmp(symbol.name(), m_name) == 0) {
     if (expression.isUninitialized()) {
       return;
     }
@@ -33,7 +33,7 @@ void VariableContext<T>::setExpressionForSymbolName(const Expression & expressio
 
 template<typename T>
 const Expression VariableContext<T>::expressionForSymbol(const Symbol & symbol) {
-  if (symbol.name() == m_name) {
+  if (strcmp(symbol.name(), m_name) == 0) {
     return m_value;
   } else {
     return m_parentContext->expressionForSymbol(symbol);

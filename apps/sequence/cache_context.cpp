@@ -7,7 +7,7 @@ namespace Sequence {
 
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
-  VariableContext<T>('n', parentContext),
+  VariableContext<T>("n", parentContext),
   m_values{{NAN, NAN},
     {NAN, NAN}}
 {

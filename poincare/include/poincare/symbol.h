@@ -81,7 +81,7 @@ public:
   static bool isVariableSymbol(const char * c);
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
-  bool isApproximate(Context & context) const;
+  bool matches(ExpressionTest test, Context & context) const;
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

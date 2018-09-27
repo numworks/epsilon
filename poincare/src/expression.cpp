@@ -93,12 +93,14 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context) {
-        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || Expression::IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isApproximate(context));
+        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || e.isMatrix(context) || (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).matches([](const Expression e, Context & context) { return e.isApproximate(context); }, context));
     }, context);
 }
 
-bool Expression::IsMatrix(const Expression e, Context & context) {
-  return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<const Symbol&>(e).name()));
+bool Expression::isMatrix(Context & context) const {
+  return type() == ExpressionNode::Type::Matrix || type() == ExpressionNode::Type::ConfidenceInterval || type() == ExpressionNode::Type::MatrixDimension || type() == ExpressionNode::Type::PredictionInterval || type() == ExpressionNode::Type::MatrixInverse || type() == ExpressionNode::Type::MatrixTranspose || (type() == ExpressionNode::Type::Symbol && convert<const Symbol>().matches([](const Expression e, Context & context){
+        return e.recursivelyMatches([](const Expression e, Context & context) { return e.isMatrix(context); }, context);
+      }, context));
 }
 
 bool Expression::getLinearCoefficients(char variables[], Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {

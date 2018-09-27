@@ -20,9 +20,9 @@ public:
   void setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) override;
   //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;
 private:
-  static constexpr char expExtension[] = ".exp";
-  static constexpr char funcExtension[] = ".func";
-  //static constexpr char seqExtension[] = ".seq";
+  static constexpr char expExtension[] = "exp";
+  static constexpr char funcExtension[] = "func";
+  //static constexpr char seqExtension[] = "seq";
   static const char * ExtensionForExpression(const Expression & exp);
   static Ion::Storage::Record RecordWithName(const char * name);
   static const Expression ExpressionForRecord(const Ion::Storage::Record & record);

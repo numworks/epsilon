@@ -23,16 +23,16 @@ const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   return ExpressionForRecord(RecordWithName(symbol.name()));
 }
 
-void GlobalContext::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
+void GlobalContext::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
-  Ion::Storage::Record record = RecordWithName(symbol.name());
+  Ion::Storage::Record record = RecordWithName(symbolName);
   Expression e = ExpressionForRecord(record);
-  Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbol.name(), e);
+  Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbolName, e);
   // Delete any record with same name (as it is going to be overriden)
   record.destroy();
 
-  Ion::Storage::Record::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), ExtensionForExpression(finalExpression), finalExpression.addressInPool(), finalExpression.size());
+  Ion::Storage::Record::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithExtension(symbolName, ExtensionForExpression(finalExpression), finalExpression.addressInPool(), finalExpression.size());
   if (err != Ion::Storage::Record::ErrorStatus::None) {
     assert(err == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     // TODO: return false to set flag that the file system is full?

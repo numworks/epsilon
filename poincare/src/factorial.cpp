@@ -112,7 +112,7 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
     Symbol s = childAtIndex(0).convert<Symbol>();
-    if (s.name() == Ion::Charset::SmallPi || s.name() == Ion::Charset::Exponential) {
+    if (s.isPi() || s.isExponential()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
       return result;

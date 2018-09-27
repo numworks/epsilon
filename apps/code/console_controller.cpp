@@ -335,7 +335,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     assert(strlen(k_importCommand1) + strlen(script.name()) - strlen(ScriptStore::k_scriptExtension) + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
     char command[k_maxImportCommandSize];
     size_t currentChar = strlcpy(command, k_importCommand1, k_maxImportCommandSize);
-    const char * scriptName = script.name();
+    const char * scriptName = script.fullName();
     currentChar += strlcpy(command+currentChar, scriptName, k_maxImportCommandSize - currentChar);
     // Remove the name extension ".py"
     currentChar -= strlen(ScriptStore::k_scriptExtension);

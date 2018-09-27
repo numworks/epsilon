@@ -273,7 +273,7 @@ int MenuController::typeAtLocation(int i, int j) {
 void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < m_scriptStore->numberOfScripts());
   EditableTextCell * editableTextCell = static_cast<EvenOddEditableTextCell *>(cell)->editableTextCell();
-  editableTextCell->textField()->setText(m_scriptStore->scriptAtIndex(index).name());
+  editableTextCell->textField()->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
 void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {

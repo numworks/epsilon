@@ -253,10 +253,10 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
   T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
   T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
-  Poincare::Symbol vnSymbol(Symbol::SpecialSymbols::vn);
-  Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
-  Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
-  Poincare::Symbol un1Symbol(Symbol::SpecialSymbols::un1);
+  Poincare::Symbol vnSymbol("v(n)");
+  Poincare::Symbol vn1Symbol("v(n+1)");
+  Poincare::Symbol unSymbol("u(n)");
+  Poincare::Symbol un1Symbol("u(n+1)");
   Preferences * preferences = Poincare::Preferences::sharedPreferences();
   switch (m_type) {
     case Type::Explicit:

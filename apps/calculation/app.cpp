@@ -3,6 +3,7 @@
 #include "../shared/poincare_helpers.h"
 #include "calculation_icon.h"
 #include "../i18n.h"
+#include <poincare/symbol.h>
 
 using namespace Poincare;
 
@@ -95,7 +96,7 @@ bool App::textInputIsCorrect(const char * text) {
     return false;
   }
   Expression ansExpression = static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext());
-  exp = exp.replaceSymbolWithExpression("ans", ansExpression);
+  exp = exp.replaceSymbolWithExpression(Symbol::k_ans, ansExpression);
   char buffer[Calculation::k_printedExpressionSize];
   int length = PoincareHelpers::Serialize(exp, buffer, sizeof(buffer));
   /* if the buffer is totally full, it is VERY likely that writeTextInBuffer

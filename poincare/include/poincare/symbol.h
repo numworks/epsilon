@@ -65,6 +65,7 @@ class Symbol final : public Expression {
   friend class Expression;
   friend class Store;
 public:
+  static constexpr char k_ans[] = "ans";
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
      * characters but events as 'end of text', 'backspace'... */

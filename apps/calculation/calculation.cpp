@@ -1,6 +1,7 @@
 #include "calculation.h"
 #include "calculation_store.h"
 #include "../shared/poincare_helpers.h"
+#include <poincare/symbol.h>
 #include <string.h>
 #include <cmath>
 #include <poincare/symbol.h>
@@ -34,7 +35,7 @@ void Calculation::reset() {
 
 void Calculation::setContent(const char * c, Context * context, Expression ansExpression) {
   reset();
-  Expression input = Expression::parse(c).replaceSymbolWithExpression("ans", ansExpression);
+  Expression input = Expression::parse(c).replaceSymbolWithExpression(Symbol::k_ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
   PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));

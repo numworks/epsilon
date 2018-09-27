@@ -54,7 +54,7 @@ Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences:
 
 template<typename T>
 T IntegralNode::functionValueAtAbscissa(T x, Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x, context, angleUnit);
+  return Expression(childAtIndex(0)).approximateWithValueForSymbol("x", x, context, angleUnit);
 }
 
 #ifdef LAGRANGE_METHOD

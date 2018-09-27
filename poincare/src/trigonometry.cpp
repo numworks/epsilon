@@ -17,7 +17,7 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e.numberOfChildren() == 1);
-  const char x[] = {SpecialSymbols::UnknownX, 0};
+  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
   int d = e.childAtIndex(0).polynomialDegree(context, x);
   if (d < 0 || d > 1) {
     // child(0) is not linear so we cannot easily find an interesting range

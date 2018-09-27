@@ -359,6 +359,15 @@ size_t Storage::overrideValueAtPosition(char * position, const void * data, reco
 
 bool Storage::isFullNameTaken(const char * fullName, const Record * recordToExclude) {
   Record r = Record(fullName);
+  return isNameOfRecordTaken(r, recordToExclude);
+}
+
+bool Storage::isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude) {
+  Record r = Record(baseName, extension);
+  return isNameOfRecordTaken(r, recordToExclude);
+}
+
+bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
   if (r == Record()) {
     /* If the CRC32 of fullName is 0, we want to refuse the name as it would
      * interfere with our escape case in the Record contructor, when the given

@@ -175,9 +175,9 @@ bool Symbol::isRegressionSymbol(const char * c) {
   return false;
 }
 
-bool Symbol::isApproximate(Context & context) const {
+bool Symbol::matches(ExpressionTest test, Context & context) const {
   Expression e = context.expressionForSymbol(*this);
-  return e.isApproximate(context);
+  return test(e, context);
 }
 
 Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

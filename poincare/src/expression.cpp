@@ -103,7 +103,24 @@ bool Expression::IsMatrix(const Expression e, Context & context) {
       }, context));
 }
 
-bool Expression::getLinearCoefficients(char variables[], Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
+bool containsVariables(const Expression e, char * variables[]) {
+  if (e.type() == ExpressionNode::Type::Symbol) {
+    int index = 0;
+    while (variables[index][0] != 0) {
+      if (strcmp(static_cast<const Symbol&>(e).name(), variables[index]) == 0) {
+        return true;
+      }
+    }
+  }
+  for (int i = 0; i < e.numberOfChildren(); i++) {
+    if (containsVariables(e.childAtIndex(i), variables)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Expression::getLinearCoefficients(char * variables[], Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!recursivelyMatches(IsMatrix, context));
   int index = 0;
   while (variables[index][0] != 0) {
@@ -114,7 +131,7 @@ bool Expression::getLinearCoefficients(char variables[], Expression coefficients
     index++;
   }
   Expression equation = *this;
-  int index = 0;
+  index = 0;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
   while (variables[index][0] != 0) {
     int degree = equation.getPolynomialReducedCoefficients(variables[index], polynomialCoefficients, context, angleUnit);
@@ -142,12 +159,12 @@ bool Expression::getLinearCoefficients(char variables[], Expression coefficients
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
-  bool isMultivariablePolynomial = (constant[0]).recursivelyMatches(DependsOnVariables, context);
+  bool isMultivariablePolynomial = containsVariables(constant[0], variables);
   for (int i = 0; i < index; i++) {
     if (isMultivariablePolynomial) {
       break;
     }
-    isMultivariablePolynomial |= coefficients[i].recursivelyMatches(DependsOnVariables, context);
+    isMultivariablePolynomial |= containsVariables(coefficients[i], variables);
   }
   return !isMultivariablePolynomial;
 }

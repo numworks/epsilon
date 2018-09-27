@@ -56,7 +56,7 @@ QUIZ_CASE(ion_storage_put_record_twice) {
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Put the same record again: an error should be issued
-  error = Storage::sharedStorage()->createRecordWithExtension(baseNameRecord, extensionRecord, dataRecord, strlen(dataRecord));
+  error = putRecordInSharedStorage(baseNameRecord, extensionRecord, dataRecord);
   quiz_assert(error == Storage::Record::ErrorStatus::NameTaken);
 
   // Retreive the record

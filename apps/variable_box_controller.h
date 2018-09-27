@@ -62,7 +62,8 @@ private:
     VariableBoxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
     MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
     // Matrix layout memoization
-    Poincare::Layout m_matrixLayouts[Poincare::GlobalContext::k_maxNumberOfMatrixExpressions];
+    // FIXME
+    Poincare::Layout m_matrixLayouts[10];
     SelectableTableView m_selectableTableView;
   };
   ContentViewController m_contentViewController;

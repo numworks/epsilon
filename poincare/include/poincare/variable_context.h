@@ -9,7 +9,7 @@ namespace Poincare {
 template<typename T>
 class VariableContext : public Context {
 public:
-  VariableContext(char name, Context * parentContext = nullptr);
+  VariableContext(const char * name, Context * parentContext = nullptr);
   void setApproximationForVariable(T value);
 
   // Context
@@ -17,7 +17,7 @@ public:
   const Expression expressionForSymbol(const Symbol & symbol) override;
 
 private:
-  char m_name;
+  const char * m_name;
   Float<T> m_value;
   Context * m_parentContext;
 };

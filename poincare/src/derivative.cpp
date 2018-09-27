@@ -29,7 +29,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   Evaluation<T> xInput = childAtIndex(1)->approximate(T(), context, angleUnit);
   T x = xInput.toScalar();
-  T functionValue = Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x, context, angleUnit);
+  T functionValue = Expression(childAtIndex(0)).approximateWithValueForSymbol("x", x, context, angleUnit);
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
     return Complex<T>::Undefined();
@@ -55,8 +55,8 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
 
 template<typename T>
 T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context & context, Preferences::AngleUnit angleUnit) const {
-  T expressionPlus = Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x+h, context, angleUnit);
-  T expressionMinus = Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x-h, context, angleUnit);
+  T expressionPlus = Expression(childAtIndex(0)).approximateWithValueForSymbol("x", x+h, context, angleUnit);
+  T expressionMinus = Expression(childAtIndex(0)).approximateWithValueForSymbol("x", x-h, context, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 

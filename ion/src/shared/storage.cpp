@@ -37,7 +37,7 @@ Storage::Record::Record(const char * fullName) {
   const char * dotChar = strchr(fullName, k_dotChar);
   assert(dotChar != nullptr);
   assert(*(dotChar+1) != 0); // Assert there is an extension
-  new (this) Record(fullName, dotChar - fullName + 1, dotChar+1, (fullName + strlen(fullName)) - (dotChar+1) +1);
+  new (this) Record(fullName, dotChar - fullName, dotChar+1, (fullName + strlen(fullName)) - (dotChar+1));
 }
 
 Storage::Record::Record(const char * baseName, const char * extension) {
@@ -49,34 +49,15 @@ Storage::Record::Record(const char * baseName, const char * extension) {
   new (this) Record(baseName, strlen(baseName), extension, strlen(extension));
 }
 
-void Crc32PaddedString(const char * s, int length, uint32_t * crcStore) {
-  /* s is a char array. Its length in Bytes is not necessarily a multiple of 4.
-   * However, crc32 method awaits input in a form of uint32_t table. To limit
-   * the use of additional memory, we compute 2 crc32:
-   * - one corresponding to s with a byte length truncated to be a multiple of 4
-   * - the other corresponds to the remaining chars in s padded with 0 to be 4
-   *   bytes long
-   * The CRC32 of s is the crc32 of both. */
-
-  // CRC32 of the truncated string
-  size_t crc32TruncatedInputSize = length*sizeof(char)/sizeof(uint32_t);
-  *crcStore = Ion::crc32((const uint32_t *)s, crc32TruncatedInputSize);
-
-  // CRC32 of the tail of the string
-  uint32_t tailName = 0;
-  strlcpy((char *)&tailName, s+crc32TruncatedInputSize*sizeof(uint32_t), sizeof(uint32_t)/sizeof(char));
-  *(crcStore+1) = Ion::crc32(&tailName, 1);
-}
-
 Storage::Record::Record(const char * basename, int basenameLength, const char * extension, int extensionLength) {
   assert(basename != nullptr);
   assert(extension != nullptr);
 
   // We compute the CRC32 of the CRC32s of the basename and the extension
-  uint32_t crc32Results[4];
-  Crc32PaddedString(basename, basenameLength, &crc32Results[0]);
-  Crc32PaddedString(extension, extensionLength, &crc32Results[2]);
-  m_fullNameCRC32 = Ion::crc32(crc32Results, 4);
+  uint32_t crc32Results[2];
+  crc32Results[0] = Ion::crc32PaddedString(basename, basenameLength);
+  crc32Results[1] = Ion::crc32PaddedString(extension, extensionLength);
+  m_fullNameCRC32 = Ion::crc32(crc32Results, 2);
 }
 
 // STORAGE
@@ -345,8 +326,8 @@ size_t Storage::overrideFullNameAtPosition(char * position, const char * fullNam
 }
 
 size_t Storage::overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension) {
-  size_t result = strlcpy(position, baseName, strlen(baseName));
-  *(position+result) = k_dotChar;
+  size_t result = strlcpy(position, baseName, strlen(baseName)+1); // strlcpy copies the null terminating char
+  *(position+result) = k_dotChar; // Replace the null terminating char with a dot
   result++;
   result += strlcpy(position+result, extension, strlen(extension)+1);
   return result+1;

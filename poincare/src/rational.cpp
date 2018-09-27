@@ -55,7 +55,7 @@ Integer RationalNode::denominator() const {
 
 // Tree Node
 
-static inline size_t RationalSize(uint8_t numeratorNumberOfDigits, uint8_t denominatorNumberOfDigits) {
+static size_t RationalSize(uint8_t numeratorNumberOfDigits, uint8_t denominatorNumberOfDigits) {
   uint8_t realNumeratorSize = numeratorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : numeratorNumberOfDigits;
   uint8_t realDenominatorSize = denominatorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : denominatorNumberOfDigits;
   return sizeof(RationalNode) + sizeof(native_uint_t)*(realNumeratorSize + realDenominatorSize);

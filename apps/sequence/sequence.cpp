@@ -140,10 +140,6 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
   m_secondInitialConditionLayout = Layout();
 }
 
-char Sequence::symbol() const {
-  return 'n';
-}
-
 int Sequence::numberOfElements() {
   return (int)m_type + 1;
 }

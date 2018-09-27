@@ -310,7 +310,7 @@ U Expression::approximateToScalar(const char * text, Context& context, Preferenc
 }
 
 template<typename U>
-U Expression::approximateWithValueForSymbol(char symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const {
+U Expression::approximateWithValueForSymbol(const char * symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const {
   VariableContext<U> variableContext = VariableContext<U>(symbol, &context);
   variableContext.setApproximationForVariable(x);
   return approximateToScalar<U>(variableContext, angleUnit);
@@ -324,27 +324,27 @@ U Expression::epsilon() {
 
 /* Expression roots/extrema solver*/
 
-typename Expression::Coordinate2D Expression::nextMinimum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
+typename Expression::Coordinate2D Expression::nextMinimum(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
+  return nextMinimumOfExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit);
 }
 
-typename Expression::Coordinate2D Expression::nextMaximum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
+typename Expression::Coordinate2D Expression::nextMaximum(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
+  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return -expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit);
   return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
 }
 
-double Expression::nextRoot(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  return nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
+double Expression::nextRoot(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
+  return nextIntersectionWithExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit, nullptr);
 }
 
-typename Expression::Coordinate2D Expression::nextIntersection(char symbol, double start, double step, double max, Poincare::Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
+typename Expression::Coordinate2D Expression::nextIntersection(const char * symbol, double start, double step, double max, Poincare::Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
+  double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit, expression);
   typename Expression::Coordinate2D result = {.abscissa = resultAbscissa, .value = approximateWithValueForSymbol(symbol, resultAbscissa, context, angleUnit)};
@@ -354,7 +354,7 @@ typename Expression::Coordinate2D Expression::nextIntersection(char symbol, doub
   return result;
 }
 
-typename Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression expression, bool lookForRootMinimum) const {
+typename Expression::Coordinate2D Expression::nextMinimumOfExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression expression, bool lookForRootMinimum) const {
   Coordinate2D result = {.abscissa = NAN, .value = NAN};
   if (start == max || step == 0.0) {
     return result;
@@ -391,7 +391,7 @@ typename Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbo
   return result;
 }
 
-void Expression::bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
+void Expression::bracketMinimum(const char * symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
   Coordinate2D p[3];
   p[0] = {.abscissa = start, .value = evaluate(symbol, start, context, angleUnit, *this, expression)};
   p[1] = {.abscissa = start+step, .value = evaluate(symbol, start+step, context, angleUnit, *this, expression)};
@@ -416,7 +416,7 @@ void Expression::bracketMinimum(char symbol, double start, double step, double m
   result[2] = NAN;
 }
 
-typename Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
+typename Expression::Coordinate2D Expression::brentMinimum(const char * symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   if (ax > bx) {
@@ -510,7 +510,7 @@ typename Expression::Coordinate2D Expression::brentMinimum(char symbol, double a
   return result;
 }
 
-double Expression::nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
+double Expression::nextIntersectionWithExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
   if (start == max || step == 0.0) {
     return NAN;
   }
@@ -526,14 +526,14 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
 
   double extremumMax = std::isnan(result) ? max : result;
   Coordinate2D resultExtremum[2] = {
-    nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
+    nextMinimumOfExpression(symbol, start, step, extremumMax, [](const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
         if (expression1.isUninitialized()) {
           return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         } else {
           return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         }
       }, context, angleUnit, expression, true),
-    nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
+    nextMinimumOfExpression(symbol, start, step, extremumMax, [](const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
         if (expression1.isUninitialized()) {
           return -expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         } else {
@@ -551,7 +551,7 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
   return result;
 }
 
-void Expression::bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
+void Expression::bracketRoot(const char * symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
   double a = start;
   double b = start+step;
   while (step > 0.0 ? b <= max : b >= max) {
@@ -569,7 +569,7 @@ void Expression::bracketRoot(char symbol, double start, double step, double max,
   result[1] = NAN;
 }
 
-double Expression::brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
+double Expression::brentRoot(const char * symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const {
   if (ax > bx) {
     return brentRoot(symbol, bx, ax, precision, evaluation, context, angleUnit, expression);
   }
@@ -657,7 +657,7 @@ template double Expression::approximateToScalar<double>(const char * text, Conte
 template Evaluation<float> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
 template Evaluation<double> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
 
-template float Expression::approximateWithValueForSymbol(char symbol, float x, Context & context, Preferences::AngleUnit angleUnit) const;
-template double Expression::approximateWithValueForSymbol(char symbol, double x, Context & context, Preferences::AngleUnit angleUnit) const;
+template float Expression::approximateWithValueForSymbol(const char * symbol, float x, Context & context, Preferences::AngleUnit angleUnit) const;
+template double Expression::approximateWithValueForSymbol(const char * symbol, double x, Context & context, Preferences::AngleUnit angleUnit) const;
 
 }

@@ -17,7 +17,7 @@ public:
   Poincare::Expression::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::Function * function) const;
-  char symbol() const override;
+  const char * symbol() const override { return "x"; }
 private:
   bool m_displayDerivative;
 };

@@ -20,7 +20,7 @@ public:
     TooManyVariables = -2,
     NonLinearSystem = -3,
     RequireApproximateSolution = -4,
-    VariableNameTooLong
+    VariableNameTooLong = -5
   };
   /* EquationStore */
   EquationStore();

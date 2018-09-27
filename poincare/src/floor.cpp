@@ -48,10 +48,10 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (c.type() == ExpressionNode::Type::Symbol) {
     Symbol s = static_cast<Symbol &>(c);
     Expression result;
-    if (s.name() == Ion::Charset::SmallPi) {
+    if (s.isPi()) {
       result = Rational(3);
     }
-    if (s.name() == Ion::Charset::Exponential) {
+    if (s.isExponential()) {
       result = Rational(2);
     }
     if (!result.isUninitialized()) {

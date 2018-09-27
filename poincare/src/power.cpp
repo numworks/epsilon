@@ -365,7 +365,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     const Rational b = childAtIndex(1).convert<Rational>();
     // i^(p/q)
-    if (childAtIndex(0).type() == ExpressionNode::Type::Symbol && childAtIndex(0).convert<Symbol>().name() == Ion::Charset::IComplex) {
+    if (childAtIndex(0).type() == ExpressionNode::Type::Symbol && childAtIndex(0).convert<Symbol>().isIComplex()) {
       Number r = Number::Multiplication(b, Rational(1, 2));
       Expression result = CreateComplexExponent(r);
       replaceWithInPlace(result);
@@ -889,7 +889,7 @@ bool Power::parentIsALogarithmOfSameBase() const {
   if (p.type() == ExpressionNode::Type::NaperianLogarithm
       && p.childAtIndex(0) == *this
       && childAtIndex(0).type() == ExpressionNode::Type::Symbol
-      && childAtIndex(0).convert<Symbol>().name() == Ion::Charset::Exponential)
+      && childAtIndex(0).convert<Symbol>().isExponential())
   {
     return true;
   }

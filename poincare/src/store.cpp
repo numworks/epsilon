@@ -33,7 +33,7 @@ Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 template<typename T>
 Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Store s(this);
-  context.setExpressionForSymbolName(s.value(), s.symbol(), context);
+  context.setExpressionForSymbolName(s.value(), s.symbol().name(), context);
   if (context.expressionForSymbol(s.symbol()).isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -41,7 +41,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
 }
 
 Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  context.setExpressionForSymbolName(value(), symbol(), context);
+  context.setExpressionForSymbolName(value(), symbol().name(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);
   return c1.shallowReduce(context, angleUnit);

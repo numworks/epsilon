@@ -19,7 +19,7 @@ public:
   {}
   void setParentContext(Poincare::Context * parentContext) { m_parentContext = parentContext; }
   void setSeriesPairIndex(int j) { m_seriesPairIndex = j; }
-  void setExpressionForSymbolName(const Poincare::Expression & expression, const Poincare::Symbol & symbol, Poincare::Context & context) override;
+  void setExpressionForSymbolName(const Poincare::Expression & expression, const char * symbolName, Poincare::Context & context) override;
 protected:
   Shared::DoublePairStore * m_store;
   int m_seriesPairIndex;

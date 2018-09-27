@@ -11,7 +11,7 @@ namespace Regression {
 
 const Expression RegressionContext::expressionForSymbol(const Symbol & symbol) {
   if (Symbol::isRegressionSymbol(symbol.name())) {
-    const char * seriesName = Symbol::textForSpecialSymbols(symbol.name());
+    const char * seriesName = symbol.name();
     assert(strlen(seriesName) == 2);
 
     int series = (int)(seriesName[1] - '0') - 1;

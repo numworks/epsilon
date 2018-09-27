@@ -79,29 +79,31 @@ QUIZ_CASE(poincare_characteristic_range) {
   assert_parsed_expression_has_characteristic_range("cos(cos(x))", 360.0f);
 }
 
-void assert_parsed_expression_has_variables(const char * expression, const char * variables) {
+void assert_parsed_expression_has_variables(const char * expression, const char variables[][]) {
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  char variableBuffer[Expression::k_maxNumberOfVariables+1] = {0};
-  int numberOfVariables = e.getVariables(Poincare::Symbol::isVariableSymbol, variableBuffer);
-  if (variables == nullptr) {
+  constexpr static int k_maxVariableSize = 10;
+  char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
+  int numberOfVariables = e.getVariables(Poincare::Symbol::isVariableSymbol, variableBuffer, k_maxVariableSize);
+  if (variables[0][0] == 0) {
     quiz_assert(numberOfVariables == -1);
   } else {
-    quiz_assert(numberOfVariables == strlen(variables));
-    char * currentChar = variableBuffer;
-    while (*variables != 0) {
-      quiz_assert(*currentChar++ == *variables++);
+    quiz_assert(numberOfVariables == sizeof(variables));
+    int index = 0;
+    const char * currentChar = variableBuffer[];
+    while (variableBuffer[index][0] != 0) {
+      quiz_assert(strcmp(variableBuffer[index], variables[index]) == 0);
     }
   }
 }
 
 QUIZ_CASE(poincare_get_variables) {
-  assert_parsed_expression_has_variables("x+y", "xy");
-  assert_parsed_expression_has_variables("x+y+z+2*t", "xyzt");
-  assert_parsed_expression_has_variables("abcdef", "abcdef");
-  assert_parsed_expression_has_variables("abcdefg", nullptr);
-  assert_parsed_expression_has_variables("abcde", "abcde");
-  assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
+  assert_parsed_expression_has_variables("x+y", {"x","y", ""});
+  assert_parsed_expression_has_variables("x+y+z+2*t", {"x","y","z","t",""});
+  assert_parsed_expression_has_variables("abcdef", {"a","b","c","d","e","f",""});
+  assert_parsed_expression_has_variables("abcdefg", {""});
+  assert_parsed_expression_has_variables("abcde", {"a","b","c","d","e",""});
+  assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", {"x","y","k","w",""});
 }
 
 void assert_parsed_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {

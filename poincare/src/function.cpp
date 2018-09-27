@@ -17,9 +17,9 @@ int FunctionNode::getPolynomialCoefficients(Context & context, const char * symb
   return e.getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables) const {
+int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   Expression e = context.expressionForSymbol(Function(this));
-  return e.getVariables(context, isVariable, variables);
+  return e.getVariables(context, isVariable, variables, maxSizeVariable);
 }
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {

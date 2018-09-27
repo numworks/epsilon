@@ -45,20 +45,23 @@ int SymbolNode::getPolynomialCoefficients(Context & context, const char * symbol
   return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables) const {
- size_t variablesLength = strlen(variables);
+int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+ size_t variablesLength = 0;
+ while(variables[variablesLength++][0] != 0) {}
  if (isVariable(m_name)) {
-   assert(m_name[1] == 0);
-   char * currentChar = variables;
-   while (*currentChar != 0) {
-     if (*currentChar == m_name[0]) {
+   int index = 0;
+   while (variables[index][0] != 0) {
+     if (strcmp(variables[index], m_name) == 0) {
        return variablesLength;
      }
-     currentChar++;
+     index++;
    }
    if (variablesLength < Expression::k_maxNumberOfVariables) {
-     variables[variablesLength] = m_name[0];
-     variables[variablesLength+1] = 0;
+     if (strlen(m_name) + 1 > maxSizeVariable) {
+       return -2;
+     }
+     strlcpy(variables[variablesLength], m_name, maxSizeVariable);
+     variables[variablesLength+1][0] = 0;
      return variablesLength+1;
    }
    return -1;

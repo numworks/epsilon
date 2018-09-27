@@ -29,4 +29,5 @@ tests += $(addprefix ion/test/,\
   crc32.cpp\
   events.cpp\
   keyboard.cpp\
+  storage.cpp\
 )

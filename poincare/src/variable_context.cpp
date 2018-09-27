@@ -20,14 +20,14 @@ void VariableContext<T>::setApproximationForVariable(T value) {
 }
 
 template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
-  if (strcmp(symbol.name(), m_name) == 0) {
+void VariableContext<T>::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
+  if (strcmp(symbolName, m_name) == 0) {
     if (expression.isUninitialized()) {
       return;
     }
     m_value = Float<T>(expression.approximateToScalar<T>(context, Preferences::sharedPreferences()->angleUnit()));
   } else {
-    m_parentContext->setExpressionForSymbolName(expression, symbol, context);
+    m_parentContext->setExpressionForSymbolName(expression, symbolName, context);
   }
 }
 

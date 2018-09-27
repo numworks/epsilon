@@ -17,7 +17,7 @@ public:
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression expressionForSymbol(const Symbol & symbol) override;
-  void setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) override;
+  void setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) override;
   static constexpr uint16_t k_maxNumberOfExpressions = 36;
   static constexpr uint16_t k_maxNumberOfFunctions = 10;
   //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;

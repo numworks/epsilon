@@ -170,7 +170,9 @@ Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, co
   size_t nameLength = strlen(baseName);
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
-    if (strncmp(currentName, baseName, nameLength) == 0) {
+    /* To not add the method strncmp, we use strcmp and compare to the expected
+     * result. */
+    if (strcmp(baseName, currentName) == 0 - currentName[nameLength]) {
       for (size_t i = 0; i < numberOfExtensions; i++) {
         if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
           return Record(currentName);

@@ -20,7 +20,7 @@ int FunctionNode::getPolynomialCoefficients(Context & context, const char * symb
   return e.getPolynomialCoefficients(newContext, symbolName, coefficients);
 }
 
-int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables[], int maxSizeVariable) const {
+int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   Expression e = context.expressionForSymbol(Function(this));
   VariableContext newContext = xContext(context);
   return e.getVariables(newContext, isVariable, variables, maxSizeVariable);

@@ -32,7 +32,7 @@ public:
     Shared::InteractiveCurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
-  const char * XNT() override;
+  char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   ListController m_listController;

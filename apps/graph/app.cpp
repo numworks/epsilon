@@ -78,8 +78,8 @@ InputViewController * App::inputViewController() {
   return &m_inputViewController;
 }
 
-const char * App::XNT() {
-  return "x";
+char App::XNT() {
+  return 'x';
 }
 
 }

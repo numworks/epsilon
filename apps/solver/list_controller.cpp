@@ -120,7 +120,7 @@ bool textRepresentsAnEquality(const char * text) {
 }
 
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!textRepresentsAnEquality(textField->text())) {
       textField->handleEvent(Ion::Events::ShiftRight);
       textField->handleEventWithText("=0");
@@ -137,7 +137,7 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     char buffer[TextField::maxBufferSize()];
     layoutField->serialize(buffer, TextField::maxBufferSize());
     if (!textRepresentsAnEquality(buffer)) {

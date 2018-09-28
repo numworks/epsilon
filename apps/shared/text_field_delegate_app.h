@@ -26,7 +26,7 @@ protected:
   bool unparsableText(const char * text, Responder * responder);
   bool displayVariableBoxController(Responder * sender);
 private:
-  const char * privateXNT(TextField * textField);
+  char privateXNT(TextField * textField);
 };
 
 }

@@ -55,7 +55,7 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
   if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && TextFieldDelegateApp::textFieldDidReceiveEvent(textField, event)) {
     return true;
   }
-  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (textField->text()[0] == 0) {
       return true;
     }
@@ -71,7 +71,7 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::E
   if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event)) {
     return true;
   }
-  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutField->hasText()) {
       return true;
     }

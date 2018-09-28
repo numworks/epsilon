@@ -1,11 +1,12 @@
 #ifndef ESCHER_TEXT_FIELD_H
 #define ESCHER_TEXT_FIELD_H
 
+#include <escher/field.h>
 #include <escher/text_input.h>
 #include <escher/text_field_delegate.h>
 #include <string.h>
 
-class TextField : public TextInput {
+class TextField : public TextInput, public Field {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
     TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
@@ -14,19 +15,20 @@ public:
   void setTextColor(KDColor textColor);
   void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
-  bool isEditing() const;
+  bool isEditing() const override;
   size_t draftTextLength() const;
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
+  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  char XNTChar(char defaultXNTChar) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }
   void scrollToCursor() override;
-  bool textFieldShouldFinishEditing(Ion::Events::Event event) { return m_delegate->textFieldShouldFinishEditing(this, event); }
+  bool shouldFinishEditing(Ion::Events::Event event) override { return m_delegate->textFieldShouldFinishEditing(this, event); }
 protected:
   class ContentView : public TextInput::ContentView {
   public:

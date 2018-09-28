@@ -1,6 +1,7 @@
 #ifndef ESCHER_LAYOUT_FIELD_H
 #define ESCHER_LAYOUT_FIELD_H
 
+#include <escher/field.h>
 #include <escher/expression_view.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/scrollable_view.h>
@@ -10,7 +11,7 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
-class LayoutField : public ScrollableView, public ScrollViewDataSource {
+class LayoutField : public ScrollableView, public ScrollViewDataSource, public Field {
 public:
   LayoutField(Responder * parentResponder, LayoutFieldDelegate * delegate = nullptr) :
     ScrollableView(parentResponder, &m_contentView, this),
@@ -18,8 +19,8 @@ public:
     m_delegate(delegate)
   {}
   void setDelegate(LayoutFieldDelegate * delegate) { m_delegate = delegate; }
-  bool isEditing() const { return m_contentView.isEditing(); }
-  void setEditing(bool isEditing) { m_contentView.setEditing(isEditing); }
+  bool isEditing() const override { return m_contentView.isEditing(); }
+  void setEditing(bool isEditing, bool reinitDraftBuffer = false) override { m_contentView.setEditing(isEditing); }
   void clearLayout() { m_contentView.clearLayout(); }
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
@@ -27,7 +28,7 @@ public:
   bool hasText() const { return layout().hasText(); }
   int serialize(char * buffer, int bufferLength) { return layout().serialize(buffer, bufferLength); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
-  char XNTChar() { return m_contentView.cursor()->layoutReference().XNTChar(); }
+  char XNTChar(char defaultXNTChar) override;
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {
@@ -41,7 +42,7 @@ public:
   Toolbox * toolbox() override {
     return m_delegate != nullptr ? m_delegate->toolboxForLayoutField(this) : nullptr;
   }
-  bool layoutFieldShouldFinishEditing(Ion::Events::Event event) { // TODO REMOVE ?
+  bool shouldFinishEditing(Ion::Events::Event event) override { // TODO REMOVE ?
     return m_delegate->layoutFieldShouldFinishEditing(this, event);
   }
 

@@ -9,12 +9,13 @@
 namespace Poincare {
 
 int DerivativeNode::polynomialDegree(char symbolName) const {
-  if (symbolName == 'x') {
-    if (childAtIndex(1)->polynomialDegree(symbolName) != 0) {
-      return -1;
-    }
+  if (childAtIndex(0)->polynomialDegree(symbolName) == 0
+      && childAtIndex(1)->polynomialDegree(symbolName) == 0)
+  {
+    // If no child depends on the symbol, the polynomial degree is 0.
     return 0;
   }
+  // If one of the children depends on the symbol, we do not know the degree.
   return ExpressionNode::polynomialDegree(symbolName);
 }
 

@@ -55,7 +55,7 @@ const char * GlobalContext::ExtensionForExpression(const Expression & exp) {
 
 const Expression GlobalContext::ExpressionForRecord(const Ion::Storage::Record & record) {
   if (record.isNull()) {
-    return Undefined();
+    return Expression();
   }
   // Build the Expression in the Tree Pool
   return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(record.value().buffer, record.value().size)));

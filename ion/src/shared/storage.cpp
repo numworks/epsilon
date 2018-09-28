@@ -373,7 +373,7 @@ bool Storage::fullNameCompliant(const char * fullName) {
   if (dotChar == nullptr) {
     return false;
   }
-  if (strchr(dotChar, k_dotChar) == nullptr) {
+  if (strchr(dotChar+1, k_dotChar) == nullptr) {
     return true;
   }
   return false;

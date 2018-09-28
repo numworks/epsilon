@@ -271,6 +271,9 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
 }
 
 void Storage::destroyRecord(Record record) {
+  if (record.isNull()) {
+    return;
+  }
   for (char * p : *this) {
     Record currentRecord(fullNameOfRecordStarting(p));
     if (record == currentRecord) {

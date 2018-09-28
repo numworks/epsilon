@@ -30,7 +30,7 @@ public:
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool textInputIsCorrect(const char * text);
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
-  const char * XNT() override;
+  char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   HistoryController m_historyController;

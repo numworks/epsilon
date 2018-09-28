@@ -14,7 +14,7 @@ ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Sn
 }
 
 char ExpressionFieldDelegateApp::privateXNT(LayoutField * layoutField) {
-  return layoutField->XNTChar(XNT()[0]);
+  return layoutField->XNTChar(XNT());
 }
 
 bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {

@@ -64,8 +64,8 @@ void App::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
-const char * App::XNT() {
-  return "x";
+char App::XNT() {
+  return 'x';
 }
 
 }

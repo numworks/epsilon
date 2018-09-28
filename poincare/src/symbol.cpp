@@ -82,7 +82,7 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
     }
     return -1;
   }
-  return variablesIndex;
+  return variablesIndex/maxSizeVariable;
 }
 
 float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
@@ -167,13 +167,6 @@ Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool(
 }
 
 Symbol::Symbol(char name) : Symbol(&name, 1) {}
-
-bool Symbol::isVariableSymbol(const char * c)  {
-  if (c[0] >= 'a' && c[0] <= 'z' && c[1] == 0) {
-    return true;
-  }
-  return false;
-}
 
 bool Symbol::isSeriesSymbol(const char * c) {
   // [NV][1-3]

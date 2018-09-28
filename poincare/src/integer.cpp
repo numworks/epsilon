@@ -37,6 +37,10 @@ static inline int8_t sign(bool negative) {
 #if POINCARE_TREE_LOG
 
 void Integer::log(std::ostream & stream) const {
+  if (m_numberOfDigits > k_maxNumberOfDigits) {
+    stream << "Integer: overflow";
+    return;
+  }
   double d = 0.0;
   double base = 1.0;
   for (int i = 0; i < m_numberOfDigits; i++) {

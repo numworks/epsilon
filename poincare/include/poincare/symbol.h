@@ -71,7 +71,7 @@ public:
      * characters but events as 'end of text', 'backspace'... */
     UnknownX = 1,
   };
-  Symbol(const char * name = "", int length = 0);
+  Symbol(const char * name, int length);
   Symbol(char name);
   Symbol(const SymbolNode * node) : Expression(node) {}
 

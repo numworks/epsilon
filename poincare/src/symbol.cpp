@@ -152,7 +152,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
     assert(m_name[1] == 0);
     return Complex<T>(0.0, 1.0);
   }
-  const Expression e = context.expressionForSymbol(Symbol(m_name));
+  const Expression e = context.expressionForSymbol(Symbol(this));
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }

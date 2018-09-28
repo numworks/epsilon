@@ -43,7 +43,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  bool shouldBeReplaceWhileReducing(Context & context) const;
+  bool shouldBeReplacedWhileReducing(Context & context) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Approximation */

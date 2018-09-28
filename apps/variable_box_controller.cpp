@@ -83,7 +83,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
       m_context->setExpressionForSymbolName(Expression(), symbolName, *m_context);
     }
     if (m_currentPage == Page::Matrix) {
-      const Symbol symbol = "M0"; // FIXME: dummy variable box controller
+      const Symbol symbol("M0", 2); // FIXME: dummy variable box controller
       m_context->setExpressionForSymbolName(Expression(), symbol.name(), *m_context);
       m_matrixLayouts[selectedRow()] = Layout();
     }

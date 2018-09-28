@@ -59,6 +59,7 @@ int SymbolNode::getPolynomialCoefficients(Context & context, const char * symbol
 }
 
 int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+  // variables is in fact of type char[k_maxNumberOfVariables][maxSizeVariable]
   size_t variablesIndex = 0;
   while(variables[variablesIndex] != 0) {
     variablesIndex+= maxSizeVariable;

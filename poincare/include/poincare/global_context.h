@@ -18,6 +18,7 @@ public:
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression expressionForSymbol(const Symbol & symbol) override;
   void setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) override;
+  static bool storageMemoryFull();
   //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;
 private:
   static constexpr char expExtension[] = "exp";

@@ -11,6 +11,16 @@ constexpr char GlobalContext::expExtension[];
 constexpr char GlobalContext::funcExtension[];
 //constexpr char GlobalContext::seqExtension[];
 
+/* Storage memory full */
+
+static bool sStorageMemoryFull = false;
+
+bool GlobalContext::storageMemoryFull() {
+  return sStorageMemoryFull;
+}
+
+/**/
+
 const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   // Constant symbols
   if (symbol.isPi()) {
@@ -24,6 +34,7 @@ const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
 }
 
 void GlobalContext::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
+  sStorageMemoryFull = false;
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = RecordWithName(symbolName);
@@ -35,7 +46,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression & expression, co
   Ion::Storage::Record::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithExtension(symbolName, ExtensionForExpression(finalExpression), finalExpression.addressInPool(), finalExpression.size());
   if (err != Ion::Storage::Record::ErrorStatus::None) {
     assert(err == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
-    // TODO: return false to set flag that the file system is full?
+    sStorageMemoryFull = true;
   }
 }
 

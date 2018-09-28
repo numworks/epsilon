@@ -107,8 +107,8 @@ bool App::textInputIsCorrect(const char * text) {
   return true;
 }
 
-const char * App::XNT() {
-  return "x";
+char App::XNT() {
+  return 'x';
 }
 
 }

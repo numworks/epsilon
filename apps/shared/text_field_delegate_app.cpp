@@ -21,8 +21,8 @@ AppsContainer * TextFieldDelegateApp::container() {
   return (AppsContainer *)app()->container();
 }
 
-const char * TextFieldDelegateApp::XNT() {
-  return "X";
+char TextFieldDelegateApp::XNT() {
+  return 'X';
 }
 
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
@@ -85,7 +85,7 @@ bool TextFieldDelegateApp::displayVariableBoxController(Responder * sender) {
 /* Private */
 
 char TextFieldDelegateApp::privateXNT(TextField * textField) {
-  return textField->XNTChar(XNT()[0]);
+  return textField->XNTChar(XNT());
 }
 
 }

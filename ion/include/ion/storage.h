@@ -42,6 +42,9 @@ public:
     bool operator==(const Record & other) const {
       return m_fullNameCRC32 == other.m_fullNameCRC32;
     }
+    bool operator!=(const Record & other) const {
+      return !(*this == other);
+    }
     bool isNull() const {
       return m_fullNameCRC32 == 0;
     }

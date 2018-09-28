@@ -17,6 +17,10 @@ QUIZ_CASE(ion_storage_records_crc32) {
   Storage::Record a(baseNameRecord, extensionRecord);
   Storage::Record b(fullNameRecord);
   quiz_assert(a==b);
+
+  Storage::Record c("A.exp");
+  Storage::Record d("B.exp");
+  quiz_assert(c!=d);
 }
 
 QUIZ_CASE(ion_storage_store_and_destroy_record) {

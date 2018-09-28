@@ -214,7 +214,7 @@ int Power::getPolynomialCoefficients(Context & context, const char * symbolName,
   /* Here we only consider the case x^4 as privateGetPolynomialCoefficients is
    * supposed to be called after reducing the expression. */
   if (childAtIndex(0).type() == ExpressionNode::Type::Symbol
-      && childAtIndex(0).convert<Symbol>().name() == symbolName
+      && strcmp(childAtIndex(0).convert<Symbol>().name(), symbolName) == 0
       && childAtIndex(1).type() == ExpressionNode::Type::Rational)
   {
     Rational r = childAtIndex(1).convert<Rational>();

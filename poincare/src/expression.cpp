@@ -103,28 +103,29 @@ bool Expression::IsMatrix(const Expression e, Context & context) {
       }, context));
 }
 
-bool containsVariables(const Expression e, char * variables[]) {
+bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
   if (e.type() == ExpressionNode::Type::Symbol) {
     int index = 0;
-    while (variables[index][0] != 0) {
-      if (strcmp(static_cast<const Symbol&>(e).name(), variables[index]) == 0) {
+    while (variables[index*maxVariableSize] != 0) {
+      if (strcmp(static_cast<const Symbol&>(e).name(), &variables[index*maxVariableSize]) == 0) {
         return true;
       }
     }
   }
   for (int i = 0; i < e.numberOfChildren(); i++) {
-    if (containsVariables(e.childAtIndex(i), variables)) {
+    if (containsVariables(e.childAtIndex(i), variables, maxVariableSize)) {
       return true;
     }
   }
   return false;
 }
 
-bool Expression::getLinearCoefficients(char * variables[], Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
+bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!recursivelyMatches(IsMatrix, context));
+  // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
   int index = 0;
-  while (variables[index][0] != 0) {
-    int degree = polynomialDegree(context, variables[index]);
+  while (variables[index*maxVariableSize] != 0) {
+    int degree = polynomialDegree(context, &variables[index*maxVariableSize]);
     if (degree > 1 || degree < 0) {
       return false;
     }
@@ -133,8 +134,8 @@ bool Expression::getLinearCoefficients(char * variables[], Expression coefficien
   Expression equation = *this;
   index = 0;
   Expression polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
-  while (variables[index][0] != 0) {
-    int degree = equation.getPolynomialReducedCoefficients(variables[index], polynomialCoefficients, context, angleUnit);
+  while (variables[index*maxVariableSize] != 0) {
+    int degree = equation.getPolynomialReducedCoefficients(&variables[index*maxVariableSize], polynomialCoefficients, context, angleUnit);
     switch (degree) {
       case 0:
         coefficients[index] = Rational(0);
@@ -159,12 +160,12 @@ bool Expression::getLinearCoefficients(char * variables[], Expression coefficien
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
-  bool isMultivariablePolynomial = containsVariables(constant[0], variables);
+  bool isMultivariablePolynomial = containsVariables(constant[0], variables, maxVariableSize);
   for (int i = 0; i < index; i++) {
     if (isMultivariablePolynomial) {
       break;
     }
-    isMultivariablePolynomial |= containsVariables(coefficients[i], variables);
+    isMultivariablePolynomial |= containsVariables(coefficients[i], variables, maxVariableSize);
   }
   return !isMultivariablePolynomial;
 }

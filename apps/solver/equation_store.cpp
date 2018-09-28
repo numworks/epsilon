@@ -107,7 +107,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
     }
-    numberOfVariables = definedModelAtIndex(i)->standardForm(context).getVariables(*context, Symbol::isVariableSymbol, (char **)m_variables, Equation::k_maxVariableSize);
+    numberOfVariables = definedModelAtIndex(i)->standardForm(context).getVariables(*context, Symbol::isVariableSymbol, (char *)m_variables, Equation::k_maxVariableSize);
     if (numberOfVariables == -1) {
       return Error::TooManyVariables;
     }

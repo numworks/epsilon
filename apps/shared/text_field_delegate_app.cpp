@@ -25,6 +25,65 @@ const char * TextFieldDelegateApp::XNT() {
   return "X";
 }
 
+bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return isFinishingEvent(event);
+}
+
+bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
+    if (unparsableText(textField->text(), textField)) {
+      return true;
+    }
+  }
+  if (event == Ion::Events::Var) {
+    forceEdition(textField);
+    return displayVariableBoxController(textField);
+  }
+  if (event == Ion::Events::XNT) {
+    forceEdition(textField);
+    const char * xnt = privateXNT(textField);
+    return textField->handleEventWithText(xnt);
+  }
+  return false;
+}
+
+Toolbox * TextFieldDelegateApp::toolboxForTextInput(TextInput * textInput) {
+  Toolbox * toolbox = container()->mathToolbox();
+  toolbox->setSender(textInput);
+  return toolbox;
+}
+
+/* Protected */
+
+void TextFieldDelegateApp::forceEdition(TextField * textField) {
+  if (!textField->isEditing()) {
+    textField->setEditing(true);
+  }
+}
+
+bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
+}
+
+bool TextFieldDelegateApp::unparsableText(const char * text, Responder * responder) {
+  Expression exp = Expression::parse(text);
+  if (exp.isUninitialized()) {
+    responder->app()->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  return false;
+}
+
+bool TextFieldDelegateApp::displayVariableBoxController(Responder * sender) {
+  AppsContainer * appsContainer = (AppsContainer *)sender->app()->container();
+  VariableBoxController * variableBoxController = appsContainer->variableBoxController();
+  variableBoxController->setSender(sender);
+  sender->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  return true;
+}
+
+/* Private */
+
 const char * TextFieldDelegateApp::privateXNT(TextField * textField) {
   static constexpr struct { const char *name, *xnt; } sFunctions[] = {
     { "diff", "x" }, { "int", "x" },
@@ -70,44 +129,6 @@ const char * TextFieldDelegateApp::privateXNT(TextField * textField) {
   }
   // Fallback to the default
   return XNT();
-}
-
-bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
-    Expression exp = Expression::parse(textField->text());
-    if (exp.isUninitialized()) {
-      textField->app()->displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-  }
-  if (event == Ion::Events::Var) {
-    if (!textField->isEditing()) {
-      textField->setEditing(true);
-    }
-    AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
-    VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setSender(textField);
-    textField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    return true;
-  }
-  if (event == Ion::Events::XNT) {
-    if (!textField->isEditing()) {
-      textField->setEditing(true);
-    }
-    const char * xnt = privateXNT(textField);
-    return textField->handleEventWithText(xnt);
-  }
-  return false;
-}
-
-Toolbox * TextFieldDelegateApp::toolboxForTextInput(TextInput * textInput) {
-  Toolbox * toolbox = container()->mathToolbox();
-  toolbox->setSender(textInput);
-  return toolbox;
 }
 
 }

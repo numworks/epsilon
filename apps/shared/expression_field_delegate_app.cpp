@@ -14,11 +14,7 @@ ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Sn
 }
 
 char ExpressionFieldDelegateApp::privateXNT(LayoutField * layoutField) {
-  char xntCharFromLayout = layoutField->XNTChar();
-  if (xntCharFromLayout != Ion::Charset::Empty) {
-    return xntCharFromLayout;
-  }
-  return XNT()[0];
+  return layoutField->XNTChar(XNT()[0]);
 }
 
 bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {
@@ -26,7 +22,7 @@ bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * la
 }
 
 bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutField->hasText()) {
       layoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;

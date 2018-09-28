@@ -78,7 +78,7 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
     return inputViewDidReceiveEvent(event);
   }
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
@@ -93,7 +93,7 @@ bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField)
 }
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event) && !layoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
     return inputViewDidReceiveEvent(event);
   }
   return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);

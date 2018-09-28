@@ -21,12 +21,10 @@ public:
 protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 protected:
-  void forceEdition(TextField * textField);
+  bool fieldDidReceiveEvent(Field * field, Responder * responder, Ion::Events::Event event);
+  void forceEdition(Field * field);
   bool isFinishingEvent(Ion::Events::Event event);
   bool unparsableText(const char * text, Responder * responder);
-  bool displayVariableBoxController(Responder * sender);
-private:
-  char privateXNT(TextField * textField);
 };
 
 }

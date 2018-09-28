@@ -295,12 +295,11 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   Evaluation<float> c1Approximated = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
   Complex<float> c0 = static_cast<Complex<float>&>(c0Approximated);
   Complex<float> c1 = static_cast<Complex<float>&>(c1Approximated);
-  bool bothChildrenComplexes = c0.imag() != 0 && c1.imag() != 0;
+  bool bothChildrenComplexes = c0.imag() != 0 && c1.imag() != 0 && !std::isnan(c0.imag()) && !std::isnan(c1.imag());
   bool nonComplexNegativeChild0 = c0.imag() == 0 && c0.real() < 0;
   if (bothChildrenComplexes) {
     return *this;
   }
-
 
   /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
    * - we can assert this step that there is no division by 0:
@@ -443,7 +442,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   // (a^b)^c -> a^(b*c) if a > 0 or c is integer
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
-    // Check is a > 0 or c is Integer
+    // Check if a > 0 or c is Integer
     if (p.childAtIndex(0).sign() == ExpressionNode::Sign::Positive
         || (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne()))

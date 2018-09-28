@@ -40,6 +40,7 @@ void translate_in_special_chars(char * expression) {
       case 'P': *c = Ion::Charset::SmallPi; break;
       case '*': *c = Ion::Charset::MultiplicationSign; break;
       case '>': *c = Ion::Charset::Sto; break;
+      case '?': *c = Poincare::Symbol::SpecialSymbols::UnknownX; break;
     }
   }
 }
@@ -55,6 +56,7 @@ void translate_in_ASCII_chars(char * expression) {
       case Ion::Charset::MultiplicationSign: *c = '*'; break;
       case Ion::Charset::MiddleDot: *c = '*'; break;
       case Ion::Charset::Sto: *c = '>'; break;
+      case Poincare::Symbol::SpecialSymbols::UnknownX: *c = '?'; break;
     }
   }
 }

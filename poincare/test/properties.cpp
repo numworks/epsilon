@@ -66,17 +66,17 @@ void assert_parsed_expression_has_characteristic_range(const char * expression, 
 }
 
 QUIZ_CASE(poincare_characteristic_range) {
-  assert_parsed_expression_has_characteristic_range("cos(x)", 360.0f);
-  assert_parsed_expression_has_characteristic_range("cos(-x)", 360.0f);
-  assert_parsed_expression_has_characteristic_range("cos(x)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("cos(-x)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("sin(9*x+10)", 40.0f);
-  assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 720.0f);
-  assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 4.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("x", NAN);
+  assert_parsed_expression_has_characteristic_range("cos(?)", 360.0f);
+  assert_parsed_expression_has_characteristic_range("cos(-?)", 360.0f);
+  assert_parsed_expression_has_characteristic_range("cos(?)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("cos(-?)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("sin(9*?+10)", 40.0f);
+  assert_parsed_expression_has_characteristic_range("sin(9*?+10)+cos(?/2)", 720.0f);
+  assert_parsed_expression_has_characteristic_range("sin(9*?+10)+cos(?/2)", 4.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("?", NAN);
   assert_parsed_expression_has_characteristic_range("cos(3)+2", 0.0f);
-  assert_parsed_expression_has_characteristic_range("log(cos(40*x))", 9.0f);
-  assert_parsed_expression_has_characteristic_range("cos(cos(x))", 360.0f);
+  assert_parsed_expression_has_characteristic_range("log(cos(40*?))", 9.0f);
+  assert_parsed_expression_has_characteristic_range("cos(cos(?))", 360.0f);
 }
 
 void assert_parsed_expression_has_variables(const char * expression, const char * variables[]) {

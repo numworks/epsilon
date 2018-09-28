@@ -13,7 +13,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(DerivativeNode); }
-  int numberOfChildren() const override { return 2; }
+  int numberOfChildren() const override { return 3; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Derivative";
@@ -41,6 +41,7 @@ private:
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T approximateWithArgument(T x, Context & context, Preferences::AngleUnit angleUnit) const;
   template<typename T> T growthRateAroundAbscissa(T x, T h, Context & context, Preferences::AngleUnit angleUnit) const;
   template<typename T> T riddersApproximation(Context & context, Preferences::AngleUnit angleUnit, T x, T h, T * error) const;
   // TODO: Change coefficients?
@@ -53,9 +54,10 @@ class Derivative final : public Expression {
 public:
   Derivative();
   Derivative(const DerivativeNode * n) : Expression(n) {}
-  Derivative(Expression child1, Expression child2) : Derivative() {
+  Derivative(Expression child1, Expression child2, Expression child3) : Derivative() {
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
+    replaceChildAtIndexInPlace(2, child3);
   }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

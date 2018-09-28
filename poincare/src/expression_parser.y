@@ -75,7 +75,7 @@ using namespace Poincare;
 %nonassoc RIGHT_BRACKET
 %nonassoc LEFT_BRACE
 %nonassoc RIGHT_BRACE
-%nonassoc FUNCTION LOGFUNCTION
+%nonassoc FUNCTION LOGFUNCTION DIFF_FUNCTION
 %left COMMA
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
@@ -127,6 +127,7 @@ term   : TERM   { $$ = $1; }
 /* Special case for logarithm, as we do not at first if it needs 1 or 2 children */
        | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }
        | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { if ($1.numberOfChildren() != 0) { YYERROR; } $$ = $1; }
+       | DIFF_FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; if ($3.childAtIndex(1).type() != ExpressionNode::Type::Symbol) { YYERROR; } ; $$ = $1; $$.setChildrenInPlace($3); }
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */
        | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }

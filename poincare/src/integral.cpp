@@ -10,12 +10,11 @@
 namespace Poincare {
 
 int IntegralNode::polynomialDegree(char symbolName) const {
-  if (symbolName == 'x') {
-    int da = childAtIndex(1)->polynomialDegree(symbolName);
-    int db = childAtIndex(2)->polynomialDegree(symbolName);
-    if (da != 0 || db != 0) {
-      return -1;
-    }
+  if (childAtIndex(0)->polynomialDegree(symbolName) == 0
+      && childAtIndex(1)->polynomialDegree(symbolName) == 0
+      && childAtIndex(2)->polynomialDegree(symbolName) == 0)
+  {
+    // If no child depends on the symbol, the polynomial degree is 0.
     return 0;
   }
   return ExpressionNode::polynomialDegree(symbolName);

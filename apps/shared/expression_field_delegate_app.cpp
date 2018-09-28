@@ -13,10 +13,6 @@ ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Sn
 {
 }
 
-char ExpressionFieldDelegateApp::privateXNT(LayoutField * layoutField) {
-  return layoutField->XNTChar(XNT());
-}
-
 bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {
   return isFinishingEvent(event);
 }
@@ -40,14 +36,8 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       return true;
     }
   }
-  if (event == Ion::Events::Var) {
-    forceEdition(layoutField);
-    return displayVariableBoxController(layoutField);
-  }
-  if (event == Ion::Events::XNT) {
-    forceEdition(layoutField);
-    const char xnt[2] = {privateXNT(layoutField), 0};
-    return layoutField->handleEventWithText(xnt);
+  if (fieldDidReceiveEvent(layoutField, layoutField, event)) {
+    return true;
   }
   return false;
 }
@@ -56,14 +46,6 @@ Toolbox * ExpressionFieldDelegateApp::toolboxForLayoutField(LayoutField * layout
   Toolbox * toolbox = container()->mathToolbox();
   toolbox->setSender(layoutField);
   return toolbox;
-}
-
-/* Private */
-
-void ExpressionFieldDelegateApp::forceEdition(LayoutField * layoutField) {
-  if (!layoutField->isEditing()) {
-    layoutField->setEditing(true);
-  }
 }
 
 }

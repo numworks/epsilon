@@ -35,14 +35,8 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
       return true;
     }
   }
-  if (event == Ion::Events::Var) {
-    forceEdition(textField);
-    return displayVariableBoxController(textField);
-  }
-  if (event == Ion::Events::XNT) {
-    forceEdition(textField);
-    const char xnt[2] = {privateXNT(textField), 0};
-    return textField->handleEventWithText(xnt);
+  if (fieldDidReceiveEvent(textField, textField, event)) {
+    return true;
   }
   return false;
 }
@@ -55,9 +49,27 @@ Toolbox * TextFieldDelegateApp::toolboxForTextInput(TextInput * textInput) {
 
 /* Protected */
 
-void TextFieldDelegateApp::forceEdition(TextField * textField) {
-  if (!textField->isEditing()) {
-    textField->setEditing(true);
+bool TextFieldDelegateApp::fieldDidReceiveEvent(Field * field, Responder * responder, Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    forceEdition(field);
+    AppsContainer * appsContainer = (AppsContainer *)responder->app()->container();
+    VariableBoxController * variableBoxController = appsContainer->variableBoxController();
+    variableBoxController->setSender(responder);
+    responder->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    return true;
+
+  }
+  if (event == Ion::Events::XNT) {
+    forceEdition(field);
+    const char xnt[2] = {field->XNTChar(XNT()), 0};
+    return responder->handleEventWithText(xnt);
+  }
+  return false;
+}
+
+void TextFieldDelegateApp::forceEdition(Field * field) {
+  if (!field->isEditing()) {
+    field->setEditing(true);
   }
 }
 
@@ -72,20 +84,6 @@ bool TextFieldDelegateApp::unparsableText(const char * text, Responder * respond
     return true;
   }
   return false;
-}
-
-bool TextFieldDelegateApp::displayVariableBoxController(Responder * sender) {
-  AppsContainer * appsContainer = (AppsContainer *)sender->app()->container();
-  VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-  variableBoxController->setSender(sender);
-  sender->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-  return true;
-}
-
-/* Private */
-
-char TextFieldDelegateApp::privateXNT(TextField * textField) {
-  return textField->XNTChar(XNT());
 }
 
 }

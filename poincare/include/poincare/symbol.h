@@ -79,7 +79,6 @@ public:
   bool isPi() const { return node()->isPi(); }
   bool isExponential() const { return node()->isExponential(); }
   bool isIComplex() const { return node()->isIComplex(); }
-  static bool isVariableSymbol(const char * c);
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
   bool matches(ExpressionTest test, Context & context) const;

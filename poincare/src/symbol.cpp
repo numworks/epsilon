@@ -67,13 +67,13 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
   if (isVariable(m_name)) {
     int index = 0;
     while (variables[index] != 0) {
-      if (strncmp(&variables[index], m_name, strlen((const char *)m_name)) == 0) {
+      if (strcmp(m_name, &variables[index]) == 0) {
         return variablesIndex/maxSizeVariable;
       }
       index+= maxSizeVariable;
     }
     if ((variablesIndex/maxSizeVariable) < Expression::k_maxNumberOfVariables) {
-      if (strlen(m_name) + 1 > maxSizeVariable) {
+      if (strlen(m_name) + 1 > (size_t)maxSizeVariable) {
         return -2;
       }
       strlcpy(&variables[variablesIndex], m_name, maxSizeVariable);

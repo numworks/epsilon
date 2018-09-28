@@ -55,7 +55,7 @@ QUIZ_CASE(poincare_matrix_simplify) {
   assert_parsed_expression_simplify_to("confidence(1/3, -34)", "undef");
   assert_parsed_expression_simplify_to("conj([[1/R(2),1/2][1,-1]])", "[[conj(1/R(2)),1/2][1,-1]]");
   assert_parsed_expression_simplify_to("cos([[P/3,0][P/7,P/2]])", "[[1/2,1][cos(P/7),0]]");
-  assert_parsed_expression_simplify_to("diff([[P/3,0][P/7,P/2]],3)", "undef");
+  assert_parsed_expression_simplify_to("diff([[P/3,0][P/7,P/2]],x,3)", "undef");
   assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "det([[1,2][3,4]])"); // TODO: implement determinant if dim < 3
   assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "det([[2,2][3,4]])");
   assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "det([[2,2][3,3]])");

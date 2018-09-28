@@ -41,7 +41,7 @@ uint32_t Ion::crc32PaddedString(const char * s, int length) {
   // CRC32 of the tail of the string
   uint32_t tailName = 0;
   size_t tailLength = length - crc32TruncatedInputSize*sizeof(uint32_t)/sizeof(char);
-  strlcpy((char *)&tailName, s+crc32TruncatedInputSize*sizeof(uint32_t)/sizeof(char), tailLength);
+  strlcpy((char *)&tailName, s+crc32TruncatedInputSize*sizeof(uint32_t)/sizeof(char), tailLength+1); //+1 because strlcpy assures null termination
   c[1] = Ion::crc32(&tailName, 1);
 
   return Ion::crc32((const uint32_t *)c, 2);

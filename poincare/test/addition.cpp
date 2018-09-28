@@ -61,6 +61,7 @@ QUIZ_CASE(poincare_addition_evaluate) {
 }
 
 QUIZ_CASE(poincare_addition_simplify) {
+  assert_parsed_expression_simplify_to("1+x", "1+x");
   assert_parsed_expression_simplify_to("1/2+1/3+1/4+1/5+1/6+1/7", "223/140");
   assert_parsed_expression_simplify_to("1+x+4-i-2x", "(5-i)-x");
   assert_parsed_expression_simplify_to("2+1", "3");

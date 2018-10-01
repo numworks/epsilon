@@ -105,20 +105,18 @@ Toolbox * ListController::toolboxForSender(Responder * sender) {
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    switch (sequenceDefinition) {
-      case 0:
-        strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
-        break;
-      case 1:
-        strlcpy(initialTextContent, sequence->firstInitialConditionText(), sizeof(initialTextContent));
-        break;
-      default:
-        strlcpy(initialTextContent, sequence->secondInitialConditionText(), sizeof(initialTextContent));
-        break;
-    }
-    initialText = initialTextContent;
+  switch (sequenceDefinition) {
+    case 0:
+    strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
+    break;
+    case 1:
+    strlcpy(initialTextContent, sequence->firstInitialConditionText(), sizeof(initialTextContent));
+    break;
+    default:
+    strlcpy(initialTextContent, sequence->secondInitialConditionText(), sizeof(initialTextContent));
+    break;
   }
+  initialText = initialTextContent;
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
   // Invalidate the sequences context cache

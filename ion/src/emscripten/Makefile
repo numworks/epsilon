@@ -6,6 +6,7 @@ objs += $(addprefix ion/src/emscripten/, \
 
 objs += $(addprefix ion/src/shared/, \
   crc32.o \
+  crc32_padded.o \
   events.o \
   events_modifier.o \
   power.o \

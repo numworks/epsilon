@@ -33,17 +33,17 @@ const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   return ExpressionForRecord(RecordWithName(symbol.name()));
 }
 
-void GlobalContext::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
+void GlobalContext::setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) {
   sStorageMemoryFull = false;
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
-  Ion::Storage::Record record = RecordWithName(symbolName);
+  Ion::Storage::Record record = RecordWithName(symbol.name());
   Expression e = ExpressionForRecord(record);
-  Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbolName, e);
+  Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbol, e);
   // Delete any record with same name (as it is going to be overriden)
   record.destroy();
 
-  Ion::Storage::Record::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithExtension(symbolName, ExtensionForExpression(finalExpression), finalExpression.addressInPool(), finalExpression.size());
+  Ion::Storage::Record::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), ExtensionForExpression(symbol), finalExpression.addressInPool(), finalExpression.size());
   if (err != Ion::Storage::Record::ErrorStatus::None) {
     assert(err == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     sStorageMemoryFull = true;

@@ -13,7 +13,7 @@ public:
   void setApproximationForVariable(T value);
 
   // Context
-  void setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) override;
+  void setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) override;
   const Expression expressionForSymbol(const Symbol & symbol) override;
 
 private:

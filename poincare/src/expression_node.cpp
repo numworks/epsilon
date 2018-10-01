@@ -1,10 +1,11 @@
 #include <poincare/expression_node.h>
-#include <poincare/undefined.h>
 #include <poincare/expression.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
 
 namespace Poincare {
 
-Expression ExpressionNode::replaceSymbolWithExpression(const char * symbol, Expression & expression) {
+Expression ExpressionNode::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 

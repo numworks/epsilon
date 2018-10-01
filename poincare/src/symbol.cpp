@@ -99,6 +99,10 @@ int SymbolNode::simplificationOrderSameType(const ExpressionNode * e, bool canBe
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
+    assert(m_name[1] == 0);
+    return CharLayout('x');
+  }
   if (strcmp(m_name, "u(n)") == 0) {
     return HorizontalLayout(
         CharLayout('u'),

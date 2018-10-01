@@ -17,6 +17,7 @@ initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 ion/src/shared/platform_info.o: SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
 objs += $(addprefix ion/src/shared/, \
+  crc32_padded.o\
   events.o \
   platform_info.o \
   storage.o \

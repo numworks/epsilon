@@ -46,6 +46,7 @@ public:
   }
 
   Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

@@ -190,6 +190,7 @@ bool Symbol::matches(ExpressionTest test, Context & context) const {
 }
 
 Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  assert(strcmp(name(), k_ans) != 0);
   /* Do not replace symbols in expression of type: var+3->A. Store needs to
    * replace unknown variables first. */
   Expression p = parent();

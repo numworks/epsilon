@@ -26,7 +26,8 @@ void CartesianFunction::setDisplayDerivative(bool display) {
 }
 
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  Poincare::Derivative derivative(expression(context).clone(), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
+  const char xUnknown[] = {Symbol::SpecialSymbols::UnknownX, 0};
+  Poincare::Derivative derivative(expression(context).clone(), Symbol(xUnknown, 1), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
   /* TODO: when we will approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */

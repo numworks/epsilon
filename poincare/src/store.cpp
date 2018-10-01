@@ -45,10 +45,20 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
 }
 
 Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  context.setExpressionForSymbol(value(), symbol(), context);
+  Expression finalValue;
+  if (symbol().type() == ExpressionNode::Type::Function) {
+    // In tata + 2 ->f(tata), replace tata with xUnknown symbol
+    Symbol userDefinedUnknown = symbol().childAtIndex(0);
+    const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
+    Symbol xUnknown = Symbol(x, 1);
+    finalValue = value().replaceSymbolWithExpression(userDefinedUnknown, xUnknown);
+  } else {
+    finalValue = value();
+  }
+  context.setExpressionForSymbol(finalValue, symbol(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);
-  return c1.shallowReduce(context, angleUnit);
+  return childAtIndex(1).shallowReduce(context, angleUnit);
 }
 
 }

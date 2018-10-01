@@ -65,7 +65,7 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Function(this).shallowReduce(context, angleUnit);
+  return Function(this).shallowReduce(context, angleUnit); // This uses Symbol::shallowReduce
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
@@ -90,10 +90,6 @@ Function::Function(const char * name) :
   Function(TreePool::sharedPool()->createTreeNode<FunctionNode>())
 {
   static_cast<FunctionNode *>(Expression::node())->setName(name, strlen(name));
-}
-
-Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Expression::defaultShallowReduce(context, angleUnit);
 }
 
 Expression Function::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {

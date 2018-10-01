@@ -107,14 +107,14 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   char initialTextContent[TextField::maxBufferSize()];
   switch (sequenceDefinition) {
     case 0:
-    strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
-    break;
+      strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
+      break;
     case 1:
-    strlcpy(initialTextContent, sequence->firstInitialConditionText(), sizeof(initialTextContent));
-    break;
+      strlcpy(initialTextContent, sequence->firstInitialConditionText(), sizeof(initialTextContent));
+      break;
     default:
-    strlcpy(initialTextContent, sequence->secondInitialConditionText(), sizeof(initialTextContent));
-    break;
+      strlcpy(initialTextContent, sequence->secondInitialConditionText(), sizeof(initialTextContent));
+      break;
   }
   initialText = initialTextContent;
   App * myApp = (App *)app();

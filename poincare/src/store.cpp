@@ -48,17 +48,18 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
-    Symbol userDefinedUnknown = symbol().childAtIndex(0);
+    Expression userDefinedUnknown = symbol().childAtIndex(0);
     const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
     Symbol xUnknown = Symbol(x, 1);
-    finalValue = value().replaceSymbolWithExpression(userDefinedUnknown, xUnknown);
+    finalValue = childAtIndex(0).replaceSymbolWithExpression(userDefinedUnknown, xUnknown);
   } else {
-    finalValue = value();
+    finalValue = childAtIndex(0);
   }
+  finalValue.deepReduce(context, angleUnit, false);
   context.setExpressionForSymbol(finalValue, symbol(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);
-  return c1.shallowReduce(context, angleUnit, false);
+  return c1.shallowReduce(context, angleUnit);
 }
 
 }

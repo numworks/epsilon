@@ -9,6 +9,9 @@ namespace Poincare {
 
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Expression e = context.expressionForSymbol(Function(this));
+  if (e.isUninitialized()) {
+    return -1;
+  }
 /*TODO Context should be float or double ?*/
   VariableContext newContext = xContext(context);
   return e.polynomialDegree(newContext, symbolName);
@@ -16,18 +19,27 @@ int FunctionNode::polynomialDegree(Context & context, const char * symbolName) c
 
 int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   Expression e = context.expressionForSymbol(Function(this));
+  if (e.isUninitialized()) {
+    return -1;
+  }
   VariableContext newContext = xContext(context);
   return e.getPolynomialCoefficients(newContext, symbolName, coefficients);
 }
 
 int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   Expression e = context.expressionForSymbol(Function(this));
+  if (e.isUninitialized()) {
+    return 0;
+  }
   VariableContext newContext = xContext(context);
   return e.getVariables(newContext, isVariable, variables, maxSizeVariable);
 }
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
+  if (e.isUninitialized()) {
+    return 0.0f;
+  }
   VariableContext newContext = xContext(context);
   return e.characteristicXRange(newContext, angleUnit);
 }
@@ -53,12 +65,18 @@ Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
+  if (e.isUninitialized()) {
+    return Complex<float>::Undefined();
+  }
   VariableContext newContext = xContext(context);
   return e.approximateToEvaluation<float>(newContext, angleUnit);
 }
 
 Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
+  if (e.isUninitialized()) {
+    return Complex<double>::Undefined();
+  }
   VariableContext newContext = xContext(context);
   return e.approximateToEvaluation<double>(newContext, angleUnit);
 }

@@ -18,14 +18,14 @@ void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>(value);
 }
 
-void VariableContext::setExpressionForSymbolName(const Expression & expression, const char * symbolName, Context & context) {
-  if (strcmp(symbolName, m_name) == 0) {
+void VariableContext::setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) {
+  if (strcmp(symbol.name(), m_name) == 0) {
     if (expression.isUninitialized()) {
       return;
     }
     m_value = expression.clone();
   } else {
-    m_parentContext->setExpressionForSymbolName(expression, symbolName, context);
+    m_parentContext->setExpressionForSymbol(expression, symbol, context);
   }
 }
 

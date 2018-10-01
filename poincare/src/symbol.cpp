@@ -43,7 +43,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression SymbolNode::replaceSymbolWithExpression(const char * symbol, Expression & expression) {
+Expression SymbolNode::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
@@ -205,8 +205,8 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   return *this;
 }
 
-Expression Symbol::replaceSymbolWithExpression(const char * symbol, Expression & expression) {
-  if (strcmp(name(), symbol) == 0) {
+Expression Symbol::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {

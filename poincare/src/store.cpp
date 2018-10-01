@@ -34,9 +34,9 @@ template<typename T>
 Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
-   * setExpressionForSymbolName. */
+   * setExpressionForSymbol. */
   Store s(this);
-  context.setExpressionForSymbolName(s.value(), s.symbol().name(), context);
+  context.setExpressionForSymbol(s.value(), s.symbol(), context);
   Expression e = context.expressionForSymbol(s.symbol());
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
@@ -45,7 +45,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
 }
 
 Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  context.setExpressionForSymbolName(value(), symbol().name(), context);
+  context.setExpressionForSymbol(value(), symbol(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);
   return c1.shallowReduce(context, angleUnit);

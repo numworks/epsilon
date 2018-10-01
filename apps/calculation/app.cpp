@@ -96,7 +96,10 @@ bool App::textInputIsCorrect(const char * text) {
     return false;
   }
   Expression ansExpression = static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext());
-  exp = exp.replaceSymbolWithExpression(Symbol::k_ans, ansExpression);
+  {
+    Symbol ansSymbol = Symbol(Symbol::k_ans, 3);
+    exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  }
   char buffer[Calculation::k_printedExpressionSize];
   int length = PoincareHelpers::Serialize(exp, buffer, sizeof(buffer));
   /* if the buffer is totally full, it is VERY likely that writeTextInBuffer

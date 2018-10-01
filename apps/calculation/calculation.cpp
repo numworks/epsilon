@@ -35,10 +35,13 @@ void Calculation::reset() {
 
 void Calculation::setContent(const char * c, Context * context, Expression ansExpression) {
   reset();
-  Expression input = Expression::parse(c).replaceSymbolWithExpression(Symbol::k_ans, ansExpression);
-  /* We do not store directly the text enter by the user because we do not want
-   * to keep Ans symbol in the calculation store. */
-  PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
+  {
+    Symbol ansSymbol = Symbol(Symbol::k_ans, 3);
+    Expression input = Expression::parse(c).replaceSymbolWithExpression(ansSymbol, ansExpression);
+    /* We do not store directly the text enter by the user because we do not want
+     * to keep Ans symbol in the calculation store. */
+    PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
+  }
   Expression exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   Expression approximateOutput = PoincareHelpers::Approximate<double>(exactOutput, *context);

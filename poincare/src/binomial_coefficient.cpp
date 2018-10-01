@@ -9,8 +9,8 @@
 
 namespace Poincare {
 
-Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return BinomialCoefficient(this).shallowReduce(context, angleUnit);
+Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return BinomialCoefficient(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -50,7 +50,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 
 BinomialCoefficient::BinomialCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<BinomialCoefficientNode>()) {}
 
-Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

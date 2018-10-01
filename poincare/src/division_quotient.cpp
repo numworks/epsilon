@@ -8,8 +8,8 @@
 
 namespace Poincare {
 
-Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return DivisionQuotient(this).shallowReduce(context, angleUnit);
+Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return DivisionQuotient(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -33,7 +33,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
 
 DivisionQuotient::DivisionQuotient() : Expression(TreePool::sharedPool()->createTreeNode<DivisionQuotientNode>()) {}
 
-Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

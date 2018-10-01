@@ -47,7 +47,7 @@ private:
   static const char * name() { return "+"; }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Evaluation */
@@ -79,7 +79,7 @@ public:
     }
   }
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 private:

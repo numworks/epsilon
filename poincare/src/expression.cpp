@@ -172,7 +172,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 // Private
 
-Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
       Expression result = Undefined();
@@ -285,15 +285,15 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
   return e;
 }
 
-Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   assert(!IsMatrix(*this, context));
-  reduceChildren(context, angleUnit);
-  return shallowReduce(context, angleUnit);
+  reduceChildren(context, angleUnit, replaceSymbols);
+  return shallowReduce(context, angleUnit, replaceSymbols);
 }
 
-void Expression::reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+void Expression::reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    childAtIndex(i).deepReduce(context, angleUnit);
+    childAtIndex(i).deepReduce(context, angleUnit, replaceSymbols);
   }
 }
 

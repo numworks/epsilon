@@ -14,8 +14,8 @@ Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return NthRoot(this).shallowReduce(context, angleUnit);
+Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return NthRoot(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -35,7 +35,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
 
 NthRoot::NthRoot() : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {}
 
-Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

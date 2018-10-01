@@ -16,8 +16,8 @@ Layout PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDis
   return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return PredictionInterval(this).shallowReduce(context, angleUnit);
+Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return PredictionInterval(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -37,7 +37,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
 
 PredictionInterval::PredictionInterval() : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {}
 
-Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -93,7 +93,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.reduceChildren(context, angleUnit);
+  matrix.reduceChildren(context, angleUnit, replaceSymbols);
   return matrix;
 }
 

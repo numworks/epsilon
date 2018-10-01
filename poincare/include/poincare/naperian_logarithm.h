@@ -32,7 +32,7 @@ private:
   }
   static const char * name() { return "ln"; }
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
     /* ln has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -55,7 +55,7 @@ public:
   explicit NaperianLogarithm(Expression operand) : NaperianLogarithm() {
     replaceChildAtIndexInPlace(0, operand);
   }
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

@@ -15,8 +15,8 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
 }
 
-Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Conjugate(this).shallowReduce(context, angleUnit);
+Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Conjugate(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -26,7 +26,7 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
 
 Conjugate::Conjugate() : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {}
 
-Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

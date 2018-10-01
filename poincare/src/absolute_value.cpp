@@ -14,8 +14,8 @@ Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayM
   return AbsoluteValueLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return AbsoluteValue(this).shallowReduce(context, angleUnit);
+Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return AbsoluteValue(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
@@ -25,7 +25,7 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Pre
 
 AbsoluteValue::AbsoluteValue() : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {}
 
-Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefined()) {
     return e;

@@ -16,8 +16,8 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return DivisionRemainder(this).shallowReduce(context, angleUnit);
+Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return DivisionRemainder(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -33,7 +33,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
 }
 DivisionRemainder::DivisionRemainder() : Expression(TreePool::sharedPool()->createTreeNode<DivisionRemainderNode>()) {}
 
-Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

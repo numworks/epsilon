@@ -7,8 +7,8 @@
 
 namespace Poincare {
 
-Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixDimension(this).shallowReduce(context, angleUnit);
+Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return MatrixDimension(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -35,7 +35,7 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
 
 MatrixDimension::MatrixDimension() : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {}
 
-Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

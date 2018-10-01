@@ -9,13 +9,13 @@ Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return RealPart(this).shallowReduce(context, angleUnit);
+Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return RealPart(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 RealPart::RealPart() : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {}
 
-Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

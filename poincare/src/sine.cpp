@@ -21,13 +21,13 @@ Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Sine(this).shallowReduce(context, angleUnit);
+Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Sine(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Sine::Sine() : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {}
 
-Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

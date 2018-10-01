@@ -46,7 +46,7 @@ private:
   static const char * name() { return "^"; }
 
   // Simplify
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
@@ -71,7 +71,7 @@ public:
   Power(const PowerNode * n) : Expression(n) {}
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:

@@ -193,7 +193,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   /* Do not replace symbols in expression of type: var+3->A. Store needs to
    * replace unknown variables first. */
   Expression p = parent();
-  if (!p.isUninitialized() && p.type() == ExpressionNode::Type::Store) {
+  if (!replaceSymbols ||(!p.isUninitialized() && p.type() == ExpressionNode::Type::Store)) {
     return *this;
   }
   const Expression e = context.expressionForSymbol(*this);

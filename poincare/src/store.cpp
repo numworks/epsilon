@@ -14,8 +14,8 @@ extern "C" {
 
 namespace Poincare {
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Store(this).shallowReduce(context, angleUnit);
+Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Store(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -44,7 +44,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
@@ -58,7 +58,7 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   context.setExpressionForSymbol(finalValue, symbol(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);
-  return childAtIndex(1).shallowReduce(context, angleUnit);
+  return c1.shallowReduce(context, angleUnit, false);
 }
 
 }

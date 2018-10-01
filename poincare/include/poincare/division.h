@@ -49,7 +49,7 @@ public:
   }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
 
 private:
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
@@ -68,7 +68,7 @@ public:
     replaceChildAtIndexInPlace(1, denominator);
   }
   Division(const DivisionNode * n) : Expression(n) {}
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

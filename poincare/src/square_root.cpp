@@ -29,14 +29,14 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
-Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return SquareRoot(this).shallowReduce(context, angleUnit);
+Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return SquareRoot(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 
 SquareRoot::SquareRoot() : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {}
 
-Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

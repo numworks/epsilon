@@ -24,13 +24,13 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
-Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Tangent(this).shallowReduce(context, angleUnit);
+Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Tangent(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Tangent::Tangent() : Expression(TreePool::sharedPool()->createTreeNode<TangentNode>()) {}
 
-Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

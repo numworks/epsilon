@@ -12,8 +12,8 @@ Layout LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMode floatDi
   return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return LeastCommonMultiple(this).shallowReduce(context, angleUnit);
+Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return LeastCommonMultiple(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -46,7 +46,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
 
 LeastCommonMultiple::LeastCommonMultiple() : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {}
 
-Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

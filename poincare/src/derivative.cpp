@@ -20,8 +20,8 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Derivative(this).shallowReduce(context, angleUnit);
+Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Derivative(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -120,7 +120,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
 
 Derivative::Derivative() : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {}
 
-Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

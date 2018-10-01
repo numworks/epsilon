@@ -15,8 +15,8 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return FracPart(this).shallowReduce(context, angleUnit);
+Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return FracPart(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -29,7 +29,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 
 FracPart::FracPart() : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {}
 
-Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

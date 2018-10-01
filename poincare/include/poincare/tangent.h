@@ -32,7 +32,7 @@ private:
   const char * name() const { return "tan"; }
 
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
 
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
@@ -52,7 +52,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

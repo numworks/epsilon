@@ -34,7 +34,7 @@ private:
   }
   const char * name() const { return "cos"; }
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);
@@ -52,7 +52,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

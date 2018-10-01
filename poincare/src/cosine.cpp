@@ -21,13 +21,13 @@ Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
   return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Cosine(this).shallowReduce(context, angleUnit);
+Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Cosine(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Cosine::Cosine() : Expression(TreePool::sharedPool()->createTreeNode<CosineNode>()) {}
 
-Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

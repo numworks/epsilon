@@ -26,7 +26,7 @@ public:
 
 private:
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -46,7 +46,8 @@ public:
 
   // Store
   const Symbol symbol() const {
-    assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol);
+    assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol
+        || childAtIndex(1).type() == ExpressionNode::Type::Function);
     return childAtIndex(1).convert<const Symbol>();
   }
   const Expression value() const {
@@ -54,7 +55,7 @@ public:
   }
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

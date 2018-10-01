@@ -13,8 +13,8 @@ Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDis
   return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return PermuteCoefficient(this).shallowReduce(context, angleUnit);
+Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return PermuteCoefficient(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -41,7 +41,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
 
 PermuteCoefficient::PermuteCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<PermuteCoefficientNode>()) {}
 
-Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

@@ -10,8 +10,8 @@ Layout ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::Prefix(ArcCosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression ArcCosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ArcCosine(this).shallowReduce(context, angleUnit);
+Expression ArcCosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return ArcCosine(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -31,7 +31,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
 
 ArcCosine::ArcCosine() : Expression(TreePool::sharedPool()->createTreeNode<ArcCosineNode>()) {}
 
-Expression ArcCosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ArcCosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

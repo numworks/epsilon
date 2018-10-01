@@ -69,8 +69,6 @@ using namespace Poincare;
 %nonassoc UNARY_MINUS
 %right POW
 %left BANG
-%nonassoc LEFT_PARENTHESIS
-%nonassoc RIGHT_PARENTHESIS
 %nonassoc LEFT_BRACKET
 %nonassoc RIGHT_BRACKET
 %nonassoc LEFT_BRACE
@@ -81,6 +79,9 @@ using namespace Poincare;
 %nonassoc DIGITS
 %nonassoc TERM
 %nonassoc SYMBOL FINAL_SYMBOL
+%nonassoc SYMBOL_TO_FUNCTION
+%nonassoc LEFT_PARENTHESIS
+%nonassoc RIGHT_PARENTHESIS
 %nonassoc UNDEFINED_SYMBOL
 
 /* During error recovery, some symbols need to be discarded. No destructor need
@@ -114,8 +115,8 @@ number : DIGITS { $$ = $1; }
        | DIGITS DIGITS { YYERROR; }
        ;
 
-symb   : SYMBOL { $$ = $1; }
-       | SYMBOL LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
+symb   : SYMBOL LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS %prec SYMBOL_TO_FUNCTION { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
+       | SYMBOL { $$ = $1; }
        ;
 
 term   : TERM   { $$ = $1; }

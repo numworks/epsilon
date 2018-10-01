@@ -26,13 +26,13 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Ang
   return Complex<T>(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Floor(this).shallowReduce(context, angleUnit);
+Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Floor(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Floor::Floor() : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {}
 
-Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

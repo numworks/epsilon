@@ -162,8 +162,8 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
-  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -221,13 +221,13 @@ protected:
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowReduce(context, angleUnit); }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) { return node()->shallowReduce(context, angleUnit); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 private:
   /* Simplification */
-  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }
 
   /* Approximation */

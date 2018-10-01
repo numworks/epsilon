@@ -19,8 +19,8 @@ extern "C" {
 }
 namespace Poincare {
 
-Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Equal(this).shallowReduce(context, angleUnit);
+Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Equal(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout EqualNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -45,7 +45,7 @@ Expression Equal::standardEquation(Context & context, Preferences::AngleUnit ang
   return sub.deepReduce(context, angleUnit);
 }
 
-Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

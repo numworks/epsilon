@@ -44,7 +44,7 @@ public:
 
   /* Simplification */
   bool shouldBeReplacedWhileReducing(Context & context) const;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
@@ -84,7 +84,7 @@ public:
   bool matches(ExpressionTest test, Context & context) const;
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 

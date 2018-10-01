@@ -31,8 +31,8 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "int");
 }
 
-Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Integral(this).shallowReduce(context, angleUnit);
+Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Integral(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -186,7 +186,7 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 
 Integral::Integral() : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {}
 
-Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

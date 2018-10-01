@@ -31,8 +31,8 @@ Layout LogarithmNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMo
 }
 
 template<int T>
-Expression LogarithmNode<T>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Logarithm(this).shallowReduce(context, angleUnit);
+Expression LogarithmNode<T>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Logarithm(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<int T>
@@ -58,7 +58,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
   return Complex<U>(result);
 }
 
-Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
+Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols){
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -302,8 +302,8 @@ template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincar
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-template Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+template Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
+template Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
 template Expression LogarithmNode<1>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 template Expression LogarithmNode<2>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 

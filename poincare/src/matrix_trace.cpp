@@ -9,8 +9,8 @@
 
 namespace Poincare {
 
-Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixTrace(this).shallowReduce(context, angleUnit);
+Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return MatrixTrace(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -30,7 +30,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
 
 MatrixTrace::MatrixTrace() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {}
 
-Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

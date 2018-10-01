@@ -161,7 +161,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 
 Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication determinant) {
   // The matrix children have to be reduced to be able to spot 0
-  reduceChildren(context, angleUnit);
+  reduceChildren(context, angleUnit, true);
 
   int m = numberOfRows();
   int n = numberOfColumns();

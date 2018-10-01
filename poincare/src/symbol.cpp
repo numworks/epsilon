@@ -137,8 +137,8 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return strlcpy(buffer, m_name, bufferSize);
 }
 
-Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Symbol(this).shallowReduce(context, angleUnit);
+Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Symbol(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 bool SymbolNode::shouldBeReplacedWhileReducing(Context & context) const {
@@ -189,7 +189,7 @@ bool Symbol::matches(ExpressionTest test, Context & context) const {
   return !e.isUninitialized() && test(e, context);
 }
 
-Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   /* Do not replace symbols in expression of type: var+3->A. Store needs to
    * replace unknown variables first. */
   Expression p = parent();

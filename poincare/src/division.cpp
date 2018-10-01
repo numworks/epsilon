@@ -35,8 +35,8 @@ Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return FractionLayout(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Division(this).shallowReduce(context, angleUnit);
+Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Division(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
@@ -62,7 +62,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 Division::Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
 
-Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

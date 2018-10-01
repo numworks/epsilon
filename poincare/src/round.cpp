@@ -11,8 +11,8 @@ Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Round(this).shallowReduce(context, angleUnit);
+Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Round(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -30,7 +30,7 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
 
 Round::Round() : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {}
 
-Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

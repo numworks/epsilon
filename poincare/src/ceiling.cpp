@@ -26,13 +26,13 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Ceiling(this).shallowReduce(context, angleUnit);
+Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Ceiling(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Ceiling::Ceiling() : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {}
 
-Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

@@ -17,8 +17,8 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ComplexArgument(this).shallowReduce(context, angleUnit);
+Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return ComplexArgument(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 template<typename T>
@@ -28,7 +28,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
 
 ComplexArgument::ComplexArgument() : Expression(TreePool::sharedPool()->createTreeNode<ComplexArgumentNode>()) {}
 
-Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

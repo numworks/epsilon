@@ -41,8 +41,8 @@ Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Addition(this).shallowReduce(context, angleUnit);
+Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Addition(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -131,7 +131,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
   return result;
 }
 
-Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

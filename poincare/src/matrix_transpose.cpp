@@ -7,8 +7,8 @@
 #include <cmath>
 
 namespace Poincare {
-Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixTranspose(this).shallowReduce(context, angleUnit);
+Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return MatrixTranspose(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -34,7 +34,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
 
 MatrixTranspose::MatrixTranspose() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTransposeNode>()) {}
 
-Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

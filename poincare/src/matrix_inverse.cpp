@@ -10,8 +10,8 @@
 
 namespace Poincare {
 
-Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixInverse(this).shallowReduce(context, angleUnit);
+Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return MatrixInverse(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -40,7 +40,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
 
 MatrixInverse::MatrixInverse() : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {}
 
-Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

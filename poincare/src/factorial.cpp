@@ -26,8 +26,8 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Factorial(this).shallowReduce(context, angleUnit);
+Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  return Factorial(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Expression FactorialNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -83,7 +83,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 Factorial::Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
 
-Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

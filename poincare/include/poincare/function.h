@@ -19,6 +19,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Function; }
+  Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
@@ -45,6 +46,7 @@ public:
   }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression);
 };
 
 }

@@ -80,11 +80,12 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     if (m_currentPage == Page::Scalar) {
       const char symbolName[2] = {static_cast<char>('A'+selectedRow()), 0};
-      m_context->setExpressionForSymbolName(Expression(), symbolName, *m_context);
+      Symbol symbol = Symbol(symbolName, 2);
+      m_context->setExpressionForSymbol(Expression(), symbol, *m_context);
     }
     if (m_currentPage == Page::Matrix) {
       const Symbol symbol("M0", 2); // FIXME: dummy variable box controller
-      m_context->setExpressionForSymbolName(Expression(), symbol.name(), *m_context);
+      m_context->setExpressionForSymbol(Expression(), symbol, *m_context);
       m_matrixLayouts[selectedRow()] = Layout();
     }
     m_selectableTableView.reloadData();

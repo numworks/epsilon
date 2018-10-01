@@ -1,11 +1,16 @@
 #include <poincare/function.h>
 #include <poincare/layout_helper.h>
+#include <poincare/parenthesis.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/rational.h>
 #include <cmath>
 
 namespace Poincare {
+
+Expression FunctionNode::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+  return Function(this).replaceSymbolWithExpression(symbol, expression);
+}
 
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Expression e = context.expressionForSymbol(Function(this));
@@ -47,7 +52,7 @@ float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUn
 VariableContext FunctionNode::xContext(Context & parentContext) const {
   const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
   VariableContext xContext = VariableContext(x, &parentContext);
-  xContext.setExpressionForSymbolName(Expression(childAtIndex(0)), x, xContext);
+  xContext.setExpressionForSymbol(Expression(childAtIndex(0)), Symbol(x, 1), xContext);
   return xContext;
 }
 
@@ -89,6 +94,26 @@ Function::Function(const char * name) :
 
 Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Expression::defaultShallowReduce(context, angleUnit);
+}
+
+Expression Function::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+  // Replace the symbol in the child
+  childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
+  if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
+    Expression value = expression.clone();
+    // Replace the unknown in the new expression by the function's child
+    const char x[2] = {SpecialSymbols::UnknownX, 0};
+    Symbol xSymbol = Symbol(x, 1);
+    Expression xValue = childAtIndex(0);
+    value.replaceSymbolWithExpression(xSymbol, xValue);
+    Expression p = parent();
+    if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
+      value = Parenthesis(value);
+    }
+    replaceWithInPlace(value);
+    return value;
+  }
+  return *this;
 }
 
 }

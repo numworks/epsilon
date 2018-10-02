@@ -13,11 +13,8 @@ public:
     Equal,
     Store,
     RightBracket,
-    LeftBracket,
     RightBrace,
-    LeftBrace,
     RightParenthesis,
-    LeftParenthesis,
     Plus,
     Minus,
     Times,
@@ -25,6 +22,9 @@ public:
     Power,
     SquareRoot,
     Bang,
+    LeftBracket,
+    LeftBrace,
+    LeftParenthesis,
     Number,
     Identifier,
     Comma,
@@ -36,21 +36,11 @@ public:
   Type type() const { return m_type; }
   bool is(Type t) const { return m_type == t; }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
-  bool isLeftGroupingToken() const {
-    return is(Type::LeftBracket) || is(Type::LeftParenthesis) || is(Type::LeftBrace);
-  }
-  bool isRightGroupingToken() const {
-    return is(Type::RightBracket) || is(Type::RightParenthesis) || is(Type::RightBrace);
-  }
-  const char * text() const { return m_text; }
-  void setText(const char * text) { m_text = text; }
-  size_t length() const { return m_length; }
-  void setLength(size_t length) { m_length = length; }
-
+  Expression expression() const { return m_expression; }
+  void setExpression(Expression e) { m_expression = e; }
 private:
   Type m_type;
-  const char * m_text;
-  size_t m_length;
+  Expression m_expression;
 };
 
 }

@@ -40,7 +40,7 @@ Token Tokenizer::popNumber() {
   const char * exponentPartText = m_text;
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
-  if (canPopChar('e')) {
+  if (canPopChar(Ion::Charset::Exponent)) {
     exponentIsNegative = canPopChar('-');
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
@@ -119,7 +119,7 @@ Token Tokenizer::popToken() {
   if (canPopChar(Ion::Charset::Sto)) {
     return Token(Token::Type::Store);
   }
-  if (canPopChar(Ion::Charset::Root)) { // 
+  if (canPopChar(Ion::Charset::Root)) {
     return Token(Token::Type::SquareRoot);
   }
   if (canPopChar(0)) {

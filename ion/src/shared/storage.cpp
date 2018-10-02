@@ -183,6 +183,20 @@ Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, co
   return Record();
 }
 
+void Storage::destroyRecordsWithExtension(const char * extension) {
+  size_t extensionLength = strlen(extension);
+  char * currentRecordStart = (char *)m_buffer;
+  while (currentRecordStart != nullptr && sizeOfRecordStarting(currentRecordStart) != 0) {
+    const char * currentFullName = fullNameOfRecordStarting(currentRecordStart);
+    if (FullNameHasExtension(currentFullName, extension, extensionLength)) {
+      Record currentRecord(currentFullName);
+      currentRecord.destroy();
+      continue;
+    }
+    currentRecordStart = *(RecordIterator(currentRecordStart).operator++());
+  }
+}
+
 const char * Storage::fullNameOfRecord(const Record record) {
   for (char * p : *this) {
     Record currentRecord(fullNameOfRecordStarting(p));

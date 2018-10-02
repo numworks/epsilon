@@ -119,7 +119,7 @@ Expression Parser::parseLeftParenthesis(Expression leftHandSide) {
 
 Expression Parser::parseSquareRoot(Expression leftHandSide) {
   assert(leftHandSide.isUninitialized());
-  return SquareRoot(parseUntil(Token::Type::Bang)); // FIXME what is the precedence of SquareRoot?
+  return SquareRoot(parseUntil(Token::Type::SquareRoot));
 }
 
 Expression Parser::parseBang(Expression leftHandSide) {

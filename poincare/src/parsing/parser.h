@@ -1,6 +1,12 @@
 #ifndef POINCARE_PARSING_PARSER_H
 #define POINCARE_PARSING_PARSER_H
 
+/* A precedence-climbing parser is implemented hereafter.
+ * It is a trade-off between
+ *   a readable but less efficient recursive-descent parser
+ * and
+ *   an efficient but less readable shunting-yard parser. */
+
 #include "tokenizer.h"
 
 #include <poincare/addition.h>
@@ -15,8 +21,6 @@
 #include <poincare/store.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
-// matrix ? with brackets
-// braces ?
 
 namespace Poincare {
 

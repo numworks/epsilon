@@ -144,7 +144,7 @@ bool Parser::canPopToken(Token::Type stoppingType) {
   }
   if (comparePrecedence(m_nextToken.type(), stoppingType)) {
     m_currentToken = m_nextToken;
-    m_nextToken = popToken();
+    m_nextToken = m_tokenizer.popToken();
     return true;
   }
   return false;

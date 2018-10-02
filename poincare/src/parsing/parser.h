@@ -41,6 +41,10 @@ public:
   Expression noParse(Expression leftHandSide);
 private:
   Expression parseUntil(Token::Type stoppingType);
+  void popToken() {
+    m_currentToken = m_nextToken;
+    m_nextToken = m_tokenizer.popToken();
+  }
   bool canPopToken(Token::Type stoppingType);
 
   Tokenizer m_tokenizer;

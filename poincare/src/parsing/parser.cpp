@@ -2,6 +2,82 @@
 
 namespace Poincare {
 
+typedef Expression (Parser::*TokenParser)(Expression leftHandSide);
+
+Expression Parser::parse() {
+  return parseUntil(Token::Type::EndOfStream);
+}
+
+Expression Parser::parseUntil(Token::Type stoppingType) {
+  const TokenParser tokenParsers[] = {
+    &Parser::noParse, //EndOfStream
+    &Parser::parseEqual,
+    &Parser::noParse, //Store, FIXME
+    &Parser::noParse, //RightBracket,
+    &Parser::noParse, //RightBrace,
+    &Parser::noParse, //RightParenthesis,
+    &Parser::parsePlus,
+    &Parser::parseMinus,
+    &Parser::parseTimes,
+    &Parser::parseSlash,
+    &Parser::parsePower,
+    &Parser::parseSquareRoot,
+    &Parser::parseBang,
+    &Parser::noParse, //LeftBracket, FIXME
+    &Parser::noParse, //LeftBrace, FIXME
+    &Parser::parseLeftParenthesis,
+    &Parser::parseNumber,
+    &Parser::noParse, //Identifier, FIXME
+    &Parser::noParse, //Comma, FIXME
+    &Parser::noParse //Undefined
+  };
+
+  Expression leftHandSide;
+  popToken();
+  do {
+    int parserIndex = static_cast<int>(m_currentToken.type());
+    leftHandSide = (this->*(tokenParsers[parserIndex]))(leftHandSide);
+  } while (canPopToken(stoppingType));
+  assert(!leftHandSide.isUninitialized());
+  return leftHandSide;
+}
+
+static inline bool tokenTypesCanBeImplicitlyMultiplied(Token::Type t1, Token::Type t2) {
+  return
+    (t1 == Token::Type::RightParenthesis || t1 == Token::Type::Number || t1 == Token::Type::Identifier)
+    &&
+    (t2 == Token::Type::LeftParenthesis  || t2 == Token::Type::Number || t2 == Token::Type::Identifier || t2 == Token::Type::SquareRoot);
+  //TODO if (t1 == Token::Type::Identifier && t2 == Token::Type::LeftParenthesis) t1 should be parsed as a function
+}
+
+static inline bool comparePrecedence(Token::Type nextTokenType, Token::Type stoppingType) {
+  // if (stoppingType == EndOfStream) return nextTokenType > EndOfStream
+  // if (stoppingType == RightParenthesis) return nextTokenType > RightParenthesis
+  // if (stoppingType == Plus) return nextTokenType > Plus
+  // if (stoppingType == Times) return nextTokenType > Times
+  // if (stoppingType == Power) return nextTokenType >= Power // >= makes the operator right-associative
+  // EndOfStream < RightParenthesis < Plus < Times < Power
+  return
+    (nextTokenType > stoppingType)
+    ||
+    (nextTokenType == stoppingType && stoppingType == Token::Type::Power);
+}
+
+bool Parser::canPopToken(Token::Type stoppingType) {
+  if (tokenTypesCanBeImplicitlyMultiplied(m_currentToken.type(), m_nextToken.type())) {
+    m_currentToken = Token(Token::Type::Times);
+    return true;
+  }
+  if (comparePrecedence(m_nextToken.type(), stoppingType)) {
+    popToken();
+    return true;
+  }
+  return false;
+}
+
+
+/* Specific TokenParsers */
+
 Expression Parser::parseNumber(Expression leftHandSide) {
   assert(leftHandSide.isUninitialized());
   return m_currentToken.expression();
@@ -24,7 +100,7 @@ Expression Parser::parseSlash(Expression leftHandSide) {
 
 Expression Parser::parseMinus(Expression leftHandSide) {
   if (leftHandSide.isUninitialized()) {
-    return Opposite(parseUntil(Token::Type::Times));
+    return Opposite(parseUntil(Token::Type::Slash));
   } else {
     return Subtraction(leftHandSide, parseUntil(Token::Type::Minus)); // Subtraction is left-associative.
   }
@@ -77,77 +153,5 @@ Expression Parser::noParse(Expression leftHandSide) { // FIXME nullptr?
   return leftHandSide;
 }
 
-typedef Expression (Parser::*TokenParser)(Expression leftHandSide);
-
-TokenParser tokenParsers[] = {
-  &Parser::noParse, //EndOfStream
-  &Parser::parseEqual,
-  &Parser::noParse, //Store, FIXME
-  &Parser::noParse, //RightBracket,
-  &Parser::noParse, //RightBrace,
-  &Parser::noParse, //RightParenthesis,
-  &Parser::parsePlus,
-  &Parser::parseMinus,
-  &Parser::parseTimes,
-  &Parser::parseSlash,
-  &Parser::parsePower,
-  &Parser::parseSquareRoot,
-  &Parser::parseBang,
-  &Parser::noParse, //LeftBracket, FIXME
-  &Parser::noParse, //LeftBrace, FIXME
-  &Parser::parseLeftParenthesis,
-  &Parser::parseNumber,
-  &Parser::noParse, //Identifier, FIXME
-  &Parser::noParse, //Comma, FIXME
-  &Parser::noParse //Undefined
-};
-
-Expression Parser::parse() {
-  return parseUntil(Token::Type::EndOfStream);
-}
-
-Expression Parser::parseUntil(Token::Type stoppingType) {
-  Expression leftHandSide;
-  while (canPopToken(stoppingType)) {
-    leftHandSide = (this->*(tokenParsers[static_cast<int>(m_currentToken.type())]))(leftHandSide);
-  }
-  assert(!leftHandSide.isUninitialized());
-  return leftHandSide;
-}
-
-static inline bool tokenTypesCanBeImplicitlyMultiplied(Token::Type t1, Token::Type t2) {
-  return
-    (t1 == Token::Type::RightParenthesis || t1 == Token::Type::Number || t1 == Token::Type::Identifier)
-    &&
-    (t2 == Token::Type::LeftParenthesis  || t2 == Token::Type::Number || t2 == Token::Type::Identifier || t2 == Token::Type::SquareRoot);
-  //TODO if (t1 == Token::Type::Identifier && t2 == Token::Type::LeftParenthesis) t1 should be parsed as a function
-}
-
-static inline bool comparePrecedence(Token::Type nextTokenType, Token::Type stoppingType) {
-  // if (stoppingType == EndOfStream) return nextTokenType > EndOfStream
-  // if (stoppingType == RightParenthesis) return nextTokenType > RightParenthesis
-  // if (stoppingType == Plus) return nextTokenType > Plus
-  // if (stoppingType == Times) return nextTokenType > Times
-  // if (stoppingType == Power) return nextTokenType >= Power // >= makes the operator right-associative
-  // EndOfStream < RightParenthesis < Plus < Times < Power
-  return ((nextTokenType > stoppingType) ||
-          (nextTokenType == stoppingType &&
-          (stoppingType == Token::Type::Power)
-         ) &&
-         (nextTokenType != Token::Type::EndOfStream));
-}
-
-bool Parser::canPopToken(Token::Type stoppingType) {
-  if (tokenTypesCanBeImplicitlyMultiplied(m_currentToken.type(), m_nextToken.type())) {
-    m_currentToken = Token(Token::Type::Times);
-    return true;
-  }
-  if (comparePrecedence(m_nextToken.type(), stoppingType)) {
-    m_currentToken = m_nextToken;
-    m_nextToken = m_tokenizer.popToken();
-    return true;
-  }
-  return false;
-}
 
 }

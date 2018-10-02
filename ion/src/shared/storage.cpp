@@ -124,7 +124,7 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
   size_t extensionLength = strlen(extension);
   for (char * p : *this) {
     const char * name = fullNameOfRecordStarting(p);
-    if (fullNameHasExtension(name, extension, extensionLength)) {
+    if (FullNameHasExtension(name, extension, extensionLength)) {
       count++;
     }
   }
@@ -137,7 +137,7 @@ Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int 
   size_t extensionLength = strlen(extension);
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
-    if (fullNameHasExtension(currentName, extension, extensionLength)) {
+    if (FullNameHasExtension(currentName, extension, extensionLength)) {
       currentIndex++;
     }
     if (currentIndex == index) {
@@ -194,7 +194,7 @@ const char * Storage::fullNameOfRecord(const Record record) {
 }
 
 Storage::Record::ErrorStatus Storage::setFullNameOfRecord(const Record record, const char * fullName) {
-  if (!fullNameCompliant(fullName)) {
+  if (!FullNameCompliant(fullName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
   if (isFullNameTaken(fullName, &record)) {
@@ -372,7 +372,7 @@ bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
   return false;
 }
 
-bool Storage::fullNameCompliant(const char * fullName) {
+bool Storage::FullNameCompliant(const char * fullName) {
   // We check that there is one dot and one dot only.
   const char * dotChar = strchr(fullName, k_dotChar);
   if (dotChar == nullptr) {
@@ -384,7 +384,7 @@ bool Storage::fullNameCompliant(const char * fullName) {
   return false;
 }
 
-bool Storage::fullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength) {
+bool Storage::FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength) {
   size_t fullNameLength = strlen(fullName);
   if (fullNameLength > extensionLength) {
     const char * ext = fullName + fullNameLength - extensionLength;

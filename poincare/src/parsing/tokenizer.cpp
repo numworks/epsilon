@@ -10,7 +10,7 @@ bool Tokenizer::canPopChar(char c) {
   return false;
 }
 
-size_t Tokenizer::popInteger() {
+size_t Tokenizer::popDigits() {
   size_t length = 0;
   char c = currentChar();
   while (c >= '0' && c <= '9') {
@@ -22,12 +22,13 @@ size_t Tokenizer::popInteger() {
 
 Token Tokenizer::popNumber() {
   const char * integerPartText = m_text;
-  size_t integerPartLength = popInteger();
+  size_t integerPartLength = popDigits();
 
-/*  const char * decimalPartText = m_text;
+  const char * decimalPartText = m_text;
   size_t decimalPartLength = 0;
   if (canPopChar('.')) {
-    decimalPartLength = popInteger();
+    decimalPartText = m_text;
+    decimalPartLength = popDigits();
   }
 
   if (integerPartLength == 0 && decimalPartLength == 0) {
@@ -39,18 +40,14 @@ Token Tokenizer::popNumber() {
   bool exponentIsNegative = false;
   if (canPopChar('e')) {
     exponentIsNegative = canPopChar('-');
-    exponentPartLength = popInteger();
+    exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
       return Token();
     }
   }
 
   Token result(Token::Type::Number);
-  //TODO result.setExpression(Number(integerPartText, integerPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
-  return result;*/
-  Token result(Token::Type::Number);
-  result.setText(integerPartText);
-  result.setLength(integerPartLength);
+  result.setExpression(Number::ParseNumber(integerPartText, integerPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
   return result;
 }
 
@@ -59,7 +56,6 @@ static inline bool isLetter(char c) {
 }
 
 Token Tokenizer::popIdentifier() {
-  const char * text = m_text;
   size_t length = 0;
   char c = currentChar();
   while (isLetter(c)) {
@@ -71,15 +67,18 @@ Token Tokenizer::popIdentifier() {
   return result;
 }
 
-Token Tokenizer::popToken() { // associative array?
+Token Tokenizer::popToken() {
   const char c = currentChar();
-  if (canPopChar(0)) {
-    return Token(Token::Type::EndOfStream);
+  if ((c == '.') || (c >= '0' && c <= '9')) {
+    return popNumber();
+  }
+  if (isLetter(c)) {
+    return popIdentifier();
   }
   if (canPopChar('!')) {
     return Token(Token::Type::Bang);
   }
-  if (c >= '(' && (c <= '/' && c != '.')) {
+  if (c >= '(' && c <= '/' && c != '.') {
     Token::Type typeForChar[] = {
       Token::Type::LeftParenthesis,
       Token::Type::RightParenthesis,
@@ -112,20 +111,17 @@ Token Tokenizer::popToken() { // associative array?
   if (canPopChar('}')) {
     return Token(Token::Type::RightBrace);
   }
-  if (canPopChar('\x89')) {
+  if (canPopChar('\x89')) { // Ion::Charset::SmallPi
     return Token(Token::Type::Number);
   }
-  if (canPopChar('\x90')) {
+  if (canPopChar('\x90')) { // Ion::Charset::Store
     return Token(Token::Type::Store);
   }
-  if (canPopChar('\x91')) {
+  if (canPopChar('\x91')) { // Ion::Charset::Root
     return Token(Token::Type::SquareRoot);
   }
-  if ((c == '.') || (c >= '0' && c <= '9')) {
-    return popNumber();
-  }
-  if (isLetter(c)) {
-    return popIdentifier();
+  if (canPopChar(0)) {
+    return Token(Token::Type::EndOfStream);
   }
   return Token(); // TODO error
 }

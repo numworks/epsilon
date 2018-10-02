@@ -20,12 +20,12 @@
 
 namespace Poincare {
 
-class Parser : public Tokenizer {
+class Parser {
 public:
   Parser(const char * input) :
-    Tokenizer(input),
+    m_tokenizer(input),
     m_currentToken(Token(Token::Type::Undefined)),
-    m_nextToken(popToken()) {}
+    m_nextToken(m_tokenizer.popToken()) {}
   Expression parse();
 
   Expression parseNumber(Expression leftHandSide);
@@ -43,6 +43,7 @@ private:
   Expression parseUntil(Token::Type stoppingType);
   bool canPopToken(Token::Type stoppingType);
 
+  Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
 };

@@ -13,6 +13,7 @@
 #include <poincare/division.h>
 #include <poincare/equal.h>
 #include <poincare/factorial.h>
+#include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>

@@ -1,4 +1,6 @@
 #include "tokenizer.h"
+#include <poincare/number.h>
+#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -111,13 +113,13 @@ Token Tokenizer::popToken() {
   if (canPopChar('}')) {
     return Token(Token::Type::RightBrace);
   }
-  if (canPopChar('\x89')) { // Ion::Charset::SmallPi
+  if (canPopChar(Ion::Charset::SmallPi)) {
     return Token(Token::Type::Number);
   }
-  if (canPopChar('\x90')) { // Ion::Charset::Store
+  if (canPopChar(Ion::Charset::Sto)) {
     return Token(Token::Type::Store);
   }
-  if (canPopChar('\x91')) { // Ion::Charset::Root
+  if (canPopChar(Ion::Charset::Root)) { // 
     return Token(Token::Type::SquareRoot);
   }
   if (canPopChar(0)) {

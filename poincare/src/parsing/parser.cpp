@@ -38,9 +38,6 @@ Expression Parser::parsePower(Expression leftHandSide) {
 Expression Parser::parseLeftParenthesis(Expression leftHandSide) {
   assert(leftHandSide.isUninitialized());
   Expression rightHandSide = parseUntil(Token::Type::RightParenthesis);
-  assert(m_nextToken.type() == Token::Type::RightParenthesis);
-  m_currentToken = m_nextToken;
-  m_nextToken = popToken();
   return Parenthesis(rightHandSide);
 }
 

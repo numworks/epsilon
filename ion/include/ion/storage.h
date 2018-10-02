@@ -82,6 +82,8 @@ public:
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
   Record recordBaseNamedWithExtensions(const char * baseName, const char * extension[], size_t numberOfExtensions);
 
+  // Record destruction
+  void destroyRecordsWithExtension(const char * extension);
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);

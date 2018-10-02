@@ -2,7 +2,6 @@
 #define POINCARE_PARSING_TOKENIZER_H
 
 #include "token.h"
-#include <poincare/number.h>
 
 namespace Poincare {
 

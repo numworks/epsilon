@@ -77,11 +77,8 @@ Token Tokenizer::popToken() {
   if (isLetter(c)) {
     return popIdentifier();
   }
-  if (canPopChar('!')) {
-    return Token(Token::Type::Bang);
-  }
   if (c >= '(' && c <= '/' && c != '.') {
-    Token::Type typeForChar[] = {
+    const Token::Type typeForChar[] = {
       Token::Type::LeftParenthesis,
       Token::Type::RightParenthesis,
       Token::Type::Times,
@@ -94,7 +91,9 @@ Token Tokenizer::popToken() {
     popChar();
     return Token(typeForChar[c - '(']);
   }
-
+  if (canPopChar('!')) {
+    return Token(Token::Type::Bang);
+  }
   if (canPopChar('=')) {
     return Token(Token::Type::Equal);
   }

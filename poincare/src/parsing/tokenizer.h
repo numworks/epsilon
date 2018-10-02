@@ -2,6 +2,7 @@
 #define POINCARE_PARSING_TOKENIZER_H
 
 #include "token.h"
+#include <poincare/number.h>
 
 namespace Poincare {
 
@@ -13,7 +14,7 @@ private:
   const char popChar() { return *++m_text; }
   const char currentChar() const { return *m_text; }
   bool canPopChar(char c);
-  size_t popInteger();
+  size_t popDigits();
   Token popNumber();
   Token popIdentifier();
 

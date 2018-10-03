@@ -50,31 +50,17 @@ static inline bool tokenTypesCanBeImplicitlyMultiplied(Token::Type t1, Token::Ty
   //TODO if (t1 == Token::Type::Identifier && t2 == Token::Type::LeftParenthesis) t1 should be parsed as a function
 }
 
-static inline bool comparePrecedence(Token::Type nextTokenType, Token::Type stoppingType) {
-  // if (stoppingType == EndOfStream) return nextTokenType > EndOfStream
-  // if (stoppingType == RightParenthesis) return nextTokenType > RightParenthesis
-  // if (stoppingType == Plus) return nextTokenType > Plus
-  // if (stoppingType == Times) return nextTokenType > Times
-  // if (stoppingType == Power) return nextTokenType >= Power // >= makes the operator right-associative
-  // EndOfStream < RightParenthesis < Plus < Times < Power
-  return
-    (nextTokenType > stoppingType)
-    ||
-    (nextTokenType == stoppingType && stoppingType == Token::Type::Power);
-}
-
 bool Parser::canPopToken(Token::Type stoppingType) {
   if (tokenTypesCanBeImplicitlyMultiplied(m_currentToken.type(), m_nextToken.type())) {
     m_currentToken = Token(Token::Type::Times);
     return true;
   }
-  if (comparePrecedence(m_nextToken.type(), stoppingType)) {
+  if (m_nextToken.type() > stoppingType) {
     popToken();
     return true;
   }
   return false;
 }
-
 
 /* Specific TokenParsers */
 
@@ -108,7 +94,7 @@ Expression Parser::parseMinus(Expression leftHandSide) {
 
 Expression Parser::parsePower(Expression leftHandSide) {
   assert(!leftHandSide.isUninitialized());
-  return Power(leftHandSide, parseUntil(Token::Type::Power)); // Power is right-associative
+  return Power(leftHandSide, parseUntil(Token::Type::Slash)); // Power is right-associative
 }
 
 Expression Parser::parseLeftParenthesis(Expression leftHandSide) {

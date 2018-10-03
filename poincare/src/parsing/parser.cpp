@@ -37,8 +37,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
   do {
     int parserIndex = static_cast<int>(m_currentToken.type());
     leftHandSide = (this->*(tokenParsers[parserIndex]))(leftHandSide);
-  } while (canPopToken(stoppingType));
-  assert(!leftHandSide.isUninitialized());
+  } while (!leftHandSide.isUninitialized() && canPopToken(stoppingType));
   return leftHandSide;
 }
 
@@ -70,36 +69,41 @@ Expression Parser::parseNumber(Expression leftHandSide) {
 }
 
 Expression Parser::parsePlus(Expression leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
-  return Addition(leftHandSide, parseUntil(Token::Type::Plus)); // Addition is left-associative.
+  return parseBinaryOperator<Addition>(leftHandSide, Token::Type::Plus);
 }
 
 Expression Parser::parseTimes(Expression leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
-  return Multiplication(leftHandSide, parseUntil(Token::Type::Times)); // Multiplication is left-associative.
+  return parseBinaryOperator<Multiplication>(leftHandSide, Token::Type::Times); // Multiplication is left-associative.
 }
 
 Expression Parser::parseSlash(Expression leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
-  return Division(leftHandSide, parseUntil(Token::Type::Power)); // Division is left-associative.
+  return parseBinaryOperator<Division>(leftHandSide, Token::Type::Slash);
 }
 
 Expression Parser::parseMinus(Expression leftHandSide) {
   if (leftHandSide.isUninitialized()) {
     return Opposite(parseUntil(Token::Type::Slash));
   } else {
-    return Subtraction(leftHandSide, parseUntil(Token::Type::Minus)); // Subtraction is left-associative.
+    Expression rightHandSide = parseUntil(Token::Type::Minus); // Subtraction is left-associative
+    if (rightHandSide.isUninitialized()) {
+      return Expression();
+    }
+    return Subtraction(leftHandSide, rightHandSide);
   }
 }
 
 Expression Parser::parsePower(Expression leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
-  return Power(leftHandSide, parseUntil(Token::Type::Slash)); // Power is right-associative
+  return parseBinaryOperator<Power>(leftHandSide, Token::Type::Slash); // Power is right-associative
 }
 
 Expression Parser::parseLeftParenthesis(Expression leftHandSide) {
   assert(leftHandSide.isUninitialized());
   Expression rightHandSide = parseUntil(Token::Type::RightParenthesis);
+
+  if (!expect(Token::Type::RightParenthesis)) {
+    return Expression();
+  }
+
   return Parenthesis(rightHandSide);
 }
 

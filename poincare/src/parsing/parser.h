@@ -32,6 +32,20 @@ public:
     m_currentToken(Token(Token::Type::Undefined)),
     m_nextToken(m_tokenizer.popToken()) {}
   Expression parse();
+private:
+  void popToken() {
+    m_currentToken = m_nextToken;
+    m_nextToken = m_tokenizer.popToken();
+  }
+
+  bool expect(Token::Type type) {
+    popToken();
+    return m_currentToken.type() == type;
+  }
+
+  bool canPopToken(Token::Type stoppingType);
+
+  Expression parseUntil(Token::Type stoppingType);
 
   Expression parseNumber(Expression leftHandSide);
   Expression parsePlus(Expression leftHandSide);
@@ -44,13 +58,18 @@ public:
   Expression parseBang(Expression leftHandSide);
   Expression parseEqual(Expression leftHandSide);
   Expression noParse(Expression leftHandSide);
-private:
-  Expression parseUntil(Token::Type stoppingType);
-  void popToken() {
-    m_currentToken = m_nextToken;
-    m_nextToken = m_tokenizer.popToken();
+
+  template <class T>
+  Expression parseBinaryOperator(Expression leftHandSide, Token::Type type) {
+    if (leftHandSide.isUninitialized()) {
+      return Expression();
+    }
+    Expression rightHandSide = parseUntil(type);
+    if (rightHandSide.isUninitialized()) {
+      return Expression();
+    }
+    return T(leftHandSide, rightHandSide);
   }
-  bool canPopToken(Token::Type stoppingType);
 
   Tokenizer m_tokenizer;
   Token m_currentToken;

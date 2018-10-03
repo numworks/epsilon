@@ -8,12 +8,13 @@ namespace Shared {
 
 class StorageFunction : public StorageExpressionModel {
 public:
-  StorageFunction(const char * name = nullptr, KDColor color = KDColorBlack) :
-    StorageExpressionModel(),
-    m_name(name),
+  StorageFunction(Ion::Storage::Record record, KDColor color = KDColorBlack) :
+    StorageExpressionModel(record),
     m_color(color),
     m_active(true)
-  {}
+  {
+    m_name = record.fullName();
+  }
   virtual uint32_t checksum();
   const char * name() const { return m_name; }
   KDColor color() const { return m_color; }

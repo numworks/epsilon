@@ -11,7 +11,7 @@ namespace Shared {
 class StorageExpressionModel {
   // TODO find better name (once we remove ExpressionModel?)
 public:
-  StorageExpressionModel();
+  StorageExpressionModel(Ion::Storage::Record record);
   void destroy();
   const char * text() const;
   Poincare::Expression expression(Poincare::Context * context) const;

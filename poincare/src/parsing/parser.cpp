@@ -14,8 +14,9 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseEqual,
     &Parser::noParse, //Store, FIXME
     &Parser::noParse, //RightBracket,
+    &Parser::noParse, //RightParenthesis, //FIXME
+    &Parser::noParse, //Comma, FIXME
     &Parser::noParse, //RightBrace,
-    &Parser::noParse, //RightParenthesis,
     &Parser::parsePlus,
     &Parser::parseMinus,
     &Parser::parseTimes,
@@ -24,11 +25,10 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseSquareRoot,
     &Parser::parseBang,
     &Parser::noParse, //LeftBracket, FIXME
-    &Parser::noParse, //LeftBrace, FIXME
     &Parser::parseLeftParenthesis,
+    &Parser::noParse, //LeftBrace, FIXME
     &Parser::parseNumber,
     &Parser::noParse, //Identifier, FIXME
-    &Parser::noParse, //Comma, FIXME
     &Parser::noParse //Undefined
   };
 
@@ -152,6 +152,5 @@ Expression Parser::parseEqual(Expression leftHandSide) {
 Expression Parser::noParse(Expression leftHandSide) { // FIXME nullptr?
   return leftHandSide;
 }
-
 
 }

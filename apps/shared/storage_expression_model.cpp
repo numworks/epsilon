@@ -50,7 +50,13 @@ bool StorageExpressionModel::isEmpty() {
 }
 
 void StorageExpressionModel::setContent(const char * c) {
-  Ion::Storage::Record::Data newData = {.buffer = c, .size = strlen(c) + 1};
+  Expression expressionToStore = Expression::parse(c);
+  GlobalContext context;
+  expressionToStore = expressionToStore.deepReduce(context, Preferences::AngleUnit::Degree, false);
+  const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
+  Symbol xUnknown = Symbol(x, 1);
+  expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);
+  Ion::Storage::Record::Data newData = {.buffer = expressionToStore.addressInPool(), .size = expressionToStore.size()};
   m_record.setValue(newData);
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only

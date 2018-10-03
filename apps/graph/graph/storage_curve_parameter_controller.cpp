@@ -1,5 +1,5 @@
 #include "storage_curve_parameter_controller.h"
-#include "graph_controller.h"
+#include "storage_graph_controller.h"
 #include "../../i18n.h"
 #include <assert.h>
 
@@ -7,7 +7,7 @@ using namespace Shared;
 
 namespace Graph {
 
-StorageCurveParameterController::StorageCurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, StorageGraphView * graphView, GraphController * graphController, StorageCartesianFunctionStore * functionStore) :
+StorageCurveParameterController::StorageCurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, StorageGraphView * graphView, StorageGraphController * graphController, StorageCartesianFunctionStore * functionStore) :
   Shared::StorageFunctionCurveParameterController<StorageCartesianFunction>(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_graphController(graphController),

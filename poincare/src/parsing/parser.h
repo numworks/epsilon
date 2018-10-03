@@ -37,30 +37,39 @@ private:
     m_currentToken = m_nextToken;
     m_nextToken = m_tokenizer.popToken();
   }
-
   bool expect(Token::Type type) {
     popToken();
-    return m_currentToken.type() == type;
+    return m_currentToken.is(type);
   }
-
+  bool accept(Token::Type type) {
+    if (m_nextToken.is(type)) {
+      popToken();
+      return true;
+    }
+    return false;
+  }
   bool canPopToken(Token::Type stoppingType);
 
   Expression parseUntil(Token::Type stoppingType);
 
-  Expression parseNumber(Expression leftHandSide);
-  Expression parsePlus(Expression leftHandSide);
-  Expression parseTimes(Expression leftHandSide);
-  Expression parseSlash(Expression leftHandSide);
-  Expression parseMinus(Expression leftHandSide);
-  Expression parsePower(Expression leftHandSide);
-  Expression parseLeftParenthesis(Expression leftHandSide);
-  Expression parseSquareRoot(Expression leftHandSide);
-  Expression parseBang(Expression leftHandSide);
-  Expression parseEqual(Expression leftHandSide);
-  Expression noParse(Expression leftHandSide);
+  Expression noParse(const Expression & leftHandSide);
+  Expression parseNumber(const Expression & leftHandSide);
+  Expression parsePlus(const Expression & leftHandSide);
+  Expression parseTimes(const Expression & leftHandSide);
+  Expression parseSlash(const Expression & leftHandSide);
+  Expression parseMinus(const Expression & leftHandSide);
+  Expression parsePower(const Expression & leftHandSide);
+  Expression parseLeftParenthesis(const Expression & leftHandSide);
+  Expression parseSquareRoot(const Expression & leftHandSide);
+  Expression parseBang(const Expression & leftHandSide);
+  Expression parseEqual(const Expression & leftHandSide);
+  Expression parseMatrix(const Expression & leftHandSide);
+
+  Matrix parseVector();
+  Matrix parseCommaSeparatedList();
 
   template <class T>
-  Expression parseBinaryOperator(Expression leftHandSide, Token::Type type) {
+  Expression parseBinaryOperator(const Expression & leftHandSide, Token::Type type) {
     if (leftHandSide.isUninitialized()) {
       return Expression();
     }

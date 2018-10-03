@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-typedef Expression (Parser::*TokenParser)(Expression leftHandSide);
+typedef Expression (Parser::*TokenParser)(const Expression & leftHandSide);
 
 Expression Parser::parse() {
   return parseUntil(Token::Type::EndOfStream);
@@ -15,8 +15,8 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::noParse, //Store, FIXME
     &Parser::noParse, //RightBracket,
     &Parser::noParse, //RightParenthesis, //FIXME
-    &Parser::noParse, //Comma, FIXME
     &Parser::noParse, //RightBrace,
+    &Parser::noParse, //Comma, FIXME
     &Parser::parsePlus,
     &Parser::parseMinus,
     &Parser::parseTimes,
@@ -24,7 +24,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parsePower,
     &Parser::parseSquareRoot,
     &Parser::parseBang,
-    &Parser::noParse, //LeftBracket, FIXME
+    &Parser::parseMatrix, //LeftBracket,
     &Parser::parseLeftParenthesis,
     &Parser::noParse, //LeftBrace, FIXME
     &Parser::parseNumber,
@@ -63,24 +63,28 @@ bool Parser::canPopToken(Token::Type stoppingType) {
 
 /* Specific TokenParsers */
 
-Expression Parser::parseNumber(Expression leftHandSide) {
+Expression Parser::noParse(const Expression & leftHandSide) {
+  return Expression();
+}
+
+Expression Parser::parseNumber(const Expression & leftHandSide) {
   assert(leftHandSide.isUninitialized());
   return m_currentToken.expression();
 }
 
-Expression Parser::parsePlus(Expression leftHandSide) {
+Expression Parser::parsePlus(const Expression & leftHandSide) {
   return parseBinaryOperator<Addition>(leftHandSide, Token::Type::Plus);
 }
 
-Expression Parser::parseTimes(Expression leftHandSide) {
+Expression Parser::parseTimes(const Expression & leftHandSide) {
   return parseBinaryOperator<Multiplication>(leftHandSide, Token::Type::Times); // Multiplication is left-associative.
 }
 
-Expression Parser::parseSlash(Expression leftHandSide) {
+Expression Parser::parseSlash(const Expression & leftHandSide) {
   return parseBinaryOperator<Division>(leftHandSide, Token::Type::Slash);
 }
 
-Expression Parser::parseMinus(Expression leftHandSide) {
+Expression Parser::parseMinus(const Expression & leftHandSide) {
   if (leftHandSide.isUninitialized()) {
     return Opposite(parseUntil(Token::Type::Slash));
   } else {
@@ -92,11 +96,11 @@ Expression Parser::parseMinus(Expression leftHandSide) {
   }
 }
 
-Expression Parser::parsePower(Expression leftHandSide) {
+Expression Parser::parsePower(const Expression & leftHandSide) {
   return parseBinaryOperator<Power>(leftHandSide, Token::Type::Slash); // Power is right-associative
 }
 
-Expression Parser::parseLeftParenthesis(Expression leftHandSide) {
+Expression Parser::parseLeftParenthesis(const Expression & leftHandSide) {
   assert(leftHandSide.isUninitialized());
   Expression rightHandSide = parseUntil(Token::Type::RightParenthesis);
 
@@ -107,12 +111,12 @@ Expression Parser::parseLeftParenthesis(Expression leftHandSide) {
   return Parenthesis(rightHandSide);
 }
 
-Expression Parser::parseSquareRoot(Expression leftHandSide) {
+Expression Parser::parseSquareRoot(const Expression & leftHandSide) {
   assert(leftHandSide.isUninitialized());
   return SquareRoot(parseUntil(Token::Type::SquareRoot));
 }
 
-Expression Parser::parseBang(Expression leftHandSide) {
+Expression Parser::parseBang(const Expression & leftHandSide) {
   assert(!leftHandSide.isUninitialized());
   return Factorial(leftHandSide);
 }
@@ -127,20 +131,72 @@ Expression Parser::parseBang(Expression leftHandSide) {
   return leftHandSide; // FIXME
 }*/
 
-Expression Parser::parseEqual(Expression leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
-  return Equal(leftHandSide, parseUntil(Token::Type::Equal));
+Expression Parser::parseEqual(const Expression & leftHandSide) {
+  if (leftHandSide.type() == ExpressionNode::Type::Equal) {
+    return Expression();
+  }
+  return parseBinaryOperator<Equal>(leftHandSide, Token::Type::Equal); // Equal is not associative
 }
 
 /*Expression Parser::parseStore(Expression leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
+  if (leftHandSide.isUninitialized()) {
+    return Expression();
+  }
   Expression symbol = parseIdentifier(leftHandSide); // FIXME Symbol
-  // TODO assert(m_nextToken == EndOfStream);
+  if (!expect(Token::Type::EndOfStream)) {
+    return Expression();
+  }
   return Store(leftHandSide, static_cast<Symbol>(symbol));
 }*/
 
-Expression Parser::noParse(Expression leftHandSide) { // FIXME nullptr?
-  return leftHandSide;
+Expression Parser::parseMatrix(const Expression & leftHandSide) {
+  Matrix m;
+  int numberOfRows = 0;
+  int numberOfColumns = 0;
+  if (!leftHandSide.isUninitialized()) {
+    return Expression();
+  }
+
+  // Keep trying to read vectors until we get a closing bracket
+  while (!accept(Token::Type::RightBracket)) {
+    Matrix row = parseVector();
+    if ((numberOfRows == 0 && (numberOfColumns = row.numberOfChildren()) == 0)
+        ||
+        (numberOfColumns != row.numberOfChildren())) {
+      return Expression();
+    }
+    m.addChildrenAsRowInPlace(row, numberOfRows++);
+  }
+
+  if (numberOfRows == 0) {
+    return Expression();
+  }
+  return m;
+}
+
+Matrix Parser::parseVector() {
+  if (!expect(Token::Type::LeftBracket)) {
+    return Matrix();
+  }
+  Matrix commaSeparatedList = parseCommaSeparatedList();
+  if (!expect(Token::Type::RightBracket)) {
+    return Matrix();
+  }
+  return commaSeparatedList;
+}
+
+Matrix Parser::parseCommaSeparatedList() {
+  Matrix commaSeparatedList;
+  int length = 0;
+  do {
+    Expression item = parseUntil(Token::Type::Comma);
+    if (item.isUninitialized()) {
+      return Matrix();
+    }
+    commaSeparatedList.addChildAtIndexInPlace(item, length, length);
+    length++;
+  } while (accept(Token::Type::Comma));
+  return commaSeparatedList;
 }
 
 }

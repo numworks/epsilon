@@ -6,6 +6,7 @@
 #include <poincare/print_float.h>
 #include <poincare/expression_node.h>
 #include <poincare/complex.h>
+#include <ion/storage.h>
 
 #include <stdio.h>
 
@@ -91,6 +92,7 @@ public:
   Expression() : TreeHandle() {}
   Expression clone() const;
   static Expression parse(char const * string);
+  static const Expression ExpressionFromRecord(const Ion::Storage::Record & record, const void * address = nullptr, size_t size = 0);
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();

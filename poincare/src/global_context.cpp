@@ -1,4 +1,5 @@
 #include <poincare/global_context.h>
+#include <poincare/helpers.h>
 #include <poincare/undefined.h>
 #include <poincare/preferences.h>
 #include <assert.h>
@@ -30,7 +31,7 @@ const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
     return Float<double>(M_E);
   }
   // Look up the file system for symbol
-  return ExpressionForRecord(RecordWithName(symbol.name()));
+  return Expression::ExpressionFromRecord(RecordWithName(symbol.name()));
 }
 
 void GlobalContext::setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) {
@@ -38,7 +39,7 @@ void GlobalContext::setExpressionForSymbol(const Expression & expression, const 
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = RecordWithName(symbol.name());
-  Expression e = ExpressionForRecord(record);
+  Expression e = Expression::ExpressionFromRecord(record);
   Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbol, e);
   // Delete any record with same name (as it is going to be overriden)
   record.destroy();
@@ -62,14 +63,6 @@ const char * GlobalContext::ExtensionForExpression(const Expression & exp) {
     return funcExtension;
   }
   return expExtension;
-}
-
-const Expression GlobalContext::ExpressionForRecord(const Ion::Storage::Record & record) {
-  if (record.isNull()) {
-    return Expression();
-  }
-  // Build the Expression in the Tree Pool
-  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(record.value().buffer, record.value().size)));
 }
 
 }

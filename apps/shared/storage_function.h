@@ -8,6 +8,12 @@ namespace Shared {
 
 class StorageFunction : public StorageExpressionModel {
 public:
+  StorageFunction(const char * name = nullptr, KDColor color = KDColorBlack) :
+    StorageExpressionModel(name == nullptr ? Ion::Storage::Record() : Ion::Storage::sharedStorage()->recordNamed(name)),
+    m_name(name),
+    m_color(color),
+    m_active(true)
+  {}
   StorageFunction(Ion::Storage::Record record, KDColor color = KDColorBlack) :
     StorageExpressionModel(record),
     m_color(color),

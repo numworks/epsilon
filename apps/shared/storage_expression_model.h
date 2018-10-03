@@ -27,7 +27,7 @@ public:
   virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
   virtual void setContent(const char * c);
   virtual void tidy();
-private:
+protected:
   Ion::Storage::Record m_record;
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;

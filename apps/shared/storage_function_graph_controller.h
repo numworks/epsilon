@@ -3,11 +3,11 @@
 
 #include <escher.h>
 #include "initialisation_parameter_controller.h"
-#include "function_banner_delegate.h"
+#include "storage_function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include "storage_function_store.h"
-#include "function_graph_view.h"
-#include "function_curve_parameter_controller.h"
+#include "storage_function_graph_view.h"
+#include "storage_function_curve_parameter_controller.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
 #include <cmath>
@@ -16,7 +16,7 @@
 namespace Shared {
 
 template <class T>
-class StorageFunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
+class StorageFunctionGraphController : public InteractiveCurveViewController, public StorageFunctionBannerDelegate<T> {
 public:
   StorageFunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion) :
     InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
@@ -37,7 +37,7 @@ public:
   }
   void viewWillAppear() override {
     functionGraphView()->setCursorView(cursorView());
-    functionGraphView()->setBannerView(bannerView());
+    functionGraphView()->setBannerView(this->bannerView());
     functionGraphView()->setAreaHighlight(NAN,NAN);
 
     if (functionGraphView()->context() == nullptr) {
@@ -176,10 +176,10 @@ private:
   bool isCursorVisible() override {
     return interactiveCurveViewRange()->isCursorVisible(k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   }
-  virtual FunctionGraphView * functionGraphView() = 0;
+  virtual StorageFunctionGraphView<T> * functionGraphView() = 0;
   virtual View * cursorView() = 0;
   virtual StorageFunctionStore<T> * functionStore() const = 0;
-  virtual FunctionCurveParameterController * curveParameterController() = 0;
+  virtual StorageFunctionCurveParameterController<T> * curveParameterController() = 0;
   InitialisationParameterController m_initialisationParameterController;
   Poincare::Preferences::AngleUnit * m_angleUnitVersion;
   int * m_indexFunctionSelectedByCursor;

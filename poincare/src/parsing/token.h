@@ -9,12 +9,13 @@ class Token {
 public:
   enum class Type {
     // Ordered from lower to higher precedence to make parser's job easier
-    EndOfStream, // Must be the first
+    EndOfStream = 0, // Must be the first
     Equal,
     Store,
     RightBracket,
-    RightBrace,
     RightParenthesis,
+    Comma,
+    RightBrace,
     Plus,
     Minus,
     Times,
@@ -23,11 +24,10 @@ public:
     SquareRoot,
     Bang,
     LeftBracket,
-    LeftBrace,
     LeftParenthesis,
+    LeftBrace,
     Number,
     Identifier,
-    Comma,
     Undefined
   };
 

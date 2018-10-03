@@ -12,7 +12,8 @@ class StorageExpressionModelListController : public ViewController, public Selec
 public:
   StorageExpressionModelListController(Responder * parentResponder, I18n::Message text) :
     ViewController(parentResponder),
-    m_addNewModel()
+    m_addNewModel(),
+    m_currentEditedModel()
   {
     m_addNewModel.setMessage(text);
   }
@@ -90,7 +91,8 @@ protected:
       model->text(initialTextContent, TextField::maxBufferSize());
       initialText = initialTextContent;
     }
-    inputController()->edit(this, event, model, initialText,
+    m_currentEditedModel = *model;
+    inputController()->edit(this, event, &m_currentEditedModel, initialText,
         [](void * context, void * sender){
         T * myModel = static_cast<T *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
@@ -113,6 +115,7 @@ protected:
   virtual StorageExpressionModelStore<T> * modelStore() = 0;
   virtual InputViewController * inputController() = 0;
   EvenOddMessageTextCell m_addNewModel;
+  T m_currentEditedModel;
 };
 
 }

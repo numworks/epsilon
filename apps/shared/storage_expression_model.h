@@ -13,8 +13,9 @@ class StorageExpressionModel {
 public:
   StorageExpressionModel(Ion::Storage::Record record);
   void destroy();
-  const char * text() const;
-  Poincare::Expression expression(Poincare::Context * context) const;
+  void text(char * buffer, size_t bufferSize) const;
+  Poincare::Expression expression() const;
+  Poincare::Expression reducedExpression(Poincare::Context * context) const;
   Poincare::Layout layout();
   /* TODO This comment will be true when Sequence inherits from this class
    * Here, isDefined is the exact contrary of isEmpty. However, for Sequence

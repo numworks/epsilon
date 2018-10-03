@@ -10,7 +10,7 @@ StorageGraphController::StorageGraphController(Responder * parentResponder, Stor
   m_bannerView(),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
-  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, &m_view, nullptr /*TODO*/, functionStore),
+  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, &m_view, this, functionStore),
   m_functionStore(functionStore),
   m_displayDerivativeInBanner(false)
 {

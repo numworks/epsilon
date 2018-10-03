@@ -43,7 +43,7 @@ float StorageGraphController::interestingXRange() {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     StorageCartesianFunction f = functionStore()->activeFunctionAtIndex(i);
-    float fRange = f.expression(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
+    float fRange = f.reducedExpression(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
     }

@@ -19,21 +19,24 @@ void StorageExpressionModel::destroy() {
   m_record.destroy();
 }
 
-const char * StorageExpressionModel::text() const {
-  return static_cast<const char *>(m_record.value().buffer);
+void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
+  expression().serialize(buffer, bufferSize);
 }
 
-Poincare::Expression StorageExpressionModel::expression(Poincare::Context * context) const {
+Expression StorageExpressionModel::expression() const {
   if (m_expression.isUninitialized()) {
-    m_expression = PoincareHelpers::ParseAndSimplify(text(), *context);
+    m_expression = Expression::ExpressionFromRecord(m_record);
   }
   return m_expression;
 }
 
+Expression StorageExpressionModel::reducedExpression(Poincare::Context * context) const {
+  return expression().clone().deepReduce(*context, Preferences::AngleUnit::Degree, true);
+}
+
 Layout StorageExpressionModel::layout() {
   if (m_layout.isUninitialized()) {
-    Expression nonSimplifiedExpression = Expression::parse(text());
-    m_layout = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
+    m_layout = PoincareHelpers::CreateLayout(expression());
   }
   return m_layout;
 }

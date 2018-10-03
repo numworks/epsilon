@@ -3,6 +3,7 @@
 
 #include "../shared/storage_function.h"
 #include <poincare/global_context.h>
+#include <poincare/symbol.h>
 
 namespace Graph {
 
@@ -22,7 +23,10 @@ public:
   Poincare::Expression::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::StorageFunction * function) const;
-  const char * symbol() const override { return "x"; }
+  const char * symbol() const override {
+    static const char x[2] = {Poincare::Symbol::UnknownX, 0}; //TODO remove static
+    return x;
+  }
 private:
   bool m_displayDerivative;
 };

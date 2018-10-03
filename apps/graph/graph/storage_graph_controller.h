@@ -1,9 +1,9 @@
 #ifndef GRAPH_STORAGE_GRAPH_CONTROLLER_H
 #define GRAPH_STORAGE_GRAPH_CONTROLLER_H
 
-#include "graph_controller_helper.h"
 #include "banner_view.h"
 #include "storage_curve_parameter_controller.h"
+#include "storage_graph_controller_helper.h"
 #include "storage_graph_view.h"
 #include "../../shared/storage_function_graph_controller.h"
 #include "../../shared/curve_view_cursor.h"
@@ -13,7 +13,7 @@
 
 namespace Graph {
 
-class StorageGraphController : public Shared::StorageFunctionGraphController<StorageCartesianFunction>, public GraphControllerHelper {
+class StorageGraphController : public Shared::StorageFunctionGraphController<StorageCartesianFunction>, public StorageGraphControllerHelper {
 public:
   StorageGraphController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;

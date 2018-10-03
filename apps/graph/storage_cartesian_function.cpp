@@ -24,7 +24,7 @@ StorageCartesianFunction::StorageCartesianFunction(Ion::Storage::Record record) 
 
 double StorageCartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
   const char xUnknown[] = {Symbol::SpecialSymbols::UnknownX, 0};
-  Poincare::Derivative derivative(expression(context).clone(), Symbol(xUnknown, 1), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
+  Poincare::Derivative derivative(reducedExpression(context), Symbol(xUnknown, 1), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
@@ -32,7 +32,7 @@ double StorageCartesianFunction::approximateDerivative(double x, Poincare::Conte
 }
 
 double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  Poincare::Integral integral(expression(context).clone(), Poincare::Float<double>(start), Poincare::Float<double>(end)); // Integral takes ownership of args
+  Poincare::Integral integral(reducedExpression(context), Poincare::Float<double>(start), Poincare::Float<double>(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
@@ -40,19 +40,20 @@ double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poin
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  return expression(context).nextMinimum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  return reducedExpression(context).nextMinimum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  return expression(context).nextMaximum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  return reducedExpression(context).nextMaximum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 double StorageCartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  return expression(context).nextRoot(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  return reducedExpression(context).nextRoot(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::StorageFunction * function) const {
-  return expression(context).nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), function->expression(context));
+  Expression reducedExp = reducedExpression(context);
+  return reducedExp.nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), reducedExp);
 }
 
 

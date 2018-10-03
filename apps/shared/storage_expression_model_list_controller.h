@@ -87,7 +87,7 @@ protected:
     char * initialText = nullptr;
     char initialTextContent[TextField::maxBufferSize()];
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      strlcpy(initialTextContent, model->text(), sizeof(initialTextContent));
+      model->text(initialTextContent, TextField::maxBufferSize());
       initialText = initialTextContent;
     }
     inputController()->edit(this, event, model, initialText,

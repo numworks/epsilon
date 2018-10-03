@@ -16,7 +16,7 @@ StorageCartesianFunction StorageCartesianFunctionStore::NullModel() {
 StorageCartesianFunctionStore::StorageCartesianFunctionStore() :
   Shared::StorageFunctionStore<StorageCartesianFunction>()
 {
-  addEmptyModel();
+  //addEmptyModel();
 }
 
 char StorageCartesianFunctionStore::symbol() const {

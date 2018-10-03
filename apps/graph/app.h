@@ -2,9 +2,9 @@
 #define GRAPH_APP_H
 
 #include <escher.h>
-#include "cartesian_function_store.h"
-#include "graph/graph_controller.h"
-#include "list/list_controller.h"
+#include "storage_cartesian_function_store.h"
+#include "graph/storage_graph_controller.h"
+#include "list/storage_list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
 
@@ -24,22 +24,22 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    CartesianFunctionStore * functionStore();
+    StorageCartesianFunctionStore * functionStore();
     Shared::InteractiveCurveViewRange * graphRange();
   private:
     void tidy() override;
-    CartesianFunctionStore m_functionStore;
+    StorageCartesianFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
   char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
-  ListController m_listController;
+  StorageListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;
   StackViewController m_listStackViewController;
-  GraphController m_graphController;
+  StorageGraphController m_graphController;
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   ButtonRowController m_graphHeader;
   StackViewController m_graphStackViewController;

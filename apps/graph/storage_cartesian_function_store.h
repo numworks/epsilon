@@ -27,6 +27,7 @@ private:
   const char * firstAvailableName() override {
     return firstAvailableAttribute(k_functionNames, FunctionStore::name);
   }*/
+  const char * firstAvailableName() override { return "f"; }
 };
 
 }

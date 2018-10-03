@@ -69,7 +69,7 @@ void StorageGraphController::reloadBannerView() {
   }
   StorageCartesianFunction f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  //TODO reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, &f, myApp);
+  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, &f, myApp);
 }
 
 bool StorageGraphController::moveCursorHorizontally(int direction) {

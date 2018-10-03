@@ -60,11 +60,11 @@ protected:
       return;
     }
     T f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
-    //TODO reloadBannerViewForCursorOnFunction(m_cursor, &f, functionStore()->symbol());
+    this->reloadBannerViewForCursorOnFunction(m_cursor, &f, functionStore()->symbol());
   }
   bool handleEnter() override {
     T f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
-    //TODO curveParameterController()->setFunction(&f);
+    curveParameterController()->setFunction(&f);
     StackViewController * stack = stackController();
     stack->push(curveParameterController());
     return true;
@@ -156,10 +156,9 @@ private:
         nextFunction = f;
       }
     }
-    /* TODO
-     * if (nextFunction == actualFunction) {
+    if (nextFunction == actualFunction) {
       return false;
-    }*/
+    }
     m_cursor->moveTo(m_cursor->x(), nextY);
     interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
     return true;

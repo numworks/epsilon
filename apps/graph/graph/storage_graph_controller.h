@@ -28,7 +28,7 @@ private:
   bool moveCursorHorizontally(int direction) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   StorageCartesianFunctionStore * functionStore() const override;
-  GraphView * functionGraphView() override;
+  StorageGraphView * functionGraphView() override;
   View * cursorView() override {
     return &m_cursorView;
   }

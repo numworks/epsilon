@@ -42,6 +42,24 @@ Expression Expression::parse(char const * string) {
   return expression;
 }
 
+const Expression Expression::ExpressionFromRecord(const Ion::Storage::Record & record, const void * address, size_t size) {
+  if (record.isNull()) {
+    return Expression();
+  }
+  const void * finalAddress;
+  size_t finalSize;
+  if (address == nullptr) {
+    finalAddress = record.value().buffer;
+    assert(size == 0);
+    finalSize = record.value().size;
+  } else {
+    finalAddress = address;
+    finalSize = size;
+  }
+  // Build the Expression in the Tree Pool
+  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(finalAddress, finalSize)));
+}
+
 /* Circuit breaker */
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;

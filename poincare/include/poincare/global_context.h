@@ -26,7 +26,6 @@ private:
   //static constexpr char seqExtension[] = "seq";
   static const char * ExtensionForExpression(const Expression & exp);
   static Ion::Storage::Record RecordWithName(const char * name);
-  static const Expression ExpressionForRecord(const Ion::Storage::Record & record);
 };
 
 }

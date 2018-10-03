@@ -75,7 +75,7 @@ void StorageGraphController::reloadBannerView() {
 bool StorageGraphController::moveCursorHorizontally(int direction) {
   StorageCartesianFunction f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return true; //TODO privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, &f, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, &f, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
 InteractiveCurveViewRange * StorageGraphController::interactiveCurveViewRange() {

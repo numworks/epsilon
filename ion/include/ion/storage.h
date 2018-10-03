@@ -70,6 +70,7 @@ public:
 
   Storage();
   size_t availableSize();
+  uint32_t checksum();
   int numberOfRecordsWithExtension(const char * extension);
 
   // Record creation

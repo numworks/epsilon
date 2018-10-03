@@ -5,9 +5,8 @@ using namespace Shared;
 
 namespace Graph {
 
-StorageGraphView::StorageGraphView(StorageCartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
-  FunctionGraphView(graphRange, cursor, bannerView, cursorView),
+StorageGraphView::StorageGraphView(StorageCartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
+  StorageFunctionGraphView<StorageCartesianFunction>(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),
   m_tangent(false)
 {
@@ -18,11 +17,11 @@ void StorageGraphView::reload() {
     KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height()-m_bannerView->bounds().height()));
     markRectAsDirty(dirtyZone);
   }
-  return FunctionGraphView::reload();
+  return StorageFunctionGraphView<StorageCartesianFunction>::reload();
 }
 
 void StorageGraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  FunctionGraphView::drawRect(ctx, rect);
+  StorageFunctionGraphView<StorageCartesianFunction>::drawRect(ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     StorageCartesianFunction f = m_functionStore->activeFunctionAtIndex(i);
 

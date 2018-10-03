@@ -42,7 +42,7 @@ Layout StorageExpressionModel::layout() {
 }
 
 bool StorageExpressionModel::isDefined() {
-  return m_record.isNull();
+  return !m_record.isNull();
 }
 
 bool StorageExpressionModel::isEmpty() {

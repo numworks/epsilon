@@ -26,7 +26,7 @@ I18n::Message StorageGraphController::emptyMessage() {
 
 void StorageGraphController::viewWillAppear() {
   m_view.drawTangent(false);
-  //TODO FunctionGraphController::viewWillAppear();
+  Shared::StorageFunctionGraphController<StorageCartesianFunction>::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
 }
 
@@ -52,7 +52,7 @@ float StorageGraphController::interestingXRange() {
 }
 
 void StorageGraphController::selectFunctionWithCursor(int functionIndex) {
-  //TODO FunctionGraphController::selectFunctionWithCursor(functionIndex);
+ Shared::StorageFunctionGraphController<StorageCartesianFunction>::selectFunctionWithCursor(functionIndex);
   StorageCartesianFunction f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   m_cursorView.setColor(f.color());
 }
@@ -62,7 +62,7 @@ BannerView * StorageGraphController::bannerView() {
 }
 
 void StorageGraphController::reloadBannerView() {
-  //TODO FunctionGraphController::reloadBannerView();
+  Shared::StorageFunctionGraphController<StorageCartesianFunction>::reloadBannerView();
   m_bannerView.setNumberOfSubviews(2+m_displayDerivativeInBanner);
   if (m_functionStore->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
     return;
@@ -86,12 +86,12 @@ StorageCartesianFunctionStore * StorageGraphController::functionStore() const {
   return m_functionStore;
 }
 
-GraphView * StorageGraphController::functionGraphView() {
-  return nullptr; //TODO&m_view;
+StorageGraphView * StorageGraphController::functionGraphView() {
+  return &m_view;
 }
 
 StorageCurveParameterController * StorageGraphController::curveParameterController() {
-  return nullptr; //TODO<D-k>&m_curveParameterController;
+  return &m_curveParameterController;
 }
 
 }

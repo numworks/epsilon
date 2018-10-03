@@ -1,12 +1,12 @@
 #ifndef GRAPH_STORAGE_GRAPH_VIEW_H
 #define GRAPH_STORAGE_GRAPH_VIEW_H
 
-#include "../../shared/function_graph_view.h"
+#include "../../shared/storage_function_graph_view.h"
 #include "../storage_cartesian_function_store.h"
 
 namespace Graph {
 
-class StorageGraphView : public Shared::FunctionGraphView {
+class StorageGraphView : public Shared::StorageFunctionGraphView<StorageCartesianFunction> {
 public:
   StorageGraphView(StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);

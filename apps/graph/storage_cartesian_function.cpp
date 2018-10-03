@@ -16,7 +16,7 @@ StorageCartesianFunction::StorageCartesianFunction(const char * text, KDColor co
 }
 
 StorageCartesianFunction::StorageCartesianFunction(Ion::Storage::Record record) :
-  Shared::StorageFunction(record.fullName(), KDColorRed),
+  Shared::StorageFunction(record, KDColorRed),
   m_displayDerivative(false)
 {
   // TODO set attributes from record

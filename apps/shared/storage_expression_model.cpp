@@ -8,8 +8,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageExpressionModel::StorageExpressionModel() :
-  m_record(),
+StorageExpressionModel::StorageExpressionModel(Ion::Storage::Record record) :
+  m_record(record),
   m_expression(),
   m_layout()
 {

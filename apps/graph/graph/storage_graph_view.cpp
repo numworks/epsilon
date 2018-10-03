@@ -24,8 +24,6 @@ void StorageGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   StorageFunctionGraphView<StorageCartesianFunction>::drawRect(ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     StorageCartesianFunction f = m_functionStore->activeFunctionAtIndex(i);
-
-#if 0
     /* Draw function (color the area under curve of the selected function) */
     if (f == m_selectedFunction) {
       drawCurve(ctx, rect, [](float t, void * model, void * context) {
@@ -45,13 +43,12 @@ void StorageGraphView::drawRect(KDContext * ctx, KDRect rect) const {
     if (m_tangent && f == m_selectedFunction) {
       float tangentParameter[2];
       tangentParameter[0] = f.approximateDerivative(m_curveViewCursor->x(), context());
-      tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateAtAbscissa(m_curveViewCursor->x(), context());
+      tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f.evaluateAtAbscissa(m_curveViewCursor->x(), context());
       drawCurve(ctx, rect, [](float t, void * model, void * context) {
           float * tangent = (float *)model;
           return tangent[0]*t+tangent[1];
         }, tangentParameter, nullptr, Palette::GreyVeryDark);
     }
-#endif
   }
 }
 

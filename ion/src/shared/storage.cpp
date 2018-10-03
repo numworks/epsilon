@@ -77,6 +77,10 @@ size_t Storage::availableSize() {
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
 }
 
+uint32_t Storage::checksum() {
+  return Ion::crc32PaddedString(m_buffer, endBuffer()-m_buffer);
+}
+
 Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
   size_t recordSize = sizeOfRecordWithFullName(fullName, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {

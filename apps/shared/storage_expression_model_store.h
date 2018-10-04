@@ -53,7 +53,7 @@ public:
   T addEmptyModel() {
     T newModel = T::EmptyModel();
     // TODO: create the record data (color, isActive and expression)
-    Ion::Storage::sharedStorage()->createRecordWithExtension(newModel.name(), "func", nullptr, 0); //TODO
+    Ion::Storage::sharedStorage()->createRecordWithFullName(newModel.name(), nullptr, 0); //TODO
     return newModel;
   }
   void removeModel(T f) {

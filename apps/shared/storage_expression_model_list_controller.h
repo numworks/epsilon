@@ -13,7 +13,7 @@ public:
   StorageExpressionModelListController(Responder * parentResponder, I18n::Message text) :
     ViewController(parentResponder),
     m_addNewModel(),
-    m_currentEditedModel()
+    m_currentEditedModel(Ion::Storage::Record())
   {
     m_addNewModel.setMessage(text);
   }

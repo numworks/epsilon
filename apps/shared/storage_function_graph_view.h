@@ -13,7 +13,7 @@ class StorageFunctionGraphView : public CurveView {
 public:
   StorageFunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
     CurveView(graphRange, cursor, bannerView, cursorView),
-    m_selectedFunction(nullptr),
+    m_selectedFunction(Ion::Storage::Record()),
     m_highlightedStart(NAN),
     m_highlightedEnd(NAN),
     m_shouldColorHighlighted(false),

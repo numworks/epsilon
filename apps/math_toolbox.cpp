@@ -111,8 +111,8 @@ MathToolbox::MathToolbox() :
 {
 }
 
-bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
-  ToolboxMessageTree * messageTree = selectedMessageTree;
+bool MathToolbox::selectLeaf(int selectedRow) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   m_selectableTableView.deselectTable();
 
   // Translate the message and remove the arguments

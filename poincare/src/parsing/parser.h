@@ -52,7 +52,9 @@ private:
 
   Expression parseUntil(Token::Type stoppingType);
 
-  Expression noParse(const Expression & leftHandSide);
+  Expression raiseError(const Expression & leftHandSide = Expression()) {
+    return Expression();
+  }
   Expression parseNumber(const Expression & leftHandSide);
   Expression parsePlus(const Expression & leftHandSide);
   Expression parseTimes(const Expression & leftHandSide);

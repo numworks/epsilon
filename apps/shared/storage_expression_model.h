@@ -11,8 +11,10 @@ namespace Shared {
 class StorageExpressionModel {
   // TODO find better name (once we remove ExpressionModel?)
 public:
+  StorageExpressionModel(const char * name);
   StorageExpressionModel(Ion::Storage::Record record);
   void destroy();
+  const char * name() const { return m_name; }
   void text(char * buffer, size_t bufferSize) const;
   Poincare::Expression expression() const;
   Poincare::Expression reducedExpression(Poincare::Context * context) const;
@@ -28,9 +30,12 @@ public:
   virtual void setContent(const char * c);
   virtual void tidy();
 protected:
-  Ion::Storage::Record m_record;
+  Ion::Storage::Record record() const;
+  const char * m_name;
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
+private:
+  mutable Ion::Storage::Record m_record;
 };
 
 }

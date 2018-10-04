@@ -9,8 +9,7 @@ namespace Shared {
 class StorageFunction : public StorageExpressionModel {
 public:
   StorageFunction(const char * name = nullptr, KDColor color = KDColorBlack) :
-    StorageExpressionModel(name == nullptr ? Ion::Storage::Record() : Ion::Storage::sharedStorage()->recordNamed(name)),
-    m_name(name),
+    StorageExpressionModel(name),
     m_color(color),
     m_active(true)
   {}
@@ -19,10 +18,8 @@ public:
     m_color(color),
     m_active(true)
   {
-    m_name = record.fullName();
   }
   virtual uint32_t checksum();
-  const char * name() const { return m_name; }
   KDColor color() const { return m_color; }
   bool isActive() const { return m_active; }
   void setActive(bool active) { m_active = active; }
@@ -39,7 +36,6 @@ private:
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The function data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   virtual const char * symbol() const = 0;
-  const char * m_name;
   KDColor m_color;
   bool m_active;
 };

@@ -13,7 +13,7 @@ public:
   static StorageCartesianFunction EmptyModel() { return StorageCartesianFunction("function", KDColorRed); }
   StorageCartesianFunction(const char * text = nullptr, KDColor color = KDColorBlack);
   StorageCartesianFunction(Ion::Storage::Record record);
-  bool operator==(const StorageCartesianFunction & other) const { return m_record == other.m_record; }
+  bool operator==(const StorageCartesianFunction & other) const { return record() == other.record(); }
   bool operator!=(const StorageCartesianFunction & other) const { return !(*this == other); }
   bool displayDerivative() const { return m_displayDerivative; }
   void setDisplayDerivative(bool display) { m_displayDerivative = display; }

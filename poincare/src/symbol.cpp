@@ -15,6 +15,16 @@ namespace Poincare {
 
 constexpr char Symbol::k_ans[];
 
+void SymbolNode::initToMatchSize(size_t goalSize) {
+  assert(goalSize != sizeof(SymbolNode));
+  int nameSize = goalSize - sizeof(SymbolNode);
+  for (int i = 0; i < nameSize - 1; i++) {
+    m_name[i] = 'a';
+  }
+  m_name[nameSize-1] = 0;
+  assert(size() == goalSize);
+}
+
 /* TreePool uses adresses and sizes that are multiples of 4 in order to make
  * node moves faster.*/
 static size_t NodeSize(size_t nameLength) {

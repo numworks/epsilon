@@ -22,6 +22,7 @@ public:
   void setNegative(bool negative) { m_negative = negative; }
 
   // TreeNode
+  void initToMatchSize(size_t goalSize) override;
   size_t size() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

@@ -58,7 +58,7 @@ private:
   Expression parseTimes(const Expression & leftHandSide);
   Expression parseSlash(const Expression & leftHandSide);
   Expression parseMinus(const Expression & leftHandSide);
-  Expression parsePower(const Expression & leftHandSide);
+  Expression parseCaret(const Expression & leftHandSide);
   Expression parseLeftParenthesis(const Expression & leftHandSide);
   Expression parseSquareRoot(const Expression & leftHandSide);
   Expression parseBang(const Expression & leftHandSide);

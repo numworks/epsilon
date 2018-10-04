@@ -60,11 +60,11 @@ Layout StorageExpressionModel::layout() {
 }
 
 bool StorageExpressionModel::isDefined() {
-  return !record().isNull();
+  return !isEmpty();
 }
 
 bool StorageExpressionModel::isEmpty() {
-  return record().isNull();
+  return record().isNull() || (record().value().size == 0);
 }
 
 void StorageExpressionModel::setContent(const char * c) {

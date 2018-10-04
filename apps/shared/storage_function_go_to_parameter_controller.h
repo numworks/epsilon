@@ -10,7 +10,7 @@ class StorageFunctionGoToParameterController : public GoToParameterController {
 public:
   StorageFunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol)  :
     GoToParameterController(parentResponder, graphRange, cursor, symbol),
-    m_function()
+    m_function(Ion::Storage::Record())
   {}
 
   const char * title() override {

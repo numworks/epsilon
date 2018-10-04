@@ -10,7 +10,7 @@ namespace Graph {
 class StorageCartesianFunction : public Shared::StorageFunction {
 public:
   static const char * Extension() { return Poincare::GlobalContext::funcExtension; }
-  static StorageCartesianFunction EmptyModel() { return StorageCartesianFunction("function", KDColorRed); }
+  static StorageCartesianFunction EmptyModel() { return StorageCartesianFunction("function.func", KDColorRed); }
   StorageCartesianFunction(const char * text = nullptr, KDColor color = KDColorBlack);
   StorageCartesianFunction(Ion::Storage::Record record);
   bool operator==(const StorageCartesianFunction & other) const { return record() == other.record(); }

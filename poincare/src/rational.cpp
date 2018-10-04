@@ -27,6 +27,15 @@ void RationalNode::setDigits(const native_uint_t * numeratorDigits, uint8_t nume
   }
 }
 
+void RationalNode::initToMatchSize(size_t goalSize) {
+  assert(goalSize != sizeof(RationalNode));
+  int digitsSize = goalSize - sizeof(RationalNode);
+  assert(digitsSize%sizeof(native_uint_t) == 0);
+  m_numberOfDigitsNumerator = digitsSize/sizeof(native_uint_t);
+  m_numberOfDigitsDenominator = 0;
+  assert(size() == goalSize);
+}
+
 Integer RationalNode::signedNumerator() const {
   return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative);
 }

@@ -22,6 +22,12 @@ void TreePool::freeIdentifier(int identifier) {
 template <typename T>
 T * TreePool::createTreeNode(size_t size) {
   T * node = new(alloc(size)) T();
+  if (size != sizeof(T)) {
+    /* If the node does not have a standard size, it should init itself so that
+     * T::size gives the right result, otherwise TreeNode::next() does not work
+     * and addGhostChildrenAndRename might not work. */
+    node->initToMatchSize(size);
+  }
   addGhostChildrenAndRename(node);
   return node;
 }

@@ -288,9 +288,9 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
   return Toolbox::rowHeight(j);
 }
 
-bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
+bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
-  ToolboxMessageTree * node = selectedMessageTree;
+  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
   int strippedEditedTextMaxLength = strlen(editedText)+1;
   char strippedEditedText[k_maxMessageSize];

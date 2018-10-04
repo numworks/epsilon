@@ -9,7 +9,7 @@ namespace Poincare {
 class FunctionNode : public SymbolNode  {
 public:
   // TreeNode
-  size_t size() const override { return sizeof(FunctionNode); }
+  size_t size() const override;
   int numberOfChildren() const override { return 1; } //TODO allow any number of children? Needs templating
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

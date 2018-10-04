@@ -1,10 +1,11 @@
 #include <poincare/symbol.h>
-#include <poincare/context.h>
-#include <poincare/rational.h>
-#include <poincare/parenthesis.h>
-#include <poincare/layout_helper.h>
 #include <poincare/char_layout.h>
+#include <poincare/context.h>
+#include <poincare/helpers.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
+#include <poincare/parenthesis.h>
+#include <poincare/rational.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion.h>
 #include <cmath>
@@ -16,17 +17,12 @@ constexpr char Symbol::k_ans[];
 
 /* TreePool uses adresses and sizes that are multiples of 4 in order to make
  * node moves faster.*/
-size_t SymbolSize(size_t nameLength) {
-  size_t realSize = sizeof(SymbolNode)+nameLength+1;
-  size_t alignment = 4;
-  size_t modulo = realSize % alignment;
-  size_t result = realSize + (modulo == 0 ? 0 : alignment - modulo);
-  assert(result % 4 == 0);
-  return result;
+static size_t NodeSize(size_t nameLength) {
+  return Helpers::AlignedSize(sizeof(SymbolNode)+nameLength+1, 4);
 }
 
 size_t SymbolNode::size() const {
-  return SymbolSize(strlen(m_name));
+  return NodeSize(strlen(m_name));
 }
 
 ExpressionNode::Sign SymbolNode::sign() const {
@@ -166,7 +162,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(SymbolSize(length))) {
+Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(NodeSize(length))) {
   node()->setName(name, length);
 }
 

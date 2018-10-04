@@ -10,13 +10,13 @@ Expression Parser::parse() {
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
   const TokenParser tokenParsers[] = {
-    &Parser::noParse, //EndOfStream
+    &Parser::raiseError, //EndOfStream
     &Parser::parseEqual,
-    &Parser::noParse, //Store, FIXME
-    &Parser::noParse, //RightBracket,
-    &Parser::noParse, //RightParenthesis, //FIXME
-    &Parser::noParse, //RightBrace,
-    &Parser::noParse, //Comma, FIXME
+    &Parser::raiseError, //Store, FIXME
+    &Parser::raiseError, //RightBracket,
+    &Parser::raiseError, //RightParenthesis,
+    &Parser::raiseError, //RightBrace,
+    &Parser::raiseError, //Comma,
     &Parser::parsePlus,
     &Parser::parseMinus,
     &Parser::parseTimes,
@@ -26,10 +26,10 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseBang,
     &Parser::parseMatrix, //LeftBracket,
     &Parser::parseLeftParenthesis,
-    &Parser::noParse, //LeftBrace, FIXME
+    &Parser::raiseError, //LeftBrace, FIXME
     &Parser::parseNumber,
-    &Parser::noParse, //Identifier, FIXME
-    &Parser::noParse //Undefined
+    &Parser::raiseError,
+    &Parser::raiseError //Undefined
   };
 
   Expression leftHandSide;
@@ -63,10 +63,6 @@ bool Parser::canPopToken(Token::Type stoppingType) {
 
 /* Specific TokenParsers */
 
-Expression Parser::noParse(const Expression & leftHandSide) {
-  return Expression();
-}
-
 Expression Parser::parseNumber(const Expression & leftHandSide) {
   assert(leftHandSide.isUninitialized());
   return m_currentToken.expression();
@@ -90,7 +86,7 @@ Expression Parser::parseMinus(const Expression & leftHandSide) {
   } else {
     Expression rightHandSide = parseUntil(Token::Type::Minus); // Subtraction is left-associative
     if (rightHandSide.isUninitialized()) {
-      return Expression();
+      return raiseError();
     }
     return Subtraction(leftHandSide, rightHandSide);
   }
@@ -104,7 +100,7 @@ Expression Parser::parseLeftParenthesis(const Expression & leftHandSide) {
   assert(leftHandSide.isUninitialized());
   Expression rightHandSide = parseUntil(Token::Type::RightParenthesis);
   if (!expect(Token::Type::RightParenthesis)) {
-    return Expression();
+    return raiseError();
   }
   return Parenthesis(rightHandSide);
 }
@@ -116,7 +112,7 @@ Expression Parser::parseSquareRoot(const Expression & leftHandSide) {
 
 Expression Parser::parseBang(const Expression & leftHandSide) {
   if (leftHandSide.isUninitialized()) {
-    return Expression();
+    return raiseError();
   }
   return Factorial(leftHandSide);
 }
@@ -133,18 +129,18 @@ Expression Parser::parseBang(const Expression & leftHandSide) {
 
 Expression Parser::parseEqual(const Expression & leftHandSide) {
   if (leftHandSide.type() == ExpressionNode::Type::Equal) {
-    return Expression();
+    return raiseError();
   }
   return parseBinaryOperator<Equal>(leftHandSide, Token::Type::Equal); // Equal is not associative
 }
 
 /*Expression Parser::parseStore(Expression leftHandSide) {
   if (leftHandSide.isUninitialized()) {
-    return Expression();
+    return raiseError();
   }
   Expression symbol = parseIdentifier(leftHandSide); // FIXME Symbol
   if (!expect(Token::Type::EndOfStream)) {
-    return Expression();
+    return raiseError();
   }
   return Store(leftHandSide, static_cast<Symbol>(symbol));
 }*/
@@ -154,7 +150,7 @@ Expression Parser::parseMatrix(const Expression & leftHandSide) {
   int numberOfRows = 0;
   int numberOfColumns = 0;
   if (!leftHandSide.isUninitialized()) {
-    return Expression();
+    return raiseError();
   }
 
   // Keep trying to read vectors until we get a closing bracket
@@ -163,13 +159,13 @@ Expression Parser::parseMatrix(const Expression & leftHandSide) {
     if ((numberOfRows == 0 && (numberOfColumns = row.numberOfChildren()) == 0)
         ||
         (numberOfColumns != row.numberOfChildren())) {
-      return Expression();
+      return raiseError();
     }
     m.addChildrenAsRowInPlace(row, numberOfRows++);
   }
 
   if (numberOfRows == 0) {
-    return Expression();
+    return raiseError();
   }
   return m;
 }

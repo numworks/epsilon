@@ -16,6 +16,7 @@ public:
   typedef uint16_t record_size_t;
   constexpr static size_t k_storageSize = 16384;
   static Storage * sharedStorage();
+  constexpr static char k_dotChar = '.';
 
   class Record {
     /* A Record is identified by the CRC32 on its fullName because:
@@ -88,7 +89,6 @@ public:
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
-  constexpr static char k_dotChar = '.';
 
   /* Getters/Setters on recordID */
   const char * fullNameOfRecord(const Record record);

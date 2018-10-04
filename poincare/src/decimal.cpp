@@ -39,6 +39,14 @@ Integer DecimalNode::unsignedMantissa() const {
   return Integer::BuildInteger((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, false);
 }
 
+void DecimalNode::initToMatchSize(size_t goalSize) {
+  assert(goalSize != sizeof(DecimalNode));
+  int mantissaSize = goalSize - sizeof(DecimalNode);
+  assert(mantissaSize%sizeof(native_uint_t) == 0);
+  m_numberOfDigitsInMantissa = mantissaSize/sizeof(native_uint_t);
+  assert(size() == goalSize);
+}
+
 size_t DecimalNode::size() const {
   return sizeof(DecimalNode)+ sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
 }

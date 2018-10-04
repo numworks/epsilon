@@ -59,10 +59,7 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
 }
 
 bool StorageListController::removeModelRow(StorageCartesianFunction * model) {
-  if (m_functionStore->numberOfModels() > 1) {
-    return Shared::StorageFunctionListController<StorageCartesianFunction>::removeModelRow(model);
-  }
-  return false;
+  return Shared::StorageFunctionListController<StorageCartesianFunction>::removeModelRow(model);
 }
 
 }

@@ -156,6 +156,9 @@ Storage::Record Storage::recordWithExtensionAtIndex(const char * extension, int 
 }
 
 Storage::Record Storage::recordNamed(const char * fullName) {
+  if (fullName == nullptr) {
+    return Record();
+  }
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
     if (strcmp(currentName, fullName) == 0) {

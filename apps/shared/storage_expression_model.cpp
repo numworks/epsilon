@@ -8,15 +8,24 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageExpressionModel::StorageExpressionModel(Ion::Storage::Record record) :
-  m_record(record),
+StorageExpressionModel::StorageExpressionModel(const char * name) :
+  m_name(name),
   m_expression(),
-  m_layout()
+  m_layout(),
+  m_record()
+{
+}
+
+StorageExpressionModel::StorageExpressionModel(Ion::Storage::Record record) :
+  m_name(record.fullName()),
+  m_expression(),
+  m_layout(),
+  m_record(record)
 {
 }
 
 void StorageExpressionModel::destroy() {
-  m_record.destroy();
+  record().destroy();
 }
 
 void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
@@ -25,7 +34,7 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
 
 Expression StorageExpressionModel::expression() const {
   if (m_expression.isUninitialized()) {
-    m_expression = Expression::ExpressionFromRecord(m_record);
+    m_expression = Expression::ExpressionFromRecord(record());
   }
   return m_expression;
 }
@@ -42,11 +51,11 @@ Layout StorageExpressionModel::layout() {
 }
 
 bool StorageExpressionModel::isDefined() {
-  return !m_record.isNull();
+  return !record().isNull();
 }
 
 bool StorageExpressionModel::isEmpty() {
-  return m_record.isNull();
+  return record().isNull();
 }
 
 void StorageExpressionModel::setContent(const char * c) {
@@ -57,7 +66,7 @@ void StorageExpressionModel::setContent(const char * c) {
   Symbol xUnknown = Symbol(x, 1);
   expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);
   Ion::Storage::Record::Data newData = {.buffer = expressionToStore.addressInPool(), .size = expressionToStore.size()};
-  m_record.setValue(newData);
+  record().setValue(newData);
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
    * the m_layout and m_expression. */
@@ -68,6 +77,13 @@ void StorageExpressionModel::setContent(const char * c) {
 void StorageExpressionModel::tidy() {
   m_layout = Layout();
   m_expression = Expression();
+}
+
+Ion::Storage::Record StorageExpressionModel::record() const {
+  if (m_record.isNull()) {
+    m_record = Ion::Storage::sharedStorage()->recordNamed(m_name);
+  }
+  return m_record;
 }
 
 }

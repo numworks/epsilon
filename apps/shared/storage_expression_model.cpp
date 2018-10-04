@@ -1,5 +1,6 @@
 #include "storage_expression_model.h"
 #include "poincare_helpers.h"
+#include <poincare/horizontal_layout.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -29,7 +30,12 @@ void StorageExpressionModel::destroy() {
 }
 
 void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
-  expression().serialize(buffer, bufferSize);
+  Expression e = expression();
+  if (e.isUninitialized() && bufferSize > 0) {
+    buffer[0] = 0;
+  } else {
+    e.serialize(buffer, bufferSize);
+  }
 }
 
 Expression StorageExpressionModel::expression() const {
@@ -46,6 +52,9 @@ Expression StorageExpressionModel::reducedExpression(Poincare::Context * context
 Layout StorageExpressionModel::layout() {
   if (m_layout.isUninitialized()) {
     m_layout = PoincareHelpers::CreateLayout(expression());
+    if (m_layout.isUninitialized()) {
+      m_layout = HorizontalLayout();
+    }
   }
   return m_layout;
 }

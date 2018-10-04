@@ -10,8 +10,8 @@ using namespace Shared;
 namespace Graph {
 
 StorageCartesianFunction::StorageCartesianFunction(const char * text, KDColor color) :
-  Shared::StorageFunction(text, color),
-  m_displayDerivative(false)
+  StorageFunction(text, color),
+  m_displayDerivative(false) //TODO
 {
 }
 

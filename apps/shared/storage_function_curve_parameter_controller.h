@@ -15,7 +15,7 @@ public:
     ViewController(nullptr),
     m_goToCell(I18n::Message::Goto),
     m_selectableTableView(this, this, this),
-    m_function()
+    m_function(Ion::Storage::Record())
   {}
   View * view() override {
     return &m_selectableTableView;

@@ -12,7 +12,7 @@ StorageTangentGraphController::StorageTangentGraphController(Responder * parentR
   m_graphView(graphView),
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),
-  m_function(nullptr)
+  m_function(Ion::Storage::Record())
 {
 }
 

@@ -115,7 +115,9 @@ Expression Parser::parseSquareRoot(const Expression & leftHandSide) {
 }
 
 Expression Parser::parseBang(const Expression & leftHandSide) {
-  assert(!leftHandSide.isUninitialized());
+  if (leftHandSide.isUninitialized()) {
+    return Expression();
+  }
   return Factorial(leftHandSide);
 }
 

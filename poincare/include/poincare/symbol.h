@@ -20,6 +20,7 @@ namespace Poincare {
 class SymbolNode final : public ExpressionNode {
   friend class Store;
 public:
+  void initToMatchSize(size_t goalSize) override;
   void setName(const char * name, int length) { strlcpy(m_name, name, length+1); }
   const char * name() const { return m_name; }
 

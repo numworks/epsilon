@@ -104,7 +104,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Type::RightBracket);
   }
   if (canPopChar('^')) {
-    return Token(Token::Type::Power);
+    return Token(Token::Type::Caret);
   }
   if (canPopChar('{')) {
     return Token(Token::Type::LeftBrace);

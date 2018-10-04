@@ -20,7 +20,7 @@ public:
     Minus,
     Times,
     Slash,
-    Power,
+    Caret,
     SquareRoot,
     Bang,
     LeftBracket,

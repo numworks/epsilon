@@ -21,7 +21,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseMinus,
     &Parser::parseTimes,
     &Parser::parseSlash,
-    &Parser::parsePower,
+    &Parser::parseCaret,
     &Parser::parseSquareRoot,
     &Parser::parseBang,
     &Parser::parseMatrix, //LeftBracket,
@@ -96,18 +96,16 @@ Expression Parser::parseMinus(const Expression & leftHandSide) {
   }
 }
 
-Expression Parser::parsePower(const Expression & leftHandSide) {
+Expression Parser::parseCaret(const Expression & leftHandSide) {
   return parseBinaryOperator<Power>(leftHandSide, Token::Type::Slash); // Power is right-associative
 }
 
 Expression Parser::parseLeftParenthesis(const Expression & leftHandSide) {
   assert(leftHandSide.isUninitialized());
   Expression rightHandSide = parseUntil(Token::Type::RightParenthesis);
-
   if (!expect(Token::Type::RightParenthesis)) {
     return Expression();
   }
-
   return Parenthesis(rightHandSide);
 }
 

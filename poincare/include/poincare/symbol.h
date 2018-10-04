@@ -8,6 +8,15 @@ namespace Poincare {
 /* TODO: should we keep the size of SymbolNode as a member to speed up TreePool
  * scan? */
 
+/* Symbol Node contains an empty member variable "m_name", which is used to get
+ * the string that follows. This means that a SymbolNode's size is sizeo
+ * (SymbolNode) + strlen(string).
+ *
+ *   Seen by TreePool:    |SymbolNode                               |
+ *   SymbolNode layout:   |ExpressionNode|m_name|                   |
+ *   Memory content:      |ExpressionNode|S     |y|m|b|o|l|N|a|m|e|0|
+ * */
+
 class SymbolNode final : public ExpressionNode {
   friend class Store;
 public:
@@ -54,11 +63,11 @@ public:
   bool isPi() const { return isSymbolChar(Ion::Charset::SmallPi); }
   bool isExponential() const { return isSymbolChar(Ion::Charset::Exponential); }
   bool isIComplex() const { return isSymbolChar(Ion::Charset::IComplex); }
+protected:
+  char m_name[0]; // MUST be the last member variable
 private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   bool isSymbolChar(char c) const { const char symbolName[2] = {c, 0}; return strcmp(m_name, symbolName) == 0; }
-
-  char m_name[0];
 };
 
 class Symbol final : public Expression {

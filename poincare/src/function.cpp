@@ -1,4 +1,5 @@
 #include <poincare/function.h>
+#include <poincare/helpers.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
@@ -7,6 +8,16 @@
 #include <cmath>
 
 namespace Poincare {
+
+/* TreePool uses adresses and sizes that are multiples of 4 in order to make
+ * node moves faster.*/
+static size_t NodeSize(size_t nameLength) {
+  return Helpers::AlignedSize(sizeof(FunctionNode)+nameLength+1, 4);
+}
+
+size_t FunctionNode::size() const {
+  return NodeSize(strlen(m_name));
+}
 
 Expression FunctionNode::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
@@ -87,7 +98,7 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context
 }
 
 Function::Function(const char * name) :
-  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>())
+  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(NodeSize(strlen(name))))
 {
   static_cast<FunctionNode *>(Expression::node())->setName(name, strlen(name));
 }

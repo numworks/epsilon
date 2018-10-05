@@ -21,7 +21,7 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
   if (c.real() == 0 && c.imag() < -1) {
     result.real(-result.real()); // other side of the cut
   }
-  result = Trigonometry::RoundToMeaningfulDigits(result);
+  result = Trigonometry::RoundToMeaningfulDigits(result, c);
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 

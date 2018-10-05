@@ -18,6 +18,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   virtual const char * text() const = 0;
   virtual void setText(const char * text) = 0;
+  KDFont * font() const { return m_font; }
   void setFont(const KDFont * font);
 protected:
 #if ESCHER_VIEW_LOGGING

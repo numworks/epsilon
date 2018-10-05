@@ -13,6 +13,7 @@ public:
   void setColor(KDColor color) override;
   void setText(const char * textContent);
   void setFont(const KDFont * font) { m_bufferTextView.setFont(font); }
+  KDFont * font() const override { return m_bufferTextView.font(); }
   const char * text() const override {
     return m_bufferTextView.text();
   }

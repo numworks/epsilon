@@ -29,7 +29,6 @@ app_objs += $(addprefix apps/,\
   suspend_timer.o\
   title_bar_view.o\
   variable_box_controller.o\
-  variable_box_leaf_cell.o\
 )
 
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)

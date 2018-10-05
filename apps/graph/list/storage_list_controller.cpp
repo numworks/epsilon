@@ -33,13 +33,6 @@ int StorageListController::maxNumberOfDisplayableRows() {
   return k_maxNumberOfDisplayableRows;
 }
 
-void StorageListController::addEmptyModel() {
-  StorageCartesianFunction m = m_functionStore->addEmptyModel();
-  computeTitlesColumnWidth(); // TODO encapsulate in didChangeFunctionNames()?
-  selectableTableView()->reloadData();
-  editExpression(&m, Ion::Events::OK);
-}
-
 FunctionTitleCell * StorageListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
   return &m_functionTitleCells[index];
@@ -94,8 +87,8 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
   myCell->setTextColor(textColor);
 }
 
-bool StorageListController::removeModelRow(StorageCartesianFunction * model) {
-  return Shared::StorageFunctionListController<StorageCartesianFunction>::removeModelRow(model);
+void StorageListController::didChangeModelsList() {
+  computeTitlesColumnWidth();
 }
 
 }

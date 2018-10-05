@@ -19,6 +19,7 @@ private:
   int maxNumberOfRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
+  KDCoordinate maxFunctionNameWidth() const override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   bool removeModelRow(StorageCartesianFunction * function) override;

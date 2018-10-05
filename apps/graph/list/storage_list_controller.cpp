@@ -8,6 +8,8 @@ using namespace Shared;
 
 namespace Graph {
 
+static inline int max(int x, int y) { return x > y ? x : y; }
+
 StorageListController::StorageListController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::StorageFunctionListController<StorageCartesianFunction>(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{},
@@ -39,6 +41,19 @@ FunctionTitleCell * StorageListController::titleCells(int index) {
 HighlightCell * StorageListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_expressionCells[index];
+}
+
+KDCoordinate StorageListController::maxFunctionNameWidth() const {
+  int maxNameLength = 0;
+  int numberOfModels = m_functionStore->numberOfModels();
+  for (int i = 0; i < numberOfModels; i++) {
+    StorageCartesianFunction function = m_functionStore->modelAtIndex(i);
+    const char * functionName = function.name();
+    const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
+    assert(dotPosition != nullptr);
+    maxNameLength = max(maxNameLength, dotPosition-functionName);
+  }
+  return (maxNameLength + 3)*KDText::charSize(m_functionTitleCells[0].fontSize()).width(); //+3 for "(x)"
 }
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {

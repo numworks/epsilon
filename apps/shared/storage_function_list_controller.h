@@ -66,6 +66,7 @@ public:
         return 0;
     }
   }
+
   KDCoordinate cumulatedWidthFromIndex(int i) override {
     switch (i) {
       case 0:

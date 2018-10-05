@@ -17,6 +17,7 @@ public:
 private:
   Shared::StorageListParameterController<StorageCartesianFunction> * parameterController() override;
   int maxNumberOfRows() override;
+  void addEmptyModel() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   KDCoordinate maxFunctionNameWidth() const override;

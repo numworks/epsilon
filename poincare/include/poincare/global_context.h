@@ -14,7 +14,9 @@ class Integer;
 
 class GlobalContext final : public Context {
 public:
+  // TODO: should this be store elsewhere?
   static constexpr char funcExtension[] = "func";
+  static constexpr char expExtension[] = "exp";
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression expressionForSymbol(const Symbol & symbol) override;
@@ -23,7 +25,6 @@ public:
   static bool storageMemoryFull();
   //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;
 private:
-  static constexpr char expExtension[] = "exp";
   //static constexpr char seqExtension[] = "seq";
   static const char * ExtensionForExpression(const Expression & exp);
 };

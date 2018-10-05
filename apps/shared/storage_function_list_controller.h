@@ -100,7 +100,7 @@ public:
 
   HighlightCell * reusableCell(int index, int type) override {
     assert(index >= 0);
-    assert(index < maxNumberOfRows());
+    assert(index < maxNumberOfDisplayableRows());
     switch (type) {
       case 0:
         return titleCells(index);
@@ -119,7 +119,7 @@ public:
     if (type > 1) {
       return 1;
     }
-    return maxNumberOfRows();
+    return maxNumberOfDisplayableRows();
   }
 
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override {
@@ -248,7 +248,7 @@ private:
     return myApp->inputViewController();
   }
   virtual StorageListParameterController<T> * parameterController() = 0;
-  virtual int maxNumberOfRows() = 0;
+  virtual int maxNumberOfDisplayableRows() = 0;
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;

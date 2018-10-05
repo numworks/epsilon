@@ -16,7 +16,7 @@ StorageListController::StorageListController(Responder * parentResponder, Storag
   m_expressionCells{},
   m_parameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
 {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
   }
 }
@@ -29,8 +29,8 @@ StorageListParameterController<StorageCartesianFunction> * StorageListController
   return &m_parameterController;
 }
 
-int StorageListController::maxNumberOfRows() {
-  return k_maxNumberOfRows;
+int StorageListController::maxNumberOfDisplayableRows() {
+  return k_maxNumberOfDisplayableRows;
 }
 
 void StorageListController::addEmptyModel() {
@@ -41,12 +41,12 @@ void StorageListController::addEmptyModel() {
 }
 
 FunctionTitleCell * StorageListController::titleCells(int index) {
-  assert(index >= 0 && index < k_maxNumberOfRows);
+  assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
   return &m_functionTitleCells[index];
 }
 
 HighlightCell * StorageListController::expressionCells(int index) {
-  assert(index >= 0 && index < k_maxNumberOfRows);
+  assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
   return &m_expressionCells[index];
 }
 

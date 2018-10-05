@@ -16,7 +16,7 @@ public:
   const char * title() override;
 private:
   Shared::StorageListParameterController<StorageCartesianFunction> * parameterController() override;
-  int maxNumberOfRows() override;
+  int maxNumberOfDisplayableRows() override;
   void addEmptyModel() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
@@ -24,9 +24,9 @@ private:
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   bool removeModelRow(StorageCartesianFunction * function) override;
-  constexpr static int k_maxNumberOfRows = 5;
-  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfRows];
-  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
+  constexpr static int k_maxNumberOfDisplayableRows = 5;
+  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
+  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   Shared::StorageListParameterController<StorageCartesianFunction> m_parameterController;
 };
 

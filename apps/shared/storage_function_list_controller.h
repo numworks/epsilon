@@ -30,7 +30,7 @@ public:
           TabViewController * tabController = list->tabController();
           tabController->setActiveTab(2);
           }, this), KDText::FontSize::Small, Palette::PurpleBright),
-    m_titlesColumnWidth(k_minNameColumnWidth)
+    m_titlesColumnWidth(k_minTitleColumnWidth)
   {
     m_selectableTableView.setMargins(0);
     m_selectableTableView.setVerticalCellOverlap(0);
@@ -51,8 +51,8 @@ public:
   }
 
   void computeTitlesColumnWidth() {
-    KDCoordinate maxNameWidth = maxFunctionNameWidth()+k_functionNameSumOfMargins;
-    m_titlesColumnWidth = maxNameWidth < k_minNameColumnWidth ? k_minNameColumnWidth : maxNameWidth;
+    KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
+    m_titlesColumnWidth = maxTitleWidth < k_minTitleColumnWidth ? k_minTitleColumnWidth : maxTitleWidth;
   }
 
   KDCoordinate columnWidth(int i) override {
@@ -237,8 +237,8 @@ protected:
   }
   StorageFunctionStore<T> * m_functionStore;
 private:
-  static constexpr KDCoordinate k_minNameColumnWidth = 65;
-  static constexpr KDCoordinate k_functionNameSumOfMargins = 2*Metric::HistoryHorizontalMargin;
+  static constexpr KDCoordinate k_minTitleColumnWidth = 65;
+  static constexpr KDCoordinate k_functionTitleSumOfMargins = 2*Metric::HistoryHorizontalMargin;
   TabViewController * tabController() const {
     return (TabViewController *)(this->parentResponder()->parentResponder()->parentResponder()->parentResponder());
   }

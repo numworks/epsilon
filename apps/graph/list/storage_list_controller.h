@@ -17,7 +17,7 @@ public:
 private:
   Shared::StorageListParameterController<StorageCartesianFunction> * parameterController() override;
   int maxNumberOfRows() override;
-  HighlightCell * titleCells(int index) override;
+  Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;

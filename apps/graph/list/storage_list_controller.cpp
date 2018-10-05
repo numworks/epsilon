@@ -31,7 +31,7 @@ int StorageListController::maxNumberOfRows() {
   return k_maxNumberOfRows;
 }
 
-HighlightCell * StorageListController::titleCells(int index) {
+FunctionTitleCell * StorageListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_functionTitleCells[index];
 }

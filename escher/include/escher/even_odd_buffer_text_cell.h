@@ -11,6 +11,9 @@ public:
   void setFont(const KDFont * font) {
     m_bufferTextView.setFont(font);
   }
+  KDText::FontSize fontSize() const {
+    return m_bufferTextView.fontSize();
+  }
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
     m_bufferTextView.setAlignment(horizontalAlignment, verticalAlignment);
   }
@@ -21,7 +24,8 @@ public:
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
-  void layoutSubviews() override;  BufferTextView m_bufferTextView;
+  void layoutSubviews() override;
+  BufferTextView m_bufferTextView;
 };
 
 #endif

@@ -56,16 +56,31 @@ void VariableBoxController::ContentViewController::didEnterResponderChain(Respon
   assert(m_pythonDelegate->pythonIsInited());
 }
 
+static bool shouldAddObject(const char * name, int maxLength) {
+  if (strlen(name)+1 > maxLength) {
+    return false;
+  }
+  assert(name != nullptr);
+  if (name[0] == '_') {
+    return false;
+  }
+  return true;
+}
+
 void VariableBoxController::ContentViewController::viewWillAppear() {
   m_scriptNodesCount = 0;
   m_scriptStore->scanScriptsForFunctionsAndVariables(
     this,
     [](void * context, const char * functionName, int scriptIndex) {
-      if (strlen(functionName)+1 > k_maxScriptObjectNameSize) { return; }
+      if (!shouldAddObject(functionName, k_maxScriptObjectNameSize)) {
+        return;
+      }
       VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
       cvc->addFunctionAtIndex(functionName, scriptIndex);},
     [](void * context, const char * variableName, int scriptIndex) {
-      if (strlen(variableName)+1 > k_maxScriptObjectNameSize) { return; }
+      if (!shouldAddObject(variableName, k_maxScriptObjectNameSize)) {
+        return;
+      }
       VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
       cvc->addVariableAtIndex(variableName, scriptIndex);});
 }

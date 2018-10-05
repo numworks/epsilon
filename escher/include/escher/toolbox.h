@@ -8,7 +8,7 @@
 
 class Toolbox : public NestedMenuController {
 public:
-  Toolbox(Responder * parentResponder, const char * title = 0);
+  Toolbox(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
 
   // StackViewController
   void viewWillAppear() override;

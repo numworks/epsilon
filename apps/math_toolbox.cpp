@@ -107,7 +107,7 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbo
 #endif
 
 MathToolbox::MathToolbox() :
-  Toolbox(nullptr, I18n::translate(rootModel()->label()))
+  Toolbox(nullptr, rootModel()->label())
 {
 }
 

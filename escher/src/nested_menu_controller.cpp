@@ -59,7 +59,7 @@ void NestedMenuController::Stack::resetStack() {
 
 /* List Controller */
 
-NestedMenuController::ListController::ListController(Responder * parentResponder, SelectableTableView * tableView, const char * title) :
+NestedMenuController::ListController::ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) :
   ViewController(parentResponder),
   m_selectableTableView(tableView),
   m_firstSelectedRow(0),
@@ -68,7 +68,7 @@ NestedMenuController::ListController::ListController(Responder * parentResponder
 }
 
 const char * NestedMenuController::ListController::title() {
-  return m_title;
+  return I18n::translate(m_title);
 }
 
 View * NestedMenuController::ListController::view() {
@@ -87,7 +87,7 @@ void NestedMenuController::ListController::setFirstSelectedRow(int firstSelected
 
 /* NestedMenuController */
 
-NestedMenuController::NestedMenuController(Responder * parentResponder, const char * title) :
+NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
   StackViewController(parentResponder, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_selectableTableView(&m_listController, this, this),
   m_listController(this, &m_selectableTableView, title),

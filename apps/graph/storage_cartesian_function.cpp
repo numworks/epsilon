@@ -9,6 +9,30 @@ using namespace Shared;
 
 namespace Graph {
 
+void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
+  /* a default name is "f[number].func", for instance "f12.func", that does not
+   * exist yet in the storage */
+  size_t constantNameSize = 1 + 1 + strlen(GlobalContext::funcExtension) + 1; // 'f', '.', extension, null-terminating char
+  assert(bufferSize > constantNameSize);
+  // Write the f
+  buffer[0] = 'f';
+  // Find the next available number
+  int currentNumber = 0;
+  int dotCharIndex = -1;
+  while (currentNumber < bufferSize - constantNameSize) {
+    dotCharIndex = 1 + Poincare::Integer(currentNumber).serialize(&buffer[1], bufferSize - constantNameSize + 1);
+    if (GlobalContext::RecordWithName(buffer).isNull()) {
+      // Name found
+      break;
+    }
+    currentNumber++;
+  }
+  // Write the extension
+  assert(dotCharIndex > 1);
+  buffer[dotCharIndex] = Ion::Storage::k_dotChar;
+  strlcpy(&buffer[dotCharIndex+1], GlobalContext::funcExtension, bufferSize - (dotCharIndex+1));
+}
+
 StorageCartesianFunction::StorageCartesianFunction(const char * text, KDColor color) :
   StorageFunction(text, color),
   m_displayDerivative(false) //TODO
@@ -55,6 +79,5 @@ Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double s
   Expression reducedExp = reducedExpression(context);
   return reducedExp.nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), reducedExp);
 }
-
 
 }

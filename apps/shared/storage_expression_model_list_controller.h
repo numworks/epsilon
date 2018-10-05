@@ -75,7 +75,13 @@ protected:
     }
     return false;
   }
-  virtual void addEmptyModel() = 0;
+  virtual void addEmptyModel() {
+    T e = modelStore()->addEmptyModel();
+    didChangeModelsList();
+    selectableTableView()->reloadData();
+    editExpression(&e, Ion::Events::OK);
+  }
+  virtual void didChangeModelsList() {}
   virtual void reinitExpression(T * model) {
     model->setContent("");
     selectableTableView()->reloadData();
@@ -100,6 +106,7 @@ protected:
   }
   virtual bool removeModelRow(T * function) {
     modelStore()->removeModel(*function);
+    didChangeModelsList();
     return true;
   }
   virtual int modelIndexForRow(int j) { return j; }

@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <string.h>
 
-Toolbox::Toolbox(Responder * parentResponder, const char * title) :
+Toolbox::Toolbox(Responder * parentResponder, I18n::Message title) :
   NestedMenuController(parentResponder, title),
   m_messageTreeModel(nullptr)
 {}

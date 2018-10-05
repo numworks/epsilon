@@ -8,7 +8,7 @@
 
 class NestedMenuController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  NestedMenuController(Responder * parentResponder, const char * title = 0);
+  NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
   void setSender(Responder * sender) { m_sender = sender; }
 
   // StackViewController
@@ -45,7 +45,7 @@ protected:
 
   class ListController : public ViewController {
   public:
-    ListController(Responder * parentResponder, SelectableTableView * tableView, const char * title);
+    ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title);
     const char * title() override;
     View * view() override;
     void didBecomeFirstResponder() override;
@@ -53,7 +53,7 @@ protected:
   private:
     SelectableTableView * m_selectableTableView;
     int m_firstSelectedRow;
-    const char * m_title;
+    I18n::Message m_title;
   };
 
   static constexpr int LeafCellType = 0;

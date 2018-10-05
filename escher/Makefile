@@ -21,6 +21,7 @@ objs += $(addprefix escher/src/,\
   even_odd_message_text_cell.o\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
+  expression_table_cell_with_expression.o\
   expression_view.o\
   highlight_cell.o\
   gauge_view.o\

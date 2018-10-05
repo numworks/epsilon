@@ -58,7 +58,7 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
     functionName++;
     index++;
   }
-  strlcpy(&bufferName[index], ofXSring, ofXSringSize);
+  strlcpy(&bufferName[index], ofXSring, ofXSringSize+1);
   myFunctionCell->setText(bufferName);
   KDColor functionNameColor = function.isActive() ? function.color() : Palette::GreyDark;
   myFunctionCell->setColor(functionNameColor);

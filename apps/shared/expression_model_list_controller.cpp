@@ -88,10 +88,8 @@ void ExpressionModelListController::reinitExpression(ExpressionModel * model) {
 void ExpressionModelListController::editExpression(ExpressionModel * model, Ion::Events::Event event) {
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    strlcpy(initialTextContent, model->text(), sizeof(initialTextContent));
-    initialText = initialTextContent;
-  }
+  strlcpy(initialTextContent, model->text(), sizeof(initialTextContent));
+  initialText = initialTextContent;
   inputController()->edit(this, event, model, initialText,
     [](void * context, void * sender){
     ExpressionModel * myModel = static_cast<ExpressionModel *>(context);

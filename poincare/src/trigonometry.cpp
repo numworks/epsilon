@@ -338,9 +338,10 @@ T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
   /* Cheat: openbsd trigonometric functions are numerical implementation and
    * thus are approximative.
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
-   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we neglect
-   * the result when its ratio with the argument (pi/2 in the exemple) is
-   * smaller than epsilon.
+   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we round
+   * the result to its 1E-6 or 1E-14 precision when its ratio with the
+   * argument (pi/2 in the exemple) is smaller than epsilon. This way, we
+   * have sin(pi) ~ 0 and sin(1E-15)=1E-15.
    * We can't do that for all evaluation as the user can operate on values as
    * small as 1E-308 (in double) and most results still be correct. */
   if (input == 0.0 || std::fabs(result/input) <= Expression::epsilon<T>()) {

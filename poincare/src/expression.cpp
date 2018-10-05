@@ -271,7 +271,10 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  assert(!recursivelyMatches(IsMatrix, context));
+  /* assert(!recursivelyMatches(IsMatrix, context));
+   * We could assert that no matrix is involved but we sometimes call deepReduce
+   * with a matrix at root to avoid calling deepReduce on all matrix children.
+   * (Matrix::rowCanonize for instance) */
   for (int i = 0; i < numberOfChildren(); i++) {
     childAtIndex(i).deepReduce(context, angleUnit);
   }

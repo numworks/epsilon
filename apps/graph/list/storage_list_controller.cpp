@@ -33,6 +33,13 @@ int StorageListController::maxNumberOfRows() {
   return k_maxNumberOfRows;
 }
 
+void StorageListController::addEmptyModel() {
+  StorageCartesianFunction m = m_functionStore->addEmptyModel();
+  computeTitlesColumnWidth(); // TODO encapsulate in didChangeFunctionNames()?
+  selectableTableView()->reloadData();
+  editExpression(&m, Ion::Events::OK);
+}
+
 FunctionTitleCell * StorageListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_functionTitleCells[index];

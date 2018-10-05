@@ -57,7 +57,7 @@ AppsContainer::AppsContainer() :
   m_window(),
   m_emptyBatteryWindow(),
   m_globalContext(),
-  m_variableBoxController(&m_globalContext),
+  m_variableBoxController(),
   m_examPopUpController(this),
 #if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
   m_promptController(sPromptMessages, sPromptColors, 8),

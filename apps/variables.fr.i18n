@@ -1,4 +1,3 @@
 Variables = "Variables"
-Number = "Nombres"
-Matrix = "Matrices"
-List = "Listes"
+Expressions = "Expressions"
+Functions = "Functions"

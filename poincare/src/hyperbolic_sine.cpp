@@ -4,7 +4,7 @@ namespace Poincare {
 
 template<typename T>
 Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(std::sinh(c)));
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(std::sinh(c), c));
 }
 
 template Complex<float> Poincare::HyperbolicSineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);

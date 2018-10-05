@@ -15,7 +15,7 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, P
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag()); // other side of the cut
   }
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result));
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
 template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);

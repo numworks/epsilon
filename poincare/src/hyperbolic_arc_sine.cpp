@@ -15,7 +15,7 @@ Complex<T> HyperbolicArcSineNode::computeOnComplex(const std::complex<T> c, Pref
   if (c.real() == 0 && c.imag() < 1) {
     result.real(-result.real()); // other side of the cut
   }
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result));
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
 template Complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);

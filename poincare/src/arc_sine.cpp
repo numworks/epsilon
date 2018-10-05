@@ -25,7 +25,7 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::A
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag()); // other side of the cut
   }
-  result = Trigonometry::RoundToMeaningfulDigits(result);
+  result = Trigonometry::RoundToMeaningfulDigits(result, c);
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 

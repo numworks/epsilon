@@ -29,7 +29,8 @@ public:
           StorageFunctionListController * list = (StorageFunctionListController *)context;
           TabViewController * tabController = list->tabController();
           tabController->setActiveTab(2);
-          }, this), KDText::FontSize::Small, Palette::PurpleBright)
+          }, this), KDText::FontSize::Small, Palette::PurpleBright),
+    m_titlesColumnWidth(k_minNameColumnWidth)
   {
     m_selectableTableView.setMargins(0);
     m_selectableTableView.setVerticalCellOverlap(0);
@@ -45,28 +46,21 @@ public:
     return this->expressionRowHeight(j);
   }
 
-  KDCoordinate maxDiplayedFunctionNameWidth() {
-    KDCoordinate columnWidth = k_minNameColumnWidth;
-    int firstDisplayedIndex = m_selectableTableView.firstDisplayedRowIndex();
-    int lastDisplayedIndex = firstDisplayedIndex+m_selectableTableView.numberOfDisplayableRows();
-    FunctionTitleCell * currentTitleCell = nullptr;
-    for (int i = firstDisplayedIndex; i < lastDisplayedIndex; i++) {
-      currentTitleCell = titleCells(i-firstDisplayedIndex);
-      const char * currentName = currentTitleCell->text();
-      KDText::FontSize fontSize = currentTitleCell->fontSize();
-      KDCoordinate currentNameWidth = KDText::stringSize(currentName, fontSize).width();
-      columnWidth = columnWidth < currentNameWidth ? currentNameWidth : columnWidth;
-    }
-    // TODO What if very big name?
-    return columnWidth + k_functionNameSumOfMargins;
+  void viewWillAppear() override {
+    computeTitlesColumnWidth();
+  }
+
+  void computeTitlesColumnWidth() {
+    KDCoordinate maxNameWidth = maxFunctionNameWidth()+k_functionNameSumOfMargins;
+    m_titlesColumnWidth = maxNameWidth < k_minNameColumnWidth ? k_minNameColumnWidth : maxNameWidth;
   }
 
   KDCoordinate columnWidth(int i) override {
     switch (i) {
       case 0:
-        return maxDiplayedFunctionNameWidth();
+        return m_titlesColumnWidth;
       case 1:
-        return selectableTableView()->bounds().width()-maxDiplayedFunctionNameWidth();
+        return selectableTableView()->bounds().width()-m_titlesColumnWidth;
       default:
         assert(false);
         return 0;
@@ -77,7 +71,7 @@ public:
       case 0:
         return 0;
       case 1:
-        return maxDiplayedFunctionNameWidth();
+        return m_titlesColumnWidth;
       case 2:
         return selectableTableView()->bounds().width();
       default:
@@ -86,7 +80,7 @@ public:
     }
   }
   int indexFromCumulatedWidth(KDCoordinate offsetX) override {
-    if (offsetX <= maxDiplayedFunctionNameWidth()) {
+    if (offsetX <= m_titlesColumnWidth) {
       return 0;
     } else {
       if (offsetX <= selectableTableView()->bounds().width())
@@ -242,7 +236,7 @@ protected:
   }
   StorageFunctionStore<T> * m_functionStore;
 private:
-  static constexpr KDCoordinate k_minNameColumnWidth = 35;
+  static constexpr KDCoordinate k_minNameColumnWidth = 65;
   static constexpr KDCoordinate k_functionNameSumOfMargins = 2*Metric::HistoryHorizontalMargin;
   TabViewController * tabController() const {
     return (TabViewController *)(this->parentResponder()->parentResponder()->parentResponder()->parentResponder());
@@ -257,10 +251,12 @@ private:
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
+  virtual KDCoordinate maxFunctionNameWidth() const = 0;
   SelectableTableView m_selectableTableView;
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;
+  KDCoordinate m_titlesColumnWidth;
 };
 
 }

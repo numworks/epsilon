@@ -75,11 +75,7 @@ protected:
     }
     return false;
   }
-  virtual void addEmptyModel() {
-    T e = modelStore()->addEmptyModel();
-    selectableTableView()->reloadData();
-    editExpression(&e, Ion::Events::OK);
-  }
+  virtual void addEmptyModel() = 0;
   virtual void reinitExpression(T * model) {
     model->setContent("");
     selectableTableView()->reloadData();

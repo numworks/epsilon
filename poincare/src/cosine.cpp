@@ -14,7 +14,7 @@ template<typename T>
 Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::cos(angleInput);
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
 Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

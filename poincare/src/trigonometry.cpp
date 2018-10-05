@@ -334,28 +334,32 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
 }
 
 template<typename T>
-T Trigonometry::RoundToMeaningfulDigits(T f) {
+T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
   /* Cheat: openbsd trigonometric functions are numerical implementation and
    * thus are approximative.
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
-   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we keep only
-   * 15 (or 7) decimals.
+   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we neglect
+   * the result when its ratio with the argument (pi/2 in the exemple) is
+   * smaller than epsilon.
    * We can't do that for all evaluation as the user can operate on values as
    * small as 1E-308 (in double) and most results still be correct. */
-  T precision = 10*Expression::epsilon<T>();
-  return std::round(f/precision)*precision;
+  if (input == 0.0 || std::fabs(result/input) <= Expression::epsilon<T>()) {
+     T precision = 10*Expression::epsilon<T>();
+     result = std::round(result/precision)*precision;
+  }
+  return result;
 }
 
 template <typename T>
-std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> c) {
-  return std::complex<T>(RoundToMeaningfulDigits(c.real()), RoundToMeaningfulDigits(c.imag()));
+std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> result, const std::complex<T> input) {
+  return std::complex<T>(RoundToMeaningfulDigits(result.real(), std::abs(input)), RoundToMeaningfulDigits(result.imag(), std::abs(input)));
 }
 
 template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Preferences::AngleUnit);
 template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Preferences::AngleUnit);
 template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Preferences::AngleUnit);
 template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Preferences::AngleUnit);
-template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>);
-template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>);
+template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>, std::complex<float>);
+template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>, std::complex<double>);
 
 }

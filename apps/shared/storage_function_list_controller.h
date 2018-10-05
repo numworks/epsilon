@@ -49,9 +49,11 @@ public:
     KDCoordinate columnWidth = k_minNameColumnWidth;
     int firstDisplayedIndex = m_selectableTableView.firstDisplayedRowIndex();
     int lastDisplayedIndex = firstDisplayedIndex+m_selectableTableView.numberOfDisplayableRows();
+    FunctionTitleCell * currentTitleCell = nullptr;
     for (int i = firstDisplayedIndex; i < lastDisplayedIndex; i++) {
-      const char * currentName = titleCells(i)->text();
-      KDText::FontSize fontSize = titleCells(i)->fontSize();
+      currentTitleCell = titleCells(i-firstDisplayedIndex);
+      const char * currentName = currentTitleCell->text();
+      KDText::FontSize fontSize = currentTitleCell->fontSize();
       KDCoordinate currentNameWidth = KDText::stringSize(currentName, fontSize).width();
       columnWidth = columnWidth < currentNameWidth ? currentNameWidth : columnWidth;
     }

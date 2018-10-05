@@ -131,7 +131,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
         /* degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
-        assert(equation.type() == ExpressionNode::Type::Undefined);
+        assert(!recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Undefined; }, context));
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.

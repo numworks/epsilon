@@ -17,13 +17,12 @@ public:
 private:
   Shared::StorageListParameterController<StorageCartesianFunction> * parameterController() override;
   int maxNumberOfDisplayableRows() override;
-  void addEmptyModel() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   KDCoordinate maxFunctionNameWidth() const override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  bool removeModelRow(StorageCartesianFunction * function) override;
+  void didChangeModelsList() override;
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];

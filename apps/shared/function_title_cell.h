@@ -15,6 +15,7 @@ public:
   void setOrientation(Orientation orientation);
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  virtual KDText::FontSize fontSize() const = 0;
 protected:
   constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;

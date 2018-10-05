@@ -2,6 +2,7 @@
 #define SHARED_STORAGE_FUNCTION_LIST_CONTROLLER_H
 
 #include <escher.h>
+#include "function_title_cell.h"
 #include "storage_function_store.h"
 #include "function_app.h"
 #include "storage_list_parameter_controller.h"
@@ -43,12 +44,27 @@ public:
   KDCoordinate rowHeight(int j) override {
     return this->expressionRowHeight(j);
   }
+
+  KDCoordinate maxDiplayedFunctionNameWidth() {
+    KDCoordinate columnWidth = k_minNameColumnWidth;
+    int firstDisplayedIndex = m_selectableTableView.firstDisplayedRowIndex();
+    int lastDisplayedIndex = firstDisplayedIndex+m_selectableTableView.numberOfDisplayableRows();
+    for (int i = firstDisplayedIndex; i < lastDisplayedIndex; i++) {
+      const char * currentName = titleCells(i)->text();
+      KDText::FontSize fontSize = titleCells(i)->fontSize();
+      KDCoordinate currentNameWidth = KDText::stringSize(currentName, fontSize).width();
+      columnWidth = columnWidth < currentNameWidth ? currentNameWidth : columnWidth;
+    }
+    // TODO What if very big name?
+    return columnWidth + k_functionNameSumOfMargins;
+  }
+
   KDCoordinate columnWidth(int i) override {
     switch (i) {
       case 0:
-        return k_functionNameWidth;
+        return maxDiplayedFunctionNameWidth();
       case 1:
-        return selectableTableView()->bounds().width()-k_functionNameWidth;
+        return selectableTableView()->bounds().width()-maxDiplayedFunctionNameWidth();
       default:
         assert(false);
         return 0;
@@ -59,7 +75,7 @@ public:
       case 0:
         return 0;
       case 1:
-        return k_functionNameWidth;
+        return maxDiplayedFunctionNameWidth();
       case 2:
         return selectableTableView()->bounds().width();
       default:
@@ -68,7 +84,7 @@ public:
     }
   }
   int indexFromCumulatedWidth(KDCoordinate offsetX) override {
-    if (offsetX <= k_functionNameWidth) {
+    if (offsetX <= maxDiplayedFunctionNameWidth()) {
       return 0;
     } else {
       if (offsetX <= selectableTableView()->bounds().width())
@@ -224,7 +240,8 @@ protected:
   }
   StorageFunctionStore<T> * m_functionStore;
 private:
-  static constexpr KDCoordinate k_functionNameWidth = 65;
+  static constexpr KDCoordinate k_minNameColumnWidth = 35;
+  static constexpr KDCoordinate k_functionNameSumOfMargins = 2*Metric::HistoryHorizontalMargin;
   TabViewController * tabController() const {
     return (TabViewController *)(this->parentResponder()->parentResponder()->parentResponder()->parentResponder());
   }
@@ -235,7 +252,7 @@ private:
   }
   virtual StorageListParameterController<T> * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;
-  virtual HighlightCell * titleCells(int index) = 0;
+  virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
   SelectableTableView m_selectableTableView;

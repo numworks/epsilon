@@ -23,7 +23,6 @@ void KDFont::fetchGlyphForChar(char c, const KDFont::RenderPalette & renderPalet
   uint8_t * greyscaleBuffer = reinterpret_cast<uint8_t *>(pixelBuffer);
   fetchGreyscaleGlyphForChar(c, greyscaleBuffer);
 
-  int numberOfPixels = m_glyphWidth*m_glyphHeight;
   uint8_t mask = (0xFF >> (8-k_bitsPerPixel));
   int pixelIndex = m_glyphWidth * m_glyphHeight;
   int greyscaleByteIndex = pixelIndex / k_bitsPerPixel;

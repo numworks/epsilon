@@ -21,8 +21,6 @@ poincare/src/simplification/demo_ruleset.h
 
 # Font related generated files.
 kandinsky/fonts/rasterizer
-kandinsky/src/font.c
-kandinsky/src/font.h
 
 # No i18n headers
 apps/i18n.h

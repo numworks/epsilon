@@ -6,6 +6,8 @@ objs += $(addprefix kandinsky/src/,\
   context_pixel.o\
   context_rect.o\
   context_text.o\
+  font.o\
+  font_small.o\
   framebuffer.o\
   framebuffer_context.o\
   ion_context.o\

@@ -9,82 +9,64 @@
 
 #include "tokenizer.h"
 
-#include <poincare/addition.h>
-#include <poincare/division.h>
-#include <poincare/equal.h>
-#include <poincare/factorial.h>
-#include <poincare/matrix.h>
-#include <poincare/multiplication.h>
-#include <poincare/opposite.h>
-#include <poincare/parenthesis.h>
-#include <poincare/power.h>
-#include <poincare/square_root.h>
-#include <poincare/store.h>
-#include <poincare/subtraction.h>
-#include <poincare/symbol.h>
-
 namespace Poincare {
 
 class Parser {
 public:
-  Parser(const char * input) :
-    m_tokenizer(input),
-    m_currentToken(Token(Token::Type::Undefined)),
-    m_nextToken(m_tokenizer.popToken()) {}
-  Expression parse();
-private:
-  void popToken() {
-    m_currentToken = m_nextToken;
-    m_nextToken = m_tokenizer.popToken();
-  }
-  bool expect(Token::Type type) {
-    popToken();
-    return m_currentToken.is(type);
-  }
-  bool accept(Token::Type type) {
-    if (m_nextToken.is(type)) {
-      popToken();
-      return true;
-    }
-    return false;
-  }
-  bool canPopToken(Token::Type stoppingType);
+  enum class Status {
+    Success,
+    Progress,
+    Error
+  };
 
+  Parser(const char * text) :
+    m_status(Status::Progress),
+    m_tokenizer(text),
+    m_currentToken(Token(Token::Undefined)),
+    m_nextToken(m_tokenizer.popToken()),
+    m_pendingImplicitMultiplication(false) {}
+
+  Expression parse();
+  Status getStatus() const { return m_status; }
+
+private:
   Expression parseUntil(Token::Type stoppingType);
 
-  Expression raiseError(const Expression & leftHandSide = Expression()) {
-    return Expression();
-  }
-  Expression parseNumber(const Expression & leftHandSide);
-  Expression parsePlus(const Expression & leftHandSide);
-  Expression parseTimes(const Expression & leftHandSide);
-  Expression parseSlash(const Expression & leftHandSide);
-  Expression parseMinus(const Expression & leftHandSide);
-  Expression parseCaret(const Expression & leftHandSide);
-  Expression parseLeftParenthesis(const Expression & leftHandSide);
-  Expression parseSquareRoot(const Expression & leftHandSide);
-  Expression parseBang(const Expression & leftHandSide);
-  Expression parseEqual(const Expression & leftHandSide);
-  Expression parseMatrix(const Expression & leftHandSide);
+  // Methods on Tokens
+  void popToken();
+  bool canPopToken(Token::Type type);
+  bool popTokenUntil(Token::Type stoppingType);
+  void isThereImplicitMultiplication();
 
-  Matrix parseVector();
-  Matrix parseCommaSeparatedList();
+  // Specific Token parsers
+  void raiseError(Expression & leftHandSide);
+  void parseNumber(Expression & leftHandSide);
+  void parseSymbol(Expression & leftHandSide);
+  void parseMatrix(Expression & leftHandSide);
+  void parseLeftParenthesis(Expression & leftHandSide);
+  void parseBang(Expression & leftHandSide);
+  void parsePlus(Expression & leftHandSide);
+  void parseMinus(Expression & leftHandSide);
+  void parseTimes(Expression & leftHandSide);
+  void parseSlash(Expression & leftHandSide);
+  void parseImplicitTimes(Expression & leftHandSide);
+  void parseCaret(Expression & leftHandSide);
+  void parseEqual(Expression & leftHandSide);
+  void parseStore(Expression & leftHandSide);
 
-  template <class T>
-  Expression parseBinaryOperator(const Expression & leftHandSide, Token::Type type) {
-    if (leftHandSide.isUninitialized()) {
-      return Expression();
-    }
-    Expression rightHandSide = parseUntil(type);
-    if (rightHandSide.isUninitialized()) {
-      return Expression();
-    }
-    return T(leftHandSide, rightHandSide);
-  }
+  // Parsing helpers
+  bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);
+  Expression parseVector();
+  template <class T> Expression parseReservedFunction();
+  Expression parseFunctionParameters();
+  Expression parseCommaSeparatedList();
 
+  // Data members
+  Status m_status;
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
+  bool m_pendingImplicitMultiplication;
 };
 
 }

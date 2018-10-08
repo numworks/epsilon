@@ -185,7 +185,10 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
     setEditing(false);
-    m_delegate->layoutFieldDidFinishEditing(this, layout(), event);
+    if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
+      // Reinit layout for next use
+      clearLayout();
+    }
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {

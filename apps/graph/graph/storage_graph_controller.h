@@ -13,7 +13,7 @@
 
 namespace Graph {
 
-class StorageGraphController : public Shared::StorageFunctionGraphController<StorageCartesianFunction>, public StorageGraphControllerHelper {
+class StorageGraphController : public Shared::StorageFunctionGraphController<Shared::StorageCartesianFunction>, public StorageGraphControllerHelper {
 public:
   StorageGraphController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;

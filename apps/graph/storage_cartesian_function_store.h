@@ -1,16 +1,16 @@
 #ifndef GRAPH_STORAGE_CARTESIAN_FUNCTION_STORE_H
 #define GRAPH_STORAGE_CARTESIAN_FUNCTION_STORE_H
 
-#include "storage_cartesian_function.h"
+#include "../shared/storage_cartesian_function.h"
 #include "../shared/storage_function_store.h"
 #include <stdint.h>
 #include <escher.h>
 
 namespace Graph {
 
-class StorageCartesianFunctionStore : public Shared::StorageFunctionStore<StorageCartesianFunction> {
+class StorageCartesianFunctionStore : public Shared::StorageFunctionStore<Shared::StorageCartesianFunction> {
 public:
-  static StorageCartesianFunction NullModel();
+  static Shared::StorageCartesianFunction NullModel();
 
   StorageCartesianFunctionStore();
 /*  StorageCartesianFunction activeCartesianFunctionAtIndex(int i) override { return (CartesianFunction *)Shared::FunctionStore::activeFunctionAtIndex(i); }

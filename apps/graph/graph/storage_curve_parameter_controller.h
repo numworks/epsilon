@@ -11,7 +11,7 @@ namespace Graph {
 
 class StorageGraphController;
 
-class StorageCurveParameterController : public Shared::StorageFunctionCurveParameterController<StorageCartesianFunction> {
+class StorageCurveParameterController : public Shared::StorageFunctionCurveParameterController<Shared::StorageCartesianFunction> {
 public:
   StorageCurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, StorageGraphView * graphView, StorageGraphController * graphController, StorageCartesianFunctionStore * functionStore);
   const char * title() override;
@@ -21,8 +21,8 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  Shared::StorageFunctionGoToParameterController<StorageCartesianFunction>  * goToParameterController() override;
-  Shared::StorageFunctionGoToParameterController<StorageCartesianFunction>  m_goToParameterController;
+  Shared::StorageFunctionGoToParameterController<Shared::StorageCartesianFunction>  * goToParameterController() override;
+  Shared::StorageFunctionGoToParameterController<Shared::StorageCartesianFunction>  m_goToParameterController;
   StorageGraphController * m_graphController;
   constexpr static int k_totalNumberOfCells = 3;
   MessageTableCellWithChevron m_calculationCell;

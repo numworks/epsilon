@@ -8,6 +8,21 @@ namespace Poincare {
 
 class FunctionNode : public SymbolAbstractNode  {
 public:
+  FunctionNode() :
+    SymbolAbstractNode(),
+    m_color(KDColorRed),
+    m_displayDerivative(true),
+    m_isActive(true)
+  {}
+
+  // FunctionNode
+  KDColor color() const { return m_color; }
+  bool displayDerivative() const { return m_displayDerivative; }
+  bool isActive() const { return m_isActive; }
+  void setColor(KDColor color) { m_color = color; }
+  void setDisplayDerivative(bool display) { m_displayDerivative = display; }
+  void setActive (bool active) { m_isActive = active; }
+
   // SymbolAbstractNode
   const char * name() const override { return m_name; }
 
@@ -18,6 +33,12 @@ public:
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Function";
+  }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " name=\"" << m_name << "\"";
+    stream << " color=\"" << m_color << "\"";
+    stream << " displayDerivative=\"" << m_displayDerivative << "\"";
+    stream << " active=\"" << m_isActive << "\"";
   }
 #endif
 
@@ -31,6 +52,9 @@ public:
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
 private:
+  KDColor m_color;
+  bool m_displayDerivative;
+  bool m_isActive;
   char m_name[0]; // MUST be the last member variable
 
   VariableContext xContext(Context & parentContext) const;

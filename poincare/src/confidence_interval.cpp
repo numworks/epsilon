@@ -82,8 +82,8 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  Expression result = matrix.deepReduce(context, angleUnit);
-  return result;
+  matrix.reduceChildren(context, angleUnit);
+  return matrix;
 }
 
 }

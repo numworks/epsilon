@@ -2,7 +2,7 @@
 #define POINCARE_STORE_H
 
 #include <poincare/expression.h>
-#include <poincare/symbol.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/layout_helper.h>
 #include <poincare/evaluation.h>
 
@@ -39,16 +39,16 @@ private:
 class Store final : public Expression {
 public:
   Store(const StoreNode * n) : Expression(n) {}
-  Store(Expression value, Symbol symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {
+  Store(Expression value, SymbolAbstract symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {
     replaceChildAtIndexInPlace(0, value);
     replaceChildAtIndexInPlace(1, symbol);
   }
 
   // Store
-  const Symbol symbol() const {
+  const SymbolAbstract symbol() const {
     assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol
         || childAtIndex(1).type() == ExpressionNode::Type::Function);
-    return childAtIndex(1).convert<const Symbol>();
+    return childAtIndex(1).convert<const SymbolAbstract>();
   }
   const Expression value() const {
     return childAtIndex(0);

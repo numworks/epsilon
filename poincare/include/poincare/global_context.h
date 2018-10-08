@@ -20,7 +20,7 @@ public:
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Expression expressionForSymbol(const SymbolAbstract & symbol) override;
-  void setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) override;
+  void setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) override;
   static Ion::Storage::Record RecordWithName(const char * name);
   static bool storageMemoryFull();
   //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;

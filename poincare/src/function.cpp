@@ -29,7 +29,7 @@ size_t FunctionNode::size() const {
   return NodeSize(strlen(m_name));
 }
 
-Expression FunctionNode::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }
 
@@ -113,7 +113,7 @@ Function::Function(const char * name) :
   static_cast<FunctionNode *>(Expression::node())->setName(name, strlen(name));
 }
 
-Expression Function::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   // Replace the symbol in the child
   childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {

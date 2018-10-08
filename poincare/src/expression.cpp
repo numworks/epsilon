@@ -3,6 +3,7 @@
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
@@ -218,7 +219,7 @@ Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences:
   return node()->approximate(U(), context, angleUnit);
 }
 
-Expression Expression::defaultReplaceSymbolWithExpression(const Symbol & symbol, const Expression expression) {
+Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {
   for (int i = 0; i < numberOfChildren(); i++) {
     childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
   }

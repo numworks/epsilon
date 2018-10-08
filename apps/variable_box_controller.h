@@ -30,7 +30,9 @@ private:
     RootMenu,
     Expression,
     Function
-    };
+  };
+  constexpr static int k_functionArgLength = 3;
+  constexpr static const char * k_functionArg = "(x)";
   constexpr static int k_maxNumberOfDisplayedRows = 6; //240/Metric::ToolboxRowHeight
   constexpr static int k_numberOfMenuRows = 2;
   constexpr static KDCoordinate k_leafMargin = 20;

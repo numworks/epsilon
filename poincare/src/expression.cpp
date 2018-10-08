@@ -106,6 +106,7 @@ bool Expression::DependsOnVariables(const Expression e, Context & context) {
 }
 
 bool Expression::getLinearCoefficients(char * variables, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
+  assert(!recursivelyMatches(IsMatrix, context));
   char * x = variables;
   while (*x != 0) {
     int degree = polynomialDegree(*x);
@@ -271,14 +272,15 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  /* assert(!recursivelyMatches(IsMatrix, context));
-   * We could assert that no matrix is involved but we sometimes call deepReduce
-   * with a matrix at root to avoid calling deepReduce on all matrix children.
-   * (Matrix::rowCanonize for instance) */
+  assert(!IsMatrix(*this, context));
+  reduceChildren(context, angleUnit);
+  return shallowReduce(context, angleUnit);
+}
+
+void Expression::reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   for (int i = 0; i < numberOfChildren(); i++) {
     childAtIndex(i).deepReduce(context, angleUnit);
   }
-  return shallowReduce(context, angleUnit);
 }
 
 Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {

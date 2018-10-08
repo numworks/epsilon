@@ -159,6 +159,7 @@ public:
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
+  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();

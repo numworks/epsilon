@@ -160,16 +160,11 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 }
 
 Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication determinant) {
-  // The matrix has to be reduced to be able to spot 0 inside it
-  Expression reduced = deepReduce(context, angleUnit);
-  // The MatrixNode should change only if one of the child is Undefined
-  if (reduced.type() != ExpressionNode::Type::Matrix) {
-    return Matrix();
-  }
-  Matrix matrix = static_cast<Matrix &>(reduced);
+  // The matrix children have to be reduced to be able to spot 0
+  reduceChildren(context, angleUnit);
 
-  int m = matrix.numberOfRows();
-  int n = matrix.numberOfColumns();
+  int m = numberOfRows();
+  int n = numberOfColumns();
 
   int h = 0; // row pivot
   int k = 0; // column pivot
@@ -177,7 +172,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
   while (h < m && k < n) {
     // Find the first non-null pivot
     int iPivot = h;
-    while (iPivot < m && matrix.matrixChild(iPivot, k).isRationalZero()) {
+    while (iPivot < m && matrixChild(iPivot, k).isRationalZero()) {
       iPivot++;
     }
     if (iPivot == m) {
@@ -189,7 +184,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
-          matrix.swapChildrenInPlace(iPivot*n+col, h*n+col);
+          swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
         if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational(-1), 0, determinant.numberOfChildren()); }
@@ -201,10 +196,10 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division(opHJ, divisor.clone());
-        matrix.replaceChildAtIndexInPlace(h*n+j, newOpHJ);
+        replaceChildAtIndexInPlace(h*n+j, newOpHJ);
         newOpHJ = newOpHJ.shallowReduce(context, angleUnit);
       }
-      matrix.replaceChildInPlace(divisor, Rational(1));
+      replaceChildInPlace(divisor, Rational(1));
 
       /* Set to 0 all M[i][j] i != h, j > k by linear combination */
       for (int i = 0; i < m; i++) {
@@ -213,17 +208,17 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
         for (int j = k+1; j < n; j++) {
           Expression opIJ = matrixChild(i, j);
           Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j).clone(), factor.clone()));
-          matrix.replaceChildAtIndexInPlace(i*n+j, newOpIJ);
+          replaceChildAtIndexInPlace(i*n+j, newOpIJ);
           newOpIJ.childAtIndex(1).shallowReduce(context, angleUnit);
           newOpIJ = newOpIJ.shallowReduce(context, angleUnit);
         }
-        matrix.replaceChildAtIndexInPlace(i*n+k, Rational(0));
+        replaceChildAtIndexInPlace(i*n+k, Rational(0));
       }
       h++;
       k++;
     }
   }
-  return matrix;
+  return *this;
 }
 
 template<typename T>

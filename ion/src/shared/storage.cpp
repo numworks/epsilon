@@ -49,6 +49,14 @@ Storage::Record::Record(const char * baseName, const char * extension) {
   new (this) Record(baseName, strlen(baseName), extension, strlen(extension));
 }
 
+uint32_t Storage::Record::checksum() {
+  uint32_t crc32Results[2];
+  crc32Results[0] = m_fullNameCRC32;
+  Data data = value();
+  crc32Results[1] = Ion::crc32PaddedString((const char *)data.buffer, data.size);
+  return Ion::crc32(crc32Results, 2);
+}
+
 Storage::Record::Record(const char * basename, int basenameLength, const char * extension, int extensionLength) {
   assert(basename != nullptr);
   assert(extension != nullptr);
@@ -268,7 +276,7 @@ Storage::Record::Data Storage::valueOfRecord(const Record record) {
       const char * fullName = fullNameOfRecordStarting(p);
       record_size_t size = sizeOfRecordStarting(p);
       const void * value = valueOfRecordStarting(p);
-      return {.buffer= value, .size= size-strlen(fullName)-1-sizeof(record_size_t)};
+      return {.buffer = value, .size = size-strlen(fullName)-1-sizeof(record_size_t)};
     }
   }
   return {.buffer= nullptr, .size= 0};

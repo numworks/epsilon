@@ -1,5 +1,5 @@
 #include "storage_function_store.h"
-#include <apps/graph/storage_cartesian_function.h>
+#include "storage_cartesian_function.h"
 #include <assert.h>
 
 namespace Shared {
@@ -57,6 +57,6 @@ U StorageFunctionStore<T>::firstAvailableAttribute(U attributes[], AttributeGett
 }
 
 //TODO specify templates
-template class Shared::StorageFunctionStore<Graph::StorageCartesianFunction>;
+template class Shared::StorageFunctionStore<Shared::StorageCartesianFunction>;
 /*template char const* const Shared::StorageFunctionStore::firstAvailableAttribute<char const* const>(char const* const*, char const* const (*)(Shared::StorageFunction));
 template KDColor const Shared::StorageFunctionStore::firstAvailableAttribute<KDColor const>(KDColor const*, KDColor const (*)(Shared::StorageFunction));*/

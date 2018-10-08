@@ -9,12 +9,12 @@ namespace Graph {
 
 //constexpr const char * StorageCartesianFunctionStore::k_functionNames[k_maxNumberOfFunctions];
 
-StorageCartesianFunction StorageCartesianFunctionStore::NullModel() {
-  return StorageCartesianFunction("");
+Shared::StorageCartesianFunction StorageCartesianFunctionStore::NullModel() {
+  return Shared::StorageCartesianFunction("");
 }
 
 StorageCartesianFunctionStore::StorageCartesianFunctionStore() :
-  Shared::StorageFunctionStore<StorageCartesianFunction>()
+  Shared::StorageFunctionStore<Shared::StorageCartesianFunction>()
 {
   //addEmptyModel();
 }

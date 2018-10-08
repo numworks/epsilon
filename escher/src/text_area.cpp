@@ -23,7 +23,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 
   size_t cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(text);
 
-  size_t eventTextSize = max(strlen(text) + 1, TextField::maxBufferSize());
+  size_t eventTextSize = min(strlen(text) + 1, TextField::maxBufferSize());
   char buffer[TextField::maxBufferSize()];
   size_t bufferIndex = 0;
 

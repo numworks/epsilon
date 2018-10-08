@@ -13,7 +13,7 @@
 
 namespace Shared {
 
-class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
+class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
   ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
   const char * title() override;

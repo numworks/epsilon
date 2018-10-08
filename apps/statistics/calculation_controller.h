@@ -12,12 +12,12 @@
 
 namespace Statistics {
 
-class CalculationController : public Shared::TabTableController, public ButtonRowDelegate, public TableViewDataSource, public AlternateEmptyViewDelegate {
+class CalculationController : public Shared::TabTableController, public ButtonRowDelegate, public TableViewDataSource, public AlternateEmptyViewDefaultDelegate {
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
 
-  // AlternateEmptyViewDelegate
+  // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   Responder * defaultController() override;

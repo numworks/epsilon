@@ -13,7 +13,7 @@
 
 namespace Regression {
 
-class CalculationController : public Shared::TabTableController, public TableViewDataSource, public SelectableTableViewDelegate, public ButtonRowDelegate, public AlternateEmptyViewDelegate  {
+class CalculationController : public Shared::TabTableController, public TableViewDataSource, public SelectableTableViewDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate  {
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
@@ -28,7 +28,7 @@ public:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
-  // AlternateEmptyViewDelegate
+  // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   Responder * defaultController() override;

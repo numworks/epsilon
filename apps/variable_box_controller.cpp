@@ -62,7 +62,9 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
   Storage::Record record = recordAtIndex(index);
-  Layout symbolLayout = LayoutHelper::String(record.fullName(), strlen(record.fullName()) - strlen(extension()));
+  char truncatedName[SymbolAbstract::k_maxNameSize];
+  size_t nameLength = SymbolAbstract::TruncateExtension(truncatedName, record.fullName(), SymbolAbstract::k_maxNameSize);
+  Layout symbolLayout = LayoutHelper::String(truncatedName, nameLength);
   myCell->setLayout(symbolLayout);
   myCell->setAccessoryLayout(expressionLayoutForIndex(selectedRow()));
 }
@@ -114,7 +116,9 @@ bool VariableBoxController::returnToPreviousMenu() {
 bool VariableBoxController::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
   Storage::Record record = recordAtIndex(selectedRow);
-  sender()->handleEventWithText(record.fullName());
+  char truncatedName[SymbolAbstract::k_maxNameSize];
+  SymbolAbstract::TruncateExtension(truncatedName, record.fullName(), SymbolAbstract::k_maxNameSize);
+  sender()->handleEventWithText(truncatedName);
   app()->dismissModalViewController();
   return true;
 }

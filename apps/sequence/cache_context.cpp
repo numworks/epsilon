@@ -15,10 +15,12 @@ CacheContext<T>::CacheContext(Context * parentContext) :
 }
 
 template<typename T>
-const Expression CacheContext<T>::expressionForSymbol(const Symbol & symbol) {
+const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & symbol) {
   // [u|v](n(+1)?)
-  if ((symbol.name()[0] ==  SequenceStore::k_sequenceNames[0][0] || symbol.name()[0] ==  SequenceStore::k_sequenceNames[1][0])
-   && (strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0)) {
+  if (symbol.type() == ExpressionNode::Type::Symbol
+    && (symbol.name()[0] ==  SequenceStore::k_sequenceNames[0][0] || symbol.name()[0] ==  SequenceStore::k_sequenceNames[1][0])
+    && (strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0))
+  {
     return Float<T>(m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)]);
   }
   return VariableContext::expressionForSymbol(symbol);

@@ -120,6 +120,7 @@ objs += $(addprefix poincare/src/,\
   subtraction.o\
   sum.o\
   symbol.o\
+  symbol_abstract.o\
   tangent.o\
   tree_handle.o\
   tree_node.o\

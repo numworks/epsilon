@@ -17,11 +17,9 @@ constexpr char Symbol::k_ans[];
 
 void SymbolNode::initToMatchSize(size_t goalSize) {
   assert(goalSize != sizeof(SymbolNode));
-  int nameSize = goalSize - sizeof(SymbolNode);
-  for (int i = 0; i < nameSize - 1; i++) {
-    m_name[i] = 'a';
-  }
-  m_name[nameSize-1] = 0;
+  assert(goalSize > sizeof(SymbolNode));
+  size_t nameSize = goalSize - sizeof(SymbolNode);
+  SymbolAbstractNode::initName(nameSize);
   assert(size() == goalSize);
 }
 
@@ -99,11 +97,6 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
   return 0.0;
 }
 
-int SymbolNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
-  assert(e->type() == Type::Symbol);
-  return strcmp(m_name, static_cast<const SymbolNode *>(e)->name());
-}
-
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
     assert(m_name[1] == 0);
@@ -172,7 +165,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Symbol::Symbol(const char * name, int length) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>(NodeSize(length))) {
+Symbol::Symbol(const char * name, int length) : SymbolAbstract(TreePool::sharedPool()->createTreeNode<SymbolNode>(NodeSize(length))) {
   node()->setName(name, length);
 }
 

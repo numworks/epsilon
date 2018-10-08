@@ -30,10 +30,22 @@ public:
     return templatedApproximateAtAbscissa(x, context);
   }
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
+protected:
+  class FunctionRecordData {
+  public:
+    KDColor color() const { return m_color; }
+    void setColor(KDColor color) { m_color = color; }
+    bool isActive() const { return m_active; }
+    void setActive(bool active) { m_active = active; }
+  private:
+    KDColor m_color;
+    bool m_active;
+  };
 private:
   constexpr static size_t k_dataLengthInBytes = (TextField::maxBufferSize()+2)*sizeof(char)+2;
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The function data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
+  FunctionRecordData * recordData() const;
   virtual const char * symbol() const = 0;
 };
 

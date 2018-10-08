@@ -13,24 +13,30 @@ uint32_t StorageFunction::checksum() {
 }
 
 bool StorageFunction::isActive() const {
-  return true; //TODO
+  return recordData()->isActive();
 }
 
 KDColor StorageFunction::color() const {
-  return KDColorRed; //TODO
+  return recordData()->color();
 }
 
 void StorageFunction::setActive(bool active) {
-  //TODO
+  recordData()->setActive(active);
 }
 
 void StorageFunction::setColor(KDColor color) {
-  //TODO
+  recordData()->setColor(color);
 }
 
 template<typename T>
 T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   return reducedExpression(context).approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
+}
+
+StorageFunction::FunctionRecordData * StorageFunction::recordData() const {
+  assert(!record().isNull());
+  Ion::Storage::Record::Data d = record().value();
+  return reinterpret_cast<FunctionRecordData *>(const_cast<void *>(d.buffer));
 }
 
 }

@@ -3,7 +3,6 @@
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/i18n.h>
-#include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 
 class AlternateEmptyViewController : public ViewController {
@@ -25,7 +24,6 @@ private:
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    MessageTextView m_message;
     ViewController * m_mainViewController;
     AlternateEmptyViewDelegate * m_delegate;
   };

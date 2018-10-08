@@ -34,7 +34,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell.setHide(true);
 }
 
-// AlternateEmptyViewDelegate
+// AlternateEmptyViewDefaultDelegate
 
 bool CalculationController::isEmpty() const {
   return m_store->isEmpty();

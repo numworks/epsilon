@@ -14,6 +14,8 @@
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 
+#include "parsing/parser.h"
+
 int poincare_expression_yyparse(Poincare::Expression * expressionOutput);
 
 namespace Poincare {
@@ -28,16 +30,9 @@ Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
     return Expression();
   }
-
-  static YY_BUFFER_STATE buf = nullptr;
-  if (buf != nullptr) {
-     poincare_expression_yy_delete_buffer(buf);
-  }
-  buf = poincare_expression_yy_scan_string(string);
-
-  Expression expression;
-  if (poincare_expression_yyparse(&expression) != 0) {
-    // Parsing failed because of invalid input or memory exhaustion
+  Parser p(string);
+  Expression expression = p.parse();
+  if (p.getStatus() != Parser::Status::Success) {
     expression = Expression();
   }
   return expression;

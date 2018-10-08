@@ -8,11 +8,24 @@ using namespace Poincare;
 namespace Shared {
 
 uint32_t StorageFunction::checksum() {
-  char data[k_dataLengthInBytes/sizeof(char)] = {};
-  text(data, TextField::maxBufferSize());
-  data[k_dataLengthInBytes-2] = m_name != nullptr ? m_name[0] : 0; //TODO
-  data[k_dataLengthInBytes-1] = m_active ? 1 : 0; //TODO
-  return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
+  assert(!record().isNull());
+  return record().checksum();
+}
+
+bool StorageFunction::isActive() const {
+  return true; //TODO
+}
+
+KDColor StorageFunction::color() const {
+  return KDColorRed; //TODO
+}
+
+void StorageFunction::setActive(bool active) {
+  //TODO
+}
+
+void StorageFunction::setColor(KDColor color) {
+  //TODO
 }
 
 template<typename T>

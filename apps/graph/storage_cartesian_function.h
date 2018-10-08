@@ -11,12 +11,17 @@ class StorageCartesianFunction : public Shared::StorageFunction {
 public:
   static const char * Extension() { return Poincare::GlobalContext::funcExtension; }
   static void DefaultName(char buffer[], size_t bufferSize);
-  StorageCartesianFunction(const char * text = nullptr, KDColor color = KDColorBlack);
-  StorageCartesianFunction(Ion::Storage::Record record);
+  static StorageCartesianFunction NewModel(Ion::Storage::Record record);
+  StorageCartesianFunction(const char * text = nullptr) :
+    Shared::StorageFunction(text)
+  {}
+  StorageCartesianFunction(Ion::Storage::Record record) :
+    Shared::StorageFunction(record)
+  {}
   bool operator==(const StorageCartesianFunction & other) const { return record() == other.record(); }
   bool operator!=(const StorageCartesianFunction & other) const { return !(*this == other); }
-  bool displayDerivative() const { return m_displayDerivative; }
-  void setDisplayDerivative(bool display) { m_displayDerivative = display; }
+  bool displayDerivative() const;
+  void setDisplayDerivative(bool display);
   double approximateDerivative(double x, Poincare::Context * context) const;
   double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   Poincare::Expression::Coordinate2D nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
@@ -27,8 +32,8 @@ public:
     static const char x[2] = {Poincare::Symbol::UnknownX, 0}; //TODO remove static
     return x;
   }
-private:
-  bool m_displayDerivative;
+  // StorageExpressionModel
+  void setContent(const char * c) override;
 };
 
 }

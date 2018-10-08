@@ -2,28 +2,27 @@
 #define SHARED_STORAGE_FUNCTION_H
 
 #include <escher/text_field.h>
+#include <poincare/function.h>
 #include "storage_expression_model.h"
 
 namespace Shared {
 
 class StorageFunction : public StorageExpressionModel {
 public:
-  StorageFunction(const char * name = nullptr, KDColor color = KDColorBlack) :
-    StorageExpressionModel(name),
-    m_color(color),
-    m_active(true)
-  {}
-  StorageFunction(Ion::Storage::Record record, KDColor color = KDColorBlack) :
-    StorageExpressionModel(record),
-    m_color(color),
-    m_active(true)
-  {
-  }
+  // Constructors
+  StorageFunction(const char * name = nullptr) : StorageExpressionModel(name) {}
+  StorageFunction(Ion::Storage::Record record) : StorageExpressionModel(record){}
+
+  // Checksum
   virtual uint32_t checksum();
-  KDColor color() const { return m_color; }
-  bool isActive() const { return m_active; }
-  void setActive(bool active) { m_active = active; }
-  void setColor(KDColor color) { m_color = color; }
+
+  // Properties
+  bool isActive() const;
+  KDColor color() const;
+  void setActive(bool active);
+  void setColor(KDColor color);
+
+  // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
     return templatedApproximateAtAbscissa(x, context);
   }
@@ -36,8 +35,6 @@ private:
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The function data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   virtual const char * symbol() const = 0;
-  KDColor m_color;
-  bool m_active;
 };
 
 }

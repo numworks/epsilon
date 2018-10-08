@@ -46,6 +46,7 @@ public:
     bool operator!=(const Record & other) const {
       return !(*this == other);
     }
+    uint32_t checksum();
     bool isNull() const {
       return m_fullNameCRC32 == 0;
     }
@@ -73,6 +74,7 @@ public:
   size_t availableSize();
   uint32_t checksum();
   int numberOfRecordsWithExtension(const char * extension);
+  static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
   Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size);
@@ -113,7 +115,6 @@ private:
   bool isBaseNameWithExtensionTaken(const char * baseName, const char * extension, Record * recordToExclude = nullptr);
   bool isNameOfRecordTaken(Record r, const Record * recordToExclude);
   static bool FullNameCompliant(const char * name);
-  static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
   char * endBuffer();
   size_t sizeOfBaseNameAndExtension(const char * baseName, const char * extension) const;
   size_t sizeOfRecordWithBaseNameAndExtension(const char * baseName, const char * extension, size_t size) const;

@@ -17,7 +17,7 @@ VariableBoxController::VariableBoxController() :
 }
 
 void VariableBoxController::viewWillAppear() {
-  StackViewController::viewWillAppear();
+  NestedMenuController::viewWillAppear();
   m_currentPage = Page::RootMenu;
   m_selectableTableView.reloadData();
 }

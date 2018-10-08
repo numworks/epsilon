@@ -1,4 +1,5 @@
 #include "variable_box_controller.h"
+#include "shared/global_context.h"
 #include "shared/poincare_helpers.h"
 #include "constant.h"
 #include <escher/metric.h>

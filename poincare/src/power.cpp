@@ -4,7 +4,6 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
-#include <poincare/global_context.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>

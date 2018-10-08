@@ -4,7 +4,7 @@
 #define MATRIX_VARIABLES 1
 
 #include <escher.h>
-#include <poincare/global_context.h>
+#include "shared/global_context.h"
 #include "i18n.h"
 
 class VariableBoxController : public NestedMenuController {

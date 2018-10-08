@@ -1,4 +1,5 @@
 #include "storage_expression_model.h"
+#include "global_context.h"
 #include "poincare_helpers.h"
 #include <poincare/horizontal_layout.h>
 #include <string.h>
@@ -76,7 +77,7 @@ void StorageExpressionModel::tidy() {
   m_expression = Expression();
 }
 
-Expression expressionToStoreFromString(const char * c) {
+Expression StorageExpressionModel::expressionToStoreFromString(const char * c) {
   Expression expressionToStore = Expression::parse(c);
   if (!expressionToStore.isUninitialized()) {
     GlobalContext context;

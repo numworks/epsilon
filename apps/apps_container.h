@@ -14,6 +14,7 @@
 #include "battery_timer.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
+#include "shared/global_context.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -69,7 +70,7 @@ private:
 #if USE_PIC_VIEW_APP
   PicViewApp m_picViewApp;
 #endif
-  Poincare::GlobalContext m_globalContext;
+  Shared::GlobalContext m_globalContext;
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;

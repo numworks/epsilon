@@ -1,6 +1,10 @@
 #include "tokenizer.h"
-#include <poincare/number.h>
+
 #include <ion/charset.h>
+
+#include <poincare/empty_expression.h>
+#include <poincare/number.h>
+#include <poincare/symbol.h>
 
 namespace Poincare {
 
@@ -23,8 +27,8 @@ size_t Tokenizer::popDigits() {
 }
 
 Token Tokenizer::popNumber() {
-  const char * integerPartText = m_text;
-  size_t integerPartLength = popDigits();
+  const char * integralPartText = m_text;
+  size_t integralPartLength = popDigits();
 
   const char * decimalPartText = m_text;
   size_t decimalPartLength = 0;
@@ -33,8 +37,8 @@ Token Tokenizer::popNumber() {
     decimalPartLength = popDigits();
   }
 
-  if (integerPartLength == 0 && decimalPartLength == 0) {
-    return Token();
+  if (integralPartLength == 0 && decimalPartLength == 0) {
+    return Token(Token::Type::Undefined);
   }
 
   const char * exponentPartText = m_text;
@@ -42,14 +46,15 @@ Token Tokenizer::popNumber() {
   bool exponentIsNegative = false;
   if (canPopChar(Ion::Charset::Exponent)) {
     exponentIsNegative = canPopChar('-');
+    exponentPartText = m_text;
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
-      return Token();
+      return Token(Token::Type::Undefined);
     }
   }
 
   Token result(Token::Type::Number);
-  result.setExpression(Number::ParseNumber(integerPartText, integerPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
+  result.setExpression(Number::ParseNumber(integralPartText, integralPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
   return result;
 }
 
@@ -57,25 +62,27 @@ static inline bool isLetter(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-Token Tokenizer::popIdentifier() {
-  size_t length = 0;
-  char c = currentChar();
-  while (isLetter(c)) {
+Token Tokenizer::popSymbol() {
+  const char * text = m_text;
+  int length = 1;
+  char c = popChar();
+  while (isLetter(c) || (c >= '0' && c <= '9') || c == '_') {
     length++;
     c = popChar();
   }
-  Token result(Token::Type::Identifier);
-  //TODO result.setExpression(Identifier(text, length));
+  Token result(Token::Type::Symbol);
+  result.setExpression(Symbol(text, length));
   return result;
 }
 
 Token Tokenizer::popToken() {
+  while (canPopChar(' ')){};
   const char c = currentChar();
   if ((c == '.') || (c >= '0' && c <= '9')) {
     return popNumber();
   }
   if (isLetter(c)) {
-    return popIdentifier();
+    return popSymbol();
   }
   if (c >= '(' && c <= '/' && c != '.') {
     const Token::Type typeForChar[] = {
@@ -90,6 +97,9 @@ Token Tokenizer::popToken() {
     };
     popChar();
     return Token(typeForChar[c - '(']);
+  }
+  if (canPopChar(Ion::Charset::MultiplicationSign) || canPopChar(Ion::Charset::MiddleDot)) {
+    return Token(Token::Type::Times);
   }
   if (canPopChar('!')) {
     return Token(Token::Type::Bang);
@@ -112,19 +122,24 @@ Token Tokenizer::popToken() {
   if (canPopChar('}')) {
     return Token(Token::Type::RightBrace);
   }
-  if (canPopChar(Ion::Charset::SmallPi)) {
-    return Token(Token::Type::Number);
+  if (c == Ion::Charset::SmallPi || c == Ion::Charset::IComplex || c == Ion::Charset::Exponential || c == Ion::Charset::Root) {
+    Token result(Token::Type::Symbol);
+    result.setExpression(Symbol(m_text,1));
+    popChar();
+    return result;
+  }
+  if (canPopChar(Ion::Charset::Empty)) {
+    Token result(Token::Type::Undefined); //FIXME
+    result.setExpression(EmptyExpression());
+    return result;
   }
   if (canPopChar(Ion::Charset::Sto)) {
     return Token(Token::Type::Store);
   }
-  if (canPopChar(Ion::Charset::Root)) {
-    return Token(Token::Type::SquareRoot);
-  }
   if (canPopChar(0)) {
     return Token(Token::Type::EndOfStream);
   }
-  return Token(); // TODO error
+  return Token(Token::Type::Undefined);
 }
 
 }

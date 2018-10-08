@@ -24,7 +24,7 @@ void Equation::tidy() {
 Expression Equation::standardForm(Context * context) const {
   if (m_standardForm.isUninitialized()) {
     const Expression e = expression(context);
-    if (e.recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity; }, *context)) {
+    if (e.recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context); }, *context)) {
       m_standardForm = Undefined();
       return m_standardForm;
     }

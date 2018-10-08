@@ -22,7 +22,8 @@ void EditorController::setScript(Script script) {
   Script::Data scriptData = m_script.value();
   size_t availableScriptSize = scriptData.size + Ion::Storage::sharedStorage()->availableSize();
   assert(sizeof(m_areaBuffer) >= availableScriptSize);
-  strlcpy(m_areaBuffer, (const char *)scriptData.buffer, scriptData.size);
+  // We cannot use strlcpy as the first char reprensenting the importation status can be 0.
+  memcpy(m_areaBuffer, (const char *)scriptData.buffer, scriptData.size);
   m_editorView.setText(m_areaBuffer+1, availableScriptSize-1); // 1 char is taken by the importation status flag
 }
 

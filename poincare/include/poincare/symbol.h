@@ -1,30 +1,16 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/expression.h>
+#include <poincare/symbol_abstract.h>
 
 namespace Poincare {
 
-/* TODO: should we keep the size of SymbolNode as a member to speed up TreePool
- * scan? */
-
-/* Symbol Node contains an empty member variable "m_name", which is used to get
- * the string that follows. This means that a SymbolNode's size is sizeo
- * (SymbolNode) + strlen(string).
- *
- *   Seen by TreePool:    |SymbolNode                               |
- *   SymbolNode layout:   |ExpressionNode|m_name|                   |
- *   Memory content:      |ExpressionNode|S     |y|m|b|o|l|N|a|m|e|0|
- * */
-
-class SymbolNode final : public ExpressionNode {
-  friend class Store;
+class SymbolNode final : public SymbolAbstractNode {
 public:
-  void initToMatchSize(size_t goalSize) override;
-  void setName(const char * name, int length) { strlcpy(m_name, name, length+1); }
-  const char * name() const { return m_name; }
+  const char * name() const override { return m_name; }
 
   // TreeNode
+  void initToMatchSize(size_t goalSize) override;
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
@@ -45,10 +31,7 @@ public:
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
-  /* Comparison */
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-
-/* Layout */
+  /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
@@ -64,14 +47,14 @@ public:
   bool isPi() const { return isSymbolChar(Ion::Charset::SmallPi); }
   bool isExponential() const { return isSymbolChar(Ion::Charset::Exponential); }
   bool isIComplex() const { return isSymbolChar(Ion::Charset::IComplex); }
-protected:
-  char m_name[0]; // MUST be the last member variable
 private:
+  char m_name[0]; // MUST be the last member variable
+
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   bool isSymbolChar(char c) const { const char symbolName[2] = {c, 0}; return strcmp(m_name, symbolName) == 0; }
 };
 
-class Symbol final : public Expression {
+class Symbol final : public SymbolAbstract {
   friend class Expression;
   friend class Store;
 public:
@@ -83,7 +66,7 @@ public:
   };
   Symbol(const char * name, int length);
   Symbol(char name);
-  Symbol(const SymbolNode * node) : Expression(node) {}
+  Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
 
   // Symbol properties
   bool isPi() const { return node()->isPi(); }
@@ -97,9 +80,6 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
-
-  // Symbol
-  const char * name() const { return node()->name(); }
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

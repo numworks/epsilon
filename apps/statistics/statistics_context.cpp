@@ -9,8 +9,8 @@ using namespace Shared;
 
 namespace Statistics {
 
-const Expression StatisticsContext::expressionForSymbol(const Symbol & symbol) {
-  if (Symbol::isSeriesSymbol(symbol.name())) {
+const Expression StatisticsContext::expressionForSymbol(const SymbolAbstract & symbol) {
+  if (symbol.type() == ExpressionNode::Type::Symbol && Symbol::isSeriesSymbol(symbol.name())) {
     const char * seriesName = symbol.name();
     assert(strlen(seriesName) == 2);
 

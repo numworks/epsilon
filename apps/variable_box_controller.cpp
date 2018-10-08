@@ -62,8 +62,11 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
   Storage::Record record = recordAtIndex(index);
-  char truncatedName[SymbolAbstract::k_maxNameSize];
+  char truncatedName[SymbolAbstract::k_maxNameSize+k_functionArgLength];
   size_t nameLength = SymbolAbstract::TruncateExtension(truncatedName, record.fullName(), SymbolAbstract::k_maxNameSize);
+  if (m_currentPage == Page::Function) {
+    nameLength += strlcpy(truncatedName+nameLength, k_functionArg, k_functionArgLength+1);
+  }
   Layout symbolLayout = LayoutHelper::String(truncatedName, nameLength);
   myCell->setLayout(symbolLayout);
   myCell->setAccessoryLayout(expressionLayoutForRecord(record));

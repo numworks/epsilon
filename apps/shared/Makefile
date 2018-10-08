@@ -50,6 +50,7 @@ app_objs += $(addprefix apps/shared/,\
   scrollable_exact_approximate_expressions_view.o\
   separator_even_odd_buffer_text_cell.o\
   simple_interactive_curve_view_controller.o\
+  storage_cartesian_function.o\
   storage_expression_model.o\
   storage_function.o\
   storage_function_store.o\

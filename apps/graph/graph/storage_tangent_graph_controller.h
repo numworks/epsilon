@@ -10,12 +10,12 @@
 
 namespace Graph {
 
-class StorageTangentGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::StorageFunctionBannerDelegate<StorageCartesianFunction>, public GraphControllerHelper {
+class StorageTangentGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::StorageFunctionBannerDelegate<Shared::StorageCartesianFunction>, public GraphControllerHelper {
 public:
   StorageTangentGraphController(Responder * parentResponder, StorageGraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
   void viewWillAppear() override;
-  void setFunction(StorageCartesianFunction * function);
+  void setFunction(Shared::StorageCartesianFunction * function);
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.22f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
@@ -28,7 +28,7 @@ private:
   StorageGraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;
-  StorageCartesianFunction m_function;
+  Shared::StorageCartesianFunction m_function;
 };
 
 }

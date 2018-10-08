@@ -1,13 +1,12 @@
 #include "storage_cartesian_function.h"
-#include "../shared/storage_expression_model_store.h"
-#include "../shared/poincare_helpers.h"
+#include "storage_expression_model_store.h"
+#include "poincare_helpers.h"
 #include <float.h>
 #include <cmath>
 
 using namespace Poincare;
-using namespace Shared;
 
-namespace Graph {
+namespace Shared {
 
 void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   /* a default name is "f[number].func", for instance "f12.func", that does not
@@ -33,20 +32,21 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   strlcpy(&buffer[dotCharIndex+1], GlobalContext::funcExtension, bufferSize - (dotCharIndex+1));
 }
 
-StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record record) {
-  StorageCartesianFunction newFunction = StorageCartesianFunction(record);
-  newFunction.setColor(KDColorRed);
-  newFunction.setActive(true);
-  newFunction.setDisplayDerivative(true);
-  return newFunction;
+StorageCartesianFunction StorageCartesianFunction::NewModel() {
+  char nameBuffer[100];
+  DefaultName(nameBuffer, 100);
+  CartesianFunctionRecordData data;
+  Ion::Storage::Record::ErrorStatus r = Ion::Storage::sharedStorage()->createRecordWithFullName(nameBuffer, &data, sizeof(data));
+  assert(r == Ion::Storage::Record::ErrorStatus::None); // TODO not a valid assertion!
+  return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordNamed(nameBuffer));
 }
 
 bool StorageCartesianFunction::displayDerivative() const {
-  return functionNode()->displayDerivative();
+  return recordData()->displayDerivative();
 }
 
 void StorageCartesianFunction::setDisplayDerivative(bool display) {
-  functionNode()->setDisplayDerivative(display);
+  return recordData()->setDisplayDerivative(display);
 }
 
 double StorageCartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
@@ -83,9 +83,39 @@ Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double s
   return reducedExp.nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), reducedExp);
 }
 void StorageCartesianFunction::setContent(const char * c) {
-  Expression expressionToStore = StorageExpressionModel::contentFromString(c);
-// TODO
-  StorageExpressionModel.setContentExpression(expressionToStore);
+  // Compute the expression to store
+  Expression expressionToStore = StorageExpressionModel::expressionToStoreFromString(c);
+
+  // Prepare the new data to store
+  Ion::Storage::Record::Data newData = record().value();
+  size_t expressionToStoreSize = expressionToStore.isUninitialized() ? 0 : expressionToStore.size();
+  newData.size = sizeof(CartesianFunctionRecordData) + expressionToStoreSize;
+
+  // Set the data
+  Ion::Storage::Record::ErrorStatus error = record().setValue(newData);
+  assert(error == Ion::Storage::Record::ErrorStatus::None); //TODO remove assertion and handle case
+
+  // Copy the expression if needed
+  if (!expressionToStore.isUninitialized()) {
+    memcpy(expressionAddress(),expressionToStore.addressInPool(), expressionToStore.size());
+  }
+  StorageExpressionModel::didSetContentData();
+}
+
+void * StorageCartesianFunction::expressionAddress() const {
+  return recordData()->expressionAddress();
+}
+
+size_t StorageCartesianFunction::expressionSize() const {
+  assert(!record().isNull());
+  Ion::Storage::Record::Data d = record().value();
+  return d.size-sizeof(FunctionRecordData);
+}
+
+StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {
+  assert(!record().isNull());
+  Ion::Storage::Record::Data d = record().value();
+  return reinterpret_cast<CartesianFunctionRecordData *>(const_cast<void *>(d.buffer));
 }
 
 }

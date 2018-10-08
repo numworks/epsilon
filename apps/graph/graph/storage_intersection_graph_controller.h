@@ -12,7 +12,7 @@ public:
 private:
   void reloadBannerView() override;
   Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
-  StorageCartesianFunction m_intersectedFunction;
+  Shared::StorageCartesianFunction m_intersectedFunction;
   StorageCartesianFunctionStore * m_functionStore;
 };
 

@@ -25,6 +25,7 @@ app_objs += $(addprefix apps/shared/,\
   function_list_controller.o\
   function_store.o\
   function_title_cell.o\
+  global_context.o\
   go_to_parameter_controller.o\
   hideable_even_odd_cell.o\
   hideable_even_odd_editable_text_cell.o\

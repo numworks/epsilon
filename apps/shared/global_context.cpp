@@ -1,4 +1,4 @@
-#include <poincare/global_context.h>
+#include "global_context.h"
 #include <poincare/helpers.h>
 #include <poincare/undefined.h>
 #include <poincare/preferences.h>
@@ -6,7 +6,9 @@
 #include <cmath>
 #include <ion.h>
 
-namespace Poincare {
+using namespace Poincare;
+
+namespace Shared {
 
 constexpr char GlobalContext::expExtension[];
 constexpr char GlobalContext::funcExtension[];

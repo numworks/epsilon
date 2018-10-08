@@ -1,15 +1,15 @@
 #ifndef GRAPH_STORAGE_CARTESIAN_FUNCTION_H
 #define GRAPH_STORAGE_CARTESIAN_FUNCTION_H
 
+#include "../shared/global_context.h"
 #include "../shared/storage_function.h"
-#include <poincare/global_context.h>
 #include <poincare/symbol.h>
 
 namespace Graph {
 
 class StorageCartesianFunction : public Shared::StorageFunction {
 public:
-  static const char * Extension() { return Poincare::GlobalContext::funcExtension; }
+  static const char * Extension() { return Shared::GlobalContext::funcExtension; }
   static void DefaultName(char buffer[], size_t bufferSize);
   static StorageCartesianFunction NewModel(Ion::Storage::Record record);
   StorageCartesianFunction(const char * text = nullptr) :

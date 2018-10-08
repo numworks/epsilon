@@ -90,21 +90,21 @@ Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = context.expressionForSymbol(Function(this));
-  if (e.isUninitialized()) {
-    return Complex<float>::Undefined();
-  }
-  VariableContext newContext = xContext(context);
-  return e.approximateToEvaluation<float>(newContext, angleUnit);
+  return templatedApproximate<float>(context, angleUnit);
 }
 
 Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
+  return templatedApproximate<double>(context, angleUnit);
+}
+
+template<typename T>
+Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
   if (e.isUninitialized()) {
-    return Complex<double>::Undefined();
+    return Complex<T>::Undefined();
   }
   VariableContext newContext = xContext(context);
-  return e.approximateToEvaluation<double>(newContext, angleUnit);
+  return e.approximateToEvaluation<T>(newContext, angleUnit);
 }
 
 Function::Function(const char * name) :

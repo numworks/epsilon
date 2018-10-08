@@ -66,12 +66,12 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   size_t nameLength = SymbolAbstract::TruncateExtension(truncatedName, record.fullName(), SymbolAbstract::k_maxNameSize);
   Layout symbolLayout = LayoutHelper::String(truncatedName, nameLength);
   myCell->setLayout(symbolLayout);
-  myCell->setAccessoryLayout(expressionLayoutForIndex(selectedRow()));
+  myCell->setAccessoryLayout(expressionLayoutForRecord(record));
 }
 
 KDCoordinate VariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
-    Layout layoutR = expressionLayoutForIndex(index);
+    Layout layoutR = expressionLayoutForRecord(recordAtIndex(index));
     if (!layoutR.isUninitialized()) {
       return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
@@ -129,9 +129,8 @@ I18n::Message VariableBoxController::nodeLabelAtIndex(int index) {
   return labels[index];
 }
 
-Layout VariableBoxController::expressionLayoutForIndex(int index) {
+Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record) {
   assert(m_currentPage != Page::RootMenu);
-  Storage::Record record = recordAtIndex(index);
   return Expression::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
 }
 

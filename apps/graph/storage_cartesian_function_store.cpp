@@ -10,7 +10,7 @@ namespace Graph {
 //constexpr const char * StorageCartesianFunctionStore::k_functionNames[k_maxNumberOfFunctions];
 
 StorageCartesianFunction StorageCartesianFunctionStore::NullModel() {
-  return StorageCartesianFunction("", KDColorBlack);
+  return StorageCartesianFunction("");
 }
 
 StorageCartesianFunctionStore::StorageCartesianFunctionStore() :

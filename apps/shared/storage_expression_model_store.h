@@ -56,7 +56,7 @@ public:
     // TODO: create the record data (color, isActive and expression)
     // T::EmptyModelData
     Ion::Storage::sharedStorage()->createRecordWithFullName(nameBuffer, nullptr, 0);
-    return T(Ion::Storage::sharedStorage()->recordNamed(nameBuffer));
+    return T::NewModel(Ion::Storage::sharedStorage()->recordNamed(nameBuffer));
   }
   void removeModel(T f) {
     f.destroy();

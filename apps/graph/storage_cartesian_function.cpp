@@ -33,17 +33,20 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   strlcpy(&buffer[dotCharIndex+1], GlobalContext::funcExtension, bufferSize - (dotCharIndex+1));
 }
 
-StorageCartesianFunction::StorageCartesianFunction(const char * text, KDColor color) :
-  StorageFunction(text, color),
-  m_displayDerivative(false) //TODO
-{
+StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record record) {
+  StorageCartesianFunction newFunction = StorageCartesianFunction(record);
+  newFunction.setColor(KDColorRed);
+  newFunction.setActive(true);
+  newFunction.setDisplayDerivative(true);
+  return newFunction;
 }
 
-StorageCartesianFunction::StorageCartesianFunction(Ion::Storage::Record record) :
-  Shared::StorageFunction(record, KDColorRed),
-  m_displayDerivative(false)
-{
-  // TODO set attributes from record
+bool StorageCartesianFunction::displayDerivative() const {
+  return functionNode()->displayDerivative();
+}
+
+void StorageCartesianFunction::setDisplayDerivative(bool display) {
+  functionNode()->setDisplayDerivative(display);
 }
 
 double StorageCartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
@@ -78,6 +81,11 @@ double StorageCartesianFunction::nextRootFrom(double start, double step, double 
 Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::StorageFunction * function) const {
   Expression reducedExp = reducedExpression(context);
   return reducedExp.nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), reducedExp);
+}
+void StorageCartesianFunction::setContent(const char * c) {
+  Expression expressionToStore = StorageExpressionModel::contentFromString(c);
+// TODO
+  StorageExpressionModel.setContentExpression(expressionToStore);
 }
 
 }

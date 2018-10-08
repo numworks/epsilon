@@ -30,6 +30,8 @@ public:
   virtual void setContent(const char * c);
   virtual void tidy();
 protected:
+  Poincare::Expression contentFromString(const char * c);
+  void setContentExpression(Poincare::Expression expressionToStore);
   Ion::Storage::Record record() const;
   const char * m_name;
   mutable Poincare::Expression m_expression;

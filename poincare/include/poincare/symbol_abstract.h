@@ -43,6 +43,8 @@ protected:
 class SymbolAbstract : public Expression {
 public:
   const char * name() const { return node()->name(); }
+  static size_t TruncateExtension(char * dst, const char * src, size_t len);
+  constexpr static size_t k_maxNameSize = 16;
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }

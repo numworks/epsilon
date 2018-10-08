@@ -20,4 +20,14 @@ void SymbolAbstractNode::initName(size_t nameSize) {
   modifiableName[nameSize-1] = 0;
 }
 
+size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
+  const char * cur = src;
+  const char * end = src+len-1;
+  while (*cur != '.' && cur < end) {
+    *dst++ = *cur++;
+  }
+  *dst = 0;
+  return cur-src;
+}
+
 }

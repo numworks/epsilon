@@ -41,7 +41,7 @@ private:
   bool returnToPreviousMenu() override;
   bool selectLeaf(int selectedRow) override;
   I18n::Message nodeLabelAtIndex(int index);
-  Poincare::Layout expressionLayoutForIndex(int index);
+  Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record);
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
   Page m_currentPage;

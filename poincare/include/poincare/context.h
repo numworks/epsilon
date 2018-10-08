@@ -10,7 +10,7 @@ class Symbol; //TODO remove?
 class Context {
 public:
   virtual const Expression expressionForSymbol(const SymbolAbstract & symbol) = 0;
-  virtual void setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) = 0;
+  virtual void setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) = 0;
 };
 
 }

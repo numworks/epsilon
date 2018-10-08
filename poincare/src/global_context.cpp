@@ -37,7 +37,7 @@ const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbo
   return Expression::ExpressionFromRecord(RecordWithName(symbol.name()));
 }
 
-void GlobalContext::setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) {
+void GlobalContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
   sStorageMemoryFull = false;
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */

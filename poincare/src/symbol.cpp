@@ -47,7 +47,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression SymbolNode::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
@@ -210,7 +210,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   return *this;
 }
 
-Expression Symbol::replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) {
+Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   if (symbol.type() == ExpressionNode::Type::Symbol && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     Expression p = parent();

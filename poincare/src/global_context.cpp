@@ -22,13 +22,16 @@ bool GlobalContext::storageMemoryFull() {
 
 /**/
 
-const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
-  // Constant symbols
-  if (symbol.isPi()) {
-    return Float<double>(M_PI);
-  }
-  if (symbol.isExponential()) {
-    return Float<double>(M_E);
+const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbol) {
+  if (symbol.type() == ExpressionNode::Type::Symbol) {
+    // Constant symbols
+    Symbol s = static_cast<const Symbol &>(symbol);
+    if (s.isPi()) {
+      return Float<double>(M_PI);
+    }
+    if (s.isExponential()) {
+      return Float<double>(M_E);
+    }
   }
   // Look up the file system for symbol
   return Expression::ExpressionFromRecord(RecordWithName(symbol.name()));

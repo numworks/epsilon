@@ -5,6 +5,7 @@
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/symbol.h>
 #include <cmath>
 
 namespace Poincare {
@@ -13,6 +14,15 @@ namespace Poincare {
  * node moves faster.*/
 static size_t NodeSize(size_t nameLength) {
   return Helpers::AlignedSize(sizeof(FunctionNode)+nameLength+1, 4);
+}
+
+void FunctionNode::initToMatchSize(size_t goalSize) {
+  // TODO Factorize with symbol
+  assert(goalSize != sizeof(FunctionNode));
+  assert(goalSize > sizeof(FunctionNode));
+  size_t nameSize = goalSize - sizeof(FunctionNode);
+  SymbolAbstractNode::initName(nameSize);
+  assert(size() == goalSize);
 }
 
 size_t FunctionNode::size() const {
@@ -109,7 +119,7 @@ Expression Function::replaceSymbolWithExpression(const Symbol & symbol, const Ex
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     // Replace the unknown in the new expression by the function's child
-    const char x[2] = {SpecialSymbols::UnknownX, 0};
+    const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
     Symbol xSymbol = Symbol(x, 1);
     Expression xValue = childAtIndex(0);
     value.replaceSymbolWithExpression(xSymbol, xValue);

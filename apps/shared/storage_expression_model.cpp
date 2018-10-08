@@ -41,7 +41,7 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
 
 Expression StorageExpressionModel::expression() const {
   if (m_expression.isUninitialized()) {
-    m_expression = Expression::ExpressionFromRecord(record());
+    m_expression = Expression::ExpressionFromAddress(expressionAddress(), expressionSize());
   }
   return m_expression;
 }

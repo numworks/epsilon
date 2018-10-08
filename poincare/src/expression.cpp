@@ -48,8 +48,12 @@ const Expression Expression::ExpressionFromRecord(const Ion::Storage::Record & r
     return Expression();
   }
   Ion::Storage::Record::Data d = record.value();
+  return ExpressionFromAddress(d.buffer, d.size);
+}
+
+const Expression Expression::ExpressionFromAddress(const void * address, size_t size) {
   // Build the Expression in the Tree Pool
-  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(d.buffer, d.size)));
+  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
 }
 
 /* Circuit breaker */

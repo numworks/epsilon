@@ -12,7 +12,7 @@ namespace Poincare {
 /* Methods preceded by '*!*' interfere with the expression pool, which can make
  * 'this' outdated. They should only be called in a wrapper on Expression. */
 
-class Symbol;
+class SymbolAbstract;
 
 class ExpressionNode : public TreeNode {
   friend class AdditionNode;
@@ -101,7 +101,7 @@ public:
   };
   virtual Sign sign() const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
-  /*!*/ virtual Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression);
+  /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;

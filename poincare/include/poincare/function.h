@@ -24,7 +24,7 @@ public:
   // Properties
   Type type() const override { return Type::Function; }
   Sign sign() const override { return Sign::Unknown; }
-  Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression) override;
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
@@ -53,7 +53,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
 
-  Expression replaceSymbolWithExpression(const Symbol & symbol, const Expression & expression);
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 

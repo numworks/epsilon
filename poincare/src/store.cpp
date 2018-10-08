@@ -1,16 +1,16 @@
+#include <poincare/store.h>
+#include <poincare/char_layout.h>
+#include <poincare/context.h>
+#include <poincare/complex.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/symbol.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 #include <math.h>
 }
-#include <poincare/store.h>
-#include <ion.h>
-#include <poincare/context.h>
-#include <poincare/serialization_helper.h>
-#include <poincare/complex.h>
-#include <poincare/char_layout.h>
-#include <poincare/horizontal_layout.h>
-
 
 namespace Poincare {
 

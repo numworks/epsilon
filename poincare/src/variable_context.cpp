@@ -18,7 +18,7 @@ void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>(value);
 }
 
-void VariableContext::setExpressionForSymbol(const Expression & expression, const Symbol & symbol, Context & context) {
+void VariableContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
   if (strcmp(symbol.name(), m_name) == 0) {
     if (expression.isUninitialized()) {
       return;

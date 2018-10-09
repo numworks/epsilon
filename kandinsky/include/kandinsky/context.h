@@ -3,7 +3,7 @@
 
 #include <kandinsky/color.h>
 #include <kandinsky/rect.h>
-#include <kandinsky/text.h>
+#include <kandinsky/font.h>
 
 class KDContext {
 public:
@@ -15,8 +15,7 @@ public:
   KDColor getPixel(KDPoint p);
 
   // Text
-  KDPoint drawString(const char * text, KDPoint p, KDText::FontSize size = KDText::FontSize::Large, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
-  KDPoint blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor = KDColorBlack);
+  KDPoint drawString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
@@ -33,8 +32,6 @@ protected:
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
 private:
   KDRect absoluteFillRect(KDRect rect);
-  KDPoint writeString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength, bool transparentBackground);
-  void writeChar(char character, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, bool transparentBackground);
   KDPoint m_origin;
   KDRect m_clippingRect;
 };

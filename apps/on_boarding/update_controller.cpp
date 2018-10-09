@@ -6,7 +6,7 @@ namespace OnBoarding {
 
 UpdateController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
   MessageView(messages, colors, numberOfMessages),
-  m_skipView(KDText::FontSize::Small, I18n::Message::Skip, 1.0f, 0.5f),
+  m_skipView(KDFont::SmallFont, I18n::Message::Skip, 1.0f, 0.5f),
   m_okView()
 {
 }
@@ -36,7 +36,7 @@ void UpdateController::MessageViewWithSkip::layoutSubviews() {
   // Layout the "skip (OK)"
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDSize okSize = m_okView.minimalSizeForOptimalDisplay();
   m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight));
   m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize));

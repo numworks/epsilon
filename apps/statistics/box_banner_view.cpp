@@ -3,9 +3,9 @@
 namespace Statistics {
 
 BoxBannerView::BoxBannerView() :
-  m_seriesName(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_calculationName(KDText::FontSize::Small, I18n::Message::Minimum, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_calculationValue(KDText::FontSize::Small, 1.0f, 0.5f, KDColorBlack, Palette::GreyMiddle)
+  m_seriesName(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_calculationName(KDFont::SmallFont, I18n::Message::Minimum, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_calculationValue(KDFont::SmallFont, 1.0f, 0.5f, KDColorBlack, Palette::GreyMiddle)
 {
 }
 

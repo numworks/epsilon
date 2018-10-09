@@ -6,7 +6,7 @@
 namespace Probability {
 
 CalculationCell::CalculationCell(Responder * parentResponder, char * draftTextBuffer, TextFieldDelegate * textFieldDelegate) :
-  m_text(KDText::FontSize::Large, I18n::Message::Default, 0.5f, 0.5f),
+  m_text(KDFont::LargeFont, I18n::Message::Default, 0.5f, 0.5f),
   m_calculation(parentResponder, textFieldDelegate, draftTextBuffer),
   m_isResponder(true)
 {
@@ -30,7 +30,10 @@ void CalculationCell::setHighlighted(bool highlight) {
 
 KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-  return KDSize(2*k_margin+textSize.width()+calculationCellWidth()+2*ResponderImageCell::k_outline, KDText::charSize().height());
+  return KDSize(
+    2 * k_margin + textSize.width() + calculationCellWidth() + 2 * ResponderImageCell::k_outline,
+    KDFont::LargeFont->glyphSize().height()
+  );
 }
 
 void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -69,7 +72,10 @@ void CalculationCell::layoutSubviews() {
 
 KDCoordinate CalculationCell::calculationCellWidth() const {
   KDCoordinate calculationCellWidth = m_calculation.minimalSizeForOptimalDisplay().width();
-  return min(k_maxTextFieldWidth, max(k_minTextFieldWidth, calculationCellWidth));
+  KDCoordinate glyphWidth = KDFont::LargeFont->glyphSize().width();
+  KDCoordinate minTextFieldWidth = 4 * glyphWidth + TextCursorView::k_width;
+  KDCoordinate maxTextFieldWidth = 14 * glyphWidth + TextCursorView::k_width;
+  return min(maxTextFieldWidth, max(minTextFieldWidth, calculationCellWidth));
 }
 
 }

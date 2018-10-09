@@ -39,9 +39,9 @@ const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
+  m_updateCell(I18n::Message::Default, KDFont::LargeFont),
 #endif
-  m_brightnessCell(I18n::Message::Default, KDText::FontSize::Large),
+  m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
   m_preferencesController(this),
@@ -51,7 +51,7 @@ MainController::MainController(Responder * parentResponder) :
   m_aboutController(this)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+    m_cells[i].setMessageFont(KDFont::LargeFont);
   }
 }
 

@@ -107,15 +107,15 @@ KDCoordinate TypeParameterController::cellHeight() {
 
 void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   const char * nextName = m_sequenceStore->firstAvailableName();
-  KDText::FontSize size = KDText::FontSize::Large;
+  const KDFont * font = KDFont::LargeFont;
   if (m_sequence) {
     nextName = m_sequence->name();
-    size = KDText::FontSize::Small;
+    font = KDFont::SmallFont;
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout(
-        CharLayout(nextName[0], size),
-        VerticalOffsetLayout(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), size), VerticalOffsetLayoutNode::Type::Subscript)
+        CharLayout(nextName[0], font),
+        VerticalOffsetLayout(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Type::Subscript)
       );
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setLayout(m_layouts[j]);

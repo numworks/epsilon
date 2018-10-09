@@ -7,8 +7,8 @@
 namespace Solver {
 
 IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_instructions0(KDText::FontSize::Small, I18n::Message::ApproximateSolutionIntervalInstruction0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_instructions1(KDText::FontSize::Small, I18n::Message::ApproximateSolutionIntervalInstruction1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_instructions0(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_instructions1(KDFont::SmallFont, I18n::Message::ApproximateSolutionIntervalInstruction1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -33,7 +33,7 @@ View * IntervalController::ContentView::subviewAtIndex(int index) {
 }
 
 void IntervalController::ContentView::layoutSubviews() {
-  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   m_instructions0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight));
   m_instructions1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight));
   m_selectableTableView->setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin));

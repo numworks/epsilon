@@ -12,7 +12,7 @@ static inline size_t min(size_t a, size_t b) {
 
 /* TextArea */
 
-TextArea::TextArea(Responder * parentResponder, View * contentView, KDText::FontSize fontSize) :
+TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
   TextInput(parentResponder, contentView),
   m_delegate(nullptr)
 {
@@ -273,17 +273,17 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   // TODO: We're clearing areas we'll draw text over. It's not needed.
   clearRect(ctx, rect);
 
-  KDSize charSize = KDText::charSize(m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
 
   // We want to draw even partially visible characters. So we need to round
   // down for the top left corner and up for the bottom right one.
   Text::Position topLeft(
-    rect.x()/charSize.width(),
-    rect.y()/charSize.height()
+    rect.x()/glyphSize.width(),
+    rect.y()/glyphSize.height()
   );
   Text::Position bottomRight(
-    rect.right()/charSize.width() + 1,
-    rect.bottom()/charSize.height() + 1
+    rect.right()/glyphSize.width() + 1,
+    rect.bottom()/glyphSize.height() + 1
   );
 
   int y = 0;
@@ -297,11 +297,11 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const {
-  KDSize charSize = KDText::charSize(m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
   ctx->drawString(
     text,
-    KDPoint(column*charSize.width(), line*charSize.height()),
-    m_fontSize,
+    KDPoint(column*glyphSize.width(), line*glyphSize.height()),
+    m_font,
     textColor,
     backgroundColor,
     length
@@ -309,13 +309,13 @@ void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, 
 }
 
 KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize charSize = KDText::charSize(m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
   Text::Position span = m_text.span();
   return KDSize(
     /* We take into account the space required to draw a cursor at the end of
-     * line by adding charSize.width() to the width. */
-    charSize.width() * (span.column()+1),
-    charSize.height() * span.line()
+     * line by adding glyphSize.width() to the width. */
+    glyphSize.width() * (span.column()+1),
+    glyphSize.height() * span.line()
   );
 }
 
@@ -376,13 +376,13 @@ bool TextArea::ContentView::removeStartOfLine() {
 }
 
 KDRect TextArea::ContentView::characterFrameAtIndex(size_t index) const {
-  KDSize charSize = KDText::charSize(m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
   Text::Position p = m_text.positionAtIndex(index);
   return KDRect(
-    p.column() * charSize.width(),
-    p.line() * charSize.height(),
-    charSize.width(),
-    charSize.height()
+    p.column() * glyphSize.width(),
+    p.line() * glyphSize.height(),
+    glyphSize.width(),
+    glyphSize.height()
   );
 }
 

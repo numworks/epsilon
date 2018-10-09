@@ -7,8 +7,8 @@ namespace Shared {
 
 class MarginEvenOddMessageTextCell : public EvenOddMessageTextCell {
 public:
-  MarginEvenOddMessageTextCell(KDText::FontSize size = KDText::FontSize::Small) :
-    EvenOddMessageTextCell(size)
+  MarginEvenOddMessageTextCell(const KDFont * font = KDFont::SmallFont) :
+    EvenOddMessageTextCell(font)
   {}
   void layoutSubviews() override;
 private:

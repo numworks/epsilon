@@ -8,7 +8,7 @@
 
 class TextArea : public TextInput {
 public:
-  TextArea(Responder * parentResponder, View * contentView, KDText::FontSize fontSize = KDText::FontSize::Large);
+  TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
@@ -93,8 +93,8 @@ protected:
 
   class ContentView : public TextInput::ContentView {
   public:
-    ContentView(KDText::FontSize fontSize) :
-      TextInput::ContentView(fontSize),
+    ContentView(const KDFont * font) :
+      TextInput::ContentView(font),
       m_text(nullptr, 0)
     {
     }

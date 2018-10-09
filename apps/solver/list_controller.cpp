@@ -15,7 +15,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     list->resolveEquations();
-  }, this), KDText::FontSize::Large, Palette::PurpleBright),
+  }, this), KDFont::LargeFont, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
 {

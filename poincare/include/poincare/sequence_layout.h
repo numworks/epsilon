@@ -28,7 +28,7 @@ public:
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
-  constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Large;
+  constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static char k_nEquals[] = {'n', '=', 0};
 
   KDSize lowerBoundSizeWithNEquals();

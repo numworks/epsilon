@@ -4,10 +4,10 @@
 #include <assert.h>
 
 EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
-   KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+   const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   HighlightCell(),
   Responder(parentResponder),
-  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), delegate, true, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), delegate, true, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_topMargin(topMargin),
   m_rightMargin(rightMargin),
   m_bottomMargin(bottomMargin),

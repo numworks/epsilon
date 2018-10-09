@@ -48,9 +48,9 @@ double TermSumController::cursorNextStep(double x, int direction) {
 
 Layout TermSumController::createFunctionLayout(const char * functionName) {
   return HorizontalLayout(
-      CharLayout(functionName[0], KDText::FontSize::Small),
+      CharLayout(functionName[0], KDFont::SmallFont),
         VerticalOffsetLayout(
-          CharLayout('n', KDText::FontSize::Small),
+          CharLayout('n', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Subscript
         )
       );

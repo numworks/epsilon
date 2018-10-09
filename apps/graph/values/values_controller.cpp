@@ -18,7 +18,7 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
 {
   for (int i = 0; i < k_maxNumberOfFunctions; i++) {
     m_functionTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
-    m_functionTitleCells[i].setFontSize(KDText::FontSize::Small);
+    m_functionTitleCells[i].setFont(KDFont::SmallFont);
   }
 }
 

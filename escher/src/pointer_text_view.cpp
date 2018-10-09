@@ -1,9 +1,9 @@
 #include <escher/pointer_text_view.h>
 #include <assert.h>
 
-PointerTextView::PointerTextView(KDText::FontSize size, const char * text, float horizontalAlignment, float verticalAlignment,
+PointerTextView::PointerTextView(const KDFont * font, const char * text, float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  TextView(size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  TextView(font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_text(text)
 {
 }
@@ -16,5 +16,5 @@ void PointerTextView::setText(const char * text) {
 }
 
 KDSize PointerTextView::minimalSizeForOptimalDisplay() const  {
-  return KDText::stringSize(text(), m_fontSize);
+  return m_font->stringSize(text());
 }

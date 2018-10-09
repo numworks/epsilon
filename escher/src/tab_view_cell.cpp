@@ -28,7 +28,7 @@ void TabViewCell::setSelected(bool selected) {
 }
 
 KDSize TabViewCell::minimalSizeForOptimalDisplay() const {
-  return KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
+  return KDFont::SmallFont->stringSize(m_controller->title());
 }
 
 void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -47,9 +47,9 @@ void TabViewCell::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(0, 0, width, height), background);
   }
   // Write title
-  KDSize textSize = KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
+  KDSize textSize = KDFont::SmallFont->stringSize(m_controller->title());
   KDPoint origin((m_frame.width() - textSize.width())/2, (m_frame.height() - textSize.height())/2);
-  ctx->drawString(m_controller->title(), origin, KDText::FontSize::Small, text, background);
+  ctx->drawString(m_controller->title(), origin, KDFont::SmallFont, text, background);
 }
 
 #if ESCHER_VIEW_LOGGING

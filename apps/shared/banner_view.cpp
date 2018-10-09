@@ -22,7 +22,7 @@ void BannerView::setMessageAtIndex(I18n::Message text, int index) {
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, KDText::charSize(KDText::FontSize::Small).height()*numberOfLines());
+  return KDSize(0, KDFont::SmallFont->glyphSize().height()*numberOfLines());
 }
 
 int BannerView::numberOfSubviews() const {
@@ -81,7 +81,7 @@ int BannerView::numberOfLines() const {
   KDCoordinate usedWidth = 0;
   KDCoordinate lineNumber = 0;
   for (int i = 0; i < numberOfSubviews(); i++) {
-    KDCoordinate textWidth = KDText::stringSize(textViewAtIndex(i)->text(), KDText::FontSize::Small).width();
+    KDCoordinate textWidth = KDFont::SmallFont->stringSize(textViewAtIndex(i)->text()).width();
     if (usedWidth+textWidth > width) {
       usedWidth = textWidth;
       lineNumber++;

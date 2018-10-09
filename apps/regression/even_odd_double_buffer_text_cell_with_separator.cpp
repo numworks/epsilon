@@ -9,8 +9,8 @@ EvenOddDoubleBufferTextCellWithSeparator::EvenOddDoubleBufferTextCellWithSeparat
   EvenOddCell(),
   Responder(parentResponder),
   m_firstTextSelected(true),
-  m_firstBufferTextView(KDText::FontSize::Small, horizontalAlignment, verticalAlignment),
-  m_secondBufferTextView(KDText::FontSize::Small, horizontalAlignment, verticalAlignment)
+  m_firstBufferTextView(KDFont::SmallFont, horizontalAlignment, verticalAlignment),
+  m_secondBufferTextView(KDFont::SmallFont, horizontalAlignment, verticalAlignment)
 {
 }
 

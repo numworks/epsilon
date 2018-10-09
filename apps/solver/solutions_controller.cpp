@@ -11,8 +11,8 @@ using namespace Shared;
 namespace Solver {
 
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
-  m_warningMessageView0(KDText::FontSize::Small, I18n::Message::OnlyFirstSolutionsDisplayed0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
-  m_warningMessageView1(KDText::FontSize::Small, I18n::Message::OnlyFirstSolutionsDisplayed1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
+  m_warningMessageView0(KDFont::SmallFont, I18n::Message::OnlyFirstSolutionsDisplayed0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
+  m_warningMessageView1(KDFont::SmallFont, I18n::Message::OnlyFirstSolutionsDisplayed1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
   m_selectableTableView(controller),
   m_displayWarningMoreSolutions(false)
 {
@@ -50,7 +50,7 @@ View * SolutionsController::ContentView::subviewAtIndex(int index) {
 
 void SolutionsController::ContentView::layoutSubviews() {
   if (m_displayWarningMoreSolutions) {
-    KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+    KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
     m_warningMessageView0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight));
     m_warningMessageView1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight));
     m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin));
@@ -66,14 +66,14 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout(),
   m_contentView(this)
 {
-  m_delta2Layout = HorizontalLayout(VerticalOffsetLayout(CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDText::FontSize::Small));
+  m_delta2Layout = HorizontalLayout(VerticalOffsetLayout(CharLayout('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
   char deltaB[] = {Ion::Charset::CapitalDelta, '=', 'b'};
-  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDText::FontSize::Small), 0, false);
+  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDFont::SmallFont), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
   for (int i = 0; i < EquationStore::k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateValueCells[i].setFontSize(KDText::FontSize::Large);
+    m_approximateValueCells[i].setFont(KDFont::LargeFont);
   }
   for (int i = 0; i < EquationStore::k_maxNumberOfSolutions; i++) {
     m_symbolCells[i].setAlignment(0.5f, 0.5f);
@@ -148,7 +148,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       deltaCell->setLayout(m_delta2Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
-      symbolCell->setFontSize(KDText::FontSize::Large);
+      symbolCell->setFont(KDFont::LargeFont);
       char bufferSymbol[10]; // hold at maximum Delta = b^2-4ac
       switch (m_equationStore->type()) {
         case EquationStore::Type::LinearSystem:

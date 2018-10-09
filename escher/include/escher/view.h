@@ -3,8 +3,8 @@
 
 extern "C" {
 #include <stdint.h>
-#include <kandinsky.h>
 }
+#include <kandinsky.h>
 
 #if ESCHER_VIEW_LOGGING
 #include <iostream>

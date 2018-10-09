@@ -18,7 +18,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
         menu->consoleController()->setAutoImport(true);
         menu->stackViewController()->push(menu->consoleController());
         return;
-        }, this), KDText::FontSize::Large),
+        }, this), KDFont::LargeFont),
   m_selectableTableView(this, this, this, this),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
   m_editorController(this, pythonDelegate),

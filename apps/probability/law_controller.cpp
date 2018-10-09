@@ -21,7 +21,7 @@
 namespace Probability {
 
 LawController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -39,7 +39,7 @@ View * LawController::ContentView::subviewAtIndex(int index) {
 }
 
 void LawController::ContentView::layoutSubviews() {
-  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleMargin;
+  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  bounds().height()-titleHeight));
 }

@@ -36,17 +36,17 @@ PopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
     PopUpController::ContentView * view = (PopUpController::ContentView *)context;
     view->app()->dismissModalViewController();
-  }, this), KDText::FontSize::Small),
+  }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     PopUpController::ContentView * view = (PopUpController::ContentView *)context;
     AppsContainer * appsContainer = (AppsContainer *)view->app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
-  }, this), KDText::FontSize::Small),
-  m_warningTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView1(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView2(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch2, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView3(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch3, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView4(KDText::FontSize::Small, I18n::Message::HardwareTestLaunch4, 0.5, 0.5, KDColorWhite, KDColorBlack)
+  }, this), KDFont::SmallFont),
+  m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView1(KDFont::SmallFont, I18n::Message::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView2(KDFont::SmallFont, I18n::Message::HardwareTestLaunch2, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView3(KDFont::SmallFont, I18n::Message::HardwareTestLaunch3, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView4(KDFont::SmallFont, I18n::Message::HardwareTestLaunch4, 0.5, 0.5, KDColorWhite, KDColorBlack)
 {
 }
 
@@ -100,7 +100,7 @@ View * PopUpController::ContentView::subviewAtIndex(int index) {
 void PopUpController::ContentView::layoutSubviews() {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight));
   m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight));
   m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight));

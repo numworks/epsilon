@@ -1,9 +1,9 @@
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/palette.h>
 
-MessageTableCellWithChevronAndMessage::MessageTableCellWithChevronAndMessage(KDText::FontSize labelSize, KDText::FontSize contentSize) :
-  MessageTableCellWithChevron((I18n::Message)0, labelSize),
-  m_subtitleView(contentSize, (I18n::Message)0, 1.0f, 0.5f, Palette::GreyDark)
+MessageTableCellWithChevronAndMessage::MessageTableCellWithChevronAndMessage(const KDFont * labelFont, const KDFont * contentFont) :
+  MessageTableCellWithChevron((I18n::Message)0, labelFont),
+  m_subtitleView(contentFont, (I18n::Message)0, 1.0f, 0.5f, Palette::GreyDark)
 {
 }
 

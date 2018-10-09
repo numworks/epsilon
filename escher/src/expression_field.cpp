@@ -5,7 +5,7 @@
 ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, textFieldDelegate, false, KDText::FontSize::Large, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, textFieldDelegate, false, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
   m_layoutField(parentResponder, layoutFieldDelegate),
   m_textBuffer(textBuffer),
   m_textBufferLength(textBufferLength)

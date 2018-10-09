@@ -61,8 +61,6 @@ private:
     void setSumSymbol(Step step, double start = NAN, double end = NAN, double result = NAN, Poincare::Layout sequenceName = Poincare::Layout());
   private:
     constexpr static KDCoordinate k_legendHeight = 35;
-    constexpr static KDCoordinate k_editableZoneWidth = 12*KDText::charSize(KDText::FontSize::Small).width();
-    constexpr static KDCoordinate k_editableZoneHeight = KDText::charSize(KDText::FontSize::Small).height();
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
     int numberOfSubviews() const override;

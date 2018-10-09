@@ -157,6 +157,7 @@ const char * VariableBoxController::extension() const {
 }
 
 Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
+  assert(!Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex).isNull());
   return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
 }
 

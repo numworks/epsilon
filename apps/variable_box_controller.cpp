@@ -24,10 +24,13 @@ void VariableBoxController::viewWillAppear() {
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
+  /* We do not want to handle backspace event in that case if the empty
+   * controller is on. */
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && !isDisplayingEmptyController()) {
     Storage::Record record = recordAtIndex(selectedRow());
     record.destroy();
     m_selectableTableView.reloadData();
+    displayEmptyController();
     return true;
   }
   return NestedMenuController::handleEvent(event);
@@ -108,16 +111,27 @@ VariableBoxController::Page VariableBoxController::pageAtIndex(int index) {
 bool VariableBoxController::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   m_currentPage = pageAtIndex(selectedRow);
-  return NestedMenuController::selectSubMenu(selectedRow);
+  bool selectSubMenu = NestedMenuController::selectSubMenu(selectedRow);
+  if (displayEmptyController()) {
+    return true;
+  }
+  return selectSubMenu;
 }
 
 bool VariableBoxController::returnToPreviousMenu() {
+  if (isDisplayingEmptyController()) {
+    pop();
+  }
   m_selectableTableView.deselectTable();
   m_currentPage = Page::RootMenu;
   return NestedMenuController::returnToPreviousMenu();
 }
 
 bool VariableBoxController::selectLeaf(int selectedRow) {
+  if (isDisplayingEmptyController()) {
+    /* We do not want to handle OK/EXE events in that case. */
+    return false;
+  }
   m_selectableTableView.deselectTable();
   Storage::Record record = recordAtIndex(selectedRow);
   char truncatedName[SymbolAbstract::k_maxNameSize];
@@ -144,6 +158,17 @@ const char * VariableBoxController::extension() const {
 
 Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
   return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
+}
+
+bool VariableBoxController::displayEmptyController() {
+  assert(!isDisplayingEmptyController());
+    /* If the content is empty, we push above an empty controller. */
+  if (numberOfRows() == 0) {
+    m_emptyViewController.setType((VariableBoxEmptyController::Type)m_currentPage);
+    push(&m_emptyViewController);
+    return true;
+  }
+  return false;
 }
 
 /* void VariableBoxController::viewDidDisappear() {

@@ -33,7 +33,6 @@ public:
     return x;
   }
   // StorageExpressionModel
-  void setContent(const char * c) override;
   void * expressionAddress() const override;
   size_t expressionSize() const override;
 //TODO protected:
@@ -41,16 +40,16 @@ public:
   public:
     CartesianFunctionRecordData() :
       FunctionRecordData(),
-      m_displayDerivative(true)
+    m_displayDerivative(true)
     {}
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
-    void * expressionAddress() { return &m_expression; }
   private:
     bool m_displayDerivative;
     char m_expression[0];
   };
 private:
+  size_t metaDataSize() override { return sizeof(CartesianFunctionRecordData); }
   CartesianFunctionRecordData * recordData() const;
 };
 

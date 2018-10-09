@@ -46,7 +46,7 @@ private:
   bool returnToPreviousMenu() override;
   bool selectLeaf(int selectedRow) override;
   I18n::Message nodeLabelAtIndex(int index);
-  Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record);
+  Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
   bool displayEmptyController();
@@ -56,7 +56,8 @@ private:
   MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
   VariableBoxEmptyController m_emptyViewController;
   // Layout memoization
-  //Poincare::Layout m_layouts[k_maxNumberOfDisplayedRows];
+  int m_firstMemoizedLayoutIndex;
+  Poincare::Layout m_layouts[k_maxNumberOfDisplayedRows];
 };
 
 #endif

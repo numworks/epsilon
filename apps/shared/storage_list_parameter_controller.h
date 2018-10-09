@@ -19,7 +19,7 @@ public:
 #if FUNCTION_COLOR_CHOICE
     m_colorCell(functionColorMessage),
 #endif
-    m_enableCell(I18n::Message::ActivateDesactivate),
+    m_enableCell(I18n::Message::ActivateDeactivate),
     m_deleteCell(deleteFunctionMessage)
   {}
 

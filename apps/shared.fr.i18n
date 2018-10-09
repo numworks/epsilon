@@ -1,4 +1,4 @@
-ActivateDesactivate = "Activer/Desactiver"
+ActivateDeactivate = "Activer/Desactiver"
 ActiveExamModeMessage1 = "Toutes vos donnees seront "
 ActiveExamModeMessage2 = "supprimees si vous activez "
 ActiveExamModeMessage3 = "le mode examen."

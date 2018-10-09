@@ -14,7 +14,6 @@ objs += $(addprefix kandinsky/src/,\
   ion_context.o\
   point.o\
   rect.o\
-  text.o\
 )
 
 objs += kandinsky/src/external/lz4/lz4.o

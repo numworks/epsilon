@@ -13,7 +13,8 @@ using namespace Ion;
 
 VariableBoxController::VariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
-  m_currentPage(Page::RootMenu)
+  m_currentPage(Page::RootMenu),
+  m_firstMemoizedLayoutIndex(0)
 {
 }
 
@@ -21,6 +22,20 @@ void VariableBoxController::viewWillAppear() {
   NestedMenuController::viewWillAppear();
   m_currentPage = Page::RootMenu;
   m_selectableTableView.reloadData();
+}
+
+void VariableBoxController::viewDidDisappear() {
+  if (isDisplayingEmptyController()) {
+    pop();
+  }
+  // Tidy the layouts used to display the VariableBoxController to clean TreePool
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setLayout(Layout());
+    m_leafCells[i].setAccessoryLayout(Layout());
+    m_layouts[i] = Layout();
+  }
+  m_firstMemoizedLayoutIndex = 0;
+  NestedMenuController::viewDidDisappear();
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -73,12 +88,12 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   Layout symbolLayout = LayoutHelper::String(truncatedName, nameLength);
   myCell->setLayout(symbolLayout);
-  myCell->setAccessoryLayout(expressionLayoutForRecord(record));
+  myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
 }
 
 KDCoordinate VariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
-    Layout layoutR = expressionLayoutForRecord(recordAtIndex(index));
+    Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
       return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
@@ -147,9 +162,22 @@ I18n::Message VariableBoxController::nodeLabelAtIndex(int index) {
   return labels[index];
 }
 
-Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record) {
+Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
   assert(m_currentPage != Page::RootMenu);
-  return Expression::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+  if (index >= m_firstMemoizedLayoutIndex+k_maxNumberOfDisplayedRows || index < m_firstMemoizedLayoutIndex) {
+    // Change range of layout memoization
+    int deltaIndex = index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows ? index - k_maxNumberOfDisplayedRows + 1 - m_firstMemoizedLayoutIndex : index - m_firstMemoizedLayoutIndex;
+    for (int i = 0; i < k_maxNumberOfDisplayedRows-1; i++) {
+      int j = deltaIndex + i;
+      m_layouts[i] = j >= 0 && j < k_maxNumberOfDisplayedRows ? m_layouts[j] : Layout();
+    }
+    m_firstMemoizedLayoutIndex += deltaIndex;
+  }
+  assert(index-m_firstMemoizedLayoutIndex < k_maxNumberOfDisplayedRows);
+  if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
+    m_layouts[index-m_firstMemoizedLayoutIndex] = Expression::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+  }
+  return m_layouts[index-m_firstMemoizedLayoutIndex];
 }
 
 const char * VariableBoxController::extension() const {
@@ -171,30 +199,3 @@ bool VariableBoxController::displayEmptyController() {
   }
   return false;
 }
-
-void VariableBoxController::viewDidDisappear() {
-  if (isDisplayingEmptyController()) {
-    pop();
-  }
-  // Tidy the layouts used to display the VariableBoxController to clean TreePool
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setLayout(Layout());
-    m_leafCells[i].setAccessoryLayout(Layout());
-  }
-  NestedMenuController::viewDidDisappear();
-}
-
-/*
-Layout VariableBoxController::matrixLayoutAtIndex(int index) {
-  assert(m_currentPage == Page::Matrix);
-  if (m_matrixLayouts[index].isUninitialized()) {
-    const Expression evaluation = expressionForIndex(index);
-    if (!evaluation.isUninitialized()) {
-      m_matrixLayouts[index] = evaluation.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
-    }
-  }
-  return m_matrixLayouts[index];
-}
-
-}*/
-

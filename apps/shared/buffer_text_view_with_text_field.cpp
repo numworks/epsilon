@@ -3,11 +3,11 @@
 
 namespace Shared {
 
-BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate, KDText::FontSize size) :
+BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate, const KDFont * font) :
   View(),
   Responder(parentResponder),
-  m_bufferTextView(size, 0.0f, 0.5f),
-  m_textField(this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, delegate, false, size, 0.0f, 0.5f),
+  m_bufferTextView(font, 0.0f, 0.5f),
+  m_textField(this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, delegate, false, font, 0.0f, 0.5f),
   m_textFieldBuffer{}
 {
 }

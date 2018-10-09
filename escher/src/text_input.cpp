@@ -3,10 +3,10 @@
 
 /* TextInput::ContentView */
 
-TextInput::ContentView::ContentView(KDText::FontSize size) :
+TextInput::ContentView::ContentView(const KDFont * font) :
   View(),
   m_cursorView(),
-  m_fontSize(size),
+  m_font(font),
   m_cursorIndex(0)
 {
 }
@@ -18,8 +18,8 @@ void TextInput::ContentView::setCursorLocation(int location) {
   layoutSubviews();
 }
 
-void TextInput::ContentView::setFontSize(KDText::FontSize size) {
-  m_fontSize = size;
+void TextInput::ContentView::setFont(const KDFont * font) {
+  m_font = font;
   markRectAsDirty(bounds());
 }
 

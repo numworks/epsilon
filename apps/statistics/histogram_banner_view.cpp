@@ -6,12 +6,12 @@
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView() :
-  m_intervalLegendView(KDText::FontSize::Small, I18n::Message::Interval, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_intervalView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_sizeLegendView(KDText::FontSize::Small, I18n::Message::Size, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_sizeView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_frequencyLegendView(KDText::FontSize::Small, I18n::Message::Frequency, 1.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_frequencyView(KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle)
+  m_intervalLegendView(KDFont::SmallFont, I18n::Message::Interval, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_intervalView(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_sizeLegendView(KDFont::SmallFont, I18n::Message::Size, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_sizeView(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_frequencyLegendView(KDFont::SmallFont, I18n::Message::Frequency, 1.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_frequencyView(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle)
 {
 }
 

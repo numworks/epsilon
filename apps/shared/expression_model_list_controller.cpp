@@ -27,7 +27,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
     return Metric::StoreRowHeight;
   }
   KDCoordinate modelSize = m->layout().layoutSize().height();
-  return modelSize + Metric::StoreRowHeight - KDText::charSize().height();
+  return modelSize + Metric::StoreRowHeight - KDFont::LargeFont->glyphSize().height();
 }
 
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {

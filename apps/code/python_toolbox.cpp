@@ -282,7 +282,7 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
        * children of the toolbox, which is the only menu that has special height
        * rows. */
     const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->children(j));
-    return KDText::stringSize(I18n::translate(messageTree->label()), k_fontSize).height() + 2*Metric::TableCellLabelTopMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
+    return k_font->stringSize(I18n::translate(messageTree->label())).height() + 2*Metric::TableCellLabelTopMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
   }
   return Toolbox::rowHeight(j);
 }

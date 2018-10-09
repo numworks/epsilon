@@ -10,7 +10,7 @@
 
 class Button : public HighlightCell, public Responder {
 public:
-  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small, KDColor textColor = KDColorBlack);
+  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, const KDFont * font = KDFont::SmallFont, KDColor textColor = KDColorBlack);
   void setMessage(I18n::Message message);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
@@ -29,7 +29,7 @@ private:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   Invocation m_invocation;
-  KDText::FontSize m_size;
+  const KDFont * m_font;
 };
 
 #endif

@@ -23,7 +23,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
-  }, this), KDText::FontSize::Small)
+  }, this), KDFont::SmallFont)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setTopMargin(k_topMargin);
@@ -32,12 +32,12 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_selectableTableView.setLeftMargin(k_leftMargin);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setIndicatorThickness(13);
-  m_abscissaTitleCell.setMessageFontSize(KDText::FontSize::Small);
+  m_abscissaTitleCell.setMessageFont(KDFont::SmallFont);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i].setParentResponder(&m_selectableTableView);
     m_abscissaCells[i].editableTextCell()->textField()->setDelegate(this);
     m_abscissaCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
-    m_abscissaCells[i].editableTextCell()->textField()->setFontSize(KDText::FontSize::Small);
+    m_abscissaCells[i].editableTextCell()->textField()->setFont(KDFont::SmallFont);
   }
 }
 

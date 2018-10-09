@@ -11,7 +11,7 @@ namespace Settings {
 
 ExamModeController::ExamModeController(Responder * parentResponder) :
   GenericSubController(parentResponder),
-  m_cell(I18n::Message::ExamModeActive, KDText::FontSize::Large)
+  m_cell(I18n::Message::ExamModeActive, KDFont::LargeFont)
 {
 }
 

@@ -25,7 +25,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
   m_pythonDelegate(pythonDelegate),
-  m_rowHeight(KDText::charSize(k_fontSize).height()),
+  m_rowHeight(k_font->glyphSize().height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
   m_editCell(this, this),

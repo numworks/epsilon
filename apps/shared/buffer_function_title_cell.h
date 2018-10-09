@@ -7,12 +7,12 @@ namespace Shared {
 
 class BufferFunctionTitleCell : public FunctionTitleCell {
 public:
-  BufferFunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator, KDText::FontSize size = KDText::FontSize::Large);
+  BufferFunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::LargeFont);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
   void setText(const char * textContent);
-  void setFontSize(KDText::FontSize size) { m_bufferTextView.setFontSize(size); }
+  void setFont(const KDFont * font) { m_bufferTextView.setFont(font); }
   const char * text() const override {
     return m_bufferTextView.text();
   }

@@ -10,15 +10,15 @@ namespace Regression {
 Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout layoutChildren[] = {
-      CharLayout('a', KDText::FontSize::Small),
-      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayout('l', KDText::FontSize::Small),
-      CharLayout('n', KDText::FontSize::Small),
-      CharLayout('(', KDText::FontSize::Small),
-      CharLayout('X', KDText::FontSize::Small),
-      CharLayout(')', KDText::FontSize::Small),
-      CharLayout('+', KDText::FontSize::Small),
-      CharLayout('b', KDText::FontSize::Small)
+      CharLayout('a', KDFont::SmallFont),
+      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout('l', KDFont::SmallFont),
+      CharLayout('n', KDFont::SmallFont),
+      CharLayout('(', KDFont::SmallFont),
+      CharLayout('X', KDFont::SmallFont),
+      CharLayout(')', KDFont::SmallFont),
+      CharLayout('+', KDFont::SmallFont),
+      CharLayout('b', KDFont::SmallFont)
     };
     m_layout = HorizontalLayout(layoutChildren, 9);
   }

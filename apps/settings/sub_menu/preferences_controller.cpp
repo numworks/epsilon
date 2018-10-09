@@ -12,7 +12,7 @@ PreferencesController::PreferencesController(Responder * parentResponder) :
   GenericSubController(parentResponder)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+    m_cells[i].setMessageFont(KDFont::LargeFont);
   }
 }
 
@@ -51,45 +51,45 @@ Layout layoutForPreferences(I18n::Message message) {
     case I18n::Message::Degres:
     {
       const char degEx[] = {'9', '0', Ion::Charset::Degree};
-      return LayoutHelper::String(degEx, sizeof(degEx), KDText::FontSize::Small);
+      return LayoutHelper::String(degEx, sizeof(degEx), KDFont::SmallFont);
     }
     case I18n::Message::Radian:
     {
       const char pi[] = {Ion::Charset::SmallPi};
       return FractionLayout(
-          LayoutHelper::String(pi, sizeof(pi), KDText::FontSize::Small),
-          LayoutHelper::String("2", 1, KDText::FontSize::Small)
+          LayoutHelper::String(pi, sizeof(pi), KDFont::SmallFont),
+          LayoutHelper::String("2", 1, KDFont::SmallFont)
         );
     }
     // Display Mode format
     case I18n::Message::Decimal:
-      return LayoutHelper::String("12.34", 5, KDText::FontSize::Small);
+      return LayoutHelper::String("12.34", 5, KDFont::SmallFont);
     case I18n::Message::Scientific:
     {
       const char text[] = {'1','.', '2', '3', '4', Ion::Charset::Exponent, '1'};
-      return LayoutHelper::String(text, sizeof(text), KDText::FontSize::Small);
+      return LayoutHelper::String(text, sizeof(text), KDFont::SmallFont);
     }
     // Edition mode
     case I18n::Message::Edition2D:
       return HorizontalLayout(
-          LayoutHelper::String("1+", 2, KDText::FontSize::Small),
-          FractionLayout(LayoutHelper::String("2", 1, KDText::FontSize::Small), LayoutHelper::String("3", 1, KDText::FontSize::Small))
+          LayoutHelper::String("1+", 2, KDFont::SmallFont),
+          FractionLayout(LayoutHelper::String("2", 1, KDFont::SmallFont), LayoutHelper::String("3", 1, KDFont::SmallFont))
         );
     case I18n::Message::EditionLinear:
-      return LayoutHelper::String("1+2/3", 5, KDText::FontSize::Small);
+      return LayoutHelper::String("1+2/3", 5, KDFont::SmallFont);
     // Complex format
     case I18n::Message::Cartesian:
     {
       const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};
-      return LayoutHelper::String(text, sizeof(text), KDText::FontSize::Small);
+      return LayoutHelper::String(text, sizeof(text), KDFont::SmallFont);
     }
     case I18n::Message::Polar:
     {
       const char base[] = {'r', Ion::Charset::Exponential};
       const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta};
       return HorizontalLayout(
-          LayoutHelper::String(base, sizeof(base), KDText::FontSize::Small),
-          VerticalOffsetLayout(LayoutHelper::String(superscript, sizeof(superscript), KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript)
+          LayoutHelper::String(base, sizeof(base), KDFont::SmallFont),
+          VerticalOffsetLayout(LayoutHelper::String(superscript, sizeof(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
         );
     }
     default:

@@ -6,7 +6,7 @@ namespace Shared {
 
 class BufferTextViewWithTextField : public View, public Responder {
 public:
-  BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate = nullptr, KDText::FontSize size = KDText::FontSize::Large);
+  BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont);
   KDSize minimalSizeForOptimalDisplay() const override;
   TextField * textField() { return &m_textField; }
   void setBufferText(const char * text);

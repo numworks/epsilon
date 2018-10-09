@@ -6,7 +6,7 @@
 
 class MessageTableCellWithChevronAndExpression : public MessageTableCellWithChevron {
 public:
-  MessageTableCellWithChevronAndExpression(I18n::Message message = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small);
+  MessageTableCellWithChevronAndExpression(I18n::Message message = (I18n::Message)0, const KDFont * font = KDFont::SmallFont);
   View * subAccessoryView() const override;
   void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layoutR);

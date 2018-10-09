@@ -30,13 +30,13 @@ private:
 
   class GutterView : public View {
   public:
-    GutterView(KDText::FontSize fontSize);
+    GutterView(const KDFont * font);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setOffset(KDCoordinate offset);
     KDSize minimalSizeForOptimalDisplay() const override;
   private:
     static constexpr KDCoordinate k_margin = 2;
-    KDText::FontSize m_fontSize;
+    const KDFont * m_font;
     KDCoordinate m_offset;
   };
 

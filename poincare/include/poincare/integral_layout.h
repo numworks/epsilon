@@ -39,7 +39,7 @@ protected:
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
-  constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Large;
+  constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static KDCoordinate k_boundHeightMargin = 8;
   constexpr static KDCoordinate k_boundWidthMargin = 5;
   constexpr static KDCoordinate k_integrandWidthMargin = 2;

@@ -18,11 +18,11 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_fontSize, textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);
+  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_font, textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return KDText::stringSize(m_line->text(), ConsoleController::k_fontSize);
+  return ConsoleController::k_font->stringSize(m_line->text());
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
@@ -38,7 +38,7 @@ KDSize ConsoleLineCell::ScrollableConsoleLineView::minimalSizeForOptimalDisplay(
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(ConsoleController::k_fontSize, I18n::Message::ConsolePrompt, 0, 0.5),
+  m_promptView(ConsoleController::k_font, I18n::Message::ConsolePrompt, 0, 0.5),
   m_scrollableView(this),
   m_line()
 {
@@ -83,7 +83,7 @@ View * ConsoleLineCell::subviewAtIndex(int index) {
 
 void ConsoleLineCell::layoutSubviews() {
   if (m_line.isCommand()) {
-    KDSize promptSize = KDText::stringSize(I18n::translate(I18n::Message::ConsolePrompt), ConsoleController::k_fontSize);
+    KDSize promptSize = ConsoleController::k_font->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
     m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
     m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()));
     return;

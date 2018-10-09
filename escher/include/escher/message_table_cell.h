@@ -7,12 +7,12 @@
 
 class MessageTableCell : public TableCell {
 public:
-  MessageTableCell(I18n::Message label = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small, Layout layout = Layout::Horizontal);
+  MessageTableCell(I18n::Message label = (I18n::Message)0, const KDFont * font = KDFont::SmallFont, Layout layout = Layout::Horizontal);
   View * labelView() const override;
   virtual void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message message);
   virtual void setTextColor(KDColor color);
-  void setMessageFontSize(KDText::FontSize fontSize);
+  void setMessageFont(const KDFont * font);
 private:
   MessageTextView m_messageTextView;
 };

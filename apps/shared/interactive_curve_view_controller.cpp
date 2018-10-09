@@ -18,17 +18,17 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
-  }, this), KDText::FontSize::Small),
+  }, this), KDFont::SmallFont),
   m_zoomButton(this, I18n::Message::Zoom, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->zoomParameterController());
-  }, this), KDText::FontSize::Small),
+  }, this), KDFont::SmallFont),
   m_defaultInitialisationButton(this, I18n::Message::Initialization, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
-  }, this), KDText::FontSize::Small)
+  }, this), KDFont::SmallFont)
 {
 }
 

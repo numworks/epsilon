@@ -24,7 +24,7 @@ using namespace Shared;
 namespace Probability {
 
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation) :
-  m_titleView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView),
   m_lawCurveView(law, calculation)
 {
@@ -46,7 +46,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 }
 
 void CalculationController::ContentView::layoutSubviews() {
-  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
+  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleHeightMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
   m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight));

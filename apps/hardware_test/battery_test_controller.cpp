@@ -66,9 +66,9 @@ void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryC
 
 BatteryTestController::ContentView::ContentView() :
   SolidColorView(KDColorWhite),
-  m_batteryStateView(KDText::FontSize::Large),
-  m_batteryLevelView(KDText::FontSize::Small),
-  m_batteryChargingView(KDText::FontSize::Small)
+  m_batteryStateView(KDFont::LargeFont),
+  m_batteryLevelView(KDFont::SmallFont),
+  m_batteryChargingView(KDFont::SmallFont)
 {
 }
 
@@ -93,7 +93,7 @@ void BatteryTestController::ContentView::setColor(KDColor color) {
 
 void BatteryTestController::ContentView::layoutSubviews() {
   m_batteryStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height/2));
-  KDSize textSize = KDText::charSize(KDText::FontSize::Small);
+  KDSize textSize = KDFont::SmallFont->glyphSize();
   m_batteryLevelView.setFrame(KDRect(0, Ion::Display::Height-2*textSize.height(), Ion::Display::Width, textSize.height()));
   m_batteryChargingView.setFrame(KDRect(0, Ion::Display::Height-textSize.height(), Ion::Display::Width, textSize.height()));
 }

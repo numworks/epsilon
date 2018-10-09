@@ -25,7 +25,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell(),
   m_store(store)
 {
-  m_r2Layout = HorizontalLayout(CharLayout('r', KDText::FontSize::Small), VerticalOffsetLayout(CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript));
+  m_r2Layout = HorizontalLayout(CharLayout('r', KDFont::SmallFont), VerticalOffsetLayout(CharLayout('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript));
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);

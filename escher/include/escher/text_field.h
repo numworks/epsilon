@@ -8,7 +8,7 @@
 class TextField : public TextInput {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large,
+    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
     float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
@@ -30,7 +30,7 @@ public:
 protected:
   class ContentView : public TextInput::ContentView {
   public:
-    ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+    ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, const KDFont * font, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
     void setBackgroundColor(KDColor backgroundColor);
     KDColor backgroundColor() const { return m_backgroundColor; }
     void setTextColor(KDColor textColor);

@@ -36,7 +36,7 @@ public:
   void setContent(const char * c) override;
   void * expressionAddress() const override;
   size_t expressionSize() const override;
-protected:
+//TODO protected:
   class CartesianFunctionRecordData : public FunctionRecordData {
   public:
     CartesianFunctionRecordData() :

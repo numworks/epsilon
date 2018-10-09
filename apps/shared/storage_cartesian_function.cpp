@@ -20,7 +20,7 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   int dotCharIndex = -1;
   while (currentNumber < bufferSize - constantNameSize) {
     dotCharIndex = 1 + Poincare::Integer(currentNumber).serialize(&buffer[1], bufferSize - constantNameSize + 1);
-    if (GlobalContext::RecordWithName(buffer).isNull()) {
+    if (GlobalContext::RecordBaseNameIsFree(buffer)) {
       // Name found
       break;
     }

@@ -92,7 +92,6 @@ public:
   Expression() : TreeHandle() {}
   Expression clone() const;
   static Expression parse(char const * string);
-  static const Expression ExpressionFromRecord(const Ion::Storage::Record & record);
   static const Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */

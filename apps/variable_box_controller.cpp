@@ -175,7 +175,7 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
   }
   assert(index-m_firstMemoizedLayoutIndex < k_maxNumberOfDisplayedRows);
   if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
-    m_layouts[index-m_firstMemoizedLayoutIndex] = Expression::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
   }
   return m_layouts[index-m_firstMemoizedLayoutIndex];
 }

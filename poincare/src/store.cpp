@@ -54,9 +54,10 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Symbol xUnknown = Symbol(x, 1);
     finalValue = childAtIndex(0).replaceSymbolWithExpression(static_cast<Symbol &>(userDefinedUnknown), xUnknown);
   } else {
+    assert(symbol().type() == ExpressionNode::Type::Symbol);
     finalValue = childAtIndex(0);
   }
-  finalValue.deepReduce(context, angleUnit, false);
+  finalValue = finalValue.deepReduce(context, angleUnit, false);
   context.setExpressionForSymbol(finalValue, symbol(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);

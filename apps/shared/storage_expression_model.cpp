@@ -40,7 +40,7 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
 }
 
 Expression StorageExpressionModel::expression() const {
-  if (m_expression.isUninitialized()) {
+  if (m_expression.isUninitialized() && !m_record.isNull()) {
     m_expression = Expression::ExpressionFromAddress(expressionAddress(), expressionSize());
   }
   return m_expression;
@@ -51,7 +51,7 @@ Expression StorageExpressionModel::reducedExpression(Poincare::Context * context
 }
 
 Layout StorageExpressionModel::layout() {
-  if (m_layout.isUninitialized()) {
+  if (m_layout.isUninitialized() && !m_record.isNull()) {
     m_layout = PoincareHelpers::CreateLayout(expression());
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout();

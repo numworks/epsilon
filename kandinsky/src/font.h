@@ -12,13 +12,13 @@ public:
   static const KDFont * LargeFont;
   static const KDFont * SmallFont;
 
-  using RenderPalette = KDPalette<k_bitsPerPixel>;
+  using RenderPalette = KDPalette<(1<<k_bitsPerPixel)>;
   void fetchGlyphForChar(char c, const RenderPalette & renderPalette, KDColor * pixelBuffer) const;
   RenderPalette renderPalette(KDColor textColor, KDColor backgroundColor) const {
     return RenderPalette::Gradient(textColor, backgroundColor);
   }
   KDCoordinate glyphWidth() const { return m_glyphWidth; }
-  KDCoordinate glyphHeight() const { return m_glyphWidth; }
+  KDCoordinate glyphHeight() const { return m_glyphHeight; }
 
   constexpr KDFont(KDCoordinate glyphWidth, KDCoordinate glyphHeight, const uint16_t * glyphDataOffset, const uint8_t * data) :
     m_glyphWidth(glyphWidth), m_glyphHeight(glyphHeight), m_glyphDataOffset(glyphDataOffset), m_data(data) { }
@@ -33,7 +33,8 @@ private:
   }
   uint8_t charAsIndex(char c) const {
     // FIXME: This is most likely false for chars greater than 127
-    return static_cast<uint8_t>(c);
+    return static_cast<uint8_t>(c) - 0x20;
+     // FIXME: 0x20 is a magic value...
   }
 
   KDCoordinate m_glyphWidth;

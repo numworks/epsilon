@@ -1,15 +1,16 @@
 #include "font.h"
 #include <assert.h>
-
-void decompress(const uint8_t * source, int sourceLength, uint8_t * output, int outputLength);
+#include "external/lz4/lz4.h"
 
 void KDFont::fetchGreyscaleGlyphForChar(char c, uint8_t * greyscaleBuffer) const {
-  decompress(
-    compressedGlyphData(c),
+  //TODO: If debug, use LZ4_decompress_safe, otherwise LZ4_decompress_fast
+  int resultSize = LZ4_decompress_safe(
+    reinterpret_cast<const char *>(compressedGlyphData(c)),
+    reinterpret_cast<char *>(greyscaleBuffer),
     compressedGlyphDataSize(c),
-    greyscaleBuffer,
-    m_glyphWidth*m_glyphHeight
+    m_glyphWidth * m_glyphHeight * k_bitsPerPixel/8
   );
+  assert(resultSize == m_glyphWidth * m_glyphHeight * k_bitsPerPixel/8);
 }
 
 void KDFont::fetchGlyphForChar(char c, const KDFont::RenderPalette & renderPalette, KDColor * pixelBuffer) const {
@@ -24,18 +25,20 @@ void KDFont::fetchGlyphForChar(char c, const KDFont::RenderPalette & renderPalet
   fetchGreyscaleGlyphForChar(c, greyscaleBuffer);
 
   uint8_t mask = (0xFF >> (8-k_bitsPerPixel));
-  int pixelIndex = m_glyphWidth * m_glyphHeight;
-  int greyscaleByteIndex = pixelIndex / k_bitsPerPixel;
+  int pixelIndex = m_glyphWidth * m_glyphHeight - 1; // Let's start at the final pixel
+  int greyscaleByteIndex = pixelIndex * k_bitsPerPixel / 8;
   while (pixelIndex >= 0) {
-    uint8_t greyscaleByte = greyscaleBuffer[greyscaleByteIndex--];
-    assert(greyscaleByteIndex >= 0);
-    for (int j=0; j<8/k_bitsPerPixel; j++) {
+    assert(greyscaleByteIndex == pixelIndex * k_bitsPerPixel / 8);
+    uint8_t greyscaleByte = greyscaleBuffer[greyscaleByteIndex--]; // We consume a greyscale byte...
+    for (int j=0; j<8/k_bitsPerPixel; j++) { // .. and we'll output 8/k_bits pixels
       uint8_t greyscale = greyscaleByte & mask;
       greyscaleByte = greyscaleByte >> k_bitsPerPixel;
+      assert(pixelIndex >= 0);
       pixelBuffer[pixelIndex--] = renderPalette.colorAtIndex(greyscale);
     }
   }
 }
+/*
 
 constexpr int glyphPixelCount = 12;
 
@@ -52,3 +55,4 @@ void drawString(const char * text, KDColor textColor, KDColor backgroundColor) {
     font->fetchGlyphForChar(c, palette, glyph);
   } while (c != 0);
 }
+*/

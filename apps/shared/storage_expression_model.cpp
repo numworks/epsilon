@@ -6,53 +6,39 @@
 #include <cmath>
 #include <assert.h>
 
+using namespace Ion;
 using namespace Poincare;
 
 namespace Shared {
 
-StorageExpressionModel::StorageExpressionModel(const char * name) :
-  m_name(name),
+StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
+  Storage::Record(record),
   m_expression(),
-  m_layout(),
-  m_record()
+  m_layout()
 {
+  assert(!isNull());
 }
 
-StorageExpressionModel::StorageExpressionModel(Ion::Storage::Record record) :
-  m_name(record.fullName()),
-  m_expression(),
-  m_layout(),
-  m_record(record)
-{
-}
-
-void StorageExpressionModel::destroy() {
-  record().destroy();
-}
-
-void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
+/*void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
   Expression e = expression();
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
     e.serialize(buffer, bufferSize);
   }
-}
+}*/
 
-Expression StorageExpressionModel::expression() const {
-  if (m_expression.isUninitialized() && !m_record.isNull()) {
-    m_expression = Expression::ExpressionFromAddress(expressionAddress(), expressionSize());
+Expression StorageExpressionModel::expression(Poincare::Context * context) const {
+  if (m_expression.isUninitialized()) {
+    m_expression = Expression::ExpressionFromAddress(expressionAddress(), expressionSize()).deepReduce(*context, Preferences::AngleUnit::Degree, true);
   }
   return m_expression;
 }
 
-Expression StorageExpressionModel::reducedExpression(Poincare::Context * context) const {
-  return expression().clone().deepReduce(*context, Preferences::AngleUnit::Degree, true);
-}
 
 Layout StorageExpressionModel::layout() {
-  if (m_layout.isUninitialized() && !m_record.isNull()) {
-    m_layout = PoincareHelpers::CreateLayout(expression());
+  if (m_layout.isUninitialized()) {
+    m_layout = PoincareHelpers::CreateLayout(Expression::ExpressionFromAddress(expressionAddress(), expressionSize()));
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout();
     }
@@ -65,7 +51,7 @@ bool StorageExpressionModel::isDefined() {
 }
 
 bool StorageExpressionModel::isEmpty() {
-  return record().isNull() || (record().value().size == 0);
+  return record().value().size == 0;
 }
 
 void StorageExpressionModel::tidy() {
@@ -73,7 +59,8 @@ void StorageExpressionModel::tidy() {
   m_expression = Expression();
 }
 
-Expression StorageExpressionModel::expressionToStoreFromString(const char * c) {
+Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char * c) {
+  // Compute the expression to store
   Expression expressionToStore = Expression::parse(c);
   if (!expressionToStore.isUninitialized()) {
     GlobalContext context;
@@ -84,20 +71,41 @@ Expression StorageExpressionModel::expressionToStoreFromString(const char * c) {
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);
     }
   }
-  return expressionToStore;
+  return setExpressionContent(expressionToStore);
 }
 
-void StorageExpressionModel::didSetContentData() {
+Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(Expression & expressionToStore) {
+  // Prepare the new data to store
+  Ion::Storage::Record::Data newData = value();
+  size_t expressionToStoreSize = expressionToStore.isUninitialized() ? 0 : expressionToStore.size();
+  newData.size = metaDataSize() + expressionToStoreSize;
+
+  // Set the data
+  Ion::Storage::Record::ErrorStatus error = record().setValue(newData);
+  if (error != Ion::Storage::Record::ErrorStatus::None) {
+    assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
+    return error;
+  }
+
+  // Copy the expression if needed
+  if (!expressionToStore.isUninitialized()) {
+    memcpy(expressionAddress(), expressionToStore.addressInPool(), expressionToStore.size());
+  }
+  /* We cannot call tidy here because tidy is a virtual function and does not
+   * do the same thing for all children class. And here we want to delete only
+   * the m_layout and m_expression. */
   m_layout = Layout();
   m_expression = Expression();
+  return error;
 }
 
+void * StorageExpressionModel::expressionAddress() const {
+  return (char *)value().buffer+metaDataSize();
+}
 
-Ion::Storage::Record StorageExpressionModel::record() const {
-  if (m_record.isNull()) {
-    m_record = Ion::Storage::sharedStorage()->recordNamed(m_name);
-  }
-  return m_record;
+size_t StorageExpressionModel::expressionSize() const {
+  assert(!isNull());
+  return value().size-metaDataSize();
 }
 
 }

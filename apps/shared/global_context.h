@@ -7,6 +7,7 @@
 #include <poincare/decimal.h>
 #include <poincare/symbol.h>
 #include <ion/storage.h>
+#include <assert.h>
 
 namespace Shared {
 
@@ -14,23 +15,41 @@ class Integer;
 
 class GlobalContext final : public Poincare::Context {
 public:
-  // TODO: should this be store elsewhere?
-  static constexpr char funcExtension[] = "func";
-  static constexpr char expExtension[] = "exp";
-  /* The expression recorded in global context is already a expression.
+  static constexpr char funcExtension[] = "func"; // TODO: store this elsewhere?
+  static constexpr char expExtension[] = "exp"; // TODO: store this elsewhere?
+  //static constexpr char seqExtension[] = "seq";
+
+  // Storage information
+  static bool RecordBaseNameIsFree(const char * baseName);
+  static bool storageMemoryFull();
+
+  // Expression from record
+  static Poincare::Expression ExpressionFromRecord(Ion::Storage::Record record);
+  static Poincare::Expression ExpressionFromSymbolRecord(Ion::Storage::Record record);
+  static Poincare::Expression ExpressionFromFunctionRecord(Ion::Storage::Record record);
+
+  /* Expression for symbol
+   * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol) override;
-  void setExpressionForSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context & context) override;
-  static Ion::Storage::Record RecordWithName(const char * name);
-  static bool storageMemoryFull();
-  //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;
+  void setExpressionForSymbol(
+      const Poincare::Expression & expression,
+      const Poincare::SymbolAbstract & symbol,
+      Poincare::Context & context) override;
+
 private:
-  //static constexpr char seqExtension[] = "seq";
-  const Poincare::Expression expressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
-  const Poincare::Expression expressionForActualSymbol(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
-  const Poincare::Expression expressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
-  Ion::Storage::Record::ErrorStatus setExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
-  Ion::Storage::Record::ErrorStatus setExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
+  // Expression getters
+  static const Poincare::Expression ExpressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  static const Poincare::Expression ExpressionForActualSymbol(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  static const Poincare::Expression ExpressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r) {
+    assert(symbol.type() == Poincare::ExpressionNode::Type::Function);
+    return ExpressionFromFunctionRecord(r);
+  }
+  // Expression setters
+  static Ion::Storage::Record::ErrorStatus SetExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
+  static Ion::Storage::Record::ErrorStatus SetExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
+  // Record getter
+  static Ion::Storage::Record RecordWithBaseName(const char * name);
 };
 
 }

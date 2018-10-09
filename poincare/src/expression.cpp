@@ -43,14 +43,6 @@ Expression Expression::parse(char const * string) {
   return expression;
 }
 
-const Expression Expression::ExpressionFromRecord(const Ion::Storage::Record & record) {
-  if (record.isNull() || record.value().size == 0) {
-    return Expression();
-  }
-  Ion::Storage::Record::Data d = record.value();
-  return ExpressionFromAddress(d.buffer, d.size);
-}
-
 const Expression Expression::ExpressionFromAddress(const void * address, size_t size) {
   if (address == nullptr || size == 0) {
     return Expression();

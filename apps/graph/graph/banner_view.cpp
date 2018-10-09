@@ -4,12 +4,12 @@
 namespace Graph {
 
 BannerView::BannerView() :
-  m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_functionView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_derivativeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_tangentEquationView(KDText::FontSize::Small, I18n::Message::LinearRegressionFormula, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_aView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_bView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_abscissaView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_functionView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_derivativeView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_tangentEquationView(KDFont::SmallFont, I18n::Message::LinearRegressionFormula, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_aView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_bView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_numberOfSubviews(2)
 {
 }

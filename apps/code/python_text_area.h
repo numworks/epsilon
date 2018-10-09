@@ -9,9 +9,9 @@ class App;
 
 class PythonTextArea : public TextArea {
 public:
-  PythonTextArea(Responder * parentResponder, App * pythonDelegate, KDText::FontSize fontSize) :
-    TextArea(parentResponder, &m_contentView, fontSize),
-    m_contentView(pythonDelegate, fontSize)
+  PythonTextArea(Responder * parentResponder, App * pythonDelegate, const KDFont * font) :
+    TextArea(parentResponder, &m_contentView, font),
+    m_contentView(pythonDelegate, font)
   {
   }
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
@@ -19,8 +19,8 @@ public:
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(App * pythonDelegate, KDText::FontSize fontSize) :
-      TextArea::ContentView(fontSize),
+    ContentView(App * pythonDelegate, const KDFont * font) :
+      TextArea::ContentView(font),
       m_pythonDelegate(pythonDelegate)
     {
     }

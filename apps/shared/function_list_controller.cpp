@@ -13,12 +13,12 @@ FunctionListController::FunctionListController(Responder * parentResponder, Func
     FunctionListController * list = (FunctionListController *)context;
     TabViewController * tabController = list->tabController();
     tabController->setActiveTab(1);
-  }, this), KDText::FontSize::Small, Palette::PurpleBright),
+  }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
     FunctionListController * list = (FunctionListController *)context;
     TabViewController * tabController = list->tabController();
     tabController->setActiveTab(2);
-  }, this), KDText::FontSize::Small, Palette::PurpleBright)
+  }, this), KDFont::SmallFont, Palette::PurpleBright)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);

@@ -6,8 +6,8 @@
 
 /* TextField::ContentView */
 
-TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  TextInput::ContentView(size),
+TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
+  TextInput::ContentView(font),
   m_isEditing(false),
   m_textBuffer(textBuffer),
   m_draftTextBuffer(draftTextBuffer),
@@ -41,7 +41,7 @@ void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
     backgroundColor = KDColorWhite;
   }
   ctx->fillRect(bounds(), backgroundColor);
-  ctx->drawString(text(), characterFrameAtIndex(0).origin(), m_fontSize, m_textColor, backgroundColor);
+  ctx->drawString(text(), characterFrameAtIndex(0).origin(), m_font, m_textColor, backgroundColor);
 }
 
 const char * TextField::ContentView::text() const {
@@ -116,11 +116,11 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, int locatio
 }
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize charSize = KDText::charSize(m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
   if (m_isEditing) {
-    return KDSize(charSize.width()*strlen(text())+m_cursorView.minimalSizeForOptimalDisplay().width(), charSize.height());
+    return KDSize(glyphSize.width()*strlen(text())+m_cursorView.minimalSizeForOptimalDisplay().width(), glyphSize.height());
   }
-  return KDSize(charSize.width()*strlen(text()), charSize.height());
+  return KDSize(glyphSize.width()*strlen(text()), glyphSize.height());
 }
 
 bool TextField::ContentView::removeChar() {
@@ -163,19 +163,19 @@ void TextField::ContentView::layoutSubviews() {
 }
 
 KDRect TextField::ContentView::characterFrameAtIndex(size_t index) const {
-  KDSize charSize = KDText::charSize(m_fontSize);
-  KDSize textSize = KDText::stringSize(text(), m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
+  KDSize textSize = m_font->stringSize(text());
   KDCoordinate cursorWidth = m_cursorView.minimalSizeForOptimalDisplay().width();
-  return KDRect(m_horizontalAlignment*(m_frame.width() - textSize.width()-cursorWidth)+ index * charSize.width(), m_verticalAlignment*(m_frame.height() - charSize.height()), charSize);
+  return KDRect(m_horizontalAlignment*(m_frame.width() - textSize.width()-cursorWidth)+ index * glyphSize.width(), m_verticalAlignment*(m_frame.height() - glyphSize.height()), glyphSize);
 }
 
 /* TextField */
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
-    size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, KDText::FontSize size,
+    size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, const KDFont * font,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TextInput(parentResponder, &m_contentView),
-  m_contentView(textBuffer, draftTextBuffer, textBufferSize, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_contentView(textBuffer, draftTextBuffer, textBufferSize, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)
 {

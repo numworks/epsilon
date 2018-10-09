@@ -12,7 +12,7 @@ LanguageController::LanguageController(Responder * parentResponder, KDCoordinate
   m_selectableTableView.setTopMargin(topMargin);
   m_selectableTableView.setBottomMargin(0);
   for (int i = 0; i < I18n::NumberOfLanguages; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
+    m_cells[i].setMessageFont(KDFont::LargeFont);
   }
 }
 

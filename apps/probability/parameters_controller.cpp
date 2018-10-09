@@ -8,9 +8,9 @@ namespace Probability {
 
 ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
   m_numberOfParameters(1),
-  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_firstParameterDefinition(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_secondParameterDefinition(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_titleView(KDFont::SmallFont, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+  m_firstParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
+  m_secondParameterDefinition(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
 {
 }
@@ -51,11 +51,11 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 }
 
 void ParametersController::ContentView::layoutSubviews() {
-  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleMargin;
+  KDCoordinate titleHeight = KDFont::SmallFont->glyphSize().height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height() + Metric::CommonTopMargin + Metric::CommonBottomMargin;
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight));
-  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+  KDCoordinate textHeight = KDFont::SmallFont->glyphSize().height();
   KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;
   m_secondParameterDefinition.setFrame(KDRectZero);
   if (m_numberOfParameters == 2) {

@@ -7,7 +7,7 @@ namespace Shared {
 
 ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
   m_approximateExpressionView(),
-  m_approximateSign(KDText::FontSize::Large, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
+  m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
   m_exactExpressionView(),
   m_selectedSubviewType((SubviewType)0)
 {

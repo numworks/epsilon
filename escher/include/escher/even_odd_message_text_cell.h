@@ -7,12 +7,12 @@
 
 class EvenOddMessageTextCell : public EvenOddCell {
 public:
-  EvenOddMessageTextCell(KDText::FontSize size = KDText::FontSize::Large);
+  EvenOddMessageTextCell(const KDFont * font = KDFont::LargeFont);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  void setMessageFontSize(KDText::FontSize size) { m_messageTextView.setFontSize(size); }
+  void setMessageFont(const KDFont * font) { m_messageTextView.setFont(font); }
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

@@ -13,11 +13,11 @@ public:
     Grey
   };
 
-  EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true) :
+  EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true) :
     LayoutNode(),
     m_isVisible(visible),
     m_color(color),
-    m_fontSize(fontSize),
+    m_font(font),
     m_margins(margins)
   {}
 
@@ -27,7 +27,7 @@ public:
   bool isVisible() const { return m_isVisible; }
   void setVisible(bool visible) { m_isVisible = visible; }
   void setMargins(bool margins) { m_margins = margins; }
-  void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
+  void setFont(const KDFont * font) { m_font = font; }
 
   // LayoutNode
   void deleteBeforeCursor(LayoutCursor * cursor) override;
@@ -58,8 +58,8 @@ private:
   constexpr static KDCoordinate k_marginWidth = 1;
   constexpr static KDCoordinate k_marginHeight = 3;
   constexpr static KDCoordinate k_lineThickness = 1;
-  KDCoordinate height() const { return KDText::charSize(m_fontSize).height() - 2*k_marginHeight; }
-  KDCoordinate width() const { return KDText::charSize(m_fontSize).width() - 2*k_marginWidth; }
+  KDCoordinate height() const { return m_font->glyphSize().height() - 2 * k_marginHeight; }
+  KDCoordinate width() const { return m_font->glyphSize().width() - 2 * k_marginWidth; }
 
   // LayoutNode
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
@@ -68,14 +68,14 @@ private:
 
   bool m_isVisible;
   Color m_color;
-  KDText::FontSize m_fontSize;
+  const KDFont * m_font;
   bool m_margins;
 };
 
 class EmptyLayout : public Layout {
 public:
   EmptyLayout(const EmptyLayoutNode * n);
-  EmptyLayout(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true);
+  EmptyLayout(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }

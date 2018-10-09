@@ -10,9 +10,9 @@ class BannerView : public Shared::BannerView {
 public:
   BannerView();
   int numberOfTextviews() const { return k_numberOfTextViews; }
-  KDText::FontSize fontSize() const { return k_fontSize; }
+  const KDFont * font() const { return k_font; }
 private:
-  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Small;
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
   static constexpr KDColor k_textColor = KDColorBlack;
   static constexpr KDColor k_backgroundColor = Palette::GreyMiddle;
   static constexpr int k_numberOfTextViews = 9;

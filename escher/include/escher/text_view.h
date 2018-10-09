@@ -9,7 +9,7 @@ public:
   // alignment = 0 -> align left or top
   // alignment = 0.5 -> align center
   // alignment = 1.0 -> align right or bottom
-  TextView(KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
+  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
@@ -18,12 +18,12 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   virtual const char * text() const = 0;
   virtual void setText(const char * text) = 0;
-  void setFontSize(KDText::FontSize fontSize);
+  void setFont(const KDFont * font);
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
-  KDText::FontSize m_fontSize;
+  const KDFont * m_font;
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

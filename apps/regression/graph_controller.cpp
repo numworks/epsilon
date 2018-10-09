@@ -173,7 +173,7 @@ void GraphController::reloadBannerView() {
   }
   if (!coefficientsAreDefined) {
     // Force the "Data not suitable" message to be on the next line
-    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width/(KDText::charSize(m_bannerView.fontSize()).width())- strlen(I18n::translate(formula)), 0);
+    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width/(m_bannerView.font()->glyphSize().width())- strlen(I18n::translate(formula)), 0);
     numberOfChar = 0;
     for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
       buffer[numberOfChar++] = ' ';
@@ -384,9 +384,9 @@ float GraphController::displayBottomMarginRatio() {
 
 float GraphController::estimatedBannerHeight() const {
   if (selectedSeriesIndex() < 0) {
-    return KDText::charSize(KDText::FontSize::Small).height() * 3;
+    return KDFont::SmallFont->glyphSize().height() * 3;
   }
-  float result = KDText::charSize(KDText::FontSize::Small).height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
+  float result = KDFont::SmallFont->glyphSize().height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
   return result;
 }
 

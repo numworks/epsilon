@@ -6,13 +6,13 @@ namespace Code {
 
 /* EditorView */
 
-constexpr KDText::FontSize editorFontSize = KDText::FontSize::Large;
+static constexpr const KDFont * editorFont = KDFont::LargeFont;
 
 EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder, pythonDelegate, editorFontSize),
-  m_gutterView(editorFontSize)
+  m_textArea(parentResponder, pythonDelegate, editorFont),
+  m_gutterView(editorFont)
 {
   m_textArea.setScrollViewDelegate(this);
 }
@@ -49,9 +49,9 @@ void EditorView::layoutSubviews() {
 
 /* EditorView::GutterView */
 
-EditorView::GutterView::GutterView(KDText::FontSize fontSize) :
+EditorView::GutterView::GutterView(const KDFont * font) :
   View(),
-  m_fontSize(fontSize),
+  m_font(font),
   m_offset(0)
 {
 }
@@ -62,21 +62,21 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
 
   ctx->fillRect(rect, backgroundColor);
 
-  KDSize charSize = KDText::charSize(m_fontSize);
+  KDSize glyphSize = m_font->glyphSize();
 
-  KDCoordinate firstLine = m_offset / charSize.height();
-  KDCoordinate firstLinePixelOffset = m_offset - firstLine * charSize.height();
+  KDCoordinate firstLine = m_offset / glyphSize.height();
+  KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
 
   char lineNumber[4];
-  int numberOfLines = bounds().height() / charSize.height() + 1;
+  int numberOfLines = bounds().height() / glyphSize.height() + 1;
   for (int i=0; i<numberOfLines; i++) {
     Poincare::Integer line(i + firstLine + 1);
     line.serialize(lineNumber, 4);
-    KDCoordinate leftPadding = (2 - strlen(lineNumber)) * charSize.width();
+    KDCoordinate leftPadding = (2 - strlen(lineNumber)) * glyphSize.width();
     ctx->drawString(
       lineNumber,
-      KDPoint(k_margin + leftPadding, i*charSize.height() - firstLinePixelOffset),
-      m_fontSize,
+      KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
+      m_font,
       textColor,
       backgroundColor
     );
@@ -94,7 +94,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * KDText::charSize(m_fontSize).width(), 0);
+  return KDSize(2 * k_margin + numberOfChars * m_font->glyphSize().width(), 0);
 }
 
 }

@@ -12,20 +12,20 @@ namespace Regression {
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout layoutChildren[] = {
-      CharLayout('a', KDText::FontSize::Small),
-      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayout('s', KDText::FontSize::Small),
-      CharLayout('i', KDText::FontSize::Small),
-      CharLayout('n', KDText::FontSize::Small),
-      CharLayout('(', KDText::FontSize::Small),
-      CharLayout('b', KDText::FontSize::Small),
-      CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      CharLayout('X', KDText::FontSize::Small),
-      CharLayout('+', KDText::FontSize::Small),
-      CharLayout('c', KDText::FontSize::Small),
-      CharLayout(')', KDText::FontSize::Small),
-      CharLayout('+', KDText::FontSize::Small),
-      CharLayout('d', KDText::FontSize::Small)
+      CharLayout('a', KDFont::SmallFont),
+      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout('s', KDFont::SmallFont),
+      CharLayout('i', KDFont::SmallFont),
+      CharLayout('n', KDFont::SmallFont),
+      CharLayout('(', KDFont::SmallFont),
+      CharLayout('b', KDFont::SmallFont),
+      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout('X', KDFont::SmallFont),
+      CharLayout('+', KDFont::SmallFont),
+      CharLayout('c', KDFont::SmallFont),
+      CharLayout(')', KDFont::SmallFont),
+      CharLayout('+', KDFont::SmallFont),
+      CharLayout('d', KDFont::SmallFont)
     };
     m_layout = HorizontalLayout(layoutChildren, 14);
   }

@@ -5,7 +5,7 @@ namespace Home {
 
 AppCell::AppCell() :
   HighlightCell(),
-  m_nameView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
+  m_nameView(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
   m_visible(true)
 {
 }

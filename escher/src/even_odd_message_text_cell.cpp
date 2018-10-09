@@ -1,9 +1,9 @@
 #include <escher/even_odd_message_text_cell.h>
 #include <assert.h>
 
-EvenOddMessageTextCell::EvenOddMessageTextCell(KDText::FontSize size) :
+EvenOddMessageTextCell::EvenOddMessageTextCell(const KDFont * font) :
   EvenOddCell(),
-  m_messageTextView(size, (I18n::Message)0, 0.5f, 0.5f)
+  m_messageTextView(font, (I18n::Message)0, 0.5f, 0.5f)
 {
 }
 

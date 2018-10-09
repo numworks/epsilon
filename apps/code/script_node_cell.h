@@ -37,7 +37,7 @@ protected:
       return m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).name();
     }
   private:
-    constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
+    constexpr static const KDFont * k_font = KDFont::SmallFont;
     constexpr static KDCoordinate k_verticalMargin = 7;
     ScriptNode * m_scriptNode;
     ScriptStore * m_scriptStore;

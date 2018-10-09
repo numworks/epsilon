@@ -4,10 +4,10 @@
 
 ExpressionTableCellWithPointer::ExpressionTableCellWithPointer(I18n::Message accessoryMessage, Layout layout) :
   ExpressionTableCell(layout),
-  m_accessoryView(KDText::FontSize::Small, accessoryMessage, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite)
+  m_accessoryView(KDFont::SmallFont, accessoryMessage, 0.0f, 0.5f, Palette::GreyDark, KDColorWhite)
 {
   if (layout == Layout::Horizontal) {
-  	m_accessoryView.setAlignment(1.0f, 0.5f);
+    m_accessoryView.setAlignment(1.0f, 0.5f);
   }
 }
 

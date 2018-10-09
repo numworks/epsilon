@@ -5,7 +5,7 @@
 MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message) :
   Responder(parentResponder),
   MessageTableCell(message),
-  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), textFieldDelegate, true, KDText::FontSize::Large, 1.0f, 0.5f)
+  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), textFieldDelegate, true, KDFont::LargeFont, 1.0f, 0.5f)
 {
   m_textBody[0] = '\0';
 }

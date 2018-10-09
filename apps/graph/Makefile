@@ -26,7 +26,6 @@ app_objs += $(addprefix apps/graph/,\
   graph/storage_intersection_graph_controller.o\
   graph/storage_tangent_graph_controller.o\
   graph/tangent_graph_controller.o\
-  list/list_controller.o\
   list/storage_list_controller.o\
   values/derivative_parameter_controller.o\
   values/function_parameter_controller.o\

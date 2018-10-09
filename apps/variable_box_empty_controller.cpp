@@ -82,14 +82,14 @@ void VariableBoxEmptyController::setType(Type type) {
     {
       message = I18n::Message::EmptyExpressionBox;
       char storeExpression[] = {'3', Ion::Charset::Sto, 'A', 0};
-      layout = LayoutHelper::String(storeExpression, sizeof(storeExpression)-1);
+      layout = LayoutHelper::String(storeExpression, sizeof(storeExpression)-1, KDText::FontSize::Small);
       break;
     }
     case Type::Functions:
     {
       message = I18n::Message::EmptyFunctionBox;
       char storeFunction[] = {'3', '+', 'x', Ion::Charset::Sto, 'f', '(', 'x', ')', 0};
-      layout = LayoutHelper::String(storeFunction, sizeof(storeFunction)-1);
+      layout = LayoutHelper::String(storeFunction, sizeof(storeFunction)-1, KDText::FontSize::Small);
       break;
     }
     default:

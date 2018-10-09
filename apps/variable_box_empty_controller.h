@@ -14,8 +14,7 @@ public:
   // View Controller
   View * view() override;
   DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
-  //void viewWillAppear() override;
-  //void viewDidDisapear() override;
+  void viewDidDisappear() override;
 
   void setType(Type type);
 private:

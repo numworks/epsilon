@@ -172,20 +172,16 @@ bool VariableBoxController::displayEmptyController() {
   return false;
 }
 
-/* void VariableBoxController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
-  // Tidy the memoized layouts to clean TreePool
-  for (int i = 0; i < 10; i++) { // FIXME
-    m_matrixLayouts[i] = Layout();
-  }
+void VariableBoxController::viewDidDisappear() {
   // Tidy the layouts used to display the VariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
+    m_leafCells[i].setAccessoryLayout(Layout());
   }
-  ViewController::viewDidDisappear();
-  }
+  NestedMenuController::viewDidDisappear();
+}
 
-
+/*
 Layout VariableBoxController::matrixLayoutAtIndex(int index) {
   assert(m_currentPage == Page::Matrix);
   if (m_matrixLayouts[index].isUninitialized()) {

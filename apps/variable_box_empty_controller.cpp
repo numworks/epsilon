@@ -70,8 +70,12 @@ View * VariableBoxEmptyController::view() {
   return &m_view;
 }
 
+void VariableBoxEmptyController::viewDidDisappear() {
+  m_view.setLayout(Layout());
+}
+
 void VariableBoxEmptyController::setType(Type type) {
-  I18n::Message message;
+  I18n::Message message = I18n::Message::Default;
   Layout layout;
   switch (type) {
     case Type::Expressions:

@@ -26,10 +26,11 @@ public:
   //TODO static constexpr uint16_t k_maxNumberOfSequences = 10;
 private:
   //static constexpr char seqExtension[] = "seq";
-  static const char * ExtensionForExpression(const Poincare::Expression & exp);
   const Poincare::Expression expressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
   const Poincare::Expression expressionForActualSymbol(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
   const Poincare::Expression expressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  Ion::Storage::Record::ErrorStatus setExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
+  Ion::Storage::Record::ErrorStatus setExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
 };
 
 }

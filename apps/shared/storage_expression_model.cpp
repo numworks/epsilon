@@ -68,10 +68,6 @@ bool StorageExpressionModel::isEmpty() {
   return record().isNull() || (record().value().size == 0);
 }
 
-void StorageExpressionModel::setContent(const char * c) {
-  setContentExpression(expressionToStoreFromString(c));
-}
-
 void StorageExpressionModel::tidy() {
   m_layout = Layout();
   m_expression = Expression();
@@ -91,18 +87,7 @@ Expression StorageExpressionModel::expressionToStoreFromString(const char * c) {
   return expressionToStore;
 }
 
-void StorageExpressionModel::setContentExpression(Expression expressionToStore) {
-  Ion::Storage::Record::Data newData;
-  if (expressionToStore.isUninitialized()) {
-    newData = {.buffer = nullptr, .size = 0};
-  } else {
-    newData = {.buffer = expressionToStore.addressInPool(), .size = expressionToStore.size()};
-  }
-  Ion::Storage::Record::ErrorStatus error = record().setValue(newData);
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
-  /* We cannot call tidy here because tidy is a virtual function and does not
-   * do the same thing for all children class. And here we want to delete only
-   * the m_layout and m_expression. */
+void StorageExpressionModel::didSetContentData() {
   m_layout = Layout();
   m_expression = Expression();
 }

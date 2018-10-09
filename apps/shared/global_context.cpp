@@ -61,7 +61,7 @@ const char * GlobalContext::ExtensionForExpression(const Expression & exp) {
 
 const Expression GlobalContext::expressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    expressionForActualSymbol(symbol, r);
+    return expressionForActualSymbol(symbol, r);
   }
   assert(symbol.type() == ExpressionNode::Type::Function);
   return expressionForFunction(symbol, r);

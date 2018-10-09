@@ -27,6 +27,9 @@ public:
 private:
   //static constexpr char seqExtension[] = "seq";
   static const char * ExtensionForExpression(const Poincare::Expression & exp);
+  const Poincare::Expression expressionForSymbolAndRecord(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  const Poincare::Expression expressionForActualSymbol(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
+  const Poincare::Expression expressionForFunction(const Poincare::SymbolAbstract & symbol, Ion::Storage::Record r);
 };
 
 }

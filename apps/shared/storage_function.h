@@ -33,6 +33,7 @@ public:
 protected:
   class FunctionRecordData {
   public:
+    FunctionRecordData() : m_color(KDColorRed), m_active(true) {}
     KDColor color() const { return m_color; }
     void setColor(KDColor color) { m_color = color; }
     bool isActive() const { return m_active; }

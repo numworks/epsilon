@@ -27,13 +27,13 @@ public:
   virtual bool isDefined();
   virtual bool isEmpty();
   virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
-  virtual void setContent(const char * c);
+  virtual void setContent(const char * c) = 0;
   virtual void tidy();
   virtual void * expressionAddress() const = 0;
   virtual size_t expressionSize() const = 0;
 protected:
   Poincare::Expression expressionToStoreFromString(const char * c);
-  void setContentExpression(Poincare::Expression expressionToStore);
+  void didSetContentData();
   Ion::Storage::Record record() const;
   const char * m_name;
   mutable Poincare::Expression m_expression;

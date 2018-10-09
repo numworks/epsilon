@@ -3,7 +3,7 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <kandinsky/text.h>
+#include <kandinsky/font.h>
 
 namespace Poincare {
 

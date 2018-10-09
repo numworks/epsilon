@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher.h>
 #include <ion/events.h>
-#include <kandinsky/text.h>
+#include <kandinsky/font.h>
 
 namespace Code {
 

@@ -1,7 +1,7 @@
 #include "graph_controller.h"
 #include "../shared/poincare_helpers.h"
 #include "../apps_container.h"
-#include <kandinsky/text.h>
+#include <kandinsky/font.h>
 #include <cmath>
 
 using namespace Poincare;

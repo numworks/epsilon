@@ -2,13 +2,38 @@
 #include <kandinsky/text.h>
 #include "small_font.h"
 #include "large_font.h"
+#include "font.h"
+#include <assert.h>
 
-KDColor smallCharacterBuffer[BITMAP_SmallFont_CHARACTER_WIDTH*BITMAP_SmallFont_CHARACTER_HEIGHT];
-KDColor largeCharacterBuffer[BITMAP_LargeFont_CHARACTER_WIDTH*BITMAP_LargeFont_CHARACTER_HEIGHT];
+constexpr int maxGlyphPixelCount = 180;
 
 KDPoint KDContext::drawString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor, KDColor backgroundColor, int maxLength) {
+#define NEW_VERSION 1
+#if NEW_VERSION
+  const KDFont * font = KDFont::LargeFont;
+  KDFont::RenderPalette palette = font->renderPalette(textColor, backgroundColor);
+
+  assert(maxGlyphPixelCount >= font->glyphWidth() * font->glyphHeight());
+
+  const char * c = text;
+  while(*c != 0) {
+    KDColor glyph[maxGlyphPixelCount];
+    font->fetchGlyphForChar(*c, palette, glyph);
+
+    KDRect absoluteRect = absoluteFillRect(KDRect(p, font->glyphWidth(), font->glyphHeight()));
+    pushRect(absoluteRect, glyph);
+    p = p.translatedBy(KDPoint(font->glyphWidth(), 0));
+
+    c++;
+  }
+
+  return KDPointZero;
+#else
   return writeString(text, p, size, textColor, backgroundColor, maxLength, false);
+#endif
 }
+
+#if 0
 
 KDPoint KDContext::blendString(const char * text, KDPoint p, KDText::FontSize size, KDColor textColor) {
   return writeString(text, p, size, textColor, KDColorWhite, -1, true);
@@ -68,3 +93,4 @@ void KDContext::writeChar(char character, KDPoint p, KDText::FontSize size, KDCo
   }
   pushRect(absoluteRect, characterBuffer);
 }
+#endif

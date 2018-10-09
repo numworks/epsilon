@@ -52,6 +52,9 @@ const Expression Expression::ExpressionFromRecord(const Ion::Storage::Record & r
 }
 
 const Expression Expression::ExpressionFromAddress(const void * address, size_t size) {
+  if (address == nullptr || size == 0) {
+    return Expression();
+  }
   // Build the Expression in the Tree Pool
   return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
 }

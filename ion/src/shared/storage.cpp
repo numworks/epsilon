@@ -414,6 +414,9 @@ bool Storage::FullNameCompliant(const char * fullName) {
 }
 
 bool Storage::FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength) {
+  if (fullName == nullptr) {
+    return false;
+  }
   size_t fullNameLength = strlen(fullName);
   if (fullNameLength > extensionLength) {
     const char * ext = fullName + fullNameLength - extensionLength;

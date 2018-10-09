@@ -58,16 +58,10 @@ Ion::Storage::Record GlobalContext::RecordWithName(const char * name) {
   return Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(name, extensions, 2);
 }
 
-const char * GlobalContext::ExtensionForExpression(const Expression & exp) {
-  // TODO Once we have matrix exact reducing, add a .mat extension and check here if the root is a matrix
-  // TODO .seq
-  if (exp.type() == ExpressionNode::Type::Function) {
-    return funcExtension;
-  }
-  return expExtension;
-}
-
 const Expression GlobalContext::expressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r) {
+  if (r.isNull()) {
+    return Expression();
+  }
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return expressionForActualSymbol(symbol, r);
   }

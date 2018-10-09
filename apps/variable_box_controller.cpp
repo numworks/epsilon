@@ -173,6 +173,9 @@ bool VariableBoxController::displayEmptyController() {
 }
 
 void VariableBoxController::viewDidDisappear() {
+  if (isDisplayingEmptyController()) {
+    pop();
+  }
   // Tidy the layouts used to display the VariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());

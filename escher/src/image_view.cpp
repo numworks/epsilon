@@ -16,6 +16,9 @@ void ImageView::drawRect(KDContext * ctx, KDRect rect) const {
   assert(bounds().width() == m_image->width());
   assert(bounds().height() == m_image->height());
   ctx->fillRectWithPixels(bounds(), m_image->pixels(), nullptr);
+
+  // Image is 55*56 pixels 3K pixels = 6K bytes
+
 }
 
 void ImageView::setImage(const Image * image) {

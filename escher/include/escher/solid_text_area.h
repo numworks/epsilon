@@ -8,15 +8,15 @@
 
 class SolidTextArea : public TextArea {
 public:
-  SolidTextArea(Responder * parentResponder, KDText::FontSize fontSize = KDText::FontSize::Large,
+  SolidTextArea(Responder * parentResponder, const KDFont * font = KDFont::LargeFont,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) :
-    TextArea(parentResponder, &m_contentView, fontSize),
-    m_contentView(fontSize, textColor, backgroundColor) {}
+    TextArea(parentResponder, &m_contentView, font),
+    m_contentView(font, textColor, backgroundColor) {}
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
-      TextArea::ContentView(fontSize),
+    ContentView(const KDFont * font, KDColor textColor, KDColor backgroundColor) :
+      TextArea::ContentView(font),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor)
     {

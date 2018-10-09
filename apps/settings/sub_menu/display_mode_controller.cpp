@@ -13,7 +13,7 @@ DisplayModeController::DisplayModeController(Responder * parentResponder) :
   m_editableCell(&m_selectableTableView, this, m_draftTextBuffer)
 {
   m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
-  m_editableCell.messageTableCellWithEditableText()->setMessageFontSize(KDText::FontSize::Large);
+  m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);
 }
 
 KDCoordinate DisplayModeController::rowHeight(int j) {

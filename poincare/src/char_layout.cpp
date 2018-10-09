@@ -49,23 +49,23 @@ bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft
 
 // Sizing and positioning
 KDSize CharLayoutNode::computeSize() {
-  return KDText::charSize(m_fontSize);
+  return m_font->glyphSize();
 }
 
 KDCoordinate CharLayoutNode::computeBaseline() {
-  return (KDText::charSize(m_fontSize).height()+1)/2; //TODO +1 ?
+  return (m_font->glyphSize().height()+1)/2; //TODO +1 ?
 }
 
 void CharLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   char string[2] = {m_char, 0};
-  ctx->drawString(string, p, m_fontSize, expressionColor, backgroundColor);
+  ctx->drawString(string, p, m_font, expressionColor, backgroundColor);
 }
 
-CharLayout::CharLayout(char c, KDText::FontSize fontSize) :
+CharLayout::CharLayout(char c, const KDFont * font) :
   Layout(TreePool::sharedPool()->createTreeNode<CharLayoutNode>())
 {
   node()->setChar(c);
-  node()->setFontSize(fontSize);
+  node()->setFont(font);
 }
 
 }

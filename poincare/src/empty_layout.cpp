@@ -95,12 +95,12 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor
 }
 
 EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
-EmptyLayout::EmptyLayout(EmptyLayoutNode::Color color, bool visible, KDText::FontSize fontSize, bool margins) :
+EmptyLayout::EmptyLayout(EmptyLayoutNode::Color color, bool visible, const KDFont * font, bool margins) :
   Layout(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
 {
   node()->setColor(color);
   node()->setVisible(visible);
-  node()->setFontSize(fontSize);
+  node()->setFont(font);
   node()->setMargins(margins);
 }
 

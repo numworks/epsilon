@@ -53,11 +53,11 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
   return result;
 }
 
-HorizontalLayout LayoutHelper::String(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
+HorizontalLayout LayoutHelper::String(const char * buffer, int bufferSize, const KDFont * font) {
   assert(bufferSize > 0);
   HorizontalLayout resultLayout;
   for (int i = 0; i < bufferSize; i++) {
-    resultLayout.addChildAtIndex(CharLayout(buffer[i], fontSize), i, i, nullptr);
+    resultLayout.addChildAtIndex(CharLayout(buffer[i], font), i, i, nullptr);
   }
   return resultLayout;
 }

@@ -11,8 +11,8 @@ AboutController::AboutController(Responder * parentResponder) :
   GenericSubController(parentResponder)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_cells[i].setMessageFontSize(KDText::FontSize::Large);
-    m_cells[i].setAccessoryFontSize(KDText::FontSize::Small);
+    m_cells[i].setMessageFont(KDFont::LargeFont);
+    m_cells[i].setAccessoryFont(KDFont::SmallFont);
     m_cells[i].setAccessoryTextColor(Palette::GreyDark);
   }
 }

@@ -3,9 +3,9 @@
 
 namespace Shared {
 
-BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, KDText::FontSize size) :
+BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, const KDFont * font) :
   FunctionTitleCell(orientation),
-  m_bufferTextView(size, 0.5f, 0.5f)
+  m_bufferTextView(font, 0.5f, 0.5f)
 {
 }
 

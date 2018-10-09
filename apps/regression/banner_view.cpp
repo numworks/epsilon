@@ -6,15 +6,15 @@ constexpr KDColor BannerView::k_textColor;
 constexpr KDColor BannerView::k_backgroundColor;
 
 BannerView::BannerView() :
-  m_dotNameView(k_fontSize, 0.0f, 0.5f, k_textColor, k_backgroundColor),
-  m_xView(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
-  m_yView(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
-  m_regressionTypeView(k_fontSize, (I18n::Message)0, 0.0f, 0.5f, k_textColor,k_backgroundColor),
-  m_subText1(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
-  m_subText2(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
-  m_subText3(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
-  m_subText4(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor),
-  m_subText5(k_fontSize, 0.5f, 0.5f, k_textColor, k_backgroundColor)
+  m_dotNameView(k_font, 0.0f, 0.5f, k_textColor, k_backgroundColor),
+  m_xView(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_yView(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_regressionTypeView(k_font, (I18n::Message)0, 0.0f, 0.5f, k_textColor,k_backgroundColor),
+  m_subText1(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText2(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText3(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText4(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),
+  m_subText5(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor)
 {
 }
 

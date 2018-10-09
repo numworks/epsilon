@@ -1,7 +1,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 
-MessageTableCellWithChevron::MessageTableCellWithChevron(I18n::Message message, KDText::FontSize size) :
-  MessageTableCell(message, size),
+MessageTableCellWithChevron::MessageTableCellWithChevron(I18n::Message message, const KDFont * font) :
+  MessageTableCell(message, font),
   m_accessoryView()
 {
 }

@@ -1,8 +1,8 @@
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/palette.h>
 
-MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message, KDText::FontSize size) :
-  MessageTableCell(message, size),
+MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message, const KDFont * font) :
+  MessageTableCell(message, font),
   m_subtitleView(1.0f, 0.5f, Palette::GreyDark)
 {
 }

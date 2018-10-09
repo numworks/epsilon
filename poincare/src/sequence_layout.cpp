@@ -138,7 +138,7 @@ KDCoordinate SequenceLayoutNode::computeBaseline() {
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
   KDSize nEqualslowerBoundSize = lowerBoundSizeWithNEquals();
-  KDSize nEqualsSize = KDText::stringSize(k_nEquals, k_fontSize);
+  KDSize nEqualsSize = k_font->stringSize(k_nEquals);
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDCoordinate x = 0;
   KDCoordinate y = 0;
@@ -202,8 +202,8 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
 
 void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Render the "n="
-  KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy(KDPoint(-KDText::stringSize(k_nEquals, k_fontSize).width(), 0));
-  ctx->drawString(k_nEquals, p.translatedBy(nEqualsPosition), k_fontSize, expressionColor, backgroundColor);
+  KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy(KDPoint(-k_font->stringSize(k_nEquals).width(), 0));
+  ctx->drawString(k_nEquals, p.translatedBy(nEqualsPosition), k_font, expressionColor, backgroundColor);
 
   // Render the parentheses
   KDCoordinate argumentWithParenthesesHeight = ParenthesisLayoutNode::HeightGivenChildHeight(argumentLayout()->layoutSize().height());
@@ -222,7 +222,7 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
 
 KDSize SequenceLayoutNode::lowerBoundSizeWithNEquals() {
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
-  KDSize nEqualsSize = KDText::stringSize(k_nEquals, k_fontSize);
+  KDSize nEqualsSize = k_font->stringSize(k_nEquals);
   return KDSize(
       nEqualsSize.width() + lowerBoundSize.width(),
       max(nEqualsSize.height(), lowerBoundSize.height()));

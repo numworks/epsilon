@@ -13,7 +13,7 @@ constexpr const char * EquationModelsParameterController::k_models[k_numberOfMod
 
 EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
   ViewController(parentResponder),
-  m_emptyModelCell(I18n::Message::Empty, KDText::FontSize::Large),
+  m_emptyModelCell(I18n::Message::Empty, KDFont::LargeFont),
   m_layouts{},
   m_selectableTableView(this),
   m_equationStore(equationStore),

@@ -5,7 +5,7 @@
 
 class BufferTextView : public TextView {
 public:
-  BufferTextView(KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f,
+  BufferTextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setText(const char * text) override;
   const char * text() const override;

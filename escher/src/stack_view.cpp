@@ -30,15 +30,16 @@ void StackView::setNamedController(ViewController * controller) {
 }
 
 void StackView::drawRect(KDContext * ctx, KDRect rect) const {
+  const KDFont * font = KDFont::SmallFont;
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   ctx->fillRect(KDRect(0, 0, width, 1), m_separatorColor);
   ctx->fillRect(KDRect(0, 1, width, height-2), m_backgroundColor);
   ctx->fillRect(KDRect(0, height-1, width, 1), m_separatorColor);
   // Write title
-  KDSize textSize = KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
+  KDSize textSize = font->stringSize(m_controller->title());
   KDPoint origin((m_frame.width() - textSize.width())/2,(m_frame.height() - textSize.height())/2);
-  ctx->drawString(m_controller->title(), origin, KDText::FontSize::Small, m_textColor, m_backgroundColor);
+  ctx->drawString(m_controller->title(), origin, font, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING

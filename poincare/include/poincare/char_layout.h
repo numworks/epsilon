@@ -9,16 +9,16 @@ namespace Poincare {
 
 class CharLayoutNode : public LayoutNode {
 public:
-  CharLayoutNode(char c = Ion::Charset::Empty, KDText::FontSize fontSize = KDText::FontSize::Large) :
+  CharLayoutNode(char c = Ion::Charset::Empty, const KDFont * font = KDFont::LargeFont) :
     LayoutNode(),
     m_char(c),
-    m_fontSize(fontSize)
+    m_font(font)
   {}
 
   // CharLayout
   virtual void setChar(char c) { m_char = c; }
-  KDText::FontSize fontSize() const { return m_fontSize; }
-  void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
+  const KDFont * font() const { return m_font; }
+  void setFont(const KDFont * font) { m_font = font; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -50,13 +50,13 @@ protected:
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   char m_char;
-  KDText::FontSize m_fontSize;
+  const KDFont * m_font;
 };
 
 class CharLayout : public Layout {
 public:
-  CharLayout(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
-  KDText::FontSize fontSize() const { return const_cast<CharLayout *>(this)->node()->fontSize(); }
+  CharLayout(char c, const KDFont * font = KDFont::LargeFont);
+  const KDFont * font() const { return const_cast<CharLayout *>(this)->node()->font(); }
 private:
   using Layout::node;
   CharLayoutNode * node() { return static_cast<CharLayoutNode *>(Layout::node());}

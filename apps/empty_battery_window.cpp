@@ -13,7 +13,7 @@ EmptyBatteryWindow::EmptyBatteryWindow() :
 void EmptyBatteryWindow::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   const char * warningMessage = I18n::translate(I18n::Message::LowBattery, GlobalPreferences::sharedGlobalPreferences()->language());
-  KDSize warningSize = KDText::stringSize(warningMessage, KDText::FontSize::Large);
-  ctx->drawString(warningMessage, KDPoint((Ion::Display::Width - warningSize.width())/2, (Ion::Display::Height - warningSize.height())/2), KDText::FontSize::Large);
+  KDSize warningSize = KDFont::LargeFont->stringSize(warningMessage);
+  ctx->drawString(warningMessage, KDPoint((Ion::Display::Width - warningSize.width())/2, (Ion::Display::Height - warningSize.height())/2), KDFont::LargeFont);
 }
 

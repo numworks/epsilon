@@ -5,8 +5,8 @@ using namespace Poincare;
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
   HighlightCell(),
-  m_labelView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, KDColorWhite),
-  m_subtitleView(KDText::FontSize::Small, 0, 0.5, Palette::GreyDark, KDColorWhite),
+  m_labelView(KDFont::SmallFont, 0, 0.5, KDColorBlack, KDColorWhite),
+  m_subtitleView(KDFont::SmallFont, 0, 0.5, Palette::GreyDark, KDColorWhite),
   m_expressionView(1.0f, 0.5f),
   m_displayExpression(false)
 {

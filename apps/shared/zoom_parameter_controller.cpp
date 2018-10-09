@@ -101,7 +101,7 @@ ZoomParameterController::ContentView::LegendView::LegendView()
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
   float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
   for (int i = 0; i < k_numberOfLegends; i++) {
-    m_legends[i].setFontSize(KDText::FontSize::Small);
+    m_legends[i].setFont(KDFont::SmallFont);
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(Palette::GreyBright);
     m_legends[i].setAlignment(horizontalAlignments[i], 0.5f);

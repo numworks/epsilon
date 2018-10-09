@@ -1,9 +1,9 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <assert.h>
 
-EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size, float horizontalAlignment, float verticalAlignment) :
+EvenOddBufferTextCell::EvenOddBufferTextCell(const KDFont * font, float horizontalAlignment, float verticalAlignment) :
   EvenOddCell(),
-  m_bufferTextView(size, horizontalAlignment, verticalAlignment)
+  m_bufferTextView(font, horizontalAlignment, verticalAlignment)
 {
 }
 

@@ -109,7 +109,7 @@ void * StorageCartesianFunction::expressionAddress() const {
 size_t StorageCartesianFunction::expressionSize() const {
   assert(!record().isNull());
   Ion::Storage::Record::Data d = record().value();
-  return d.size-sizeof(FunctionRecordData);
+  return d.size-sizeof(CartesianFunctionRecordData);
 }
 
 StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {

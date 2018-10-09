@@ -8,16 +8,14 @@
 
 namespace Shared {
 
-class StorageExpressionModel {
+// StorageExpressionModel is a handle to Ion::Record
+
+class StorageExpressionModel : public Ion::Storage::Record {
   // TODO find better name (once we remove ExpressionModel?)
 public:
-  StorageExpressionModel(const char * name);
   StorageExpressionModel(Ion::Storage::Record record);
-  void destroy();
-  const char * name() const { return m_name; }
-  void text(char * buffer, size_t bufferSize) const;
-  Poincare::Expression expression() const;
-  Poincare::Expression reducedExpression(Poincare::Context * context) const;
+  //void text(char * buffer, size_t bufferSize) const;
+  Poincare::Expression expression(Poincare::Context * context) const;
   Poincare::Layout layout();
   /* TODO This comment will be true when Sequence inherits from this class
    * Here, isDefined is the exact contrary of isEmpty. However, for Sequence
@@ -27,19 +25,16 @@ public:
   virtual bool isDefined();
   virtual bool isEmpty();
   virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
-  virtual void setContent(const char * c) = 0;
   virtual void tidy();
-  virtual void * expressionAddress() const = 0;
-  virtual size_t expressionSize() const = 0;
+  virtual Ion::Storage::Record::ErrorStatus setContent(const char * c);
+  Ion::Storage::Record::ErrorStatus setExpressionContent(Poincare::Expression & e);
 protected:
-  Poincare::Expression expressionToStoreFromString(const char * c);
-  void didSetContentData();
+  void * expressionAddress() const;
+  size_t expressionSize() const;;
+  virtual size_t metaDataSize() const = 0;
   Ion::Storage::Record record() const;
-  const char * m_name;
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
-private:
-  mutable Ion::Storage::Record m_record;
 };
 
 }

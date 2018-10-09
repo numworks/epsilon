@@ -92,7 +92,7 @@ public:
   Expression() : TreeHandle() {}
   Expression clone() const;
   static Expression parse(char const * string);
-  static const Expression ExpressionFromAddress(const void * address, size_t size);
+  static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();

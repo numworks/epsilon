@@ -14,6 +14,7 @@ public:
 
   // View Controller
   void viewWillAppear() override;
+  void viewDidDisappear() override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

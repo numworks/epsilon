@@ -15,7 +15,7 @@ public:
     ViewController(parentResponder),
     m_selectableTableView(this, this, this, tableDelegate),
     m_functionStore(functionStore),
-    m_function(nullptr),
+    m_function(),
 #if FUNCTION_COLOR_CHOICE
     m_colorCell(functionColorMessage),
 #endif
@@ -36,7 +36,7 @@ public:
     return false;
   }
   virtual void setFunction(T * function) {
-    m_function = function;
+    m_function = *function;
     selectCellAtLocation(0, 0);
   }
   void didBecomeFirstResponder() override {
@@ -73,7 +73,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override {
     if (cell == &m_enableCell) {
       SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
-      switchView->setState(m_function->isActive());
+      switchView->setState(m_function.isActive());
     }
   }
 protected:
@@ -87,7 +87,7 @@ protected:
 #else
       case 0:
 #endif
-        m_function->setActive(!m_function->isActive());
+        m_function.setActive(!m_function.isActive());
         m_selectableTableView.reloadData();
         return true;
 #if FUNCTION_COLOR_CHOICE
@@ -97,7 +97,7 @@ protected:
 #endif
         {
           if (m_functionStore->numberOfModels() > 1) {
-            m_functionStore->removeModel(*m_function);
+            m_functionStore->removeModel(m_function);
             StackViewController * stack = (StackViewController *)(parentResponder());
             stack->pop();
             return true;
@@ -119,7 +119,7 @@ protected:
   }
   SelectableTableView m_selectableTableView;
   StorageFunctionStore<T> * m_functionStore;
-  T * m_function;
+  T m_function;
 private:
 #if FUNCTION_COLOR_CHOICE
   constexpr static int k_totalNumberOfCell = 3;

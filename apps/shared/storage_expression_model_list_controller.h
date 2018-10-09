@@ -32,9 +32,11 @@ protected:
     if (m.layout().isUninitialized()) {
       return Metric::StoreRowHeight;
     }
-    KDCoordinate modelSize = m.layout().layoutSize().height();
-    return modelSize + Metric::StoreRowHeight - KDText::charSize().height();
+    KDCoordinate modelHeight = m.layout().layoutSize().height();
+    KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDText::charSize().height();
+    return Metric::StoreRowHeight > modelHeightWithMargins ? Metric::StoreRowHeight : modelHeightWithMargins;
   }
+
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
     EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
     T m = modelStore()->modelAtIndex(j);

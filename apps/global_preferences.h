@@ -7,7 +7,7 @@ class GlobalPreferences {
 public:
   enum class ExamMode {
     Activate,
-    Desactivate
+    Deactivate
   };
   static GlobalPreferences * sharedGlobalPreferences();
   I18n::Language language() const;
@@ -24,7 +24,7 @@ public:
 private:
   GlobalPreferences() :
     m_language(I18n::Language::EN),
-    m_examMode(ExamMode::Desactivate),
+    m_examMode(ExamMode::Deactivate),
 #ifdef EPSILON_BOOT_PROMPT
     m_showPopUp(true),
 #endif

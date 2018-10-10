@@ -8,26 +8,21 @@
 
 namespace Graph {
 
-class StorageCartesianFunctionStore : public Shared::StorageFunctionStore<Shared::StorageCartesianFunction> {
+class StorageCartesianFunctionStore : public Shared::StorageFunctionStore {
 public:
-  static Shared::StorageCartesianFunction NullModel();
-
   StorageCartesianFunctionStore();
-/*  StorageCartesianFunction activeCartesianFunctionAtIndex(int i) override { return (CartesianFunction *)Shared::FunctionStore::activeFunctionAtIndex(i); }
-  StorageCartesianFunction definedFunctionAtIndex(int i) override { return (CartesianFunction *)Shared::FunctionStore::definedFunctionAtIndex(i); }
-*/
-  char symbol() const override;
+  Shared::StorageCartesianFunction * modelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::modelAtIndex(i)); }
+  Shared::StorageCartesianFunction * activeFunctionAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::activeFunctionAtIndex(i)); }
+  Shared::StorageCartesianFunction * definedModelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::definedModelAtIndex(i)); }
+  char symbol() const override { return 'x'; }
   void removeAll() override;
-  static constexpr int k_maxNumberOfFunctions = 4; //TODO
 private:
-/*  static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
-    "f", "g", "h", "p" //TODO
-  };
-
-  const char * firstAvailableName() override {
-    return firstAvailableAttribute(k_functionNames, FunctionStore::name);
-  }*/
-  const char * firstAvailableName() override { return "f"; }
+  void addEmptyModel();
+  const char * modelExtension() const override { return Shared::GlobalContext::funcExtension; }
+  void privateSetMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  void moveMemoizedModel(int previousIndex, int nextIndex) const override;
+  Shared::StorageExpressionModel * memoizedModelAtIndex(int cacheIndex) const override;
+  mutable Shared::StorageCartesianFunction m_functions[k_maxNumberOfMemoizedModels];
 };
 
 }

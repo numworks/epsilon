@@ -11,33 +11,36 @@ namespace Shared {
 void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   /* a default name is "f[number].func", for instance "f12.func", that does not
    * exist yet in the storage */
-  size_t constantNameSize = 1 + 1 + strlen(GlobalContext::funcExtension) + 1; // 'f', '.', extension, null-terminating char
-  assert(bufferSize > constantNameSize);
+  size_t extensionLength = 1 + strlen(GlobalContext::funcExtension); // '.', extension, no null-terminating char
+  size_t constantNameLength = 1 + extensionLength; // 'f', '.', extension, no null-terminating char
+  assert(bufferSize > constantNameLength+1);
   // Write the f
   buffer[0] = 'f';
   // Find the next available number
   int currentNumber = 0;
-  int dotCharIndex = -1;
-  while (currentNumber < bufferSize - constantNameSize) {
-    dotCharIndex = 1 + Poincare::Integer(currentNumber).serialize(&buffer[1], bufferSize - constantNameSize + 1);
+  int currentNumberLength = -1;
+  size_t availableBufferSize = bufferSize - constantNameLength;
+  while (currentNumberLength < availableBufferSize) {
+    currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
     if (GlobalContext::RecordBaseNameIsFree(buffer)) {
       // Name found
       break;
     }
     currentNumber++;
   }
+  assert(currentNumberLength > 1 && currentNumberLength < availableBufferSize);
   // Write the extension
-  assert(dotCharIndex > 1);
+  int dotCharIndex = 1 + currentNumberLength;
   buffer[dotCharIndex] = Ion::Storage::k_dotChar;
   strlcpy(&buffer[dotCharIndex+1], GlobalContext::funcExtension, bufferSize - (dotCharIndex+1));
 }
 
-StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus & error) {
-  char nameBuffer[100];
-  DefaultName(nameBuffer, 100);
+StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error) {
+  char nameBuffer[SymbolAbstract::k_maxNameSize];
+  DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
   CartesianFunctionRecordData data;
   *error = Ion::Storage::sharedStorage()->createRecordWithFullName(nameBuffer, &data, sizeof(data));
-  if (*error != Ion::Storage::Record::ErrorStatus::None()) {
+  if (*error != Ion::Storage::Record::ErrorStatus::None) {
     return StorageCartesianFunction();
   }
   return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordNamed(nameBuffer));
@@ -52,8 +55,7 @@ void StorageCartesianFunction::setDisplayDerivative(bool display) {
 }
 
 double StorageCartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  const char xUnknown[] = {Symbol::SpecialSymbols::UnknownX, 0};
-  Poincare::Derivative derivative(reducedExpression(context), Symbol(xUnknown, 1), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
+  Poincare::Derivative derivative(expression(context).clone(), Symbol(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
@@ -61,7 +63,7 @@ double StorageCartesianFunction::approximateDerivative(double x, Poincare::Conte
 }
 
 double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  Poincare::Integral integral(reducedExpression(context), Poincare::Float<double>(start), Poincare::Float<double>(end)); // Integral takes ownership of args
+  Poincare::Integral integral(expression(context).clone(), Poincare::Float<double>(start), Poincare::Float<double>(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
@@ -69,41 +71,28 @@ double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poin
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  return reducedExpression(context).nextMinimum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  return expression(context).nextMinimum(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  return reducedExpression(context).nextMaximum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  return expression(context).nextMaximum(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 double StorageCartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  return reducedExpression(context).nextRoot(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  return expression(context).nextRoot(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::StorageFunction * function) const {
-  Expression reducedExp = reducedExpression(context);
-  return reducedExp.nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), reducedExp);
-}
-
-void StorageCartesianFunction::setContent(const char * c) {
-  Expression expressionToStore = StorageExpressionModel::expressionToStoreFromString(c);
-  Ion::Storage::Record::ErrorStatus error = GlobalContext::SetExpressionForFunctionRecord(expressionToStore, record());
-  StorageExpressionModel::didSetContentData();
-}
-
-void * StorageCartesianFunction::expressionAddress() const {
-  return recordData()->expressionAddress();
-}
-
-size_t StorageCartesianFunction::expressionSize() const {
-  assert(!record().isNull());
-  Ion::Storage::Record::Data d = record().value();
-  return d.size-sizeof(CartesianFunctionRecordData);
+  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  return expression(context).nextIntersection(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), function->expression(context));
 }
 
 StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {
-  assert(!record().isNull());
-  Ion::Storage::Record::Data d = record().value();
+  assert(!isNull());
+  Ion::Storage::Record::Data d = value();
   return reinterpret_cast<CartesianFunctionRecordData *>(const_cast<void *>(d.buffer));
 }
 

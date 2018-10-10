@@ -30,7 +30,8 @@ void StorageFunction::setColor(KDColor color) {
 
 template<typename T>
 T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  return expression(context).approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
+  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  return expression(context).approximateWithValueForSymbol(unknownX, x, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 StorageFunction::FunctionRecordData * StorageFunction::recordData() const {

@@ -26,10 +26,11 @@ public:
 
   // Other
   void tidy();
+protected:
+  constexpr static int k_maxNumberOfMemoizedModels = 5;
 private:
   virtual const char * modelExtension() const = 0;
   // Memoization of k_maxNumberOfMemoizedModels consecutive models
-  constexpr static int k_maxNumberOfMemoizedModels = 5;
   mutable int m_firstMemoizedModelIndex;
   mutable uint32_t m_memoizedModelChecksum[k_maxNumberOfMemoizedModels];
   void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const;

@@ -19,6 +19,7 @@ objs += $(addprefix ion/src/shared/, \
   dummy/led.o \
   dummy/keyboard.o \
   dummy/serial_number.o \
+  dummy/stack.o \
   dummy/usb.o \
 )
 

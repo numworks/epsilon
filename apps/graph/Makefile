@@ -17,15 +17,6 @@ app_objs += $(addprefix apps/graph/,\
   graph/integral_graph_controller.o\
   graph/intersection_graph_controller.o\
   graph/root_graph_controller.o\
-  graph/storage_calculation_graph_controller.o\
-  graph/storage_calculation_parameter_controller.o\
-  graph/storage_curve_parameter_controller.o\
-  graph/storage_graph_controller.o\
-  graph/storage_graph_controller_helper.o\
-  graph/storage_graph_view.o\
-  graph/storage_intersection_graph_controller.o\
-  graph/storage_tangent_graph_controller.o\
-  graph/tangent_graph_controller.o\
   list/storage_list_controller.o\
   values/derivative_parameter_controller.o\
   values/function_parameter_controller.o\

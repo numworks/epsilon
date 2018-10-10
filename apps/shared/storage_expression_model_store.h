@@ -17,8 +17,8 @@ public:
   // Getters
   int numberOfModels() const;
   int numberOfDefinedModels() const;
-  StorageExpressionModel * modelAtIndex(int i) const;
-  StorageExpressionModel * definedModelAtIndex(int i) const;
+  virtual StorageExpressionModel * modelAtIndex(int i) const;
+  virtual StorageExpressionModel * definedModelAtIndex(int i) const;
 
   // Add and Remove
   virtual void removeAll();

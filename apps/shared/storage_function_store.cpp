@@ -4,59 +4,41 @@
 
 namespace Shared {
 
-template<class T>
-int StorageFunctionStore<T>::numberOfActiveFunctions() {
+uint32_t StorageFunctionStore::storeChecksum() {
+  return Ion::Storage::sharedStorage()->checksum();
+}
+
+int StorageFunctionStore::numberOfActiveFunctions() const {
   int result = 0;
-  int modelsCount = StorageExpressionModelStore<T>::numberOfModels();
-  for (int i = 0; i < modelsCount; i++) {
-    T function = StorageExpressionModelStore<T>::modelAtIndex(i);
-    if (function.isDefined() && function.isActive()) {
+  int i = 0;
+  StorageFunction * function = modelAtIndex(i++);
+  while (!function->isNull()) {
+    if (function->isDefined() && function->isActive()) {
       result++;
     }
+    function = modelAtIndex(i++);
   }
   return result;
 }
 
-template<class T>
-T StorageFunctionStore<T>::activeFunctionAtIndex(int i) {
-  assert(i >= 0 && i < numberOfActiveFunctions());
+
+StorageFunction * StorageFunctionStore::activeFunctionAtIndex(int i) {
+  assert(i >= 0 && i < numberOfDefinedModels());
   int index = 0;
-  int modelsCount = StorageExpressionModelStore<T>::numberOfModels();
-  for (int k = 0; k < modelsCount; k++) {
-    T function = StorageExpressionModelStore<T>::modelAtIndex(k);
-    if (function.isActive() && function.isDefined()) {
+  int currentModelIndex = 0;
+  StorageFunction * function = modelAtIndex(currentModelIndex++);
+  while (!function->isNull()) {
+    assert(currentModelIndex < numberOfModels());
+    if (function->isActive() && function->isDefined()) {
       if (i == index) {
         return function;
       }
       index++;
     }
+    function = modelAtIndex(currentModelIndex++);
   }
   assert(false);
   return nullptr;
 }
 
-template<class T>
-template<typename U>
-U StorageFunctionStore<T>::firstAvailableAttribute(U attributes[], AttributeGetter<U> attribute) {
-  int modelsCount = StorageExpressionModelStore<T>::numberOfModels();
-  for (int k = 0; k < 4/*TODO*/; k++) {
-    int j = 0;
-    while  (j < modelsCount) {
-      if (attribute(StorageExpressionModelStore<T>::modelAtIndex(j)) == attributes[k]) {
-        break;
-      }
-      j++;
-    }
-    if (j == modelsCount) {
-      return attributes[k];
-    }
-  }
-  return attributes[0];
 }
-
-}
-
-//TODO specify templates
-template class Shared::StorageFunctionStore<Shared::StorageCartesianFunction>;
-/*template char const* const Shared::StorageFunctionStore::firstAvailableAttribute<char const* const>(char const* const*, char const* const (*)(Shared::StorageFunction));
-template KDColor const Shared::StorageFunctionStore::firstAvailableAttribute<KDColor const>(KDColor const*, KDColor const (*)(Shared::StorageFunction));*/

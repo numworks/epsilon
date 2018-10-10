@@ -17,7 +17,7 @@ public:
   int numberOfActiveFunctions() const;
   virtual StorageFunction * modelAtIndex(int i) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::modelAtIndex(i)); }
   virtual StorageFunction * definedModelAtIndex(int i) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::definedModelAtIndex(i)); }
-  virtual StorageFunction * activeFunctionAtIndex(int i);
+  virtual StorageFunction * activeFunctionAtIndex(int i) const;
 
   virtual char symbol() const = 0;
 };

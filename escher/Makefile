@@ -86,9 +86,9 @@ objs += $(addprefix escher/src/,\
 
 INLINER := escher/image/inliner
 
-$(INLINER): escher/image/inliner.c
+$(INLINER): escher/image/inliner.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c)
 	@echo "HOSTCC  $@"
-	$(Q) $(HOSTCC) -std=c99 `libpng-config --cflags` $< `libpng-config --ldflags` -o $@
+	$(Q) $(HOSTCC) -std=c99 `libpng-config --cflags` $^ `libpng-config --ldflags` -o $@
 
 %.h %.cpp : %.png $(INLINER)
 	@echo "INLINER $@"

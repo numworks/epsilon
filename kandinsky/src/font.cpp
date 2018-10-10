@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <kandinsky/font.h>
-#include "external/lz4/lz4.h"
+#include <ion.h>
 
 constexpr static int k_tabCharacterWidth = 4;
 
@@ -24,15 +24,12 @@ KDSize KDFont::stringSize(const char * text) const {
 }
 
 void KDFont::fetchGreyscaleGlyphForChar(char c, uint8_t * greyscaleBuffer) const {
-  //TODO: If debug, use LZ4_decompress_safe, otherwise LZ4_decompress_fast
-  int resultSize = LZ4_decompress_safe(
-    reinterpret_cast<const char *>(compressedGlyphData(c)),
-    reinterpret_cast<char *>(greyscaleBuffer),
+  Ion::decompress(
+    compressedGlyphData(c),
+    greyscaleBuffer,
     compressedGlyphDataSize(c),
     m_glyphSize.width() * m_glyphSize.height() * k_bitsPerPixel/8
   );
-  (void)resultSize; // Silence the "variable unused" warning if assertions are not enabled
-  assert(resultSize == m_glyphSize.width() * m_glyphSize.height() * k_bitsPerPixel/8);
 }
 
 void KDFont::fetchGlyphForChar(char c, const KDFont::RenderPalette * renderPalette, KDColor * pixelBuffer) const {

@@ -7,31 +7,19 @@
 
 namespace Shared {
 
-/* FunctionStore storse functions and gives them a color. The template should be
- * a class derived from Shared::Function */
+/* FunctionStore storse functions and gives them a color. */
 
-template <class T>
-class StorageFunctionStore : public StorageExpressionModelStore<T> {
+class StorageFunctionStore : public StorageExpressionModelStore {
 public:
-  StorageFunctionStore() : StorageExpressionModelStore<T>() {}
-  uint32_t storeChecksum() {
-    return Ion::Storage::sharedStorage()->checksum();
-  }
-  int numberOfActiveFunctions(); // An active function must be defined to be counted
-  virtual T activeFunctionAtIndex(int i);
-  T definedFunctionAtIndex(int i) { return static_cast<T>(StorageExpressionModelStore<T>::definedModelAtIndex(i)); } //TODO keep it?
+  StorageFunctionStore() : StorageExpressionModelStore() {}
+  uint32_t storeChecksum();
+  // An active function must be defined to be counted
+  int numberOfActiveFunctions() const;
+  virtual StorageFunction * modelAtIndex(int i) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::modelAtIndex(i)); }
+  virtual StorageFunction * definedModelAtIndex(int i) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::definedModelAtIndex(i)); }
+  virtual StorageFunction * activeFunctionAtIndex(int i);
 
   virtual char symbol() const = 0;
-protected:
-  static const char * const name(T f) { return f.name(); }
-  static KDColor const color(T f) { return f.color(); }
-  template<typename U> using AttributeGetter = U (*)(T f);
-  template<typename U> U firstAvailableAttribute(U attributes[], AttributeGetter<U> attribute);
-  const KDColor firstAvailableColor() {
-    return firstAvailableAttribute(Palette::DataColor, StorageFunctionStore::color);
-  }
-private:
-  virtual const char * firstAvailableName() = 0;
 };
 
 }

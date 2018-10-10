@@ -16,8 +16,6 @@ objs += $(addprefix kandinsky/src/,\
   rect.o\
 )
 
-objs += kandinsky/src/external/lz4/lz4.o
-
 tests += $(addprefix kandinsky/test/,\
   color.cpp\
   rect.cpp\
@@ -51,7 +49,7 @@ kandinsky/src/font_large.cpp: kandinsky/fonts/rasterizer
 	@echo "RASTER  $(large_font_files)"
 	$(Q) $< kandinsky/fonts/LargeSourcePixel.ttf 16 16 LargeFont $(large_font_files)
 
-kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c kandinsky/src/external/lz4/lz4.c kandinsky/src/external/lz4/lz4hc.c
+kandinsky/fonts/rasterizer: kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c)
 	@echo "HOSTCC  $@"
 	$(Q) $(HOSTCC) $(RASTERIZER_CFLAGS) $^ $(RASTERIZER_LDFLAGS) -o $@
 

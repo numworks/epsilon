@@ -16,7 +16,7 @@
 #include FT_FREETYPE_H
 
 #include "unicode_for_symbol.h"
-#include "../src/external/lz4/lz4hc.h"
+#include "../../ion/src/external/lz4/lz4hc.h"
 
 
 #define ENSURE(action, description...) { if (!(action)) { fprintf(stderr, "Error: "); fprintf(stderr, description); fprintf(stderr, "\n"); exit(-1);}}

@@ -20,7 +20,10 @@ objs += $(addprefix ion/src/shared/, \
   events.o \
   platform_info.o \
   storage.o \
+  decompress.o \
 )
+
+objs += ion/src/external/lz4/lz4.o
 
 tests += $(addprefix ion/test/,\
   crc32.cpp\

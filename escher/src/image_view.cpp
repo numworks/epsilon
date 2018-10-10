@@ -2,6 +2,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <ion.h>
 
 ImageView::ImageView() :
   View(),
@@ -9,16 +10,30 @@ ImageView::ImageView() :
 {
 }
 
+constexpr static int maxPixelBufferSize = 4000;
+// Icon file is 55 x 56 = 3080
+// Boot logo file is 188 x 21 = 3948
+
 void ImageView::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_image == nullptr) {
     return;
   }
   assert(bounds().width() == m_image->width());
   assert(bounds().height() == m_image->height());
-  ctx->fillRectWithPixels(bounds(), m_image->pixels(), nullptr);
 
-  // Image is 55*56 pixels 3K pixels = 6K bytes
+  KDColor pixelBuffer[maxPixelBufferSize];
+  int pixelBufferSize = m_image->width() * m_image->height();
+  // CAUTION: That's a VERY big buffer we're allocating on the stack
+  assert(pixelBufferSize <= maxPixelBufferSize);
 
+  Ion::decompress(
+    m_image->compressedPixelData(),
+    reinterpret_cast<uint8_t *>(pixelBuffer),
+    m_image->compressedPixelDataSize(),
+    pixelBufferSize * sizeof(KDColor)
+  );
+
+  ctx->fillRectWithPixels(bounds(), pixelBuffer, nullptr);
 }
 
 void ImageView::setImage(const Image * image) {

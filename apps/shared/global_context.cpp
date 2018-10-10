@@ -119,26 +119,24 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), expExtension, expression.addressInPool(), expression.size());
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
-  size_t expressionToStoreSize = expressionToStore.isUninitialized() ? 0 : expressionToStore.size();
-  size_t newDataSize = sizeof(StorageCartesianFunction::CartesianFunctionRecordData) + expressionToStoreSize;
+Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunctionRecord(Expression expressionToStore, const char * baseName, Ion::Storage::Record previousRecord) {
+  Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
-  if (Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
-    // The previous record was also a function: we want to keep its metadata
-    Ion::Storage::Record::Data newData = previousRecord.value();
-    newData.size = newDataSize;
-    error = previousRecord.setValue(newData);
-  } else {
+  if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
-    StorageCartesianFunction::CartesianFunctionRecordData newData;
-    error = Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), funcExtension, &newData, newDataSize);
+    StorageCartesianFunction newModel = StorageCartesianFunction::NewModel(&error);
+    if (error == Ion::Storage::Record::ErrorStatus::None) {
+      return error;
+    }
+    recordToSet = newModel.record();
   }
-  if (error == Ion::Storage::Record::ErrorStatus::None && !expressionToStore.isUninitialized()) {
-    void * newDataExpressionAddress = StorageCartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(symbol.name(), funcExtension)).expressionAddress();
-    memcpy(newDataExpressionAddress, expressionToStore.addressInPool(), expressionToStore.size());
-  }
+  error = StorageCartesianFunction(recordToSet).setExpressionContent(expressionToStore);
   return error;
+}
+
+Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
+  return SetExpressionForFunctionRecord(expressionToStore, symbol.name(), previousRecord);
 }
 
 Ion::Storage::Record GlobalContext::RecordWithBaseName(const char * name) {

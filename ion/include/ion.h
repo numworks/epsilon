@@ -40,6 +40,9 @@ uint32_t crc32(const uint32_t * data, size_t length);
 // Provides a true random number
 uint32_t random();
 
+// Decompress data
+void decompress(const uint8_t * src, uint8_t * dst, int srcSize, int dstSize);
+
 }
 
 #endif

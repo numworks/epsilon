@@ -44,7 +44,6 @@ protected:
 private:
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   FunctionRecordData * recordData() const;
-  virtual const char * symbol() const = 0;
 };
 
 }

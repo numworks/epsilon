@@ -11,7 +11,7 @@ class StorageCartesianFunction : public StorageFunction {
 public:
   static const char * Extension() { return GlobalContext::funcExtension; }
   static void DefaultName(char buffer[], size_t bufferSize);
-  static StorageCartesianFunction NewModel();
+  static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus & error);
   StorageCartesianFunction(const char * text = nullptr) :
     StorageFunction(text)
   {}

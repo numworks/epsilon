@@ -43,7 +43,7 @@ Expression Expression::parse(char const * string) {
   return expression;
 }
 
-const Expression Expression::ExpressionFromAddress(const void * address, size_t size) {
+Expression Expression::ExpressionFromAddress(const void * address, size_t size) {
   if (address == nullptr || size == 0) {
     return Expression();
   }

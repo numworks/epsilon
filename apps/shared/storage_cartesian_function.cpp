@@ -32,12 +32,14 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   strlcpy(&buffer[dotCharIndex+1], GlobalContext::funcExtension, bufferSize - (dotCharIndex+1));
 }
 
-StorageCartesianFunction StorageCartesianFunction::NewModel() {
+StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus & error) {
   char nameBuffer[100];
   DefaultName(nameBuffer, 100);
   CartesianFunctionRecordData data;
-  Ion::Storage::Record::ErrorStatus r = Ion::Storage::sharedStorage()->createRecordWithFullName(nameBuffer, &data, sizeof(data));
-  assert(r == Ion::Storage::Record::ErrorStatus::None); // TODO not a valid assertion!
+  *error = Ion::Storage::sharedStorage()->createRecordWithFullName(nameBuffer, &data, sizeof(data));
+  if (*error != Ion::Storage::Record::ErrorStatus::None()) {
+    return StorageCartesianFunction();
+  }
   return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordNamed(nameBuffer));
 }
 
@@ -82,23 +84,10 @@ Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double s
   Expression reducedExp = reducedExpression(context);
   return reducedExp.nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), reducedExp);
 }
+
 void StorageCartesianFunction::setContent(const char * c) {
-  // Compute the expression to store
   Expression expressionToStore = StorageExpressionModel::expressionToStoreFromString(c);
-
-  // Prepare the new data to store
-  Ion::Storage::Record::Data newData = record().value();
-  size_t expressionToStoreSize = expressionToStore.isUninitialized() ? 0 : expressionToStore.size();
-  newData.size = sizeof(CartesianFunctionRecordData) + expressionToStoreSize;
-
-  // Set the data
-  Ion::Storage::Record::ErrorStatus error = record().setValue(newData);
-  assert(error == Ion::Storage::Record::ErrorStatus::None); //TODO remove assertion and handle case
-
-  // Copy the expression if needed
-  if (!expressionToStore.isUninitialized()) {
-    memcpy(expressionAddress(),expressionToStore.addressInPool(), expressionToStore.size());
-  }
+  Ion::Storage::Record::ErrorStatus error = GlobalContext::SetExpressionForFunctionRecord(expressionToStore, record());
   StorageExpressionModel::didSetContentData();
 }
 

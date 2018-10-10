@@ -23,9 +23,9 @@ const Expression RegressionContext::expressionForSymbol(const SymbolAbstract & s
     assert(m_seriesPairIndex >= 0);
     assert(m_seriesPairIndex < m_store->numberOfPairsOfSeries(series));
     return Float<double>(m_store->get(series, storeI, m_seriesPairIndex));
+  } else {
+    return m_parentContext->expressionForSymbol(symbol);
   }
-} else {
-  return m_parentContext->expressionForSymbol(symbol);
 }
 
 }

@@ -174,7 +174,7 @@ int ListController::maxNumberOfRows() {
   return k_maxNumberOfRows;
 }
 
-HighlightCell * ListController::titleCells(int index) {
+FunctionTitleCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_sequenceTitleCells[index];
 }

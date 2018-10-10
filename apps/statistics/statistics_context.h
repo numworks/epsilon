@@ -8,7 +8,7 @@ namespace Statistics {
 class StatisticsContext : public Shared::StoreContext {
 public:
   using Shared::StoreContext::StoreContext;
-  const Poincare::Expression expressionForSymbol(const Poincare::Symbol & symbol) override;
+  const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol) override;
 };
 
 }

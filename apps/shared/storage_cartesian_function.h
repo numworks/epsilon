@@ -9,17 +9,13 @@ namespace Shared {
 
 class StorageCartesianFunction : public StorageFunction {
 public:
-  static const char * Extension() { return GlobalContext::funcExtension; }
   static void DefaultName(char buffer[], size_t bufferSize);
-  static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus & error);
-  StorageCartesianFunction(const char * text = nullptr) :
-    StorageFunction(text)
-  {}
-  StorageCartesianFunction(Ion::Storage::Record record) :
+  static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error);
+  StorageCartesianFunction(Ion::Storage::Record record = Record()) :
     StorageFunction(record)
   {}
-  bool operator==(const StorageCartesianFunction & other) const { return record() == other.record(); }
-  bool operator!=(const StorageCartesianFunction & other) const { return !(*this == other); }
+  //bool operator==(const StorageCartesianFunction & other) const { return *(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
+  //bool operator!=(const StorageCartesianFunction & other) const { return !(*(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   double approximateDerivative(double x, Poincare::Context * context) const;
@@ -28,14 +24,7 @@ public:
   Poincare::Expression::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const StorageFunction * function) const;
-  const char * symbol() const override {
-    static const char x[2] = {Poincare::Symbol::UnknownX, 0}; //TODO remove static
-    return x;
-  }
-  // StorageExpressionModel
-  void * expressionAddress() const override;
-  size_t expressionSize() const override;
-//TODO protected:
+protected:
   class CartesianFunctionRecordData : public FunctionRecordData {
   public:
     CartesianFunctionRecordData() :
@@ -46,10 +35,10 @@ public:
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
   private:
     bool m_displayDerivative;
-    char m_expression[0];
+    //char m_expression[0];
   };
 private:
-  size_t metaDataSize() override { return sizeof(CartesianFunctionRecordData); }
+  size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordData); }
   CartesianFunctionRecordData * recordData() const;
 };
 

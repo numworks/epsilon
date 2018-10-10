@@ -16,7 +16,6 @@ StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
   m_expression(),
   m_layout()
 {
-  assert(!isNull());
 }
 
 /*void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
@@ -75,6 +74,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char 
 }
 
 Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(Expression & expressionToStore) {
+  assert(!isNull());
   // Prepare the new data to store
   Ion::Storage::Record::Data newData = value();
   size_t expressionToStoreSize = expressionToStore.isUninitialized() ? 0 : expressionToStore.size();
@@ -100,6 +100,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(E
 }
 
 void * StorageExpressionModel::expressionAddress() const {
+  assert(!isNull());
   return (char *)value().buffer+metaDataSize();
 }
 

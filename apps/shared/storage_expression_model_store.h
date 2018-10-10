@@ -1,72 +1,34 @@
 #ifndef SHARED_STORAGE_EXPRESSION_MODEL_STORE_H
 #define SHARED_STORAGE_EXPRESSION_MODEL_STORE_H
 
-#include <ion/storage.h>
 #include "storage_expression_model.h"
-#include <stdint.h>
+#include <ion/storage.h>
 #include <assert.h>
 
 namespace Shared {
 
-// StorageExpressionModelStore is a handle to Ion::sharedStorage
+// StorageExpressionModelStore is a handle to Ion::Storage::sharedStorage()
 
-template<class T>
 class StorageExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)
 public:
   // Getters
-  int numberOfModels() const {
-    return Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(T::Extension());
-  }
-  T modelAtIndex(int i) const {
-    return T(Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(T::Extension(), i));
-  }
-  int numberOfDefinedModels() {
-    int result = 0;
-    int i = 0;
-    while (!modelAtIndex(i).isEmpty()) {
-      if (modelAtIndex(i).isDefined()) {
-        result++;
-      }
-      i++;
-    }
-    return result;
-  }
-
-  T definedModelAtIndex(int i) {
-    assert(i >= 0 && i < numberOfDefinedModels());
-    int index = 0;
-    int currentModelIndex = 0;
-    while (true) {
-      assert(currentModelIndex < numberOfModels());
-      if (modelAtIndex(currentModelIndex).isDefined()) {
-        if (i == index) {
-          return modelAtIndex(currentModelIndex);
-        }
-        index++;
-      }
-      currentModelIndex++;
-    }
-  }
+  virtual const char * modelExtension() const = 0;
+  int numberOfModels() const;
+  int numberOfDefinedModels() const;
+  StorageExpressionModel modelAtIndex(int i) const;
+  StorageExpressionModel definedModelAtIndex(int i) const;
 
   // Add and Remove
-  T addEmptyModel() {
-    return T::NewModel();
+  virtual Ion::Storage::Record::ErrorStatus addEmptyModel() = 0;
+  void removeModel(StorageExpressionModel * f) {
+    assert(f != nullptr);
+    f->destroy();
   }
-  void removeModel(T f) {
-    f.destroy();
-  }
-  virtual void removeAll() {
-    Ion::Storage::sharedStorage()->destroyRecordsWithExtension(T::Extension());
-  }
+  virtual void removeAll();
 
   // Other
-  void tidy() {
-    int modelsCount = numberOfModels();
-    for (int i = 0; i < modelsCount; i++) {
-      modelAtIndex(i).tidy();
-    }
-  }
+  void tidy();
 };
 
 }

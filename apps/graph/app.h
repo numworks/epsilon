@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "storage_cartesian_function_store.h"
-#include "graph/storage_graph_controller.h"
+#include "graph/graph_controller.h"
 #include "list/storage_list_controller.h"
 #include "values/values_controller.h"
 #include "../shared/function_app.h"
@@ -39,7 +39,7 @@ private:
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;
   StackViewController m_listStackViewController;
-  StorageGraphController m_graphController;
+  GraphController m_graphController;
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   ButtonRowController m_graphHeader;
   StackViewController m_graphStackViewController;

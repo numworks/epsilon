@@ -134,10 +134,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
 }
 
 Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  /* Do not replace symbols in expression of type: g(x)+3->f(x). Store needs to
-   * replace unknown variables first. */
-  Expression p = parent();
-  if (!replaceSymbols ||(!p.isUninitialized() && p.type() == ExpressionNode::Type::Store)) {
+  if (!replaceSymbols) {
     return *this;
   }
   const Expression e = context.expressionForSymbol(*this);
@@ -148,7 +145,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
     Symbol x = Symbol(xString, 1);
     result.replaceSymbolWithExpression(x, childAtIndex(0));
     replaceWithInPlace(result);
-    return result.deepReduce(context, angleUnit);
+    return result.deepReduce(context, angleUnit, replaceSymbols);
   }
   return *this;
 }

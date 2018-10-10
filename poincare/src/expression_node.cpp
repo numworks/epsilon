@@ -91,8 +91,12 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
+void ExpressionNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  Expression(this).defaultReduceChildren(context, angleUnit, replaceSymbols);
+}
+
 Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Expression(this).defaultShallowReduce(context, angleUnit);
+  return Expression(this).defaultShallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

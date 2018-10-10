@@ -113,7 +113,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       return;
     }
     char buffer[Sequence::k_initialRankNumberOfDigits+1];
-    Integer(m_sequence->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
+    Poincare::Integer(m_sequence->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
     myCell->setAccessoryText(buffer);
   }
 }

@@ -2,6 +2,7 @@
 #define SEQUENCE_SEQUENCE_TITLE_CELL_H
 
 #include "../shared/function_title_cell.h"
+#include <poincare_layouts.h>
 
 namespace Sequence {
 
@@ -12,6 +13,9 @@ public:
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
+  KDText::FontSize fontSize() const override {
+    return Poincare::CharLayoutNode::k_defaultFontSize;
+  }
   Poincare::Layout layout() const override {
     return m_titleTextView.layout();
   }

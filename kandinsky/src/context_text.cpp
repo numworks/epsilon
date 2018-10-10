@@ -22,9 +22,11 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
     } else {
       // Fetch and draw glyph for current char
       font->fetchGlyphForChar(*text, &palette, glyph);
-      KDRect absoluteRect = absoluteFillRect(KDRect(position, glyphSize.width(), glyphSize.height()));
-      pushRect(absoluteRect, glyph);
-
+      fillRectWithPixels(
+        KDRect(position, glyphSize.width(), glyphSize.height()),
+        glyph,
+        glyph // It's OK to trash the content of glyph since we'll re-fetch it for the next char anyway
+      );
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
     }
     text++;

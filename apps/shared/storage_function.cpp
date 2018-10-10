@@ -30,12 +30,12 @@ void StorageFunction::setColor(KDColor color) {
 
 template<typename T>
 T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  return reducedExpression(context).approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
+  return expression(context).approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 StorageFunction::FunctionRecordData * StorageFunction::recordData() const {
   assert(!record().isNull());
-  Ion::Storage::Record::Data d = record().value();
+  Ion::Storage::Record::Data d = value();
   return reinterpret_cast<FunctionRecordData *>(const_cast<void *>(d.buffer));
 }
 

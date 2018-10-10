@@ -21,6 +21,7 @@ public:
   virtual StorageExpressionModel * definedModelAtIndex(int i) const;
 
   // Add and Remove
+  virtual Ion::Storage::Record::ErrorStatus addEmptyModel() = 0;
   virtual void removeAll();
   void removeModel(StorageExpressionModel * f);
 

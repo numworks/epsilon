@@ -28,6 +28,9 @@ public:
   static Poincare::Expression ExpressionFromSymbolRecord(Ion::Storage::Record record);
   static Poincare::Expression ExpressionFromFunctionRecord(Ion::Storage::Record record);
 
+  // Set expression for record
+  static Ion::Storage::Record::ErrorStatus SetExpressionForFunctionRecord(Poincare::Expression e, Ion::Storage::Record record);
+
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */

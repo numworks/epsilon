@@ -119,8 +119,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     // Replace the unknown in the new expression by the function's child
-    const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
-    Symbol xSymbol = Symbol(x, 1);
+    Symbol xSymbol = Symbol(Symbol::SpecialSymbols::UnknownX);
     Expression xValue = childAtIndex(0);
     value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
@@ -141,8 +140,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (!e.isUninitialized()) {
     // We need to replace the unknown witht the child
     Expression result = e.clone();
-    const char xString[2] = {Symbol::SpecialSymbols::UnknownX, 0};
-    Symbol x = Symbol(xString, 1);
+    Symbol x = Symbol(Symbol::SpecialSymbols::UnknownX);
     result.replaceSymbolWithExpression(x, childAtIndex(0));
     replaceWithInPlace(result);
     return result.deepReduce(context, angleUnit, replaceSymbols);

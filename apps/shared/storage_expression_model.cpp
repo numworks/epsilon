@@ -65,8 +65,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char 
     GlobalContext context;
     expressionToStore = expressionToStore.deepReduce(context, Preferences::AngleUnit::Degree, false);
     if (!expressionToStore.isUninitialized()) {
-      const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
-      Symbol xUnknown = Symbol(x, 1);
+      Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);
     }
   }

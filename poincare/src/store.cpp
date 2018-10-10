@@ -54,8 +54,7 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    const char x[2] = {Symbol::SpecialSymbols::UnknownX, 0};
-    Symbol xUnknown = Symbol(x, 1);
+    Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
     finalValue = childAtIndex(0).replaceSymbolWithExpression(static_cast<Symbol &>(userDefinedUnknown), xUnknown);
   } else {
     assert(symbol().type() == ExpressionNode::Type::Symbol);

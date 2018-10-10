@@ -17,7 +17,7 @@ public:
   char symbol() const override { return 'x'; }
   void removeAll() override;
 private:
-  void addEmptyModel();
+  Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   const char * modelExtension() const override { return Shared::GlobalContext::funcExtension; }
   void privateSetMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
   void moveMemoizedModel(int previousIndex, int nextIndex) const override;

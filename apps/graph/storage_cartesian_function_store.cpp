@@ -12,18 +12,20 @@ namespace Graph {
 StorageCartesianFunctionStore::StorageCartesianFunctionStore() :
   Shared::StorageFunctionStore()
 {
-  addEmptyModel();
+  Ion::Storage::Record::ErrorStatus error = addEmptyModel();
+  assert(error == Ion::Storage::Record::ErrorStatus::None);
 }
 
 void StorageCartesianFunctionStore::removeAll() {
   StorageFunctionStore::removeAll();
-  addEmptyModel();
+  Ion::Storage::Record::ErrorStatus error = addEmptyModel();
+  assert(error == Ion::Storage::Record::ErrorStatus::None);
 }
 
-void StorageCartesianFunctionStore::addEmptyModel() {
+Ion::Storage::Record::ErrorStatus StorageCartesianFunctionStore::addEmptyModel() {
   Ion::Storage::Record::ErrorStatus error;
   StorageCartesianFunction newModel = StorageCartesianFunction::NewModel(&error);
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
+  return error;
 }
 
 void StorageCartesianFunctionStore::privateSetMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {

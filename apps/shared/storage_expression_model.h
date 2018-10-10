@@ -14,7 +14,7 @@ class StorageExpressionModel : public Ion::Storage::Record {
   // TODO find better name (once we remove ExpressionModel?)
 public:
   StorageExpressionModel(Ion::Storage::Record record);
-  //void text(char * buffer, size_t bufferSize) const;
+  void text(char * buffer, size_t bufferSize) const;
   Poincare::Expression expression(Poincare::Context * context) const;
   Poincare::Layout layout();
   /* TODO This comment will be true when Sequence inherits from this class

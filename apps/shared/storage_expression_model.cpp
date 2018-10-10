@@ -18,14 +18,14 @@ StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
 {
 }
 
-/*void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
+void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
   Expression e = expression();
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
     e.serialize(buffer, bufferSize);
   }
-}*/
+}
 
 Expression StorageExpressionModel::expression(Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {

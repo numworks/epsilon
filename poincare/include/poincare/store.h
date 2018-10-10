@@ -26,6 +26,7 @@ public:
 
 private:
   // Simplification
+  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) override;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

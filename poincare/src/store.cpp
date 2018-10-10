@@ -14,6 +14,10 @@ extern "C" {
 
 namespace Poincare {
 
+void StoreNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  Expression(this).defaultReduceChildren(context, angleUnit, false);
+}
+
 Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return Store(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
@@ -61,7 +65,7 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   context.setExpressionForSymbol(finalValue, symbol(), context);
   Expression c1 = childAtIndex(1);
   replaceWithInPlace(c1);
-  return c1.shallowReduce(context, angleUnit);
+  return c1.shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 }

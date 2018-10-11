@@ -173,6 +173,7 @@ void LayoutCursor::insertText(const char * text) {
   }
   if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
+    m_position = Position::Right;
   }
 }
 

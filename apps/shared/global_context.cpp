@@ -53,7 +53,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
   /* An function record value has metadata before the expression. To get the
    * expression, use the funciton record handle. */
   StorageCartesianFunction f = StorageCartesianFunction(record);
-  return f.expression();
+  return f.expressionWithSymbol();
 }
 
 const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbol) {

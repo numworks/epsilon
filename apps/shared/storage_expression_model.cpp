@@ -19,7 +19,7 @@ StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
 }
 
 void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
-  Expression e = expression();
+  Expression e = expressionWithSymbol();
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
@@ -34,10 +34,13 @@ Expression StorageExpressionModel::expression(Poincare::Context * context) const
   return m_expression;
 }
 
+Expression StorageExpressionModel::expressionWithSymbol() const {
+  return Expression::ExpressionFromAddress(expressionAddress(), expressionSize());
+}
 
 Layout StorageExpressionModel::layout() {
   if (m_layout.isUninitialized()) {
-    m_layout = PoincareHelpers::CreateLayout(Expression::ExpressionFromAddress(expressionAddress(), expressionSize()));
+    m_layout = PoincareHelpers::CreateLayout(expressionWithSymbol());
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout();
     }

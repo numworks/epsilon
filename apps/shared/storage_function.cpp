@@ -9,8 +9,8 @@ using namespace Poincare;
 namespace Shared {
 
 uint32_t StorageFunction::checksum() {
-  assert(!record().isNull());
-  return record().checksum();
+  assert(!isNull());
+  return checksum();
 }
 
 bool StorageFunction::isActive() const {
@@ -36,7 +36,7 @@ T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * conte
 }
 
 StorageFunction::FunctionRecordData * StorageFunction::recordData() const {
-  assert(!record().isNull());
+  assert(!isNull());
   Ion::Storage::Record::Data d = value();
   return reinterpret_cast<FunctionRecordData *>(const_cast<void *>(d.buffer));
 }

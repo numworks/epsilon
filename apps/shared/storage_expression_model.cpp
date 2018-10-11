@@ -53,7 +53,7 @@ bool StorageExpressionModel::isDefined() {
 }
 
 bool StorageExpressionModel::isEmpty() {
-  return record().value().size == 0;
+  return value().size == 0;
 }
 
 void StorageExpressionModel::tidy() {
@@ -83,7 +83,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(E
   newData.size = metaDataSize() + expressionToStoreSize;
 
   // Set the data
-  Ion::Storage::Record::ErrorStatus error = record().setValue(newData);
+  Ion::Storage::Record::ErrorStatus error = setValue(newData);
   if (error != Ion::Storage::Record::ErrorStatus::None) {
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     return error;

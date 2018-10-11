@@ -232,8 +232,8 @@ int main(int argc, char * argv[]) {
     ENSURE(uncompressedGlyphBufferIndex == sizeOfUncompressedGlyphBuffer, "Error filling uncompressed buffer, only %d out of %d", uncompressedGlyphBufferIndex, sizeOfUncompressedGlyphBuffer);
 
     int sizeOfCompressedGlyphBuffer = LZ4_compress_HC(
-      uncompressedGlyphBuffer,
-      glyphData + lastOffset,
+      (const char *)uncompressedGlyphBuffer,
+      (char *)(glyphData + lastOffset),
       sizeOfUncompressedGlyphBuffer,
       maxGlyphDataSize - lastOffset,
       LZ4HC_CLEVEL_MAX
@@ -251,9 +251,9 @@ int main(int argc, char * argv[]) {
   size_t finalDataSize = lastOffset;
   size_t initialDataSize = GLYPH_COUNT * glyph_width * glyph_height;
 
-  fprintf(sourceFile, "/* Rasterized  = %5d bytes (%d glyphs x %d pixels)\n", initialDataSize, GLYPH_COUNT, glyph_width*glyph_height);
-  fprintf(sourceFile, " * Downsampled = %5d bytes (1/%d of rasterized)\n", initialDataSize*greyscaleBitsPerPixel/8, 8/greyscaleBitsPerPixel);
-  fprintf(sourceFile, " * Compressed  = %5d bytes (%.2f%% of rasterized) */\n", finalDataSize, 100.0*finalDataSize/initialDataSize);
+  fprintf(sourceFile, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n", initialDataSize, GLYPH_COUNT, glyph_width*glyph_height);
+  fprintf(sourceFile, " * Downsampled = %5lu bytes (1/%d of rasterized)\n", initialDataSize*greyscaleBitsPerPixel/8, 8/greyscaleBitsPerPixel);
+  fprintf(sourceFile, " * Compressed  = %5zu bytes (%.2f%% of rasterized) */\n", finalDataSize, 100.0*finalDataSize/initialDataSize);
 
   fprintf(sourceFile, "static constexpr uint8_t glyphData[%d] = {", lastOffset);
   prettyPrintArray(sourceFile, 80, 1, glyphData, lastOffset);

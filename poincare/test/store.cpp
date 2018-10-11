@@ -23,15 +23,6 @@ QUIZ_CASE(poincare_store_simplify) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
-QUIZ_CASE(poincare_store_simplify) {
-  assert_parsed_expression_simplify_to("1+2>A", "A");
-  assert_parsed_expression_simplify_to("1+2>x", "x");
-
-  // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("A.exp").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
-}
-
 QUIZ_CASE(poincare_store_user_variable) {
   // Fill variable
   assert_parsed_expression_simplify_to("1+2>Adadas", "Adadas");

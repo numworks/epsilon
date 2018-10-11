@@ -167,6 +167,7 @@ tests += $(addprefix poincare/test/,\
 )
 
 test_objs += $(addprefix poincare/test/, tree/helpers.o)
+test_objs += $(addprefix apps/shared/, global_context.o)
 
 #  simplify_utils.cpp\
 

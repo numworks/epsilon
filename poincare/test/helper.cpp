@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <poincare/expression.h>
 #include <string.h>
 #include <ion.h>
@@ -82,7 +82,7 @@ void assert_parsed_expression_is(const char * expression, Poincare::Expression r
 }
 
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   e = e.simplify(globalContext, Radian);
   quiz_assert(e.polynomialDegree(globalContext, symbolName) == degree);
@@ -91,7 +91,7 @@ void assert_parsed_expression_polynomial_degree(const char * expression, int deg
 typedef Expression (*ProcessExpression)(Expression, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ProcessExpression process, int numberOfSignifiantDigits = PrintFloat::k_numberOfStoredSignificantDigits) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << " Entry expression: " << expression << "----"  << endl;

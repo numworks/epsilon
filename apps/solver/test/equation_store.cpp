@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <string.h>
 #include <assert.h>
 #include <limits.h>
@@ -13,7 +13,7 @@ namespace Solver {
 
 void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions) {
   char buffer[200];
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
@@ -49,7 +49,7 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
 
 void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
   char buffer[200];
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   EquationStore equationStore;
   Shared::ExpressionModel * e = equationStore.addEmptyModel();
   strlcpy(buffer, equations, 200);

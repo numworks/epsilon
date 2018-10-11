@@ -1,8 +1,8 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
 #include <poincare/addition.h>
+#include <apps/shared/global_context.h>
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"
@@ -11,7 +11,7 @@
 using namespace Poincare;
 
 static inline void assert_approximation_equals(const Expression i, float f) {
-  Poincare::GlobalContext c;
+  Shared::GlobalContext c;
   quiz_assert(i.approximateToScalar<float>(c, Preferences::AngleUnit::Degree) == f);
 }
 

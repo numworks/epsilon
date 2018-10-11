@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <poincare/expression.h>
 #include <cmath>
 #include <ion.h>
@@ -10,7 +10,7 @@ using namespace Poincare;
 
 template<typename T>
 void assert_exp_is_bounded(Expression exp, T lowBound, T upBound, bool upBoundIncluded = false) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   T result = exp.approximateToScalar<T>(globalContext, Radian);
   quiz_assert(result >= lowBound);
   quiz_assert(result < upBound || (result == upBound && upBoundIncluded));

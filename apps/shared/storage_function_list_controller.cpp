@@ -2,6 +2,8 @@
 
 namespace Shared {
 
+static inline int max(int x, int y) { return x > y ? x : y; }
+
 StorageFunctionListController::StorageFunctionListController(Responder * parentResponder, StorageFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   StorageExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),

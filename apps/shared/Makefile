@@ -54,6 +54,7 @@ app_objs += $(addprefix apps/shared/,\
   storage_expression_model.o\
   storage_function.o\
   storage_function_store.o\
+  storage_list_parameter_controller.o\
   store_cell.o\
   store_context.o\
   store_controller.o\

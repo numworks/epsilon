@@ -119,7 +119,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else {
     Expression resultExpression = Expression::parse(text);
     if (resultExpression.isUninitialized()) {
+      KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
       m_contentView.cursor()->insertText(text);
+      reload(previousLayoutSize);
     } else {
       Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
       if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {

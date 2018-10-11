@@ -48,7 +48,7 @@ void writeImageToPNGFile(image_t * image, char * filename);
 #define GRID_WIDTH 19
 #define GRID_HEIGHT 8
 
-#if (GRID_WIDTH*GRID_HEIGHT < (NUMBER_OF_SYMBOLS+CHARACTER_RANGE_END-CHARACTER_RANGE_START+1))
+#if (GRID_WIDTH*GRID_HEIGHT < GLYPH_COUNT)
 #error Grid too small. Consider increasing GRID_WIDTH or GRID_HEIGHT
 #endif
 
@@ -87,7 +87,7 @@ int main(int argc, char * argv[]) {
   char * font_name = argv[4];
   char * output_cpp = argv[5];
 #ifdef GENERATE_PNG
-  char * output_png = argv[7];
+  char * output_png = argv[6];
 #endif
 
   ENSURE(!FT_Init_FreeType(&library), "Initializing library");
@@ -238,6 +238,8 @@ int main(int argc, char * argv[]) {
       maxGlyphDataSize - lastOffset,
       LZ4HC_CLEVEL_MAX
     );
+
+    ENSURE(sizeOfCompressedGlyphBuffer > 0, "Could not compress glyph %d", character);
 
     glyphDataOffset[character] = lastOffset;
     lastOffset += sizeOfCompressedGlyphBuffer;

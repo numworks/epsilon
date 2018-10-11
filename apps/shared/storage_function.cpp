@@ -29,6 +29,21 @@ void StorageFunction::setColor(KDColor color) {
   recordData()->setColor(color);
 }
 
+int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
+  const char * functionName = fullName();
+  int index = 0;
+  const char ofXSring[4] = {'(',arg,')', 0};
+  size_t ofXSringLength = strlen(ofXSring);
+  while (*functionName != Ion::Storage::k_dotChar
+      && index < bufferSize - ofXSringLength - 1)
+  {
+    // We keep room to write the final "(x)" //TODO should we?
+    assert(functionName < fullName() + strlen(fullName()));
+    buffer[index++] = *functionName++;
+  }
+  return index - 1 + strlcpy(&buffer[index], ofXSring, bufferSize);
+}
+
 template<typename T>
 T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};

@@ -1,4 +1,5 @@
 #include "storage_function.h"
+#include <poincare/symbol.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>

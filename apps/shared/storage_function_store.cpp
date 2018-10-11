@@ -22,7 +22,7 @@ int StorageFunctionStore::numberOfActiveFunctions() const {
 }
 
 
-StorageFunction * StorageFunctionStore::activeFunctionAtIndex(int i) {
+StorageFunction * StorageFunctionStore::activeFunctionAtIndex(int i) const {
   assert(i >= 0 && i < numberOfDefinedModels());
   int index = 0;
   int currentModelIndex = 0;

@@ -10,23 +10,21 @@
 
 namespace Graph {
 
-class StorageListController : public Shared::StorageFunctionListController<Shared::StorageCartesianFunction> {
+class StorageListController : public Shared::StorageFunctionListController {
 public:
   StorageListController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
 private:
-  Shared::StorageListParameterController<Shared::StorageCartesianFunction> * parameterController() override;
+  Shared::StorageListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
-  KDCoordinate maxFunctionNameWidth() const override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  void didChangeModelsList() override;
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
-  Shared::StorageListParameterController<Shared::StorageCartesianFunction> m_parameterController;
+  Shared::StorageListParameterController m_parameterController;
 };
 
 }

@@ -31,11 +31,12 @@ protected:
   constexpr static int k_maxNumberOfMemoizedModels = 5;
 private:
   virtual const char * modelExtension() const = 0;
-  // Memoization of k_maxNumberOfMemoizedModels consecutive models
+  /* Memoization of k_maxNumberOfMemoizedModels consecutive models:
+   * stores memoize k_maxNumberOfMemoizedModels consecutive models from the
+   * m_firstMemoizedModelIndex. */
   mutable int m_firstMemoizedModelIndex;
-  mutable uint32_t m_memoizedModelChecksum[k_maxNumberOfMemoizedModels];
-  void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const;
-  virtual void privateSetMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const = 0;
+  mutable uint32_t m_storageChecksum;
+  virtual void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
   virtual void moveMemoizedModel(int previousIndex, int nextIndex) const = 0;
   virtual StorageExpressionModel * memoizedModelAtIndex(int cacheIndex) const = 0;
 };

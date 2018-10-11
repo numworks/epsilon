@@ -31,6 +31,7 @@ void KDFont::fetchGreyscaleGlyphForChar(char c, uint8_t * greyscaleBuffer) const
     compressedGlyphDataSize(c),
     m_glyphSize.width() * m_glyphSize.height() * k_bitsPerPixel/8
   );
+  (void)resultSize; // Silence the "variable unused" warning if assertions are not enabled
   assert(resultSize == m_glyphSize.width() * m_glyphSize.height() * k_bitsPerPixel/8);
 }
 

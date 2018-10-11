@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
@@ -14,7 +14,7 @@ void assert_store_is(CalculationStore * store, const char * result[10]) {
 }
 
 QUIZ_CASE(calculation_store) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   CalculationStore store;
   quiz_assert(CalculationStore::k_maxNumberOfCalculations == 10);
   for (int i = 0; i < CalculationStore::k_maxNumberOfCalculations; i++) {

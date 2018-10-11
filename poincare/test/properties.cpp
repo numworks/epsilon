@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <poincare/expression.h>
 #include <ion.h>
 #include <assert.h>
@@ -12,7 +12,7 @@ constexpr Poincare::ExpressionNode::Sign Negative = Poincare::ExpressionNode::Si
 constexpr Poincare::ExpressionNode::Sign Unknown = Poincare::ExpressionNode::Sign::Unknown;
 
 void assert_parsed_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, Degree);
@@ -56,7 +56,7 @@ QUIZ_CASE(poincare_polynomial_degree) {
 }
 
 void assert_parsed_expression_has_characteristic_range(const char * expression, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, angleUnit);
@@ -86,7 +86,7 @@ void assert_parsed_expression_has_variables(const char * expression, const char 
   quiz_assert(!e.isUninitialized());
   constexpr static int k_maxVariableSize = 10;
   char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   int numberOfVariables = e.getVariables(globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
   quiz_assert(trueNumberOfVariables == numberOfVariables);
   if (numberOfVariables < 0) {
@@ -116,7 +116,7 @@ QUIZ_CASE(poincare_get_variables) {
 }
 
 void assert_parsed_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
   e = e.deepReduce(globalContext, angleUnit);

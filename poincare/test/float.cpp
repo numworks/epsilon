@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <poincare/print_float.h>
 #include <poincare/float.h>
 #include <string.h>
@@ -13,7 +13,7 @@ using namespace Poincare;
 
 template<typename T>
 void assert_float_evaluates_to(Float<T> f, const char * result) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   char buffer[500];
   f.template approximate<T>(globalContext, Radian, Cartesian).serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);

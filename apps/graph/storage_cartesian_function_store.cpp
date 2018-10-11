@@ -28,7 +28,7 @@ Ion::Storage::Record::ErrorStatus StorageCartesianFunctionStore::addEmptyModel()
   return error;
 }
 
-void StorageCartesianFunctionStore::privateSetMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+void StorageCartesianFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < k_maxNumberOfMemoizedModels);
   m_functions[cacheIndex] = StorageCartesianFunction(record);
 }

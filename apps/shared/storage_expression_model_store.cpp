@@ -25,16 +25,18 @@ int StorageExpressionModelStore::numberOfDefinedModels() const {
 }
 
 StorageExpressionModel * StorageExpressionModelStore::modelAtIndex(int i) const {
+  /* If the model index asked is out of the range of the memoized index, we
+   * translate the memoized models to include the model i at the closest
+   * extremity of the array. */
   if (i >= m_firstMemoizedModelIndex+k_maxNumberOfMemoizedModels || i < m_firstMemoizedModelIndex) {
-    // Change range of layout memoization
     int deltaIndex = i >= m_firstMemoizedModelIndex + k_maxNumberOfMemoizedModels ? i - k_maxNumberOfMemoizedModels + 1 - m_firstMemoizedModelIndex : i - m_firstMemoizedModelIndex;
     // Translate memoized models
     for (int i = 0; i < k_maxNumberOfMemoizedModels-1; i++) {
       int j = deltaIndex + i;
       if (j >= 0 && j < k_maxNumberOfMemoizedModels) {
-        m_memoizedModelChecksum[i] = m_memoizedModelChecksum[j];
         moveMemoizedModel(i, j);
       } else {
+        // Fill new models with empty records
         Ion::Storage::Record emptyRecord;
         setMemoizedModelAtIndex(i, emptyRecord);
       }
@@ -42,10 +44,15 @@ StorageExpressionModel * StorageExpressionModelStore::modelAtIndex(int i) const 
     m_firstMemoizedModelIndex += deltaIndex;
   }
   assert(i-m_firstMemoizedModelIndex < k_maxNumberOfMemoizedModels);
-  Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(modelExtension(), i);
-  // Storage might have changed since last call
-  if (memoizedModelAtIndex(i-m_firstMemoizedModelIndex)->isNull() || m_memoizedModelChecksum[i-m_firstMemoizedModelIndex] != record.checksum()) {
+  uint32_t currentStorageChecksum = Ion::Storage::sharedStorage()->checksum();
+  /* We have to build a new model if:
+   * - the model has never been created
+   * - Storage changed since last built. For instance, if f(x) = A+x, if A
+   *   changes, we need to unmemoize f. */
+  if (memoizedModelAtIndex(i-m_firstMemoizedModelIndex)->isNull() || currentStorageChecksum != m_storageChecksum) {
+    Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(modelExtension(), i);
     setMemoizedModelAtIndex(i-m_firstMemoizedModelIndex, record);
+    m_storageChecksum = currentStorageChecksum;
   }
   return memoizedModelAtIndex(i-m_firstMemoizedModelIndex);
 }
@@ -85,11 +92,6 @@ void StorageExpressionModelStore::tidy() {
     m->tidy();
     m = modelAtIndex(i++);
   }
-}
-
-void StorageExpressionModelStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
-  m_memoizedModelChecksum[cacheIndex] = record.isNull() ? 0 : record.checksum();
-  privateSetMemoizedModelAtIndex(cacheIndex, record);
 }
 
 }

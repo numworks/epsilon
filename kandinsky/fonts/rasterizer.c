@@ -208,7 +208,7 @@ int main(int argc, char * argv[]) {
   uint8_t * glyphData = (uint8_t *)malloc(maxGlyphDataSize);
   uint16_t lastOffset = 0;
 
-  for (int character = 0; character <= GLYPH_COUNT; character++) {
+  for (int character = 0; character < GLYPH_COUNT; character++) {
     int characterX = (character%GRID_WIDTH * (glyph_width+grid_size));
     int characterY = (character/GRID_WIDTH * (glyph_height+grid_size));
     uint8_t accumulator = 0;

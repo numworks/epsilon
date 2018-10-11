@@ -5,6 +5,9 @@
 
 namespace Poincare {
 
+/* TODO: should Function directly inherit from Symbol and we remove
+ * SymbolAbstract? */
+
 /* TODO: should we keep the size of SymbolAbstractNode as a member to speed up
  * TreePool scan? */
 
@@ -33,6 +36,9 @@ public:
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "SymbolAbstract";
+  }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " name=\"" << name() << "\"";
   }
 #endif
 

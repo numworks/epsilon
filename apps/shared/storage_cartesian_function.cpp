@@ -1,6 +1,8 @@
 #include "storage_cartesian_function.h"
 #include "storage_expression_model_store.h"
 #include "poincare_helpers.h"
+#include <poincare/derivative.h>
+#include <poincare/integral.h>
 #include <float.h>
 #include <cmath>
 

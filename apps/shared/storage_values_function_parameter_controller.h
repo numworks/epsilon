@@ -32,8 +32,7 @@ protected:
   MessageTableCellWithChevron m_copyColumn;
   SelectableTableView m_selectableTableView;
 private:
-  constexpr static int k_maxNumberOfCharsInTitle = Poincare::SymbolAbstract::k_maxNameSize + 4; /* Function name and null-terminating char + "(x)" */;
-  char m_pageTitle[k_maxNumberOfCharsInTitle];
+  char m_pageTitle[StorageFunction::k_maxNameWithArgumentSize];
   StorageFunction * m_function;
   char m_symbol;
 };

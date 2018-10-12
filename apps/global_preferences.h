@@ -16,8 +16,8 @@ public:
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  bool showUpdatePopUp() const;
-  void setShowUpdatePopUp(bool showUpdatePopUp);
+  bool showPopUp() const;
+  void setShowPopUp(bool showPopUp);
 #endif
   int brightnessLevel() const;
   void setBrightnessLevel(int brightnessLevel);
@@ -26,7 +26,7 @@ private:
   I18n::Language m_language;
   ExamMode m_examMode;
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  bool m_showUpdatePopUp;
+  bool m_showPopUp;
 #endif
   int m_brightnessLevel;
 };

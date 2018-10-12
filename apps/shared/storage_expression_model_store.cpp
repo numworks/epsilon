@@ -31,7 +31,7 @@ StorageExpressionModel * StorageExpressionModelStore::modelAtIndex(int i) const 
   if (i >= m_firstMemoizedModelIndex+k_maxNumberOfMemoizedModels || i < m_firstMemoizedModelIndex) {
     int deltaIndex = i >= m_firstMemoizedModelIndex + k_maxNumberOfMemoizedModels ? i - k_maxNumberOfMemoizedModels + 1 - m_firstMemoizedModelIndex : i - m_firstMemoizedModelIndex;
     // Translate memoized models
-    for (int i = 0; i < k_maxNumberOfMemoizedModels-1; i++) {
+    for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
       int j = deltaIndex + i;
       if (j >= 0 && j < k_maxNumberOfMemoizedModels) {
         moveMemoizedModel(i, j);

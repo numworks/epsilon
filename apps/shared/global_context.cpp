@@ -17,8 +17,8 @@ constexpr char GlobalContext::funcExtension[];
 
 static bool sStorageMemoryFull = false;
 
-bool GlobalContext::RecordBaseNameIsFree(const char * baseName) {
-  return RecordWithBaseName(baseName).isNull();
+bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
+  return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }
 
 bool GlobalContext::storageMemoryFull() {
@@ -57,7 +57,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
 }
 
 const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbol) {
-  Ion::Storage::Record r = RecordWithBaseName(symbol.name());
+  Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
   return ExpressionForSymbolAndRecord(symbol, r);
 }
 
@@ -65,7 +65,7 @@ void GlobalContext::setExpressionForSymbol(const Expression & expression, const 
   sStorageMemoryFull = false;
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
-  Ion::Storage::Record record = RecordWithBaseName(symbol.name());
+  Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
   Expression e = ExpressionFromRecord(record);
   if (e.isUninitialized()) {
     e = Undefined();
@@ -139,7 +139,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
   return SetExpressionForFunctionRecord(expressionToStore, previousRecord, symbol.name());
 }
 
-Ion::Storage::Record GlobalContext::RecordWithBaseName(const char * name) {
+Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(const char * name) {
   const char * extensions[2] = {expExtension, funcExtension/*, seqExtension*/};
   return Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(name, extensions, 2);
 }

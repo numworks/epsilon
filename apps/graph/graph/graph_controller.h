@@ -22,6 +22,7 @@ public:
   void setDisplayDerivativeInBanner(bool displayDerivative);
   float interestingXRange() override;
 private:
+  int estimatedBannerNumberOfLines() const override;
   void selectFunctionWithCursor(int functionIndex) override;
   BannerView * bannerView() override;
   void reloadBannerView() override;

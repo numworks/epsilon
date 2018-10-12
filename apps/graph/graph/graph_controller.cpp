@@ -51,6 +51,10 @@ float GraphController::interestingXRange() {
   return (characteristicRange > 0.0f ? 1.6f*characteristicRange : 10.0f);
 }
 
+int GraphController::estimatedBannerNumberOfLines() const {
+  return 1 + m_displayDerivativeInBanner;
+}
+
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   StorageFunctionGraphController::selectFunctionWithCursor(functionIndex);
   StorageCartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
@@ -75,7 +79,7 @@ void GraphController::reloadBannerView() {
 bool GraphController::moveCursorHorizontally(int direction) {
   StorageCartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, f, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, f, myApp, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {

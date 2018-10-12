@@ -19,8 +19,10 @@ public:
   void viewWillAppear() override;
 
 protected:
-  constexpr static float k_cursorTopMarginRatio = 0.068f;   // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
+  float cursorTopMarginRatio() {
+    return 0.068f; // (cursorHeight/2)/graphViewHeight;
+  }
+  float cursorBottomMarginRatio();
   void reloadBannerView() override;
   bool handleEnter() override;
   int indexFunctionSelectedByCursor() const {
@@ -29,17 +31,18 @@ protected:
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorAbscissa();
 private:
+  constexpr static float k_viewHeight = 174.0f; // TODO Taken from Regresssion/graph_controller. Maybe we should compute and/or put in common ?
+  // InteractiveCurveViewController
   /* When y auto is ticked, we use a display margin to be ensure that the user
    * can move the cursor along the curve without panning the window */
-  constexpr static float k_displayTopMarginRatio = 0.09f;
-  constexpr static float k_displayBottomMarginRatio = 0.2f;
-
-  // InteractiveCurveViewController
-  float displayTopMarginRatio() override { return k_displayTopMarginRatio; }
-  float displayBottomMarginRatio() override { return k_displayBottomMarginRatio; }
+  float displayTopMarginRatio() {
+    return 0.09f; // cursorHeight/graphViewHeight
+  }
+  float displayBottomMarginRatio();
   // InteractiveCurveViewRangeDelegate
   InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
-
+  float estimatedBannerHeight() const;
+  virtual int estimatedBannerNumberOfLines() const { return 1; }
   void initRangeParameters() override;
   void initCursorParameters() override;
   bool moveCursorVertically(int direction) override;

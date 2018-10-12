@@ -558,12 +558,8 @@ KDRect CurveView::bannerFrame() {
 KDRect CurveView::okFrame() {
   KDRect okFrame = KDRectZero;
   if (m_okView && (m_mainViewSelected || m_forceOkDisplay)) {
-    KDCoordinate bannerHeight = 0;
-    if (m_bannerView != nullptr) {
-      bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
-    }
     KDSize okSize = m_okView->minimalSizeForOptimalDisplay();
-    okFrame = KDRect(bounds().width()- okSize.width()-k_okHorizontalMargin, bounds().height()- bannerHeight-okSize.height()-k_okVerticalMargin, okSize);
+    okFrame = KDRect(bounds().width()- okSize.width()-k_okHorizontalMargin, bounds().y()+k_okVerticalMargin, okSize);
   }
   return okFrame;
 }

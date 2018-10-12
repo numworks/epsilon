@@ -17,9 +17,9 @@ app_objs += $(addprefix apps/graph/,\
   graph/root_graph_controller.o\
   graph/tangent_graph_controller.o\
   list/storage_list_controller.o\
-  values/derivative_parameter_controller.o\
-  values/function_parameter_controller.o\
-  values/values_controller.o\
+  values/storage_derivative_parameter_controller.o\
+  values/storage_function_parameter_controller.o\
+  values/storage_values_controller.o\
 )
 
 i18n_files += $(addprefix apps/graph/,\

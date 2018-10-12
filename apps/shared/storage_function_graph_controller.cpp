@@ -56,12 +56,24 @@ void StorageFunctionGraphController::selectFunctionWithCursor(int functionIndex)
   *m_indexFunctionSelectedByCursor = functionIndex;
 }
 
+float StorageFunctionGraphController::cursorBottomMarginRatio() {
+  return (cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
+}
+
 void StorageFunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
   StorageFunction * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   reloadBannerViewForCursorOnFunction(m_cursor, f, functionStore()->symbol());
+}
+
+float StorageFunctionGraphController::displayBottomMarginRatio() {
+  return (cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
+}
+
+float StorageFunctionGraphController::estimatedBannerHeight() const {
+  return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
 }
 
 InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
@@ -119,7 +131,7 @@ void StorageFunctionGraphController::initCursorParameters() {
   m_cursor->moveTo(x, y);
   functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
-  interactiveCurveViewRange()->panToMakePointVisible(x, y, k_displayTopMarginRatio, k_cursorRightMarginRatio, k_displayBottomMarginRatio, k_cursorLeftMarginRatio);
+  interactiveCurveViewRange()->panToMakePointVisible(x, y, displayTopMarginRatio(), k_cursorRightMarginRatio, displayBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 bool StorageFunctionGraphController::moveCursorVertically(int direction) {
@@ -142,7 +154,7 @@ bool StorageFunctionGraphController::moveCursorVertically(int direction) {
     return false;
   }
   m_cursor->moveTo(m_cursor->x(), nextY);
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 
@@ -159,7 +171,7 @@ uint32_t StorageFunctionGraphController::rangeVersion() {
 }
 
 bool StorageFunctionGraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 }

@@ -30,7 +30,7 @@ protected:
   public:
     CartesianFunctionRecordData() :
       FunctionRecordData(),
-    m_displayDerivative(true)
+      m_displayDerivative(false)
     {}
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }

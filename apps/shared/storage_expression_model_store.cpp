@@ -63,7 +63,7 @@ StorageExpressionModel * StorageExpressionModelStore::definedModelAtIndex(int i)
   int currentModelIndex = 0;
   StorageExpressionModel * m = modelAtIndex(currentModelIndex++);
   while (!m->isNull()) {
-    assert(currentModelIndex < numberOfModels());
+    assert(currentModelIndex <= numberOfModels());
     if (m->isDefined()) {
       if (i == index) {
         return m;

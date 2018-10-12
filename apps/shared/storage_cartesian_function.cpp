@@ -11,10 +11,9 @@ using namespace Poincare;
 namespace Shared {
 
 void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
-  /* a default name is "f[number].func", for instance "f12.func", that does not
+  /* a default name is "f[number]", for instance "f12", that does not
    * exist yet in the storage */
-  size_t extensionLength = 1 + strlen(GlobalContext::funcExtension); // '.', extension, no null-terminating char
-  size_t constantNameLength = 1 + extensionLength; // 'f', '.', extension, no null-terminating char
+  size_t constantNameLength = 1; // 'f', no null-terminating char
   assert(bufferSize > constantNameLength+1);
   // Write the f
   buffer[0] = 'f';
@@ -31,10 +30,7 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
     currentNumber++;
   }
   assert(currentNumberLength > 0 && currentNumberLength < availableBufferSize);
-  // Write the extension
-  int dotCharIndex = 1 + currentNumberLength;
-  buffer[dotCharIndex] = Ion::Storage::k_dotChar;
-  strlcpy(&buffer[dotCharIndex+1], GlobalContext::funcExtension, bufferSize - (dotCharIndex+1));
+  buffer[constantNameLength+currentNumberLength] = 0;
 }
 
 StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
@@ -43,10 +39,9 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
   CartesianFunctionRecordData data;
   if (baseName == nullptr) {
     DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
-    *error = Ion::Storage::sharedStorage()->createRecordWithFullName(nameBuffer, &data, sizeof(data));
-  } else {
-    *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, GlobalContext::funcExtension, &data, sizeof(data));
+    baseName = nameBuffer;
   }
+  *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, GlobalContext::funcExtension, &data, sizeof(data));
 
   // Return if error
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
@@ -54,11 +49,7 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
   }
 
   // Return the StorageCartesianFunction withthe new record
-  if (baseName == nullptr) {
-    return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordNamed(nameBuffer));
-  } else {
-    return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, GlobalContext::funcExtension));
-  }
+  return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, GlobalContext::funcExtension));
 }
 
 int StorageCartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {

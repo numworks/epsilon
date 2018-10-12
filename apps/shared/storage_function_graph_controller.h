@@ -35,10 +35,10 @@ private:
   // InteractiveCurveViewController
   /* When y auto is ticked, we use a display margin to be ensure that the user
    * can move the cursor along the curve without panning the window */
-  float displayTopMarginRatio() {
+  float displayTopMarginRatio() override {
     return 0.09f; // cursorHeight/graphViewHeight
   }
-  float displayBottomMarginRatio();
+  float displayBottomMarginRatio() override;
   // InteractiveCurveViewRangeDelegate
   InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
   float estimatedBannerHeight() const;

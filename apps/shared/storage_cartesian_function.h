@@ -10,7 +10,7 @@ namespace Shared {
 class StorageCartesianFunction : public StorageFunction {
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
-  static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error);
+  static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   StorageCartesianFunction(Ion::Storage::Record record = Record()) :
     StorageFunction(record)
   {}

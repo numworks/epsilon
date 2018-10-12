@@ -119,14 +119,14 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), expExtension, expression.addressInPool(), expression.size());
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunctionRecord(Expression expressionToStore, Ion::Storage::Record previousRecord) {
+Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunctionRecord(Expression expressionToStore, Ion::Storage::Record previousRecord, const char * baseName) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
-    StorageCartesianFunction newModel = StorageCartesianFunction::NewModel(&error);
-    if (error == Ion::Storage::Record::ErrorStatus::None) {
+    StorageCartesianFunction newModel = StorageCartesianFunction::NewModel(&error, baseName);
+    if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     recordToSet = newModel;
@@ -136,7 +136,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunctionRecord(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
-  return SetExpressionForFunctionRecord(expressionToStore, previousRecord);
+  return SetExpressionForFunctionRecord(expressionToStore, previousRecord, symbol.name());
 }
 
 Ion::Storage::Record GlobalContext::RecordWithBaseName(const char * name) {

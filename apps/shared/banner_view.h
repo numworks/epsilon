@@ -7,6 +7,7 @@ namespace Shared {
 
 class BannerView : public View {
 public:
+  static KDCoordinate HeightGivenNumberOfLines(int linesCount);
   void setLegendAtIndex(char * text, int index);
   void setMessageAtIndex(I18n::Message text, int index);
   KDSize minimalSizeForOptimalDisplay() const override;

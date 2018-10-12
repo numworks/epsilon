@@ -19,14 +19,13 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, StorageCartesianFunction * function, TextFieldDelegateApp * app) {
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
-  const char * space = "                  ";
+  const char * space = " ";
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize, 'x');
   const char * legend = "=";
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   double y = function->approximateDerivative(cursor->x(), app->localContext());
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Constant::ShortNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
-  buffer[k_maxDigitLegendLength+6] = 0;
   bannerView()->setLegendAtIndex(buffer, 2);
 }
 

@@ -42,9 +42,11 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
 }
 
 StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
+  static int s_colorIndex = 0;
   // Create the record
   char nameBuffer[SymbolAbstract::k_maxNameSize];
-  CartesianFunctionRecordData data;
+  int numberOfColors = sizeof(Palette::DataColor)/sizeof(KDColor);
+  CartesianFunctionRecordData data(Palette::DataColor[s_colorIndex++ % numberOfColors]);
   if (baseName == nullptr) {
     DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
     baseName = nameBuffer;

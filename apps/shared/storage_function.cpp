@@ -25,10 +25,6 @@ void StorageFunction::setActive(bool active) {
   recordData()->setActive(active);
 }
 
-void StorageFunction::setColor(KDColor color) {
-  recordData()->setColor(color);
-}
-
 int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
   const char * functionName = fullName();
   int index = 0;

@@ -10,7 +10,6 @@ namespace Graph {
 
 class StorageCartesianFunctionStore : public Shared::StorageFunctionStore {
 public:
-  StorageCartesianFunctionStore();
   Shared::StorageCartesianFunction * modelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::modelAtIndex(i)); }
   Shared::StorageCartesianFunction * activeFunctionAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::activeFunctionAtIndex(i)); }
   Shared::StorageCartesianFunction * definedModelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::definedModelAtIndex(i)); }

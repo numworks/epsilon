@@ -5,7 +5,7 @@
 #include "storage_cartesian_function_store.h"
 #include "graph/graph_controller.h"
 #include "list/storage_list_controller.h"
-#include "values/values_controller.h"
+#include "values/storage_values_controller.h"
 #include "../shared/function_app.h"
 
 namespace Graph {
@@ -43,7 +43,7 @@ private:
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   ButtonRowController m_graphHeader;
   StackViewController m_graphStackViewController;
-  ValuesController m_valuesController;
+  StorageValuesController m_valuesController;
   AlternateEmptyViewController m_valuesAlternateEmptyViewController;
   ButtonRowController m_valuesHeader;
   StackViewController m_valuesStackViewController;

@@ -64,6 +64,8 @@ app_objs += $(addprefix apps/shared/,\
   storage_function_store.o\
   storage_list_parameter_controller.o\
   storage_sum_graph_controller.o\
+  storage_values_function_parameter_controller.o\
+  storage_values_controller.o\
   store_cell.o\
   store_context.o\
   store_controller.o\

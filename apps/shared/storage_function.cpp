@@ -27,7 +27,7 @@ void StorageFunction::setActive(bool active) {
 
 int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
   const char * functionName = fullName();
-  int index = 0;
+  size_t index = 0;
   const char ofXSring[4] = {'(',arg,')', 0};
   size_t ofXSringLength = strlen(ofXSring);
   while (*functionName != Ion::Storage::k_dotChar

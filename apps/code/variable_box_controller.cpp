@@ -57,7 +57,7 @@ void VariableBoxController::ContentViewController::didEnterResponderChain(Respon
 }
 
 static bool shouldAddObject(const char * name, int maxLength) {
-  if (strlen(name)+1 > maxLength) {
+  if (strlen(name)+1 > (size_t)maxLength) {
     return false;
   }
   assert(name != nullptr);

@@ -269,6 +269,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   variables[0][0] = 0;
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
+  (void) nbOfVariables; // Remove compilation warning of nused variable
   assert(nbOfVariables >= 0);
   int numberOfValuesToCompute = -1;
   int index = 0;

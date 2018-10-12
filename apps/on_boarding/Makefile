@@ -3,7 +3,7 @@ app_objs += $(addprefix apps/on_boarding/,\
   language_controller.o\
   logo_controller.o\
   logo_view.o\
-  update_controller.o\
+  pop_up_controller.o\
 )
 
 i18n_files += $(addprefix apps/on_boarding/,\

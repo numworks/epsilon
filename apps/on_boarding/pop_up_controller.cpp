@@ -1,21 +1,23 @@
-#include "update_controller.h"
+#include "pop_up_controller.h"
 #include "../apps_container.h"
 #include <assert.h>
 
 namespace OnBoarding {
 
-UpdateController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
+
+PopUpController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
   MessageView(messages, colors, numberOfMessages),
   m_skipView(KDFont::SmallFont, I18n::Message::Skip, 1.0f, 0.5f),
   m_okView()
 {
 }
 
-int UpdateController::MessageViewWithSkip::numberOfSubviews() const {
+int PopUpController::MessageViewWithSkip::numberOfSubviews() const {
  return MessageView::numberOfSubviews() + 2;
 }
 
-View * UpdateController::MessageViewWithSkip::subviewAtIndex(int index) {
+View * PopUpController::MessageViewWithSkip::subviewAtIndex(int index) {
   uint8_t numberOfMainMessages = MessageView::numberOfSubviews();
   if (index < numberOfMainMessages) {
     return MessageView::subviewAtIndex(index);
@@ -30,7 +32,7 @@ View * UpdateController::MessageViewWithSkip::subviewAtIndex(int index) {
   return nullptr;
 }
 
-void UpdateController::MessageViewWithSkip::layoutSubviews() {
+void PopUpController::MessageViewWithSkip::layoutSubviews() {
   // Layout the main message
   MessageView::layoutSubviews();
   // Layout the "skip (OK)"
@@ -41,6 +43,28 @@ void UpdateController::MessageViewWithSkip::layoutSubviews() {
   m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight));
   m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize));
 }
+
+PopUpController::PopUpController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
+  ViewController(nullptr),
+  m_messageViewWithSkip(messages, colors, numberOfMessages)
+{
+}
+
+bool PopUpController::handleEvent(Ion::Events::Event event) {
+  if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
+    app()->dismissModalViewController();
+    AppsContainer * appsContainer = (AppsContainer *)app()->container();
+    if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
+      appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
+    }
+    return true;
+  }
+  return false;
+}
+
+#endif
+
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
 
 static I18n::Message sOnBoardingMessages[] = {
   I18n::Message::UpdateAvailable,
@@ -59,21 +83,8 @@ static KDColor sOnBoardingColors[] = {
   Palette::YellowDark};
 
 UpdateController::UpdateController() :
-  ViewController(nullptr),
-  m_messageViewWithSkip(sOnBoardingMessages, sOnBoardingColors, 6)
-{
-}
+  PopUpController(sOnBoardingMessages, sOnBoardingColors, 6) {}
 
-bool UpdateController::handleEvent(Ion::Events::Event event) {
-  if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
-    app()->dismissModalViewController();
-    AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
-      appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
-    }
-    return true;
-  }
-  return false;
-}
+#endif
 
 }

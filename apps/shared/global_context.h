@@ -20,7 +20,7 @@ public:
   //static constexpr char seqExtension[] = "seq";
 
   // Storage information
-  static bool RecordBaseNameIsFree(const char * baseName);
+  static bool SymbolAbstractNameIsFree(const char * baseName);
   static bool storageMemoryFull();
 
   // Expression from record
@@ -52,7 +52,7 @@ private:
   static Ion::Storage::Record::ErrorStatus SetExpressionForActualSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
   static Ion::Storage::Record::ErrorStatus SetExpressionForFunction(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Ion::Storage::Record previousRecord);
   // Record getter
-  static Ion::Storage::Record RecordWithBaseName(const char * name);
+  static Ion::Storage::Record SymbolAbstractRecordWithBaseName(const char * name);
 };
 
 }

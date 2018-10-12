@@ -38,7 +38,7 @@ protected:
   // Drawing methods
   virtual float samplingRatio() const;
   constexpr static KDCoordinate k_labelMargin = 4;
-  constexpr static KDCoordinate k_okVerticalMargin = 23;
+  constexpr static KDCoordinate k_okVerticalMargin = 3;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;

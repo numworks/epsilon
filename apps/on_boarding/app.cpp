@@ -1,5 +1,4 @@
 #include "app.h"
-#include "../apps_container.h"
 #include <assert.h>
 
 namespace OnBoarding {
@@ -15,11 +14,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_languageController),
-  m_languageController(&m_modalViewController, &m_logoController
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-      , ((AppsContainer *)container)->updatePopUpController()
-#endif
-      ),
+  m_languageController(&m_modalViewController, &m_logoController),
   m_logoController()
 {
 }

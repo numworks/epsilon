@@ -4,16 +4,8 @@
 
 namespace OnBoarding {
 
-LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-    , UpdateController * updateController) :
-#else
-    ) :
-#endif
+LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController) :
   Shared::LanguageController(parentResponder, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2),
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-  m_updateController(updateController),
-#endif
   m_logoController(logoController)
 {
 }
@@ -26,7 +18,8 @@ void LanguageController::reinitOnBoarding() {
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (Shared::LanguageController::handleEvent(event)) {
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-    app()->displayModalViewController(m_updateController, 0.5f, 0.5f);
+    AppsContainer * container = (AppsContainer *)(app()->container());
+    app()->displayModalViewController(container->updatePopUpController(), 0.5f, 0.5f);
 #else
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));

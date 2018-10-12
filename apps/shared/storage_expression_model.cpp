@@ -53,7 +53,7 @@ bool StorageExpressionModel::isDefined() {
 }
 
 bool StorageExpressionModel::isEmpty() {
-  return value().size == 0;
+  return value().size <= metaDataSize();
 }
 
 void StorageExpressionModel::tidy() {

@@ -22,7 +22,7 @@ public:
 
   // Add and Remove
   virtual Ion::Storage::Record::ErrorStatus addEmptyModel() = 0;
-  virtual void removeAll();
+  void removeAll();
   void removeModel(StorageExpressionModel * f);
 
   // Other

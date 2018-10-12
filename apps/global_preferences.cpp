@@ -3,7 +3,9 @@
 GlobalPreferences::GlobalPreferences() :
   m_language(I18n::Language::EN),
   m_examMode(ExamMode::Desactivate),
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   m_showUpdatePopUp(true),
+#endif
   m_brightnessLevel(Ion::Backlight::MaxBrightness)
 {
 }
@@ -33,6 +35,7 @@ void GlobalPreferences::setExamMode(ExamMode examMode) {
   }
 }
 
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
 bool GlobalPreferences::showUpdatePopUp() const {
   return m_showUpdatePopUp;
 }
@@ -42,6 +45,7 @@ void GlobalPreferences::setShowUpdatePopUp(bool showUpdatePopUp) {
     m_showUpdatePopUp = showUpdatePopUp;
   }
 }
+#endif
 
 int GlobalPreferences::brightnessLevel() const {
   return m_brightnessLevel;

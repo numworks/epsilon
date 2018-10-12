@@ -48,7 +48,9 @@ public:
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   OnBoarding::UpdateController * updatePopUpController();
+#endif
   void redrawWindow();
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -71,7 +73,9 @@ private:
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   OnBoarding::UpdateController m_updateController;
+#endif
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;

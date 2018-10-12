@@ -5,18 +5,18 @@
 #include "banner_view.h"
 #include "../../shared/curve_view_cursor.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../../shared/function_banner_delegate.h"
-#include "../cartesian_function.h"
+#include "../../shared/storage_function_banner_delegate.h"
+#include "../storage_cartesian_function_store.h"
 
 namespace Graph {
 
-class CalculationGraphController : public ViewController, public Shared::FunctionBannerDelegate {
+class CalculationGraphController : public ViewController, public Shared::StorageFunctionBannerDelegate {
 public:
   CalculationGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, I18n::Message defaultMessage);
   View * view() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(CartesianFunction * function);
+  void setFunction(Shared::StorageCartesianFunction * function);
 protected:
   constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
@@ -29,7 +29,7 @@ protected:
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;
   Shared::CurveViewCursor * m_cursor;
-  CartesianFunction * m_function;
+  Shared::StorageCartesianFunction * m_function;
   MessageTextView m_defaultBannerView;
   bool m_isActive;
 };

@@ -29,7 +29,7 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->reload();
 }
 
-void TangentGraphController::setFunction(CartesianFunction * function) {
+void TangentGraphController::setFunction(StorageCartesianFunction * function) {
   m_graphView->selectFunction(function);
   m_function = function;
 }
@@ -39,7 +39,7 @@ void TangentGraphController::reloadBannerView() {
   if (m_function == nullptr) {
     return;
   }
-  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_function, 'x');
+  StorageFunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_function, 'x');
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_function, myApp);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);

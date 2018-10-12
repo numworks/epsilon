@@ -14,7 +14,6 @@ public:
   Shared::StorageCartesianFunction * activeFunctionAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::activeFunctionAtIndex(i)); }
   Shared::StorageCartesianFunction * definedModelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::definedModelAtIndex(i)); }
   char symbol() const override { return 'x'; }
-  void removeAll() override;
 private:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   const char * modelExtension() const override { return Shared::GlobalContext::funcExtension; }

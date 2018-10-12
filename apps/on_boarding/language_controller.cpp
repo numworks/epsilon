@@ -4,7 +4,12 @@
 
 namespace OnBoarding {
 
-LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController, UpdateController * updateController) :
+LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
+    , UpdateController * updateController) :
+#else
+    ) :
+#endif
   Shared::LanguageController(parentResponder, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2),
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
   m_updateController(updateController),

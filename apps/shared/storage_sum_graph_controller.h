@@ -1,5 +1,5 @@
-#ifndef SHARED_SUM_GRAPH_CONTROLLER_H
-#define SHARED_SUM_GRAPH_CONTROLLER_H
+#ifndef SHARED_STORAGE_SUM_GRAPH_CONTROLLER_H
+#define SHARED_STORAGE_SUM_GRAPH_CONTROLLER_H
 
 #include <escher.h>
 #include "storage_function_graph_view.h"

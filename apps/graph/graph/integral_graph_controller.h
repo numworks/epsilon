@@ -3,18 +3,18 @@
 
 #include <escher.h>
 #include "graph_view.h"
-#include "../../shared/sum_graph_controller.h"
+#include "../../shared/storage_sum_graph_controller.h"
 
 namespace Graph {
 
-class IntegralGraphController : public Shared::SumGraphController {
+class IntegralGraphController : public Shared::StorageSumGraphController {
 public:
   IntegralGraphController(Responder * parentResponder, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
 private:
   I18n::Message legendMessageAtStep(Step step) override;
   double cursorNextStep(double position, int direction) override;
-  Poincare::Layout createFunctionLayout(const char * functionName) override;
+  Poincare::Layout createFunctionLayout(Shared::StorageFunction * function) override;
 };
 
 }

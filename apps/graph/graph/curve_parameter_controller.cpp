@@ -7,8 +7,8 @@ using namespace Shared;
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController, CartesianFunctionStore * functionStore) :
-  FunctionCurveParameterController(graphRange, cursor),
+CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController, StorageCartesianFunctionStore * functionStore) :
+  StorageFunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
@@ -33,7 +33,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     switch (selectedRow()) {
       case 0:
       {
-        m_calculationParameterController.setFunction(static_cast<CartesianFunction *>(m_function));
+        m_calculationParameterController.setFunction(static_cast<StorageCartesianFunction *>(m_function));
         StackViewController * stack = (StackViewController *)parentResponder();
         stack->push(&m_calculationParameterController);
         return true;
@@ -68,7 +68,7 @@ int CurveParameterController::reusableCellCount() {
   return k_totalNumberOfCells;
 }
 
-FunctionGoToParameterController * CurveParameterController::goToParameterController() {
+StorageFunctionGoToParameterController * CurveParameterController::goToParameterController() {
   return &m_goToParameterController;
 }
 

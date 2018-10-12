@@ -7,7 +7,7 @@ using namespace Shared;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CartesianFunctionStore * functionStore) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, StorageCartesianFunctionStore * functionStore) :
   ViewController(parentResponder),
   m_selectableTableView(this),
   m_function(nullptr),
@@ -103,7 +103,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   myCell->setMessage(titles[index]);
 }
 
-void CalculationParameterController::setFunction(CartesianFunction * function) {
+void CalculationParameterController::setFunction(StorageCartesianFunction * function) {
   m_function = function;
 }
 

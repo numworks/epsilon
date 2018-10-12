@@ -56,7 +56,7 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void CalculationGraphController::setFunction(CartesianFunction * function) {
+void CalculationGraphController::setFunction(StorageCartesianFunction * function) {
   m_graphView->selectFunction(function);
   m_function = function;
 }

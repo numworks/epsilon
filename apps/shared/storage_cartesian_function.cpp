@@ -24,7 +24,7 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   int availableBufferSize = bufferSize - constantNameLength;
   while (currentNumberLength < availableBufferSize) {
     currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
-    if (GlobalContext::RecordBaseNameIsFree(buffer)) {
+    if (GlobalContext::SymbolAbstractNameIsFree(buffer)) {
       // Name found
       break;
     }

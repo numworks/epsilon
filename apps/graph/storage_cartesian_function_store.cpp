@@ -20,10 +20,10 @@ void StorageCartesianFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion:
   m_functions[cacheIndex] = StorageCartesianFunction(record);
 }
 
-void StorageCartesianFunctionStore::moveMemoizedModel(int previousIndex, int nextIndex) const {
-  assert(nextIndex >= 0 && nextIndex < k_maxNumberOfMemoizedModels);
+void StorageCartesianFunctionStore::moveMemoizedModel(int newIndex, int previousIndex) const {
+  assert(newIndex >= 0 && newIndex < k_maxNumberOfMemoizedModels);
   assert(previousIndex >= 0 && previousIndex < k_maxNumberOfMemoizedModels);
-  m_functions[nextIndex] = m_functions[previousIndex];
+  m_functions[newIndex] = m_functions[previousIndex];
 }
 
 StorageExpressionModel * StorageCartesianFunctionStore::memoizedModelAtIndex(int cacheIndex) const {

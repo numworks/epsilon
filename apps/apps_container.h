@@ -4,7 +4,6 @@
 #include "home/app.h"
 #include "on_boarding/app.h"
 #include "hardware_test/app.h"
-#include "on_boarding/update_controller.h"
 #include "usb/app.h"
 #include "apps_window.h"
 #include "empty_battery_window.h"
@@ -19,6 +18,10 @@
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
 #include "picview/picview_app.h"
+#endif
+
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#include "on_boarding/pop_up_controller.h"
 #endif
 
 #include <ion/events.h>

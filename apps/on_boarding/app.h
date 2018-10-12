@@ -4,7 +4,6 @@
 #include <escher.h>
 #include "language_controller.h"
 #include "logo_controller.h"
-#include "update_controller.h"
 
 namespace OnBoarding {
 

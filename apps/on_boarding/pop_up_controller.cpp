@@ -64,27 +64,4 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 
 #endif
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-
-static I18n::Message sOnBoardingMessages[] = {
-  I18n::Message::UpdateAvailable,
-  I18n::Message::UpdateMessage1,
-  I18n::Message::UpdateMessage2,
-  I18n::Message::BlankMessage,
-  I18n::Message::UpdateMessage3,
-  I18n::Message::UpdateMessage4};
-
-static KDColor sOnBoardingColors[] = {
-  KDColorBlack,
-  KDColorBlack,
-  KDColorBlack,
-  KDColorWhite,
-  KDColorBlack,
-  Palette::YellowDark};
-
-UpdateController::UpdateController() :
-  PopUpController(sOnBoardingMessages, sOnBoardingColors, 6) {}
-
-#endif
-
 }

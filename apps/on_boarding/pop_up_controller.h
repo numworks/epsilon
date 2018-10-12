@@ -35,15 +35,6 @@ private:
 
 #endif
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-
-class UpdateController : public PopUpController {
-public:
-  UpdateController();
-};
-
-#endif
-
 }
 
 #endif

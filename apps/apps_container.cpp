@@ -10,6 +10,26 @@ extern "C" {
 
 using namespace Shared;
 
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
+
+static I18n::Message sOnBoardingMessages[] = {
+  I18n::Message::UpdateAvailable,
+  I18n::Message::UpdateMessage1,
+  I18n::Message::UpdateMessage2,
+  I18n::Message::BlankMessage,
+  I18n::Message::UpdateMessage3,
+  I18n::Message::UpdateMessage4};
+
+static KDColor sOnBoardingColors[] = {
+  KDColorBlack,
+  KDColorBlack,
+  KDColorBlack,
+  KDColorWhite,
+  KDColorBlack,
+  Palette::YellowDark};
+
+#endif
+
 AppsContainer::AppsContainer() :
   Container(),
   m_window(),
@@ -18,7 +38,7 @@ AppsContainer::AppsContainer() :
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(this),
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  m_updateController(),
+  m_updateController(sOnBoardingMessages, sOnBoardingColors, 6),
 #endif
   m_batteryTimer(BatteryTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
@@ -228,7 +248,7 @@ bool AppsContainer::updateAlphaLock() {
 }
 
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
+OnBoarding::PopUpController * AppsContainer::updatePopUpController() {
   return &m_updateController;
 }
 #endif

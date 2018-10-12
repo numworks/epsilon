@@ -4,7 +4,7 @@
 
 namespace OnBoarding {
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
 
 PopUpController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
   MessageView(messages, colors, numberOfMessages),

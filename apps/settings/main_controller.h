@@ -28,9 +28,9 @@ public:
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
   constexpr static int k_totalNumberOfCell = 9;
-  MessageTableCellWithSwitch m_updateCell;
+  MessageTableCellWithSwitch m_popUpCell;
 #else
   constexpr static int k_totalNumberOfCell = 8;
 #endif

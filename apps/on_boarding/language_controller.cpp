@@ -17,11 +17,10 @@ void LanguageController::reinitOnBoarding() {
 
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (Shared::LanguageController::handleEvent(event)) {
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-    AppsContainer * container = (AppsContainer *)(app()->container());
-    app()->displayModalViewController(container->updatePopUpController(), 0.5f, 0.5f);
-#else
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
+#ifdef EPSILON_BOOT_PROMPT
+    app()->displayModalViewController(appsContainer->promptController(), 0.5f, 0.5f);
+#else
     appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
 #endif
     return true;

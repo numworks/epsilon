@@ -14,7 +14,7 @@ const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree menu[9] =
 #else
 const SettingsMessageTree menu[8] =
@@ -26,11 +26,13 @@ const SettingsMessageTree menu[8] =
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
+  SettingsMessageTree(I18n::Message::BetaPopUp),
+#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
   SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
 #else
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
@@ -38,8 +40,8 @@ const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-  m_updateCell(I18n::Message::Default, KDFont::LargeFont),
+#ifdef EPSILON_BOOT_PROMPT
+  m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
 #endif
   m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
@@ -68,8 +70,12 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (m_messageTreeModel->children(selectedRow())->numberOfChildren() == 0) {
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
+    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::BetaPopUp) {
+#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
+#endif
+#ifdef EPSILON_BOOT_PROMPT
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         GlobalPreferences::sharedGlobalPreferences()->setShowPopUp(!GlobalPreferences::sharedGlobalPreferences()->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -108,7 +114,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       case 6:
         subController = &m_examModeController;
         break;
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
       case 8:
 #else
       case 7:
@@ -149,9 +155,9 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
   if (type == 2) {
-    return &m_updateCell;
+    return &m_popUpCell;
   }
 #endif
   assert(type == 1);
@@ -169,7 +175,7 @@ int MainController::typeAtLocation(int i, int j) {
   if (j == 4) {
     return 1;
   }
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
   if (j == 7) {
     return 2;
   }
@@ -191,7 +197,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
   if (index == 7) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();

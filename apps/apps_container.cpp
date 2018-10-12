@@ -10,9 +10,27 @@ extern "C" {
 
 using namespace Shared;
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
 
-static I18n::Message sOnBoardingMessages[] = {
+static I18n::Message sPromptMessages[] = {
+  I18n::Message::BetaVersion,
+  I18n::Message::BetaVersionMessage1,
+  I18n::Message::BlankMessage,
+  I18n::Message::BetaVersionMessage2,
+  I18n::Message::BetaVersionMessage3,
+  I18n::Message::UpdateMessage4};
+
+static KDColor sPromptColors[] = {
+  KDColorBlack,
+  KDColorBlack,
+  KDColorBlack,
+  KDColorBlack,
+  KDColorBlack,
+  Palette::YellowDark};
+
+#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
+
+static I18n::Message sPromptMessages[] = {
   I18n::Message::UpdateAvailable,
   I18n::Message::UpdateMessage1,
   I18n::Message::UpdateMessage2,
@@ -20,7 +38,7 @@ static I18n::Message sOnBoardingMessages[] = {
   I18n::Message::UpdateMessage3,
   I18n::Message::UpdateMessage4};
 
-static KDColor sOnBoardingColors[] = {
+static KDColor sPromptColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,
@@ -37,8 +55,8 @@ AppsContainer::AppsContainer() :
   m_globalContext(),
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(this),
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-  m_updateController(sOnBoardingMessages, sOnBoardingColors, 6),
+#ifdef EPSILON_BOOT_PROMPT
+  m_promptController(sPromptMessages, sPromptColors, 6),
 #endif
   m_batteryTimer(BatteryTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
@@ -90,9 +108,9 @@ VariableBoxController * AppsContainer::variableBoxController() {
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   resetShiftAlphaStatus();
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
   if (activeApp()->snapshot()!= onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showPopUp()) {
-    activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
+    activeApp()->displayModalViewController(&m_promptController, 0.f, 0.f);
   }
 #endif
   Ion::Power::suspend(checkIfPowerKeyReleased);
@@ -247,9 +265,9 @@ bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-OnBoarding::PopUpController * AppsContainer::updatePopUpController() {
-  return &m_updateController;
+#ifdef EPSILON_BOOT_PROMPT
+OnBoarding::PopUpController * AppsContainer::promptController() {
+  return &m_promptController;
 }
 #endif
 

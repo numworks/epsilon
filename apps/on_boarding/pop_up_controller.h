@@ -8,7 +8,7 @@
 
 namespace OnBoarding {
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
 
 class PopUpController : public ViewController {
 public:

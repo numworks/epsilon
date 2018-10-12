@@ -28,8 +28,8 @@ public:
 protected:
   class CartesianFunctionRecordData : public FunctionRecordData {
   public:
-    CartesianFunctionRecordData() :
-      FunctionRecordData(),
+    CartesianFunctionRecordData(KDColor color) :
+      FunctionRecordData(color),
       m_displayDerivative(false)
     {}
     bool displayDerivative() const { return m_displayDerivative; }

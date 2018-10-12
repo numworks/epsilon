@@ -20,7 +20,6 @@ public:
   bool isActive() const;
   KDColor color() const;
   void setActive(bool active);
-  void setColor(KDColor color);
 
   // Name
   int nameWithArgument(char * buffer, size_t bufferSize, char arg);
@@ -36,9 +35,8 @@ public:
 protected:
   class FunctionRecordData {
   public:
-    FunctionRecordData() : m_color(KDColorRed), m_active(true) {}
+    FunctionRecordData(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const { return m_color; }
-    void setColor(KDColor color) { m_color = color; }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
   private:

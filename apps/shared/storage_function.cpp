@@ -41,7 +41,7 @@ int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg
     assert(functionName < fullName() + strlen(fullName()));
     buffer[index++] = *functionName++;
   }
-  return index - 1 + strlcpy(&buffer[index], ofXSring, bufferSize);
+  return index + strlcpy(&buffer[index], ofXSring, bufferSize-index);
 }
 
 template<typename T>

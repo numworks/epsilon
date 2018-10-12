@@ -37,7 +37,7 @@ private:
   mutable int m_firstMemoizedModelIndex;
   mutable uint32_t m_storageChecksum;
   virtual void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
-  virtual void moveMemoizedModel(int previousIndex, int nextIndex) const = 0;
+  virtual void moveMemoizedModel(int newIndex, int previousIndex) const = 0;
   virtual StorageExpressionModel * memoizedModelAtIndex(int cacheIndex) const = 0;
 };
 

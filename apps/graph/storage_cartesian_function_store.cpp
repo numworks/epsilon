@@ -9,13 +9,6 @@ using namespace Shared;
 
 namespace Graph {
 
-StorageCartesianFunctionStore::StorageCartesianFunctionStore() :
-  Shared::StorageFunctionStore()
-{
-  Ion::Storage::Record::ErrorStatus error = addEmptyModel();
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
-}
-
 void StorageCartesianFunctionStore::removeAll() {
   StorageFunctionStore::removeAll();
   Ion::Storage::Record::ErrorStatus error = addEmptyModel();

@@ -11,25 +11,32 @@ using namespace Poincare;
 namespace Shared {
 
 void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
-  /* a default name is "f[number]", for instance "f12", that does not
-   * exist yet in the storage */
+  constexpr int k_maxNumberOfDefaultLetterNames = 4;
+  static constexpr const char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
+    'f', 'g', 'h', 'p'
+  };
+  /* First default names are f, g, h, p and then f0, f1... ie, "f[number]",
+   * for instance "f12", that does not exist yet in the storage. */
   size_t constantNameLength = 1; // 'f', no null-terminating char
   assert(bufferSize > constantNameLength+1);
-  // Write the f
-  buffer[0] = 'f';
-  // Find the next available number
-  int currentNumber = 0;
-  int currentNumberLength = -1;
+  // Find the next available name
+  int currentNumber = -k_maxNumberOfDefaultLetterNames;
+  int currentNumberLength = 0;
   int availableBufferSize = bufferSize - constantNameLength;
   while (currentNumberLength < availableBufferSize) {
-    currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
+    // Choose letter
+    buffer[0] = currentNumber < 0 ? k_defaultLetterNames[k_maxNumberOfDefaultLetterNames+currentNumber] : k_defaultLetterNames[0];
+    // Choose number if required
+    if (currentNumber >= 0) {
+      currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
+    }
     if (GlobalContext::SymbolAbstractNameIsFree(buffer)) {
       // Name found
       break;
     }
     currentNumber++;
   }
-  assert(currentNumberLength > 0 && currentNumberLength < availableBufferSize);
+  assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
   buffer[constantNameLength+currentNumberLength] = 0;
 }
 

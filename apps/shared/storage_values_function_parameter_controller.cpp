@@ -4,7 +4,7 @@
 namespace Shared {
 
 const char * StorageValuesFunctionParameterController::title() {
-  m_function->nameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle, m_symbol);
+  m_function->nameWithArgument(m_pageTitle, StorageFunction::k_maxNameWithArgumentSize, m_symbol);
   return m_pageTitle;
 }
 

@@ -18,6 +18,7 @@ public:
   //bool operator!=(const StorageCartesianFunction & other) const { return !(*(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
+  int derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg);
   double approximateDerivative(double x, Poincare::Context * context) const;
   double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   Poincare::Expression::Coordinate2D nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;

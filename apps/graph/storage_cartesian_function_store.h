@@ -18,7 +18,7 @@ private:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   const char * modelExtension() const override { return Shared::GlobalContext::funcExtension; }
   void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
-  void moveMemoizedModel(int previousIndex, int nextIndex) const override;
+  void moveMemoizedModel(int newIndex, int previousIndex) const override;
   Shared::StorageExpressionModel * memoizedModelAtIndex(int cacheIndex) const override;
   mutable Shared::StorageCartesianFunction m_functions[k_maxNumberOfMemoizedModels];
 };

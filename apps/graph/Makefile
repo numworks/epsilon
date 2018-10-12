@@ -3,8 +3,6 @@ app_headers += apps/graph/app.h
 
 app_objs += $(addprefix apps/graph/,\
   app.o\
-  cartesian_function.o\
-  cartesian_function_store.o\
   storage_cartesian_function_store.o\
   graph/banner_view.o\
   graph/calculation_graph_controller.o\

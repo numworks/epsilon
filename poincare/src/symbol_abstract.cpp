@@ -14,7 +14,7 @@ int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bo
 
 void SymbolAbstractNode::initName(size_t nameSize) {
   char * modifiableName = const_cast<char *>(name());
-  for (int i = 0; i < nameSize - 1; i++) {
+  for (size_t i = 0; i < nameSize - 1; i++) {
     modifiableName[i] = 'a';
   }
   modifiableName[nameSize-1] = 0;

@@ -29,7 +29,7 @@ public:
   static Poincare::Expression ExpressionFromFunctionRecord(Ion::Storage::Record record);
 
   // Set expression for record
-  static Ion::Storage::Record::ErrorStatus SetExpressionForFunctionRecord(Poincare::Expression e, Ion::Storage::Record record);
+  static Ion::Storage::Record::ErrorStatus SetExpressionForFunctionRecord(Poincare::Expression e, Ion::Storage::Record record, const char * baseName);
 
   /* Expression for symbol
    * The expression recorded in global context is already an expression.

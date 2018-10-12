@@ -53,9 +53,17 @@ app_objs += $(addprefix apps/shared/,\
   storage_cartesian_function.o\
   storage_expression_model.o\
   storage_expression_model_store.o\
+  storage_expression_model_list_controller.o\
   storage_function.o\
+  storage_function_banner_delegate.o\
+  storage_function_curve_parameter_controller.o\
+  storage_function_go_to_parameter_controller.o\
+  storage_function_graph_view.o\
+  storage_function_graph_controller.o\
+  storage_function_list_controller.o\
   storage_function_store.o\
   storage_list_parameter_controller.o\
+  storage_sum_graph_controller.o\
   store_cell.o\
   store_context.o\
   store_controller.o\

@@ -64,13 +64,13 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
 int StorageCartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {
   // Fill buffer with f(x). Keep one char for derivative sign.
   int numberOfChars = nameWithArgument(buffer, bufferSize-1, arg);
-  assert(numberOfChars < bufferSize - 1);
+  assert(numberOfChars + 1 < bufferSize);
   char * lastChar = buffer+numberOfChars;
-  while (*(lastChar+1) != '(' && lastChar >= buffer) {
+  do {
     *(lastChar+1) = *lastChar;
     lastChar--;
-  }
-  *lastChar = '\'';
+  } while (*(lastChar+1) != '(' && lastChar >= buffer);
+  *(lastChar+1) = '\'';
   return numberOfChars+1;
 }
 

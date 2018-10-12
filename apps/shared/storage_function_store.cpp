@@ -28,7 +28,7 @@ StorageFunction * StorageFunctionStore::activeFunctionAtIndex(int i) const {
   int currentModelIndex = 0;
   StorageFunction * function = modelAtIndex(currentModelIndex++);
   while (!function->isNull()) {
-    assert(currentModelIndex < numberOfModels());
+    assert(currentModelIndex <= numberOfModels());
     if (function->isActive() && function->isDefined()) {
       if (i == index) {
         return function;

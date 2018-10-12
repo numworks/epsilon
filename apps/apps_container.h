@@ -49,7 +49,7 @@ public:
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  OnBoarding::UpdateController * updatePopUpController();
+  OnBoarding::PopUpController * updatePopUpController();
 #endif
   void redrawWindow();
   // Exam pop-up controller delegate
@@ -74,7 +74,7 @@ private:
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  OnBoarding::UpdateController m_updateController;
+  OnBoarding::PopUpController m_updateController;
 #endif
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;

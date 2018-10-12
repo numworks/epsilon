@@ -29,6 +29,8 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
     // Choose number if required
     if (currentNumber >= 0) {
       currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
+    } else {
+      buffer[1] = 0;
     }
     if (GlobalContext::SymbolAbstractNameIsFree(buffer)) {
       // Name found
@@ -37,7 +39,6 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
     currentNumber++;
   }
   assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
-  buffer[constantNameLength+currentNumberLength] = 0;
 }
 
 StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {

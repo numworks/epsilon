@@ -17,7 +17,9 @@ AppsContainer::AppsContainer() :
   m_globalContext(),
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(this),
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   m_updateController(),
+#endif
   m_batteryTimer(BatteryTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(),
@@ -225,9 +227,11 @@ bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }
 
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
 OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
   return &m_updateController;
 }
+#endif
 
 void AppsContainer::redrawWindow() {
   m_window.redraw();

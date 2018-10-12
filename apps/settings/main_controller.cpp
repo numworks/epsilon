@@ -71,7 +71,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-        GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
+        GlobalPreferences::sharedGlobalPreferences()->setShowPopUp(!GlobalPreferences::sharedGlobalPreferences()->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;
       }
@@ -195,7 +195,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == 7) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
+    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showPopUp());
     return;
   }
 #endif

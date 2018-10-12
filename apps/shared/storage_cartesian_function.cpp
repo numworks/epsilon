@@ -19,7 +19,7 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   // Find the next available number
   int currentNumber = 0;
   int currentNumberLength = -1;
-  size_t availableBufferSize = bufferSize - constantNameLength;
+  int availableBufferSize = bufferSize - constantNameLength;
   while (currentNumberLength < availableBufferSize) {
     currentNumberLength = Poincare::Integer(currentNumber).serialize(&buffer[1], availableBufferSize);
     if (GlobalContext::RecordBaseNameIsFree(buffer)) {
@@ -28,7 +28,7 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
     }
     currentNumber++;
   }
-  assert(currentNumberLength > 1 && currentNumberLength < availableBufferSize);
+  assert(currentNumberLength > 0 && currentNumberLength < availableBufferSize);
   // Write the extension
   int dotCharIndex = 1 + currentNumberLength;
   buffer[dotCharIndex] = Ion::Storage::k_dotChar;

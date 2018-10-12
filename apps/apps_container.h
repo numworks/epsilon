@@ -20,7 +20,7 @@
 #include "picview/picview_app.h"
 #endif
 
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
+#ifdef EPSILON_BOOT_PROMPT
 #include "on_boarding/pop_up_controller.h"
 #endif
 
@@ -48,8 +48,8 @@ public:
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-  OnBoarding::PopUpController * updatePopUpController();
+#ifdef EPSILON_BOOT_PROMPT
+  OnBoarding::PopUpController * promptController();
 #endif
   void redrawWindow();
   // Exam pop-up controller delegate
@@ -73,8 +73,8 @@ private:
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
-#if EPSILON_SOFTWARE_UPDATE_PROMPT
-  OnBoarding::PopUpController m_updateController;
+#ifdef EPSILON_BOOT_PROMPT
+  OnBoarding::PopUpController m_promptController;
 #endif
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;

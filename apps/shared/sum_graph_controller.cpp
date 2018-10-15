@@ -243,7 +243,8 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
         EmptyLayout(EmptyLayoutNode::Color::Yellow, false, KDFont::SmallFont, false));
   } else {
     m_sumLayout = LayoutHelper::String(sigma, sizeof(sigma));
-    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    constexpr size_t bufferSize = 2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+    char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout start = LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
@@ -252,7 +253,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
         LayoutHelper::String(sigma, sizeof(sigma)),
         start,
         end);
-    strlcpy(buffer, "= ", 3);
+    strlcpy(buffer, "= ", bufferSize);
     PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     m_sumLayout = HorizontalLayout(
         m_sumLayout,

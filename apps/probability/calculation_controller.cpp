@@ -274,11 +274,12 @@ void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {
     m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", 4);
+    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters);
     currentChar += 3;
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+    const size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
+    char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
+    strlcpy(m_titleBuffer+currentChar, buffer, bufferSize - currentChar);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';
   }

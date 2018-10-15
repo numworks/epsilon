@@ -42,17 +42,16 @@ void TangentGraphController::reloadBannerView() {
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_function, 'x');
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_function, myApp);
-  char buffer[FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  char buffer[bufferSize];
   const char * legend = "a=";
-  int legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  int legendLength = strlcpy(buffer, legend, bufferSize);
   double y = m_function->approximateDerivative(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 4);
 
   legend = "b=";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  legendLength = strlcpy(buffer, legend, bufferSize);
   y = -y*m_cursor->x()+m_function->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 5);

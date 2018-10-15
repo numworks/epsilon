@@ -29,10 +29,11 @@ Sequence::Sequence(const char * text, KDColor color) :
 }
 
 uint32_t Sequence::checksum() {
-  char data[k_dataLengthInBytes/sizeof(char)] = {};
-  strlcpy(data, text(), TextField::maxBufferSize());
-  strlcpy(data+TextField::maxBufferSize(), firstInitialConditionText(), TextField::maxBufferSize());
-  strlcpy(data+2*TextField::maxBufferSize(), secondInitialConditionText(), TextField::maxBufferSize());
+  constexpr size_t dataSize = k_dataLengthInBytes/sizeof(char);
+  char data[dataSize] = {};
+  strlcpy(data, text(), dataSize);
+  strlcpy(data+TextField::maxBufferSize(), firstInitialConditionText(), dataSize - TextField::maxBufferSize());
+  strlcpy(data+2*TextField::maxBufferSize(), secondInitialConditionText(), dataSize - 2*TextField::maxBufferSize());
   int * intAdress = (int *)(&data[3*TextField::maxBufferSize()]);
   *intAdress = m_initialRank;
   data[k_dataLengthInBytes-3] = (char)m_type;

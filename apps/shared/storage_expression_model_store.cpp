@@ -25,12 +25,13 @@ int StorageExpressionModelStore::numberOfDefinedModels() const {
 }
 
 StorageExpressionModel * StorageExpressionModelStore::modelAtIndex(int i) const {
-  /* If the model index asked is out of the range of the memoized index, we
-   * translate the memoized models to include the model i at the closest
-   * extremity of the array. */
-  if (i >= m_firstMemoizedModelIndex+k_maxNumberOfMemoizedModels || i < m_firstMemoizedModelIndex) {
-    int deltaIndex = i >= m_firstMemoizedModelIndex + k_maxNumberOfMemoizedModels ? i - k_maxNumberOfMemoizedModels + 1 - m_firstMemoizedModelIndex : i - m_firstMemoizedModelIndex;
-    // Translate memoized models
+  /* If i is out of the range of memoized indexes, we relocate the memoized
+   * models to include the model i at the closest extremity of the array. */
+  if (i >= m_firstMemoizedModelIndex + k_maxNumberOfMemoizedModels || i < m_firstMemoizedModelIndex) {
+    int deltaIndex = i >= m_firstMemoizedModelIndex + k_maxNumberOfMemoizedModels ?
+      i - (k_maxNumberOfMemoizedModels + m_firstMemoizedModelIndex) + 1:
+      i - m_firstMemoizedModelIndex;
+    // Relocate memoized models
     for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
       int j = deltaIndex + i;
       if (j >= 0 && j < k_maxNumberOfMemoizedModels) {
@@ -50,9 +51,12 @@ StorageExpressionModel * StorageExpressionModelStore::modelAtIndex(int i) const 
    * - Storage changed since last built. For instance, if f(x) = A+x, if A
    *   changes, we need to unmemoize f. */
   if (memoizedModelAtIndex(i-m_firstMemoizedModelIndex)->isNull() || currentStorageChecksum != m_storageChecksum) {
+    if (currentStorageChecksum != m_storageChecksum) {
+      resetMemoizedModels();
+      m_storageChecksum = currentStorageChecksum;
+    }
     Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(modelExtension(), i);
     setMemoizedModelAtIndex(i-m_firstMemoizedModelIndex, record);
-    m_storageChecksum = currentStorageChecksum;
   }
   return memoizedModelAtIndex(i-m_firstMemoizedModelIndex);
 }
@@ -91,6 +95,13 @@ void StorageExpressionModelStore::tidy() {
   while (!m->isNull()) {
     m->tidy();
     m = modelAtIndex(i++);
+  }
+}
+
+void StorageExpressionModelStore::resetMemoizedModels() const {
+  Ion::Storage::Record emptyRecord;
+  for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
+    setMemoizedModelAtIndex(i, emptyRecord);
   }
 }
 

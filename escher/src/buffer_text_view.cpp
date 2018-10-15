@@ -23,6 +23,6 @@ void BufferTextView::appendText(const char * text) {
   size_t previousTextLength = strlen(m_buffer);
   size_t argTextLength = strlen(text);
   if (previousTextLength + argTextLength + 1 < k_maxNumberOfChar) {
-    strlcpy(&m_buffer[previousTextLength], text, argTextLength + 1);
+    strlcpy(&m_buffer[previousTextLength], text, k_maxNumberOfChar - previousTextLength);
   }
 }

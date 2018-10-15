@@ -4,6 +4,8 @@
 
 namespace Code {
 
+static inline int min(int x, int y) { return (x<y ? x : y); }
+
 ConsoleStore::ConsoleStore() :
   m_history{0}
 {
@@ -112,7 +114,7 @@ void ConsoleStore::push(const char marker, const char * text, size_t length) {
     i = indexOfNullMarker();
   }
   m_history[i] = marker;
-  strlcpy(&m_history[i+1], text, textLength+1);
+  strlcpy(&m_history[i+1], text, min(k_historySize-(i+1),textLength+1));
   m_history[i+1+textLength+1] = 0;
 }
 

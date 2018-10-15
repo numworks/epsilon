@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Graph {
 
 StorageValuesController::StorageValuesController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, Interval * interval, ButtonRowController * header) :
-  Shared::StorageValuesController(parentResponder, header, I18n::Message::XColumn, &m_intervalParameterController, interval),
+  Shared::StorageValuesController(parentResponder, header, I18n::Message::X, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionStore(functionStore),

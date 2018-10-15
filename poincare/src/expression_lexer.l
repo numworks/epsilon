@@ -180,6 +180,7 @@ inf { *yylval = Infinity(false); return TERM; }
 u { return UNDEFINED_SYMBOL; }
 v { return UNDEFINED_SYMBOL; }
 w { return UNDEFINED_SYMBOL; }
+x { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
  /*TODO prevent u,v or w symbol with something like ((?![uvw])[A-Za-z\_][A-Za-z\_0-9]*)  ? */
 ([A-Za-z\_][A-Za-z\_0-9]*) { *yylval = Poincare::Symbol(yytext, yyleng); return SYMBOL; }
 . { return UNDEFINED_SYMBOL; }

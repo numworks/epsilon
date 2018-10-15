@@ -21,18 +21,18 @@ const char * IntersectionGraphController::title() {
 void IntersectionGraphController::reloadBannerView() {
   m_bannerView->setNumberOfSubviews(2);
   reloadBannerViewForCursorOnFunction(m_cursor, m_function, 'x');
-  char buffer[FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  char buffer[bufferSize];
   const char * space = "                  ";
   int spaceLength = strlen(space);
   const char * legend = "0(x)=0(x)=";
   int legendLength = strlen(legend);
   int numberOfChar = 0;
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
+  numberOfChar += strlcpy(buffer, legend, bufferSize);
   buffer[0] = m_function->name()[0];
   buffer[5] = m_intersectedFunction->name()[0];
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  strlcpy(buffer+numberOfChar, space, spaceLength+1);
+  strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
   buffer[FunctionBannerDelegate::k_maxDigitLegendLength+legendLength] = 0;
   bannerView()->setLegendAtIndex(buffer, 1);
 }

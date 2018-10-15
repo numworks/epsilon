@@ -17,17 +17,17 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 }
 
 void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, CartesianFunction * function, TextFieldDelegateApp * app) {
-  char buffer[FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  char buffer[bufferSize];
   const char * space = "                  ";
   int spaceLength = strlen(space);
   const char * legend = "00(x)=";
-  int legendLength = strlen(legend);
-  int numberOfChar = strlcpy(buffer, legend, legendLength+1);
+  int numberOfChar = strlcpy(buffer, legend, bufferSize);
   buffer[0] = function->name()[0];
   buffer[1] = '\'';
   double y = function->approximateDerivative(cursor->x(), app->localContext());
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits);
-  strlcpy(buffer+numberOfChar, space, spaceLength+1);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits);
+  strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
   buffer[k_maxDigitLegendLength+6] = 0;
   bannerView()->setLegendAtIndex(buffer, 2);
 }

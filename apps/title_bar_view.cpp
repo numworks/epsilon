@@ -82,18 +82,16 @@ void TitleBarView::layoutSubviews() {
 }
 
 void TitleBarView::refreshPreferences() {
-  char buffer[13];
+  constexpr size_t bufferSize = 13;
+  char buffer[bufferSize];
   int numberOfChar = 0;
   if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Scientific) {
-    strlcpy(buffer, I18n::translate(I18n::Message::Sci), strlen(I18n::translate(I18n::Message::Sci))+1);
-    numberOfChar += strlen(I18n::translate(I18n::Message::Sci));
+    numberOfChar += strlcpy(buffer, I18n::translate(I18n::Message::Sci), bufferSize);
   }
   if (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Radian) {
-    strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), strlen(I18n::translate(I18n::Message::Rad))+1);
-    numberOfChar += strlen(I18n::translate(I18n::Message::Rad));
+    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), bufferSize - numberOfChar);
   } else {
-    strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), strlen(I18n::translate(I18n::Message::Sci))+1);
-    numberOfChar += strlen(I18n::translate(I18n::Message::Deg));
+    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), bufferSize - numberOfChar);
   }
   buffer[numberOfChar] = 0;
   m_preferenceView.setText(buffer);

@@ -122,7 +122,7 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
     return -1;
   }
   if (bufferSize == 1) {
-    buffer[bufferSize-1] = 0;
+    buffer[0] = 0;
     return 0;
   }
   /* Special cases for all special symbols */

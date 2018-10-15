@@ -99,7 +99,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, int locatio
   for (int k = m_currentDraftTextLength; k >= location && k >= 0; k--) {
     m_draftTextBuffer[k+textSize] = m_draftTextBuffer[k];
   }
-  strlcpy(&m_draftTextBuffer[location], text, textSize);
+  strlcpy(&m_draftTextBuffer[location], text, m_textBufferSize-location);
   if (location+textSize > 0) {
     m_draftTextBuffer[location+textSize-1] = text[textSize-1];
   }

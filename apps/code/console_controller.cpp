@@ -332,13 +332,14 @@ void ConsoleController::printText(const char * text, size_t length) {
 void ConsoleController::autoImportScript(Script script, bool force) {
   if (script.importationStatus() || force) {
     // Create the command "from scriptName import *".
+    assert(strlen(k_importCommand1) + strlen(script.name()) - strlen(ScriptStore::k_scriptExtension) + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
     char command[k_maxImportCommandSize];
-    size_t currentChar = strlcpy(command, k_importCommand1, strlen(k_importCommand1)+1);
+    size_t currentChar = strlcpy(command, k_importCommand1, k_maxImportCommandSize);
     const char * scriptName = script.name();
-    currentChar += strlcpy(command+currentChar, scriptName, strlen(scriptName)+1);
+    currentChar += strlcpy(command+currentChar, scriptName, k_maxImportCommandSize - currentChar);
     // Remove the name extension ".py"
     currentChar -= strlen(ScriptStore::k_scriptExtension);
-    currentChar += strlcpy(command+currentChar, k_importCommand2, strlen(k_importCommand2)+1);
+    currentChar += strlcpy(command+currentChar, k_importCommand2, k_maxImportCommandSize - currentChar);
     runAndPrintForCommand(command);
   }
   if (force) {

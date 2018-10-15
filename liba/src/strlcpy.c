@@ -2,7 +2,7 @@
 
 size_t strlcpy(char * dst, const char * src, size_t len) {
   if (len == 0) {
-    return 0;
+    return strlen(src);
   }
   const char * cur = src;
   const char * end = src+len-1;
@@ -10,5 +10,8 @@ size_t strlcpy(char * dst, const char * src, size_t len) {
     *dst++ = *cur++;
   }
   *dst = 0;
+  while (*cur != 0) {
+    cur++;
+  }
   return cur-src;
 }

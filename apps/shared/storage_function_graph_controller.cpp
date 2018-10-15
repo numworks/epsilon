@@ -135,12 +135,13 @@ void StorageFunctionGraphController::initCursorParameters() {
 }
 
 bool StorageFunctionGraphController::moveCursorVertically(int direction) {
-  int actualActiveFunctionIndex = indexFunctionSelectedByCursor();
+  int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double y = functionStore()->activeFunctionAtIndex(actualActiveFunctionIndex)->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-  int nextActiveFunctionIndex = actualActiveFunctionIndex;
+  double y = functionStore()->activeFunctionAtIndex(currentActiveFunctionIndex)->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+  int nextActiveFunctionIndex = currentActiveFunctionIndex;
   double nextY = direction > 0 ? DBL_MAX : -DBL_MAX;
-  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+  int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
+  for (int i = 0; i < activeFunctionsCount; i++) {
     double newY = functionStore()->activeFunctionAtIndex(i)->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
@@ -149,7 +150,7 @@ bool StorageFunctionGraphController::moveCursorVertically(int direction) {
       nextActiveFunctionIndex = i;
     }
   }
-  if (nextActiveFunctionIndex == actualActiveFunctionIndex) {
+  if (nextActiveFunctionIndex == currentActiveFunctionIndex) {
     return false;
   }
   m_cursor->moveTo(m_cursor->x(), nextY);

@@ -20,10 +20,6 @@ const char * StorageListParameterController::title() {
   return I18n::translate(I18n::Message::FunctionOptions);
 }
 
-View * StorageListParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void StorageListParameterController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
@@ -57,27 +53,15 @@ bool StorageListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int StorageListParameterController::numberOfRows() {
-  return k_totalNumberOfCell;
-};
-
 HighlightCell * StorageListParameterController::reusableCell(int index) {
   assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
+  assert(index < totalNumberOfCells());
 #if FUNCTION_COLOR_CHOICE
   HighlightCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
 #else
   HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
 #endif
   return cells[index];
-}
-
-int StorageListParameterController::reusableCellCount() {
-  return k_totalNumberOfCell;
-}
-
-KDCoordinate StorageListParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
 }
 
 bool StorageListParameterController::handleEnterOnRow(int rowIndex) {

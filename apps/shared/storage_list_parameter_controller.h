@@ -11,28 +11,32 @@ class StorageListParameterController : public ViewController, public SimpleListV
 public:
   StorageListParameterController(Responder * parentResponder, StorageFunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
 
-  View * view() override;
+  View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   virtual void setFunction(StorageFunction * function);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  int numberOfRows() override;
-  KDCoordinate cellHeight() override;
+  int numberOfRows() override { return totalNumberOfCells(); }
+  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  int reusableCellCount() override { return totalNumberOfCells(); }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
-  bool handleEnterOnRow(int rowIndex);
+  virtual bool handleEnterOnRow(int rowIndex);
+  virtual int totalNumberOfCells() const {
+#if FUNCTION_COLOR_CHOICE
+    return 3;
+#else
+    return 2;
+#endif
+  }
   SelectableTableView m_selectableTableView;
   StorageFunctionStore * m_functionStore;
   StorageFunction * m_function;
 private:
 #if FUNCTION_COLOR_CHOICE
-  constexpr static int k_totalNumberOfCell = 3;
   MessageTableCellWithChevron m_colorCell;
-#else
-  constexpr static int k_totalNumberOfCell = 2;
 #endif
   MessageTableCellWithSwitch m_enableCell;
   MessageTableCell m_deleteCell;

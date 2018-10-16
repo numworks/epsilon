@@ -55,7 +55,9 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
+    computeTitlesColumnWidth();
     m_selectableTableView.selectedCell()->setHighlighted(true);
+    m_selectableTableView.reloadData();
     app()->setFirstResponder(&m_selectableTableView);
     return true;
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {

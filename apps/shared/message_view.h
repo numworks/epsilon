@@ -13,7 +13,7 @@ protected:
   void layoutSubviews() override;
 private:
   constexpr static KDCoordinate k_titleMargin = 40;
-  constexpr static KDCoordinate k_paragraphHeight = 100;
+  constexpr static KDCoordinate k_paragraphHeight = 90;
   constexpr static uint8_t k_maxNumberOfMessages = 8;
   MessageTextView m_messageTextViews[k_maxNumberOfMessages];
   uint8_t m_numberOfMessages;

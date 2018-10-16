@@ -15,15 +15,19 @@ using namespace Shared;
 static I18n::Message sPromptMessages[] = {
   I18n::Message::BetaVersion,
   I18n::Message::BetaVersionMessage1,
-  I18n::Message::BlankMessage,
   I18n::Message::BetaVersionMessage2,
   I18n::Message::BetaVersionMessage3,
-  I18n::Message::UpdateMessage4};
+  I18n::Message::BlankMessage,
+  I18n::Message::BetaVersionMessage4,
+  I18n::Message::BetaVersionMessage5,
+  I18n::Message::BetaVersionMessage6};
 
 static KDColor sPromptColors[] = {
   KDColorBlack,
   KDColorBlack,
   KDColorBlack,
+  KDColorBlack,
+  KDColorWhite,
   KDColorBlack,
   KDColorBlack,
   Palette::YellowDark};
@@ -55,7 +59,9 @@ AppsContainer::AppsContainer() :
   m_globalContext(),
   m_variableBoxController(&m_globalContext),
   m_examPopUpController(this),
-#ifdef EPSILON_BOOT_PROMPT
+#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
+  m_promptController(sPromptMessages, sPromptColors, 8),
+#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   m_promptController(sPromptMessages, sPromptColors, 6),
 #endif
   m_batteryTimer(BatteryTimer(this)),

@@ -8,8 +8,8 @@ using namespace Shared;
 
 namespace Graph {
 
-StorageListController::StorageListController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::StorageFunctionListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
+StorageListController::StorageListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
+  Shared::StorageFunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{ //TODO find better initialization
     TextFieldFunctionTitleCell(this),
     TextFieldFunctionTitleCell(this),
@@ -18,7 +18,7 @@ StorageListController::StorageListController(Responder * parentResponder, Storag
     TextFieldFunctionTitleCell(this),
   },
   m_expressionCells{},
-  m_parameterController(this, this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
+  m_parameterController(this, this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
@@ -51,7 +51,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   }
 
   // Set the name
-  Ion::Storage::Record::ErrorStatus error = StorageCartesianFunction::baseNameCompliant(baseName) ? m_functionStore->modelAtIndex(m_selectableTableView.selectedRow())->setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
+  Ion::Storage::Record::ErrorStatus error = StorageCartesianFunction::baseNameCompliant(baseName) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
@@ -91,9 +91,9 @@ HighlightCell * StorageListController::expressionCells(int index) {
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   TextFieldFunctionTitleCell * myFunctionCell = (TextFieldFunctionTitleCell *)cell;
-  StorageFunction * function = m_functionStore->modelAtIndex(j);
+  StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   char bufferName[BufferTextView::k_maxNumberOfChar];
-  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, m_functionStore->symbol());
+  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
   myFunctionCell->setText(bufferName);
   KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
   myFunctionCell->setColor(functionNameColor);
@@ -102,7 +102,7 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   Shared::StorageFunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  StorageFunction * f = m_functionStore->modelAtIndex(j);
+  StorageFunction * f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }

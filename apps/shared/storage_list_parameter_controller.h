@@ -9,12 +9,12 @@ namespace Shared {
 
 class StorageListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  StorageListParameterController(Responder * parentResponder, StorageFunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
+  StorageListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
 
   View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  virtual void setFunction(StorageFunction * function);
+  virtual void setRecord(Ion::Storage::Record record);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   int numberOfRows() override { return totalNumberOfCells(); }
@@ -32,9 +32,10 @@ protected:
 #endif
   }
   SelectableTableView m_selectableTableView;
-  StorageFunctionStore * m_functionStore;
-  StorageFunction * m_function;
+  Ion::Storage::Record m_record;
 private:
+  StorageFunction * function();
+  StorageFunctionStore * functionStore();
 #if FUNCTION_COLOR_CHOICE
   MessageTableCellWithChevron m_colorCell;
 #endif

@@ -1,13 +1,13 @@
 #include "storage_function_list_controller.h"
+#include "storage_function_app.h"
 
 namespace Shared {
 
 static inline int max(int x, int y) { return x > y ? x : y; }
 
-StorageFunctionListController::StorageFunctionListController(Responder * parentResponder, StorageFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
+StorageFunctionListController::StorageFunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   StorageExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),
-  m_functionStore(functionStore),
   m_selectableTableView(this, this, this, this),
   m_emptyCell(),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
@@ -178,12 +178,12 @@ bool StorageFunctionListController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedColumn() == 0);
-    configureFunction(m_functionStore->modelAtIndex(modelIndexForRow(selectedRow())));
+    configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    StorageFunction * function = m_functionStore->modelAtIndex(modelIndexForRow(selectedRow()));
-    if (removeModelRow(function)) {
+    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    if (removeModelRow(record)) {
       int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
       selectCellAtLocation(selectedColumn(), newSelectedRow);
       selectableTableView()->reloadData();
@@ -218,9 +218,9 @@ StackViewController * StorageFunctionListController::stackController() const {
   return static_cast<StackViewController *>(parentResponder()->parentResponder()->parentResponder());
 }
 
-void StorageFunctionListController::configureFunction(StorageFunction * function) {
+void StorageFunctionListController::configureFunction(Ion::Storage::Record record) {
   StackViewController * stack = stackController();
-  parameterController()->setFunction(function);
+  parameterController()->setRecord(record);
   stack->push(parameterController());
 }
 
@@ -233,6 +233,11 @@ TabViewController * StorageFunctionListController::tabController() const {
   return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
+StorageFunctionStore * StorageFunctionListController::modelStore() {
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  return myApp->functionStore();
+}
+
 InputViewController * StorageFunctionListController::inputController() {
   FunctionApp * myApp = static_cast<FunctionApp *>(app());
   return myApp->inputViewController();
@@ -240,10 +245,10 @@ InputViewController * StorageFunctionListController::inputController() {
 
 KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
   int maxNameLength = 0;
-  int numberOfModels = m_functionStore->numberOfModels();
+  int numberOfModels = modelStore()->numberOfModels();
   for (int i = 0; i < numberOfModels; i++) {
-    StorageFunction * function = m_functionStore->modelAtIndex(i);
-    const char * functionName = function->fullName();
+    Ion::Storage::Record record = modelStore()->recordAtIndex(i);
+    const char * functionName = record.fullName();
     const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
     assert(dotPosition != nullptr);
     maxNameLength = max(maxNameLength, dotPosition-functionName);

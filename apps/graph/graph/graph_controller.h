@@ -28,18 +28,17 @@ private:
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
-  StorageCartesianFunctionStore * functionStore() const override;
   GraphView * functionGraphView() override;
   View * cursorView() override {
     return &m_cursorView;
   }
   CurveParameterController * curveParameterController() override;
+  StorageCartesianFunctionStore * functionStore() const override { return static_cast<StorageCartesianFunctionStore *>(Shared::StorageFunctionGraphController::functionStore()); }
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
-  StorageCartesianFunctionStore * m_functionStore;
   bool m_displayDerivativeInBanner;
 };
 

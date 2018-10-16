@@ -14,10 +14,10 @@ public:
   StorageFunctionStore() : StorageExpressionModelStore() {}
   uint32_t storeChecksum();
   // An active function must be defined to be counted
-  int numberOfActiveFunctions() const;
-  virtual StorageFunction * modelAtIndex(int i) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::modelAtIndex(i)); }
-  virtual StorageFunction * definedModelAtIndex(int i) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::definedModelAtIndex(i)); }
-  virtual StorageFunction * activeFunctionAtIndex(int i) const;
+  int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest([](StorageExpressionModel * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
+  Ion::Storage::Record activeRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](StorageExpressionModel * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
+
+  StorageFunction * modelForRecord(Ion::Storage::Record record) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::modelForRecord(record)); }
 
   virtual char symbol() const = 0;
 };

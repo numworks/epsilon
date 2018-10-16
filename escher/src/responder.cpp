@@ -74,8 +74,8 @@ Responder * Responder::commonAncestorWith(Responder * responder) {
 }
 
 /* We assume the app is the root parent. */
-App * Responder::app() {
-  Responder * rootResponder = this;
+App * Responder::app() const {
+  const Responder * rootResponder = this;
   while (rootResponder->parentResponder() != nullptr) {
     rootResponder = rootResponder->parentResponder();
   }

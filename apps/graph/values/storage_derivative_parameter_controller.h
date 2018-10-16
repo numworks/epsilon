@@ -2,7 +2,7 @@
 #define GRAPH_STORAGE_DERIVATIVE_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "../../shared/storage_cartesian_function.h"
+#include "../storage_cartesian_function_store.h"
 
 namespace Graph {
 
@@ -20,10 +20,11 @@ public:
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
-  void setFunction(Shared::StorageCartesianFunction * function) {
-    m_function = function;
+  void setRecord(Ion::Storage::Record record) {
+    m_record = record;
   }
 private:
+  StorageCartesianFunctionStore * functionStore();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else
@@ -36,7 +37,7 @@ private:
   MessageTableCellWithChevron m_copyColumn;
 #endif
   SelectableTableView m_selectableTableView;
-  Shared::StorageCartesianFunction * m_function;
+  Ion::Storage::Record m_record;
   StorageValuesController * m_valuesController;
 };
 

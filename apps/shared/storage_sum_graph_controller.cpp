@@ -1,4 +1,5 @@
 #include "storage_sum_graph_controller.h"
+#include "storage_function_app.h"
 #include "../apps_container.h"
 #include <poincare_layouts.h>
 #include <poincare/layout_helper.h>
@@ -17,7 +18,7 @@ StorageSumGraphController::StorageSumGraphController(Responder * parentResponder
   m_step(Step::FirstParameter),
   m_startSum(NAN),
   m_endSum(NAN),
-  m_function(nullptr),
+  m_record(),
   m_graphRange(range),
   m_graphView(graphView),
   m_legendView(this, sumSymbol),
@@ -100,11 +101,10 @@ bool StorageSumGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool StorageSumGraphController::moveCursorHorizontallyToPosition(double x) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  if (m_function == nullptr) {
-    return false;
-  }
-  double y = m_function->evaluateAtAbscissa(x, myApp->localContext());
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  assert(!m_record.isNull());
+  StorageFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  double y = function->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   if (m_step == Step::FirstParameter) {
     m_startSum = m_cursor->x();
@@ -119,9 +119,9 @@ bool StorageSumGraphController::moveCursorHorizontallyToPosition(double x) {
   return true;
 }
 
-void StorageSumGraphController::setFunction(StorageFunction * function) {
-  m_graphView->selectFunction(function);
-  m_function = function;
+void StorageSumGraphController::setRecord(Ion::Storage::Record record) {
+  m_graphView->selectRecord(record);
+  m_record = record;
 }
 
 bool StorageSumGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
@@ -189,9 +189,11 @@ bool StorageSumGraphController::handleEnter() {
     return true;
   }
   m_step = (Step)((int)m_step+1);
-  TextFieldDelegateApp * myApp = static_cast<TextFieldDelegateApp *>(app());
-  double sum = m_function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
-  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, createFunctionLayout(m_function));
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  assert(!m_record.isNull());
+  StorageFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  double sum = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
+  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, createFunctionLayout(function));
   m_legendView.setLegendMessage(I18n::Message::Default, m_step);
   m_graphView->setAreaHighlightColor(true);
   m_graphView->setCursorView(nullptr);

@@ -1,13 +1,13 @@
 #include "storage_list_parameter_controller.h"
+#include "storage_function_app.h"
 #include <assert.h>
 
 namespace Shared {
 
-StorageListParameterController::StorageListParameterController(Responder * parentResponder, StorageFunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
+StorageListParameterController::StorageListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, this, tableDelegate),
-  m_functionStore(functionStore),
-  m_function(nullptr),
+  m_record(),
 #if FUNCTION_COLOR_CHOICE
   m_colorCell(functionColorMessage),
 #endif
@@ -37,12 +37,12 @@ void StorageListParameterController::viewWillAppear() {
 void StorageListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell) {
     SwitchView * switchView = (SwitchView *)m_enableCell.accessoryView();
-    switchView->setState(m_function->isActive());
+    switchView->setState(function()->isActive());
   }
 }
 
-void StorageListParameterController::setFunction(StorageFunction * function) {
-  m_function = function;
+void StorageListParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
   selectCellAtLocation(0, 0);
 }
 
@@ -74,7 +74,7 @@ bool StorageListParameterController::handleEnterOnRow(int rowIndex) {
 #else
     case 0:
 #endif
-      m_function->setActive(!m_function->isActive());
+      function()->setActive(!function()->isActive());
       m_selectableTableView.reloadData();
       return true;
 #if FUNCTION_COLOR_CHOICE
@@ -82,27 +82,26 @@ bool StorageListParameterController::handleEnterOnRow(int rowIndex) {
 #else
       case 1:
 #endif
-    {
-      if (m_functionStore->numberOfModels() > 1) {
-        m_functionStore->removeModel(m_function);
+      {
+        assert(functionStore()->numberOfModels() > 0);
+        functionStore()->removeModel(m_record);
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;
-      } else {
-        if (m_functionStore->numberOfDefinedModels() == 1) {
-          StorageFunction * f = m_functionStore->definedModelAtIndex(0);
-          f->setContent("");
-          StackViewController * stack = (StackViewController *)(parentResponder());
-          stack->pop();
-          return true;
-        }
-        app()->displayWarning(I18n::Message::NoFunctionToDelete);
-        return true;
       }
-  }
-  default:
-    return false;
+      default:
+        return false;
   }
 }
+
+StorageFunction * StorageListParameterController::function() {
+  return functionStore()->modelForRecord(m_record);
+}
+
+StorageFunctionStore * StorageListParameterController::functionStore() {
+  StorageFunctionApp * a = static_cast<StorageFunctionApp *>(app());
+  return a->functionStore();
+}
+
 
 }

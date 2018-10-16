@@ -9,8 +9,8 @@ class StorageListController;
 
 class ListParameterController : public Shared::StorageListParameterController {
 public:
-  ListParameterController(StorageListController * listController, Responder * parentResponder, Shared::StorageFunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr) :
-    Shared::StorageListParameterController(parentResponder, functionStore, functionColorMessage, deleteFunctionMessage, tableDelegate),
+  ListParameterController(StorageListController * listController, Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr) :
+    Shared::StorageListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage, tableDelegate),
     m_listController(listController),
     m_renameCell(I18n::Message::Rename)
   {}

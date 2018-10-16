@@ -1,5 +1,5 @@
 #include "storage_function_go_to_parameter_controller.h"
-#include "text_field_delegate_app.h"
+#include "storage_function_app.h"
 #include <assert.h>
 #include <cmath>
 
@@ -7,7 +7,7 @@ namespace Shared {
 
 StorageFunctionGoToParameterController::StorageFunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
   GoToParameterController(parentResponder, graphRange, cursor, symbol),
-  m_function(nullptr)
+  m_record()
 {
 }
 
@@ -22,8 +22,9 @@ double StorageFunctionGoToParameterController::parameterAtIndex(int index) {
 
 bool StorageFunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  float y = m_function->evaluateAtAbscissa(f, myApp->localContext());
+  StorageFunctionApp * myApp = (StorageFunctionApp *)app();
+  StorageFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  float y = function->evaluateAtAbscissa(f, myApp->localContext());
   if (std::fabs(f) > k_maxDisplayableFloat || std::fabs(y) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
@@ -38,8 +39,8 @@ bool StorageFunctionGoToParameterController::setParameterAtIndex(int parameterIn
   return true;
 }
 
-void StorageFunctionGoToParameterController::setFunction(StorageFunction * function) {
-  m_function = function;
+void StorageFunctionGoToParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
 }
 
 }

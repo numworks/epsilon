@@ -2,10 +2,11 @@
 #define GRAPH_STORAGE_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "../../shared/storage_function_list_controller.h"
+#include "text_field_function_title_cell.h"
 #include "../storage_cartesian_function_store.h"
-#include "../../shared/buffer_function_title_cell.h"
-#include "../../shared/function_expression_cell.h"
+#include <apps/shared/storage_function_list_controller.h>
+#include <apps/shared/buffer_function_title_cell.h>
+#include <apps/shared/function_expression_cell.h>
 #include <apps/shared/storage_list_parameter_controller.h>
 
 namespace Graph {
@@ -22,7 +23,7 @@ private:
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   constexpr static int k_maxNumberOfDisplayableRows = 5;
-  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
+  TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   Shared::StorageListParameterController m_parameterController;
 };

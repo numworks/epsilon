@@ -42,7 +42,7 @@ HighlightCell * StorageListController::expressionCells(int index) {
 }
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
-  Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
+  TextFieldFunctionTitleCell * myFunctionCell = (TextFieldFunctionTitleCell *)cell;
   StorageFunction * function = m_functionStore->modelAtIndex(j);
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, m_functionStore->symbol());

@@ -22,6 +22,7 @@ protected:
   public:
     ContentView(const KDFont * font);
     void setFont(const KDFont * font);
+    const KDFont * font() const { return m_font; }
     size_t cursorLocation() const { return m_cursorIndex; }
     void setCursorLocation(int cursorLocation);
     virtual const char * text() const = 0;

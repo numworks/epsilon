@@ -55,6 +55,7 @@ protected:
   virtual const ContentView * nonEditableContentView() const = 0;
 private:
   virtual TextInputDelegate * delegate() = 0;
+  virtual void willSetCursorLocation(int * location) {}
 };
 
 #endif

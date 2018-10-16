@@ -3,6 +3,7 @@
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
+#include <escher/palette.h>
 #include <float.h>
 #include <cmath>
 

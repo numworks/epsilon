@@ -243,7 +243,7 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = max(maxNameLength, dotPosition-functionName);
   }
-  return (maxNameLength + 3)*KDText::charSize(titleCells(0)->fontSize()).width(); //+3 for "(x)"
+  return (maxNameLength + StorageFunction::k_parenthesedArgumentLength) * KDText::charSize(titleCells(0)->fontSize()).width();
 }
 
 void StorageFunctionListController::computeTitlesColumnWidth() {

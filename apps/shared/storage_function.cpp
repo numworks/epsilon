@@ -8,6 +8,8 @@ using namespace Poincare;
 
 namespace Shared {
 
+char StorageFunction::k_parenthesedArgument[]("(x)");
+
 uint32_t StorageFunction::checksum() {
   assert(!isNull());
   return checksum();
@@ -28,16 +30,15 @@ void StorageFunction::setActive(bool active) {
 int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
   const char * functionName = fullName();
   size_t index = 0;
-  const char ofXSring[4] = {'(',arg,')', 0};
-  size_t ofXSringLength = strlen(ofXSring);
+  k_parenthesedArgument[1] = arg;
   while (*functionName != Ion::Storage::k_dotChar
-      && index < bufferSize - ofXSringLength - 1)
+      && index < bufferSize - k_parenthesedArgumentLength - 1)
   {
     // We keep room to write the final "(x)" //TODO should we?
     assert(functionName < fullName() + strlen(fullName()));
     buffer[index++] = *functionName++;
   }
-  return index + strlcpy(&buffer[index], ofXSring, bufferSize-index);
+  return index + strlcpy(&buffer[index], k_parenthesedArgument, bufferSize-index);
 }
 
 template<typename T>

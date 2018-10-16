@@ -1,7 +1,6 @@
 #ifndef SHARED_STORAGE_FUNCTION_H
 #define SHARED_STORAGE_FUNCTION_H
 
-#include <escher/text_field.h>
 #include <poincare/function.h>
 #include "storage_expression_model.h"
 

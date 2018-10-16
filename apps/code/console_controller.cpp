@@ -331,15 +331,25 @@ void ConsoleController::printText(const char * text, size_t length) {
 
 void ConsoleController::autoImportScript(Script script, bool force) {
   if (script.importationStatus() || force) {
-    // Create the command "from scriptName import *".
+    // Step 1 - Create the command "from scriptName import *".
+
     assert(strlen(k_importCommand1) + strlen(script.name()) - strlen(ScriptStore::k_scriptExtension) + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
     char command[k_maxImportCommandSize];
+
+    // Copy "from "
     size_t currentChar = strlcpy(command, k_importCommand1, k_maxImportCommandSize);
     const char * scriptName = script.fullName();
-    currentChar += strlcpy(command+currentChar, scriptName, k_maxImportCommandSize - currentChar);
-    // Remove the name extension ".py"
-    currentChar -= strlen(ScriptStore::k_scriptExtension);
-    currentChar += strlcpy(command+currentChar, k_importCommand2, k_maxImportCommandSize - currentChar);
+
+    /* Copy the script name without the extension ".py". The '.' is overwritten
+     * by the null terminating char. */
+    int copySizeWithNullTerminatingZero = min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
+    currentChar += copySizeWithNullTerminatingZero-1;
+
+    // Copy " import *"
+    strlcpy(command+currentChar, k_importCommand2, k_maxImportCommandSize - currentChar);
+
+    // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
   if (force) {

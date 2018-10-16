@@ -15,12 +15,12 @@ public:
   View * view() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
-  void setFunction(StorageFunction * function);
+  void setRecord(Ion::Storage::Record recor);
 protected:
   bool handleGotoSelection();
   MessageTableCellWithChevron m_goToCell;
   SelectableTableView m_selectableTableView;
-  StorageFunction * m_function;
+  Ion::Storage::Record m_record;
 private:
   virtual StorageFunctionGoToParameterController * goToParameterController() = 0;
 };

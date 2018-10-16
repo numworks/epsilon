@@ -10,15 +10,12 @@ namespace Graph {
 
 class StorageCartesianFunctionStore : public Shared::StorageFunctionStore {
 public:
-  Shared::StorageCartesianFunction * modelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::modelAtIndex(i)); }
-  Shared::StorageCartesianFunction * activeFunctionAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::activeFunctionAtIndex(i)); }
-  Shared::StorageCartesianFunction * definedModelAtIndex(int i) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::definedModelAtIndex(i)); }
+  Shared::StorageCartesianFunction * modelForRecord(Ion::Storage::Record record) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::modelForRecord(record)); }
   char symbol() const override { return 'x'; }
 private:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   const char * modelExtension() const override { return Shared::GlobalContext::funcExtension; }
   void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
-  void moveMemoizedModel(int newIndex, int previousIndex) const override;
   Shared::StorageExpressionModel * memoizedModelAtIndex(int cacheIndex) const override;
   mutable Shared::StorageCartesianFunction m_functions[k_maxNumberOfMemoizedModels];
 };

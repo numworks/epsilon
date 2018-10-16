@@ -13,7 +13,7 @@ public:
     ViewController(nullptr),
     m_copyColumn(I18n::Message::CopyColumnInList),
     m_selectableTableView(this, this, this),
-    m_function(nullptr),
+    m_record(),
     m_symbol(symbol)
   {}
 
@@ -27,13 +27,13 @@ public:
     return &m_copyColumn;
   }
   virtual int reusableCellCount() override { return 1; }
-  virtual void setFunction(StorageFunction * function) { m_function = function; }
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
 protected:
   MessageTableCellWithChevron m_copyColumn;
   SelectableTableView m_selectableTableView;
+  Ion::Storage::Record m_record;
 private:
   char m_pageTitle[StorageFunction::k_maxNameWithArgumentSize];
-  StorageFunction * m_function;
   char m_symbol;
 };
 

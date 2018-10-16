@@ -16,16 +16,15 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setFunction(Shared::StorageFunction * function) override;
   void viewWillAppear() override;
 private:
+  Shared::StorageCartesianFunction * function();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else
   constexpr static int k_totalNumberOfCell = 1;
 #endif
   MessageTableCellWithSwitch m_displayDerivativeColumn;
-  Shared::StorageCartesianFunction * m_cartesianFunction;
   StorageValuesController * m_valuesController;
 };
 

@@ -18,7 +18,7 @@ public:
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(StorageFunction * function);
+  void setRecord(Ion::Storage::Record record);
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
@@ -32,7 +32,7 @@ protected:
   Step m_step;
   double m_startSum;
   double m_endSum;
-  StorageFunction * m_function;
+  Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
 private:
   constexpr static float k_cursorTopMarginRatio = 0.06f;   // (cursorHeight/2)/graphViewHeight

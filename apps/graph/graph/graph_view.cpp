@@ -24,10 +24,11 @@ void GraphView::reload() {
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   StorageFunctionGraphView::drawRect(ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    StorageCartesianFunction * f = m_functionStore->activeFunctionAtIndex(i);
+    Ion::Storage::Record record = m_functionStore->activeRecordAtIndex(i);
+    StorageCartesianFunction * f = m_functionStore->modelForRecord(record);;
 
     /* Draw function (color the area under curve of the selected function) */
-    if (f == m_selectedFunction) {
+    if (record == m_selectedRecord) {
       drawCurve(ctx, rect, [](float t, void * model, void * context) {
         StorageCartesianFunction * f = (StorageCartesianFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
@@ -42,7 +43,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
 
     /* Draw tangent */
-    if (m_tangent && f == m_selectedFunction) {
+    if (m_tangent && record == m_selectedRecord) {
       float tangentParameter[2];
       tangentParameter[0] = f->approximateDerivative(m_curveViewCursor->x(), context());
       tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateAtAbscissa(m_curveViewCursor->x(), context());

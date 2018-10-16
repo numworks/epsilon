@@ -13,7 +13,7 @@ namespace Graph {
 
 class StorageListController : public Shared::StorageFunctionListController, public Shared::TextFieldDelegate {
 public:
-  StorageListController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer);
+  StorageListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
   void renameSelectedFunction();
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;

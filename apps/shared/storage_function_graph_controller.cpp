@@ -1,5 +1,5 @@
 #include "storage_function_graph_controller.h"
-#include "text_field_delegate_app.h"
+#include "storage_function_app.h"
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -33,7 +33,7 @@ void StorageFunctionGraphController::viewWillAppear() {
   functionGraphView()->setAreaHighlight(NAN,NAN);
 
   if (functionGraphView()->context() == nullptr) {
-    TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+    StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
     functionGraphView()->setContext(myApp->localContext());
   }
   Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
@@ -45,8 +45,8 @@ void StorageFunctionGraphController::viewWillAppear() {
 }
 
 bool StorageFunctionGraphController::handleEnter() {
-  StorageFunction * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
-  curveParameterController()->setFunction(f);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  curveParameterController()->setRecord(record);
   StackViewController * stack = stackController();
   stack->push(curveParameterController());
   return true;
@@ -64,8 +64,8 @@ void StorageFunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
-  StorageFunction * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
-  reloadBannerViewForCursorOnFunction(m_cursor, f, functionStore()->symbol());
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), functionStore()->symbol());
 }
 
 float StorageFunctionGraphController::displayBottomMarginRatio() {
@@ -77,7 +77,7 @@ float StorageFunctionGraphController::estimatedBannerHeight() const {
 }
 
 InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   float min = FLT_MAX;
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
@@ -89,7 +89,7 @@ InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::compute
     return range;
   }
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
-    StorageFunction * f = functionStore()->activeFunctionAtIndex(i);
+    StorageFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float y = 0.0f;
     float res = curveView()->resolution();
     /* Scan x-range from the middle to the extrema in order to get balanced
@@ -121,11 +121,11 @@ double StorageFunctionGraphController::defaultCursorAbscissa() {
 
 void StorageFunctionGraphController::initCursorParameters() {
   double x = defaultCursorAbscissa();
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   int functionIndex = 0;
   double y = 0;
   do {
-    StorageFunction * firstFunction = functionStore()->activeFunctionAtIndex(functionIndex++);
+    StorageFunction * firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
   } while ((std::isnan(y) || std::isinf(y)) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
@@ -136,13 +136,13 @@ void StorageFunctionGraphController::initCursorParameters() {
 
 bool StorageFunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double y = functionStore()->activeFunctionAtIndex(currentActiveFunctionIndex)->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  double y = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(currentActiveFunctionIndex))->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   int nextActiveFunctionIndex = currentActiveFunctionIndex;
   double nextY = direction > 0 ? DBL_MAX : -DBL_MAX;
   int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < activeFunctionsCount; i++) {
-    double newY = functionStore()->activeFunctionAtIndex(i)->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+    double newY = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i))->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
       selectFunctionWithCursor(i);
@@ -172,6 +172,11 @@ uint32_t StorageFunctionGraphController::rangeVersion() {
 
 bool StorageFunctionGraphController::isCursorVisible() {
   return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+}
+
+StorageFunctionStore * StorageFunctionGraphController::functionStore() const {
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  return myApp->functionStore();
 }
 
 }

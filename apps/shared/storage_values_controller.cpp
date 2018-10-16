@@ -1,5 +1,5 @@
 #include "storage_values_controller.h"
-#include "text_field_delegate_app.h"
+#include "storage_function_app.h"
 #include "../constant.h"
 #include "../apps_container.h"
 #include "poincare_helpers.h"
@@ -252,9 +252,9 @@ void StorageValuesController::viewDidDisappear() {
   EditableCellTableViewController::viewDidDisappear();
 }
 
-StorageFunction * StorageValuesController::functionAtColumn(int i) {
+Ion::Storage::Record StorageValuesController::recordAtColumn(int i) {
   assert(i > 0);
-  return functionStore()->activeFunctionAtIndex(i-1);
+  return functionStore()->activeRecordAtIndex(i-1);
 }
 
 Responder * StorageValuesController::tabController() const {
@@ -279,7 +279,7 @@ void StorageValuesController::configureFunction() {
     return;
   }
 #endif
-  functionParameterController()->setFunction(functionAtColumn(selectedColumn()));
+  functionParameterController()->setRecord(recordAtColumn(selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(functionParameterController());
 }
@@ -309,13 +309,18 @@ int StorageValuesController::maxNumberOfElements() const {
 }
 
 double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  StorageFunction * function = functionAtColumn(columnIndex);
+  StorageFunction * function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }
 
 void StorageValuesController::updateNumberOfColumns() {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
+}
+
+StorageFunctionStore * StorageValuesController::functionStore() const {
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  return myApp->functionStore();
 }
 
 }

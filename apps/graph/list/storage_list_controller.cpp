@@ -40,7 +40,7 @@ void StorageListController::renameSelectedFunction() {
 bool StorageListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   // Compute the new name
   size_t textLength = strlen(text);
-  size_t argumentLength = strlen("(x)"); //TODO
+  size_t argumentLength = StorageFunction::k_parenthesedArgumentLength;
   constexpr int maxBaseNameSize = StorageFunction::k_maxNameWithArgumentSize;
   char baseName[maxBaseNameSize];
   if (textLength <= argumentLength) {

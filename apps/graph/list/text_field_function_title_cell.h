@@ -1,16 +1,16 @@
 #ifndef GRAPH_LIST_TEXT_FIELD_FUNCTION_TITLE_CELL_H
 #define GRAPH_LIST_TEXT_FIELD_FUNCTION_TITLE_CELL_H
 
-#include "../../shared/function_title_cell.h"
+#include <apps/shared/function_title_cell.h>
 
 namespace Graph {
 
-class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell {
+class StorageListController;
+
+class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell, public Responder {
 public:
-  TextFieldFunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator, KDText::FontSize size = KDText::FontSize::Large) :
-    Shared::FunctionTitleCell(orientation),
-    m_textField(nullptr, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, false, size, 0.5f, 0.5f)
-  {}
+  TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation = Orientation::VerticalIndicator, KDText::FontSize size = KDText::FontSize::Large);
+  void setEditing(bool editing);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;

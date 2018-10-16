@@ -53,6 +53,9 @@ public:
     const char * fullName() const {
       return Storage::sharedStorage()->fullNameOfRecord(*this);
     }
+    ErrorStatus setBaseNameWithExtension(const char * baseName, const char * extension) {
+      return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(*this, baseName, extension);
+    }
     ErrorStatus setName(const char * fullName) {
       return Storage::sharedStorage()->setFullNameOfRecord(*this, fullName);
     }

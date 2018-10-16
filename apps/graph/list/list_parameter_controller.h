@@ -5,10 +5,13 @@
 
 namespace Graph {
 
+class StorageListController;
+
 class ListParameterController : public Shared::StorageListParameterController {
 public:
-  ListParameterController(Responder * parentResponder, Shared::StorageFunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr) :
+  ListParameterController(StorageListController * listController, Responder * parentResponder, Shared::StorageFunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr) :
     Shared::StorageListParameterController(parentResponder, functionStore, functionColorMessage, deleteFunctionMessage, tableDelegate),
+    m_listController(listController),
     m_renameCell(I18n::Message::Rename)
   {}
   HighlightCell * reusableCell(int index) override;
@@ -18,6 +21,8 @@ private:
   int totalNumberOfCells() const override {
     return Shared::StorageListParameterController::totalNumberOfCells() + 1;
   }
+  void renameFunction();
+  StorageListController * m_listController;
   MessageTableCell m_renameCell;
 };
 

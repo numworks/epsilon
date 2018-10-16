@@ -14,6 +14,7 @@ public:
   StorageCartesianFunction(Ion::Storage::Record record = Record()) :
     StorageFunction(record)
   {}
+  static bool baseNameCompliant(const char * baseName) { return true; } // TODO TODO TODO
   //bool operator==(const StorageCartesianFunction & other) const { return *(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
   //bool operator!=(const StorageCartesianFunction & other) const { return !(*(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
   bool displayDerivative() const;

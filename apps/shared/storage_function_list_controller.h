@@ -52,6 +52,7 @@ protected:
   StackViewController * stackController() const;
   void configureFunction(StorageFunction * function);
   StorageFunctionStore * m_functionStore;
+  SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 2*Metric::HistoryHorizontalMargin;
@@ -66,7 +67,6 @@ private:
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
-  SelectableTableView m_selectableTableView;
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;

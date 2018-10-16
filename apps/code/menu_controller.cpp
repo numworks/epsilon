@@ -130,7 +130,7 @@ void MenuController::renameSelectedScript() {
   const char * previousText = myCell->editableTextCell()->textField()->text();
   myCell->editableTextCell()->textField()->setEditing(true);
   myCell->editableTextCell()->textField()->setText(previousText);
-  myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension));
+  myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension) - 1);
 }
 
 void MenuController::deleteScript(Script script) {
@@ -292,7 +292,11 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     return true;
   }
   if (event == Ion::Events::Clear && textField->isEditing()) {
-    textField->setText(ScriptStore::k_scriptExtension);
+    constexpr size_t k_bufferSize = 4;
+    char buffer[k_bufferSize] = {'.', 0, 0, 0};
+    assert(k_bufferSize >= 1 + strlen(ScriptStore::k_scriptExtension) + 1);
+    strlcpy(&buffer[1], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension) + 1);
+    textField->setText(buffer);
     textField->setCursorLocation(0);
     return true;
   }
@@ -302,7 +306,7 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
   char numberedDefaultName[k_defaultScriptNameMaxSize];
-  if (strlen(text) <= strlen(ScriptStore::k_scriptExtension)) {
+  if (strlen(text) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The user entered an empty name. Use a numbered default script name.
     numberedDefaultScriptName(numberedDefaultName);
     newName = const_cast<const char *>(numberedDefaultName);
@@ -336,7 +340,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 }
 
 bool MenuController::textFieldDidAbortEditing(TextField * textField) {
-  if (strlen(textField->text()) <= strlen(ScriptStore::k_scriptExtension)) {
+  if (strlen(textField->text()) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);
@@ -357,7 +361,7 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField) {
 }
 
 bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) {
-  int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
+  int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing() && textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength) {
     textField->setCursorLocation(textField->draftTextLength() - scriptExtensionLength);
   }
@@ -396,8 +400,11 @@ void MenuController::numberedDefaultScriptName(char * buffer) {
   // We will only name scripts from script1.py to script99.py.
   while (!foundNewScriptNumber && currentScriptNumber < 100) {
     // Change the number in the script name.
-    intToText(currentScriptNumber, &newName[strlen(ScriptStore::k_defaultScriptName)-strlen(ScriptStore::k_scriptExtension)]);
-    memcpy(&newName[strlen(newName)], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension)+1);
+    intToText(currentScriptNumber, &newName[strlen(ScriptStore::k_defaultScriptName)-(strlen(ScriptStore::k_scriptExtension) + 1)]);
+    assert(strlen(newName) + 1 + strlen(ScriptStore::k_scriptExtension) + 1 < k_defaultScriptNameMaxSize);
+    size_t currentNameLength = strlen(newName);
+    newName[currentNameLength++] = '.';
+    memcpy(&newName[currentNameLength], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension)+1);
     if (m_scriptStore->scriptNamed(const_cast<const char *>(newName)).isNull()) {
       foundNewScriptNumber = true;
     }

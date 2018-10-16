@@ -49,7 +49,9 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
   if (record.isNull() || record.value().size == 0) {
     return Expression();
   }
-  assert(Ion::Storage::FullNameHasExtension(record.fullName(), funcExtension, strlen(funcExtension)));
+  if (!Ion::Storage::FullNameHasExtension(record.fullName(), funcExtension, strlen(funcExtension))) {
+    return Expression();
+  }
   /* An function record value has metadata before the expression. To get the
    * expression, use the funciton record handle. */
   StorageCartesianFunction f = StorageCartesianFunction(record);
@@ -101,6 +103,9 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 
 const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract & symbol, Ion::Storage::Record r) {
   assert(symbol.type() == ExpressionNode::Type::Symbol);
+  if (!Ion::Storage::FullNameHasExtension(r.fullName(), expExtension, strlen(expExtension))) {
+    return Expression();
+  }
   // Constant symbols
   Symbol s = static_cast<const Symbol &>(symbol);
   if (s.isPi()) {

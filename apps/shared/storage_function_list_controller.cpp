@@ -224,6 +224,11 @@ void StorageFunctionListController::configureFunction(StorageFunction * function
   stack->push(parameterController());
 }
 
+void StorageFunctionListController::computeTitlesColumnWidth() {
+  KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
+  m_titlesColumnWidth = maxTitleWidth < k_minTitleColumnWidth ? k_minTitleColumnWidth : maxTitleWidth;
+}
+
 TabViewController * StorageFunctionListController::tabController() const {
   return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
@@ -244,11 +249,6 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
     maxNameLength = max(maxNameLength, dotPosition-functionName);
   }
   return (maxNameLength + StorageFunction::k_parenthesedArgumentLength) * KDText::charSize(titleCells(0)->fontSize()).width();
-}
-
-void StorageFunctionListController::computeTitlesColumnWidth() {
-  KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
-  m_titlesColumnWidth = maxTitleWidth < k_minTitleColumnWidth ? k_minTitleColumnWidth : maxTitleWidth;
 }
 
 void StorageFunctionListController::didChangeModelsList() {

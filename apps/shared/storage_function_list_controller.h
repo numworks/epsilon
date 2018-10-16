@@ -52,6 +52,7 @@ protected:
   StackViewController * stackController() const;
   void configureFunction(StorageFunction * function);
   StorageFunctionStore * m_functionStore;
+  void computeTitlesColumnWidth();
   SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
@@ -60,7 +61,6 @@ private:
   StorageExpressionModelStore * modelStore() override { return m_functionStore; }
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
-  void computeTitlesColumnWidth();
   void didChangeModelsList() override;
   virtual StorageListParameterController * parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;

@@ -76,6 +76,7 @@ app_objs += $(addprefix apps/shared/,\
   tab_table_controller.o\
   text_field_delegate.o\
   text_field_delegate_app.o\
+  text_field_with_extension.o\
   toolbox_helpers.o\
   values_function_parameter_controller.o\
   values_parameter_controller.o\

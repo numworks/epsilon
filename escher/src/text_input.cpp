@@ -12,8 +12,8 @@ TextInput::ContentView::ContentView(const KDFont * font) :
 }
 
 void TextInput::ContentView::setCursorLocation(int location) {
-  int adjustedLocation = location < 0 ? 0 : location;
-  adjustedLocation = adjustedLocation > (signed int)editedTextLength() ? (signed int)editedTextLength() : adjustedLocation;
+  assert(location >= 0);
+  int adjustedLocation = location > (signed int)editedTextLength() ? (signed int)editedTextLength() : location;
   m_cursorIndex = adjustedLocation;
   layoutSubviews();
 }
@@ -84,7 +84,9 @@ void TextInput::scrollToCursor() {
 }
 
 bool TextInput::setCursorLocation(int location) {
-  contentView()->setCursorLocation(location);
+  int adjustedLocation = location < 0 ? 0 : location;
+  willSetCursorLocation(&adjustedLocation);
+  contentView()->setCursorLocation(adjustedLocation);
   scrollToCursor();
   return true;
 }

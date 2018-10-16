@@ -15,7 +15,7 @@ public:
   TangentGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
   void viewWillAppear() override;
-  void setFunction(Shared::StorageCartesianFunction * function);
+  void setRecord(Ion::Storage::Record record);
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.22f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
@@ -28,7 +28,7 @@ private:
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;
-  Shared::StorageCartesianFunction * m_function;
+  Ion::Storage::Record m_record;
 };
 
 }

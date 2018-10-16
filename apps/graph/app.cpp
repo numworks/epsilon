@@ -21,7 +21,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-  Shared::FunctionApp::Snapshot::Snapshot(),
+  Shared::StorageFunctionApp::Snapshot::Snapshot(),
   m_functionStore(),
   m_graphRange(&m_cursor)
 {
@@ -32,7 +32,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  FunctionApp::Snapshot::reset();
+  StorageFunctionApp::Snapshot::reset();
   m_functionStore.removeAll();
   m_graphRange.setDefault();
 }
@@ -56,8 +56,8 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  FunctionApp(container, snapshot, &m_inputViewController),
-  m_listController(&m_listFooter, snapshot->functionStore(), &m_listHeader, &m_listFooter),
+  StorageFunctionApp(container, snapshot, &m_inputViewController),
+  m_listController(&m_listFooter, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
@@ -65,7 +65,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),
-  m_valuesController(&m_valuesAlternateEmptyViewController, snapshot->functionStore(), snapshot->interval(), &m_valuesHeader),
+  m_valuesController(&m_valuesAlternateEmptyViewController, snapshot->interval(), &m_valuesHeader),
   m_valuesAlternateEmptyViewController(&m_valuesHeader, &m_valuesController, &m_valuesController),
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, &m_valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader),

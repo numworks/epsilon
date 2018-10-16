@@ -7,7 +7,7 @@ StorageFunctionCurveParameterController::StorageFunctionCurveParameterController
   ViewController(nullptr),
   m_goToCell(I18n::Message::Goto),
   m_selectableTableView(this, this, this),
-  m_function(nullptr)
+  m_record()
 {
 }
 
@@ -23,10 +23,10 @@ void StorageFunctionCurveParameterController::didBecomeFirstResponder() {
 }
 
 bool StorageFunctionCurveParameterController::handleGotoSelection() {
-  if (m_function == nullptr) {
+  if (m_record.isNull()) {
     return false;
   }
-  goToParameterController()->setFunction(m_function);
+  goToParameterController()->setRecord(m_record);
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->push(goToParameterController());
   return true;
@@ -36,8 +36,8 @@ KDCoordinate StorageFunctionCurveParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void StorageFunctionCurveParameterController::setFunction(StorageFunction * function) {
-  m_function = function;
+void StorageFunctionCurveParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
 }
 
 }

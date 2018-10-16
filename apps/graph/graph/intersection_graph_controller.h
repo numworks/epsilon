@@ -8,13 +8,12 @@ namespace Graph {
 
 class IntersectionGraphController : public CalculationGraphController {
 public:
-  IntersectionGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, StorageCartesianFunctionStore * functionStore);
+  IntersectionGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
 private:
   void reloadBannerView() override;
   Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
-  Shared::StorageFunction * m_intersectedFunction;
-  StorageCartesianFunctionStore * m_functionStore;
+  Ion::Storage::Record m_intersectedRecord;
 };
 
 }

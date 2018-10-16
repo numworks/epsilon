@@ -10,10 +10,10 @@ class StorageFunctionGoToParameterController : public GoToParameterController {
 public:
   StorageFunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   const char * title() override;
-  void setFunction(StorageFunction * function);
+  void setRecord(Ion::Storage::Record record);
 protected:
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  StorageFunction * m_function;
+  Ion::Storage::Record m_record;
 private:
   double parameterAtIndex(int index) override;
 };

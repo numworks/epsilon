@@ -30,6 +30,7 @@ protected:
   }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorAbscissa();
+  virtual StorageFunctionStore * functionStore() const;
 private:
   constexpr static float k_viewHeight = 174.0f; // TODO Taken from Regresssion/graph_controller. Maybe we should compute and/or put in common ?
   // InteractiveCurveViewController
@@ -52,7 +53,6 @@ private:
   bool isCursorVisible() override;
   virtual StorageFunctionGraphView * functionGraphView() = 0;
   virtual View * cursorView() = 0;
-  virtual StorageFunctionStore * functionStore() const = 0;
   virtual StorageFunctionCurveParameterController * curveParameterController() = 0;
   InitialisationParameterController m_initialisationParameterController;
   Poincare::Preferences::AngleUnit * m_angleUnitVersion;

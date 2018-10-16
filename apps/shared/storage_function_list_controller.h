@@ -13,7 +13,7 @@ namespace Shared {
 
 class StorageFunctionListController : public StorageExpressionModelListController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDelegate {
 public:
-  StorageFunctionListController(Responder * parentResponder, StorageFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
+  StorageFunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
 
   /* ViewController */
   void viewWillAppear() override;
@@ -50,15 +50,14 @@ public:
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 protected:
   StackViewController * stackController() const;
-  void configureFunction(StorageFunction * function);
-  StorageFunctionStore * m_functionStore;
+  void configureFunction(Ion::Storage::Record record);
   void computeTitlesColumnWidth();
+  StorageFunctionStore * modelStore() override;
   SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 2*Metric::HistoryHorizontalMargin;
   TabViewController * tabController() const;
-  StorageExpressionModelStore * modelStore() override { return m_functionStore; }
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;

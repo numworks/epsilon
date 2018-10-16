@@ -1,5 +1,6 @@
 #include "storage_derivative_parameter_controller.h"
 #include "storage_values_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 namespace Graph {
@@ -11,13 +12,13 @@ StorageDerivativeParameterController::StorageDerivativeParameterController(Stora
   m_copyColumn(I18n::Message::CopyColumnInList),
 #endif
   m_selectableTableView(this),
-  m_function(nullptr),
+  m_record(),
   m_valuesController(valuesController)
 {
 }
 
 const char * StorageDerivativeParameterController::title() {
-  m_function->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle, 'x');
+  functionStore()->modelForRecord(m_record)->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle, 'x');
   return m_pageTitle;
 }
 
@@ -36,7 +37,7 @@ bool StorageDerivativeParameterController::handleEvent(Ion::Events::Event event)
       case 0:
       {
         m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()-1, m_valuesController->selectedRow());
-        m_function->setDisplayDerivative(false);
+        functionStore()->modelForRecord(m_record)->setDisplayDerivative(false);
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;
@@ -75,6 +76,11 @@ int StorageDerivativeParameterController::reusableCellCount() {
 
 KDCoordinate StorageDerivativeParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
+}
+
+StorageCartesianFunctionStore * StorageDerivativeParameterController::functionStore() {
+  App * a = static_cast<App *>(app());
+  return a->functionStore();
 }
 
 }

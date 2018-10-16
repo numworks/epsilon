@@ -1,5 +1,6 @@
 #include "storage_function_parameter_controller.h"
 #include "storage_values_controller.h"
+#include "../app.h"
 #include <assert.h>
 
 using namespace Shared;
@@ -9,14 +10,8 @@ namespace Graph {
 StorageFunctionParameterController::StorageFunctionParameterController(StorageValuesController * valuesController) :
   StorageValuesFunctionParameterController('x'),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
-  m_cartesianFunction(nullptr),
   m_valuesController(valuesController)
 {
-}
-
-void StorageFunctionParameterController::setFunction(StorageFunction * function) {
-  m_cartesianFunction = (Shared::StorageCartesianFunction *)function;
-  StorageValuesFunctionParameterController::setFunction(function);
 }
 
 bool StorageFunctionParameterController::handleEvent(Ion::Events::Event event) {
@@ -24,7 +19,7 @@ bool StorageFunctionParameterController::handleEvent(Ion::Events::Event event) {
     switch (selectedRow()) {
       case 0:
       {
-        m_cartesianFunction->setDisplayDerivative(!m_cartesianFunction->displayDerivative());
+        function()->setDisplayDerivative(!function()->displayDerivative());
         m_selectableTableView.reloadData();
         return true;
       }
@@ -62,7 +57,7 @@ int StorageFunctionParameterController::reusableCellCount() {
 
 void StorageFunctionParameterController::viewWillAppear() {
   StorageValuesFunctionParameterController::viewWillAppear();
-  if (m_cartesianFunction->displayDerivative()) {
+  if (function()->displayDerivative()) {
     m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()+1, m_valuesController->selectedRow());
   }
 }
@@ -70,8 +65,13 @@ void StorageFunctionParameterController::viewWillAppear() {
 void StorageFunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.accessoryView();
-    switchView->setState(m_cartesianFunction->displayDerivative());
+    switchView->setState(function()->displayDerivative());
   }
+}
+
+StorageCartesianFunction * StorageFunctionParameterController::function() {
+  App * a = static_cast<App *>(app());
+  return a->functionStore()->modelForRecord(m_record);
 }
 
 }

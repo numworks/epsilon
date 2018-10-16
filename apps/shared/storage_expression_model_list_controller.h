@@ -21,8 +21,9 @@ protected:
   virtual void addEmptyModel();
   virtual void didChangeModelsList() {}
   virtual void reinitExpression(StorageExpressionModel * model);
-  virtual void editExpression(StorageExpressionModel * model, Ion::Events::Event event);
-  virtual bool removeModelRow(StorageExpressionModel * model);
+  virtual void editExpression(Ion::Events::Event event);
+  virtual void editSelectedRecordWithText(const char * text);
+  virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) { return j; }
   virtual bool isAddEmptyRow(int j);
   /* View Controller */

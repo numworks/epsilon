@@ -10,15 +10,14 @@ GraphController::GraphController(Responder * parentResponder, StorageCartesianFu
   m_bannerView(),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
-  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, &m_view, this, functionStore),
-  m_functionStore(functionStore),
+  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, &m_view, this),
   m_displayDerivativeInBanner(false)
 {
   m_graphRange->setDelegate(this);
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (m_functionStore->numberOfDefinedModels() == 0) {
+  if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
   return I18n::Message::NoActivatedFunction;
@@ -42,7 +41,7 @@ float GraphController::interestingXRange() {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    StorageFunction * f = functionStore()->activeFunctionAtIndex(i);
+    StorageFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float fRange = f->expression(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
@@ -57,7 +56,7 @@ int GraphController::estimatedBannerNumberOfLines() const {
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   StorageFunctionGraphController::selectFunctionWithCursor(functionIndex);
-  StorageCartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
+  StorageCartesianFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   m_cursorView.setColor(f->color());
 }
 
@@ -68,26 +67,22 @@ BannerView * GraphController::bannerView() {
 void GraphController::reloadBannerView() {
   StorageFunctionGraphController::reloadBannerView();
   m_bannerView.setNumberOfSubviews(2+m_displayDerivativeInBanner);
-  if (m_functionStore->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
+  if (functionStore()->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
     return;
   }
-  StorageCartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, f, myApp);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  App * myApp = static_cast<App *>(app());
+  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, myApp);
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  StorageCartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, f, myApp, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  App * myApp = static_cast<App *>(app());
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, myApp, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
   return m_graphRange;
-}
-
-StorageCartesianFunctionStore * GraphController::functionStore() const {
-  return m_functionStore;
 }
 
 GraphView * GraphController::functionGraphView() {

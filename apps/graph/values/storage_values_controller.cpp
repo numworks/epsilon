@@ -7,11 +7,10 @@ using namespace Poincare;
 
 namespace Graph {
 
-StorageValuesController::StorageValuesController(Responder * parentResponder, StorageCartesianFunctionStore * functionStore, Interval * interval, ButtonRowController * header) :
+StorageValuesController::StorageValuesController(Responder * parentResponder, Interval * interval, ButtonRowController * header) :
   Shared::StorageValuesController(parentResponder, header, I18n::Message::X, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
-  m_functionStore(functionStore),
   m_functionParameterController(this),
   m_intervalParameterController(this, m_interval),
   m_derivativeParameterController(this)
@@ -42,7 +41,7 @@ void StorageValuesController::willDisplayCellAtLocation(HighlightCell * cell, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
-    Shared::StorageCartesianFunction * function = functionAtColumn(i);
+    Shared::StorageCartesianFunction * function = functionStore()->modelForRecord(recordAtColumn(i));
     const size_t bufferNameSize = Shared::StorageFunction::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
     if (isDerivativeColumn(i)) {
@@ -56,7 +55,7 @@ void StorageValuesController::willDisplayCellAtLocation(HighlightCell * cell, in
 }
 
 I18n::Message StorageValuesController::emptyMessage() {
-  if (m_functionStore->numberOfDefinedModels() == 0) {
+  if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
   return I18n::Message::NoActivatedFunction;
@@ -66,18 +65,20 @@ IntervalParameterController * StorageValuesController::intervalParameterControll
   return &m_intervalParameterController;
 }
 
-Shared::StorageCartesianFunction * StorageValuesController::functionAtColumn(int i) {
+Ion::Storage::Record StorageValuesController::recordAtColumn(int i) {
   assert(i > 0);
   int index = 1;
-  for (int k = 0; k < m_functionStore->numberOfDefinedModels(); k++) {
-    if (m_functionStore->definedModelAtIndex(k)->isActive()) {
+  for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
+    Ion::Storage::Record record = functionStore()->definedRecordAtIndex(k);
+    StorageCartesianFunction * f = functionStore()->modelForRecord(record);
+    if (f->isActive()) {
       if (i == index) {
-        return m_functionStore->definedModelAtIndex(k);
+        return record;
       }
       index++;
-      if (m_functionStore->definedModelAtIndex(k)->displayDerivative()) {
+      if (f->displayDerivative()) {
         if (i == index) {
-          return m_functionStore->definedModelAtIndex(k);
+          return record;
         }
         index++;
       }
@@ -90,13 +91,14 @@ Shared::StorageCartesianFunction * StorageValuesController::functionAtColumn(int
 bool StorageValuesController::isDerivativeColumn(int i) {
   assert(i >= 1);
   int index = 1;
-  for (int k = 0; k < m_functionStore->numberOfDefinedModels(); k++) {
-    if (m_functionStore->definedModelAtIndex(k)->isActive()) {
+  for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
+    StorageCartesianFunction * f = functionStore()->modelForRecord(functionStore()->definedRecordAtIndex(k));
+    if (f->isActive()) {
       if (i == index) {
         return false;
       }
       index++;
-      if (m_functionStore->definedModelAtIndex(k)->displayDerivative()) {
+      if (f->displayDerivative()) {
         if (i == index) {
           return true;
         }
@@ -109,8 +111,7 @@ bool StorageValuesController::isDerivativeColumn(int i) {
 }
 
 void StorageValuesController::configureDerivativeFunction() {
-  Shared::StorageCartesianFunction * function = functionAtColumn(selectedColumn());
-  m_derivativeParameterController.setFunction(function);
+  m_derivativeParameterController.setRecord(recordAtColumn(selectedColumn()));
   StackViewController * stack = stackController();
   stack->push(&m_derivativeParameterController);
 }
@@ -133,16 +134,12 @@ EvenOddBufferTextCell * StorageValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
-StorageCartesianFunctionStore * StorageValuesController::functionStore() const {
-  return m_functionStore;
-}
-
 StorageFunctionParameterController * StorageValuesController::functionParameterController() {
   return &m_functionParameterController;
 }
 
 double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  Shared::StorageCartesianFunction * function = functionAtColumn(columnIndex);
+  Shared::StorageCartesianFunction * function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   if (isDerivativeColumn(columnIndex)) {
     return function->approximateDerivative(abscissa, myApp->localContext());
@@ -152,9 +149,10 @@ double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, in
 
 void StorageValuesController::updateNumberOfColumns() {
   int result = 1;
-  for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    if (m_functionStore->activeFunctionAtIndex(i)->isActive()) {
-      result += 1 + m_functionStore->activeFunctionAtIndex(i)->displayDerivative();
+  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    StorageCartesianFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    if (f->isActive()) {
+      result += 1 + f->displayDerivative();
     }
   }
   m_numberOfColumns = result;

@@ -7,7 +7,7 @@ namespace Graph {
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, KDText::FontSize size) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, listController, false, size, 0.5f, 0.5f)
+  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, listController, false, size, 0.5f, 0.5f)
   {}
 
 void TextFieldFunctionTitleCell::setHighlighted(bool highlight) {
@@ -20,7 +20,6 @@ void TextFieldFunctionTitleCell::setEditing(bool editing) {
   const char * previousText = m_textField.text();
   m_textField.setEditing(true, false);
   m_textField.setText(previousText);
-  m_textField.setCursorLocation(strlen(previousText) - strlen("(x)"));
 }
 
 void TextFieldFunctionTitleCell::setEven(bool even) {

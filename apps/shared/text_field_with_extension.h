@@ -12,7 +12,7 @@ public:
       char * textBuffer,
       char * draftTextBuffer,
       size_t textBufferSize,
-      TextFieldDelegate * delegate = nullptr,
+      ::TextFieldDelegate * delegate = nullptr,
       bool hasTwoBuffers = true,
       KDText::FontSize size = KDText::FontSize::Large,
       float horizontalAlignment = 0.0f,

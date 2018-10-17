@@ -15,8 +15,6 @@ public:
     StorageFunction(record)
   {}
   static bool baseNameCompliant(const char * baseName) { return true; } // TODO TODO TODO
-  //bool operator==(const StorageCartesianFunction & other) const { return *(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
-  //bool operator!=(const StorageCartesianFunction & other) const { return !(*(static_cast<Record *>(this)) == static_cast<Record &>(other)); }
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg);
@@ -37,6 +35,8 @@ protected:
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
   private:
     bool m_displayDerivative;
+    /* In the record, after the boolean flag about displayDerivative, there is
+     * the expression of the function, directly copied from the pool. */
     //char m_expression[0];
   };
 private:

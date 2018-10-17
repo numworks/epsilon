@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "console_controller.h"
 #include "editor_controller.h"
+#include "script_name_cell.h"
 #include "script_parameter_controller.h"
 #include "script_store.h"
 
@@ -91,7 +92,7 @@ private:
       return nullptr;
     }
   };
-  EvenOddEditableTextCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
+  ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   /* In the initializer list of the MenuController constructor, we initialize
    * m_scriptCells by copying k_maxNumberOfDisplayableScriptCells times the
    * constructor of an EvenOddEditableTextCell. */

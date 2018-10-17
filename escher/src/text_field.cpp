@@ -80,6 +80,7 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
   if (reinitDrafBuffer) {
     reinitDraftTextBuffer();
   }
+  m_currentDraftTextLength = strlen(m_draftTextBuffer);
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   layoutSubviews();

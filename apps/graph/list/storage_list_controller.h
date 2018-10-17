@@ -16,7 +16,10 @@ public:
   StorageListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
   void renameSelectedFunction();
+  // TextFieldDelegate
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   Shared::StorageListParameterController * parameterController() override;
@@ -28,6 +31,7 @@ private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override {
     return static_cast<Shared::TextFieldDelegateApp *>(app());
   }
+  void setFunctionNameInTextField(Shared::StorageFunction * function, TextField * textField);
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;

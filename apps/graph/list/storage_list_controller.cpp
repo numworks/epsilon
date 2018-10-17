@@ -71,6 +71,18 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   return false;
 }
 
+bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
+  StorageFunction * function = m_functionStore->modelAtIndex(selectedRow());
+  setFunctionNameInTextField(function, textField);
+  m_selectableTableView.selectedCell()->setHighlighted(true);
+  app()->setFirstResponder(&m_selectableTableView);
+  return true;
+}
+
+bool StorageListController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return event == Ion::Events::Up || event == Ion::Events::Down || Shared::TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+}
+
 StorageListParameterController * StorageListController::parameterController() {
   return &m_parameterController;
 }
@@ -90,13 +102,11 @@ HighlightCell * StorageListController::expressionCells(int index) {
 }
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
-  TextFieldFunctionTitleCell * myFunctionCell = (TextFieldFunctionTitleCell *)cell;
+  TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
   StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  char bufferName[BufferTextView::k_maxNumberOfChar];
-  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
-  myFunctionCell->setText(bufferName);
+  setFunctionNameInTextField(function, titleCell->textField());
   KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
-  myFunctionCell->setColor(functionNameColor);
+  titleCell->setColor(functionNameColor);
 }
 
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
@@ -105,6 +115,12 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
   StorageFunction * f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
+}
+
+void StorageListController::setFunctionNameInTextField(StorageFunction * function, TextField * textField) {
+  char bufferName[BufferTextView::k_maxNumberOfChar];
+  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, m_functionStore->symbol());
+  textField->setText(bufferName);
 }
 
 }

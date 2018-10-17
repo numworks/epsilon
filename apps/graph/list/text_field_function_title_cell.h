@@ -2,6 +2,7 @@
 #define GRAPH_LIST_TEXT_FIELD_FUNCTION_TITLE_CELL_H
 
 #include <apps/shared/function_title_cell.h>
+#include <apps/shared/text_field_with_extension.h>
 
 namespace Graph {
 
@@ -29,7 +30,7 @@ protected:
   KDRect textFieldFrame() const;
 private:
   constexpr static int k_textFieldBufferSize = TextField::maxBufferSize();
-  TextField m_textField;
+  Shared::TextFieldWithExtension m_textField;
   char m_textFieldBuffer[k_textFieldBufferSize];
 };
 

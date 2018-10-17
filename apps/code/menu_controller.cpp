@@ -30,10 +30,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
-    m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);
-    m_scriptCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
-    m_scriptCells[i].editableTextCell()->textField()->setAlignment(0.0f, 0.5f);
-    m_scriptCells[i].editableTextCell()->setMargins(0, 0, 0, Metric::HistoryHorizontalMargin);
+    m_scriptCells[i].textField()->setDelegate(this);
   }
 }
 
@@ -49,7 +46,7 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
   int selectedRow = m_selectableTableView.selectedRow();
   int selectedColumn = m_selectableTableView.selectedColumn();
   if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
-    TextField * tf = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell())->editableTextCell()->textField();
+    TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
     if (tf->isEditing()) {
       tf->setEditing(false);
       textFieldDidAbortEditing(tf);
@@ -124,13 +121,11 @@ void MenuController::renameSelectedScript() {
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
-  EvenOddEditableTextCell * myCell = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell());
+  ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
   app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
-  const char * previousText = myCell->editableTextCell()->textField()->text();
-  myCell->editableTextCell()->textField()->setEditing(true);
-  myCell->editableTextCell()->textField()->setText(previousText);
-  myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension) - 1);
+  myCell->textField()->setEditing(true, false);
+  myCell->textField()->setCursorLocation(strlen(myCell->textField()->text()));
 }
 
 void MenuController::deleteScript(Script script) {
@@ -272,8 +267,7 @@ int MenuController::typeAtLocation(int i, int j) {
 
 void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < m_scriptStore->numberOfScripts());
-  EditableTextCell * editableTextCell = static_cast<EvenOddEditableTextCell *>(cell)->editableTextCell();
-  editableTextCell->textField()->setText(m_scriptStore->scriptAtIndex(index).fullName());
+  (static_cast<ScriptNameCell *>(cell))->textField()->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
 void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {

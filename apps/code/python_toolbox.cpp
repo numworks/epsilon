@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Code {
 
-static constexpr int catalogChildrenCount = 94;
+static constexpr int catalogChildrenCount = 95;
 static constexpr int MathModuleChildrenCount = 43;
 static constexpr int KandinskyModuleChildrenCount = 7;
 static constexpr int CMathModuleChildrenCount = 13;
@@ -180,6 +180,7 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandExp, I18n::Message::PythonExp, I18n::Message::PythonCommandExp),
   ToolboxMessageTree(I18n::Message::PythonCommandExpm1, I18n::Message::PythonExpm1, I18n::Message::PythonCommandExpm1),
   ToolboxMessageTree(I18n::Message::PythonCommandFabs, I18n::Message::PythonFabs, I18n::Message::PythonCommandFabs),
+  ToolboxMessageTree(I18n::Message::PythonCommandFloat, I18n::Message::PythonFloat, I18n::Message::PythonCommandFloat),
   ToolboxMessageTree(I18n::Message::PythonCommandFloor, I18n::Message::PythonFloor, I18n::Message::PythonCommandFloor),
   ToolboxMessageTree(I18n::Message::PythonCommandFmod, I18n::Message::PythonFmod, I18n::Message::PythonCommandFmod),
   ToolboxMessageTree(I18n::Message::PythonCommandFrExp, I18n::Message::PythonFrExp, I18n::Message::PythonCommandFrExp),

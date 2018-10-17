@@ -56,6 +56,12 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
     computeTitlesColumnWidth();
+    int currentRow = m_selectableTableView.selectedRow();
+    if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
+      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
+    } else if (event == Ion::Events::Up && currentRow > 0) {
+      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
+    }
     m_selectableTableView.selectedCell()->setHighlighted(true);
     m_selectableTableView.reloadData();
     app()->setFirstResponder(&m_selectableTableView);

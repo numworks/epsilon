@@ -14,6 +14,7 @@ namespace Code {
 class ScriptStore : public MicroPython::ScriptProvider {
 public:
   static constexpr char k_scriptExtension[] = "py";
+  static constexpr size_t k_scriptExtensionLength = 2;
   static constexpr char k_defaultScriptName[] = "script.py";
   static constexpr int k_maxNumberOfScripts = 8;
 

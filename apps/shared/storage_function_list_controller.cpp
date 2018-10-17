@@ -239,7 +239,7 @@ StorageFunctionStore * StorageFunctionListController::modelStore() {
 }
 
 InputViewController * StorageFunctionListController::inputController() {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   return myApp->inputViewController();
 }
 

@@ -72,7 +72,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 }
 
 bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
-  StorageFunction * function = m_functionStore->modelAtIndex(selectedRow());
+  StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   app()->setFirstResponder(&m_selectableTableView);
@@ -119,7 +119,7 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
 
 void StorageListController::setFunctionNameInTextField(StorageFunction * function, TextField * textField) {
   char bufferName[BufferTextView::k_maxNumberOfChar];
-  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, m_functionStore->symbol());
+  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
   textField->setText(bufferName);
 }
 

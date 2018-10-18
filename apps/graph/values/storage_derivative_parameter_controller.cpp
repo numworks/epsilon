@@ -18,7 +18,7 @@ StorageDerivativeParameterController::StorageDerivativeParameterController(Stora
 }
 
 const char * StorageDerivativeParameterController::title() {
-  functionStore()->modelForRecord(m_record)->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle, 'x');
+  functionStore()->modelForRecord(m_record)->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle, StorageCartesianFunctionStore::Symbol());
   return m_pageTitle;
 }
 

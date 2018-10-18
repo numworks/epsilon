@@ -1,3 +1,5 @@
+## What is this?
+
 Quiz is a simple test framework.
 
 To write a test using quiz, all you have to do is #include quiz.h, and then

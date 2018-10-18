@@ -11,13 +11,12 @@ static uint32_t crc32(uint32_t crc, uint8_t data) {
 }
 
 uint32_t Ion::crc32(const uint32_t * data, size_t length) {
+  const uint8_t * dataByte = (const uint8_t *)data;
+  size_t byteLength = length*sizeof(uint32_t)/sizeof(uint8_t);
   uint32_t crc = 0xFFFFFFFF;
-  for (size_t i=0; i<length; i++) {
-    // FIXME: Assumes little-endian byte order!
-    crc = ::crc32(crc, (uint8_t)((data[i] >> 24) & 0xFF));
-    crc = ::crc32(crc, (uint8_t)((data[i] >> 16) & 0xFF));
-    crc = ::crc32(crc, (uint8_t)((data[i] >> 8) & 0xFF));
-    crc = ::crc32(crc, (uint8_t)(data[i] & 0xFF));
+  for (size_t i=0; i<byteLength; i++) {
+    // scan byte by byte to avoid alignment issue when building for emscripten platform
+    crc = ::crc32(crc, dataByte[i]);
   }
   return crc;
 }

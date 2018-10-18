@@ -5,6 +5,8 @@
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
 //#include <poincare/matrix.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -36,7 +38,11 @@ bool AdditionNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, Addition::Name());
+}
+
+int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Addition::Name());
 }
 
 // Simplication

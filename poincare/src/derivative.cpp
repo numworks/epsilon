@@ -1,5 +1,7 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -18,6 +20,14 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
   }
   // If one of the children depends on the symbol, we do not know the degree.
   return ExpressionNode::polynomialDegree(context, symbolName);
+}
+
+Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::Name());
+}
+
+int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::Name());
 }
 
 Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

@@ -1,6 +1,8 @@
 #include <poincare/random.h>
 #include <poincare/complex.h>
 #include <ion.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <cmath>
 
@@ -11,7 +13,11 @@ Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit
 }
 
 Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, Random::Name());
+}
+
+int RandomNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Random::Name());
 }
 
 template <typename T> Evaluation<T> RandomNode::templateApproximate() const {

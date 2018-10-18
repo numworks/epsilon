@@ -20,7 +20,9 @@ public:
   // Properties
   Type type() const override { return Type::HyperbolicArcCosine; }
 private:
-  const char * name() const override { return "acosh"; }
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   //Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -38,6 +40,7 @@ public:
   explicit HyperbolicArcCosine(Expression operand) : HyperbolicArcCosine() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "acosh"; }
 };
 
 }

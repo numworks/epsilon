@@ -2,6 +2,8 @@
 #include <poincare/complex.h>
 #include <poincare/random.h>
 #include <ion.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 extern "C" {
 #include <assert.h>
@@ -11,7 +13,11 @@ extern "C" {
 namespace Poincare {
 
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::Name());
+}
+
+int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::Name());
 }
 
 template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {

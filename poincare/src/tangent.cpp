@@ -2,6 +2,7 @@
 #include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/sine.h>
 #include <poincare/trigonometry.h>
@@ -14,7 +15,11 @@ float TangentNode::characteristicXRange(Context & context, Preferences::AngleUni
 }
 
 Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::Name());
+}
+
+int TangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Tangent::Name());
 }
 
 template<typename T>

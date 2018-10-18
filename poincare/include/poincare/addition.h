@@ -2,10 +2,8 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/layout_helper.h>
 #include <poincare/n_ary_expression_node.h>
 #include <poincare/rational.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -41,10 +39,7 @@ private:
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  static const char * name() { return "+"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
@@ -78,6 +73,7 @@ public:
       addChildAtIndexInPlace(children[i], i, i);
     }
   }
+  static const char * Name() { return "+"; }
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

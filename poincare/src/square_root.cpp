@@ -1,5 +1,7 @@
 #include <poincare/square_root.h>
 #include <poincare/power.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/nth_root_layout.h>
 #include <assert.h>
@@ -12,9 +14,8 @@ Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::Name());
 }
 
 template<typename T>
@@ -32,7 +33,6 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
 Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return SquareRoot(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
-
 
 SquareRoot::SquareRoot() : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {}
 

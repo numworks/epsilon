@@ -9,6 +9,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
 #include <poincare/char_layout.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/horizontal_layout.h>
 #include <ion.h>
 extern "C" {

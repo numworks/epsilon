@@ -3,6 +3,8 @@
 #include <poincare/power.h>
 #include <poincare/undefined.h>
 #include <poincare/nth_root_layout.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <cmath>
 
@@ -12,6 +14,10 @@ Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
   return NthRootLayout(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::Name());
 }
 
 Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

@@ -2,7 +2,6 @@
 #define POINCARE_PARENTHESIS_H
 
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
 
 namespace Poincare {
 

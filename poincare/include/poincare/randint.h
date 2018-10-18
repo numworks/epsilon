@@ -1,9 +1,7 @@
 #ifndef POINCARE_RANDINT_H
 #define POINCARE_RANDINT_H
 
-#include <poincare/layout_helper.h>
 #include <poincare/expression.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -24,10 +22,7 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "randint"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>(context, angleUnit);
@@ -43,6 +38,7 @@ friend class RandintNode;
 public:
   Randint();
   Randint(const RandintNode * n) : Expression(n) {}
+  static const char * Name() { return "randint"; }
   template<typename T> static T random();
 };
 

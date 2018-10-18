@@ -2,8 +2,6 @@
 #define POINCARE_NTH_ROOT_H
 
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -24,9 +22,7 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Evaluation
@@ -44,6 +40,7 @@ public:
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }
+  static const char * Name() { return "root"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

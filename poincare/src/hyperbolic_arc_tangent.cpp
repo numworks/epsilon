@@ -1,8 +1,18 @@
 #include <poincare/hyperbolic_arc_tangent.h>
 #include <poincare/complex.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 
 namespace Poincare {
+
+Layout HyperbolicArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(HyperbolicArcTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcTangent::Name());
+}
+
+int HyperbolicArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcTangent::Name());
+}
 
 template<typename T>
 Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {

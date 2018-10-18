@@ -24,7 +24,6 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  const char * name() const { return "frac"; }
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Evaluation
@@ -44,6 +43,7 @@ public:
   explicit FracPart(Expression operand) : FracPart() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "frac"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

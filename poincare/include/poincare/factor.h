@@ -1,8 +1,6 @@
 #ifndef POINCARE_FACTOR_H
 #define POINCARE_FACTOR_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
@@ -25,10 +23,7 @@ private:
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Serialization */
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "factor"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
@@ -46,6 +41,7 @@ public:
   explicit Factor(Expression operand) : Factor() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "factor"; }
 
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const;

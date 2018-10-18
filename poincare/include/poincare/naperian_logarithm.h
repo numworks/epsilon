@@ -3,8 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -24,13 +22,8 @@ public:
 
 private:
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  static const char * name() { return "ln"; }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   /* Evaluation */
@@ -55,6 +48,7 @@ public:
   explicit NaperianLogarithm(Expression operand) : NaperianLogarithm() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "ln"; }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 

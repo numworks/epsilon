@@ -1,8 +1,18 @@
 #include <poincare/hyperbolic_arc_cosine.h>
 #include <poincare/complex.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 
 namespace Poincare {
+
+Layout HyperbolicArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(HyperbolicArcCosine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcCosine::Name());
+}
+
+int HyperbolicArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcCosine::Name());
+}
 
 template<typename T>
 Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {

@@ -23,7 +23,6 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  const char * name() const { return "gcd"; }
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Evaluation
@@ -40,6 +39,7 @@ public:
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }
+  static const char * Name() { return "gcd"; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

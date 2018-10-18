@@ -1,6 +1,8 @@
 #include <poincare/permute_coefficient.h>
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 extern "C" {
 #include <assert.h>
@@ -10,7 +12,11 @@ extern "C" {
 namespace Poincare {
 
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::Name());
+}
+
+int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::Name());
 }
 
 Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

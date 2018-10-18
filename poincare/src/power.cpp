@@ -15,6 +15,7 @@
 #include <poincare/undefined.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 #include <math.h>
 #include <ion.h>
@@ -121,6 +122,12 @@ bool PowerNode::childNeedsParenthesis(const TreeNode * child) const {
   Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
 }
+
+int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Power::Name());
+}
+
+
 
 // Simplify
 

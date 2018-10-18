@@ -1,6 +1,7 @@
 #ifndef POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 #define POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 
+#include <poincare/absolute_value.h>
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/serialization_helper.h>
 
@@ -12,7 +13,7 @@ public:
 
   // SerializationHelperInterface
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "abs");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::Name());
   }
 
   // TreeNode

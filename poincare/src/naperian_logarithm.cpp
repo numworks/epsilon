@@ -1,9 +1,18 @@
 #include <poincare/naperian_logarithm.h>
 #include <poincare/constant.h>
 #include <poincare/logarithm.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 
 namespace Poincare {
+
+Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::Name());
+}
+int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::Name());
+}
 
 Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return NaperianLogarithm(this).shallowReduce(context, angleUnit, replaceSymbols);

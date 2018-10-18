@@ -3,7 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {
@@ -25,12 +24,7 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const {
-    return "acos";
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
@@ -51,6 +45,7 @@ public:
   explicit ArcCosine(Expression operand) : ArcCosine() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "acos"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

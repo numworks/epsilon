@@ -1,6 +1,8 @@
 #include <poincare/product.h>
 #include <poincare/multiplication.h>
 #include <poincare/product_layout.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -11,6 +13,10 @@ namespace Poincare {
 
 Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
   return ProductLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+}
+
+int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::Name());
 }
 
 template<typename T>

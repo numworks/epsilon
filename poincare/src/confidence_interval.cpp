@@ -1,9 +1,9 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -12,11 +12,11 @@
 namespace Poincare {
 
 Layout ConfidenceIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::Name());
 }
 
 int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::Name());
 }
 
 Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -36,6 +36,14 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
   operands[0] = std::complex<T>(f - 1/std::sqrt(n));
   operands[1] = std::complex<T>(f + 1/std::sqrt(n));
   return MatrixComplex<T>(operands, 1, 2);
+}
+
+Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(SimplePredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::Name());
+}
+
+int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::Name());
 }
 
 ConfidenceInterval::ConfidenceInterval() : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {}

@@ -17,9 +17,9 @@ public:
 
   Type type() const override { return Type::Product; }
 private:
-  const char * name() const override { return "product"; }
   float emptySequenceValue() const override { return 1.0f; }
   Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);
   }
@@ -40,6 +40,7 @@ public:
     replaceChildAtIndexInPlace(2, operand2);
     replaceChildAtIndexInPlace(3, operand3);
   }
+  static const char * Name() { return "product"; }
 };
 
 }

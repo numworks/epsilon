@@ -1,7 +1,6 @@
 #ifndef POINCARE_LEAST_COMMON_MULTIPLE_H
 #define POINCARE_LEAST_COMMON_MULTIPLE_H
 
-#include <poincare/serialization_helper.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -22,10 +21,7 @@ public:
 private:
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "lcm"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   /* Evaluation */
@@ -42,6 +38,7 @@ public:
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }
+  static const char * Name() { return "lcm"; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

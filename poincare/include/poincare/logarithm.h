@@ -5,8 +5,6 @@
 #include <poincare/integer.h>
 #include <poincare/addition.h>
 #include <poincare/complex.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -27,9 +25,7 @@ public:
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
@@ -56,6 +52,7 @@ public:
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }
+  static const char * Name() { return "log"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

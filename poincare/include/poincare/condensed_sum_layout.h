@@ -1,6 +1,7 @@
 #ifndef POINCARE_CONDENSED_SUM_LAYOUT_NODE_H
 #define POINCARE_CONDENSED_SUM_LAYOUT_NODE_H
 
+#include <poincare/sum.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_helper.h>
 #include <poincare/layout.h>
@@ -19,7 +20,7 @@ public:
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override { assert(false); }
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override { assert(false); }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "sum");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::Name());
   }
 
   LayoutNode * layoutToPointWhenInserting() override {

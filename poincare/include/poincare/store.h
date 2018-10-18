@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/symbol_abstract.h>
-#include <poincare/layout_helper.h>
 #include <poincare/evaluation.h>
 
 namespace Poincare {

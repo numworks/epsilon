@@ -1,6 +1,7 @@
 #include <poincare/determinant.h>
 #include <poincare/matrix.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 }
@@ -9,7 +10,11 @@ extern "C" {
 namespace Poincare {
 
 Layout DeterminantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::Name());
+}
+
+int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Determinant::Name());
 }
 
 // TODO: handle this exactly in shallowReduce for small dimensions.

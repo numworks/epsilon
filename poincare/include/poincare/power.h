@@ -4,7 +4,6 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -40,10 +39,7 @@ private:
 
   // Serialize
   bool childNeedsParenthesis(const TreeNode * child) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  static const char * name() { return "^"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplify
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
@@ -69,6 +65,7 @@ class Power final : public Expression {
 public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
+  static const char * Name() { return "^"; }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

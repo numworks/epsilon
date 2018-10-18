@@ -3,7 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
+#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -45,10 +45,13 @@ public:
   explicit SquareRoot(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() {
+    constexpr static char k_name[2] = {Ion::Charset::Root, 0};
+    return k_name;
+  }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
-
 
 }
 

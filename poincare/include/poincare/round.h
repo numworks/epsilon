@@ -1,10 +1,8 @@
 #ifndef POINCARE_ROUND_H
 #define POINCARE_ROUND_H
 
-#include <poincare/layout_helper.h>
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -25,10 +23,7 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "round"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Evaluation
@@ -45,6 +40,7 @@ public:
     replaceChildAtIndexInPlace(0, operand0);
     replaceChildAtIndexInPlace(1, operand1);
   }
+  static const char * Name() { return "round"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

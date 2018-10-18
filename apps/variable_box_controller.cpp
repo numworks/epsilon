@@ -1,6 +1,8 @@
 #include "variable_box_controller.h"
 #include "shared/global_context.h"
 #include "shared/poincare_helpers.h"
+#include "shared/storage_function.h"
+#include "shared/storage_cartesian_function.h"
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>
@@ -81,12 +83,17 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
   Storage::Record record = recordAtIndex(index);
-  char truncatedName[SymbolAbstract::k_maxNameSize+k_functionArgLength];
-  size_t nameLength = SymbolAbstract::TruncateExtension(truncatedName, record.fullName(), SymbolAbstract::k_maxNameSize);
-  if (m_currentPage == Page::Function) {
-    nameLength += strlcpy(truncatedName+nameLength, k_functionArg, k_functionArgLength+1);
+  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  char symbolName[Shared::StorageFunction::k_maxNameWithArgumentSize];
+  size_t symbolLength = 0;
+  if (m_currentPage == Page::Expression) {
+    symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
+  } else {
+    assert(m_currentPage == Page::Function);
+    StorageCartesianFunction f(record);
+    symbolLength = f.nameWithArgument(symbolName, Shared::StorageFunction::k_maxNameWithArgumentSize, 'x');
   }
-  Layout symbolLayout = LayoutHelper::String(truncatedName, nameLength);
+  Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);
   myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
 }

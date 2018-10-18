@@ -43,11 +43,7 @@ public:
 
 class Logarithm final : public Expression {
 public:
-  Logarithm(const LogarithmNode<1> * n) : Expression(n) {}
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  explicit Logarithm(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
-    replaceChildAtIndexInPlace(0, operand);
-  }
   Logarithm(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
@@ -62,6 +58,17 @@ private:
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   bool parentIsAPowerOfSameBase() const;
+};
+
+class CommonLogarithm : public Expression {
+public:
+  CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
+  explicit CommonLogarithm(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
+    replaceChildAtIndexInPlace(0, operand);
+  }
+  static const char * Name() { return "log"; }
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 
 }

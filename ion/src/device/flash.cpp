@@ -48,7 +48,14 @@ static void close() {
 static void typed_memcpy(uint8_t * source, uint8_t * destination, size_t length) {
   MemoryAccessType * src = reinterpret_cast<MemoryAccessType *>(source);
   MemoryAccessType * dst = reinterpret_cast<MemoryAccessType *>(destination);
-  for (size_t i=0; i<length/sizeof(MemoryAccessType); i++) {
+  /* "length" gives the number of bytes of the memcpy, but operations on Flash
+   * are made in MemoryAccessType. Make sure to write all the data if length is
+   * not a multiple of MemoryAccessType.
+   * For instance, if length is 5 bytes and memory operations are in uint32_t,
+   * we need to make 2 write operations. */
+  bool lengthIsMultipleOfMemoryAccessType = ((length*sizeof(uint8_t)) % sizeof(MemoryAccessType)) == 0;
+  size_t numberOfWrites = (length*sizeof(uint8_t))/sizeof(MemoryAccessType) + (lengthIsMultipleOfMemoryAccessType ? 0 : 1);
+  for (size_t i = 0; i < numberOfWrites; i++) {
     *dst++ = *src++;
   }
 }

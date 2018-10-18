@@ -3,6 +3,7 @@
 #include "shared/poincare_helpers.h"
 #include "shared/storage_function.h"
 #include "shared/storage_cartesian_function.h"
+#include "graph/storage_cartesian_function_store.h"
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>
@@ -91,7 +92,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   } else {
     assert(m_currentPage == Page::Function);
     StorageCartesianFunction f(record);
-    symbolLength = f.nameWithArgument(symbolName, Shared::StorageFunction::k_maxNameWithArgumentSize, 'x');
+    symbolLength = f.nameWithArgument(symbolName, Shared::StorageFunction::k_maxNameWithArgumentSize, Graph::StorageCartesianFunctionStore::Symbol());
   }
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);

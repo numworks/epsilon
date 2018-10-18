@@ -40,7 +40,7 @@ Layout IntegralGraphController::createFunctionLayout(StorageFunction * function)
   constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize+5; // f(x)dx
   char buffer[bufferSize];
   const char * dx = "dx";
-  int numberOfChars = function->nameWithArgument(buffer, bufferSize-strlen(dx), 'x');
+  int numberOfChars = function->nameWithArgument(buffer, bufferSize-strlen(dx), StorageCartesianFunctionStore::Symbol());
   strlcpy(buffer+numberOfChars, dx, bufferSize-numberOfChars);
   return LayoutHelper::String(buffer, strlen(buffer), KFont::SmallFont);
 }

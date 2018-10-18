@@ -45,9 +45,9 @@ void StorageValuesController::willDisplayCellAtLocation(HighlightCell * cell, in
     const size_t bufferNameSize = Shared::StorageFunction::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
     if (isDerivativeColumn(i)) {
-      function->derivativeNameWithArgument(bufferName, bufferNameSize, 'x');
+      function->derivativeNameWithArgument(bufferName, bufferNameSize, StorageCartesianFunctionStore::Symbol());
     } else {
-      function->nameWithArgument(bufferName, bufferNameSize, 'x');
+      function->nameWithArgument(bufferName, bufferNameSize, StorageCartesianFunctionStore::Symbol());
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());

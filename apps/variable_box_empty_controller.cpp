@@ -1,5 +1,6 @@
 #include "variable_box_empty_controller.h"
 #include <poincare/layout_helper.h>
+#include "graph/storage_cartesian_function_store.h"
 #include "i18n.h"
 #include <assert.h>
 
@@ -88,7 +89,7 @@ void VariableBoxEmptyController::setType(Type type) {
     case Type::Functions:
     {
       message = I18n::Message::EmptyFunctionBox;
-      char storeFunction[] = {'3', '+', 'x', Ion::Charset::Sto, 'f', '(', 'x', ')', 0};
+      char storeFunction[] = {'3', '+', Graph::StorageCartesianFunctionStore::Symbol(), Ion::Charset::Sto, 'f', '(', Graph::StorageCartesianFunctionStore::Symbol(), ')', 0};
       layout = LayoutHelper::String(storeFunction, sizeof(storeFunction)-1, KDText::FontSize::Small);
       break;
     }

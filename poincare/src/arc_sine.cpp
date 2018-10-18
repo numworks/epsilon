@@ -1,13 +1,18 @@
 #include <poincare/arc_sine.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
 namespace Poincare {
 
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::Name());
+}
+
+int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::Name());
 }
 
 Expression ArcSineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

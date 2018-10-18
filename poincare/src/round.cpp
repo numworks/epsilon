@@ -2,13 +2,19 @@
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/power.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <cmath>
 
 namespace Poincare {
 
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::Name());
+}
+
+int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::Name());
 }
 
 Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

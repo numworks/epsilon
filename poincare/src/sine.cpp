@@ -1,6 +1,7 @@
 #include <poincare/sine.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
@@ -18,7 +19,11 @@ Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::Angl
 }
 
 Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, Sine::Name());
+}
+
+int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::Name());
 }
 
 Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

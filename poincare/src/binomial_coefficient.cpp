@@ -1,6 +1,7 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/rational.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <stdlib.h>
@@ -20,7 +21,7 @@ Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDi
 }
 
 int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::Name());
 }
 
 template<typename T>

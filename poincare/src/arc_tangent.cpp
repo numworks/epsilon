@@ -1,13 +1,18 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
 namespace Poincare {
 
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::Name());
+}
+
+int ArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcTangent::Name());
 }
 
 template<typename T>

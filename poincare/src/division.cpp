@@ -4,6 +4,7 @@
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 #include <assert.h>
 #include <string.h>
@@ -33,6 +34,10 @@ Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   const ExpressionNode * numerator = childAtIndex(0)->type() == Type::Parenthesis ? childAtIndex(0)->childAtIndex(0) : childAtIndex(0);
   const ExpressionNode * denominator = childAtIndex(1)->type() == Type::Parenthesis ? childAtIndex(1)->childAtIndex(0) : childAtIndex(1);
   return FractionLayout(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Division::Name());
 }
 
 Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

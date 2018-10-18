@@ -31,7 +31,7 @@ Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "int");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::Name());
 }
 
 Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

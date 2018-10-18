@@ -23,7 +23,7 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;  const char * name() const { return "im"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
   // Evaluation
@@ -45,6 +45,7 @@ public:
   explicit ImaginaryPart(Expression operand) : ImaginaryPart() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "im"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

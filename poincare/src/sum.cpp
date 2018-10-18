@@ -1,7 +1,8 @@
 #include <poincare/sum.h>
 #include <poincare/addition.h>
 #include <poincare/sum_layout.h>
-
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -10,9 +11,12 @@ extern "C" {
 
 namespace Poincare {
 
-
 Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
   return SumLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+}
+
+int SumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::Name());
 }
 
 template<typename T>

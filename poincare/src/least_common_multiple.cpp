@@ -3,13 +3,18 @@
 #include <poincare/undefined.h>
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 #include <assert.h>
 
 namespace Poincare {
 
 Layout LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::Name());
+}
+
+int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::Name());
 }
 
 Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

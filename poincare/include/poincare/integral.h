@@ -56,6 +56,7 @@ public:
     replaceChildAtIndexInPlace(2, child3);
     replaceChildAtIndexInPlace(3, child4);
   }
+  static const char * Name() { return "int"; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

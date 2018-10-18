@@ -5,6 +5,8 @@
 #include <poincare/power.h>
 #include <poincare/undefined.h>
 #include <poincare/division.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 }
@@ -13,8 +15,13 @@ extern "C" {
 namespace Poincare {
 
 Layout PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::Name());
 }
+
+int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PredictionInterval::Name());
+}
+
 
 Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return PredictionInterval(this).shallowReduce(context, angleUnit, replaceSymbols);

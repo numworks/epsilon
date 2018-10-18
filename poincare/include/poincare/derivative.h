@@ -2,8 +2,6 @@
 #define POINCARE_DERIVATIVE_H
 
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/variable_context.h>
 
 namespace Poincare {
@@ -26,13 +24,8 @@ public:
 
 private:
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "diff"; }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
@@ -59,6 +52,7 @@ public:
     replaceChildAtIndexInPlace(1, child2);
     replaceChildAtIndexInPlace(2, child3);
   }
+  static const char * Name() { return "diff"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

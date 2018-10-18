@@ -12,7 +12,7 @@ Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 }
 
 int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::Name());
 }
 
 Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

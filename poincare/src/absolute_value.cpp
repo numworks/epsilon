@@ -1,4 +1,6 @@
 #include <poincare/absolute_value.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/absolute_value_layout.h>
 #include <assert.h>
@@ -12,6 +14,10 @@ Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::An
 
 Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return AbsoluteValueLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::Name());
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

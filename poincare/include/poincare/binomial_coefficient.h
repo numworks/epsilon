@@ -3,7 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -44,6 +43,7 @@ public:
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }
+  static const char * Name() { return "binomial"; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

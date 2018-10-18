@@ -43,6 +43,7 @@ public:
   explicit Conjugate(Expression operand) : Conjugate() {
     replaceChildAtIndexInPlace(0, operand);
   }
+  static const char * Name() { return "conj"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

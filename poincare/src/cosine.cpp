@@ -1,6 +1,7 @@
 #include <poincare/cosine.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
@@ -18,7 +19,11 @@ Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::An
 }
 
 Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, Cosine::Name());
+}
+
+int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::Name());
 }
 
 Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

@@ -1,4 +1,5 @@
 #include <poincare/subtraction.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
@@ -31,11 +32,11 @@ bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Infix(Subtraction(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Infix(Subtraction(this), floatDisplayMode, numberOfSignificantDigits, Subtraction::Name());
 }
 
 int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Subtraction::Name());
 }
 
 template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {

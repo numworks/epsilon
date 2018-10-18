@@ -8,6 +8,8 @@
 #include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/constant.h>
 #include <poincare/undefined.h>
@@ -20,7 +22,7 @@ namespace Poincare {
 
 template<>
 Layout LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, "log");
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::Name());
 }
 
 template<>
@@ -28,6 +30,11 @@ Layout LogarithmNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMo
   return LayoutHelper::Logarithm(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+template<int T>
+int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Logarithm::Name());
 }
 
 template<int T>
@@ -302,6 +309,8 @@ template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincar
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
+template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 template Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
 template Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
 template Expression LogarithmNode<1>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

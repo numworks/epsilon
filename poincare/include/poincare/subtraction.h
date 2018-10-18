@@ -3,7 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -43,7 +42,6 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
 
 private:
-  static const char * name() { return "-"; }
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
@@ -62,6 +60,7 @@ public:
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }
+  static const char * Name() { return "-"; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

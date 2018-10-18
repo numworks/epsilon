@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/approximation_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -44,9 +43,7 @@ public:
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
@@ -68,6 +65,8 @@ public:
     replaceChildAtIndexInPlace(1, denominator);
   }
   Division(const DivisionNode * n) : Expression(n) {}
+  static const char * Name() { return "/"; }
+
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };
 

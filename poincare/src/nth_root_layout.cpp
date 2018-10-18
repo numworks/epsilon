@@ -1,4 +1,6 @@
+#include <poincare/nth_root.h>
 #include <poincare/nth_root_layout.h>
+#include <poincare/square_root.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <ion/charset.h>
@@ -146,18 +148,17 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   // Case: root(x,n)
   if (m_hasIndex
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
       && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
   {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::Name());
   }
   // Case: squareRoot(x)
   if (!m_hasIndex) {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::Name());
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".
@@ -168,7 +169,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
 
-  buffer[numberOfChar++] = '\x91';
+  buffer[numberOfChar++] = Ion::Charset::Root;
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }

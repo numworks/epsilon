@@ -39,7 +39,6 @@ public:
   Randint();
   Randint(const RandintNode * n) : Expression(n) {}
   static const char * Name() { return "randint"; }
-  template<typename T> static T random();
 };
 
 }

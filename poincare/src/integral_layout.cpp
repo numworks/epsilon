@@ -215,7 +215,7 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
 
-  // Render the integral symbol.
+  // Render the integral symbol
   KDRect topSymbolFrame(p.x() + k_symbolWidth + k_lineThickness, p.y() + upperBoundSize.height() - k_boundHeightMargin,
     k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(topSymbolFrame, expressionColor, (const uint8_t *)topSymbolPixel, (KDColor *)workingBuffer);
@@ -226,8 +226,8 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   ctx->fillRect(KDRect(p.x() + k_symbolWidth, p.y() + upperBoundSize.height() - k_boundHeightMargin, k_lineThickness,
     2*k_boundHeightMargin+2*k_integrandHeigthMargin+integrandSize.height()), expressionColor);
 
-  // Render "dx".
-  KDPoint dxPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width(), 0));
+  // Render "dx"
+  KDPoint dxPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width(), integrandLayout()->baseline() - k_font->glyphSize().height()/2));
   ctx->drawString("dx", dxPosition, k_font, expressionColor, backgroundColor);
 }
 

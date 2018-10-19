@@ -12,6 +12,8 @@ extern "C" {
 
 namespace Poincare {
 
+int RandintNode::numberOfChildren() const { return Randint::NumberOfChildren(); }
+
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::Name());
 }

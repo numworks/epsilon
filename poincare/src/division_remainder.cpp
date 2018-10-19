@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::NumberOfChildren(); }
+
 Layout DivisionRemainderNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::Name());
 }

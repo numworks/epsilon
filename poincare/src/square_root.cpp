@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int SquareRootNode::numberOfChildren() const { return SquareRoot::NumberOfChildren(); }
+
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

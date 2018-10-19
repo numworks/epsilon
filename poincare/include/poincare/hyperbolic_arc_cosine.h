@@ -41,6 +41,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
   static const char * Name() { return "acosh"; }
+  static const int NumberOfChildren() { return 1; }
 };
 
 }

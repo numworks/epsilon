@@ -9,6 +9,8 @@
 
 namespace Poincare {
 
+int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::NumberOfChildren(); }
+
 Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixTrace(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

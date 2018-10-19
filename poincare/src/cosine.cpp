@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int CosineNode::numberOfChildren() const { return Cosine::NumberOfChildren(); }
+
 float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
 }

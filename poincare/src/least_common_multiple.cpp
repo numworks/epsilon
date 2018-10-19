@@ -9,6 +9,8 @@
 
 namespace Poincare {
 
+int LeastCommonMultipleNode::numberOfChildren() const { return LeastCommonMultiple::NumberOfChildren(); }
+
 Layout LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::Name());
 }

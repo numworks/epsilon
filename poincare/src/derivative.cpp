@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int DerivativeNode::numberOfChildren() const { return Derivative::NumberOfChildren(); }
+
 int DerivativeNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(1)->polynomialDegree(context, symbolName) == 0

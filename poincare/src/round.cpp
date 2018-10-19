@@ -9,6 +9,8 @@
 
 namespace Poincare {
 
+int RoundNode::numberOfChildren() const { return Round::NumberOfChildren(); }
+
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::Name());
 }

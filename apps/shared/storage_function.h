@@ -10,6 +10,7 @@ class StorageFunction : public StorageExpressionModel {
 public:
   constexpr static int k_parenthesedArgumentLength = 3;
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
+  static bool BaseNameCompliant(const char * baseName);
 
   // Constructors
   StorageFunction(Ion::Storage::Record record) : StorageExpressionModel(record){}

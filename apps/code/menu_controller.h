@@ -93,10 +93,6 @@ private:
     }
   };
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
-  /* In the initializer list of the MenuController constructor, we initialize
-   * m_scriptCells by copying k_maxNumberOfDisplayableScriptCells times the
-   * constructor of an EvenOddEditableTextCell. */
-  char m_draftTextBuffer[TextField::maxBufferSize()];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddMessageTextCell m_addNewScriptCell;
   EvenOddCell m_emptyCell;

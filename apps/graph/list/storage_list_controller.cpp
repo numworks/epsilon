@@ -46,6 +46,10 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   if (textLength <= argumentLength) {
     // The user entered an empty name. Use a default function name.
     StorageCartesianFunction::DefaultName(baseName, maxBaseNameSize);
+    size_t defaultNameLength = strlen(baseName);
+    strlcpy(baseName + defaultNameLength, StorageFunction::k_parenthesedArgument, maxBaseNameSize - defaultNameLength);
+    textField->setText(baseName);
+    baseName[defaultNameLength] = 0;
   } else {
     strlcpy(baseName, text, textLength - argumentLength + 1);
   }
@@ -74,6 +78,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     app()->displayWarning(I18n::Message::NameTooLong);
   }
+  textField->setEditing(true, false);
   return false;
 }
 
@@ -109,10 +114,12 @@ HighlightCell * StorageListController::expressionCells(int index) {
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
-  StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  setFunctionNameInTextField(function, titleCell->textField());
-  KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
-  titleCell->setColor(functionNameColor);
+  if (!titleCell->isEditing()) {
+    StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+    setFunctionNameInTextField(function, titleCell->textField());
+    KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
+    titleCell->setColor(functionNameColor);
+  }
 }
 
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {

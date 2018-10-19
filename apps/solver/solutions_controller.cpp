@@ -152,7 +152,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       deltaCell->setLayout(m_delta2Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
-      symbolCell->setFontSize(KDFont::LargeFont);
+      symbolCell->setFont(KDFont::LargeFont);
       char bufferSymbol[Equation::k_maxVariableSize+1]; // Hold at maximum Delta = b^2-4ac or the variable name + a digit
       switch (m_equationStore->type()) {
         case EquationStore::Type::LinearSystem:

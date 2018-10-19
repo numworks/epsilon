@@ -14,7 +14,7 @@ public:
       size_t textBufferSize,
       ::TextFieldDelegate * delegate = nullptr,
       bool hasTwoBuffers = true,
-      KDText::FontSize size = KDText::FontSize::Large,
+      const KDFont * size = KDFont::LargeFont,
       float horizontalAlignment = 0.0f,
       float verticalAlignment = 0.5f,
       KDColor textColor = KDColorBlack,

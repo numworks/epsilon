@@ -12,7 +12,7 @@ VariableBoxEmptyController::VariableBoxEmptyView::VariableBoxEmptyView() :
 {
   I18n::Message messages[k_numberOfMessages] = {I18n::Message::EmptyVariableBox0, I18n::Message::Default, I18n::Message::EmptyVariableBox1, I18n::Message::EmptyVariableBox2, I18n::Message::EmptyVariableBox3};
   for (int i = 0; i < k_numberOfMessages; i++) {
-    m_messages[i].setFontSize(KDText::FontSize::Small);
+    m_messages[i].setFont(k_font);
     m_messages[i].setAlignment(0.5f, 0.5f);
     m_messages[i].setBackgroundColor(Palette::WallScreen);
     m_messages[i].setMessage(messages[i]);
@@ -46,7 +46,7 @@ View * VariableBoxEmptyController::VariableBoxEmptyView::subviewAtIndex(int inde
 void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+  KDCoordinate textHeight = k_font->glyphSize().height();
   KDCoordinate layoutHeight = m_layoutExample.minimalSizeForOptimalDisplay().height();
   KDCoordinate margin = (height - k_numberOfMessages*textHeight-layoutHeight)/2;
   m_layoutExample.setFrame(KDRect(0, margin+3*textHeight, width, layoutHeight));
@@ -83,14 +83,14 @@ void VariableBoxEmptyController::setType(Type type) {
     {
       message = I18n::Message::EmptyExpressionBox;
       char storeExpression[] = {'3', Ion::Charset::Sto, 'A', 0};
-      layout = LayoutHelper::String(storeExpression, sizeof(storeExpression)-1, KDText::FontSize::Small);
+      layout = LayoutHelper::String(storeExpression, sizeof(storeExpression)-1, VariableBoxEmptyView::k_font);
       break;
     }
     case Type::Functions:
     {
       message = I18n::Message::EmptyFunctionBox;
       char storeFunction[] = {'3', '+', Graph::StorageCartesianFunctionStore::Symbol(), Ion::Charset::Sto, 'f', '(', Graph::StorageCartesianFunctionStore::Symbol(), ')', 0};
-      layout = LayoutHelper::String(storeFunction, sizeof(storeFunction)-1, KDText::FontSize::Small);
+      layout = LayoutHelper::String(storeFunction, sizeof(storeFunction)-1, VariableBoxEmptyView::k_font);
       break;
     }
     default:

@@ -14,12 +14,12 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
       StorageFunctionListController * list = (StorageFunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(1);
-    }, this), KDText::FontSize::Small, Palette::PurpleBright),
+    }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
       StorageFunctionListController * list = (StorageFunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
-    }, this), KDText::FontSize::Small, Palette::PurpleBright),
+    }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_titlesColumnWidth(k_minTitleColumnWidth)
 {
   m_selectableTableView.setMargins(0);
@@ -253,7 +253,7 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = max(maxNameLength, dotPosition-functionName);
   }
-  return (maxNameLength + StorageFunction::k_parenthesedArgumentLength) * KDText::charSize(titleCells(0)->fontSize()).width();
+  return (maxNameLength + StorageFunction::k_parenthesedArgumentLength) * titleCells(0)->font()->glyphSize().width();
 }
 
 void StorageFunctionListController::didChangeModelsList() {

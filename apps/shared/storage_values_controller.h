@@ -51,6 +51,7 @@ protected:
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
   virtual Ion::Storage::Record recordAtColumn(int i);
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }

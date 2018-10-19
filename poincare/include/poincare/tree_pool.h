@@ -15,7 +15,7 @@ namespace Poincare {
 
 class TreeHandle;
 
-class TreePool {
+class TreePool final {
   friend class TreeNode;
   friend class TreeHandle;
   friend class ExceptionCheckpoint;
@@ -69,7 +69,7 @@ private:
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
-  class Nodes {
+  class Nodes final {
   public:
     Nodes(TreeNode * node) : m_node(node) {}
     class Iterator : public TreeNode::Iterator<TreeNode> {
@@ -87,7 +87,7 @@ private:
   };
   Nodes allNodes() { return Nodes(first()); }
 
-  class RootNodes {
+  class RootNodes final {
   public:
     RootNodes(TreeNode * node) : m_node(node) {}
     class Iterator : public TreeNode::Iterator<TreeNode> {
@@ -114,7 +114,7 @@ private:
   int generateIdentifier() { return m_identifiers.pop(); }
   void freeIdentifier(int identifier);
 
-  class IdentifierStack {
+  class IdentifierStack final {
   public:
     IdentifierStack() : m_currentIndex(0) {
       for (int i = 0; i < MaxNumberOfNodes; i++) {

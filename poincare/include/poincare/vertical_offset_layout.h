@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class VerticalOffsetLayoutNode : public LayoutNode {
+class VerticalOffsetLayoutNode final : public LayoutNode {
 public:
   enum class Type {
     Subscript,
@@ -56,7 +56,7 @@ private:
   Type m_type;
 };
 
-class VerticalOffsetLayout : public Layout {
+class VerticalOffsetLayout final : public Layout {
 public:
   VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type);
 };

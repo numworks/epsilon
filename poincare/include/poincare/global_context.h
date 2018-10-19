@@ -13,7 +13,7 @@ class Integer;
 
 /* The global context only stores symbols A-Z, L0-L9 and M0-M9 */
 
-class GlobalContext : public Context {
+class GlobalContext final : public Context {
 public:
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */

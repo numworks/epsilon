@@ -35,7 +35,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class SimplePredictionIntervalNode : public ConfidenceIntervalNode {
+class SimplePredictionIntervalNode final : public ConfidenceIntervalNode {
 public:
 private:
   const char * name() const override { return "prediction"; }
@@ -56,7 +56,7 @@ private:
   constexpr static int k_maxNValue = 300;
 };
 
-class SimplePredictionInterval : public ConfidenceInterval {
+class SimplePredictionInterval final : public ConfidenceInterval {
 public:
   SimplePredictionInterval() : ConfidenceInterval(static_cast<SimplePredictionIntervalNode *>(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>())) {}
   SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}

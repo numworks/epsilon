@@ -10,7 +10,7 @@ template<typename T>
 class MatrixComplex;
 
 template<typename T>
-class MatrixComplexNode : public EvaluationNode<T> {
+class MatrixComplexNode final : public EvaluationNode<T> {
 public:
   MatrixComplexNode() :
     EvaluationNode<T>(),
@@ -53,7 +53,7 @@ private:
 };
 
 template<typename T>
-class MatrixComplex : public Evaluation<T> {
+class MatrixComplex final : public Evaluation<T> {
   friend class MatrixComplexNode<T>;
 public:
   MatrixComplex(MatrixComplexNode<T> * node) : Evaluation<T>(node) {}

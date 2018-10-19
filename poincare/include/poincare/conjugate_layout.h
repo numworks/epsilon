@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ConjugateLayoutNode : public LayoutNode {
+class ConjugateLayoutNode final : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
@@ -38,7 +38,7 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class ConjugateLayout : public Layout {
+class ConjugateLayout final : public Layout {
 public:
   explicit ConjugateLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);

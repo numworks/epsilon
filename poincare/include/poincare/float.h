@@ -18,7 +18,7 @@ namespace Poincare {
  * Decimal. */
 
 template<typename T>
-class FloatNode : public NumberNode {
+class FloatNode final : public NumberNode {
 public:
   FloatNode() : m_value(0.0) {}
 
@@ -58,7 +58,7 @@ private:
 };
 
 template<typename T>
-class Float : public Number {
+class Float final : public Number {
 public:
   Float(T value);
 private:

@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FloorNode : public ExpressionNode {
+class FloorNode /*final*/ : public ExpressionNode {
 public:
 
   // TreeNode
@@ -37,7 +37,7 @@ private:
   }
 };
 
-class Floor : public Expression {
+class Floor final : public Expression {
 public:
   Floor();
   Floor(const FloorNode * n) : Expression(n) {}

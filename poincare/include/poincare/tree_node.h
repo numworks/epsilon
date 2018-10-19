@@ -78,7 +78,7 @@ public:
   };
 
   template <typename T>
-  class Direct {
+  class Direct final {
   public:
     Direct(const T * node) : m_node(const_cast<T *>(node)) {}
     class Iterator : public TreeNode::Iterator<T> {
@@ -96,7 +96,7 @@ public:
   };
 
   template <typename T>
-  class DepthFirst {
+  class DepthFirst final {
   public:
     DepthFirst(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
     class Iterator : public TreeNode::Iterator<T> {

@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class PredictionIntervalNode : public ExpressionNode {
+class PredictionIntervalNode /*final*/ : public ExpressionNode {
 public:
 
   // TreeNode
@@ -39,8 +39,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-
-class PredictionInterval : public Expression {
+class PredictionInterval final : public Expression {
 public:
   PredictionInterval();
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}

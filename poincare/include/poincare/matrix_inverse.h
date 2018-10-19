@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class MatrixInverseNode : public ExpressionNode {
+class MatrixInverseNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -32,7 +32,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class MatrixInverse : public Expression {
+class MatrixInverse final : public Expression {
 public:
   MatrixInverse();
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}

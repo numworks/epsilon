@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class SubtractionNode : public ExpressionNode {
+class SubtractionNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -54,7 +54,7 @@ private:
   }
 };
 
-class Subtraction : public Expression {
+class Subtraction final : public Expression {
 public:
   Subtraction();
   Subtraction(const SubtractionNode * n) : Expression(n) {}

@@ -9,7 +9,7 @@ template<typename T>
 class Complex;
 
 template<typename T>
-class ComplexNode : public std::complex<T>, public EvaluationNode<T> {
+class ComplexNode final : public std::complex<T>, public EvaluationNode<T> {
 public:
   ComplexNode() : std::complex<T>(NAN, NAN) {}
 
@@ -38,7 +38,7 @@ public:
 };
 
 template<typename T>
-class Complex : public Evaluation<T> {
+class Complex final : public Evaluation<T> {
 public:
   Complex(ComplexNode<T> * n) : Evaluation<T>(n) {}
   explicit Complex(T a, T b = 0.0);

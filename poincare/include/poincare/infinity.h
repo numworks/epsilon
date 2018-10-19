@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class InfinityNode : public NumberNode {
+class InfinityNode final : public NumberNode {
 public:
 
   void setNegative(bool negative) { m_negative = negative; }
@@ -42,7 +42,7 @@ private:
   bool m_negative;
 };
 
-class Infinity : public Number {
+class Infinity final : public Number {
 public:
   Infinity(InfinityNode * n) : Number(n) {}
   Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {

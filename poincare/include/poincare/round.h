@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class RoundNode : public ExpressionNode  {
+class RoundNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -37,7 +37,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Round : public Expression {
+class Round final : public Expression {
 public:
   Round();
   Round(const RoundNode * n) : Expression(n) {}

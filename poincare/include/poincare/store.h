@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class StoreNode : public ExpressionNode {
+class StoreNode /*final*/ : public ExpressionNode {
 public:
 
   // TreeNode
@@ -36,7 +36,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Store : public Expression {
+class Store final : public Expression {
 public:
   Store(const StoreNode * n) : Expression(n) {}
   Store(Expression value, Symbol symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {

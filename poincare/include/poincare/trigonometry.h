@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class Trigonometry  {
+class Trigonometry final {
 public:
   enum class Function {
     Cosine = 0,

@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class DerivativeNode : public ExpressionNode {
+class DerivativeNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -49,7 +49,7 @@ private:
   constexpr static double k_rateStepSize = 1.4;
 };
 
-class Derivative : public Expression {
+class Derivative final : public Expression {
 public:
   Derivative();
   Derivative(const DerivativeNode * n) : Expression(n) {}

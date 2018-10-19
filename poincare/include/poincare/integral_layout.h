@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class IntegralLayoutNode : public LayoutNode {
+class IntegralLayoutNode final : public LayoutNode {
 public:
   constexpr static KDCoordinate k_symbolHeight = 4;
   constexpr static KDCoordinate k_symbolWidth = 4;
@@ -51,7 +51,7 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class IntegralLayout : public Layout {
+class IntegralLayout final : public Layout {
 public:
   IntegralLayout(Layout integrand, Layout lowerBound, Layout upperBound) :
     Layout(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())

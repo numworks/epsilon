@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-class Preferences {
+class Preferences final {
 public:
   enum class EditionMode {
     Edition2D,

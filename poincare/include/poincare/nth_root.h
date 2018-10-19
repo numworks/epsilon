@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class NthRootNode : public ExpressionNode  {
+class NthRootNode final : public ExpressionNode  {
 public:
   // ExpressionNode
   Type type() const override { return Type::NthRoot; }
@@ -36,7 +36,7 @@ private:
 
 };
 
-class NthRoot : public Expression {
+class NthRoot final : public Expression {
 public:
   NthRoot();
   NthRoot(const NthRootNode * n) : Expression(n) {}

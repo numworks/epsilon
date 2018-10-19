@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class DivisionQuotientNode : public ExpressionNode {
+class DivisionQuotientNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -32,7 +32,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class DivisionQuotient : public Expression {
+class DivisionQuotient final : public Expression {
 public:
   DivisionQuotient();
   DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}

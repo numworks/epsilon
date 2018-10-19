@@ -114,8 +114,9 @@ VariableBoxController * AppsContainer::variableBoxController() {
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   resetShiftAlphaStatus();
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
 #ifdef EPSILON_BOOT_PROMPT
-  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showPopUp()) {
+  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
     activeApp()->displayModalViewController(&m_promptController, 0.f, 0.f);
   }
 #endif
@@ -123,7 +124,7 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
-  Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
+  Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
   m_backlightDimmingTimer.reset();
   window()->redraw(true);
 }

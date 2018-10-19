@@ -43,7 +43,8 @@ void GlobalContext::setExpressionForSymbolName(const Expression & expression, co
   FileName symbolFileName = fileNameForSymbol(symbol);
 
   // evaluate before deleting anything (to be able to evaluate A+2->A)
-  Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat());
+  Preferences * preferences = Preferences::sharedPreferences();
+  Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, preferences->angleUnit(), preferences->complexFormat());
   // Delete any record with same name (as it is going to be override)
   Ion::Storage::sharedStorage()->recordNamed(symbolFileName.nameWithExtension).destroy();
 

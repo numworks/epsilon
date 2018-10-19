@@ -10,6 +10,24 @@ namespace Shared {
 
 char StorageFunction::k_parenthesedArgument[]("(x)");
 
+bool StorageFunction::BaseNameCompliant(const char * baseName) {
+  if (baseName[0] == 0 || (baseName[0] >= '0' && baseName[0] <= '9')) {
+    // The name cannot be empty nor start with a number
+    return false;
+  }
+  const char * currentChar = baseName;
+  while (*currentChar != 0) {
+    if (!((*currentChar >= 'A' && *currentChar <= 'Z')
+        || (*currentChar >= 'a' && *currentChar <= 'z')
+        || (*currentChar >= '0' && *currentChar <= '9')
+        || *currentChar == '_')) {
+      return false;
+    }
+    currentChar++;
+  }
+  return true;
+}
+
 uint32_t StorageFunction::checksum() {
   assert(!isNull());
   return checksum();

@@ -91,9 +91,6 @@ void GlobalContext::setExpressionForSymbol(const Expression & expression, const 
 }
 
 const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstract & symbol, Ion::Storage::Record r) {
-  if (r.isNull()) {
-    return Expression();
-  }
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(symbol, r);
   }
@@ -103,9 +100,7 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 
 const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract & symbol, Ion::Storage::Record r) {
   assert(symbol.type() == ExpressionNode::Type::Symbol);
-  if (!Ion::Storage::FullNameHasExtension(r.fullName(), expExtension, strlen(expExtension))) {
-    return Expression();
-  }
+
   // Constant symbols
   Symbol s = static_cast<const Symbol &>(symbol);
   if (s.isPi()) {
@@ -113,6 +108,9 @@ const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract &
   }
   if (s.isExponential()) {
     return Float<double>(M_E);
+  }
+  if (r.isNull() || !Ion::Storage::FullNameHasExtension(r.fullName(), expExtension, strlen(expExtension))) {
+    return Expression();
   }
   // Look up the file system for symbol
   return ExpressionFromSymbolRecord(r);

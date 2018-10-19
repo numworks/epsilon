@@ -9,6 +9,7 @@ namespace Shared {
 class StorageFunction : public StorageExpressionModel {
 public:
   constexpr static int k_parenthesedArgumentLength = 3;
+  static char k_parenthesedArgument[k_parenthesedArgumentLength+1];
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
   static bool BaseNameCompliant(const char * baseName);
 
@@ -46,7 +47,6 @@ protected:
     bool m_active;
   };
 private:
-  static char k_parenthesedArgument[k_parenthesedArgumentLength+1];
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   FunctionRecordData * recordData() const;
 };

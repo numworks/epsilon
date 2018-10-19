@@ -15,11 +15,19 @@ void TextFieldFunctionTitleCell::setHighlighted(bool highlight) {
   m_textField.setBackgroundColor(EvenOddCell::backgroundColor());
 }
 
+Responder * TextFieldFunctionTitleCell::responder() {
+  return isEditing() ? this : nullptr;
+}
+
 void TextFieldFunctionTitleCell::setEditing(bool editing) {
   app()->setFirstResponder(&m_textField);
   const char * previousText = m_textField.text();
   m_textField.setEditing(true, false);
   m_textField.setText(previousText);
+}
+
+bool TextFieldFunctionTitleCell::isEditing() const {
+  return m_textField.isEditing();
 }
 
 void TextFieldFunctionTitleCell::setEven(bool even) {
@@ -38,6 +46,12 @@ void TextFieldFunctionTitleCell::setText(const char * title) {
 
 void TextFieldFunctionTitleCell::layoutSubviews() {
   m_textField.setFrame(textFieldFrame());
+}
+
+void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
+  if (isEditing()) {
+    app()->setFirstResponder(&m_textField);
+  }
 }
 
 KDRect TextFieldFunctionTitleCell::textFieldFrame() const {

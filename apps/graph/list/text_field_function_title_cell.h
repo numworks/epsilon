@@ -11,7 +11,7 @@ class StorageListController;
 
 class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell, public Responder {
 public:
-  TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation = Orientation::VerticalIndicator, KDText::FontSize size = KDText::FontSize::Large);
+  TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::LargeFont);
   TextField * textField() { return &m_textField; }
   void setEditing(bool editing);
   bool isEditing() const;
@@ -19,7 +19,7 @@ public:
 
   // FunctionTitleCell
   void setColor(KDColor color) override;
-  KDText::FontSize fontSize() const override { return m_textField.fontSize(); }
+  const KDFont * font() const override { return m_textField.font(); }
   // EvenOddCell
   void setEven(bool even) override;
   // HighlightCell

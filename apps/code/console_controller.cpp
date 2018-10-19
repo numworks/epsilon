@@ -333,7 +333,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
   if (script.importationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
-    assert(strlen(k_importCommand1) + strlen(script.name()) - strlen(ScriptStore::k_scriptExtension) + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
+    assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
     char command[k_maxImportCommandSize];
 
     // Copy "from "

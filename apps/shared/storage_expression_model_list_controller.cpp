@@ -24,7 +24,7 @@ KDCoordinate StorageExpressionModelListController::expressionRowHeight(int j) {
     return Metric::StoreRowHeight;
   }
   KDCoordinate modelHeight = m->layout().layoutSize().height();
-  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDText::charSize().height();
+  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDFont::LargeFont->glyphSize().height();
   return Metric::StoreRowHeight > modelHeightWithMargins ? Metric::StoreRowHeight : modelHeightWithMargins;
 }
 

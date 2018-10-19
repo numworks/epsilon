@@ -20,6 +20,7 @@ public:
 private:
   class VariableBoxEmptyView : public View {
   public:
+    static constexpr const KDFont * k_font = KDFont::SmallFont;
     VariableBoxEmptyView();
     void setMessage(I18n::Message message);
     void setLayout(Poincare::Layout layout);

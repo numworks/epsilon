@@ -59,17 +59,25 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
+    bool selectTab = false;
     textField->setEditing(false, false);
     computeTitlesColumnWidth();
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
       m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
-    } else if (event == Ion::Events::Up && currentRow > 0) {
-      m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
+    } else if (event == Ion::Events::Up) {
+      if (currentRow > 0) {
+        m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
+      } else {
+        selectTab = true;
+      }
     }
     m_selectableTableView.selectedCell()->setHighlighted(true);
     m_selectableTableView.reloadData();
     app()->setFirstResponder(&m_selectableTableView);
+    if (selectTab) {
+      m_selectableTableView.parentResponder()->handleEvent(event);
+    }
     return true;
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);

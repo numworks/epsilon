@@ -8,7 +8,7 @@ namespace Poincare {
 
 class Opposite;
 
-class OppositeNode : public ExpressionNode {
+class OppositeNode /*final*/ : public ExpressionNode {
 public:
   template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
 
@@ -44,7 +44,7 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 };
 
-class Opposite : public Expression {
+class Opposite final : public Expression {
 public:
   Opposite();
   Opposite(const OppositeNode * n) : Expression(n) {}

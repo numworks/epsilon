@@ -8,7 +8,7 @@ namespace Poincare {
 
 class NthRootLayout;
 
-class NthRootLayoutNode : public LayoutNode {
+class NthRootLayoutNode /*final*/ : public LayoutNode {
   friend class NthRootLayout;
 public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
@@ -65,7 +65,7 @@ private:
   bool m_hasIndex;
 };
 
-class NthRootLayout : public Layout {
+class NthRootLayout final : public Layout {
 public:
   explicit NthRootLayout(Layout radicand);
   NthRootLayout(Layout radicand, Layout index);

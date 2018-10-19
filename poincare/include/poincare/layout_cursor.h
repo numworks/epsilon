@@ -8,7 +8,7 @@ namespace Poincare {
 class HorizontalLayoutNode;
 class VerticalOffsetLayout;
 
-class LayoutCursor {
+class LayoutCursor final {
   friend class Layout;
   friend class BinomialCoefficientLayoutNode;
   friend class BracketLayoutNode;

@@ -29,7 +29,7 @@ To raise an error : ExceptionCheckpoint::Raise();
 
 namespace Poincare {
 
-class ExceptionCheckpoint {
+class ExceptionCheckpoint final {
 public:
   static void Raise() {
     assert(s_topmostExceptionCheckpoint != nullptr);

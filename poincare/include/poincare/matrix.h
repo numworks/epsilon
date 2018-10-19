@@ -8,7 +8,7 @@ namespace Poincare {
 
 class Multiplication;
 
-class MatrixNode : public ExpressionNode {
+class MatrixNode /*final*/ : public ExpressionNode {
 public:
   MatrixNode() :
     m_numberOfRows(0),
@@ -58,7 +58,7 @@ private:
   uint16_t m_numberOfColumns;
 };
 
-class Matrix : public Expression {
+class Matrix final : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:

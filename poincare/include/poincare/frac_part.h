@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FracPartNode : public ExpressionNode  {
+class FracPartNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -37,7 +37,7 @@ private:
   }
 };
 
-class FracPart : public Expression {
+class FracPart final : public Expression {
 public:
   FracPart();
   FracPart(const FracPartNode * n) : Expression(n) {}

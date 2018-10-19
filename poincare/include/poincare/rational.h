@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class RationalNode : public NumberNode {
+class RationalNode final : public NumberNode {
 public:
   RationalNode() :
     m_negative(false),
@@ -66,7 +66,7 @@ private:
   native_uint_t m_digits[0];
 };
 
-class Rational : public Number {
+class Rational final : public Number {
   friend class RationalNode;
   friend class PowerNode;
   friend class Power;

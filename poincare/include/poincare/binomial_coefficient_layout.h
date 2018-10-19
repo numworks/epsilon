@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class BinomialCoefficientLayoutNode : public LayoutNode {
+class BinomialCoefficientLayoutNode final : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
@@ -41,7 +41,7 @@ private:
   LayoutNode * kLayout() { return childAtIndex(1); }
 };
 
-class BinomialCoefficientLayout : public Layout {
+class BinomialCoefficientLayout final : public Layout {
 public:
   BinomialCoefficientLayout(Layout n, Layout k) :
     Layout(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())

@@ -10,7 +10,7 @@ namespace Poincare {
 /* GhostReference is not in ghost_node.h because GhostNode is needed in
  * tree_pool.h and this created header inclusion problems. */
 
-class GhostReference : public TreeHandle {
+class GhostReference final : public TreeHandle {
 public:
   GhostReference() : TreeHandle(TreePool::sharedPool()->createTreeNode<GhostNode>()) {}
 };

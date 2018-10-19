@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class AbsoluteValueLayoutNode : public BracketPairLayoutNode {
+class AbsoluteValueLayoutNode final : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
 
@@ -30,7 +30,7 @@ private:
   bool renderBottomBar() const override { return false; }
 };
 
-class AbsoluteValueLayout : public Layout {
+class AbsoluteValueLayout final : public Layout {
 public:
   explicit AbsoluteValueLayout(Layout l) :
     Layout(TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>())

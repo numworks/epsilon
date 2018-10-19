@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class FloorLayoutNode : public BracketPairLayoutNode {
+class FloorLayoutNode final : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -26,7 +26,7 @@ protected:
   bool renderTopBar() const override { return false; }
 };
 
-class FloorLayout : public Layout {
+class FloorLayout final : public Layout {
 public:
   explicit FloorLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<FloorLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);

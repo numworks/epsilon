@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-class AdditionNode : public NAryExpressionNode {
+class AdditionNode final : public NAryExpressionNode {
   friend class Addition;
 public:
   using NAryExpressionNode::NAryExpressionNode;
@@ -62,7 +62,7 @@ private:
    }
 };
 
-class Addition : public NAryExpression {
+class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
   Addition();

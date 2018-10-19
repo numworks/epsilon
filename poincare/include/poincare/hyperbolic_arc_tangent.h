@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class HyperbolicArcTangentNode : public HyperbolicTrigonometricFunctionNode {
+class HyperbolicArcTangentNode final : public HyperbolicTrigonometricFunctionNode {
 public:
 
   // TreeNode
@@ -31,7 +31,7 @@ private:
   }
 };
 
-class HyperbolicArcTangent : public HyperbolicTrigonometricFunction {
+class HyperbolicArcTangent final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcTangent() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {}
   HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}

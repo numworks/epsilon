@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class GreatCommonDivisorNode : public ExpressionNode {
+class GreatCommonDivisorNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -32,7 +32,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class GreatCommonDivisor : public Expression {
+class GreatCommonDivisor final : public Expression {
 public:
   GreatCommonDivisor();
   GreatCommonDivisor(const GreatCommonDivisorNode * n) : Expression(n) {}

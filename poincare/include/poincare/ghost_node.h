@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class GhostNode : public TreeNode {
+class GhostNode final : public TreeNode {
 public:
   // TreeNode
   int numberOfChildren() const override { return 0; }

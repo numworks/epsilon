@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class MultiplicationNode : public NAryExpressionNode {
+class MultiplicationNode /*final*/ : public NAryExpressionNode {
   friend class Addition;
 public:
   using NAryExpressionNode::NAryExpressionNode;
@@ -60,7 +60,7 @@ private:
   }
 };
 
-class Multiplication : public NAryExpression {
+class Multiplication final : public NAryExpression {
   friend class AdditionNode;
   friend class Addition;
   friend class Power;

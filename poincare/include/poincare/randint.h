@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class RandintNode : public ExpressionNode  {
+class RandintNode /*final*/ : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -38,7 +38,7 @@ private:
   template <typename T> Evaluation<T> templateApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Randint : public Expression {
+class Randint final : public Expression {
 friend class RandintNode;
 public:
   Randint();

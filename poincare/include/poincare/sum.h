@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class SumNode : public SequenceNode {
+class SumNode final : public SequenceNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(SumNode); }
@@ -29,7 +29,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b) const;
 };
 
-class Sum : public Expression {
+class Sum final : public Expression {
 friend class SumNode;
 public:
   Sum();

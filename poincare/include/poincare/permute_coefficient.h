@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class PermuteCoefficientNode : public ExpressionNode {
+class PermuteCoefficientNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -39,7 +39,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class PermuteCoefficient : public Expression {
+class PermuteCoefficient final : public Expression {
 public:
   PermuteCoefficient();
   PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}

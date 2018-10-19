@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class SquareRootNode : public ExpressionNode  {
+class SquareRootNode /*final*/ : public ExpressionNode  {
 public:
   // ExpressionNode
   Type type() const override { return Type::SquareRoot; }
@@ -38,7 +38,7 @@ private:
   }
 };
 
-class SquareRoot : public Expression {
+class SquareRoot final : public Expression {
 public:
   SquareRoot();
   SquareRoot(const SquareRootNode * n) : Expression(n) {}

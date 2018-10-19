@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class NaperianLogarithmNode : public ExpressionNode  {
+class NaperianLogarithmNode final : public ExpressionNode  {
 public:
   // TreeNode
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
@@ -48,7 +48,7 @@ private:
   }
 };
 
-class NaperianLogarithm : public Expression {
+class NaperianLogarithm final : public Expression {
 public:
   NaperianLogarithm();
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}

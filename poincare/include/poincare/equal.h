@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class EqualNode : public ExpressionNode {
+class EqualNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -32,7 +32,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Equal : public Expression {
+class Equal final : public Expression {
 public:
   Equal(const EqualNode * n) : Expression(n) {}
   Equal(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<EqualNode>()) {

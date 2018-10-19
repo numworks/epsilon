@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class CeilingLayoutNode : public BracketPairLayoutNode {
+class CeilingLayoutNode final : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
 
@@ -27,7 +27,7 @@ protected:
   bool renderBottomBar() const override { return false; }
 };
 
-class CeilingLayout : public Layout {
+class CeilingLayout final : public Layout {
 public:
   explicit CeilingLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);

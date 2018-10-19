@@ -41,6 +41,7 @@ public:
     replaceChildAtIndexInPlace(3, operand3);
   }
   static const char * Name() { return "sum"; }
+  static const int NumberOfChildren() { return 3; }
 };
 
 }

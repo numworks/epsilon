@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int ArcSineNode::numberOfChildren() const { return ArcSine::NumberOfChildren(); }
+
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::Name());
 }

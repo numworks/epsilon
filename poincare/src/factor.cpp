@@ -14,6 +14,8 @@ extern "C" {
 
 namespace Poincare {
 
+int FactorNode::numberOfChildren() const { return Factor::NumberOfChildren(); }
+
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::Name());
 }

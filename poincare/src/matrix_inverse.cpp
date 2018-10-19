@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::NumberOfChildren(); }
+
 Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixInverse(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

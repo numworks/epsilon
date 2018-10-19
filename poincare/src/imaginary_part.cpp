@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int ImaginaryPartNode::numberOfChildren() const { return ImaginaryPart::NumberOfChildren(); }
+
 Layout ImaginaryPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::Name());
 }

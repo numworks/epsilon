@@ -11,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(DerivativeNode); }
-  int numberOfChildren() const override { return 3; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Derivative";
@@ -53,6 +53,7 @@ public:
     replaceChildAtIndexInPlace(2, child3);
   }
   static const char * Name() { return "diff"; }
+  static const int NumberOfChildren() { return 3; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

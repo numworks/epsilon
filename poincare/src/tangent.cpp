@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int TangentNode::numberOfChildren() const { return Tangent::NumberOfChildren(); }
+
 float TangentNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }

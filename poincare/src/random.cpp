@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+int RandomNode::numberOfChildren() const { return Random::NumberOfChildren(); }
+
 Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Random(this).setSign(s, context, angleUnit);
 }

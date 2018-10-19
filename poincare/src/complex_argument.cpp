@@ -9,6 +9,8 @@ extern "C" {
 
 namespace Poincare {
 
+int ComplexArgumentNode::numberOfChildren() const { return ComplexArgument::NumberOfChildren(); }
+
 Layout ComplexArgumentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits, ComplexArgument::Name());
 }
@@ -43,8 +45,6 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
 #endif
   return *this;
 }
-
-
 
 }
 

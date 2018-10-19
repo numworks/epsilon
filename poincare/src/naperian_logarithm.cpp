@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::NumberOfChildren(); }
+
 Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::Name());
 }

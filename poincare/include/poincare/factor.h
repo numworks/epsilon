@@ -12,7 +12,7 @@ class FactorNode /*final*/ : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(FactorNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Factor";
@@ -42,6 +42,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
   static const char * Name() { return "factor"; }
+  static const int NumberOfChildren() { return 1; }
 
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const;

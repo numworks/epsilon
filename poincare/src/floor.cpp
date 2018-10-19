@@ -11,6 +11,8 @@
 
 namespace Poincare {
 
+int FloorNode::numberOfChildren() const { return Floor::NumberOfChildren(); }
+
 Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

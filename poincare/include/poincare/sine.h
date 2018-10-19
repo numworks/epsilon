@@ -12,7 +12,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(SineNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Sine";
@@ -50,6 +50,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
   static const char * Name() { return "sin"; }
+  static const int NumberOfChildren() { return 1; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

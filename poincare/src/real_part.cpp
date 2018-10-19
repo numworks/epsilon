@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int RealPartNode::numberOfChildren() const { return RealPart::NumberOfChildren(); }
+
 Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::Name());
 }

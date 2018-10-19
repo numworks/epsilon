@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+int GreatCommonDivisorNode::numberOfChildren() const { return GreatCommonDivisor::NumberOfChildren(); }
+
 Layout GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::Name());
 }

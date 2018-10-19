@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::NumberOfChildren(); }
+
 Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return BinomialCoefficient(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

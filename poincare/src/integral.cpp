@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int IntegralNode::numberOfChildren() const { return Integral::NumberOfChildren(); }
+
 int IntegralNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(1)->polynomialDegree(context, symbolName) == 0

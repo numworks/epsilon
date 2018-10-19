@@ -24,6 +24,7 @@ class Expression : public TreeHandle {
   friend class Arithmetic;
   friend class BinomialCoefficient;
   friend class Ceiling;
+  friend class CommonLogarithm;
   friend class ComplexArgument;
   friend class ConfidenceInterval;
   friend class Conjugate;

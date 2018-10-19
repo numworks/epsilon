@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::NumberOfChildren(); }
+
 Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return DivisionQuotient(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

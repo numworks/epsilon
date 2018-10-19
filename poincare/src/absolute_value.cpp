@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::NumberOfChildren(); }
+
 Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
 }

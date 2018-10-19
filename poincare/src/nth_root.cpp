@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+int NthRootNode::numberOfChildren() const { return NthRoot::NumberOfChildren(); }
+
 Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),

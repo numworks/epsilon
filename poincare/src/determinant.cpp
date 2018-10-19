@@ -9,6 +9,8 @@ extern "C" {
 
 namespace Poincare {
 
+int DeterminantNode::numberOfChildren() const { return Determinant::NumberOfChildren(); }
+
 Layout DeterminantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::Name());
 }

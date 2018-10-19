@@ -13,7 +13,7 @@ class LogarithmNode final : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
-  int numberOfChildren() const override { assert(T == 1 || T == 2); return T; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Logarithm";
@@ -49,6 +49,7 @@ public:
     replaceChildAtIndexInPlace(1, child2);
   }
   static const char * Name() { return "log"; }
+  static const int NumberOfChildren() { return 2; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
@@ -67,6 +68,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
   static const char * Name() { return "log"; }
+  static const int NumberOfChildren() { return 1; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

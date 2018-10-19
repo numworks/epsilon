@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int ArcTangentNode::numberOfChildren() const { return ArcTangent::NumberOfChildren(); }
+
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::Name());
 }

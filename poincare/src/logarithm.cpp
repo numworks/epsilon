@@ -21,6 +21,12 @@
 namespace Poincare {
 
 template<>
+int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::NumberOfChildren(); }
+
+template<>
+int LogarithmNode<2>::numberOfChildren() const { return Logarithm::NumberOfChildren(); }
+
+template<>
 Layout LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::Name());
 }

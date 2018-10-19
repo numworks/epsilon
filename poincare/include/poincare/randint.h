@@ -10,7 +10,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }
-  int numberOfChildren() const override { return 2; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Randint";
@@ -39,6 +39,7 @@ public:
   Randint();
   Randint(const RandintNode * n) : Expression(n) {}
   static const char * Name() { return "randint"; }
+  static const int NumberOfChildren() { return 2; }
 };
 
 }

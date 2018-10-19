@@ -7,6 +7,9 @@
 #include <cmath>
 
 namespace Poincare {
+
+int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::NumberOfChildren(); }
+
 Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixTranspose(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

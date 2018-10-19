@@ -11,6 +11,8 @@
 
 namespace Poincare {
 
+int CeilingNode::numberOfChildren() const { return Ceiling::NumberOfChildren(); }
+
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return CeilingLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

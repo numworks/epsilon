@@ -14,6 +14,8 @@ extern "C" {
 
 namespace Poincare {
 
+int PredictionIntervalNode::numberOfChildren() const { return PredictionInterval::NumberOfChildren(); }
+
 Layout PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::Name());
 }

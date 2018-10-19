@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::NumberOfChildren(); }
+
 Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixDimension(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

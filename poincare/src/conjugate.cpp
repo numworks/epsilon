@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+int ConjugateNode::numberOfChildren() const { return Conjugate::NumberOfChildren(); }
+
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

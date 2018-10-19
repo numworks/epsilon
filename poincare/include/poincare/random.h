@@ -11,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(RandomNode); }
-  int numberOfChildren() const override { return 0; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Random";
@@ -42,6 +42,7 @@ public:
   Random();
   Random(const RandomNode * n) : Expression(n) {}
   static const char * Name() { return "random"; }
+  static const int NumberOfChildren() { return 0; }
 
   template<typename T> static T random();
 private:

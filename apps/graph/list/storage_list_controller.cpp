@@ -51,7 +51,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   }
 
   // Set the name
-  Ion::Storage::Record::ErrorStatus error = StorageCartesianFunction::baseNameCompliant(baseName) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
+  Ion::Storage::Record::ErrorStatus error =  StorageFunction::BaseNameCompliant(baseName) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
@@ -69,7 +69,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Ion::Storage::Record::ErrorStatus::NonCompliantName) {
-    app()->displayWarning(I18n::Message::NonCompliantName);
+    app()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
   } else {
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     app()->displayWarning(I18n::Message::NameTooLong);

@@ -14,7 +14,6 @@ public:
   StorageCartesianFunction(Ion::Storage::Record record = Record()) :
     StorageFunction(record)
   {}
-  static bool baseNameCompliant(const char * baseName) { return true; } // TODO TODO TODO
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg);

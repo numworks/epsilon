@@ -289,8 +289,8 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
     replaceWithInPlace(np);
     return np;
   }
-  Rational one(1);
-  if (childAtIndex(1).isIdenticalTo(one)) {
+  Rational ten(10);
+  if (childAtIndex(1).isIdenticalTo(ten)) {
     Logarithm l(childAtIndex(0));
     replaceWithInPlace(l);
     return l;

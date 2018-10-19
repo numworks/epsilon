@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class BinomialCoefficientNode : public ExpressionNode {
+class BinomialCoefficientNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -36,7 +36,7 @@ private:
   template<typename T> Complex<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class BinomialCoefficient : public Expression {
+class BinomialCoefficient final : public Expression {
 public:
   BinomialCoefficient();
   BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}

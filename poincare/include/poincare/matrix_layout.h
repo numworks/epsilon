@@ -9,7 +9,7 @@ namespace Poincare {
 
 class MatrixLayout;
 
-class MatrixLayoutNode : public GridLayoutNode {
+class MatrixLayoutNode final : public GridLayoutNode {
   friend class Layout;
   friend class MatrixLayout;
 public:
@@ -54,7 +54,7 @@ private:
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
-class MatrixLayout : public GridLayout {
+class MatrixLayout /*final*/ : public GridLayout {
   friend class MatrixLayoutNode;
 public:
   MatrixLayout(const MatrixLayoutNode * n);

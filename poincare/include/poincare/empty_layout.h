@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class EmptyLayoutNode : public LayoutNode {
+class EmptyLayoutNode /*final*/ : public LayoutNode {
 public:
   enum class Color {
     Yellow,
@@ -72,7 +72,7 @@ private:
   bool m_margins;
 };
 
-class EmptyLayout : public Layout {
+class EmptyLayout final : public Layout {
 public:
   EmptyLayout(const EmptyLayoutNode * n);
   EmptyLayout(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true);

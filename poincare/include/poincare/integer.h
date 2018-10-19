@@ -29,7 +29,7 @@ static_assert(sizeof(double_native_int_t) == 2*sizeof(native_int_t), "double_nat
 
 struct IntegerDivision;
 
-class Integer {
+class Integer final {
 public:
   /* Constructors & Destructors */
   Integer(native_int_t i = 0);

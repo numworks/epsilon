@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ProductNode : public SequenceNode {
+class ProductNode final : public SequenceNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(ProductNode); }
@@ -29,7 +29,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b) const;
 };
 
-class Product : public Expression {
+class Product final : public Expression {
 friend class ProductNode;
 public:
   Product();

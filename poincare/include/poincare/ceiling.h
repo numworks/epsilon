@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class CeilingNode : public ExpressionNode  {
+class CeilingNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -37,7 +37,7 @@ private:
   }
 };
 
-class Ceiling : public Expression {
+class Ceiling final : public Expression {
 public:
   Ceiling();
   Ceiling(const CeilingNode * n) : Expression(n) {}

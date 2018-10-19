@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ProductLayoutNode : public SequenceLayoutNode {
+class ProductLayoutNode final : public SequenceLayoutNode {
 public:
   using SequenceLayoutNode::SequenceLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -23,7 +23,7 @@ private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
 
-class ProductLayout : public Layout {
+class ProductLayout final : public Layout {
 public:
   ProductLayout(Layout argument, Layout lowerB, Layout upperB) :
     Layout(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())

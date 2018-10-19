@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ParenthesisNode : public ExpressionNode {
+class ParenthesisNode /*final*/ : public ExpressionNode {
 public:
 
   // TreeNode
@@ -35,7 +35,7 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Parenthesis : public Expression {
+class Parenthesis final : public Expression {
 public:
   Parenthesis(const ParenthesisNode * n) : Expression(n) {}
   Parenthesis(Expression exp) : Expression(TreePool::sharedPool()->createTreeNode<ParenthesisNode>()) {

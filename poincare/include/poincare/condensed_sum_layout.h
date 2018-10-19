@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class CondensedSumLayoutNode : public LayoutNode {
+class CondensedSumLayoutNode /*final*/ : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
@@ -48,7 +48,7 @@ private:
   LayoutNode * superscriptLayout() { return childAtIndex(2); }
 };
 
-class CondensedSumLayout : public Layout {
+class CondensedSumLayout final : public Layout {
 public:
   CondensedSumLayout(Layout base, Layout subscript, Layout superscript);
 };

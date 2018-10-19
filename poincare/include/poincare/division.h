@@ -9,7 +9,7 @@ namespace Poincare {
 
 class Division;
 
-class DivisionNode : public ExpressionNode {
+class DivisionNode /*final*/ : public ExpressionNode {
 template<int T>
   friend class LogarithmNode;
 public:
@@ -60,7 +60,7 @@ private:
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
 };
 
-class Division : public Expression {
+class Division final : public Expression {
 public:
   Division();
   Division(Expression numerator, Expression denominator) : Division() {

@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class TangentNode : public ExpressionNode {
+class TangentNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -44,7 +44,7 @@ private:
   }
 };
 
-class Tangent : public Expression {
+class Tangent final : public Expression {
 public:
   Tangent();
   Tangent(const TangentNode * n) : Expression(n) {}

@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class CharLayoutNode : public LayoutNode {
+class CharLayoutNode final : public LayoutNode {
 public:
   CharLayoutNode(char c = Ion::Charset::Empty, const KDFont * font = KDFont::LargeFont) :
     LayoutNode(),
@@ -53,7 +53,7 @@ private:
   const KDFont * m_font;
 };
 
-class CharLayout : public Layout {
+class CharLayout final : public Layout {
 public:
   CharLayout(char c, const KDFont * font = KDFont::LargeFont);
   const KDFont * font() const { return const_cast<CharLayout *>(this)->node()->font(); }

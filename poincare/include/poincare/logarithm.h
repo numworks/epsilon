@@ -11,7 +11,7 @@
 namespace Poincare {
 
 template<int T>
-class LogarithmNode : public ExpressionNode {
+class LogarithmNode final : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
@@ -45,7 +45,7 @@ public:
   template<typename U> Evaluation<U> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Logarithm : public Expression {
+class Logarithm final : public Expression {
 public:
   Logarithm(const LogarithmNode<1> * n) : Expression(n) {}
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}

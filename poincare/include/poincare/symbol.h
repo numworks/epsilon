@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class SymbolNode : public ExpressionNode {
+class SymbolNode final : public ExpressionNode {
   friend class Store;
 public:
   SymbolNode() : m_name(0) {}
@@ -56,7 +56,7 @@ private:
   char m_name;
 };
 
-class Symbol : public Expression {
+class Symbol final : public Expression {
   friend class Expression;
   friend class Store;
 public:

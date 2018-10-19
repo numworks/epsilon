@@ -15,7 +15,7 @@ namespace Poincare {
 
 class Decimal;
 
-class DecimalNode : public NumberNode {
+class DecimalNode final : public NumberNode {
   friend class Decimal;
 public:
   DecimalNode() :
@@ -81,7 +81,7 @@ private:
   native_uint_t m_mantissa[0];
 };
 
-class Decimal : public Number {
+class Decimal final : public Number {
 friend class Number;
 friend class DecimalNode;
 public:

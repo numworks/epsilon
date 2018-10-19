@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ImaginaryPartNode : public ExpressionNode  {
+class ImaginaryPartNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -36,7 +36,7 @@ private:
   }
 };
 
-class ImaginaryPart : public Expression {
+class ImaginaryPart final : public Expression {
 public:
   ImaginaryPart();
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}

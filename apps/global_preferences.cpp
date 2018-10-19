@@ -1,15 +1,5 @@
 #include "global_preferences.h"
 
-GlobalPreferences::GlobalPreferences() :
-  m_language(I18n::Language::EN),
-  m_examMode(ExamMode::Desactivate),
-#ifdef EPSILON_BOOT_PROMPT
-  m_showPopUp(true),
-#endif
-  m_brightnessLevel(Ion::Backlight::MaxBrightness)
-{
-}
-
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
   static GlobalPreferences globalPreferences;
   return &globalPreferences;
@@ -20,9 +10,7 @@ I18n::Language GlobalPreferences::language() const {
 }
 
 void GlobalPreferences::setLanguage(I18n::Language language) {
-  if (language != m_language) {
-    m_language = language;
-  }
+  m_language = language;
 }
 
 GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
@@ -30,17 +18,13 @@ GlobalPreferences::ExamMode GlobalPreferences::examMode() const {
 }
 
 void GlobalPreferences::setExamMode(ExamMode examMode) {
-  if (examMode != m_examMode) {
-    m_examMode = examMode;
-  }
+  m_examMode = examMode;
 }
 
 #ifdef EPSILON_BOOT_PROMPT
 
 void GlobalPreferences::setShowPopUp(bool showPopUp) {
-  if (showPopUp != m_showPopUp) {
-    m_showPopUp = showPopUp;
-  }
+  m_showPopUp = showPopUp;
 }
 
 #endif

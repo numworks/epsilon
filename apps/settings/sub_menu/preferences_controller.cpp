@@ -109,32 +109,34 @@ void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int in
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {
+  Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {
-    Preferences::sharedPreferences()->setAngleUnit((Preferences::AngleUnit)valueIndex);
+    preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   }
   if (message == I18n::Message::DisplayMode) {
-    Preferences::sharedPreferences()->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
+    preferences->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
   }
   if (message == I18n::Message::EditionMode) {
-    Preferences::sharedPreferences()->setEditionMode((Preferences::EditionMode)valueIndex);
+    preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   }
   if (message == I18n::Message::ComplexFormat) {
-    Preferences::sharedPreferences()->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+    preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   }
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) {
+  Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {
-    return (int)Preferences::sharedPreferences()->angleUnit();
+    return (int)preferences->angleUnit();
   }
   if (message == I18n::Message::DisplayMode) {
-    return (int)Preferences::sharedPreferences()->displayMode();
+    return (int)preferences->displayMode();
   }
   if (message == I18n::Message::EditionMode) {
-    return (int)Preferences::sharedPreferences()->editionMode();
+    return (int)preferences->editionMode();
   }
   if (message == I18n::Message::ComplexFormat) {
-    return (int)Preferences::sharedPreferences()->complexFormat();
+    return (int)preferences->complexFormat();
   }
   return 0;
 }

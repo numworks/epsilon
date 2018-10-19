@@ -9,7 +9,6 @@ public:
     Activate,
     Desactivate
   };
-  GlobalPreferences();
   static GlobalPreferences * sharedGlobalPreferences();
   I18n::Language language() const;
   void setLanguage(I18n::Language language);
@@ -23,6 +22,13 @@ public:
   void setBrightnessLevel(int brightnessLevel);
   constexpr static int NumberOfBrightnessStates = 5;
 private:
+  GlobalPreferences() :
+    m_language(I18n::Language::EN),
+    m_examMode(ExamMode::Desactivate),
+#ifdef EPSILON_BOOT_PROMPT
+    m_showPopUp(true),
+#endif
+    m_brightnessLevel(Ion::Backlight::MaxBrightness) {}
   I18n::Language m_language;
   ExamMode m_examMode;
 #ifdef EPSILON_BOOT_PROMPT

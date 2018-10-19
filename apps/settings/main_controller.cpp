@@ -69,6 +69,7 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   if (m_messageTreeModel->children(selectedRow())->numberOfChildren() == 0) {
 #if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::BetaPopUp) {
@@ -77,7 +78,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 #endif
 #ifdef EPSILON_BOOT_PROMPT
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-        GlobalPreferences::sharedGlobalPreferences()->setShowPopUp(!GlobalPreferences::sharedGlobalPreferences()->showPopUp());
+        globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;
       }
@@ -88,7 +89,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
-        GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+        globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
         return true;
       }
@@ -184,16 +185,18 @@ int MainController::typeAtLocation(int i, int j) {
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_messageTreeModel->children(index)->label());
   if (index == 4) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
-    myGauge->setLevel((float)GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
+    myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
   if (index == 5) {
-    int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
+    int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
@@ -201,7 +204,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == 7) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
-    mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showPopUp());
+    mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
 #endif
@@ -209,16 +212,16 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   int childIndex = -1;
   switch (index) {
     case 0:
-      childIndex = (int)Preferences::sharedPreferences()->angleUnit();
+      childIndex = (int)preferences->angleUnit();
       break;
     case 1:
-      childIndex = (int)Preferences::sharedPreferences()->displayMode();
+      childIndex = (int)preferences->displayMode();
       break;
     case 2:
-      childIndex = (int)Preferences::sharedPreferences()->editionMode();
+      childIndex = (int)preferences->editionMode();
       break;
     case 3:
-      childIndex = (int)Preferences::sharedPreferences()->complexFormat();
+      childIndex = (int)preferences->complexFormat();
       break;
   }
   I18n::Message message = childIndex >= 0 ? m_messageTreeModel->children(index)->children(childIndex)->label() : I18n::Message::Default;

@@ -4,10 +4,10 @@
 
 namespace Graph {
 
-TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, KDText::FontSize size) :
+TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, listController, false, size, 0.5f, 0.5f)
+  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, listController, false, font, 0.5f, 0.5f)
   {}
 
 void TextFieldFunctionTitleCell::setHighlighted(bool highlight) {

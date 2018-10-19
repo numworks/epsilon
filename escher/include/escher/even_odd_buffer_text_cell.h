@@ -11,8 +11,8 @@ public:
   void setFont(const KDFont * font) {
     m_bufferTextView.setFont(font);
   }
-  KDText::FontSize fontSize() const {
-    return m_bufferTextView.fontSize();
+  const KDFont * font() const {
+    return m_bufferTextView.font();
   }
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
     m_bufferTextView.setAlignment(horizontalAlignment, verticalAlignment);

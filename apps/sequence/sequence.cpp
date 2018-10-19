@@ -261,12 +261,13 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
   Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
   Poincare::Symbol un1Symbol(Symbol::SpecialSymbols::un1);
+  Preferences * preferences = Poincare::Preferences::sharedPreferences();
   switch (m_type) {
     case Type::Explicit:
     {
       ctx.setValueForSymbol(un, unSymbol);
       ctx.setValueForSymbol(vn, vnSymbol);
-      return expression(sqctx).approximateWithValueForSymbol(symbol(), (T)n, ctx, Poincare::Preferences::sharedPreferences()->angleUnit());
+      return expression(sqctx).approximateWithValueForSymbol(symbol(), (T)n, ctx, preferences->angleUnit());
     }
     case Type::SingleRecurrence:
     {
@@ -277,7 +278,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm1, unSymbol);
       ctx.setValueForSymbol(vn, vn1Symbol);
       ctx.setValueForSymbol(vnm1, vnSymbol);
-      return expression(sqctx).approximateWithValueForSymbol(symbol(), (T)(n-1), ctx, Poincare::Preferences::sharedPreferences()->angleUnit());
+      return expression(sqctx).approximateWithValueForSymbol(symbol(), (T)(n-1), ctx, preferences->angleUnit());
     }
     default:
     {
@@ -291,7 +292,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm2, unSymbol);
       ctx.setValueForSymbol(vnm1, vn1Symbol);
       ctx.setValueForSymbol(vnm2, vnSymbol);
-      return expression(sqctx).approximateWithValueForSymbol(symbol(), (T)(n-2), ctx, Poincare::Preferences::sharedPreferences()->angleUnit());
+      return expression(sqctx).approximateWithValueForSymbol(symbol(), (T)(n-2), ctx, preferences->angleUnit());
     }
   }
 }

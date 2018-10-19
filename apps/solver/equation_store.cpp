@@ -119,8 +119,9 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
   Expression constants[k_maxNumberOfEquations];
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
+  Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context, Preferences::sharedPreferences()->angleUnit());
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context, preferences->angleUnit());
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -151,7 +152,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     char x = m_variables[0];
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(x, polynomialCoefficients, *context, Preferences::sharedPreferences()->angleUnit());
+    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(x, polynomialCoefficients, *context, preferences->angleUnit());
     if (degree == 2) {
       /* Polynomial degree <= 2*/
       m_type = Type::PolynomialMonovariable;
@@ -179,7 +180,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
         char buffer[Shared::ExpressionModel::k_expressionBufferSize];
-        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, buffer, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
       }
     }
   }

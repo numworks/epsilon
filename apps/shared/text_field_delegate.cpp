@@ -12,7 +12,7 @@ bool TextFieldDelegate::textFieldDidReceiveEvent(::TextField * textField, Ion::E
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
-Toolbox * TextFieldDelegate::toolboxForTextInput(TextInput * textInput) {
+Toolbox * TextFieldDelegate::toolboxForTextInput(InputEventHandler * textInput) {
   return textFieldDelegateApp()->toolboxForTextInput(textInput);
 }
 

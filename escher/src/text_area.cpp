@@ -18,6 +18,13 @@ TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont
 {
 }
 
+Toolbox * TextArea::toolbox() {
+  if (delegate()) {
+    return delegate()->toolboxForTextInput(this);
+  }
+  return nullptr;
+}
+
 bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   int nextCursorLocation = cursorLocation();
 
@@ -50,9 +57,8 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
-  } else if (Responder::handleEvent(event)) {
-    // The only event Responder handles is 'Toolbox' displaying.
-    return true;
+  } else if (event == Ion::Events::Toolbox) {
+    return handleToolboxEvent(app());
   } else if (event == Ion::Events::Left) {
     return setCursorLocation(cursorLocation()-1);
   } else if (event == Ion::Events::Right) {

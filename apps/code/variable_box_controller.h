@@ -13,14 +13,14 @@ class VariableBoxController : public StackViewController {
 public:
   VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore);
   void didBecomeFirstResponder() override;
-  void setTextInputCaller(TextInput * textInput);
+  void setSender(InputEventHandler * sender);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
   class ContentViewController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
   public:
     ContentViewController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore);
-    void setTextInputCaller(TextInput * textInput);
+    void setSender(InputEventHandler * sender);
     void reloadData();
 
     void addFunctionAtIndex(const char * functionName, int scriptIndex);
@@ -52,7 +52,7 @@ private:
     ScriptNode m_scriptNodes[k_maxScriptNodesCount];
     App * m_pythonDelegate;
     ScriptStore * m_scriptStore;
-    TextInput * m_textInputCaller;
+    InputEventHandler * m_sender;
     ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];
     SelectableTableView m_selectableTableView;
   };

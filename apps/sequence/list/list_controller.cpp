@@ -28,7 +28,7 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
+Toolbox * ListController::toolboxForTextInput(InputEventHandler * textInput) {
   return toolboxForSender(textInput);
 }
 
@@ -88,7 +88,7 @@ void ListController::selectPreviousNewSequenceCell() {
   }
 }
 
-Toolbox * ListController::toolboxForSender(Responder * sender) {
+Toolbox * ListController::toolboxForSender(InputEventHandler * sender) {
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());

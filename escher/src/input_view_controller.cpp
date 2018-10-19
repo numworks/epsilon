@@ -64,7 +64,7 @@ bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::E
   return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }
 
-Toolbox * InputViewController::toolboxForTextInput(TextInput * input) {
+Toolbox * InputViewController::toolboxForTextInput(InputEventHandler * input) {
   return m_textFieldDelegate->toolboxForTextInput(input);
 }
 

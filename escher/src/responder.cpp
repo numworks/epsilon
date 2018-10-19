@@ -1,6 +1,5 @@
 #include <escher/responder.h>
 #include <escher/app.h>
-#include <escher/toolbox.h>
 #include <escher/metric.h>
 #include <assert.h>
 
@@ -15,15 +14,6 @@ Responder * Responder::parentResponder() const {
 
 void Responder::setParentResponder(Responder * responder) {
   m_parentResponder = responder;
-}
-
-bool Responder::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Toolbox && toolbox() != nullptr) {
-    toolbox()->setSender(this);
-    app()->displayModalViewController(toolbox(), 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    return true;
-  }
-  return false;
 }
 
 void Responder::didBecomeFirstResponder() {

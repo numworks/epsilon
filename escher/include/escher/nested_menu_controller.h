@@ -1,6 +1,7 @@
 #ifndef ESCHER_NESTED_MENU_CONTROLLER_H
 #define ESCHER_NESTED_MENU_CONTROLLER_H
 
+#include <escher/input_event_handler.h>
 #include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
@@ -9,7 +10,7 @@
 class NestedMenuController : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
-  void setSender(Responder * sender) { m_sender = sender; }
+  void setSender(InputEventHandler * sender) { m_sender = sender; }
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
@@ -63,14 +64,14 @@ protected:
   virtual bool selectSubMenu(int selectedRow);
   virtual bool returnToPreviousMenu();
   virtual bool selectLeaf(int selectedRow) = 0;
-  Responder * sender() { return m_sender; }
+  InputEventHandler * sender() { return m_sender; }
   virtual HighlightCell * leafCellAtIndex(int index) = 0;
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
   SelectableTableView m_selectableTableView;
   Stack m_stack;
   ListController m_listController;
 private:
-  Responder * m_sender;
+  InputEventHandler * m_sender;
 };
 
 #endif

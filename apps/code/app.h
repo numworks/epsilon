@@ -41,7 +41,7 @@ public:
   ConsoleController * consoleController() { return &m_consoleController; }
   PythonToolbox * pythonToolbox() { return &m_toolbox; }
   bool handleEvent(Ion::Events::Event event) override;
-  bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
+  bool textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event);
   // Python delegate
   bool pythonIsInited() { return m_pythonUser != nullptr; }
   bool isPythonUser(const void * pythonUser) { return m_pythonUser == pythonUser; }

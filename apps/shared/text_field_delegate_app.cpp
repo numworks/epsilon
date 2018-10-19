@@ -41,7 +41,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
   return false;
 }
 
-Toolbox * TextFieldDelegateApp::toolboxForTextInput(TextInput * textInput) {
+Toolbox * TextFieldDelegateApp::toolboxForTextInput(InputEventHandler * textInput) {
   Toolbox * toolbox = container()->mathToolbox();
   toolbox->setSender(textInput);
   return toolbox;
@@ -49,12 +49,12 @@ Toolbox * TextFieldDelegateApp::toolboxForTextInput(TextInput * textInput) {
 
 /* Protected */
 
-bool TextFieldDelegateApp::fieldDidReceiveEvent(Field * field, Responder * responder, Ion::Events::Event event) {
+bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
   if (event == Ion::Events::Var) {
     forceEdition(field);
     AppsContainer * appsContainer = (AppsContainer *)responder->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setSender(responder);
+    variableBoxController->setSender(field);
     responder->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
 
@@ -62,12 +62,12 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(Field * field, Responder * respo
   if (event == Ion::Events::XNT) {
     forceEdition(field);
     const char xnt[2] = {field->XNTChar(XNT()), 0};
-    return responder->handleEventWithText(xnt);
+    return field->handleEventWithText(xnt);
   }
   return false;
 }
 
-void TextFieldDelegateApp::forceEdition(Field * field) {
+void TextFieldDelegateApp::forceEdition(EditableField * field) {
   if (!field->isEditing()) {
     field->setEditing(true);
   }

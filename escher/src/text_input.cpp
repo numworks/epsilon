@@ -59,13 +59,6 @@ TextInput::TextInput(Responder * parentResponder, View * contentView) :
 {
 }
 
-Toolbox * TextInput::toolbox() {
-  if (delegate()) {
-    return delegate()->toolboxForTextInput(this);
-  }
-  return nullptr;
-}
-
 bool TextInput::removeChar() {
   contentView()->removeChar();
   scrollToCursor();

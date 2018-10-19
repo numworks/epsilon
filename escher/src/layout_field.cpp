@@ -185,13 +185,13 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
-  if (Responder::handleEvent(event)) {
-    /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the LayoutField is forced into editing mode. */
-    if (!isEditing()) {
-      setEditing(true);
+  if (event == Ion::Events::Toolbox) {
+    if (handleToolboxEvent(app())) {
+      if (!isEditing()) {
+        setEditing(true);
+      }
+      return true;
     }
-    return true;
   }
   if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
     setEditing(false);

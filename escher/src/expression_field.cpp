@@ -35,6 +35,14 @@ bool ExpressionField::isEditing() const {
   return editionIsInTextField() ? m_textField.isEditing() : m_layoutField.isEditing();
 }
 
+char ExpressionField::XNTChar(char defaultXNTChar) {
+  return editionIsInTextField() ? m_textField.XNTChar(defaultXNTChar) : m_layoutField.XNTChar(defaultXNTChar);
+}
+
+bool ExpressionField::shouldFinishEditing(Ion::Events::Event event) {
+  return editionIsInTextField() ? m_textField.shouldFinishEditing(event) : m_layoutField.shouldFinishEditing(event);
+}
+
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
     m_layoutField.serialize(m_textBuffer, m_textBufferLength);

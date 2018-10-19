@@ -1,7 +1,7 @@
 #ifndef ESCHER_LAYOUT_FIELD_H
 #define ESCHER_LAYOUT_FIELD_H
 
-#include <escher/field.h>
+#include <escher/editable_field.h>
 #include <escher/expression_view.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/scrollable_view.h>
@@ -11,7 +11,7 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
-class LayoutField : public ScrollableView, public ScrollViewDataSource, public Field {
+class LayoutField : public ScrollableView, public ScrollViewDataSource, public EditableField {
 public:
   LayoutField(Responder * parentResponder, LayoutFieldDelegate * delegate = nullptr) :
     ScrollableView(parentResponder, &m_contentView, this),

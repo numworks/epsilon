@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class DeterminantNode : public ExpressionNode {
+class DeterminantNode /*final*/ : public ExpressionNode {
 public:
 
   // TreeNode
@@ -36,7 +36,7 @@ private:
 };
 
 
-class Determinant : public Expression {
+class Determinant final : public Expression {
 public:
   Determinant();
   Determinant(const DeterminantNode * n) : Expression(n) {}

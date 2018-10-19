@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class UndefinedNode : public NumberNode {
+class UndefinedNode final : public NumberNode {
 public:
 
   // TreeNode
@@ -36,7 +36,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate() const;
 };
 
-class Undefined : public Number {
+class Undefined final : public Number {
 public:
   Undefined() : Number(TreePool::sharedPool()->createTreeNode<UndefinedNode>()) {}
 };

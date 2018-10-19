@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FractionLayoutNode : public LayoutNode {
+class FractionLayoutNode /*final*/ : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
@@ -56,7 +56,7 @@ private:
   LayoutNode * denominatorLayout() { return childAtIndex(1); }
 };
 
-class FractionLayout : public Layout {
+class FractionLayout final : public Layout {
 public:
   FractionLayout(Layout numerator, Layout denominator);
 };

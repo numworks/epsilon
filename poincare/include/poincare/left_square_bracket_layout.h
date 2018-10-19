@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class LeftSquareBracketLayoutNode : public SquareBracketLayoutNode {
+class LeftSquareBracketLayoutNode final : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -27,7 +27,7 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class LeftSquareBracketLayout : public Layout {
+class LeftSquareBracketLayout final : public Layout {
 public:
   LeftSquareBracketLayout();
 };

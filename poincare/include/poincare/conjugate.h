@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ConjugateNode : public ExpressionNode  {
+class ConjugateNode /*final*/ : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -36,7 +36,7 @@ private:
   }
 };
 
-class Conjugate : public Expression {
+class Conjugate final : public Expression {
 public:
   Conjugate();
   Conjugate(const ConjugateNode * n) : Expression(n) {}

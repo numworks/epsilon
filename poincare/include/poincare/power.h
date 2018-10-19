@@ -10,7 +10,7 @@ namespace Poincare {
 
 class Power;
 
-class PowerNode : public ExpressionNode {
+class PowerNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -63,7 +63,7 @@ private:
   }
 };
 
-class Power : public Expression {
+class Power final : public Expression {
   friend class PowerNode;
   friend class Round;
 public:

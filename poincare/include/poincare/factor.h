@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-class FactorNode : public ExpressionNode {
+class FactorNode /*final*/ : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(FactorNode); }
@@ -39,7 +39,7 @@ private:
   }
 };
 
-class Factor : public Expression {
+class Factor final : public Expression {
 public:
   Factor();
   Factor(const FactorNode * n) : Expression(n) {}

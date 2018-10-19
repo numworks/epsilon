@@ -9,7 +9,7 @@ namespace Poincare {
 /* WARNING: A HorizontalLayout should never have a HorizontalLayout child. For
  * instance, use addOrMergeChildAtIndex to add a LayoutNode safely. */
 
-class HorizontalLayoutNode : public LayoutNode {
+class HorizontalLayoutNode final : public LayoutNode {
   friend class Layout;
 public:
 
@@ -62,7 +62,7 @@ private:
   uint16_t m_numberOfChildren;
 };
 
-class HorizontalLayout : public Layout {
+class HorizontalLayout final : public Layout {
   friend class HorizontalLayoutNode;
 public:
   HorizontalLayout(HorizontalLayoutNode * n) : Layout(n) {}

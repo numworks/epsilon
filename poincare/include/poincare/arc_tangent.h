@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class ArcTangentNode : public ExpressionNode {
+class ArcTangentNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -41,7 +41,7 @@ private:
   }
 };
 
-class ArcTangent : public Expression {
+class ArcTangent final : public Expression {
 public:
   ArcTangent();
   ArcTangent(const ArcTangentNode * n) : Expression(n) {}

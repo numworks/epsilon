@@ -7,7 +7,7 @@ namespace Poincare {
 
 // An empty expression awaits completion by the user.
 
-class EmptyExpressionNode : public ExpressionNode  {
+class EmptyExpressionNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -31,7 +31,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class EmptyExpression : public Expression {
+class EmptyExpression final : public Expression {
 public:
   EmptyExpression();
   EmptyExpression(const EmptyExpressionNode * n) : Expression(n) {}

@@ -16,7 +16,7 @@ namespace Poincare {
  */
 
 template<typename T>
-class IEEE754 {
+class IEEE754 final {
 public:
   static uint16_t exponentOffset() {
     return ((1 <<(k_exponentNbBits-1))-1);

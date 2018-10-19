@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class FactorialNode : public ExpressionNode  {
+class FactorialNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -44,7 +44,7 @@ private:
 #endif
 };
 
-class Factorial : public Expression {
+class Factorial final : public Expression {
 public:
   Factorial();
   Factorial(const FactorialNode * n) : Expression(n) {}

@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class LeastCommonMultipleNode : public ExpressionNode  {
+class LeastCommonMultipleNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -34,7 +34,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class LeastCommonMultiple : public Expression {
+class LeastCommonMultiple final : public Expression {
 public:
   LeastCommonMultiple();
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : Expression(n) {}

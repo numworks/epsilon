@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class RandomNode : public ExpressionNode  {
+class RandomNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -41,7 +41,7 @@ private:
   template <typename T> Evaluation<T> templateApproximate() const;
 };
 
-class Random : public Expression {
+class Random final : public Expression {
 friend class RandomNode;
 public:
   Random();

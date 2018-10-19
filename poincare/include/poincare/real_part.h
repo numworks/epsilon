@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class RealPartNode : public ExpressionNode  {
+class RealPartNode final : public ExpressionNode  {
 public:
 
   // TreeNode
@@ -41,7 +41,7 @@ private:
   }
 };
 
-class RealPart : public Expression {
+class RealPart final : public Expression {
 public:
   RealPart();
   RealPart(const RealPartNode * n) : Expression(n) {}

@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class IntegralNode : public ExpressionNode {
+class IntegralNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -46,7 +46,7 @@ private:
   template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::AngleUnit angleUnit) const;
 };
 
-class Integral : public Expression {
+class Integral final : public Expression {
 public:
   Integral();
   Integral(const IntegralNode * n) : Expression(n) {}

@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class SineNode : public ExpressionNode {
+class SineNode final : public ExpressionNode {
 public:
 
   // TreeNode
@@ -46,7 +46,7 @@ private:
   }
 };
 
-class Sine : public Expression {
+class Sine final : public Expression {
 public:
   Sine();
   Sine(const SineNode * n) : Expression(n) {}

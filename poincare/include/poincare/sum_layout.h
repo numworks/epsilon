@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class SumLayoutNode : public SequenceLayoutNode {
+class SumLayoutNode final : public SequenceLayoutNode {
 public:
   using SequenceLayoutNode::SequenceLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -21,7 +21,7 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class SumLayout : public Layout {
+class SumLayout final : public Layout {
 public:
   SumLayout(Layout argument, Layout lowerB, Layout upperB) :
     Layout(TreePool::sharedPool()->createTreeNode<SumLayoutNode>())

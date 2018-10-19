@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class LeftParenthesisLayoutNode : public ParenthesisLayoutNode {
+class LeftParenthesisLayoutNode final : public ParenthesisLayoutNode {
 public:
   using ParenthesisLayoutNode::ParenthesisLayoutNode;
 
@@ -33,7 +33,7 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class LeftParenthesisLayout : public Layout {
+class LeftParenthesisLayout final : public Layout {
 public:
   LeftParenthesisLayout();
 };

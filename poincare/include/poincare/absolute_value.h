@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class AbsoluteValueNode : public ExpressionNode {
+class AbsoluteValueNode final : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(AbsoluteValueNode); }
@@ -43,7 +43,7 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 };
 
-class AbsoluteValue : public Expression {
+class AbsoluteValue final : public Expression {
 friend class AbsoluteValueNode;
 public:
   AbsoluteValue();

@@ -84,10 +84,11 @@ void TitleBarView::refreshPreferences() {
   constexpr size_t bufferSize = 13;
   char buffer[bufferSize];
   int numberOfChar = 0;
-  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Scientific) {
+  Preferences * preferences = Preferences::sharedPreferences();
+  if (preferences->displayMode() == Preferences::PrintFloatMode::Scientific) {
     numberOfChar += strlcpy(buffer, I18n::translate(I18n::Message::Sci), bufferSize);
   }
-  if (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Radian) {
+  if (preferences->angleUnit() == Preferences::AngleUnit::Radian) {
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), bufferSize - numberOfChar);
   } else {
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), bufferSize - numberOfChar);

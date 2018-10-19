@@ -59,6 +59,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
+    textField->setEditing(false, false);
     computeTitlesColumnWidth();
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {

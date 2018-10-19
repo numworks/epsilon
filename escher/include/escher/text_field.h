@@ -1,12 +1,12 @@
 #ifndef ESCHER_TEXT_FIELD_H
 #define ESCHER_TEXT_FIELD_H
 
-#include <escher/field.h>
+#include <escher/editable_field.h>
 #include <escher/text_input.h>
 #include <escher/text_field_delegate.h>
 #include <string.h>
 
-class TextField : public TextInput, public Field {
+class TextField : public TextInput, public EditableField {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
     TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
@@ -24,6 +24,7 @@ public:
   char XNTChar(char defaultXNTChar) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
+  Toolbox * toolbox() override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }

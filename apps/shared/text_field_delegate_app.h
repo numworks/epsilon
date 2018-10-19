@@ -17,12 +17,12 @@ public:
   virtual char XNT();
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  Toolbox * toolboxForTextInput(InputEventHandler * textInput) override;
 protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 protected:
-  bool fieldDidReceiveEvent(Field * field, Responder * responder, Ion::Events::Event event);
-  void forceEdition(Field * field);
+  bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
+  void forceEdition(EditableField * field);
   bool isFinishingEvent(Ion::Events::Event event);
   bool unparsableText(const char * text, Responder * responder);
 };

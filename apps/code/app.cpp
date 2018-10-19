@@ -109,14 +109,14 @@ bool App::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool App::textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event) {
+bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {
     textInput->handleEventWithText(pythonText);
     return true;
   }
   if (event == Ion::Events::Var) {
-    m_variableBoxController.setTextInputCaller(textInput);
+    m_variableBoxController.setSender(textInput);
     displayModalViewController(&m_variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }

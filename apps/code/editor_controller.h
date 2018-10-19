@@ -25,7 +25,7 @@ public:
 
   /* TextAreaDelegate */
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  Toolbox * toolboxForTextInput(InputEventHandler * textInput) override;
 
 private:
   static constexpr int k_indentationSpacesNumber = 2;

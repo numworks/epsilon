@@ -2,16 +2,18 @@
 #define ESCHER_TEXT_AREA_H
 
 #include <escher/text_input.h>
+#include <escher/input_event_handler.h>
 #include <escher/text_area_delegate.h>
 #include <assert.h>
 #include <string.h>
 
-class TextArea : public TextInput {
+class TextArea : public TextInput, public InputEventHandler {
 public:
   TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  Toolbox * toolbox() override;
   void setText(char * textBuffer, size_t textBufferSize);
 
 protected:

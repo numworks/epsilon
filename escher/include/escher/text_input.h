@@ -11,7 +11,6 @@ class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
   TextInput(Responder * parentResponder, View * contentView);
   void setFont(const KDFont * font) { contentView()->setFont(font); }
-  Toolbox * toolbox() override;
   const char * text() const { return nonEditableContentView()->text(); }
   bool removeChar();
   size_t cursorLocation() const { return nonEditableContentView()->cursorLocation(); }

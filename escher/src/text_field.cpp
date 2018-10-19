@@ -228,13 +228,13 @@ void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
 }
 
 bool TextField::privateHandleEvent(Ion::Events::Event event) {
-  if (Responder::handleEvent(event)) {
-    /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the text field is forced into editing mode. */
-    if (!isEditing()) {
-      setEditing(true);
+  if (event == Ion::Events::Toolbox) {
+    if (handleToolboxEvent(app())) {
+      if (!isEditing()) {
+        setEditing(true);
+      }
+      return true;
     }
-    return true;
   }
   if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
     return setCursorLocation(cursorLocation()-1);
@@ -356,6 +356,13 @@ char TextField::XNTChar(char defaultXNTChar) {
   }
   // Fallback to the default
   return defaultXNTChar;
+}
+
+Toolbox * TextField::toolbox() {
+  if (delegate()) {
+    return delegate()->toolboxForTextInput(this);
+  }
+  return nullptr;
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {

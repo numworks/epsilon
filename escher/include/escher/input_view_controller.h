@@ -24,7 +24,7 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  Toolbox * toolboxForTextInput(InputEventHandler * textInput) override;
 
   /* LayoutFieldDelegate */
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;

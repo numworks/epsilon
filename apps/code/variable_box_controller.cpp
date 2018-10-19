@@ -26,8 +26,8 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   }
 }
 
-void VariableBoxController::ContentViewController::setTextInputCaller(TextInput * textInput) {
-  m_textInputCaller = textInput;
+void VariableBoxController::ContentViewController::setSender(InputEventHandler * textInput) {
+  m_sender = textInput;
 }
 
 void VariableBoxController::ContentViewController::reloadData() {
@@ -147,7 +147,7 @@ void VariableBoxController::ContentViewController::insertTextInCaller(const char
   char commandBuffer[k_maxScriptObjectNameSize];
   assert(commandBufferMaxSize <= k_maxScriptObjectNameSize);
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer, commandBufferMaxSize, true);
-  m_textInputCaller->handleEventWithText(commandBuffer);
+  m_sender->handleEventWithText(commandBuffer);
 }
 
 VariableBoxController::VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore) :
@@ -160,8 +160,8 @@ void VariableBoxController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_contentViewController);
 }
 
-void VariableBoxController::setTextInputCaller(TextInput * textInput) {
-  m_contentViewController.setTextInputCaller(textInput);
+void VariableBoxController::setSender(InputEventHandler * sender) {
+  m_contentViewController.setSender(sender);
 }
 
 void VariableBoxController::viewWillAppear() {

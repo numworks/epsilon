@@ -21,13 +21,13 @@ public:
   int numberOfExpressionRows() override;
   KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  Toolbox * toolboxForTextInput(InputEventHandler * textInput) override;
   Toolbox * toolboxForLayoutField(LayoutField * layoutField) override;
   void selectPreviousNewSequenceCell();
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
-  Toolbox * toolboxForSender(Responder * sender);
+  Toolbox * toolboxForSender(InputEventHandler * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   ListParameterController * parameterController() override;

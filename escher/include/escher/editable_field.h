@@ -1,9 +1,10 @@
-#ifndef ESCHER_FIELD_H
-#define ESCHER_FIELD_H
+#ifndef ESCHER_EDITABLE_FIELD_H
+#define ESCHER_EDITABLE_FIELD_H
 
 #include <ion.h>
+#include <escher/input_event_handler.h>
 
-class Field {
+class EditableField : public InputEventHandler {
 public:
   virtual bool isEditing() const = 0;
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) = 0;

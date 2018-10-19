@@ -14,20 +14,30 @@ public:
   TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation = Orientation::VerticalIndicator, KDText::FontSize size = KDText::FontSize::Large);
   TextField * textField() { return &m_textField; }
   void setEditing(bool editing);
-  void setEven(bool even) override;
-  void setHighlighted(bool highlight) override;
-  void setColor(KDColor color) override;
+  bool isEditing() const;
   void setText(const char * textContent);
+
+  // FunctionTitleCell
+  void setColor(KDColor color) override;
   KDText::FontSize fontSize() const override { return m_textField.fontSize(); }
+  // EvenOddCell
+  void setEven(bool even) override;
+  // HighlightCell
+  void setHighlighted(bool highlight) override;
+  Responder * responder() override;
   const char * text() const override {
     return m_textField.text();
   }
+  // View
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override {
     assert(index == 0);
     return &m_textField;
   }
   void layoutSubviews() override;
+
+  // Responder
+  void didBecomeFirstResponder() override;
 protected:
   KDRect textFieldFrame() const;
 private:

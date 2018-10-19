@@ -99,11 +99,15 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, int locatio
   for (int k = m_currentDraftTextLength; k >= location && k >= 0; k--) {
     m_draftTextBuffer[k+textSize] = m_draftTextBuffer[k];
   }
+
+  // Caution! One char will be overridden by the null-terminating char of strlcpy
+  int overridenCharLocation = location + strlen(text);
+  char overridenChar = m_draftTextBuffer[overridenCharLocation];
   strlcpy(&m_draftTextBuffer[location], text, m_textBufferSize-location);
-  if (location+textSize > 0) {
-    m_draftTextBuffer[location+textSize-1] = text[textSize-1];
-  }
+  assert(overridenCharLocation < m_textBufferSize);
+  m_draftTextBuffer[overridenCharLocation] = overridenChar;
   m_currentDraftTextLength += textSize;
+
   for (size_t i = 0; i < m_currentDraftTextLength; i++) {
     if (m_draftTextBuffer[i] == '\n') {
       m_draftTextBuffer[i] = 0;

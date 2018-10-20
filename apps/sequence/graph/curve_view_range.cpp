@@ -1,7 +1,7 @@
 #include "curve_view_range.h"
 #include <cmath>
 #include <ion.h>
-#include <poincare.h>
+#include <poincare/preferences.h>
 
 using namespace Shared;
 using namespace Poincare;

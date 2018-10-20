@@ -1,5 +1,7 @@
 #include "calculation_store.h"
 #include <assert.h>
+#include <poincare/rational.h>
+#include <poincare/symbol.h>
 using namespace Poincare;
 
 namespace Calculation {

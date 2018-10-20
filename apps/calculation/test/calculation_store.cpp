@@ -1,4 +1,5 @@
 #include <quiz.h>
+#include <poincare/global_context.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"

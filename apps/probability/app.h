@@ -2,7 +2,6 @@
 #define PROBABILITY_PROBABILITY_APP_H
 
 #include <escher.h>
-#include <poincare.h>
 #include "law_controller.h"
 #include "calculation_controller.h"
 #include "parameters_controller.h"

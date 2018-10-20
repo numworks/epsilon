@@ -2,7 +2,6 @@
 #define SHARED_CURVE_VIEW_H
 
 #include <escher.h>
-#include <poincare.h>
 #include <cmath>
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"

@@ -7,7 +7,7 @@
 #include <escher/invocation.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <poincare.h>
+#include <poincare/layout.h>
 
 /* TODO Implement a split view. Because we use a modal view, the main view is
  * redrawn underneath the modal view, which is visible and ugly. */

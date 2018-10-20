@@ -38,6 +38,7 @@
  * which only define YYSTYPE. This should be discarded with Bison 3. */
 #include "expression_lexer_parser.h"
 
+#include <poincare_nodes.h>
 #include "expression_parser.hpp"
 using namespace Poincare;
 

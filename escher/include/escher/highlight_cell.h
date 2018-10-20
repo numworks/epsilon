@@ -3,7 +3,6 @@
 
 #include <escher/view.h>
 #include <escher/responder.h>
-#include <poincare.h>
 #include <poincare/layout.h>
 
 class HighlightCell : public View {

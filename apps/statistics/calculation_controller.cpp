@@ -2,7 +2,6 @@
 #include "../constant.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
-#include <poincare.h>
 #include <assert.h>
 
 using namespace Shared;

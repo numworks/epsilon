@@ -4,9 +4,10 @@
 #include <poincare/tree_handle.h>
 #include <poincare/test/tree/blob_node.h>
 #include <poincare/test/tree/pair_node.h>
-#include <poincare.h>
 #include <string.h>
 #include <stdint.h>
+#include <poincare_layouts.h>
+#include <poincare_nodes.h>
 
 namespace Poincare {
 

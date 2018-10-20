@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_APP_H
 #define SHARED_FUNCTION_APP_H
 
-#include <poincare.h>
+#include <poincare/preferences.h>
 #include "expression_field_delegate_app.h"
 #include "curve_view_cursor.h"
 #include "interval.h"

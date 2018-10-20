@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/tree_handle.h>
 #include <poincare/init.h>
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>

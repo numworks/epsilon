@@ -2,7 +2,7 @@
 #define ESCHER_CLIPBOARD_H
 
 #include <escher/text_field.h>
-#include <poincare.h>
+#include <poincare/layout.h>
 
 class Clipboard {
 public:

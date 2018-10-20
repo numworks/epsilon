@@ -1,5 +1,5 @@
 #include "editor_view.h"
-#include <poincare.h>
+#include <poincare/integer.h>
 #include <escher/app.h>
 
 namespace Code {

@@ -1,7 +1,6 @@
 #include "histogram_banner_view.h"
 #include "../constant.h"
 #include <assert.h>
-#include <poincare.h>
 
 namespace Statistics {
 

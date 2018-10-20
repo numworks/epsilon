@@ -5,6 +5,7 @@
 #include "store.h"
 #include "../shared/curve_view.h"
 #include "../constant.h"
+#include <poincare/print_float.h>
 
 namespace Statistics {
 

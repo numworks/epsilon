@@ -41,7 +41,7 @@ template<typename T>
 class Complex final : public Evaluation<T> {
 public:
   Complex(ComplexNode<T> * n) : Evaluation<T>(n) {}
-  explicit Complex(T a, T b = 0.0);
+  explicit Complex(T a, T b = 0.0) : Complex(std::complex<T>(a, b)) {}
   explicit Complex(std::complex<T> c);
   static Complex<T> Undefined() {
     return Complex<T>(NAN, NAN);

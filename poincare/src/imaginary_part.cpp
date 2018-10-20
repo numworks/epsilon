@@ -15,11 +15,6 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-template<typename T>
-Complex<T> ImaginaryPartNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(std::imag(c));
-}
-
 Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return ImaginaryPart(this).shallowReduce(context, angleUnit);
 }

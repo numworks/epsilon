@@ -10,11 +10,6 @@ Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::An
   return AbsoluteValue(this).setSign(s, context, angleUnit);
 }
 
-template<typename T>
-Complex<T> AbsoluteValueNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(std::abs(c));
-}
-
 Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return AbsoluteValueLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

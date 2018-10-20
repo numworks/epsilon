@@ -9,11 +9,6 @@ Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-template<typename T>
-Complex<T> RealPartNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(std::real(c));
-}
-
 Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return RealPart(this).shallowReduce(context, angleUnit);
 }

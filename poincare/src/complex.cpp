@@ -106,9 +106,6 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
 }
 
 template <typename T>
-Complex<T>::Complex(T a, T b) : Complex(std::complex<T>(a, b)) {}
-
-template <typename T>
 Complex<T>::Complex(std::complex<T> c) :
   Evaluation<T>(TreePool::sharedPool()->createTreeNode<ComplexNode<T>>())
 {

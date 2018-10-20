@@ -2,9 +2,6 @@
 extern "C" {
 #include <assert.h>
 }
-#include <poincare.h>
-
-using namespace Poincare;
 
 namespace HardwareTest {
 

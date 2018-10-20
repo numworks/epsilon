@@ -1,7 +1,9 @@
 #ifndef SEQUENCE_SEQUENCE_CONTEXT_H
 #define SEQUENCE_SEQUENCE_CONTEXT_H
 
-#include <poincare.h>
+#include <poincare/context.h>
+#include <poincare/expression.h>
+#include <poincare/symbol.h>
 
 namespace Sequence {
 

@@ -1,7 +1,7 @@
 #include "command.h"
 #include <ion.h>
 #include <ion/src/device/display.h>
-#include <poincare.h>
+#include <poincare/integer.h>
 
 namespace Ion {
 namespace Device {

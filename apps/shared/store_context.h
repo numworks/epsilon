@@ -1,7 +1,9 @@
 #ifndef SHARED_STORE_CONTEXT_H
 #define SHARED_STORE_CONTEXT_H
 
-#include <poincare.h>
+#include <poincare/expression.h>
+#include <poincare/context.h>
+#include <poincare/symbol.h>
 #include "double_pair_store.h"
 #include <cmath>
 

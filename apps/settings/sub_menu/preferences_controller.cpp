@@ -3,6 +3,10 @@
 #include "../../apps_container.h"
 #include <assert.h>
 #include <cmath>
+#include <poincare/layout_helper.h>
+#include <poincare/char_layout.h>
+#include <poincare/fraction_layout.h>
+#include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
 

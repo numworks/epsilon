@@ -3,6 +3,9 @@
 #include <float.h>
 #include <cmath>
 
+#include <poincare/derivative.h>
+#include <poincare/integral.h>
+
 using namespace Poincare;
 using namespace Shared;
 

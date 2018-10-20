@@ -1,9 +1,9 @@
 #include "interactive_curve_view_range.h"
-#include <poincare.h>
 #include <ion.h>
 #include <cmath>
 #include <stddef.h>
 #include <assert.h>
+#include <poincare/preferences.h>
 
 using namespace Poincare;
 

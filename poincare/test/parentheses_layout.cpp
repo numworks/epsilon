@@ -1,4 +1,5 @@
 #include <quiz.h>
+#include <poincare_layouts.h>
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"

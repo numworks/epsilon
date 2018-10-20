@@ -2,6 +2,7 @@
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
 #include <escher.h>
+#include <poincare/layout.h>
 #include "../sequence_store.h"
 
 namespace Sequence {

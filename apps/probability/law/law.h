@@ -1,7 +1,6 @@
 #ifndef PROBABILITE_LAW_H
 #define PROBABILITE_LAW_H
 
-#include <poincare.h>
 #include <escher.h>
 #include "../../constant.h"
 #include "../../shared/curve_view_range.h"

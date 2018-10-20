@@ -1,7 +1,9 @@
 #ifndef SHARED_POINCARE_HELPERS_H
 #define SHARED_POINCARE_HELPERS_H
 
-#include <poincare.h>
+#include <poincare/preferences.h>
+#include <poincare/print_float.h>
+#include <poincare/expression.h>
 
 namespace Shared {
 

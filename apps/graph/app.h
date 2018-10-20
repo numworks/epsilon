@@ -2,7 +2,6 @@
 #define GRAPH_APP_H
 
 #include <escher.h>
-#include <poincare.h>
 #include "cartesian_function_store.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"

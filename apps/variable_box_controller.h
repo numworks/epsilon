@@ -4,7 +4,7 @@
 #define MATRIX_VARIABLES 1
 
 #include <escher.h>
-#include <poincare.h>
+#include <poincare/global_context.h>
 #include "variable_box_leaf_cell.h"
 #include "i18n.h"
 

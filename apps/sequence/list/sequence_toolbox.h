@@ -3,6 +3,8 @@
 
 #include "../../math_toolbox.h"
 
+#include <poincare/layout.h>
+
 namespace Sequence {
 
 class SequenceToolbox : public MathToolbox {

@@ -3,6 +3,7 @@
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>
+#include <poincare/matrix_layout.h>
 
 using namespace Poincare;
 using namespace Shared;

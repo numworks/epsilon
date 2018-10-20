@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <cmath>
 
+#include <poincare/integer.h>
+
 using namespace Poincare;
 using namespace Shared;
 

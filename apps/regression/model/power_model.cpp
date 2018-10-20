@@ -2,6 +2,9 @@
 #include "../store.h"
 #include <math.h>
 #include <assert.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
 

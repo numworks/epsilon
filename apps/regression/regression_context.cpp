@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <string.h>
 
+#include <poincare/float.h>
+
 using namespace Poincare;
 using namespace Shared;
 

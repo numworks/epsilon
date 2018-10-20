@@ -2,7 +2,6 @@
 #define SEQUENCE_APP_H
 
 #include <escher.h>
-#include <poincare.h>
 #include "sequence_context.h"
 #include "sequence_store.h"
 #include "graph/graph_controller.h"

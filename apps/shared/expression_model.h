@@ -1,7 +1,9 @@
 #ifndef SHARED_EXPRESSION_MODEL_H
 #define SHARED_EXPRESSION_MODEL_H
 
-#include <poincare.h>
+#include <poincare/expression.h>
+#include <poincare/context.h>
+#include <poincare/layout.h>
 #include <kandinsky.h>
 #include <escher.h>
 

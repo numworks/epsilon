@@ -2,7 +2,7 @@
 #define APPS_VARIABLE_BOX_LEAF_CELL_H
 
 #include <escher.h>
-#include <poincare.h>
+#include <poincare/layout.h>
 
 class VariableBoxLeafCell : public HighlightCell {
 public:

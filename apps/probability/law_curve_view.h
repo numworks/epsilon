@@ -6,7 +6,7 @@
 #include "law/law.h"
 #include "calculation/calculation.h"
 #include <escher.h>
-#include <poincare.h>
+#include <poincare/print_float.h>
 
 namespace Probability {
 

@@ -1,5 +1,6 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/expression.h>
+#include <poincare/rational.h>
 
 using namespace Poincare;
 

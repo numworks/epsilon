@@ -2,6 +2,15 @@
 #include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+#include <poincare/decimal.h>
+#include <poincare/number.h>
+#include <poincare/symbol.h>
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
 
 using namespace Poincare;
 using namespace Shared;

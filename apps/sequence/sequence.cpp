@@ -2,6 +2,9 @@
 #include "sequence_store.h"
 #include "cache_context.h"
 #include <poincare/layout_helper.h>
+#include <poincare/char_layout.h>
+#include <poincare/vertical_offset_layout.h>
+#include <poincare/integer.h>
 #include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <cmath>

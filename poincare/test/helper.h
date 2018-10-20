@@ -1,4 +1,5 @@
-#include <poincare.h>
+#include <poincare/expression.h>
+#include <poincare/preferences.h>
 
 // Expressions
 

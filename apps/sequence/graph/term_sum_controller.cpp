@@ -1,6 +1,9 @@
 #include "term_sum_controller.h"
 #include "../../shared/text_field_delegate.h"
 #include "../app.h"
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
 
 #include <cmath>
 

@@ -2,7 +2,8 @@
 #define CALCULATION_CALCULATION_H
 
 #include <escher.h>
-#include <poincare.h>
+#include <poincare/context.h>
+#include <poincare/expression.h>
 
 namespace Calculation {
 

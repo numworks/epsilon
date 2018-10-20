@@ -15,8 +15,7 @@
 %pure-parser
 
 %{
-#include <poincare.h>
-
+#include <poincare_nodes.h>
 
 /* YYSTYPE has to be defined in expression_lexer.y, expression.cpp and here
  * because the genereated code is included in expression_parser.cpp, not .hpp

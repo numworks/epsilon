@@ -1,5 +1,8 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/decimal.h>
+#include <poincare/integer.h>
+#include <poincare/rational.h>
+#include <poincare/infinity.h>
 #include <assert.h>
 
 #include "tree/helpers.h"

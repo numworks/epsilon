@@ -4,7 +4,8 @@
 extern "C" {
 #include <assert.h>
 }
-#include <poincare.h>
+#include <poincare/print_float.h>
+#include <poincare/preferences.h>
 
 using namespace Poincare;
 

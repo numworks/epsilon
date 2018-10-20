@@ -4,6 +4,10 @@
 #include "../shared/poincare_helpers.h"
 #include <assert.h>
 #include <limits.h>
+#include <poincare/layout_helper.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
 using namespace Shared;

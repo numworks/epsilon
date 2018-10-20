@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/expression.h>
 #include <cmath>
 #include <ion.h>
 #include <assert.h>

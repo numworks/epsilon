@@ -1,5 +1,6 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/global_context.h>
+#include <poincare/expression.h>
 #include <string.h>
 #include <ion.h>
 #include <stdlib.h>

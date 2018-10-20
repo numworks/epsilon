@@ -5,6 +5,8 @@
 #include <cmath>
 #include <float.h>
 
+#include <poincare/print_float.h>
+
 using namespace Poincare;
 
 namespace Shared {

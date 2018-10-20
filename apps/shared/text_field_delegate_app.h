@@ -1,7 +1,7 @@
 #ifndef SHARED_TEXT_FIELD_DELEGATE_APP_H
 #define SHARED_TEXT_FIELD_DELEGATE_APP_H
 
-#include <poincare.h>
+#include <poincare/context.h>
 #include <escher.h>
 #include "../i18n.h"
 

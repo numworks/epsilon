@@ -2,6 +2,17 @@
 #include "../shared/poincare_helpers.h"
 #include <limits.h>
 
+#include <poincare/symbol.h>
+#include <poincare/matrix.h>
+#include <poincare/rational.h>
+#include <poincare/opposite.h>
+#include <poincare/addition.h>
+#include <poincare/subtraction.h>
+#include <poincare/multiplication.h>
+#include <poincare/division.h>
+#include <poincare/square_root.h>
+#include <poincare/power.h>
+
 using namespace Poincare;
 using namespace Shared;
 

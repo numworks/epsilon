@@ -2,6 +2,8 @@
 #include "../apps_container.h"
 #include <poincare/layout_helper.h>
 #include "poincare_helpers.h"
+#include <poincare/empty_layout.h>
+#include <poincare/condensed_sum_layout.h>
 
 #include <assert.h>
 #include <cmath>

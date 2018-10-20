@@ -2,7 +2,7 @@
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <escher.h>
-#include <poincare.h>
+#include <poincare/preferences.h>
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "regular_table_view_data_source.h"

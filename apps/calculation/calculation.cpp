@@ -3,6 +3,8 @@
 #include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <cmath>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
 
 using namespace Poincare;
 using namespace Shared;

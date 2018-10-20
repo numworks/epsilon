@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 #include "../../i18n.h"
-#include <poincare.h>
+#include <poincare/context.h>
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 
 namespace Regression {
 

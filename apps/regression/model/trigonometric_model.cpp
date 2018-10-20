@@ -3,6 +3,15 @@
 #include <math.h>
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <poincare/char_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/vertical_offset_layout.h>
+#include <poincare/number.h>
+#include <poincare/symbol.h>
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
+#include <poincare/sine.h>
 
 using namespace Poincare;
 using namespace Shared;

@@ -1,5 +1,7 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/global_context.h>
+#include <poincare/expression.h>
+#include <poincare/integer.h>
 #include <poincare/arithmetic.h>
 #include <assert.h>
 #include <utility>

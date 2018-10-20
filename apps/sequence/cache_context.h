@@ -1,7 +1,10 @@
 #ifndef SEQUENCE_CACHE_CONTEXT_H
 #define SEQUENCE_CACHE_CONTEXT_H
 
-#include <poincare.h>
+#include <poincare/context.h>
+#include <poincare/expression.h>
+#include <poincare/symbol.h>
+#include <poincare/variable_context.h>
 #include "sequence_context.h"
 
 namespace Sequence {

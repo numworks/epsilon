@@ -1,5 +1,9 @@
 #include "equation.h"
 
+#include <poincare/equal.h>
+#include <poincare/undefined.h>
+#include <poincare/rational.h>
+
 using namespace Poincare;
 
 namespace Solver {

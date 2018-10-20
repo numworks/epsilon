@@ -1,5 +1,7 @@
 #include <quiz.h>
-#include <poincare.h>
+#include <poincare/global_context.h>
+#include <poincare/print_float.h>
+#include <poincare/float.h>
 #include <string.h>
 #include <ion.h>
 #include <stdlib.h>

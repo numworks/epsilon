@@ -1,8 +1,5 @@
 #include "keyboard_view.h"
 #include "../constant.h"
-#include <poincare.h>
-
-using namespace Poincare;
 
 namespace HardwareTest {
 

@@ -4,11 +4,11 @@
 
 namespace Shared {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
   FloatParameterController(parentResponder),
   m_cursor(cursor),
   m_graphRange(graphRange),
-  m_abscisseCell(&m_selectableTableView, this, m_draftTextBuffer, symbol)
+  m_abscisseCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer, symbol)
 {
 }
 

@@ -9,10 +9,10 @@ using namespace Shared;
 
 namespace Sequence {
 
-ListParameterController::ListParameterController(ListController * listController, SequenceStore * sequenceStore) :
+ListParameterController::ListParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * listController, SequenceStore * sequenceStore) :
   Shared::ListParameterController(listController, sequenceStore, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
-  m_initialRankCell(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::FirstTermIndex),
+  m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer, I18n::Message::FirstTermIndex),
   m_typeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin),
   m_sequence(nullptr)

@@ -7,13 +7,13 @@ using namespace Shared;
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
+CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
   StorageFunctionCurveParameterController(graphRange, cursor),
-  m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
+  m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor, I18n::Message::X),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
   m_derivativeCell(I18n::Message::DerivateNumber),
-  m_calculationParameterController(this, graphView, bannerView, graphRange, cursor)
+  m_calculationParameterController(this, inputEventHandlerDelegate, graphView, bannerView, graphRange, cursor)
 {
 }
 

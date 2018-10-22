@@ -3,9 +3,9 @@
 #include <escher/palette.h>
 #include <assert.h>
 
-InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_expressionField(this, m_textBuffer, k_bufferLength, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(this, m_textBuffer, k_bufferLength, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
   m_textBuffer[0] = 0;
 }
@@ -14,11 +14,12 @@ void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_expressionField);
 }
 
-InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ModalViewController(parentResponder, child),
-  m_expressionFieldController(this, this, this),
+  m_expressionFieldController(this, this, this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
+  m_inputEventHandlerDelegate(inputEventHandlerDelegate),
   m_textFieldDelegate(textFieldDelegate),
   m_layoutFieldDelegate(layoutFieldDelegate),
   m_inputViewHeightIsMaximal(false)
@@ -95,7 +96,7 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
 }
 
 Toolbox * InputViewController::toolboxForInputEventHandler(InputEventHandler * handler) {
-  return m_textFieldDelegate->toolboxForInputEventHandler(handler);
+  return m_inputEventHandlerDelegate->toolboxForInputEventHandler(handler);
 }
 
 void InputViewController::inputViewDidFinishEditing() {

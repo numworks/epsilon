@@ -15,7 +15,7 @@ class HistoryController;
 /* TODO: implement a split view */
 class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
+  EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override;
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
@@ -36,7 +36,7 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
     TableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }

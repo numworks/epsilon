@@ -7,12 +7,12 @@ using namespace Poincare;
 
 namespace Graph {
 
-StorageValuesController::StorageValuesController(Responder * parentResponder, Interval * interval, ButtonRowController * header) :
-  Shared::StorageValuesController(parentResponder, header, I18n::Message::X, &m_intervalParameterController, interval),
+StorageValuesController::StorageValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
+  Shared::StorageValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::X, &m_intervalParameterController, interval),
   m_functionTitleCells{},
   m_floatCells{},
   m_functionParameterController(this),
-  m_intervalParameterController(this, m_interval),
+  m_intervalParameterController(this, inputEventHandlerDelegate, m_interval),
   m_derivativeParameterController(this)
 {
   for (int i = 0; i < k_maxNumberOfFunctions; i++) {

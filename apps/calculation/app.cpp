@@ -47,7 +47,7 @@ void App::Snapshot::tidy() {
 App::App(Container * container, Snapshot * snapshot) :
   ExpressionFieldDelegateApp(container, snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
-  m_editExpressionController(&m_modalViewController, &m_historyController, snapshot->calculationStore())
+  m_editExpressionController(&m_modalViewController, this, &m_historyController, snapshot->calculationStore())
 {
 }
 

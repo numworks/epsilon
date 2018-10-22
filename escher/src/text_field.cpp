@@ -177,9 +177,10 @@ KDRect TextField::ContentView::characterFrameAtIndex(size_t index) const {
 /* TextField */
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
-    size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, const KDFont * font,
+    size_t textBufferSize, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, bool hasTwoBuffers, const KDFont * font,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TextInput(parentResponder, &m_contentView),
+  EditableField(inputEventHandlerDelegate),
   m_contentView(textBuffer, draftTextBuffer, textBufferSize, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)

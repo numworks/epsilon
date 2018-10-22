@@ -9,11 +9,11 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphOptionsController::GraphOptionsController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
+GraphOptionsController::GraphOptionsController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
   ViewController(parentResponder),
   m_changeRegressionCell(I18n::Message::Regression),
   m_selectableTableView(this),
-  m_goToParameterController(this, store, cursor, graphController),
+  m_goToParameterController(this, inputEventHandlerDelegate, store, cursor, graphController),
   m_store(store),
   m_graphController(graphController)
 {

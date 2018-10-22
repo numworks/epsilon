@@ -15,7 +15,7 @@ public:
   ScriptNameCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr) :
     EvenOddCell(),
     Responder(parentResponder),
-    m_textField(k_extensionLength, this, m_textBody, m_textBody, TextField::maxBufferSize(), delegate, false)
+    m_textField(k_extensionLength, this, m_textBody, m_textBody, TextField::maxBufferSize(), nullptr, delegate, false)
   {}
 
   Shared::TextFieldWithExtension * textField() { return &m_textField; }

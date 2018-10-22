@@ -17,7 +17,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
+  GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;

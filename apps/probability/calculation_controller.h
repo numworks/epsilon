@@ -13,7 +13,7 @@ namespace Probability {
 
 class CalculationController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
-  CalculationController(Responder * parentResponder, Law * law, Calculation * calculation);
+  CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, Calculation * calculation);
   /* Responder */
   void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;

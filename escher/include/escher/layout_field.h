@@ -13,12 +13,13 @@
 
 class LayoutField : public ScrollableView, public ScrollViewDataSource, public EditableField {
 public:
-  LayoutField(Responder * parentResponder, LayoutFieldDelegate * delegate = nullptr) :
+  LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr) :
     ScrollableView(parentResponder, &m_contentView, this),
+    EditableField(inputEventHandlerDelegate),
     m_contentView(),
     m_delegate(delegate)
   {}
-  void setDelegate(LayoutFieldDelegate * delegate) { m_delegate = delegate; }
+  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool isEditing() const override { return m_contentView.isEditing(); }
   void setEditing(bool isEditing, bool reinitDraftBuffer = false) override { m_contentView.setEditing(isEditing); }
   void clearLayout() { m_contentView.clearLayout(); }
@@ -60,7 +61,6 @@ private:
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Layout pointedLayout, bool forceCursorRightOfLayout = false);
-  InputEventHandlerDelegate * inputEventHandlerDelegate() override { return m_delegate; }
 
   class ContentView : public View {
   public:

@@ -14,9 +14,9 @@
 
 namespace Sequence {
 
-class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::FunctionListController, public InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
   int numberOfExpressionRows() override;
   KDCoordinate expressionRowHeight(int j) override;

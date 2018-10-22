@@ -14,7 +14,7 @@ namespace Shared {
 
 class SumGraphController : public SimpleInteractiveCurveViewController, public TextFieldDelegate {
 public:
-  SumGraphController(Responder * parentResponder, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol);
+  SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol);
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -48,7 +48,7 @@ private:
   bool handleEnter() override;
   class LegendView : public View {
   public:
-    LegendView(SumGraphController * controller, char sumSymbol);
+    LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, char sumSymbol);
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
     LegendView& operator=(const LegendView& other) = delete;

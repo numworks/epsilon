@@ -10,10 +10,10 @@ using namespace Poincare;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_expressionField(parentResponder, m_textBody, k_bufferLength, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(parentResponder, m_textBody, k_bufferLength, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
   m_textBody[0] = 0;
 }
@@ -40,11 +40,11 @@ void EditExpressionController::ContentView::reload() {
   markRectAsDirty(bounds());
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
-  m_contentView(this, (TableView *)m_historyController->view(), this, this),
+  m_contentView(this, (TableView *)m_historyController->view(), inputEventHandlerDelegate, this, this),
   m_inputViewHeightIsMaximal(false)
 {
   m_cacheBuffer[0] = 0;

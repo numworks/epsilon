@@ -8,7 +8,7 @@ namespace Shared {
 
 class FunctionGoToParameterController : public GoToParameterController {
 public:
-  FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
+  FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   const char * title() override;
   void setFunction(Function * function);
 protected:

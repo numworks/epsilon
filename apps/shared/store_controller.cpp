@@ -12,11 +12,11 @@ static inline int max(int x, int y) { return (x>y ? x : y); }
 
 namespace Shared {
 
-StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate) :
+StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   View(),
   Responder(parentResponder),
   m_dataView(store, this, dataSource, selectionDataSource),
-  m_formulaInputView(this, textFieldDelegate),
+  m_formulaInputView(this, inputEventHandlerDelegate, textFieldDelegate),
   m_displayFormulaInputView(false)
 {
   m_dataView.setBackgroundColor(Palette::WallScreenDark);
@@ -52,16 +52,16 @@ KDRect StoreController::ContentView::formulaFrame() const {
   return KDRect(0, bounds().height() - k_formulaInputHeight, bounds().width(), m_displayFormulaInputView ? k_formulaInputHeight : 0);
 }
 
-StoreController::StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
   m_store(store),
-  m_contentView(m_store, this, this, this, this)
+  m_contentView(m_store, this, this, this, inputEventHandlerDelegate, this)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(m_contentView.dataView());
-    m_editableCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_editableCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }

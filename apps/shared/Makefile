@@ -30,6 +30,7 @@ app_objs += $(addprefix apps/shared/,\
   hideable_even_odd_cell.o\
   hideable_even_odd_editable_text_cell.o\
   initialisation_parameter_controller.o\
+  input_event_handler_delegate_app.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
   interactive_curve_view_range_delegate.o\

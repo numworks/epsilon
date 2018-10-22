@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <ion/events.h>
+#include "../shared/input_event_handler_delegate_app.h"
 #include "console_controller.h"
 #include "menu_controller.h"
 #include "script_store.h"
@@ -11,9 +12,9 @@
 
 namespace Code {
 
-class App : public ::App {
+class App : public Shared::InputEventHandlerDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor : public Shared::InputEventHandlerDelegateApp::Descriptor {
   public:
     I18n::Message name() override;
     I18n::Message upperName() override;
@@ -39,8 +40,13 @@ public:
   ~App();
   StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
-  PythonToolbox * pythonToolbox() { return &m_toolbox; }
+
+  /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
+
+  /* InputEventHandlerDelegate */
+  Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;
+
   bool textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event);
   // Python delegate
   bool pythonIsInited() { return m_pythonUser != nullptr; }

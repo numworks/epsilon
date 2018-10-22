@@ -11,7 +11,6 @@ public:
   virtual ~ExpressionFieldDelegateApp() = default;
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
-  Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
 protected:
   ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 };

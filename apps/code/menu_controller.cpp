@@ -30,7 +30,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
-    m_scriptCells[i].textField()->setDelegate(this);
+    m_scriptCells[i].textField()->setDelegates(nullptr, this);
   }
 }
 

@@ -8,17 +8,13 @@ using namespace Poincare;
 namespace Shared {
 
 TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  ::App(container, snapshot, rootViewController, I18n::Message::Warning),
+  InputEventHandlerDelegateApp(container, snapshot, rootViewController),
   TextFieldDelegate()
 {
 }
 
 Context * TextFieldDelegateApp::localContext() {
   return container()->globalContext();
-}
-
-AppsContainer * TextFieldDelegateApp::container() {
-  return (AppsContainer *)app()->container();
 }
 
 char TextFieldDelegateApp::XNT() {
@@ -39,12 +35,6 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
     return true;
   }
   return false;
-}
-
-Toolbox * TextFieldDelegateApp::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  Toolbox * toolbox = container()->mathToolbox();
-  toolbox->setSender(textInput);
-  return toolbox;
 }
 
 /* Protected */

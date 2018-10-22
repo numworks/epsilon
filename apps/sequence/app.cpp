@@ -58,20 +58,20 @@ void App::Snapshot::tidy() {
 App::App(Container * container, Snapshot * snapshot) :
   FunctionApp(container, snapshot, &m_inputViewController),
   m_sequenceContext(((AppsContainer *)container)->globalContext(), snapshot->sequenceStore()),
-  m_listController(&m_listFooter, snapshot->sequenceStore(), &m_listHeader, &m_listFooter),
+  m_listController(&m_listFooter, this, snapshot->sequenceStore(), &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(nullptr, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
-  m_graphController(&m_graphAlternateEmptyViewController, snapshot->sequenceStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->angleUnitVersion(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->sequenceStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->angleUnitVersion(), &m_graphHeader),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),
-  m_valuesController(&m_valuesAlternateEmptyViewController, snapshot->sequenceStore(), snapshot->interval(), &m_valuesHeader),
+  m_valuesController(&m_valuesAlternateEmptyViewController, this, snapshot->sequenceStore(), snapshot->interval(), &m_valuesHeader),
   m_valuesAlternateEmptyViewController(&m_valuesHeader, &m_valuesController, &m_valuesController),
   m_valuesHeader(nullptr, &m_valuesAlternateEmptyViewController, &m_valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader),
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController, &m_listController)
+  m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController, &m_listController, &m_listController)
 {
 }
 

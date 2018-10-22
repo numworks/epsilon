@@ -5,8 +5,8 @@
 #include <escher/metric.h>
 
 bool InputEventHandler::handleToolboxEvent(App * app) {
-  if (inputEventHandlerDelegate() != nullptr) {
-    Toolbox * toolbox = inputEventHandlerDelegate()->toolboxForInputEventHandler(this);
+  if (m_inputEventHandlerDelegate != nullptr) {
+    Toolbox * toolbox = m_inputEventHandlerDelegate->toolboxForInputEventHandler(this);
     toolbox->setSender(this);
     app->displayModalViewController(toolbox, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;

@@ -13,7 +13,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageSumGraphController::StorageSumGraphController(Responder * parentResponder, StorageFunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol) :
+StorageSumGraphController::StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, range, graphView, cursor),
   m_step(Step::FirstParameter),
   m_startSum(NAN),
@@ -21,7 +21,7 @@ StorageSumGraphController::StorageSumGraphController(Responder * parentResponder
   m_record(),
   m_graphRange(range),
   m_graphView(graphView),
-  m_legendView(this, sumSymbol),
+  m_legendView(this, inputEventHandlerDelegate, sumSymbol),
   m_cursorView()
 {
 }
@@ -203,11 +203,11 @@ bool StorageSumGraphController::handleEnter() {
 
 /* Legend View */
 
-StorageSumGraphController::LegendView::LegendView(StorageSumGraphController * controller, char sumSymbol) :
+StorageSumGraphController::LegendView::LegendView(StorageSumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, char sumSymbol) :
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumLayout(),
   m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), controller, false, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, false, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumSymbol(sumSymbol)
 {
   m_draftText[0] = 0;

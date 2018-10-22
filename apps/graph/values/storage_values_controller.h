@@ -12,7 +12,7 @@ namespace Graph {
 
 class StorageValuesController : public Shared::StorageValuesController {
 public:
-  StorageValuesController(Responder * parentResponder, Shared::Interval * interval, ButtonRowController * header);
+  StorageValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   I18n::Message emptyMessage() override;

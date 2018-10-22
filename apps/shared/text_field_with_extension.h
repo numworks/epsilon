@@ -12,6 +12,7 @@ public:
       char * textBuffer,
       char * draftTextBuffer,
       size_t textBufferSize,
+      ::InputEventHandlerDelegate * inputEventHandlerDelegate,
       ::TextFieldDelegate * delegate = nullptr,
       bool hasTwoBuffers = true,
       const KDFont * size = KDFont::LargeFont,
@@ -19,7 +20,7 @@ public:
       float verticalAlignment = 0.5f,
       KDColor textColor = KDColorBlack,
       KDColor backgroundColor = KDColorWhite) :
-    TextField(parentResponder, textBuffer, draftTextBuffer, textBufferSize, delegate, hasTwoBuffers, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+    TextField(parentResponder, textBuffer, draftTextBuffer, textBufferSize, inputEventHandlerDelegate, delegate, hasTwoBuffers, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
     m_extensionLength(extensionLength)
   {}
 private:

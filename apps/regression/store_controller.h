@@ -12,7 +12,7 @@ namespace Regression {
 
 class StoreController : public Shared::StoreController {
 public:
-  StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
+  StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header);
   Shared::StoreContext * storeContext() override;
   void setFormulaLabel() override;
   bool fillColumnWithFormula(Poincare::Expression formula) override;

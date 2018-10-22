@@ -7,12 +7,12 @@ using namespace Shared;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_selectableTableView(this),
   m_record(),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_integralGraphController(nullptr, graphView, range, cursor),
+  m_integralGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_rootGraphController(nullptr, graphView, bannerView, range, cursor),

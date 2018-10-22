@@ -3,6 +3,7 @@
 
 #include <escher/expression_field.h>
 #include <escher/layout_field_delegate.h>
+#include <escher/input_event_handler_delegate.h>
 #include <escher/modal_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/text_field.h>
@@ -12,9 +13,9 @@
 /* TODO Implement a split view. Because we use a modal view, the main view is
  * redrawn underneath the modal view, which is visible and ugly. */
 
-class InputViewController : public ModalViewController, TextFieldDelegate, LayoutFieldDelegate {
+class InputViewController : public ModalViewController, InputEventHandlerDelegate, TextFieldDelegate, LayoutFieldDelegate {
 public:
-  InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
   void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
   void abortEditionAndDismiss();
@@ -37,7 +38,7 @@ public:
 private:
   class ExpressionFieldController : public ViewController {
   public:
-    ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ExpressionFieldController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     ExpressionFieldController(const ExpressionFieldController& other) = delete;
     ExpressionFieldController(ExpressionFieldController&& other) = delete;
     ExpressionFieldController& operator=(const ExpressionFieldController& other) = delete;
@@ -55,6 +56,7 @@ private:
   ExpressionFieldController m_expressionFieldController;
   Invocation m_successAction;
   Invocation m_failureAction;
+  InputEventHandlerDelegate * m_inputEventHandlerDelegate;
   TextFieldDelegate * m_textFieldDelegate;
   LayoutFieldDelegate * m_layoutFieldDelegate;
   bool m_inputViewHeightIsMaximal;

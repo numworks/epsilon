@@ -28,7 +28,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_rowHeight(k_font->glyphSize().height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
-  m_editCell(this, this),
+  m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
@@ -289,11 +289,6 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 #endif
   }
   return true;
-}
-
-Toolbox * ConsoleController::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  Code::App * codeApp = static_cast<Code::App *>(app());
-  return codeApp->pythonToolbox();
 }
 
 void ConsoleController::displaySandbox() {

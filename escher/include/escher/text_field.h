@@ -9,11 +9,11 @@
 class TextField : public TextInput, public EditableField {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
     float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
-  void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
+  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
   bool isEditing() const override;
   size_t draftTextLength() const;
@@ -79,7 +79,6 @@ protected:
   ContentView m_contentView;
 private:
   bool privateHandleEvent(Ion::Events::Event event);
-  InputEventHandlerDelegate * inputEventHandlerDelegate() override { return m_delegate; }
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

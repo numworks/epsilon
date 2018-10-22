@@ -53,7 +53,7 @@ void CalculationController::ContentView::layoutSubviews() {
   m_lawCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
 }
 
-CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
+CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
   m_contentView(&m_selectableTableView, law, calculation),
   m_selectableTableView(this),
@@ -72,7 +72,7 @@ CalculationController::CalculationController(Responder * parentResponder, Law * 
 
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(&m_selectableTableView);
-    m_calculationCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_calculationCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_calculationCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }

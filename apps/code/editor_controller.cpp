@@ -14,7 +14,7 @@ EditorController::EditorController(MenuController * menuController, App * python
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {
-  m_editorView.setTextAreaDelegate(this);
+  m_editorView.setTextAreaDelegates(pythonDelegate, this);
 }
 
 void EditorController::setScript(Script script) {
@@ -125,11 +125,6 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     }
   }
   return false;
-}
-
-Toolbox * EditorController::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  Code::App * codeApp = static_cast<Code::App *>(app());
-  return codeApp->pythonToolbox();
 }
 
 StackViewController * EditorController::stackController() {

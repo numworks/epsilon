@@ -12,8 +12,8 @@ using namespace Poincare;
 
 namespace Graph {
 
-IntegralGraphController::IntegralGraphController(Responder * parentResponder, GraphView * graphView, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  StorageSumGraphController(parentResponder, graphView, graphRange, cursor, Ion::Charset::Integral)
+IntegralGraphController::IntegralGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+  StorageSumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, Ion::Charset::Integral)
 {
 }
 

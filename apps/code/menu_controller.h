@@ -54,7 +54,6 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
   bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) override;
-  Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override { return nullptr; }
 
   /* ButtonRowDelegate */
   int numberOfButtons(ButtonRowController::Position position) const override { return 1; }

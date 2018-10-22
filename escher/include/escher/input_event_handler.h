@@ -6,11 +6,11 @@ class App;
 
 class InputEventHandler {
 public:
+  InputEventHandler(InputEventHandlerDelegate * inputEventHandlerdelegate) : m_inputEventHandlerDelegate(inputEventHandlerdelegate) {}
   virtual bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) { return false; }
 protected:
   bool handleToolboxEvent(App * app);
-private:
-  virtual InputEventHandlerDelegate * inputEventHandlerDelegate() { return nullptr; };
+  InputEventHandlerDelegate * m_inputEventHandlerDelegate;
 };
 
 #endif

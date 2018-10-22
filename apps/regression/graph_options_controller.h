@@ -12,7 +12,7 @@ class GraphController;
 
 class GraphOptionsController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  GraphOptionsController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  GraphOptionsController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

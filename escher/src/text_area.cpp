@@ -14,6 +14,7 @@ static inline size_t min(size_t a, size_t b) {
 
 TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
   TextInput(parentResponder, contentView),
+  InputEventHandler(nullptr),
   m_delegate(nullptr)
 {
 }

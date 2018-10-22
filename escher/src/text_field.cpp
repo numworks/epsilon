@@ -358,13 +358,6 @@ char TextField::XNTChar(char defaultXNTChar) {
   return defaultXNTChar;
 }
 
-Toolbox * TextField::toolbox() {
-  if (delegate()) {
-    return delegate()->toolboxForTextInput(this);
-  }
-  return nullptr;
-}
-
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   if (m_delegate->textFieldDidReceiveEvent(this, event)) {

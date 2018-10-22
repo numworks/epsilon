@@ -64,10 +64,6 @@ bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::E
   return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }
 
-Toolbox * InputViewController::toolboxForTextInput(InputEventHandler * input) {
-  return m_textFieldDelegate->toolboxForTextInput(input);
-}
-
 bool InputViewController::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
@@ -98,8 +94,8 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   }
 }
 
-Toolbox * InputViewController::toolboxForLayoutField(LayoutField * layoutField) {
-  return m_layoutFieldDelegate->toolboxForLayoutField(layoutField);
+Toolbox * InputViewController::toolboxForInputEventHandler(InputEventHandler * handler) {
+  return m_textFieldDelegate->toolboxForInputEventHandler(handler);
 }
 
 void InputViewController::inputViewDidFinishEditing() {

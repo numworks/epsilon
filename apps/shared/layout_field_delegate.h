@@ -13,7 +13,7 @@ public:
   bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
-  Toolbox * toolboxForLayoutField(LayoutField * layoutField) override;
+  Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
 private:
   virtual ExpressionFieldDelegateApp * expressionFieldDelegateApp() = 0;
 };

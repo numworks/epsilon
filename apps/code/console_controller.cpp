@@ -291,7 +291,7 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
   return true;
 }
 
-Toolbox * ConsoleController::toolboxForTextInput(InputEventHandler * textInput) {
+Toolbox * ConsoleController::toolboxForInputEventHandler(InputEventHandler * textInput) {
   Code::App * codeApp = static_cast<Code::App *>(app());
   return codeApp->pythonToolbox();
 }

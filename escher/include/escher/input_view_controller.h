@@ -24,7 +24,6 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
-  Toolbox * toolboxForTextInput(InputEventHandler * textInput) override;
 
   /* LayoutFieldDelegate */
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
@@ -32,8 +31,9 @@ public:
   bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
-  Toolbox * toolboxForLayoutField(LayoutField * layoutField) override;
 
+  /* InputEventHandlerDelegate */
+  Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
 private:
   class ExpressionFieldController : public ViewController {
   public:

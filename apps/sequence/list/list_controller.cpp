@@ -28,12 +28,8 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-Toolbox * ListController::toolboxForTextInput(InputEventHandler * textInput) {
+Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
   return toolboxForSender(textInput);
-}
-
-Toolbox * ListController::toolboxForLayoutField(LayoutField * layoutField) {
-  return toolboxForSender(layoutField);
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {

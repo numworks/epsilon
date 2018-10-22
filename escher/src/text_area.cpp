@@ -18,13 +18,6 @@ TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont
 {
 }
 
-Toolbox * TextArea::toolbox() {
-  if (delegate()) {
-    return delegate()->toolboxForTextInput(this);
-  }
-  return nullptr;
-}
-
 bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   int nextCursorLocation = cursorLocation();
 

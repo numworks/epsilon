@@ -39,9 +39,6 @@ public:
   /* Responder */
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
-  Toolbox * toolbox() override {
-    return m_delegate != nullptr ? m_delegate->toolboxForLayoutField(this) : nullptr;
-  }
   bool shouldFinishEditing(Ion::Events::Event event) override { // TODO REMOVE ?
     return m_delegate->layoutFieldShouldFinishEditing(this, event);
   }
@@ -63,6 +60,7 @@ private:
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Layout pointedLayout, bool forceCursorRightOfLayout = false);
+  InputEventHandlerDelegate * inputEventHandlerDelegate() override { return m_delegate; }
 
   class ContentView : public View {
   public:

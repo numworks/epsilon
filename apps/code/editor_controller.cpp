@@ -127,7 +127,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
   return false;
 }
 
-Toolbox * EditorController::toolboxForTextInput(InputEventHandler * textInput) {
+Toolbox * EditorController::toolboxForInputEventHandler(InputEventHandler * textInput) {
   Code::App * codeApp = static_cast<Code::App *>(app());
   return codeApp->pythonToolbox();
 }

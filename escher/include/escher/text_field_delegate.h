@@ -1,11 +1,11 @@
 #ifndef ESCHER_TEXT_FIELD_DELEGATE_H
 #define ESCHER_TEXT_FIELD_DELEGATE_H
 
-#include <escher/text_input_delegate.h>
+#include <escher/input_event_handler_delegate.h>
 
 class TextField;
 
-class TextFieldDelegate : public TextInputDelegate {
+class TextFieldDelegate : public InputEventHandlerDelegate {
 public:
   virtual bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) = 0;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) = 0;

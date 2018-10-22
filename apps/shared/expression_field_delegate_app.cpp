@@ -42,9 +42,9 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
   return false;
 }
 
-Toolbox * ExpressionFieldDelegateApp::toolboxForLayoutField(LayoutField * layoutField) {
+Toolbox * ExpressionFieldDelegateApp::toolboxForInputEventHandler(InputEventHandler * handler) {
   Toolbox * toolbox = container()->mathToolbox();
-  toolbox->setSender(layoutField);
+  toolbox->setSender(handler);
   return toolbox;
 }
 

@@ -41,7 +41,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
   return false;
 }
 
-Toolbox * TextFieldDelegateApp::toolboxForTextInput(InputEventHandler * textInput) {
+Toolbox * TextFieldDelegateApp::toolboxForInputEventHandler(InputEventHandler * textInput) {
   Toolbox * toolbox = container()->mathToolbox();
   toolbox->setSender(textInput);
   return toolbox;

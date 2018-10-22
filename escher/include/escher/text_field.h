@@ -24,7 +24,6 @@ public:
   char XNTChar(char defaultXNTChar) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
-  Toolbox * toolbox() override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }
@@ -80,9 +79,7 @@ protected:
   ContentView m_contentView;
 private:
   bool privateHandleEvent(Ion::Events::Event event);
-  TextInputDelegate * delegate() override {
-    return m_delegate;
-  }
+  InputEventHandlerDelegate * inputEventHandlerDelegate() override { return m_delegate; }
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

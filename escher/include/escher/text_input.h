@@ -5,7 +5,6 @@
 #include <string.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
-#include <escher/text_input_delegate.h>
 
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
@@ -53,7 +52,6 @@ protected:
   }
   virtual const ContentView * nonEditableContentView() const = 0;
 private:
-  virtual TextInputDelegate * delegate() = 0;
   virtual void willSetCursorLocation(int * location) {}
 };
 

@@ -3,14 +3,14 @@
 
 namespace Shared {
 
-IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
+IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval) :
   FloatParameterController(parentResponder),
   m_interval(interval),
   m_intervalCells{}
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableTableView);
-    m_intervalCells[i].textField()->setDelegate(this);
+    m_intervalCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
     m_intervalCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }

@@ -6,6 +6,7 @@
 
 class EditableField : public InputEventHandler {
 public:
+  using InputEventHandler::InputEventHandler;
   virtual bool isEditing() const = 0;
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) = 0;
   virtual char XNTChar(char defaultXNTChar) = 0;

@@ -11,7 +11,7 @@ namespace Code {
 
 class ConsoleEditCell : public HighlightCell, public Responder {
 public:
-  ConsoleEditCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr);
+  ConsoleEditCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr);
 
   // View
   int numberOfSubviews() const override;

@@ -38,7 +38,7 @@ const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
 #endif
 
-MainController::MainController(Responder * parentResponder) :
+MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
 #ifdef EPSILON_BOOT_PROMPT
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
@@ -47,7 +47,7 @@ MainController::MainController(Responder * parentResponder) :
   m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
   m_preferencesController(this),
-  m_displayModeController(this),
+  m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
   m_examModeController(this),
   m_aboutController(this)

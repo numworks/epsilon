@@ -8,7 +8,7 @@ namespace Shared {
 
 class StorageFunctionGoToParameterController : public GoToParameterController {
 public:
-  StorageFunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
+  StorageFunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   const char * title() override;
   void setRecord(Ion::Storage::Record record);
 protected:

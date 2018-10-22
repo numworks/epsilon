@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
+ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_interval(interval),
@@ -35,7 +35,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_abscissaTitleCell.setMessageFont(KDFont::SmallFont);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i].setParentResponder(&m_selectableTableView);
-    m_abscissaCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_abscissaCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_abscissaCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
     m_abscissaCells[i].editableTextCell()->textField()->setFont(KDFont::SmallFont);
   }

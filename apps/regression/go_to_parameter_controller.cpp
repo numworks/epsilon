@@ -10,8 +10,8 @@ using namespace Poincare;
 
 namespace Regression {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
-  Shared::GoToParameterController(parentResponder, store, cursor, I18n::Message::X),
+GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
+  Shared::GoToParameterController(parentResponder, inputEventHandlerDelegate, store, cursor, I18n::Message::X),
   m_store(store),
   m_xPrediction(true),
   m_graphController(graphController)

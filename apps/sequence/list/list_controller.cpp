@@ -9,12 +9,12 @@ using namespace Poincare;
 
 namespace Sequence {
 
-ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
+ListController::ListController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{},
   m_expressionCells{},
-  m_parameterController(this, sequenceStore),
+  m_parameterController(inputEventHandlerDelegate, this, sequenceStore),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
   m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()

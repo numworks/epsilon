@@ -76,7 +76,7 @@ void App::Snapshot::setOpt(const char * name, char * value) {
 #endif
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
+  Shared::InputEventHandlerDelegateApp(container, snapshot, &m_codeStackViewController),
   m_pythonHeap{},
   m_pythonUser(nullptr),
   m_consoleController(nullptr, this, snapshot->scriptStore()
@@ -107,6 +107,10 @@ bool App::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
+  return &m_toolbox;
 }
 
 bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {

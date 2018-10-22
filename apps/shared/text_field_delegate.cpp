@@ -12,8 +12,4 @@ bool TextFieldDelegate::textFieldDidReceiveEvent(::TextField * textField, Ion::E
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
-Toolbox * TextFieldDelegate::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  return textFieldDelegateApp()->toolboxForInputEventHandler(textInput);
-}
-
 }

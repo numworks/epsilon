@@ -9,7 +9,7 @@ namespace Shared {
 
 class IntervalParameterController : public Shared::FloatParameterController {
 public:
-  IntervalParameterController(Responder * parentResponder, Interval * interval);
+  IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval);
   Interval * interval();
   const char * title() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

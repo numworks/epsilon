@@ -69,8 +69,8 @@ App::Snapshot::Page App::Snapshot::activePage() {
 
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_stackViewController),
-  m_calculationController(&m_stackViewController, snapshot->law(), snapshot->calculation()),
-  m_parametersController(&m_stackViewController, snapshot->law(), &m_calculationController),
+  m_calculationController(&m_stackViewController, this, snapshot->law(), snapshot->calculation()),
+  m_parametersController(&m_stackViewController, this, snapshot->law(), &m_calculationController),
   m_lawController(&m_stackViewController, snapshot->law(), &m_parametersController),
   m_stackViewController(&m_modalViewController, &m_lawController)
 {

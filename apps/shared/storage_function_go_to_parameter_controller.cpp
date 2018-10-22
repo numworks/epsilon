@@ -5,8 +5,8 @@
 
 namespace Shared {
 
-StorageFunctionGoToParameterController::StorageFunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
-  GoToParameterController(parentResponder, graphRange, cursor, symbol),
+StorageFunctionGoToParameterController::StorageFunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
+  GoToParameterController(parentResponder, inputEventHandlerDelegate, graphRange, cursor, symbol),
   m_record()
 {
 }

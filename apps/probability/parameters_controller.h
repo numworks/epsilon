@@ -10,7 +10,7 @@ namespace Probability {
 
 class ParametersController : public Shared::FloatParameterController {
 public:
-  ParametersController(Responder * parentResponder, Law * m_law, CalculationController * calculationController);
+  ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * m_law, CalculationController * calculationController);
   const char * title() override;
   View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;

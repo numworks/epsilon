@@ -13,7 +13,7 @@ namespace Settings {
 
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  MainController(Responder * parentResponder);
+  MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate);
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

@@ -14,7 +14,7 @@ namespace Shared {
 
 class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
-  StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header);
+  StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header);
   View * view() override { return &m_contentView; }
 
   virtual StoreContext * storeContext() = 0;
@@ -55,7 +55,7 @@ protected:
 
   class ContentView : public View , public Responder {
   public:
-    ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate);
+    ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate);
    StoreSelectableTableView * dataView() { return &m_dataView; }
    BufferTextViewWithTextField * formulaInputView() { return &m_formulaInputView; }
    void displayFormulaInput(bool display);

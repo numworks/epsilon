@@ -2,12 +2,11 @@
 #define ESCHER_LAYOUT_FIELD_DELEGATE_H
 
 #include <escher/toolbox.h>
-#include <escher/input_event_handler_delegate.h>
 #include <ion/events.h>
 
 class LayoutField;
 
-class LayoutFieldDelegate : public InputEventHandlerDelegate {
+class LayoutFieldDelegate {
 public:
   virtual bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) = 0;

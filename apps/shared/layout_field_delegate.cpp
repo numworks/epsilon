@@ -24,8 +24,8 @@ void LayoutFieldDelegate::layoutFieldDidChangeSize(LayoutField * layoutField) {
   return expressionFieldDelegateApp()->layoutFieldDidChangeSize(layoutField);
 }
 
-Toolbox * LayoutFieldDelegate::toolboxForLayoutField(LayoutField * layoutField) {
-  return expressionFieldDelegateApp()->toolboxForLayoutField(layoutField);
+Toolbox * LayoutFieldDelegate::toolboxForInputEventHandler(InputEventHandler * handler) {
+  return expressionFieldDelegateApp()->toolboxForInputEventHandler(handler);
 }
 
 }

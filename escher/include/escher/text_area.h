@@ -13,15 +13,12 @@ public:
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
-  Toolbox * toolbox() override;
   void setText(char * textBuffer, size_t textBufferSize);
 
 protected:
   int indentationBeforeCursor() const;
   bool insertTextWithIndentation(const char * textBuffer, int location);
-  TextInputDelegate * delegate() override {
-    return m_delegate;
-  }
+  InputEventHandlerDelegate * inputEventHandlerDelegate() override { return m_delegate; }
 
   class Text {
   public:

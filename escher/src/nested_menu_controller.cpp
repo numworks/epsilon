@@ -134,16 +134,16 @@ int NestedMenuController::stackDepth() {
   return m_stack.depth();
 }
 
-bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int selectedRow) {
+bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIndex) {
   int depth = m_stack.depth();
   if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
     return returnToPreviousMenu();
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && typeAtLocation(0, selectedRow) == NodeCellType) {
-    return selectSubMenu(selectedRow);
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && typeAtLocation(0, selectedRow()) == NodeCellType) {
+    return selectSubMenu(rowIndex);
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtLocation(0, selectedRow) == LeafCellType) {
-    return selectLeaf(selectedRow);
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtLocation(0, selectedRow()) == LeafCellType) {
+    return selectLeaf(rowIndex);
   }
   return false;
 }

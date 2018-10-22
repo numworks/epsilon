@@ -7,14 +7,12 @@
 #include <escher/text_field_delegate.h>
 #include <poincare/layout.h>
 
-class ExpressionField : public Responder, public View, public EditableField {
+class ExpressionField : public Responder, public View {
 public:
   ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
-  void setEditing(bool isEditing, bool reinitDraftBuffer = true) override;
-  bool isEditing() const override;
-  char XNTChar(char defaultXNTChar) override;
-  bool shouldFinishEditing(Ion::Events::Event event) override;
+  void setEditing(bool isEditing, bool reinitDraftBuffer = true);
+  bool isEditing() const;
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
    * m_layoutField might overflow the m_textBuffer once serialized
    * and still have been accepted before because the model can hold a longer
@@ -26,7 +24,7 @@ public:
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
 
   /* View */
   int numberOfSubviews() const override { return 1; }

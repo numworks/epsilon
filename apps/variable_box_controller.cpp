@@ -47,6 +47,8 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && !isDisplayingEmptyController()) {
     Storage::Record record = recordAtIndex(selectedRow());
     record.destroy();
+    int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
+    selectCellAtLocation(selectedColumn(), newSelectedRow);
     m_selectableTableView.reloadData();
     displayEmptyController();
     return true;
@@ -155,6 +157,7 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
     /* We do not want to handle OK/EXE events in that case. */
     return false;
   }
+  assert(selectedRow >= 0 && selectedRow < numberOfRows());
   m_selectableTableView.deselectTable();
   Storage::Record record = recordAtIndex(selectedRow);
   char truncatedName[SymbolAbstract::k_maxNameSize];

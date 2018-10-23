@@ -33,6 +33,7 @@ public:
   };
   InputViewController * inputViewController() override;
   char XNT() override;
+  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   StorageCartesianFunctionStore * functionStore() override { return static_cast<Snapshot *>(snapshot())->functionStore(); }
 private:
   App(Container * container, Snapshot * snapshot);

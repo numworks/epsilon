@@ -334,20 +334,21 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 }
 
 bool MenuController::textFieldDidAbortEditing(TextField * textField) {
-  if (strlen(textField->text()) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
+  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+  const char * scriptName = script.fullName();
+  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);
-    Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(numberedDefaultName);
-    if (error != Script::ErrorStatus::None) {
-      assert(false);
-      /* Because we use the numbered default name, the name should not be
-       * already taken. Plus, the script could be added only if the storage has
-       * enough available space to add a script named 'script99.py' */
-    }
+    scriptName = numberedDefaultName;
+    Script::ErrorStatus error = script.setName(numberedDefaultName);
+    /* Because we use the numbered default name, the name should not be
+     * already taken. Plus, the script could be added only if the storage has
+     * enough available space to add a script named 'script99.py' */
     assert(error == Script::ErrorStatus::None);
     updateAddScriptRowDisplay();
   }
+  textField->setText(scriptName);
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   app()->setFirstResponder(&m_selectableTableView);
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);

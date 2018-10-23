@@ -5,9 +5,12 @@
 namespace Shared {
 
 const char * StorageValuesFunctionParameterController::title() {
+  return m_pageTitle;
+}
+
+void StorageValuesFunctionParameterController::viewWillAppear() {
   StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   myApp->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, StorageFunction::k_maxNameWithArgumentSize, m_symbol);
-  return m_pageTitle;
 }
 
 void StorageValuesFunctionParameterController::didBecomeFirstResponder() {

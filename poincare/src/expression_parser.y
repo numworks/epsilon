@@ -115,11 +115,14 @@ number : DIGITS { $$ = $1; }
        | DIGITS DIGITS { YYERROR; }
        ;
 
-symb   : SYMBOL LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS %prec SYMBOL_TO_FUNCTION { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
-       | SYMBOL { $$ = $1; }
+func   : SYMBOL LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS %prec SYMBOL_TO_FUNCTION { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
+       ;
+
+symb   : SYMBOL { $$ = $1; }
        ;
 
 term   : TERM   { $$ = $1; }
+       | func   { $$ = $1; }
        | symb   { $$ = $1; }
        | FINAL_SYMBOL { $$ = $1; }
        | number { $$ = $1; }
@@ -157,6 +160,7 @@ exp    : pow              { $$ = $1; }
 
 final_exp : exp           { $$ = $1; }
           | exp STO symb  { if (static_cast<Symbol&>($3).name() == Symbol::k_ans) { YYERROR; } ; $$ = Store($1, static_cast<Symbol &>($3)); }
+          | exp STO func  { if ($3.childAtIndex(0).type() != ExpressionNode::Type::Symbol) { YYERROR; } ; $$ = Store($1, static_cast<Function &>($3)); }
           | exp EQUAL exp { $$ = Equal($1, $3); }
           ;
 %%

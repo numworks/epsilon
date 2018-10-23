@@ -99,6 +99,10 @@ Toolbox * InputViewController::toolboxForInputEventHandler(InputEventHandler * h
   return m_inputEventHandlerDelegate->toolboxForInputEventHandler(handler);
 }
 
+NestedMenuController * InputViewController::variableBoxForInputEventHandler(InputEventHandler * handler) {
+  return m_inputEventHandlerDelegate->variableBoxForInputEventHandler(handler);
+}
+
 void InputViewController::inputViewDidFinishEditing() {
   m_successAction.perform(this);
   dismissModalViewController();

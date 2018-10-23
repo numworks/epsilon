@@ -52,7 +52,7 @@ App::App(Container * container, Snapshot * snapshot) :
 }
 
 bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && TextFieldDelegateApp::textFieldDidReceiveEvent(textField, event)) {
+  if (event == Ion::Events::XNT && TextFieldDelegateApp::textFieldDidReceiveEvent(textField, event)) {
     return true;
   }
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
@@ -68,7 +68,7 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
 }
 
 bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event)) {
+  if (event == Ion::Events::XNT && ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event)) {
     return true;
   }
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {

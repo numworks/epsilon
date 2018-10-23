@@ -113,15 +113,14 @@ Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
   return &m_toolbox;
 }
 
+NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  return &m_variableBoxController;
+}
+
 bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {
     textInput->handleEventWithText(pythonText);
-    return true;
-  }
-  if (event == Ion::Events::Var) {
-    m_variableBoxController.setSender(textInput);
-    displayModalViewController(&m_variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
   return false;

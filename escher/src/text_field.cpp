@@ -229,13 +229,12 @@ void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
 }
 
 bool TextField::privateHandleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Toolbox) {
-    if (handleToolboxEvent(app())) {
-      if (!isEditing()) {
-        setEditing(true);
-      }
-      return true;
+  // Handle Toolbox or Var event
+  if (handleBoxEvent(app(), event)) {
+    if (!isEditing()) {
+      setEditing(true);
     }
+    return true;
   }
   if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
     return setCursorLocation(cursorLocation()-1);

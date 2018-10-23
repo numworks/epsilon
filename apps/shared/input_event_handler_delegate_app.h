@@ -12,6 +12,7 @@ public:
   virtual ~InputEventHandlerDelegateApp() = default;
   AppsContainer * container();
   Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;
+  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 protected:
   InputEventHandlerDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 };

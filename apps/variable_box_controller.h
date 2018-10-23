@@ -27,12 +27,13 @@ public:
   int typeAtLocation(int i, int j) override;
 
   // Menu
-private:
   enum class Page {
     RootMenu = 0,
     Expression = 1,
     Function = 2
   };
+  void lockDeleteEvent(Page page);
+private:
   // TODO: use the "(x)" define in CartesianFunctionSomething
   constexpr static int k_functionArgLength = 3;
   constexpr static const char * k_functionArg = "(x)";
@@ -52,6 +53,7 @@ private:
   bool displayEmptyController();
   bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
   Page m_currentPage;
+  Page m_lockPageDelete;
   ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
   VariableBoxEmptyController m_emptyViewController;

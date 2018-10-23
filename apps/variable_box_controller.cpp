@@ -17,6 +17,7 @@ using namespace Ion;
 VariableBoxController::VariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
+  m_lockPageDelete(Page::RootMenu),
   m_firstMemoizedLayoutIndex(0)
 {
 }
@@ -42,9 +43,12 @@ void VariableBoxController::viewDidDisappear() {
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
-  /* We do not want to handle backspace event in that case if the empty
-   * controller is on. */
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && !isDisplayingEmptyController()) {
+  /* We do not want to handle backspace event if:
+   * - On the root menu page
+   *   The deletion on the current page is locked
+   * - The empty controller is displayed
+   */
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage && !isDisplayingEmptyController()) {
     Storage::Record record = recordAtIndex(selectedRow());
     record.destroy();
     int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
@@ -116,6 +120,10 @@ int VariableBoxController::typeAtLocation(int i, int j) {
     return 1;
   }
   return 0;
+}
+
+void VariableBoxController::lockDeleteEvent(Page page) {
+  m_lockPageDelete = page;
 }
 
 ExpressionTableCellWithExpression * VariableBoxController::leafCellAtIndex(int index) {
@@ -211,10 +219,12 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
 }
 
 const char * VariableBoxController::extension() const {
+  assert(m_currentPage != Page::RootMenu);
   return m_currentPage == Page::Function ? GlobalContext::funcExtension : GlobalContext::expExtension;
 }
 
 Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
+  assert(m_currentPage != Page::RootMenu);
   assert(!Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex).isNull());
   return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
 }

@@ -82,4 +82,11 @@ char App::XNT() {
   return 'x';
 }
 
+NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = container()->variableBoxController();
+  varBox->setSender(textInput);
+  varBox->lockDeleteEvent(VariableBoxController::Page::Function);
+  return varBox;
+}
+
 }

@@ -26,6 +26,7 @@ Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler(InputEventHa
 NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   VariableBoxController * varBox = container()->variableBoxController();
   varBox->setSender(textInput);
+  varBox->lockDeleteEvent(VariableBoxController::Page::RootMenu);
   return varBox;
 }
 

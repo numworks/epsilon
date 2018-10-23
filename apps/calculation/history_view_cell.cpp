@@ -105,13 +105,21 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
+  assert(!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext()) || !calculation->shouldOnlyDisplayExactOutput());
   if (!m_exactOutputLayout.isUninitialized()) {
     m_exactOutputLayout = Poincare::Layout();
   }
-  if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
-    m_exactOutputLayout = calculation->createExactOutputLayout();
+  if (!m_approximateOutputLayout.isUninitialized()) {
+    m_approximateOutputLayout = Poincare::Layout();
   }
-  m_approximateOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
+  if (calculation->shouldOnlyDisplayExactOutput()) {
+    m_approximateOutputLayout = calculation->createExactOutputLayout();
+  } else {
+    m_approximateOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
+    if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
+      m_exactOutputLayout = calculation->createExactOutputLayout();
+    }
+  }
   m_scrollableOutputView.setLayouts(m_approximateOutputLayout, m_exactOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);

@@ -53,11 +53,15 @@ KDCoordinate Calculation::height(Context * context) {
     Layout inputLayout = createInputLayout();
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     Layout approximateLayout = createApproximateOutputLayout(context);
-    KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
+    Layout exactLayout = createExactOutputLayout();
     if (shouldOnlyDisplayApproximateOutput(context)) {
+      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       m_height = inputHeight+approximateOutputHeight;
+    } else if (shouldOnlyDisplayExactOutput()) {
+      KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
+      m_height = inputHeight+exactOutputHeight;
     } else {
-      Layout exactLayout = createExactOutputLayout();
+      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       m_height = inputHeight + outputHeight;
@@ -141,6 +145,10 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
     return true;
   }
   return input().isApproximate(*context) || exactOutput().isApproximate(*context);
+}
+
+bool Calculation::shouldOnlyDisplayExactOutput() {
+  return strchr(m_inputText, Ion::Charset::Sto) != nullptr;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

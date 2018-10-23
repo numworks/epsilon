@@ -270,12 +270,12 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   Expression exp = parse(text);
   if (exp.isUninitialized()) {
     return Undefined();
   }
-  exp = exp.simplify(context, angleUnit);
+  exp = exp.simplify(context, angleUnit, replaceSymbols);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
@@ -284,7 +284,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
   return exp;
 }
 
-Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   sSimplificationHasBeenInterrupted = false;
 #if MATRIX_EXACT_REDUCING
 #else
@@ -292,7 +292,7 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
     return *this;
   }
 #endif
-  Expression e = deepReduce(context, angleUnit);
+  Expression e = deepReduce(context, angleUnit, replaceSymbols);
   e = e.deepBeautify(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
     e = Expression();

@@ -105,7 +105,6 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  assert(!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext()) || !calculation->shouldOnlyDisplayExactOutput());
   if (!m_leftOutputLayout.isUninitialized()) {
     m_leftOutputLayout = Poincare::Layout();
   }

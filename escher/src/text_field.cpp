@@ -279,7 +279,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return removeChar();
   }
   if (event == Ion::Events::Back && isEditing()) {
-    setEditing(false);
+    setEditing(false, m_hasTwoBuffers);
     reloadScroll();
     m_delegate->textFieldDidAbortEditing(this);
     return true;

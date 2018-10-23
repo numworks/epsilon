@@ -15,7 +15,7 @@ public:
   ::EvenOddCell * evenOddCell() {
     return &m_contentCell;
   }
-  void setLayouts(Poincare::Layout approximatelayout, Poincare::Layout exactLayout);
+  void setLayouts(Poincare::Layout rightlayout, Poincare::Layout leftLayout);
   void setEqualMessage(I18n::Message equalSignMessage);
   SubviewType selectedSubviewType() {
     return m_contentCell.selectedSubviewType();
@@ -37,11 +37,11 @@ private:
     void setHighlighted(bool highlight) override;
     void reloadCell() override;
     KDSize minimalSizeForOptimalDisplay() const override;
-    ExpressionView * approximateExpressionView() {
-      return &m_approximateExpressionView;
+    ExpressionView * rightExpressionView() {
+      return &m_rightExpressionView;
     }
-    ExpressionView * exactExpressionView() {
-      return &m_exactExpressionView;
+    ExpressionView * leftExpressionView() {
+      return &m_leftExpressionView;
     }
     MessageTextView * approximateSign() {
       return &m_approximateSign;
@@ -56,9 +56,9 @@ private:
   private:
     View * subviewAtIndex(int index) override;
     constexpr static KDCoordinate k_digitHorizontalMargin = 10;
-    ExpressionView m_approximateExpressionView;
+    ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;
-    ExpressionView m_exactExpressionView;
+    ExpressionView m_leftExpressionView;
     SubviewType m_selectedSubviewType;
 };
   ContentCell m_contentCell;

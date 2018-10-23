@@ -280,8 +280,8 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Back && isEditing()) {
     setEditing(false, m_hasTwoBuffers);
-    reloadScroll();
     m_delegate->textFieldDidAbortEditing(this);
+    reloadScroll(true);
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {

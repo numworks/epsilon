@@ -115,10 +115,13 @@ number : DIGITS { $$ = $1; }
        | DIGITS DIGITS { YYERROR; }
        ;
 
-func   : SYMBOL LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS %prec SYMBOL_TO_FUNCTION { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
+short_symb : SYMBOL { if (strlen(static_cast<Symbol&>($1).name()) +1 > SymbolAbstract::k_maxNameSize) { YYERROR; } ; $$ = $1; }
+           ;
+
+func   : short_symb LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS %prec SYMBOL_TO_FUNCTION { if ($3.numberOfChildren() != 1) { YYERROR; } ; $$ = Function(static_cast<Symbol&>($1).name(), $3.childAtIndex(0)); }
        ;
 
-symb   : SYMBOL { $$ = $1; }
+symb   : short_symb { $$ = $1; }
        ;
 
 term   : TERM   { $$ = $1; }

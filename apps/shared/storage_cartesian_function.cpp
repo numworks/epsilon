@@ -93,6 +93,7 @@ double StorageCartesianFunction::approximateDerivative(double x, Poincare::Conte
 }
 
 double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
+  // TODO: this does not work yet because integral does not understand UnknownX
   Poincare::Integral integral(expression(context).clone(), Poincare::Float<double>(start), Poincare::Float<double>(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in

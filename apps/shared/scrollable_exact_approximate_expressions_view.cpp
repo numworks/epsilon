@@ -6,9 +6,9 @@ using namespace Poincare;
 namespace Shared {
 
 ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
-  m_approximateExpressionView(),
+  m_rightExpressionView(),
   m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
-  m_exactExpressionView(),
+  m_leftExpressionView(),
   m_selectedSubviewType((SubviewType)0)
 {
 }
@@ -21,13 +21,13 @@ KDColor ScrollableExactApproximateExpressionsView::ContentCell::backgroundColor(
 void ScrollableExactApproximateExpressionsView::ContentCell::setHighlighted(bool highlight) {
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
   m_highlighted = highlight;
-  m_exactExpressionView.setBackgroundColor(backgroundColor());
-  m_approximateExpressionView.setBackgroundColor(backgroundColor());
+  m_leftExpressionView.setBackgroundColor(backgroundColor());
+  m_rightExpressionView.setBackgroundColor(backgroundColor());
   if (highlight) {
     if (m_selectedSubviewType == SubviewType::ExactOutput) {
-      m_exactExpressionView.setBackgroundColor(Palette::Select);
+      m_leftExpressionView.setBackgroundColor(Palette::Select);
     } else {
-      m_approximateExpressionView.setBackgroundColor(Palette::Select);
+      m_rightExpressionView.setBackgroundColor(Palette::Select);
     }
   }
 }
@@ -36,24 +36,24 @@ void ScrollableExactApproximateExpressionsView::ContentCell::reloadCell() {
   setHighlighted(isHighlighted());
   m_approximateSign.setBackgroundColor(backgroundColor());
   if (numberOfSubviews() == 1) {
-    m_approximateExpressionView.setTextColor(KDColorBlack);
+    m_rightExpressionView.setTextColor(KDColorBlack);
   } else {
-    m_approximateExpressionView.setTextColor(Palette::GreyVeryDark);
+    m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
   }
   layoutSubviews();
 }
 
 KDSize ScrollableExactApproximateExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
-  KDSize approximateExpressionSize = m_approximateExpressionView.minimalSizeForOptimalDisplay();
+  KDSize rightExpressionSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
   if (numberOfSubviews() == 1) {
-    return approximateExpressionSize;
+    return rightExpressionSize;
   }
-  KDSize exactExpressionSize = m_exactExpressionView.minimalSizeForOptimalDisplay();
-  KDCoordinate exactBaseline = m_exactExpressionView.layout().baseline();
-  KDCoordinate approximateBaseline = m_approximateExpressionView.layout().baseline();
-  KDCoordinate height = max(exactBaseline, approximateBaseline) + max(exactExpressionSize.height()-exactBaseline, approximateExpressionSize.height()-approximateBaseline);
+  KDSize leftExpressionSize = m_leftExpressionView.minimalSizeForOptimalDisplay();
+  KDCoordinate leftBaseline = m_leftExpressionView.layout().baseline();
+  KDCoordinate rightBaseline = m_rightExpressionView.layout().baseline();
+  KDCoordinate height = max(leftBaseline, rightBaseline) + max(leftExpressionSize.height()-leftBaseline, rightExpressionSize.height()-rightBaseline);
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-  return KDSize(exactExpressionSize.width()+approximateSignSize.width()+approximateExpressionSize.width()+2*k_digitHorizontalMargin, height);
+  return KDSize(leftExpressionSize.width()+approximateSignSize.width()+rightExpressionSize.width()+2*k_digitHorizontalMargin, height);
 }
 
 void ScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewType(ScrollableExactApproximateExpressionsView::SubviewType subviewType) {
@@ -63,39 +63,39 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewT
 
 Poincare::Layout ScrollableExactApproximateExpressionsView::ContentCell::layout() const {
   if (m_selectedSubviewType == SubviewType::ExactOutput) {
-    return m_exactExpressionView.layout();
+    return m_leftExpressionView.layout();
   } else {
-    return m_approximateExpressionView.layout();
+    return m_rightExpressionView.layout();
   }
 }
 
 int ScrollableExactApproximateExpressionsView::ContentCell::numberOfSubviews() const {
-  if (m_exactExpressionView.layout().isUninitialized()) {
+  if (m_leftExpressionView.layout().isUninitialized()) {
     return 1;
   }
   return 3;
 }
 
 View * ScrollableExactApproximateExpressionsView::ContentCell::subviewAtIndex(int index) {
-  View * views[3] = {&m_approximateExpressionView, &m_approximateSign, &m_exactExpressionView};
+  View * views[3] = {&m_rightExpressionView, &m_approximateSign, &m_leftExpressionView};
   return views[index];
 }
 
 void ScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews() {
   KDCoordinate height = bounds().height();
-  KDSize approximateExpressionSize = m_approximateExpressionView.minimalSizeForOptimalDisplay();
+  KDSize rightExpressionSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
   if (numberOfSubviews() == 1) {
-    m_approximateExpressionView.setFrame(KDRect(0, 0, approximateExpressionSize.width(), height));
+    m_rightExpressionView.setFrame(KDRect(0, 0, rightExpressionSize.width(), height));
     return;
   }
-  KDCoordinate exactBaseline = m_exactExpressionView.layout().baseline();
-  KDCoordinate approximateBaseline = m_approximateExpressionView.layout().baseline();
-  KDCoordinate baseline = max(exactBaseline, approximateBaseline);
-  KDSize exactExpressionSize = m_exactExpressionView.minimalSizeForOptimalDisplay();
+  KDCoordinate leftBaseline = m_leftExpressionView.layout().baseline();
+  KDCoordinate rightBaseline = m_rightExpressionView.layout().baseline();
+  KDCoordinate baseline = max(leftBaseline, rightBaseline);
+  KDSize leftExpressionSize = m_leftExpressionView.minimalSizeForOptimalDisplay();
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-  m_exactExpressionView.setFrame(KDRect(0, baseline-exactBaseline, exactExpressionSize));
-  m_approximateExpressionView.setFrame(KDRect(2*k_digitHorizontalMargin+exactExpressionSize.width()+approximateSignSize.width(), baseline-approximateBaseline, approximateExpressionSize));
-  m_approximateSign.setFrame(KDRect(k_digitHorizontalMargin+exactExpressionSize.width(), baseline-approximateSignSize.height()/2, approximateSignSize));
+  m_leftExpressionView.setFrame(KDRect(0, baseline-leftBaseline, leftExpressionSize));
+  m_rightExpressionView.setFrame(KDRect(2*k_digitHorizontalMargin+leftExpressionSize.width()+approximateSignSize.width(), baseline-rightBaseline, rightExpressionSize));
+  m_approximateSign.setFrame(KDRect(k_digitHorizontalMargin+leftExpressionSize.width(), baseline-approximateSignSize.height()/2, approximateSignSize));
 }
 
 ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressionsView(Responder * parentResponder) :
@@ -104,9 +104,9 @@ ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressions
 {
 }
 
-void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout) {
-  m_contentCell.approximateExpressionView()->setLayout(approximateLayout);
-  m_contentCell.exactExpressionView()->setLayout(exactLayout);
+void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout rightLayout, Poincare::Layout leftLayout) {
+  m_contentCell.rightExpressionView()->setLayout(rightLayout);
+  m_contentCell.leftExpressionView()->setLayout(leftLayout);
   m_contentCell.layoutSubviews();
 }
 
@@ -115,7 +115,7 @@ void ScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message eq
 }
 
 void ScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
-  if (m_contentCell.exactExpressionView()->layout().isUninitialized()) {
+  if (m_contentCell.leftExpressionView()->layout().isUninitialized()) {
     setSelectedSubviewType(SubviewType::ApproximativeOutput);
   } else {
     setSelectedSubviewType(SubviewType::ExactOutput);
@@ -123,12 +123,12 @@ void ScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
 }
 
 bool ScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event event) {
-  if (m_contentCell.exactExpressionView()->layout().isUninitialized()) {
+  if (m_contentCell.leftExpressionView()->layout().isUninitialized()) {
     return ScrollableView::handleEvent(event);
   }
-  bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - m_contentCell.approximateExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() < bounds().width()
+  bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - m_contentCell.rightExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() < bounds().width()
 ;
-  bool leftExpressionIsVisible = m_contentCell.exactExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() > 0;
+  bool leftExpressionIsVisible = m_contentCell.leftExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() > 0;
   if ((event == Ion::Events::Right && selectedSubviewType() == SubviewType::ExactOutput && rightExpressionIsVisible) ||
     (event == Ion::Events::Left && selectedSubviewType() == SubviewType::ApproximativeOutput && leftExpressionIsVisible)) {
     SubviewType otherSubviewType = selectedSubviewType() == SubviewType::ExactOutput ? SubviewType::ApproximativeOutput : SubviewType::ExactOutput;

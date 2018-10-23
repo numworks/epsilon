@@ -19,6 +19,7 @@ public:
 
   View * view() override { return &m_selectableTableView; }
   const char * title() override;
+  void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   virtual int numberOfRows() override { return 1; }
   KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }

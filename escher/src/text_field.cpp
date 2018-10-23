@@ -250,36 +250,30 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return setCursorLocation(draftTextLength());
   }
   if (isEditing() && shouldFinishEditing(event)) {
+    char bufferText[ContentView::k_maxBufferSize];
+    int cursorLoc = cursorLocation();
     if (m_hasTwoBuffers) {
-      char bufferText[ContentView::k_maxBufferSize];
       strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
-      int cursorLoc = cursorLocation();
-      setEditing(false, m_hasTwoBuffers);
-      if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
-        /* We allow overscroll to avoid calling layoutSubviews twice because the
-         * content might have changed. */
-        reloadScroll(true);
-        return true;
-      }
+    }
+    setEditing(false, m_hasTwoBuffers);
+    if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
+      /* We allow overscroll to avoid calling layoutSubviews twice because the
+       * content might have changed. */
+      reloadScroll(true);
+      return true;
+    }
+    setEditing(true, m_hasTwoBuffers);
+    if (m_hasTwoBuffers) {
       /* if the text was refused (textInputDidFinishEditing returned false, we
        * reset the textfield in the same state as before */
       char bufferDraft[ContentView::k_maxBufferSize];
       strlcpy(bufferDraft, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
       setText(bufferText);
-      setEditing(true);
       setText(bufferDraft);
       setCursorLocation(cursorLoc);
-      return true;
-    } else {
-      if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
-        /* We allow overscroll to avoid calling layoutSubviews twice because the
-         * content might have changed. */
-        setEditing(false, false);
-        reloadScroll(true);
-      }
-      return true;
     }
+    return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
     return removeChar();

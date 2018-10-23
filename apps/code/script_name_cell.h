@@ -24,7 +24,12 @@ public:
   void setEven(bool even) override;
   // HighlightCell
   void setHighlighted(bool highlight) override;
-  Responder * responder() override { return this; }
+  Responder * responder() override {
+    if (m_textField.isEditing()) {
+      return this;
+    }
+    return nullptr;
+  }
   const char * text() const override;
   // View
   KDSize minimalSizeForOptimalDisplay() const override;

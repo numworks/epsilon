@@ -82,15 +82,6 @@ private:
   void intToText(int i, char * buffer);
   void updateAddScriptRowDisplay();
   ScriptStore * m_scriptStore;
-  class EvenOddEditableTextCell : public ::EvenOddEditableTextCell {
-  public:
-    Responder * responder() override {
-      if (editableTextCell()->textField()->isEditing()) {
-        return this;
-      }
-      return nullptr;
-    }
-  };
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddMessageTextCell m_addNewScriptCell;

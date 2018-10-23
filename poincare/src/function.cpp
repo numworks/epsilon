@@ -121,7 +121,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
     // Replace the unknown in the new expression by the function's child
     Symbol xSymbol = Symbol(Symbol::SpecialSymbols::UnknownX);
     Expression xValue = childAtIndex(0);
-    value.replaceSymbolWithExpression(xSymbol, xValue);
+    value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
       value = Parenthesis(value);
@@ -141,7 +141,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
     // We need to replace the unknown witht the child
     Expression result = e.clone();
     Symbol x = Symbol(Symbol::SpecialSymbols::UnknownX);
-    result.replaceSymbolWithExpression(x, childAtIndex(0));
+    result = result.replaceSymbolWithExpression(x, childAtIndex(0));
     replaceWithInPlace(result);
     return result.deepReduce(context, angleUnit, replaceSymbols);
   }

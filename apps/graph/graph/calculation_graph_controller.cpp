@@ -23,7 +23,7 @@ View * CalculationGraphController::view() {
 }
 
 void CalculationGraphController::viewWillAppear() {
-  assert(m_record.isNull());
+  assert(!m_record.isNull());
   Expression::Coordinate2D pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
   if (std::isnan(pointOfInterest.abscissa)) {
     m_isActive = false;

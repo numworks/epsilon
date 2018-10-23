@@ -116,7 +116,7 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
         LayoutHelper::String("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
-  if (strcmp(m_name, "v(n)" ) == 0) {
+  if (strcmp(m_name, "v(n)") == 0) {
     return HorizontalLayout(
         CharLayout('v'),
         VerticalOffsetLayout(

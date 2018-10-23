@@ -87,10 +87,10 @@ u\(n\)      { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
 u\(n\+1\)   { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
 v\(n\)      { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
 v\(n\+1\)   { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
-u\_\{n\}    { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
-u\_\{n\+1\} { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
-v\_\{n\}    { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
-v\_\{n\+1\} { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
+u\_\{n\}    { yytext[1] = '('; yytext[2] = 'n';  yytext[3] = ')';  yytext[4] = 0; *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
+u\_\{n\+1\} { yytext[1] = '('; yytext[2] = 'n';  yytext[3] = '+';  yytext[4] = '1'; yytext[5] = ')';  yytext[6] = 0; *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
+v\_\{n\}    { yytext[1] = '('; yytext[2] = 'n';  yytext[3] = ')';  yytext[4] = 0; *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
+v\_\{n\+1\} { yytext[1] = '('; yytext[2] = 'n';  yytext[3] = '+';  yytext[4] = '1'; yytext[5] = ')';  yytext[6] = 0; *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
 V1 { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
 N1 { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }
 V2 { *yylval = Poincare::Symbol(yytext, yyleng); return FINAL_SYMBOL; }

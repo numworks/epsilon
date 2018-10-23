@@ -41,7 +41,7 @@ void StorageValuesController::willDisplayCellAtLocation(HighlightCell * cell, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
-    Shared::StorageCartesianFunction * function = functionStore()->modelForRecord(recordAtColumn(i));
+    Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(i));
     const size_t bufferNameSize = Shared::StorageFunction::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
     if (isDerivativeColumn(i)) {
@@ -70,7 +70,7 @@ Ion::Storage::Record StorageValuesController::recordAtColumn(int i) {
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
     Ion::Storage::Record record = functionStore()->definedRecordAtIndex(k);
-    StorageCartesianFunction * f = functionStore()->modelForRecord(record);
+    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(record);
     if (f->isActive()) {
       if (i == index) {
         return record;
@@ -92,7 +92,7 @@ bool StorageValuesController::isDerivativeColumn(int i) {
   assert(i >= 1);
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
-    StorageCartesianFunction * f = functionStore()->modelForRecord(functionStore()->definedRecordAtIndex(k));
+    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->definedRecordAtIndex(k));
     if (f->isActive()) {
       if (i == index) {
         return false;
@@ -139,7 +139,7 @@ StorageFunctionParameterController * StorageValuesController::functionParameterC
 }
 
 double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  Shared::StorageCartesianFunction * function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   if (isDerivativeColumn(columnIndex)) {
     return function->approximateDerivative(abscissa, myApp->localContext());
@@ -150,7 +150,7 @@ double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, in
 void StorageValuesController::updateNumberOfColumns() {
   int result = 1;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    StorageCartesianFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     if (f->isActive()) {
       result += 1 + f->displayDerivative();
     }

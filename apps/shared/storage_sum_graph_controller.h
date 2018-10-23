@@ -9,6 +9,7 @@
 #include "simple_interactive_curve_view_controller.h"
 #include "storage_function.h"
 #include "text_field_delegate.h"
+#include "expiring_pointer.h"
 
 namespace Shared {
 
@@ -39,7 +40,7 @@ private:
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::Layout createFunctionLayout(StorageFunction * function) = 0;
+  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<StorageFunction> function) = 0;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
   TextFieldDelegateApp * textFieldDelegateApp() override {

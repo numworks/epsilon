@@ -103,7 +103,7 @@ bool StorageSumGraphController::handleEvent(Ion::Events::Event event) {
 bool StorageSumGraphController::moveCursorHorizontallyToPosition(double x) {
   StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   assert(!m_record.isNull());
-  StorageFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<StorageFunction> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   if (m_step == Step::FirstParameter) {
@@ -191,7 +191,7 @@ bool StorageSumGraphController::handleEnter() {
   m_step = (Step)((int)m_step+1);
   StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   assert(!m_record.isNull());
-  StorageFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<StorageFunction> function = myApp->functionStore()->modelForRecord(m_record);
   double sum = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
   m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, createFunctionLayout(function));
   m_legendView.setLegendMessage(I18n::Message::Default, m_step);

@@ -92,7 +92,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 }
 
 bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
-  StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   app()->setFirstResponder(&m_selectableTableView);
@@ -124,7 +124,7 @@ HighlightCell * StorageListController::expressionCells(int index) {
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
   if (!titleCell->isEditing()) {
-    StorageFunction * function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+    ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
     titleCell->setColor(functionNameColor);
@@ -134,12 +134,12 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   Shared::StorageFunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  StorageFunction * f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<StorageFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 
-void StorageListController::setFunctionNameInTextField(StorageFunction * function, TextField * textField) {
+void StorageListController::setFunctionNameInTextField(ExpiringPointer<StorageFunction> function, TextField * textField) {
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
   textField->setText(bufferName);

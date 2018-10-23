@@ -10,7 +10,7 @@ namespace Graph {
 
 class StorageCartesianFunctionStore : public Shared::StorageFunctionStore {
 public:
-  Shared::StorageCartesianFunction * modelForRecord(Ion::Storage::Record record) const override { return static_cast<Shared::StorageCartesianFunction *>(Shared::StorageFunctionStore::modelForRecord(record)); }
+  Shared::ExpiringPointer<Shared::StorageCartesianFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::StorageCartesianFunction>(static_cast<Shared::StorageCartesianFunction *>(privateModelForRecord(record))); }
   static char Symbol() { return 'x'; }
   char symbol() const override { return Symbol(); }
 private:

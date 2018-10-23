@@ -31,7 +31,7 @@ private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override {
     return static_cast<Shared::TextFieldDelegateApp *>(app());
   }
-  void setFunctionNameInTextField(Shared::StorageFunction * function, TextField * textField);
+  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::StorageFunction> function, TextField * textField);
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;

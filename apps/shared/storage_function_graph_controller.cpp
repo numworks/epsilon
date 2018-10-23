@@ -89,7 +89,7 @@ InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::compute
     return range;
   }
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
-    StorageFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<StorageFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float y = 0.0f;
     float res = curveView()->resolution();
     /* Scan x-range from the middle to the extrema in order to get balanced
@@ -125,7 +125,7 @@ void StorageFunctionGraphController::initCursorParameters() {
   int functionIndex = 0;
   double y = 0;
   do {
-    StorageFunction * firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
+    ExpiringPointer<StorageFunction> firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
   } while ((std::isnan(y) || std::isinf(y)) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);

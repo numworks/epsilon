@@ -46,7 +46,7 @@ void TangentGraphController::reloadBannerView() {
   char buffer[bufferSize];
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
-  StorageCartesianFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<StorageCartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 4);

@@ -157,12 +157,31 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
     /* We do not want to handle OK/EXE events in that case. */
     return false;
   }
+
+  // Deselect the table
   assert(selectedRow >= 0 && selectedRow < numberOfRows());
   m_selectableTableView.deselectTable();
+
+  // Get the name text to insert
   Storage::Record record = recordAtIndex(selectedRow);
-  char truncatedName[SymbolAbstract::k_maxNameSize];
-  SymbolAbstract::TruncateExtension(truncatedName, record.fullName(), SymbolAbstract::k_maxNameSize);
-  sender()->handleEventWithText(truncatedName);
+  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > 0);
+  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  size_t nameToHandleMaxSize = Shared::StorageFunction::k_maxNameWithArgumentSize - 1;
+  char nameToHandle[nameToHandleMaxSize];
+  size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
+
+  if (m_currentPage == Page::Function) {
+    // Add parentheses to a function name
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength++] = '(';
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength++] = ')';
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength] = 0;
+  }
+
+  // Handle the text
+  sender()->handleEventWithText(nameToHandle);
   app()->dismissModalViewController();
   return true;
 }

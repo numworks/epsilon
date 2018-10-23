@@ -40,27 +40,14 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 /* Protected */
 
 bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    forceEdition(field);
-    AppsContainer * appsContainer = (AppsContainer *)responder->app()->container();
-    VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setSender(field);
-    responder->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    return true;
-
-  }
   if (event == Ion::Events::XNT) {
-    forceEdition(field);
+    if (!field->isEditing()) {
+      field->setEditing(true);
+    }
     const char xnt[2] = {field->XNTChar(XNT()), 0};
     return field->handleEventWithText(xnt);
   }
   return false;
-}
-
-void TextFieldDelegateApp::forceEdition(EditableField * field) {
-  if (!field->isEditing()) {
-    field->setEditing(true);
-  }
 }
 
 bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {

@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Sequence {
 
-ListController::ListController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
+ListController::ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{},
@@ -37,6 +37,10 @@ TextFieldDelegateApp * ListController::textFieldDelegateApp() {
 }
 
 ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
+  return (App *)app();
+}
+
+InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
   return (App *)app();
 }
 

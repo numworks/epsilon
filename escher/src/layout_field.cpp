@@ -185,13 +185,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
-  if (event == Ion::Events::Toolbox) {
-    if (handleToolboxEvent(app())) {
-      if (!isEditing()) {
-        setEditing(true);
-      }
-      return true;
+  if (handleBoxEvent(app(), event)) {
+    if (!isEditing()) {
+      setEditing(true);
     }
+    return true;
   }
   if (isEditing() && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
     setEditing(false);

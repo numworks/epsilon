@@ -21,7 +21,6 @@ protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 protected:
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
-  void forceEdition(EditableField * field);
   bool isFinishingEvent(Ion::Events::Event event);
   bool unparsableText(const char * text, Responder * responder);
 };

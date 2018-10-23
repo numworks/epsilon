@@ -35,6 +35,7 @@ public:
 
   /* InputEventHandlerDelegate */
   Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
+  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * handler) override;
 private:
   class ExpressionFieldController : public ViewController {
   public:

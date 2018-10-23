@@ -3,10 +3,12 @@
 
 class InputEventHandler;
 class Toolbox;
+class NestedMenuController;
 
 class InputEventHandlerDelegate {
 public:
   virtual Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) = 0;
+  virtual NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) = 0;
 };
 
 #endif

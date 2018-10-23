@@ -23,4 +23,10 @@ Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler(InputEventHa
   return toolbox;
 }
 
+NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = container()->variableBoxController();
+  varBox->setSender(textInput);
+  return varBox;
+}
+
 }

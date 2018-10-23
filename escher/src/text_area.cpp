@@ -51,8 +51,8 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
-  } else if (event == Ion::Events::Toolbox) {
-    return handleToolboxEvent(app());
+  } else if (handleBoxEvent(app(), event)) {
+    return true;
   } else if (event == Ion::Events::Left) {
     return setCursorLocation(cursorLocation()-1);
   } else if (event == Ion::Events::Right) {

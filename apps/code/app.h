@@ -46,6 +46,7 @@ public:
 
   /* InputEventHandlerDelegate */
   Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;
+  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
   bool textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event);
   // Python delegate

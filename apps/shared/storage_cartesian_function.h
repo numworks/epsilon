@@ -22,7 +22,7 @@ public:
   Poincare::Expression::Coordinate2D nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
-  Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const StorageFunction * function) const;
+  Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression expression) const;
 protected:
   class CartesianFunctionRecordData : public FunctionRecordData {
   public:

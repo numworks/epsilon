@@ -94,7 +94,7 @@ bool StorageListParameterController::handleEnterOnRow(int rowIndex) {
   }
 }
 
-StorageFunction * StorageListParameterController::function() {
+ExpiringPointer<StorageFunction> StorageListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }
 

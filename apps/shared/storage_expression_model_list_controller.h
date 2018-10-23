@@ -20,7 +20,7 @@ protected:
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addEmptyModel();
   virtual void didChangeModelsList() {}
-  virtual void reinitExpression(StorageExpressionModel * model);
+  virtual void reinitExpression(ExpiringPointer<StorageExpressionModel> model);
   virtual void editExpression(Ion::Events::Event event);
   virtual void editSelectedRecordWithText(const char * text);
   virtual bool removeModelRow(Ion::Storage::Record record);

@@ -23,7 +23,7 @@ double StorageFunctionGoToParameterController::parameterAtIndex(int index) {
 bool StorageFunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   StorageFunctionApp * myApp = (StorageFunctionApp *)app();
-  StorageFunction * function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<StorageFunction> function = myApp->functionStore()->modelForRecord(m_record);
   float y = function->evaluateAtAbscissa(f, myApp->localContext());
   if (std::fabs(f) > k_maxDisplayableFloat || std::fabs(y) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);

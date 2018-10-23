@@ -2,6 +2,7 @@
 #define SHARED_STORAGE_EXPRESSION_MODEL_STORE_H
 
 #include "storage_expression_model.h"
+#include "expiring_pointer.h"
 #include <ion/storage.h>
 #include <assert.h>
 
@@ -19,7 +20,7 @@ public:
   int numberOfDefinedModels() const { return numberOfModelsSatisfyingTest([](StorageExpressionModel * m) { return m->isDefined(); }); }
   Ion::Storage::Record recordAtIndex(int i) const;
   Ion::Storage::Record definedRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](StorageExpressionModel * m) { return m->isDefined(); }); }
-  virtual StorageExpressionModel * modelForRecord(Ion::Storage::Record record) const;
+  ExpiringPointer<StorageExpressionModel> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<StorageExpressionModel>(privateModelForRecord(record)); }
 
   // Add and Remove
   virtual Ion::Storage::Record::ErrorStatus addEmptyModel() = 0;
@@ -33,6 +34,7 @@ protected:
   typedef bool (*ModelTest)(StorageExpressionModel * model);
   int numberOfModelsSatisfyingTest(ModelTest test) const;
   Ion::Storage::Record recordStatifyingTestAtIndex(int i, ModelTest test) const;
+  StorageExpressionModel * privateModelForRecord(Ion::Storage::Record record) const;
 private:
   void resetMemoizedModels() const;
   virtual void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;

@@ -34,7 +34,7 @@ protected:
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-  StorageFunction * function();
+  ExpiringPointer<StorageFunction> function();
   StorageFunctionStore * functionStore();
 #if FUNCTION_COLOR_CHOICE
   MessageTableCellWithChevron m_colorCell;

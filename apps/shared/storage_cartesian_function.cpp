@@ -115,9 +115,9 @@ double StorageCartesianFunction::nextRootFrom(double start, double step, double 
   return expression(context).nextRoot(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
-Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::StorageFunction * function) const {
+Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expression(context).nextIntersection(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), function->expression(context));
+  return expression(context).nextIntersection(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), e);
 }
 
 StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {

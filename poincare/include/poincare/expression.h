@@ -162,8 +162,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
-  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
+  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
     return node()->reduceChildren(context, angleUnit, replaceSymbols);

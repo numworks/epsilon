@@ -62,9 +62,9 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   finalValue = finalValue.deepReduce(context, angleUnit, false);
   context.setExpressionForSymbol(finalValue, symbol(), context);
-  Expression c1 = childAtIndex(1);
-  replaceWithInPlace(c1);
-  return c1.shallowReduce(context, angleUnit, replaceSymbols);
+  Expression e = context.expressionForSymbol(symbol());
+  replaceWithInPlace(e);
+  return e.shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 }

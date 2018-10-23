@@ -1,6 +1,7 @@
 #ifndef GRAPH_STORAGE_FUNCTION_PARAM_CONTROLLER_H
 #define GRAPH_STORAGE_FUNCTION_PARAM_CONTROLLER_H
 
+#include "../../shared/expiring_pointer.h"
 #include "../../shared/storage_cartesian_function.h"
 #include "../../shared/storage_values_function_parameter_controller.h"
 
@@ -18,7 +19,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
-  Shared::StorageCartesianFunction * function();
+  Shared::ExpiringPointer<Shared::StorageCartesianFunction> function();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else

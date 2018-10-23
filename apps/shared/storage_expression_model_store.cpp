@@ -15,7 +15,7 @@ Ion::Storage::Record StorageExpressionModelStore::recordAtIndex(int i) const {
   return Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(modelExtension(), i);
 }
 
-StorageExpressionModel * StorageExpressionModelStore::modelForRecord(Ion::Storage::Record record) const {
+StorageExpressionModel * StorageExpressionModelStore::privateModelForRecord(Ion::Storage::Record record) const {
   uint32_t currentStorageChecksum = Ion::Storage::sharedStorage()->checksum();
   /* If the storage changed since last call to modelForRecord, we invalid all
    * memoized models. Indeed, if f(x) = A+x, and A changed, f(x) memoization
@@ -55,12 +55,12 @@ void StorageExpressionModelStore::tidy() {
 int StorageExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
   int result = 0;
   int i = 0;
-  StorageExpressionModel * m = modelForRecord(recordAtIndex(i++));
+  StorageExpressionModel * m = privateModelForRecord(recordAtIndex(i++));
   while (!m->isNull()) {
     if (test(m)) {
       result++;
     }
-    m = modelForRecord(recordAtIndex(i++));
+    m = privateModelForRecord(recordAtIndex(i++));
   }
   return result;
 }
@@ -70,7 +70,7 @@ Ion::Storage::Record StorageExpressionModelStore::recordStatifyingTestAtIndex(in
   int index = 0;
   int currentModelIndex = 0;
   Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
-  StorageExpressionModel * m = modelForRecord(r);
+  StorageExpressionModel * m = privateModelForRecord(r);
   while (!m->isNull()) {
     assert(currentModelIndex <= numberOfModels());
     if (test(m)) {
@@ -80,7 +80,7 @@ Ion::Storage::Record StorageExpressionModelStore::recordStatifyingTestAtIndex(in
       index++;
     }
     r = recordAtIndex(currentModelIndex++);
-    m = modelForRecord(r);
+    m = privateModelForRecord(r);
   }
   assert(false);
   return Ion::Storage::Record();

@@ -17,7 +17,7 @@ public:
   int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest([](StorageExpressionModel * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
   Ion::Storage::Record activeRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](StorageExpressionModel * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
 
-  StorageFunction * modelForRecord(Ion::Storage::Record record) const override { return static_cast<StorageFunction *>(StorageExpressionModelStore::modelForRecord(record)); }
+  ExpiringPointer<StorageFunction> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<StorageFunction>(static_cast<StorageFunction *>(privateModelForRecord(record))); }
 
   virtual char symbol() const = 0;
 };

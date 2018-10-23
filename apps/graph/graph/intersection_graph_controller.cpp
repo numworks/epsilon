@@ -24,11 +24,11 @@ void IntersectionGraphController::reloadBannerView() {
   const char * space = "                  ";
   const char * legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
-  StorageCartesianFunction * f = functionStore()->modelForRecord(m_record);
+  ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(m_record);
   int numberOfChar = f->nameWithArgument(buffer, bufferSize-2, StorageCartesianFunctionStore::Symbol());
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   // keep 1 char for '=';
-  StorageCartesianFunction * g = functionStore()->modelForRecord(m_intersectedRecord);
+  ExpiringPointer<StorageCartesianFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
   numberOfChar += g->nameWithArgument(buffer, bufferSize-numberOfChar-1, StorageCartesianFunctionStore::Symbol());
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Constant::MediumNumberOfSignificantDigits);

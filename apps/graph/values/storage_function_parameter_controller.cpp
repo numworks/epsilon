@@ -69,7 +69,7 @@ void StorageFunctionParameterController::willDisplayCellForIndex(HighlightCell *
   }
 }
 
-StorageCartesianFunction * StorageFunctionParameterController::function() {
+ExpiringPointer<StorageCartesianFunction> StorageFunctionParameterController::function() {
   App * a = static_cast<App *>(app());
   return a->functionStore()->modelForRecord(m_record);
 }

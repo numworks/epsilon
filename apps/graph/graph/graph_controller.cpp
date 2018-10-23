@@ -41,7 +41,7 @@ float GraphController::interestingXRange() {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    StorageFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float fRange = f->expression(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
@@ -56,7 +56,7 @@ int GraphController::estimatedBannerNumberOfLines() const {
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   StorageFunctionGraphController::selectFunctionWithCursor(functionIndex);
-  StorageCartesianFunction * f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   m_cursorView.setColor(f->color());
 }
 

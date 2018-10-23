@@ -309,7 +309,7 @@ int StorageValuesController::maxNumberOfElements() const {
 }
 
 double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  StorageFunction * function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  ExpiringPointer<StorageFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }

@@ -13,7 +13,7 @@ using namespace Poincare;
 
 const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg),
-  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg),
+  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommand),
   ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
@@ -115,14 +115,18 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   m_selectableTableView.deselectTable();
 
-  // Translate the message and remove the arguments
+  // Translate the message
   const char * text = I18n::translate(messageTree->insertedText());
-  int maxTextToInsertLength = strlen(text) + 1;
-  assert(maxTextToInsertLength <= k_maxMessageSize);
-  char textToInsert[k_maxMessageSize];
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+  if (messageTree->label() == messageTree->insertedText()) {
+  //  Remove the arguments if we kept one message for both inserted and displayed message
+    int maxTextToInsertLength = strlen(text) + 1;
+    assert(maxTextToInsertLength <= k_maxMessageSize);
+    char textToInsert[k_maxMessageSize];
+    Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+    text = textToInsert;
+  }
 
-  sender()->handleEventWithText(textToInsert);
+  sender()->handleEventWithText(text);
   app()->dismissModalViewController();
   return true;
 }

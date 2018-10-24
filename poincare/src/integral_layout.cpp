@@ -76,9 +76,9 @@ void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   if (cursor->layoutNode() == integrandLayout())
   {
     assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right the integrand. Go right of the differential.
-    cursor->setLayoutNode(differentialLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
+    // Case: Right the differential. Go Right.
+    cursor->setLayoutNode(this);
+    cursor->setPosition(LayoutCursor::Position::Right);
     return;
   }
   if (cursor->layoutNode() == differentialLayout())

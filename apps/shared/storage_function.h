@@ -16,9 +16,6 @@ public:
   // Constructors
   StorageFunction(Ion::Storage::Record record) : StorageExpressionModel(record){}
 
-  // Checksum
-  virtual uint32_t checksum();
-
   // Properties
   bool isActive() const;
   KDColor color() const;

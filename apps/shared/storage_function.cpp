@@ -28,11 +28,6 @@ bool StorageFunction::BaseNameCompliant(const char * baseName) {
   return true;
 }
 
-uint32_t StorageFunction::checksum() {
-  assert(!isNull());
-  return checksum();
-}
-
 bool StorageFunction::isActive() const {
   return recordData()->isActive();
 }

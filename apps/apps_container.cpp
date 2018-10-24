@@ -74,6 +74,7 @@ AppsContainer::AppsContainer() :
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
+  Ion::Storage::sharedStorage()->setDelegate(this);
 }
 
 bool AppsContainer::poincareCircuitBreaker() {
@@ -293,9 +294,9 @@ void AppsContainer::examDeactivatingPopUpIsDismissed() {
   }
 }
 
-void AppsContainer::storageDidChange(const Ion::Storage * storage) {
-  for (int i = 0; i < numberOfApps(); i++) {
-    appSnapshotAtIndex(i)->storageDidChange();
+void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {
+  if (activeApp()) {
+    activeApp()->snapshot()->storageDidChangeForRecord(record);
   }
 }
 

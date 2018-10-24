@@ -16,18 +16,9 @@ Ion::Storage::Record StorageExpressionModelStore::recordAtIndex(int i) const {
 }
 
 StorageExpressionModel * StorageExpressionModelStore::privateModelForRecord(Ion::Storage::Record record) const {
-  uint32_t currentStorageChecksum = Ion::Storage::sharedStorage()->checksum();
-  /* If the storage changed since last call to modelForRecord, we invalid all
-   * memoized models. Indeed, if f(x) = A+x, and A changed, f(x) memoization
-   *  which stores the reduced expression of f is outdated. */
-  if (currentStorageChecksum != m_storageChecksum) {
-    resetMemoizedModels();
-    m_storageChecksum = currentStorageChecksum;
-  } else {
-    for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
-      if (!memoizedModelAtIndex(i)->isNull() && *memoizedModelAtIndex(i) == record) {
-        return memoizedModelAtIndex(i);
-      }
+  for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
+    if (!memoizedModelAtIndex(i)->isNull() && *memoizedModelAtIndex(i) == record) {
+      return memoizedModelAtIndex(i);
     }
   }
   setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
@@ -47,9 +38,7 @@ void StorageExpressionModelStore::removeModel(Ion::Storage::Record record) {
 }
 
 void StorageExpressionModelStore::tidy() {
-  for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
-    memoizedModelAtIndex(i)->tidy();
-  }
+  resetMemoizedModelsExceptRecord();
 }
 
 int StorageExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
@@ -86,10 +75,12 @@ Ion::Storage::Record StorageExpressionModelStore::recordStatifyingTestAtIndex(in
   return Ion::Storage::Record();
 }
 
-void StorageExpressionModelStore::resetMemoizedModels() const {
+void StorageExpressionModelStore::resetMemoizedModelsExceptRecord(const Ion::Storage::Record record) const {
   Ion::Storage::Record emptyRecord;
   for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
-    setMemoizedModelAtIndex(i, emptyRecord);
+    if (*memoizedModelAtIndex(i) != record) {
+      setMemoizedModelAtIndex(i, emptyRecord);
+    }
   }
 }
 

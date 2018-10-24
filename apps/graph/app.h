@@ -23,6 +23,7 @@ public:
     Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
+    void storageDidChangeForRecord(const Ion::Storage::Record record) override;
     Descriptor * descriptor() override;
     StorageCartesianFunctionStore * functionStore();
     Shared::InteractiveCurveViewRange * graphRange();

@@ -81,7 +81,7 @@ public:
 
   // Delegate
   void setDelegate(StorageDelegate * delegate) { m_delegate = delegate; }
-  void notifyChangeToDelegate() const;
+  void notifyChangeToDelegate(const Record r = Record()) const;
 
   int numberOfRecordsWithExtension(const char * extension);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
@@ -155,14 +155,16 @@ private:
 };
 
 /* Some apps memoize records and need to be notified when a record might have
- * become invalid. We could have computed and compared the checksum of the
- * storage to detect storage invalidity, but profiling showed that this slows
- * down the execution (for example when scrolling the functions list).
+ * become invalid. For instance in the Graph app, if f(x) = A+x, and A changed,
+ * f(x) memoization which stores the reduced expression of f is outdated.
+ * We could have computed and compared the checksum of the storage to detect
+ * storage invalidity, but profiling showed that this slows down the execution
+ * (for example when scrolling the functions list).
  * We thus decided to notify a delegate when the storage changes. */
 
 class StorageDelegate {
 public:
-  virtual void storageDidChange(const Storage * storage) = 0;
+  virtual void storageDidChangeForRecord(const Storage::Record record) = 0;
 };
 
 }

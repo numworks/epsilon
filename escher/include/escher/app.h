@@ -34,7 +34,7 @@ public:
     void pack(App * app);
     /* reset all instances to their initial values */
     virtual void reset();
-    virtual void storageDidChange() {}
+    virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
     virtual Descriptor * descriptor() = 0;
 #if EPSILON_GETOPT
     virtual void setOpt(const char * name, char * value) {}

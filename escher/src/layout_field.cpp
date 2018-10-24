@@ -199,6 +199,12 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
+  /* if move event was not caught neither by privateHandleMoveEvent nor by
+   * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
+   * event up. */
+  if ((event == Ion::Events::Up || event == Ion::Events::Down || event == Ion::Events::Left || event == Ion::Events::Right) && isEditing()) {
+    return true;
+  }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     setEditing(true);
     m_contentView.cursor()->setLayout(layout());

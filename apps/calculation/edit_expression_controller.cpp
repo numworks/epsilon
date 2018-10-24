@@ -58,18 +58,6 @@ void EditExpressionController::insertTextBody(const char * text) {
   ((ContentView *)view())->expressionField()->handleEventWithText(text, false, true);
 }
 
-bool EditExpressionController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
-    if (m_calculationStore->numberOfCalculations() > 0) {
-      m_cacheBuffer[0] = 0;
-      ((ContentView *)view())->expressionField()->setEditing(false, false);
-      app()->setFirstResponder(m_historyController);
-    }
-    return true;
-  }
-  return false;
-}
-
 void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
   m_historyController->scrollToCell(0, lastRow);
@@ -78,8 +66,9 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->shouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
-    return inputViewDidReceiveEvent(event);
+  bool shouldDuplicateLastCalculation = textField->isEditing() && textField->shouldFinishEditing(event) && textField->draftTextLength() == 0;
+  if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
+    return true;
   }
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
@@ -93,8 +82,9 @@ bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField)
 }
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
-    return inputViewDidReceiveEvent(event);
+  bool shouldDuplicateLastCalculation = layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText();
+  if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
+    return true;
   }
   return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
 }
@@ -135,17 +125,28 @@ void EditExpressionController::reloadView() {
   }
 }
 
-bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event) {
-  App * calculationApp = (App *)app();
-  /* The input text store in m_cacheBuffer might have beed correct the first
-   * time but then be too long when replacing ans in another context */
-  if (!calculationApp->textInputIsCorrect(m_cacheBuffer)) {
+bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
+  if (shouldDuplicateLastCalculation && m_cacheBuffer[0] != 0) {
+    App * calculationApp = (App *)app();
+    /* The input text store in m_cacheBuffer might have beed correct the first
+     * time but then be too long when replacing ans in another context */
+    if (!calculationApp->textInputIsCorrect(m_cacheBuffer)) {
+      return true;
+    }
+    m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
+    m_historyController->reload();
+    ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
     return true;
   }
-  m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
-  m_historyController->reload();
-  ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  return true;
+  if (event == Ion::Events::Up) {
+    if (m_calculationStore->numberOfCalculations() > 0) {
+      m_cacheBuffer[0] = 0;
+      ((ContentView *)view())->expressionField()->setEditing(false, false);
+      app()->setFirstResponder(m_historyController);
+    }
+    return true;
+  }
+  return false;
 }
 
 

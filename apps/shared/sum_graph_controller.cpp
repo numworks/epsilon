@@ -56,7 +56,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
   if ((int)m_step > 1 && event != Ion::Events::OK && event != Ion::Events::EXE && event != Ion::Events::Back) {
     return false;
   }
-  if (event == Ion::Events::Left && !m_legendView.textField()->isEditing()) {
+  if (event == Ion::Events::Left) {
     if ((int)m_step > 0 && m_startSum >= m_cursor->x()) {
       return false;
     }
@@ -66,7 +66,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (event == Ion::Events::Right && !m_legendView.textField()->isEditing()) {
+  if (event == Ion::Events::Right) {
     if (moveCursorHorizontallyToPosition(cursorNextStep(m_cursor->x(), 1))) {
       m_graphView->reload();
       return true;

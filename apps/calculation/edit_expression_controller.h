@@ -19,7 +19,6 @@ public:
   View * view() override;
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event event) override;
   void insertTextBody(const char * text);
 
   /* TextFieldDelegate */
@@ -51,7 +50,7 @@ private:
     ExpressionField m_expressionField;
   };
   void reloadView();
-  bool inputViewDidReceiveEvent(Ion::Events::Event event);
+  bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;

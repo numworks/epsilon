@@ -29,13 +29,17 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
 
 Expression StorageExpressionModel::expression(Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
-    m_expression = Expression::ExpressionFromAddress(expressionAddress(), expressionSize()).deepReduce(*context, Preferences::AngleUnit::Degree, true);
+    assert(!isNull());
+    Ion::Storage::Record::Data recordData = value();
+    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData)).deepReduce(*context, Preferences::AngleUnit::Degree, true);
   }
   return m_expression;
 }
 
 Expression StorageExpressionModel::expressionWithSymbol() const {
-  return Expression::ExpressionFromAddress(expressionAddress(), expressionSize());
+  assert(!isNull());
+  Ion::Storage::Record::Data recordData = value();
+  return Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData));
 }
 
 Layout StorageExpressionModel::layout() {
@@ -94,7 +98,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(E
 
   // Copy the expression if needed
   if (!expressionToStore.isUninitialized()) {
-    memcpy(expressionAddress(), expressionToStore.addressInPool(), expressionToStore.size());
+    memcpy(expressionAddressForValue(value()), expressionToStore.addressInPool(), expressionToStore.size());
   }
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
@@ -104,14 +108,12 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(E
   return error;
 }
 
-void * StorageExpressionModel::expressionAddress() const {
-  assert(!isNull());
-  return (char *)value().buffer+metaDataSize();
+void * StorageExpressionModel::expressionAddressForValue(Ion::Storage::Record::Data recordData) const {
+  return (char *)recordData.buffer+metaDataSize();
 }
 
-size_t StorageExpressionModel::expressionSize() const {
-  assert(!isNull());
-  return value().size-metaDataSize();
+size_t StorageExpressionModel::expressionSizeForValue(Ion::Storage::Record::Data recordData) const {
+  return recordData.size-metaDataSize();
 }
 
 }

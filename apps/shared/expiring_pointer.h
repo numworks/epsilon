@@ -32,6 +32,11 @@ private:
   T * m_rawPointer;
 };
 
+#if DEBUG
+template<class T>
+T * ExpiringPointer<T>::s_global = nullptr;
+#endif
+
 }
 
 #endif

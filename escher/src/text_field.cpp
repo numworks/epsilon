@@ -236,18 +236,6 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
-    return setCursorLocation(cursorLocation()-1);
-  }
-  if (event == Ion::Events::ShiftLeft && isEditing()) {
-    return setCursorLocation(0);
-  }
-  if (event == Ion::Events::Right && isEditing() && cursorLocation() < draftTextLength()) {
-    return setCursorLocation(cursorLocation()+1);
-  }
-  if (event == Ion::Events::ShiftRight && isEditing()) {
-    return setCursorLocation(draftTextLength());
-  }
   if (isEditing() && shouldFinishEditing(event)) {
     char bufferText[ContentView::k_maxBufferSize];
     int cursorLoc = cursorLocation();
@@ -278,6 +266,11 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
       setText(bufferDraft);
       setCursorLocation(cursorLoc);
     }
+    return true;
+  }
+  /* if move event was not caught before nor by textFieldShouldFinishEditing,
+   * we handle it here to avoid bubbling the event up. */
+  if ((event == Ion::Events::Up || event == Ion::Events::Down || event == Ion::Events::Left || event == Ion::Events::Right) && isEditing()) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
@@ -360,20 +353,20 @@ char TextField::XNTChar(char defaultXNTChar) {
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
-  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
+  size_t previousTextLength = strlen(text());
+  bool didHandleEvent = false;
+  if (privateHandleMoveEvent(event)) {
+    didHandleEvent = true;
+  } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
-  }
-  if (event.hasText()) {
+  } else if (event.hasText()) {
     return handleEventWithText(event.text());
-  }
-  if (event == Ion::Events::Paste) {
+  } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
-  }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
+  } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     return handleEventWithText(m_contentView.textBuffer());
   }
-  size_t previousTextLength = strlen(text());
-  bool didHandleEvent = privateHandleEvent(event);
+  didHandleEvent = privateHandleEvent(event);
   return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
@@ -382,6 +375,22 @@ void TextField::scrollToCursor() {
     return;
   }
   return TextInput::scrollToCursor();
+}
+
+bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
+    return setCursorLocation(cursorLocation()-1);
+  }
+  if (event == Ion::Events::ShiftLeft && isEditing()) {
+    return setCursorLocation(0);
+  }
+  if (event == Ion::Events::Right && isEditing() && cursorLocation() < draftTextLength()) {
+    return setCursorLocation(cursorLocation()+1);
+  }
+  if (event == Ion::Events::ShiftRight && isEditing()) {
+    return setCursorLocation(draftTextLength());
+  }
+  return false;
 }
 
 bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {

@@ -30,12 +30,13 @@ public:
   virtual Ion::Storage::Record::ErrorStatus setContent(const char * c);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Poincare::Expression & e);
 protected:
-  void * expressionAddress() const;
-  size_t expressionSize() const;
   virtual size_t metaDataSize() const = 0;
   Ion::Storage::Record record() const;
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
+private:
+  void * expressionAddressForValue(Ion::Storage::Record::Data recordData) const;
+  size_t expressionSizeForValue(Ion::Storage::Record::Data recordData) const;
 };
 
 }

@@ -11,6 +11,8 @@ namespace Ion {
  *
  * A record's fullName is baseName.extension. */
 
+class StorageDelegate;
+
 class Storage {
 public:
   typedef uint16_t record_size_t;
@@ -76,6 +78,11 @@ public:
   Storage();
   size_t availableSize();
   uint32_t checksum();
+
+  // Delegate
+  void setDelegate(StorageDelegate * delegate) { m_delegate = delegate; }
+  void notifyChangeToDelegate() const;
+
   int numberOfRecordsWithExtension(const char * extension);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
@@ -91,6 +98,7 @@ public:
 
   // Record destruction
   void destroyRecordsWithExtension(const char * extension);
+
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
@@ -143,6 +151,18 @@ private:
   uint32_t m_magicHeader;
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
+  StorageDelegate * m_delegate;
+};
+
+/* Some apps memoize records and need to be notified when a record might have
+ * become invalid. We could have computed and compared the checksum of the
+ * storage to detect storage invalidity, but profiling showed that this slows
+ * down the execution (for example when scrolling the functions list).
+ * We thus decided to notify a delegate when the storage changes. */
+
+class StorageDelegate {
+public:
+  virtual void storageDidChange(const Storage * storage) = 0;
 };
 
 }

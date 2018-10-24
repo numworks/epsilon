@@ -1,5 +1,5 @@
-#ifndef ESCHER_ALTERNATE_EMPTY_VIEW_H
-#define ESCHER_ALTERNATE_EMPTY_VIEW_H
+#ifndef ESCHER_ALTERNATE_EMPTY_VIEW_CONTROLLER_H
+#define ESCHER_ALTERNATE_EMPTY_VIEW_CONTROLLER_H
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/i18n.h>

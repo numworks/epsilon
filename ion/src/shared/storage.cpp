@@ -310,6 +310,7 @@ void Storage::destroyRecord(Record record) {
     if (record == currentRecord) {
       record_size_t previousRecordSize = sizeOfRecordStarting(p);
       slideBuffer(p+previousRecordSize, -previousRecordSize);
+      return;
     }
   }
 }

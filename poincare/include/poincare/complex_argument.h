@@ -38,15 +38,17 @@ private:
 
 class ComplexArgument final : public Expression {
 public:
-  ComplexArgument();
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
-  explicit ComplexArgument(Expression operand) : ComplexArgument() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "arg"; }
-  static const int NumberOfChildren() { return 1; }
+  static ComplexArgument Builder(Expression child) { return ComplexArgument(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit ComplexArgument(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ComplexArgumentNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

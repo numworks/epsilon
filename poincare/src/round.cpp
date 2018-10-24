@@ -9,14 +9,14 @@
 
 namespace Poincare {
 
-int RoundNode::numberOfChildren() const { return Round::NumberOfChildren(); }
+int RoundNode::numberOfChildren() const { return Round::FunctionHelper()->numberOfChildren(); }
 
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::Name());
+  return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::FunctionHelper()->name());
 }
 
 int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::FunctionHelper()->name());
 }
 
 Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -35,8 +35,6 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
   T err = std::pow(10, std::floor(f2));
   return Complex<T>(std::round(f1*err)/err);
 }
-
-Round::Round() : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {}
 
 Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -82,6 +80,6 @@ Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleU
   return *this;
 }
 
+constexpr Expression::FunctionHelper Round::m_functionHelper = Expression::FunctionHelper("round", 2, &Round::UntypedBuilder);
+
 }
-
-

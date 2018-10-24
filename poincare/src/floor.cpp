@@ -11,14 +11,14 @@
 
 namespace Poincare {
 
-int FloorNode::numberOfChildren() const { return Floor::NumberOfChildren(); }
+int FloorNode::numberOfChildren() const { return Floor::FunctionHelper()->numberOfChildren(); }
 
 Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -32,8 +32,6 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Ang
 Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return Floor(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
-
-Floor::Floor() : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {}
 
 Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -73,5 +71,7 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   replaceWithInPlace(result);
   return result;
 }
+
+constexpr Expression::FunctionHelper Floor::m_functionHelper = Expression::FunctionHelper("floor", 1, &Floor::UntypedBuilder);
 
 }

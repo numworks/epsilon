@@ -38,15 +38,17 @@ private:
 
 class Ceiling final : public Expression {
 public:
-  Ceiling();
   Ceiling(const CeilingNode * n) : Expression(n) {}
-  explicit Ceiling(Expression operand) : Ceiling() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "ceil"; }
-  static const int NumberOfChildren() { return 1; }
+  static Ceiling Builder(Expression child) { return Ceiling(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit Ceiling(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

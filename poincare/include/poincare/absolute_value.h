@@ -44,17 +44,19 @@ public:
 class AbsoluteValue final : public Expression {
 friend class AbsoluteValueNode;
 public:
-  AbsoluteValue();
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  explicit AbsoluteValue(Expression operand) : AbsoluteValue() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "abs"; }
-  static const int NumberOfChildren() { return 1; }
+  static AbsoluteValue Builder(Expression child) { return AbsoluteValue(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
+  explicit AbsoluteValue(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

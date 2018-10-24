@@ -38,15 +38,17 @@ private:
 
 class Conjugate final : public Expression {
 public:
-  Conjugate();
   Conjugate(const ConjugateNode * n) : Expression(n) {}
-  explicit Conjugate(Expression operand) : Conjugate() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "conj"; }
-  static const int NumberOfChildren() { return 1; }
+  static Conjugate Builder(Expression child) { return Conjugate(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit Conjugate(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

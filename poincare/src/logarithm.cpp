@@ -21,14 +21,14 @@
 namespace Poincare {
 
 template<>
-int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::NumberOfChildren(); }
+int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::FunctionHelper()->numberOfChildren(); }
 
 template<>
-int LogarithmNode<2>::numberOfChildren() const { return Logarithm::NumberOfChildren(); }
+int LogarithmNode<2>::numberOfChildren() const { return Logarithm::FunctionHelper()->numberOfChildren(); }
 
 template<>
 Layout LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::Name());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::FunctionHelper()->name());
 }
 
 template<>
@@ -40,7 +40,7 @@ Layout LogarithmNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMo
 
 template<int T>
 int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, T == 1 ? CommonLogarithm::Name() : Logarithm::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, T == 1 ? CommonLogarithm::FunctionHelper()->name() : Logarithm::FunctionHelper()->name());
 }
 
 template<>
@@ -96,7 +96,7 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleU
   }
 #endif
 #endif
-  Logarithm log(childAtIndex(0), Rational(10));
+  Logarithm log = Logarithm::Builder(childAtIndex(0), Rational(10));
   replaceWithInPlace(log);
   return log.shallowReduce(context, angleUnit, replaceSymbols);
 }
@@ -305,18 +305,22 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
   assert(numberOfChildren() == 2);
   Constant e = Constant(Ion::Charset::Exponential);
   if (childAtIndex(1).isIdenticalTo(e)) {
-    NaperianLogarithm np(childAtIndex(0));
+    NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);
     return np;
   }
   Rational ten(10);
   if (childAtIndex(1).isIdenticalTo(ten)) {
-    CommonLogarithm l(childAtIndex(0));
+    CommonLogarithm l = CommonLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(l);
     return l;
   }
   return *this;
 }
+
+constexpr Expression::FunctionHelper Logarithm::m_functionHelper = Expression::FunctionHelper("log", 2, &Logarithm::UntypedBuilder);
+
+constexpr Expression::FunctionHelper CommonLogarithm::m_functionHelper = Expression::FunctionHelper("log", 1, &CommonLogarithm::UntypedBuilder);
 
 template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;

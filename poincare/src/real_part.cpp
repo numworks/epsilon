@@ -7,21 +7,19 @@
 
 namespace Poincare {
 
-int RealPartNode::numberOfChildren() const { return RealPart::NumberOfChildren(); }
+int RealPartNode::numberOfChildren() const { return RealPart::FunctionHelper()->numberOfChildren(); }
 
 Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::Name());
+  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::FunctionHelper()->name());
 }
 
 int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::FunctionHelper()->name());
 }
 
 Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return RealPart(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
-
-RealPart::RealPart() : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {}
 
 Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -42,5 +40,7 @@ Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
   return *this;
 }
+
+constexpr Expression::FunctionHelper RealPart::m_functionHelper = Expression::FunctionHelper("re", 1, &RealPart::UntypedBuilder);
 
 }

@@ -73,7 +73,6 @@ public:
       addChildAtIndexInPlace(children[i], i, i);
     }
   }
-  static const char * Name() { return "+"; }
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

@@ -8,14 +8,14 @@
 
 namespace Poincare {
 
-int GreatCommonDivisorNode::numberOfChildren() const { return GreatCommonDivisor::NumberOfChildren(); }
+int GreatCommonDivisorNode::numberOfChildren() const { return GreatCommonDivisor::FunctionHelper()->numberOfChildren(); }
 
 Layout GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::Name());
+  return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::FunctionHelper()->name());
 }
 
 int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::FunctionHelper()->name());
 }
 
 Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -45,8 +45,6 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
   }
   return Complex<T>(std::round((T)a));
 }
-
-GreatCommonDivisor::GreatCommonDivisor() : Expression(TreePool::sharedPool()->createTreeNode<GreatCommonDivisorNode>()) {}
 
 Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -92,5 +90,7 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   replaceWithInPlace(result);
   return result;
 }
+
+constexpr Expression::FunctionHelper GreatCommonDivisor::m_functionHelper = Expression::FunctionHelper("gcd", 2, &GreatCommonDivisor::UntypedBuilder);
 
 }

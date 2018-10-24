@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-int DerivativeNode::numberOfChildren() const { return Derivative::NumberOfChildren(); }
+int DerivativeNode::numberOfChildren() const { return Derivative::FunctionHelper()->numberOfChildren(); }
 
 int DerivativeNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
@@ -25,11 +25,11 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
 }
 
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::Name());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::FunctionHelper()->name());
 }
 
 int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::FunctionHelper()->name());
 }
 
 Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -130,8 +130,6 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
   return ans;
 }
 
-Derivative::Derivative() : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {}
-
 Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -148,5 +146,6 @@ Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit a
   return *this;
 }
 
-}
+constexpr Expression::FunctionHelper Derivative::m_functionHelper = Expression::FunctionHelper("diff", 3, &Derivative::UntypedBuilder);
 
+}

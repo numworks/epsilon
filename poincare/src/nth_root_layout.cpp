@@ -154,11 +154,11 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
       && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
   {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::Name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::FunctionHelper()->name());
   }
   // Case: squareRoot(x)
   if (!m_hasIndex) {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::Name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::FunctionHelper()->name());
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".

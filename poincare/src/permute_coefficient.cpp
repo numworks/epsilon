@@ -11,14 +11,14 @@ extern "C" {
 
 namespace Poincare {
 
-int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::NumberOfChildren(); }
+int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::FunctionHelper()->numberOfChildren(); }
 
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::Name());
+  return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::FunctionHelper()->name());
 }
 
 int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::FunctionHelper()->name());
 }
 
 Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -46,8 +46,6 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
   }
   return Complex<T>(std::round(result));
 }
-
-PermuteCoefficient::PermuteCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<PermuteCoefficientNode>()) {}
 
 Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -109,5 +107,7 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
   return rationalResult;
 
 }
+
+constexpr Expression::FunctionHelper PermuteCoefficient::m_functionHelper = Expression::FunctionHelper("permute", 2, &PermuteCoefficient::UntypedBuilder);
 
 }

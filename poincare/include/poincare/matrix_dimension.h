@@ -33,15 +33,17 @@ private:
 
 class MatrixDimension final : public Expression {
 public:
-  MatrixDimension();
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
-  explicit MatrixDimension(Expression operand) : MatrixDimension() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "dim"; }
-  static const int NumberOfChildren() { return 1; }
+  static MatrixDimension Builder(Expression child) { return MatrixDimension(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit MatrixDimension(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

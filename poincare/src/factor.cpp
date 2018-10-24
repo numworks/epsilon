@@ -14,17 +14,15 @@ extern "C" {
 
 namespace Poincare {
 
-int FactorNode::numberOfChildren() const { return Factor::NumberOfChildren(); }
+int FactorNode::numberOfChildren() const { return Factor::FunctionHelper()->numberOfChildren(); }
 
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::Name());
+  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::FunctionHelper()->name());
 }
 
 int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::FunctionHelper()->name());
 }
-
-Factor::Factor() : Expression(TreePool::sharedPool()->createTreeNode<FactorNode>()) {}
 
 Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Factor(this).shallowBeautify(context, angleUnit);
@@ -89,5 +87,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   }
   return m;
 }
+
+constexpr Expression::FunctionHelper Factor::m_functionHelper = Expression::FunctionHelper("factor", 1, &Factor::UntypedBuilder);
 
 }

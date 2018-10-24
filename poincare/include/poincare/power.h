@@ -65,7 +65,6 @@ class Power final : public Expression {
 public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
-  static const char * Name() { return "^"; }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

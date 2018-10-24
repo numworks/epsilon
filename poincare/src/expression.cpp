@@ -3,20 +3,13 @@
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
-#include <poincare/symbol_abstract.h>
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
 #include <cmath>
 #include <float.h>
 
-#include "expression_lexer_parser.h"
-#include "expression_parser.hpp"
-#include "expression_lexer.hpp"
-
 #include "parsing/parser.h"
-
-int poincare_expression_yyparse(Poincare::Expression * expressionOutput);
 
 namespace Poincare {
 

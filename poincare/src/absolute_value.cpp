@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::NumberOfChildren(); }
+int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::FunctionHelper()->numberOfChildren(); }
 
 Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
@@ -19,7 +19,7 @@ Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::FunctionHelper()->name());
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -30,8 +30,6 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Pre
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
 }
-
-AbsoluteValue::AbsoluteValue() : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {}
 
 Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -58,5 +56,6 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
   return *this;
 }
 
+constexpr Expression::FunctionHelper AbsoluteValue::m_functionHelper = Expression::FunctionHelper("abs", 1, &AbsoluteValue::UntypedBuilder);
 
 }

@@ -32,16 +32,18 @@ private:
 class Sum final : public Expression {
 friend class SumNode;
 public:
-  Sum();
   Sum(const SumNode * n) : Expression(n) {}
-  Sum(Expression operand0, Expression operand1, Expression operand2, Expression operand3) : Sum() {
-    replaceChildAtIndexInPlace(0, operand0);
-    replaceChildAtIndexInPlace(1, operand1);
-    replaceChildAtIndexInPlace(2, operand2);
-    replaceChildAtIndexInPlace(3, operand3);
+  static Sum Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return Sum(child0, child1, child2, child3); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+private:
+  Sum(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+    replaceChildAtIndexInPlace(2, child2);
+    replaceChildAtIndexInPlace(3, child3);
   }
-  static const char * Name() { return "sum"; }
-  static const int NumberOfChildren() { return 3; }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

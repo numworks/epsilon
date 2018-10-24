@@ -56,11 +56,10 @@ class Subtraction final : public Expression {
 public:
   Subtraction();
   Subtraction(const SubtractionNode * n) : Expression(n) {}
-  Subtraction(Expression child1, Expression child2) : Subtraction() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
+  Subtraction(Expression child0, Expression child1) : Subtraction() {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
   }
-  static const char * Name() { return "-"; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

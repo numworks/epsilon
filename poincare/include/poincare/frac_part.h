@@ -38,15 +38,17 @@ private:
 
 class FracPart final : public Expression {
 public:
-  FracPart();
   FracPart(const FracPartNode * n) : Expression(n) {}
-  explicit FracPart(Expression operand) : FracPart() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "frac"; }
-  static const int NumberOfChildren() { return 1; }
+  static FracPart Builder(Expression child) { return FracPart(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit FracPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

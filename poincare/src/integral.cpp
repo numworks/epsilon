@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-int IntegralNode::numberOfChildren() const { return Integral::NumberOfChildren(); }
+int IntegralNode::numberOfChildren() const { return Integral::FunctionHelper()->numberOfChildren(); }
 
 int IntegralNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
@@ -33,7 +33,7 @@ Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::FunctionHelper()->name());
 }
 
 Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -188,9 +188,6 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 }
 #endif
 
-
-Integral::Integral() : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {}
-
 Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -209,5 +206,7 @@ Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit ang
 #endif
   return *this;
 }
+
+constexpr Expression::FunctionHelper Integral::m_functionHelper = Expression::FunctionHelper("int", 4, &Integral::UntypedBuilder);
 
 }

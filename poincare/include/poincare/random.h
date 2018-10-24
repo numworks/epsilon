@@ -39,14 +39,16 @@ private:
 class Random final : public Expression {
 friend class RandomNode;
 public:
-  Random();
   Random(const RandomNode * n) : Expression(n) {}
-  static const char * Name() { return "random"; }
-  static const int NumberOfChildren() { return 0; }
+  static Random Builder() { return Random(); }
+  static Expression UntypedBuilder(Expression children) { return Builder(); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   template<typename T> static T random();
 private:
+  Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

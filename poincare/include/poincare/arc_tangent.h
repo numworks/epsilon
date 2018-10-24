@@ -39,15 +39,17 @@ private:
 
 class ArcTangent final : public Expression {
 public:
-  ArcTangent();
   ArcTangent(const ArcTangentNode * n) : Expression(n) {}
-  explicit ArcTangent(Expression operand) : ArcTangent() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "atan"; }
-  static const int NumberOfChildren() { return 1; }
+  static ArcTangent Builder(Expression child) { return ArcTangent(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit ArcTangent(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ArcTangentNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

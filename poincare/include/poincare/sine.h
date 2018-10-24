@@ -44,15 +44,17 @@ private:
 
 class Sine final : public Expression {
 public:
-  Sine();
   Sine(const SineNode * n) : Expression(n) {}
-  explicit Sine(Expression operand) : Sine() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "sin"; }
-  static const int NumberOfChildren() { return 1; }
+  static Sine Builder(Expression child) { return Sine(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit Sine(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

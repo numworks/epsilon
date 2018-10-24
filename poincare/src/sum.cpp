@@ -16,7 +16,7 @@ Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout,
 }
 
 int SumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -39,6 +39,6 @@ Evaluation<T> SumNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluat
   return AdditionNode::computeOnMatrices<T>(m, n);
 }
 
-Sum::Sum() : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {}
+constexpr Expression::FunctionHelper Sum::m_functionHelper = Expression::FunctionHelper("sum", 4, &Sum::UntypedBuilder);
 
 }

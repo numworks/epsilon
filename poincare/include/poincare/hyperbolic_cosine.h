@@ -35,13 +35,15 @@ private:
 
 class HyperbolicCosine final : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicCosine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicCosineNode>()) {}
   HyperbolicCosine(const HyperbolicCosineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  explicit HyperbolicCosine(Expression operand) : HyperbolicCosine() {
-    replaceChildAtIndexInPlace(0, operand);
+  static HyperbolicCosine Builder(Expression child) { return HyperbolicCosine(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+private:
+  explicit HyperbolicCosine(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicCosineNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
-  static const char * Name() { return "cosh"; }
-  static const int NumberOfChildren() { return 1; }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

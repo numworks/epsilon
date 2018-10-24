@@ -29,6 +29,7 @@ public:
 
   // Other
   void tidy();
+  void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
 protected:
   constexpr static int k_maxNumberOfMemoizedModels = 5;
   typedef bool (*ModelTest)(StorageExpressionModel * model);
@@ -36,7 +37,7 @@ protected:
   Ion::Storage::Record recordStatifyingTestAtIndex(int i, ModelTest test) const;
   StorageExpressionModel * privateModelForRecord(Ion::Storage::Record record) const;
 private:
-  void resetMemoizedModels() const;
+  void resetMemoizedModelsExceptRecord(const Ion::Storage::Record record = Ion::Storage::Record()) const;
   virtual void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
   virtual StorageExpressionModel * memoizedModelAtIndex(int cacheIndex) const = 0;
   virtual const char * modelExtension() const = 0;
@@ -46,8 +47,6 @@ private:
    * same time. Otherwise, we should use a queue to decide which was the last
    * memoized model. */
   mutable int m_oldestMemoizedIndex;
-  mutable uint32_t m_storageChecksum;
-
 };
 
 }

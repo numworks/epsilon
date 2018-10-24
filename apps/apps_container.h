@@ -56,7 +56,7 @@ public:
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
   // Ion::StorageDelegate
-  void storageDidChange(const Ion::Storage * storage) override;
+  void storageDidChangeForRecord(const Ion::Storage::Record record) override;
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:

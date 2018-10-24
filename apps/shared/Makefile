@@ -9,7 +9,6 @@ app_objs += $(addprefix apps/shared/,\
   curve_view_range.o\
   double_pair_store.o\
   editable_cell_table_view_controller.o\
-  expiring_pointer.o\
   expression_field_delegate_app.o\
   expression_model.o\
   expression_model_list_controller.o\

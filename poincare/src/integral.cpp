@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/integral_layout.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
 #include <float.h>
@@ -12,7 +13,8 @@ namespace Poincare {
 int IntegralNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(1)->polynomialDegree(context, symbolName) == 0
-      && childAtIndex(2)->polynomialDegree(context, symbolName) == 0)
+      && childAtIndex(2)->polynomialDegree(context, symbolName) == 0
+      && childAtIndex(3)->polynomialDegree(context, symbolName) == 0)
   {
     // If no child depends on the symbol, the polynomial degree is 0.
     return 0;
@@ -24,7 +26,8 @@ Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return IntegralLayout(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -37,8 +40,8 @@ Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit
 
 template<typename T>
 Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(1)->approximate(T(), context, angleUnit);
-  Evaluation<T> bInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, angleUnit);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
   if (std::isnan(a) || std::isnan(b)) {
@@ -54,7 +57,7 @@ Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences:
 
 template<typename T>
 T IntegralNode::functionValueAtAbscissa(T x, Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression(childAtIndex(0)).approximateWithValueForSymbol("x", x, context, angleUnit);
+  return Expression(childAtIndex(0)).approximateWithValueForSymbol(static_cast<SymbolNode *>(childAtIndex(1))->name(), x, context, angleUnit);
 }
 
 #ifdef LAGRANGE_METHOD
@@ -196,7 +199,8 @@ Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit ang
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix
       || childAtIndex(1).type() == ExpressionNode::Type::Matrix
-      || childAtIndex(2).type() == ExpressionNode::Type::Matrix)
+      || childAtIndex(2).type() == ExpressionNode::Type::Matrix
+      || childAtIndex(3).type() == ExpressionNode::Type::Matrix)
   {
     return Undefined();
   }

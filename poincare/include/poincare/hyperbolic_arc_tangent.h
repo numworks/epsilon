@@ -35,13 +35,15 @@ private:
 
 class HyperbolicArcTangent final : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicArcTangent() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {}
   HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
-  explicit HyperbolicArcTangent(Expression operand) : HyperbolicArcTangent() {
-    replaceChildAtIndexInPlace(0, operand);
+  static HyperbolicArcTangent Builder(Expression child) { return HyperbolicArcTangent(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+private:
+  explicit HyperbolicArcTangent(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
-  static const char * Name() { return "atanh"; }
-  static const int NumberOfChildren() { return 1; }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

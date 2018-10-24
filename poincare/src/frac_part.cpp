@@ -7,14 +7,14 @@
 
 namespace Poincare {
 
-int FracPartNode::numberOfChildren() const { return FracPart::NumberOfChildren(); }
+int FracPartNode::numberOfChildren() const { return FracPart::FunctionHelper()->numberOfChildren(); }
 
 Layout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, FracPart::Name());
+  return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, FracPart::FunctionHelper()->name());
 }
 
 int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::FunctionHelper()->name());
 }
 
 Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -28,8 +28,6 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
   }
   return Complex<T>(c.real()-std::floor(c.real()));
 }
-
-FracPart::FracPart() : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {}
 
 Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -55,5 +53,7 @@ Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   replaceWithInPlace(result);
   return result;
 }
+
+constexpr Expression::FunctionHelper FracPart::m_functionHelper = Expression::FunctionHelper("frac", 1, &FracPart::UntypedBuilder);
 
 }

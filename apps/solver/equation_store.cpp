@@ -250,9 +250,9 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     m_numberOfSolutions = 1;
   } else {
     // x0 = (-b-sqrt(delta))/(2a)
-    exactSolutions[0] = Division(Subtraction(Opposite(coefficients[1].clone()), SquareRoot(delta.clone())), Multiplication(Rational(2), coefficients[2].clone()));
+    exactSolutions[0] = Division(Subtraction(Opposite(coefficients[1].clone()), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2].clone()));
     // x1 = (-b+sqrt(delta))/(2a)
-    exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot(delta.clone())), Multiplication(Rational(2), coefficients[2]));
+    exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2]));
     m_numberOfSolutions = 2;
   }
   exactSolutions[m_numberOfSolutions] = delta;

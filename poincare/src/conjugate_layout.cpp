@@ -52,7 +52,7 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
 }
 
 int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::FunctionHelper()->name());
 }
 
 KDSize ConjugateLayoutNode::computeSize() {

@@ -44,33 +44,38 @@ public:
 class Logarithm final : public Expression {
 public:
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  Logarithm(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
-  static const char * Name() { return "log"; }
-  static const int NumberOfChildren() { return 2; }
+  static Logarithm Builder(Expression child0, Expression child1) { return Logarithm(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
+  Logarithm(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
   Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   bool parentIsAPowerOfSameBase() const;
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 class CommonLogarithm : public Expression {
 public:
   CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
-  explicit CommonLogarithm(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "log"; }
-  static const int NumberOfChildren() { return 1; }
+  static CommonLogarithm Builder(Expression child) { return CommonLogarithm(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit CommonLogarithm(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

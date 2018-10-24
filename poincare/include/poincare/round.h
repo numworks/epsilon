@@ -34,16 +34,18 @@ private:
 
 class Round final : public Expression {
 public:
-  Round();
   Round(const RoundNode * n) : Expression(n) {}
-  Round(Expression operand0, Expression operand1) : Round() {
-    replaceChildAtIndexInPlace(0, operand0);
-    replaceChildAtIndexInPlace(1, operand1);
-  }
-  static const char * Name() { return "round"; }
-  static const int NumberOfChildren() { return 2; }
+  static Round Builder(Expression child0, Expression child1) { return Round(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  Round(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

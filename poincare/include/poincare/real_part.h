@@ -40,15 +40,17 @@ private:
 
 class RealPart final : public Expression {
 public:
-  RealPart();
   RealPart(const RealPartNode * n) : Expression(n) {}
-  explicit RealPart(Expression operand) : RealPart() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "re"; }
-  static const int NumberOfChildren() { return 1; }
+  static RealPart Builder(Expression child) { return RealPart(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit RealPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

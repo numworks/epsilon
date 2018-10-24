@@ -7,14 +7,14 @@
 
 namespace Poincare {
 
-int ArcTangentNode::numberOfChildren() const { return ArcTangent::NumberOfChildren(); }
+int ArcTangentNode::numberOfChildren() const { return ArcTangent::FunctionHelper()->numberOfChildren(); }
 
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::Name());
+  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::FunctionHelper()->name());
 }
 
 int ArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcTangent::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcTangent::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -36,8 +36,6 @@ Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUn
   return ArcTangent(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
-ArcTangent::ArcTangent() : Expression(TreePool::sharedPool()->createTreeNode<ArcTangentNode>()) {}
-
 Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -52,5 +50,7 @@ Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit a
 #endif
   return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit);
 }
+
+constexpr Expression::FunctionHelper ArcTangent::m_functionHelper = Expression::FunctionHelper("atan", 1, &ArcTangent::UntypedBuilder);
 
 }

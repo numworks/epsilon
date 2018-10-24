@@ -36,16 +36,18 @@ private:
 
 class Factor final : public Expression {
 public:
-  Factor();
   Factor(const FactorNode * n) : Expression(n) {}
-  explicit Factor(Expression operand) : Factor() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "factor"; }
-  static const int NumberOfChildren() { return 1; }
+  static Factor Builder(Expression child) { return Factor(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const;
+private:
+  explicit Factor(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FactorNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

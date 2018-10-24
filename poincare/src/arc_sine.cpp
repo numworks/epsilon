@@ -7,14 +7,14 @@
 
 namespace Poincare {
 
-int ArcSineNode::numberOfChildren() const { return ArcSine::NumberOfChildren(); }
+int ArcSineNode::numberOfChildren() const { return ArcSine::FunctionHelper()->numberOfChildren(); }
 
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::Name());
+  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::FunctionHelper()->name());
 }
 
 int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::FunctionHelper()->name());
 }
 
 Expression ArcSineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -36,8 +36,6 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-ArcSine::ArcSine() : Expression(TreePool::sharedPool()->createTreeNode<ArcSineNode>()) {}
-
 Expression ArcSine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -52,5 +50,7 @@ Expression ArcSine::shallowReduce(Context & context, Preferences::AngleUnit angl
 #endif
   return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit);
 }
+
+constexpr Expression::FunctionHelper ArcSine::m_functionHelper = Expression::FunctionHelper("asin", 1, &ArcSine::UntypedBuilder);
 
 }

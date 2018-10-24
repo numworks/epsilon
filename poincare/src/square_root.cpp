@@ -10,14 +10,14 @@
 
 namespace Poincare {
 
-int SquareRootNode::numberOfChildren() const { return SquareRoot::NumberOfChildren(); }
+int SquareRootNode::numberOfChildren() const { return SquareRoot::FunctionHelper()->numberOfChildren(); }
 
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -36,8 +36,6 @@ Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUn
   return SquareRoot(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
-SquareRoot::SquareRoot() : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {}
-
 Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -55,4 +53,6 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit a
   return p.shallowReduce(context, angleUnit);
 }
 
+constexpr char SquareRoot::k_name[2] = {Ion::Charset::Root, 0};
+constexpr Expression::FunctionHelper SquareRoot::m_functionHelper = Expression::FunctionHelper(SquareRoot::k_name, 1, &SquareRoot::UntypedBuilder);
 }

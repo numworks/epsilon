@@ -65,7 +65,6 @@ public:
     replaceChildAtIndexInPlace(1, denominator);
   }
   Division(const DivisionNode * n) : Expression(n) {}
-  static const char * Name() { return "/"; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 };

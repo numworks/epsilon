@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-int NthRootNode::numberOfChildren() const { return NthRoot::NumberOfChildren(); }
+int NthRootNode::numberOfChildren() const { return NthRoot::FunctionHelper()->numberOfChildren(); }
 
 Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(
@@ -19,7 +19,7 @@ Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
 }
 
 int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::FunctionHelper()->name());
 }
 
 Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -41,8 +41,6 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
   return result;
 }
 
-NthRoot::NthRoot() : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {}
-
 Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -61,5 +59,7 @@ Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angl
   replaceWithInPlace(p);
   return p.shallowReduce(context, angleUnit);
 }
+
+constexpr Expression::FunctionHelper NthRoot::m_functionHelper = Expression::FunctionHelper("root", 2, &NthRoot::UntypedBuilder);
 
 }

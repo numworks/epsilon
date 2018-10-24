@@ -35,13 +35,15 @@ private:
 
 class HyperbolicSine final : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicSine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicSineNode>()) {}
   HyperbolicSine(const HyperbolicSineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  explicit HyperbolicSine(Expression operand) : HyperbolicSine() {
-    replaceChildAtIndexInPlace(0, operand);
+  static HyperbolicSine Builder(Expression child) { return HyperbolicSine(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+private:
+  explicit HyperbolicSine(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicSineNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
-  static const char * Name() { return "sinh"; }
-  static const int NumberOfChildren() { return 1; }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

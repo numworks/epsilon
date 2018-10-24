@@ -42,32 +42,36 @@ private:
 };
 
 class ConfidenceInterval : public Expression {
+  friend class SimplePredictionInterval;
 public:
-  ConfidenceInterval();
   ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
-  ConfidenceInterval(Expression child1, Expression child2) : ConfidenceInterval() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
-  static const char * Name() { return "confidence"; }
-  static const int NumberOfChildren() { return 2; }
+  static ConfidenceInterval Builder(Expression child0, Expression child1) { return ConfidenceInterval(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
+  ConfidenceInterval(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
   constexpr static int k_maxNValue = 300;
 };
 
 class SimplePredictionInterval final : public ConfidenceInterval {
 public:
-  SimplePredictionInterval() : ConfidenceInterval(static_cast<SimplePredictionIntervalNode *>(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>())) {}
   SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}
-  SimplePredictionInterval(Expression child1, Expression child2) : SimplePredictionInterval() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
+  static SimplePredictionInterval Builder(Expression child0, Expression child1) { return SimplePredictionInterval(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+private:
+  SimplePredictionInterval(Expression child0, Expression child1) : ConfidenceInterval(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
   }
-  static const char * Name() { return "prediction"; }
-  static const int NumberOfChildren() { return 2; }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

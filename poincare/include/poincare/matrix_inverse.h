@@ -33,15 +33,17 @@ private:
 
 class MatrixInverse final : public Expression {
 public:
-  MatrixInverse();
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
-  explicit MatrixInverse(Expression operand) : MatrixInverse() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "inverse"; }
-  static const int NumberOfChildren() { return 1; }
+  static MatrixInverse Builder(Expression child) { return MatrixInverse(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit MatrixInverse(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

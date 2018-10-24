@@ -48,8 +48,8 @@ class Opposite final : public Expression {
 public:
   Opposite();
   Opposite(const OppositeNode * n) : Expression(n) {}
-  explicit Opposite(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
-    replaceChildAtIndexInPlace(0, operand);
+  explicit Opposite(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

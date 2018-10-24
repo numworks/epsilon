@@ -37,18 +37,19 @@ private:
 
 class BinomialCoefficient final : public Expression {
 public:
-  BinomialCoefficient();
   BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
-  BinomialCoefficient(Expression child1, Expression child2) : BinomialCoefficient() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
-  static const char * Name() { return "binomial"; }
-  static const int NumberOfChildren() { return 2; }
+  static BinomialCoefficient Builder(Expression child0, Expression child1) { return BinomialCoefficient(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
+  BinomialCoefficient(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<BinomialCoefficientNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
   constexpr static int k_maxNValue = 300;
 };
 

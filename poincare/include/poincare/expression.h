@@ -186,6 +186,24 @@ public:
   double nextRoot(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
   Coordinate2D nextIntersection(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
 
+  /* This class is meant to contain data about named functions (e.g. sin, tan...)
+   * in one place: their name, their number of children and a pointer to a builder.
+   * It is used in particular by the parser. */
+  class FunctionHelper {
+  public:
+    constexpr FunctionHelper(const char * name, const int numberOfChildren, Expression (* const builder)(Expression)) :
+      m_name(name),
+      m_numberOfChildren(numberOfChildren),
+      m_untypedBuilder(builder) {}
+    const char * name() const { return m_name; }
+    const int numberOfChildren() const { return m_numberOfChildren; }
+    Expression build(Expression children) const { return (*m_untypedBuilder)(children); }
+  private:
+    const char * m_name;
+    const int m_numberOfChildren;
+    Expression (* const m_untypedBuilder)(Expression children);
+  };
+
 protected:
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
 
@@ -230,6 +248,7 @@ protected:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+
 private:
   /* Simplification */
   void defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);

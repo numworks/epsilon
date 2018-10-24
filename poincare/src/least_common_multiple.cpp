@@ -9,14 +9,14 @@
 
 namespace Poincare {
 
-int LeastCommonMultipleNode::numberOfChildren() const { return LeastCommonMultiple::NumberOfChildren(); }
+int LeastCommonMultipleNode::numberOfChildren() const { return LeastCommonMultiple::FunctionHelper()->numberOfChildren(); }
 
 Layout LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::Name());
+  return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::FunctionHelper()->name());
 }
 
 int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::FunctionHelper()->name());
 }
 
 Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -50,8 +50,6 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
   }
   return Complex<T>(product/a);
 }
-
-LeastCommonMultiple::LeastCommonMultiple() : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {}
 
 Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -99,5 +97,7 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   replaceWithInPlace(result);
   return result;
 }
+
+constexpr Expression::FunctionHelper LeastCommonMultiple::m_functionHelper = Expression::FunctionHelper("lcm", 2, &LeastCommonMultiple::UntypedBuilder);
 
 }

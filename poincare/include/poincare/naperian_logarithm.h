@@ -43,15 +43,17 @@ private:
 
 class NaperianLogarithm final : public Expression {
 public:
-  NaperianLogarithm();
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
-  explicit NaperianLogarithm(Expression operand) : NaperianLogarithm() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "ln"; }
-  static const int NumberOfChildren() { return 1; }
+  static NaperianLogarithm Builder(Expression child) { return NaperianLogarithm(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit NaperianLogarithm(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

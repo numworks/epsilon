@@ -48,8 +48,8 @@ class Function : public SymbolAbstract {
 public:
   explicit Function(const char * name);
   Function(const FunctionNode * n) : SymbolAbstract(n) {}
-  explicit Function(const char * name, Expression operand) : Function(name) {
-    replaceChildAtIndexInPlace(0, operand);
+  explicit Function(const char * name, Expression child) : Function(name) {
+    replaceChildAtIndexInPlace(0, child);
   }
 
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);

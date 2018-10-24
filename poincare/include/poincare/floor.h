@@ -38,15 +38,17 @@ private:
 
 class Floor final : public Expression {
 public:
-  Floor();
   Floor(const FloorNode * n) : Expression(n) {}
-  explicit Floor(Expression operand) : Floor() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "floor"; }
-  static const int NumberOfChildren() { return 1; }
+  static Floor Builder(Expression child) { return Floor(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit Floor(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

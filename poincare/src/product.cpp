@@ -16,7 +16,7 @@ Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLay
 }
 
 int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -39,6 +39,6 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   return MultiplicationNode::computeOnMatrices<T>(m, n);
 }
 
-Product::Product() : Expression(TreePool::sharedPool()->createTreeNode<ProductNode>()) {}
+constexpr Expression::FunctionHelper Product::m_functionHelper = Expression::FunctionHelper("product", 4, &Product::UntypedBuilder);
 
 }

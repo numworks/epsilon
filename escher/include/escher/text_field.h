@@ -79,6 +79,7 @@ protected:
   ContentView m_contentView;
 private:
   bool privateHandleEvent(Ion::Events::Event event);
+  bool privateHandleMoveEvent(Ion::Events::Event event);
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

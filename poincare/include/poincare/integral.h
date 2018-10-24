@@ -10,7 +10,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralNode); }
-  int numberOfChildren() const override { return 3; }
+  int numberOfChildren() const override { return 4; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Integral";
@@ -50,10 +50,11 @@ class Integral final : public Expression {
 public:
   Integral();
   Integral(const IntegralNode * n) : Expression(n) {}
-  Integral(Expression child1, Expression child2, Expression child3) : Integral() {
+  Integral(Expression child1, Expression child2, Expression child3, Expression child4) : Integral() {
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
     replaceChildAtIndexInPlace(2, child3);
+    replaceChildAtIndexInPlace(3, child4);
   }
 
   // Expression

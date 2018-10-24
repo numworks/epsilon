@@ -26,7 +26,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralLayoutNode); }
-  int numberOfChildren() const override { return 3; }
+  int numberOfChildren() const override { return 4; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "IntegralLayout";
@@ -42,23 +42,27 @@ private:
   constexpr static const KDFont * k_font = KDFont::LargeFont;
   constexpr static KDCoordinate k_boundHeightMargin = 8;
   constexpr static KDCoordinate k_boundWidthMargin = 5;
+  constexpr static KDCoordinate k_differentialWidthMargin = 3;
   constexpr static KDCoordinate k_integrandWidthMargin = 2;
   constexpr static KDCoordinate k_integrandHeigthMargin = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
-  LayoutNode * integrandLayout() { return childAtIndex(0); }
-  LayoutNode * lowerBoundLayout() { return childAtIndex(1); }
-  LayoutNode * upperBoundLayout() { return childAtIndex(2); }
+  // int(f(x), x, a, b)
+  LayoutNode * integrandLayout() { return childAtIndex(0); } // f(x)
+  LayoutNode * differentialLayout() { return childAtIndex(1); } // dx
+  LayoutNode * lowerBoundLayout() { return childAtIndex(2); } // a
+  LayoutNode * upperBoundLayout() { return childAtIndex(3); } // b
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
 class IntegralLayout final : public Layout {
 public:
-  IntegralLayout(Layout integrand, Layout lowerBound, Layout upperBound) :
+  IntegralLayout(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) :
     Layout(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, integrand);
-    replaceChildAtIndexInPlace(1, lowerBound);
-    replaceChildAtIndexInPlace(2, upperBound);
+    replaceChildAtIndexInPlace(1, differential);
+    replaceChildAtIndexInPlace(2, lowerBound);
+    replaceChildAtIndexInPlace(3, upperBound);
   }
 };
 

@@ -62,11 +62,14 @@ void StorageExpressionModel::tidy() {
 }
 
 Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char * c) {
-  // Compute the expression to store
-  Expression expressionToStore = Expression::parse(c);
-  if (!expressionToStore.isUninitialized()) {
+  Expression expressionToStore;
+  // if c = "", we want to reinit the Expression
+  if (c && *c != 0) {
+    /* We do not want to replace any symbols in the stored expression, so we don't
+     * need the current context. */
     GlobalContext context;
-    expressionToStore = expressionToStore.deepReduce(context, Preferences::AngleUnit::Degree, false);
+    // Compute the expression to store
+    expressionToStore = PoincareHelpers::ParseAndSimplify(c, context, false);
     if (!expressionToStore.isUninitialized()) {
       Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);

@@ -73,7 +73,8 @@ Storage::Record::Record(const char * basename, int basenameLength, const char * 
 Storage::Storage() :
   m_magicHeader(Magic),
   m_buffer(),
-  m_magicFooter(Magic)
+  m_magicFooter(Magic),
+  m_delegate(nullptr)
 {
   assert(m_magicHeader == Magic);
   assert(m_magicFooter == Magic);
@@ -87,6 +88,12 @@ size_t Storage::availableSize() {
 
 uint32_t Storage::checksum() {
   return Ion::crc32PaddedString(m_buffer, endBuffer()-m_buffer);
+}
+
+void Storage::notifyChangeToDelegate() const {
+  if (m_delegate != nullptr) {
+    m_delegate->storageDidChange(this);
+  }
 }
 
 Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
@@ -107,6 +114,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
   newRecord += overrideValueAtPosition(newRecord, data, size);
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
+  notifyChangeToDelegate();
   return Record::ErrorStatus::None;
 }
 
@@ -128,6 +136,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   newRecord += overrideValueAtPosition(newRecord, data, size);
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
+  notifyChangeToDelegate();
   return Record::ErrorStatus::None;
 }
 
@@ -201,14 +210,19 @@ Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, co
 void Storage::destroyRecordsWithExtension(const char * extension) {
   size_t extensionLength = strlen(extension);
   char * currentRecordStart = (char *)m_buffer;
+  bool didChange = false;
   while (currentRecordStart != nullptr && sizeOfRecordStarting(currentRecordStart) != 0) {
     const char * currentFullName = fullNameOfRecordStarting(currentRecordStart);
     if (FullNameHasExtension(currentFullName, extension, extensionLength)) {
       Record currentRecord(currentFullName);
       currentRecord.destroy();
+      didChange = true;
       continue;
     }
     currentRecordStart = *(RecordIterator(currentRecordStart).operator++());
+  }
+  if (didChange) {
+    notifyChangeToDelegate();
   }
 }
 
@@ -241,6 +255,7 @@ Storage::Record::ErrorStatus Storage::setFullNameOfRecord(const Record record, c
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideFullNameAtPosition(p+sizeof(record_size_t), fullName);
+      notifyChangeToDelegate();
       return Record::ErrorStatus::None;
     }
   }
@@ -263,6 +278,7 @@ Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record re
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideBaseNameWithExtensionAtPosition(p+sizeof(record_size_t), baseName, extension);
+      notifyChangeToDelegate();
       return Record::ErrorStatus::None;
     }
   }
@@ -295,6 +311,7 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
       record_size_t fullNameSize = strlen(fullName)+1;
       overrideSizeAtPosition(p, newRecordSize);
       overrideValueAtPosition(p+sizeof(record_size_t)+fullNameSize, data.buffer, data.size);
+      notifyChangeToDelegate();
       return Record::ErrorStatus::None;
     }
   }
@@ -310,6 +327,7 @@ void Storage::destroyRecord(Record record) {
     if (record == currentRecord) {
       record_size_t previousRecordSize = sizeOfRecordStarting(p);
       slideBuffer(p+previousRecordSize, -previousRecordSize);
+      notifyChangeToDelegate();
       return;
     }
   }

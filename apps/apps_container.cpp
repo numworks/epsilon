@@ -293,6 +293,12 @@ void AppsContainer::examDeactivatingPopUpIsDismissed() {
   }
 }
 
+void AppsContainer::storageDidChange(const Ion::Storage * storage) {
+  for (int i = 0; i < numberOfApps(); i++) {
+    appSnapshotAtIndex(i)->storageDidChange();
+  }
+}
+
 Window * AppsContainer::window() {
   return &m_window;
 }

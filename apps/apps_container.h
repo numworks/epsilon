@@ -27,7 +27,7 @@
 
 #include <ion/events.h>
 
-class AppsContainer : public Container, ExamPopUpControllerDelegate {
+class AppsContainer : public Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
 public:
   AppsContainer();
   static bool poincareCircuitBreaker();
@@ -55,6 +55,8 @@ public:
   void redrawWindow();
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
+  // Ion::StorageDelegate
+  void storageDidChange(const Ion::Storage * storage) override;
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:

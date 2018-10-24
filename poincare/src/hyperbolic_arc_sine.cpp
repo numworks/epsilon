@@ -7,10 +7,10 @@
 namespace Poincare {
 
 Layout HyperbolicArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::Name());
+  return LayoutHelper::Prefix(HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::FunctionHelper()->name());
 }
 int HyperbolicArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -29,5 +29,7 @@ Complex<T> HyperbolicArcSineNode::computeOnComplex(const std::complex<T> c, Pref
 
 template Complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcSineNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
+
+constexpr Expression::FunctionHelper HyperbolicArcSine::m_functionHelper = Expression::FunctionHelper("asinh", 1, &HyperbolicArcSine::UntypedBuilder);
 
 }

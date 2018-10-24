@@ -33,15 +33,17 @@ private:
 
 class MatrixTrace final : public Expression {
 public:
-  MatrixTrace();
   MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
-  explicit MatrixTrace(Expression operand) : MatrixTrace() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "trace"; }
-  static const int NumberOfChildren() { return 1; }
+  static MatrixTrace Builder(Expression child) { return MatrixTrace(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit MatrixTrace(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

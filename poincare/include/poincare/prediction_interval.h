@@ -36,17 +36,19 @@ private:
 
 class PredictionInterval final : public Expression {
 public:
-  PredictionInterval();
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
-  PredictionInterval(Expression child1, Expression child2) : PredictionInterval() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
-  static const char * Name() { return "prediction95"; }
-  static const int NumberOfChildren() { return 2; }
+  static PredictionInterval Builder(Expression child0, Expression child1) { return PredictionInterval(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  PredictionInterval(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

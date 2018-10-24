@@ -48,8 +48,8 @@ class Factorial final : public Expression {
 public:
   Factorial();
   Factorial(const FactorialNode * n) : Expression(n) {}
-  explicit Factorial(Expression operand) : Factorial() {
-    replaceChildAtIndexInPlace(0, operand);
+  explicit Factorial(Expression child) : Factorial() {
+    replaceChildAtIndexInPlace(0, child);
   }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

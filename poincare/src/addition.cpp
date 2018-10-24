@@ -38,11 +38,11 @@ bool AdditionNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, Addition::Name());
+  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+");
 }
 
 int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Addition::Name());
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "+");
 }
 
 // Simplication

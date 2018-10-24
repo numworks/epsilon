@@ -8,14 +8,14 @@
 
 namespace Poincare {
 
-int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::NumberOfChildren(); }
+int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::FunctionHelper()->numberOfChildren(); }
 
 Layout DivisionRemainderNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::Name());
+  return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::FunctionHelper()->name());
 }
 
 int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::FunctionHelper()->name());
 }
 
 Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -33,7 +33,6 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
   }
   return Complex<T>(std::round(f1-f2*std::floor(f1/f2)));
 }
-DivisionRemainder::DivisionRemainder() : Expression(TreePool::sharedPool()->createTreeNode<DivisionRemainderNode>()) {}
 
 Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -84,5 +83,7 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }
+
+constexpr Expression::FunctionHelper DivisionRemainder::m_functionHelper = Expression::FunctionHelper("rem", 2, &DivisionRemainder::UntypedBuilder);
 
 }

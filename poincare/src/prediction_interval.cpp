@@ -14,14 +14,14 @@ extern "C" {
 
 namespace Poincare {
 
-int PredictionIntervalNode::numberOfChildren() const { return PredictionInterval::NumberOfChildren(); }
+int PredictionIntervalNode::numberOfChildren() const { return PredictionInterval::FunctionHelper()->numberOfChildren(); }
 
 Layout PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::Name());
+  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::FunctionHelper()->name());
 }
 
 int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PredictionInterval::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PredictionInterval::FunctionHelper()->name());
 }
 
 
@@ -43,8 +43,6 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
   operands[1] = std::complex<T>(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
   return MatrixComplex<T>(operands, 1, 2);
 }
-
-PredictionInterval::PredictionInterval() : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {}
 
 Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -105,5 +103,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.reduceChildren(context, angleUnit, replaceSymbols);
   return matrix;
 }
+
+constexpr Expression::FunctionHelper PredictionInterval::m_functionHelper = Expression::FunctionHelper("prediction95", 2, &PredictionInterval::UntypedBuilder);
 
 }

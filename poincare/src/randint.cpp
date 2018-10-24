@@ -12,14 +12,14 @@ extern "C" {
 
 namespace Poincare {
 
-int RandintNode::numberOfChildren() const { return Randint::NumberOfChildren(); }
+int RandintNode::numberOfChildren() const { return Randint::FunctionHelper()->numberOfChildren(); }
 
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::Name());
+  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::FunctionHelper()->name());
 }
 
 int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::FunctionHelper()->name());
 }
 
 template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
@@ -35,6 +35,6 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   return Complex<T>(result);
 }
 
-Randint::Randint() : Expression(TreePool::sharedPool()->createTreeNode<RandintNode>()) {}
+constexpr Expression::FunctionHelper Randint::m_functionHelper = Expression::FunctionHelper("randint", 2, &Randint::UntypedBuilder);
 
 }

@@ -8,18 +8,18 @@
 
 namespace Poincare {
 
-int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::NumberOfChildren(); }
+int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::FunctionHelper()->numberOfChildren(); }
 
 Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixTranspose(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::Name());
+  return LayoutHelper::Prefix(MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::FunctionHelper()->name());
 }
 
 int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -34,8 +34,6 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
   assert(!transpose.isUninitialized());
   return transpose;
 }
-
-MatrixTranspose::MatrixTranspose() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTransposeNode>()) {}
 
 Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -62,5 +60,7 @@ Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleU
   return *this;
 #endif
 }
+
+constexpr Expression::FunctionHelper MatrixTranspose::m_functionHelper = Expression::FunctionHelper("transpose", 1, &MatrixTranspose::UntypedBuilder);
 
 }

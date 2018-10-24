@@ -48,19 +48,21 @@ private:
 
 class Integral final : public Expression {
 public:
-  Integral();
   Integral(const IntegralNode * n) : Expression(n) {}
-  Integral(Expression child1, Expression child2, Expression child3, Expression child4) : Integral() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-    replaceChildAtIndexInPlace(2, child3);
-    replaceChildAtIndexInPlace(3, child4);
-  }
-  static const char * Name() { return "int"; }
-  static const int NumberOfChildren() { return 4; }
+  static Integral Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return Integral(child0, child1, child2, child3); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  Integral(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+    replaceChildAtIndexInPlace(2, child2);
+    replaceChildAtIndexInPlace(3, child3);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

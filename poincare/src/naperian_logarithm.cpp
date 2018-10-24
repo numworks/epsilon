@@ -7,20 +7,18 @@
 
 namespace Poincare {
 
-int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::NumberOfChildren(); }
+int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::FunctionHelper()->numberOfChildren(); }
 
 Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::Name());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::FunctionHelper()->name());
 }
 int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::FunctionHelper()->name());
 }
 
 Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return NaperianLogarithm(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
-
-NaperianLogarithm::NaperianLogarithm() : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {}
 
 Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -34,9 +32,11 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Logarithm l = Logarithm(childAtIndex(0), Constant(Ion::Charset::Exponential));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant(Ion::Charset::Exponential));
   replaceWithInPlace(l);
   return l.shallowReduce(context, angleUnit);
 }
+
+constexpr Expression::FunctionHelper NaperianLogarithm::m_functionHelper = Expression::FunctionHelper("ln", 1, &NaperianLogarithm::UntypedBuilder);
 
 }

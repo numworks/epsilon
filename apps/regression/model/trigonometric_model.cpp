@@ -51,7 +51,7 @@ Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, 
     Addition(
       Multiplication(
         Number::DecimalNumber(a),
-        Sine(
+        Sine::Builder(
           Addition(
             Multiplication(
               Number::DecimalNumber(b),

@@ -11,14 +11,14 @@
 
 namespace Poincare {
 
-int ConfidenceIntervalNode::numberOfChildren() const { return ConfidenceInterval::NumberOfChildren(); }
+int ConfidenceIntervalNode::numberOfChildren() const { return ConfidenceInterval::FunctionHelper()->numberOfChildren(); }
 
 Layout ConfidenceIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::Name());
+  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::FunctionHelper()->name());
 }
 
 int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::FunctionHelper()->name());
 }
 
 Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -41,14 +41,12 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
 }
 
 Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(SimplePredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::Name());
+  return LayoutHelper::Prefix(SimplePredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::FunctionHelper()->name());
 }
 
 int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::FunctionHelper()->name());
 }
-
-ConfidenceInterval::ConfidenceInterval() : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {}
 
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -95,5 +93,9 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.reduceChildren(context, angleUnit, replaceSymbols);
   return matrix;
 }
+
+constexpr Expression::FunctionHelper ConfidenceInterval::m_functionHelper = Expression::FunctionHelper("confidence", 2, &ConfidenceInterval::UntypedBuilder);
+
+constexpr Expression::FunctionHelper SimplePredictionInterval::m_functionHelper = Expression::FunctionHelper("prediction", 2, &SimplePredictionInterval::UntypedBuilder);
 
 }

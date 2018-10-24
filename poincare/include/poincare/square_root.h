@@ -40,18 +40,18 @@ private:
 
 class SquareRoot final : public Expression {
 public:
-  SquareRoot();
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
-  explicit SquareRoot(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() {
-    constexpr static char k_name[2] = {Ion::Charset::Root, 0};
-    return k_name;
-  }
-  static const int NumberOfChildren() { return 1; }
+  static SquareRoot Builder(Expression child) { return SquareRoot(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit SquareRoot(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const char k_name[2];
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

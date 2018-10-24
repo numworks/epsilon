@@ -40,15 +40,17 @@ private:
 
 class ImaginaryPart final : public Expression {
 public:
-  ImaginaryPart();
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
-  explicit ImaginaryPart(Expression operand) : ImaginaryPart() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  static const char * Name() { return "im"; }
-  static const int NumberOfChildren() { return 1; }
+  static ImaginaryPart Builder(Expression child) { return ImaginaryPart(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  explicit ImaginaryPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ImaginaryPartNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

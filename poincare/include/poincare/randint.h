@@ -36,10 +36,16 @@ private:
 class Randint final : public Expression {
 friend class RandintNode;
 public:
-  Randint();
   Randint(const RandintNode * n) : Expression(n) {}
-  static const char * Name() { return "randint"; }
-  static const int NumberOfChildren() { return 2; }
+  static Randint Builder(Expression child0, Expression child1) { return Randint(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+private:
+  Randint(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<RandintNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

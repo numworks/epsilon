@@ -11,14 +11,14 @@
 
 namespace Poincare {
 
-int CeilingNode::numberOfChildren() const { return Ceiling::NumberOfChildren(); }
+int CeilingNode::numberOfChildren() const { return Ceiling::FunctionHelper()->numberOfChildren(); }
 
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return CeilingLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::Name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::FunctionHelper()->name());
 }
 
 template<typename T>
@@ -32,8 +32,6 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::A
 Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return Ceiling(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
-
-Ceiling::Ceiling() : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {}
 
 Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   {
@@ -82,5 +80,7 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }
+
+constexpr Expression::FunctionHelper Ceiling::m_functionHelper = Expression::FunctionHelper("ceil", 1, &Ceiling::UntypedBuilder);
 
 }

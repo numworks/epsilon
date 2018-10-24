@@ -45,17 +45,19 @@ private:
 
 class Derivative final : public Expression {
 public:
-  Derivative();
   Derivative(const DerivativeNode * n) : Expression(n) {}
-  Derivative(Expression child1, Expression child2, Expression child3) : Derivative() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-    replaceChildAtIndexInPlace(2, child3);
-  }
-  static const char * Name() { return "diff"; }
-  static const int NumberOfChildren() { return 3; }
+  static Derivative Builder(Expression child0, Expression child1, Expression child2) { return Derivative(child0, child1, child2); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2)); }
+  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+private:
+  Derivative(Expression child0, Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+    replaceChildAtIndexInPlace(2, child2);
+  }
+  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

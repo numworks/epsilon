@@ -124,7 +124,7 @@ bool PowerNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Power::Name());
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
 }
 
 
@@ -415,9 +415,9 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     if (angleUnit == Preferences::AngleUnit::Degree) {
       m.replaceChildAtIndexInPlace(m.numberOfChildren()-1, Rational(180));
     }
-    Expression cos = Cosine(m);
+    Expression cos = Cosine::Builder(m);
     m = m.shallowReduce(context, angleUnit);
-    Expression sin = Sine(m.clone());
+    Expression sin = Sine::Builder(m.clone());
     Expression complexPart = Multiplication(sin, i);
     sin.shallowReduce(context, angleUnit);
     Expression a = Addition(cos, complexPart);
@@ -632,11 +632,11 @@ Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angl
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne()) {
     Integer index = childAtIndex(1).convert<Rational>().integerDenominator();
     if (index.isEqualTo(Integer(2))) {
-      Expression result = SquareRoot(childAtIndex(0));
+      Expression result = SquareRoot::Builder(childAtIndex(0));
       replaceWithInPlace(result);
       return result;
     }
-    Expression result = NthRoot(childAtIndex(0), Rational(index));
+    Expression result = NthRoot::Builder(childAtIndex(0), Rational(index));
     replaceWithInPlace(result);
     return result;
   }

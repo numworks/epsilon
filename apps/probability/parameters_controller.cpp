@@ -89,6 +89,11 @@ const char * ParametersController::title() {
 
 bool ParametersController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
+    for (int i = 0; i < k_maxNumberOfCells; i++) {
+      if (m_menuListCell[i].textField()->isEditing()) {
+        return false;
+      }
+    }
     stackController()->pop();
     return true;
   }

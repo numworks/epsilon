@@ -37,6 +37,10 @@ void App::Snapshot::reset() {
   m_graphRange.setDefault();
 }
 
+void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
+  m_functionStore.storageDidChangeForRecord(record);
+}
+
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;

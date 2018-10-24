@@ -90,9 +90,9 @@ uint32_t Storage::checksum() {
   return Ion::crc32PaddedString(m_buffer, endBuffer()-m_buffer);
 }
 
-void Storage::notifyChangeToDelegate() const {
+void Storage::notifyChangeToDelegate(const Record record) const {
   if (m_delegate != nullptr) {
-    m_delegate->storageDidChange(this);
+    m_delegate->storageDidChangeForRecord(record);
   }
 }
 
@@ -105,7 +105,8 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
     return Record::ErrorStatus::NameTaken;
   }
   // Find the end of data
-  char * newRecord = endBuffer();
+  char * newRecordAddress = endBuffer();
+  char * newRecord = newRecordAddress;
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
   // Fill name
@@ -114,7 +115,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
   newRecord += overrideValueAtPosition(newRecord, data, size);
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
-  notifyChangeToDelegate();
+  notifyChangeToDelegate(Record(fullName));
   return Record::ErrorStatus::None;
 }
 
@@ -127,7 +128,8 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
     return Record::ErrorStatus::NameTaken;
   }
   // Find the end of data
-  char * newRecord = endBuffer();
+  char * newRecordAddress = endBuffer();
+  char * newRecord = newRecordAddress;
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
   // Fill name
@@ -136,7 +138,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * bas
   newRecord += overrideValueAtPosition(newRecord, data, size);
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
-  notifyChangeToDelegate();
+  notifyChangeToDelegate(Record(fullNameOfRecordStarting(newRecordAddress)));
   return Record::ErrorStatus::None;
 }
 
@@ -255,7 +257,7 @@ Storage::Record::ErrorStatus Storage::setFullNameOfRecord(const Record record, c
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideFullNameAtPosition(p+sizeof(record_size_t), fullName);
-      notifyChangeToDelegate();
+      notifyChangeToDelegate(record);
       return Record::ErrorStatus::None;
     }
   }
@@ -278,7 +280,7 @@ Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record re
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideBaseNameWithExtensionAtPosition(p+sizeof(record_size_t), baseName, extension);
-      notifyChangeToDelegate();
+      notifyChangeToDelegate(record);
       return Record::ErrorStatus::None;
     }
   }
@@ -311,7 +313,7 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
       record_size_t fullNameSize = strlen(fullName)+1;
       overrideSizeAtPosition(p, newRecordSize);
       overrideValueAtPosition(p+sizeof(record_size_t)+fullNameSize, data.buffer, data.size);
-      notifyChangeToDelegate();
+      notifyChangeToDelegate(record);
       return Record::ErrorStatus::None;
     }
   }

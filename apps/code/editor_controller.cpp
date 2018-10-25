@@ -31,18 +31,12 @@ void EditorController::setScript(Script script) {
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {
-    size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
-    Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
-    if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
-      assert(false); // This should not happen as we set the text area according to the available space in the Kallax
-    } else {
-      stackController()->pop();
-    }
+    saveScript();
+    stackController()->pop();
     return event != Ion::Events::Home;
   }
   return false;
 }
-
 
 void EditorController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_editorView);
@@ -58,6 +52,11 @@ void EditorController::viewDidDisappear() {
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    // We save script before displaying the Variable box to add new functions or variables
+    saveScript();
+    return false;
+  }
   if (static_cast<App *>(textArea->app())->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
@@ -140,6 +139,14 @@ InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() 
 
 StackViewController * EditorController::stackController() {
   return static_cast<StackViewController *>(parentResponder());
+}
+
+void EditorController::saveScript() {
+  size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
+  Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
+  if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
+    assert(false); // This should not happen as we set the text area according to the available space in the Kallax
+  }
 }
 
 }

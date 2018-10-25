@@ -245,11 +245,6 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    if (!textField->isEditing()) {
-      textField->setEditing(true);
-    }
-  }
   return static_cast<App *>(textField->app())->textInputDidReceiveEvent(textField, event);
 }
 

@@ -52,6 +52,10 @@ bool ConsoleController::loadPythonEnvironment() {
   m_pythonDelegate->initPythonWithUser(this);
   MicroPython::registerScriptProvider(m_scriptStore);
   m_importScriptsWhenViewAppears = m_autoImportScripts;
+  /* We load functions and variables names in the variable box before running
+   * any other python code to avoid failling to load functions and variables
+   * due to memory exhaustion. */
+  static_cast<App *>(app())->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
@@ -105,10 +109,6 @@ const char * ConsoleController::inputText(const char * prompt) {
 
 void ConsoleController::viewWillAppear() {
   loadPythonEnvironment();
-  /* We load functions and variables names in the variable box before running
-   * any other python code to avoid failling to load functions and variables
-   * due to memory exhaustion. */
-  static_cast<App *>(app())->variableBoxController()->loadFunctionsAndVariables();
   m_sandboxIsDisplayed = false;
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;

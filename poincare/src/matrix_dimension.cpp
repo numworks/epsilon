@@ -7,18 +7,20 @@
 
 namespace Poincare {
 
-int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
+
+int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixDimension(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, MatrixDimension::FunctionHelper()->name());
+  return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
 }
 
 int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixDimension::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
 }
 
 template<typename T>
@@ -72,7 +74,5 @@ Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleU
   return *this;
 #endif
 }
-
-constexpr Expression::FunctionHelper MatrixDimension::m_functionHelper = Expression::FunctionHelper("dim", 1, &MatrixDimension::UntypedBuilder);
 
 }

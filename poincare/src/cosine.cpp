@@ -7,7 +7,9 @@
 
 namespace Poincare {
 
-int CosineNode::numberOfChildren() const { return Cosine::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Cosine::s_functionHelper;
+
+int CosineNode::numberOfChildren() const { return Cosine::s_functionHelper.numberOfChildren(); }
 
 float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
@@ -21,11 +23,11 @@ Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::An
 }
 
 Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, Cosine::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
 int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
 Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -47,7 +49,5 @@ Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angle
 #endif
   return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
 }
-
-constexpr Expression::FunctionHelper Cosine::m_functionHelper = Expression::FunctionHelper("cos", 1, &Cosine::UntypedBuilder);
 
 }

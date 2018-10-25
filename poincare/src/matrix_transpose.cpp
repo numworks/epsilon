@@ -8,18 +8,20 @@
 
 namespace Poincare {
 
-int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
+
+int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixTranspose(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::FunctionHelper()->name());
+  return LayoutHelper::Prefix(MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::s_functionHelper.name());
 }
 
 int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::s_functionHelper.name());
 }
 
 template<typename T>
@@ -60,7 +62,5 @@ Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleU
   return *this;
 #endif
 }
-
-constexpr Expression::FunctionHelper MatrixTranspose::m_functionHelper = Expression::FunctionHelper("transpose", 1, &MatrixTranspose::UntypedBuilder);
 
 }

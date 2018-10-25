@@ -11,12 +11,14 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Product::s_functionHelper;
+
 Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
   return ProductLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
 }
 
 int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::s_functionHelper.name());
 }
 
 template<typename T>
@@ -38,7 +40,5 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
   return MultiplicationNode::computeOnMatrices<T>(m, n);
 }
-
-constexpr Expression::FunctionHelper Product::m_functionHelper = Expression::FunctionHelper("product", 4, &Product::UntypedBuilder);
 
 }

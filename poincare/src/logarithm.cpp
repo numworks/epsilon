@@ -20,15 +20,19 @@
 
 namespace Poincare {
 
-template<>
-int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Logarithm::s_functionHelper;
+
+constexpr Expression::FunctionHelper CommonLogarithm::s_functionHelper;
 
 template<>
-int LogarithmNode<2>::numberOfChildren() const { return Logarithm::FunctionHelper()->numberOfChildren(); }
+int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::s_functionHelper.numberOfChildren(); }
+
+template<>
+int LogarithmNode<2>::numberOfChildren() const { return Logarithm::s_functionHelper.numberOfChildren(); }
 
 template<>
 Layout LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::FunctionHelper()->name());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::s_functionHelper.name());
 }
 
 template<>
@@ -40,7 +44,7 @@ Layout LogarithmNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMo
 
 template<int T>
 int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, T == 1 ? CommonLogarithm::FunctionHelper()->name() : Logarithm::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, T == 1 ? CommonLogarithm::s_functionHelper.name() : Logarithm::s_functionHelper.name());
 }
 
 template<>
@@ -317,10 +321,6 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper Logarithm::m_functionHelper = Expression::FunctionHelper("log", 2, &Logarithm::UntypedBuilder);
-
-constexpr Expression::FunctionHelper CommonLogarithm::m_functionHelper = Expression::FunctionHelper("log", 1, &CommonLogarithm::UntypedBuilder);
 
 template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;

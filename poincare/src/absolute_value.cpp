@@ -8,7 +8,9 @@
 
 namespace Poincare {
 
-int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
+
+int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
 Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
@@ -19,7 +21,7 @@ Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::s_functionHelper.name());
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -55,7 +57,5 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper AbsoluteValue::m_functionHelper = Expression::FunctionHelper("abs", 1, &AbsoluteValue::UntypedBuilder);
 
 }

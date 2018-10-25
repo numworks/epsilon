@@ -10,18 +10,20 @@
 
 namespace Poincare {
 
-int TangentNode::numberOfChildren() const { return Tangent::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Tangent::s_functionHelper;
+
+int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
 
 float TangentNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
 
 Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
 }
 
 int TangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Tangent::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
 }
 
 template<typename T>
@@ -58,7 +60,5 @@ Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angl
   }
   return newExpression;
 }
-
-constexpr Expression::FunctionHelper Tangent::m_functionHelper = Expression::FunctionHelper("tan", 1, &Tangent::UntypedBuilder);
 
 }

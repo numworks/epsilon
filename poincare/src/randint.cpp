@@ -12,14 +12,16 @@ extern "C" {
 
 namespace Poincare {
 
-int RandintNode::numberOfChildren() const { return Randint::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Randint::s_functionHelper;
+
+int RandintNode::numberOfChildren() const { return Randint::s_functionHelper.numberOfChildren(); }
 
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
 int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
 template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
@@ -34,7 +36,5 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);
   return Complex<T>(result);
 }
-
-constexpr Expression::FunctionHelper Randint::m_functionHelper = Expression::FunctionHelper("randint", 2, &Randint::UntypedBuilder);
 
 }

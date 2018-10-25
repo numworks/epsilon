@@ -7,14 +7,16 @@
 
 namespace Poincare {
 
-int ImaginaryPartNode::numberOfChildren() const { return ImaginaryPart::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper ImaginaryPart::s_functionHelper;
+
+int ImaginaryPartNode::numberOfChildren() const { return ImaginaryPart::s_functionHelper.numberOfChildren(); }
 
 Layout ImaginaryPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::FunctionHelper()->name());
+  return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
 int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
 Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -41,7 +43,5 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper ImaginaryPart::m_functionHelper = Expression::FunctionHelper("im", 1, &ImaginaryPart::UntypedBuilder);
 
 }

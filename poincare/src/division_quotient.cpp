@@ -8,17 +8,19 @@
 
 namespace Poincare {
 
-int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
+
+int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
 Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return DivisionQuotient(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits, DivisionQuotient::FunctionHelper()->name());
+  return LayoutHelper::Prefix(DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits, DivisionQuotient::s_functionHelper.name());
 }
 int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionQuotient::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionQuotient::s_functionHelper.name());
 }
 
 template<typename T>
@@ -84,7 +86,5 @@ Expression DivisionQuotient::shallowReduce(Context & context, Preferences::Angle
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }
-
-constexpr Expression::FunctionHelper DivisionQuotient::m_functionHelper = Expression::FunctionHelper("quo", 2, &DivisionQuotient::UntypedBuilder);
 
 }

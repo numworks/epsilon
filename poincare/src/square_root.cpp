@@ -10,14 +10,16 @@
 
 namespace Poincare {
 
-int SquareRootNode::numberOfChildren() const { return SquareRoot::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper SquareRoot::s_functionHelper;
+
+int SquareRootNode::numberOfChildren() const { return SquareRoot::s_functionHelper.numberOfChildren(); }
 
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name());
 }
 
 template<typename T>
@@ -53,6 +55,4 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit a
   return p.shallowReduce(context, angleUnit);
 }
 
-constexpr char SquareRoot::k_name[2] = {Ion::Charset::Root, 0};
-constexpr Expression::FunctionHelper SquareRoot::m_functionHelper = Expression::FunctionHelper(SquareRoot::k_name, 1, &SquareRoot::UntypedBuilder);
 }

@@ -7,14 +7,16 @@
 
 namespace Poincare {
 
-int RealPartNode::numberOfChildren() const { return RealPart::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper RealPart::s_functionHelper;
+
+int RealPartNode::numberOfChildren() const { return RealPart::s_functionHelper.numberOfChildren(); }
 
 Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::FunctionHelper()->name());
+  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
 int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
 Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -40,7 +42,5 @@ Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper RealPart::m_functionHelper = Expression::FunctionHelper("re", 1, &RealPart::UntypedBuilder);
 
 }

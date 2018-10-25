@@ -7,14 +7,16 @@
 
 namespace Poincare {
 
-int ConjugateNode::numberOfChildren() const { return Conjugate::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
+
+int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
 
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
 Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -45,7 +47,5 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit an
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper Conjugate::m_functionHelper = Expression::FunctionHelper("conj", 1, &Conjugate::UntypedBuilder);
 
 }

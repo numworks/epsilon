@@ -11,14 +11,16 @@
 
 namespace Poincare {
 
-int FloorNode::numberOfChildren() const { return Floor::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Floor::s_functionHelper;
+
+int FloorNode::numberOfChildren() const { return Floor::s_functionHelper.numberOfChildren(); }
 
 Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.name());
 }
 
 template<typename T>
@@ -71,7 +73,5 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   replaceWithInPlace(result);
   return result;
 }
-
-constexpr Expression::FunctionHelper Floor::m_functionHelper = Expression::FunctionHelper("floor", 1, &Floor::UntypedBuilder);
 
 }

@@ -41,14 +41,13 @@ public:
   Floor(const FloorNode * n) : Expression(n) {}
   static Floor Builder(Expression child) { return Floor(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
   explicit Floor(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

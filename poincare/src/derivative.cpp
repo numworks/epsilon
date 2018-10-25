@@ -10,7 +10,9 @@
 
 namespace Poincare {
 
-int DerivativeNode::numberOfChildren() const { return Derivative::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Derivative::s_functionHelper;
+
+int DerivativeNode::numberOfChildren() const { return Derivative::s_functionHelper.numberOfChildren(); }
 
 int DerivativeNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
@@ -25,11 +27,11 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
 }
 
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::FunctionHelper()->name());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
 int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
 Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -145,7 +147,5 @@ Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit a
   // TODO: to be implemented diff(+) -> +diff() etc
   return *this;
 }
-
-constexpr Expression::FunctionHelper Derivative::m_functionHelper = Expression::FunctionHelper("diff", 3, &Derivative::UntypedBuilder);
 
 }

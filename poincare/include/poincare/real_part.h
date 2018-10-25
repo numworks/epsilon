@@ -43,14 +43,13 @@ public:
   RealPart(const RealPartNode * n) : Expression(n) {}
   static RealPart Builder(Expression child) { return RealPart(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
   explicit RealPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

@@ -10,7 +10,9 @@
 
 namespace Poincare {
 
-int IntegralNode::numberOfChildren() const { return Integral::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Integral::s_functionHelper;
+
+int IntegralNode::numberOfChildren() const { return Integral::s_functionHelper.numberOfChildren(); }
 
 int IntegralNode::polynomialDegree(Context & context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
@@ -33,7 +35,7 @@ Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name());
 }
 
 Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -206,7 +208,5 @@ Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit ang
 #endif
   return *this;
 }
-
-constexpr Expression::FunctionHelper Integral::m_functionHelper = Expression::FunctionHelper("int", 4, &Integral::UntypedBuilder);
 
 }

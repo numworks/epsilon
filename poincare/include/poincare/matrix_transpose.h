@@ -36,14 +36,13 @@ public:
   MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
   static MatrixTranspose Builder(Expression child) { return MatrixTranspose(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
   explicit MatrixTranspose(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixTransposeNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

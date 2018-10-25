@@ -38,12 +38,11 @@ public:
   HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
   static HyperbolicArcTangent Builder(Expression child) { return HyperbolicArcTangent(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atanh", 1, &UntypedBuilder);
 private:
   explicit HyperbolicArcTangent(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

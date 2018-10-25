@@ -9,18 +9,20 @@
 
 namespace Poincare {
 
-int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
+
+int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return MatrixTrace(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
 Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixTrace(this), floatDisplayMode, numberOfSignificantDigits, MatrixTrace::FunctionHelper()->name());
+  return LayoutHelper::Prefix(MatrixTrace(this), floatDisplayMode, numberOfSignificantDigits, MatrixTrace::s_functionHelper.name());
 }
 
 int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixTrace::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixTrace::s_functionHelper.name());
 }
 
 template<typename T>
@@ -65,7 +67,5 @@ Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit 
   return *this;
 #endif
 }
-
-constexpr Expression::FunctionHelper MatrixTrace::m_functionHelper = Expression::FunctionHelper("trace", 1, &MatrixTrace::UntypedBuilder);
 
 }

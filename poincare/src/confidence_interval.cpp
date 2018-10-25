@@ -11,14 +11,18 @@
 
 namespace Poincare {
 
-int ConfidenceIntervalNode::numberOfChildren() const { return ConfidenceInterval::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper ConfidenceInterval::s_functionHelper;
+
+constexpr Expression::FunctionHelper SimplePredictionInterval::s_functionHelper;
+
+int ConfidenceIntervalNode::numberOfChildren() const { return ConfidenceInterval::s_functionHelper.numberOfChildren(); }
 
 Layout ConfidenceIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::FunctionHelper()->name());
+  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
 int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
 Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -41,11 +45,11 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
 }
 
 Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(SimplePredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::FunctionHelper()->name());
+  return LayoutHelper::Prefix(SimplePredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
 int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -93,9 +97,5 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.reduceChildren(context, angleUnit, replaceSymbols);
   return matrix;
 }
-
-constexpr Expression::FunctionHelper ConfidenceInterval::m_functionHelper = Expression::FunctionHelper("confidence", 2, &ConfidenceInterval::UntypedBuilder);
-
-constexpr Expression::FunctionHelper SimplePredictionInterval::m_functionHelper = Expression::FunctionHelper("prediction", 2, &SimplePredictionInterval::UntypedBuilder);
 
 }

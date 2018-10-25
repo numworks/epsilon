@@ -8,14 +8,16 @@
 
 namespace Poincare {
 
-int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper DivisionRemainder::s_functionHelper;
+
+int DivisionRemainderNode::numberOfChildren() const { return DivisionRemainder::s_functionHelper.numberOfChildren(); }
 
 Layout DivisionRemainderNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::FunctionHelper()->name());
+  return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
 }
 
 int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
 }
 
 Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -83,7 +85,5 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }
-
-constexpr Expression::FunctionHelper DivisionRemainder::m_functionHelper = Expression::FunctionHelper("rem", 2, &DivisionRemainder::UntypedBuilder);
 
 }

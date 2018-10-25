@@ -43,7 +43,7 @@ public:
   ArcCosine(const ArcCosineNode * n) : Expression(n) {}
   static ArcCosine Builder(Expression child) { return ArcCosine(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acos", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
@@ -51,7 +51,6 @@ private:
     replaceChildAtIndexInPlace(0, child);
   }
 
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

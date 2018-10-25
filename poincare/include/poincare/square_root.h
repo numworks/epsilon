@@ -43,7 +43,8 @@ public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   static SquareRoot Builder(Expression child) { return SquareRoot(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static_assert('\x91' == Ion::Charset::Root, "Charset error");
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
@@ -51,7 +52,6 @@ private:
     replaceChildAtIndexInPlace(0, child);
   }
   static const char k_name[2];
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

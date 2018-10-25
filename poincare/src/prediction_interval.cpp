@@ -14,14 +14,16 @@ extern "C" {
 
 namespace Poincare {
 
-int PredictionIntervalNode::numberOfChildren() const { return PredictionInterval::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper PredictionInterval::s_functionHelper;
+
+int PredictionIntervalNode::numberOfChildren() const { return PredictionInterval::s_functionHelper.numberOfChildren(); }
 
 Layout PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::FunctionHelper()->name());
+  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::s_functionHelper.name());
 }
 
 int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PredictionInterval::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PredictionInterval::s_functionHelper.name());
 }
 
 
@@ -103,7 +105,5 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.reduceChildren(context, angleUnit, replaceSymbols);
   return matrix;
 }
-
-constexpr Expression::FunctionHelper PredictionInterval::m_functionHelper = Expression::FunctionHelper("prediction95", 2, &PredictionInterval::UntypedBuilder);
 
 }

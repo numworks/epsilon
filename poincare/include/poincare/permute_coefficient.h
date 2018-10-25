@@ -39,7 +39,7 @@ public:
   PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}
   static PermuteCoefficient Builder(Expression child0, Expression child1) { return PermuteCoefficient(child0, child1); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
@@ -48,7 +48,6 @@ private:
     replaceChildAtIndexInPlace(0, child0);
     replaceChildAtIndexInPlace(1, child1);
   }
-  static const Expression::FunctionHelper m_functionHelper;
   constexpr static int k_maxNValue = 100;
 };
 

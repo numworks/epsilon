@@ -41,14 +41,13 @@ public:
   Conjugate(const ConjugateNode * n) : Expression(n) {}
   static Conjugate Builder(Expression child) { return Conjugate(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilder);;
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
   explicit Conjugate(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

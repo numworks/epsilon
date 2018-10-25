@@ -47,32 +47,6 @@ static bool shouldAddObject(const char * name, int maxLength) {
   return true;
 }
 
-void VariableBoxController::viewWillAppear() {
-  m_scriptNodesCount = 0;
-  m_scriptStore->scanScriptsForFunctionsAndVariables(
-    this,
-    [](void * context, const char * functionName, int scriptIndex) {
-      if (!shouldAddObject(functionName, k_maxScriptObjectNameSize)) {
-        return;
-      }
-      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
-      cvc->addFunctionAtIndex(functionName, scriptIndex);},
-    [](void * context, const char * variableName, int scriptIndex) {
-      if (!shouldAddObject(variableName, k_maxScriptObjectNameSize)) {
-        return;
-      }
-      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
-      cvc->addVariableAtIndex(variableName, scriptIndex);});
-  NestedMenuController::viewWillAppear();
-}
-
-void VariableBoxController::viewDidDisappear() {
-  for (int i = 0; i < k_maxScriptNodesCount; i++) {
-    m_scriptNodes[i] = ScriptNode();
-  }
-  NestedMenuController::viewDidDisappear();
-}
-
 int VariableBoxController::numberOfRows() {
   return m_scriptNodesCount < k_maxScriptNodesCount ? m_scriptNodesCount : k_maxScriptNodesCount;
 }
@@ -89,6 +63,24 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
 
 int VariableBoxController::typeAtLocation(int i, int j) {
   return 0;
+}
+
+void VariableBoxController::loadFunctionsAndVariables() {
+  m_scriptNodesCount = 0;
+  m_scriptStore->scanScriptsForFunctionsAndVariables(
+    this,
+    [](void * context, const char * functionName, int scriptIndex) {
+      if (!shouldAddObject(functionName, k_maxScriptObjectNameSize)) {
+        return;
+      }
+      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
+      cvc->addFunctionAtIndex(functionName, scriptIndex);},
+    [](void * context, const char * variableName, int scriptIndex) {
+      if (!shouldAddObject(variableName, k_maxScriptObjectNameSize)) {
+        return;
+      }
+      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
+      cvc->addVariableAtIndex(variableName, scriptIndex);});
 }
 
 HighlightCell * VariableBoxController::leafCellAtIndex(int index) {

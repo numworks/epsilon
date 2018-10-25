@@ -1,10 +1,11 @@
 #include "editor_controller.h"
 #include "menu_controller.h"
 #include "script_parameter_controller.h"
-#include "variable_box_controller.h"
-#include <apps/code/app.h>
+#include "app.h"
 #include <escher/metric.h>
 #include <ion.h>
+
+using namespace Shared;
 
 namespace Code {
 
@@ -14,7 +15,7 @@ EditorController::EditorController(MenuController * menuController, App * python
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {
-  m_editorView.setTextAreaDelegates(pythonDelegate, this);
+  m_editorView.setTextAreaDelegates(this, this);
 }
 
 void EditorController::setScript(Script script) {
@@ -125,6 +126,16 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     }
   }
   return false;
+}
+
+VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = static_cast<App *>(app())->variableBoxController();
+  varBox->loadFunctionsAndVariables();
+  return varBox;
+}
+
+InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() {
+  return static_cast<App *>(app());
 }
 
 StackViewController * EditorController::stackController() {

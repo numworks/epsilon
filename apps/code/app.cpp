@@ -113,7 +113,7 @@ Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
   return &m_toolbox;
 }
 
-NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+VariableBoxController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
   return &m_variableBoxController;
 }
 

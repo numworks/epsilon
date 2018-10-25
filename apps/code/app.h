@@ -46,14 +46,19 @@ public:
 
   /* InputEventHandlerDelegate */
   Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;
-  NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
+  VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
+  /* TextInputDelegate */
   bool textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event);
+
+  /* Code::App */
   // Python delegate
   bool pythonIsInited() { return m_pythonUser != nullptr; }
   bool isPythonUser(const void * pythonUser) { return m_pythonUser == pythonUser; }
   void initPythonWithUser(const void * pythonUser);
   void deinitPython();
+
+  VariableBoxController * variableBoxController() { return &m_variableBoxController; }
 private:
   /* Python delegate:
    * MicroPython requires a heap. To avoid dynamic allocation, we keep a working

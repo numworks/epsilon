@@ -2,12 +2,13 @@
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
 #include <escher.h>
-#include "menu_controller.h"
 #include "script_node.h"
 #include "script_node_cell.h"
 #include "script_store.h"
 
 namespace Code {
+
+class App;
 
 class VariableBoxController : public NestedMenuController {
 public:
@@ -17,15 +18,14 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
-  /* View Controller */
-  void viewWillAppear() override;
-  void viewDidDisappear() override;
-
   /* ListViewDataSource */
   int numberOfRows() override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
+
+  /* VariableBoxController */
+  void loadFunctionsAndVariables();
 private:
   constexpr static int k_maxScriptObjectNameSize = 100;
   constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40

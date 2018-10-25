@@ -31,7 +31,7 @@ public:
   void tidy();
   void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
 protected:
-  constexpr static int k_maxNumberOfMemoizedModels = 5;
+  constexpr static int k_maxNumberOfMemoizedModels = 10;
   typedef bool (*ModelTest)(StorageExpressionModel * model);
   int numberOfModelsSatisfyingTest(ModelTest test) const;
   Ion::Storage::Record recordStatifyingTestAtIndex(int i, ModelTest test) const;

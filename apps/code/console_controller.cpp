@@ -121,19 +121,7 @@ void ConsoleController::didBecomeFirstResponder() {
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up && inputRunLoopActive()) {
-    askInputRunLoopTermination();
-    // We need to return true here because we want to actually exit from the
-    // input run loop, which requires ending a dispatchEvent cycle.
-    return true;
-  }
-  if (event == Ion::Events::Up) {
-    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
-      m_editCell.setEditing(false);
-      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
-      return true;
-    }
-  } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
       m_editCell.setEditing(true);
@@ -245,6 +233,19 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (event == Ion::Events::Up && inputRunLoopActive()) {
+    askInputRunLoopTermination();
+    // We need to return true here because we want to actually exit from the
+    // input run loop, which requires ending a dispatchEvent cycle.
+    return true;
+  }
+  if (event == Ion::Events::Up) {
+    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
+      m_editCell.setEditing(false);
+      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
+      return true;
+    }
+  }
   return static_cast<App *>(textField->app())->textInputDidReceiveEvent(textField, event);
 }
 

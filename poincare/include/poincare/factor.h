@@ -39,7 +39,7 @@ public:
   Factor(const FactorNode * n) : Expression(n) {}
   static Factor Builder(Expression child) { return Factor(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilder);
 
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const;
@@ -47,7 +47,6 @@ private:
   explicit Factor(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FactorNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

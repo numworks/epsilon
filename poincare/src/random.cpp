@@ -8,18 +8,20 @@
 
 namespace Poincare {
 
-int RandomNode::numberOfChildren() const { return Random::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Random::s_functionHelper;
+
+int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
 Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Random(this).setSign(s, context, angleUnit);
 }
 
 Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, Random::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.name());
 }
 
 int RandomNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Random::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.name());
 }
 
 template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
@@ -49,7 +51,5 @@ template Evaluation<float> RandomNode::templateApproximate<float>() const;
 template Evaluation<double> RandomNode::templateApproximate<double>() const;
 template float Random::random();
 template double Random::random();
-
-constexpr Expression::FunctionHelper Random::m_functionHelper = Expression::FunctionHelper("random", 0, &Random::UntypedBuilder);
 
 }

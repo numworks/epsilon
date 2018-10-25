@@ -11,14 +11,16 @@ extern "C" {
 
 namespace Poincare {
 
-int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper PermuteCoefficient::s_functionHelper;
+
+int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::s_functionHelper.numberOfChildren(); }
 
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::FunctionHelper()->name());
+  return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }
 
 int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }
 
 Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -107,7 +109,5 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
   return rationalResult;
 
 }
-
-constexpr Expression::FunctionHelper PermuteCoefficient::m_functionHelper = Expression::FunctionHelper("permute", 2, &PermuteCoefficient::UntypedBuilder);
 
 }

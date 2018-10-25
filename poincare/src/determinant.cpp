@@ -9,14 +9,16 @@ extern "C" {
 
 namespace Poincare {
 
-int DeterminantNode::numberOfChildren() const { return Determinant::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Determinant::s_functionHelper;
+
+int DeterminantNode::numberOfChildren() const { return Determinant::s_functionHelper.numberOfChildren(); }
 
 Layout DeterminantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.name());
 }
 
 int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Determinant::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.name());
 }
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
@@ -53,7 +55,5 @@ Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit 
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper Determinant::m_functionHelper = Expression::FunctionHelper("det", 1, &Determinant::UntypedBuilder);
 
 }

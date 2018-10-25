@@ -14,14 +14,16 @@ extern "C" {
 
 namespace Poincare {
 
-int FactorNode::numberOfChildren() const { return Factor::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Factor::s_functionHelper;
+
+int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
 
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
 int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
 Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -87,7 +89,5 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   }
   return m;
 }
-
-constexpr Expression::FunctionHelper Factor::m_functionHelper = Expression::FunctionHelper("factor", 1, &Factor::UntypedBuilder);
 
 }

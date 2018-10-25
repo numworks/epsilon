@@ -9,14 +9,16 @@
 
 namespace Poincare {
 
-int RoundNode::numberOfChildren() const { return Round::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Round::s_functionHelper;
+
+int RoundNode::numberOfChildren() const { return Round::s_functionHelper.numberOfChildren(); }
 
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
 
 int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
 
 Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -79,7 +81,5 @@ Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   return *this;
 }
-
-constexpr Expression::FunctionHelper Round::m_functionHelper = Expression::FunctionHelper("round", 2, &Round::UntypedBuilder);
 
 }

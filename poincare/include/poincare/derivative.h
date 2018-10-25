@@ -48,7 +48,7 @@ public:
   Derivative(const DerivativeNode * n) : Expression(n) {}
   static Derivative Builder(Expression child0, Expression child1, Expression child2) { return Derivative(child0, child1, child2); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
@@ -57,7 +57,6 @@ private:
     replaceChildAtIndexInPlace(1, child1);
     replaceChildAtIndexInPlace(2, child2);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

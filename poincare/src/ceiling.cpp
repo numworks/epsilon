@@ -11,14 +11,16 @@
 
 namespace Poincare {
 
-int CeilingNode::numberOfChildren() const { return Ceiling::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Ceiling::s_functionHelper;
+
+int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
 
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return CeilingLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.name());
 }
 
 template<typename T>
@@ -80,7 +82,5 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }
-
-constexpr Expression::FunctionHelper Ceiling::m_functionHelper = Expression::FunctionHelper("ceil", 1, &Ceiling::UntypedBuilder);
 
 }

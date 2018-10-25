@@ -7,14 +7,16 @@
 
 namespace Poincare {
 
-int FracPartNode::numberOfChildren() const { return FracPart::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper FracPart::s_functionHelper;
+
+int FracPartNode::numberOfChildren() const { return FracPart::s_functionHelper.numberOfChildren(); }
 
 Layout FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, FracPart::FunctionHelper()->name());
+  return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
 int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
 Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -53,7 +55,5 @@ Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   replaceWithInPlace(result);
   return result;
 }
-
-constexpr Expression::FunctionHelper FracPart::m_functionHelper = Expression::FunctionHelper("frac", 1, &FracPart::UntypedBuilder);
 
 }

@@ -7,7 +7,9 @@
 
 namespace Poincare {
 
-int SineNode::numberOfChildren() const { return Sine::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper Sine::s_functionHelper;
+
+int SineNode::numberOfChildren() const { return Sine::s_functionHelper.numberOfChildren(); }
 
 float SineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Sine(this), context, angleUnit);
@@ -21,11 +23,11 @@ Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::Angl
 }
 
 Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, Sine::FunctionHelper()->name());
+  return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
 int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
 Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -47,7 +49,5 @@ Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUn
 #endif
   return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
 }
-
-constexpr Expression::FunctionHelper Sine::m_functionHelper = Expression::FunctionHelper("sin", 1, &Sine::UntypedBuilder);
 
 }

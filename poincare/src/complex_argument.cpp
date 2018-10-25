@@ -9,14 +9,16 @@ extern "C" {
 
 namespace Poincare {
 
-int ComplexArgumentNode::numberOfChildren() const { return ComplexArgument::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper ComplexArgument::s_functionHelper;
+
+int ComplexArgumentNode::numberOfChildren() const { return ComplexArgument::s_functionHelper.numberOfChildren(); }
 
 Layout ComplexArgumentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits, ComplexArgument::FunctionHelper()->name());
+  return LayoutHelper::Prefix(ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
 int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
 Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -43,7 +45,5 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
 #endif
   return *this;
 }
-
-constexpr Expression::FunctionHelper ComplexArgument::m_functionHelper = Expression::FunctionHelper("arg", 1, &ComplexArgument::UntypedBuilder);
 
 }

@@ -7,13 +7,15 @@
 
 namespace Poincare {
 
-int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper NaperianLogarithm::s_functionHelper;
+
+int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::s_functionHelper.numberOfChildren(); }
 
 Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::FunctionHelper()->name());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 
 Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -36,7 +38,5 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Angl
   replaceWithInPlace(l);
   return l.shallowReduce(context, angleUnit);
 }
-
-constexpr Expression::FunctionHelper NaperianLogarithm::m_functionHelper = Expression::FunctionHelper("ln", 1, &NaperianLogarithm::UntypedBuilder);
 
 }

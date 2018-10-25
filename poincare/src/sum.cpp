@@ -11,12 +11,14 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Sum::s_functionHelper;
+
 Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
   return SumLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
 }
 
 int SumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::s_functionHelper.name());
 }
 
 template<typename T>
@@ -38,7 +40,5 @@ Evaluation<T> SumNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluat
   MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
   return AdditionNode::computeOnMatrices<T>(m, n);
 }
-
-constexpr Expression::FunctionHelper Sum::m_functionHelper = Expression::FunctionHelper("sum", 4, &Sum::UntypedBuilder);
 
 }

@@ -42,13 +42,12 @@ public:
   Random(const RandomNode * n) : Expression(n) {}
   static Random Builder() { return Random(); }
   static Expression UntypedBuilder(Expression children) { return Builder(); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template<typename T> static T random();
 private:
   Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

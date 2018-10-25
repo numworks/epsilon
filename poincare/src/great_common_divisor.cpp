@@ -8,14 +8,16 @@
 
 namespace Poincare {
 
-int GreatCommonDivisorNode::numberOfChildren() const { return GreatCommonDivisor::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper GreatCommonDivisor::s_functionHelper;
+
+int GreatCommonDivisorNode::numberOfChildren() const { return GreatCommonDivisor::s_functionHelper.numberOfChildren(); }
 
 Layout GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::FunctionHelper()->name());
+  return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
 int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
 Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -90,7 +92,5 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   replaceWithInPlace(result);
   return result;
 }
-
-constexpr Expression::FunctionHelper GreatCommonDivisor::m_functionHelper = Expression::FunctionHelper("gcd", 2, &GreatCommonDivisor::UntypedBuilder);
 
 }

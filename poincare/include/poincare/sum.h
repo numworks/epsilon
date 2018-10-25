@@ -35,7 +35,7 @@ public:
   Sum(const SumNode * n) : Expression(n) {}
   static Sum Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return Sum(child0, child1, child2, child3); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sum", 4, &UntypedBuilder);
 private:
   Sum(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {
     replaceChildAtIndexInPlace(0, child0);
@@ -43,7 +43,6 @@ private:
     replaceChildAtIndexInPlace(2, child2);
     replaceChildAtIndexInPlace(3, child3);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

@@ -36,14 +36,13 @@ public:
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
   static MatrixInverse Builder(Expression child) { return MatrixInverse(child); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("inverse", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
   explicit MatrixInverse(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

@@ -51,7 +51,7 @@ public:
   Integral(const IntegralNode * n) : Expression(n) {}
   static Integral Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return Integral(child0, child1, child2, child3); }
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3)); }
-  static const Expression::FunctionHelper * FunctionHelper() { return &m_functionHelper; }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
@@ -62,7 +62,6 @@ private:
     replaceChildAtIndexInPlace(2, child2);
     replaceChildAtIndexInPlace(3, child3);
   }
-  static const Expression::FunctionHelper m_functionHelper;
 };
 
 }

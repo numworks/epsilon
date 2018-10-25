@@ -6,12 +6,14 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper HyperbolicArcTangent::s_functionHelper;
+
 Layout HyperbolicArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(HyperbolicArcTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcTangent::FunctionHelper()->name());
+  return LayoutHelper::Prefix(HyperbolicArcTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcTangent::s_functionHelper.name());
 }
 
 int HyperbolicArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcTangent::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcTangent::s_functionHelper.name());
 }
 
 template<typename T>
@@ -30,7 +32,5 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, P
 
 template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcTangentNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
-
-constexpr Expression::FunctionHelper HyperbolicArcTangent::m_functionHelper = Expression::FunctionHelper("atanh", 1, &HyperbolicArcTangent::UntypedBuilder);
 
 }

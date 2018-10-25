@@ -7,14 +7,16 @@
 
 namespace Poincare {
 
-int ArcSineNode::numberOfChildren() const { return ArcSine::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper ArcSine::s_functionHelper;
+
+int ArcSineNode::numberOfChildren() const { return ArcSine::s_functionHelper.numberOfChildren(); }
 
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::FunctionHelper()->name());
+  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
 }
 
 int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
 }
 
 Expression ArcSineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -50,7 +52,5 @@ Expression ArcSine::shallowReduce(Context & context, Preferences::AngleUnit angl
 #endif
   return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit);
 }
-
-constexpr Expression::FunctionHelper ArcSine::m_functionHelper = Expression::FunctionHelper("asin", 1, &ArcSine::UntypedBuilder);
 
 }

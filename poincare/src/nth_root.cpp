@@ -10,7 +10,9 @@
 
 namespace Poincare {
 
-int NthRootNode::numberOfChildren() const { return NthRoot::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper NthRoot::s_functionHelper;
+
+int NthRootNode::numberOfChildren() const { return NthRoot::s_functionHelper.numberOfChildren(); }
 
 Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(
@@ -19,7 +21,7 @@ Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
 }
 
 int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::FunctionHelper()->name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name());
 }
 
 Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -59,7 +61,5 @@ Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angl
   replaceWithInPlace(p);
   return p.shallowReduce(context, angleUnit);
 }
-
-constexpr Expression::FunctionHelper NthRoot::m_functionHelper = Expression::FunctionHelper("root", 2, &NthRoot::UntypedBuilder);
 
 }

@@ -10,7 +10,9 @@
 
 namespace Poincare {
 
-int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::FunctionHelper()->numberOfChildren(); }
+constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
+
+int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
 Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return BinomialCoefficient(this).shallowReduce(context, angleUnit, replaceSymbols);
@@ -23,7 +25,7 @@ Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDi
 }
 
 int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::FunctionHelper()->name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.name());
 }
 
 template<typename T>
@@ -118,7 +120,5 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
 
 template double BinomialCoefficientNode::compute(double k, double n);
 template float BinomialCoefficientNode::compute(float k, float n);
-
-constexpr Expression::FunctionHelper BinomialCoefficient::m_functionHelper = Expression::FunctionHelper("binomial", 2, &BinomialCoefficient::UntypedBuilder);
 
 }

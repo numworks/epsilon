@@ -36,6 +36,7 @@ private:
   Shared::InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() override;
   static constexpr int k_indentationSpacesNumber = 2;
   StackViewController * stackController();
+  void saveScript();
   EditorView m_editorView;
   /* m_areaBuffer first character is dedicated to the importation status.
    * Thereby, we avoid wasteful copy while adding the Script to the storage

@@ -77,12 +77,9 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   int previousY = selectedRow();
   selectColumn(i);
   selectRow(j);
-  if (selectedRow() >= 0) {
-    scrollToCell(i, j);
-  }
+
   HighlightCell * cell = selectedCell();
   if (cell) {
-    cell->setHighlighted(true);
     // Update first responder
     if ((i != previousX || j != previousY) && setFirstResponder) {
       if (cell->responder()) {
@@ -94,6 +91,13 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   }
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
+  }
+  if (selectedRow() >= 0) {
+    scrollToCell(selectedColumn(), selectedRow());
+  }
+  cell = selectedCell();
+  if (cell) {
+    cell->setHighlighted(true);
   }
   return true;
 }

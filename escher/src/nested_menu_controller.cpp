@@ -139,6 +139,9 @@ bool NestedMenuController::handleEventForRow(Ion::Events::Event event, int rowIn
   if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
     return returnToPreviousMenu();
   }
+  if (selectedRow() < 0) {
+    return false;
+  }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && typeAtLocation(0, selectedRow()) == NodeCellType) {
     return selectSubMenu(rowIndex);
   }

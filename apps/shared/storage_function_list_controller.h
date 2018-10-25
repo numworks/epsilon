@@ -21,9 +21,10 @@ public:
   /* TableViewDataSource */
   int numberOfRows() override { return this->numberOfExpressionRows(); }
   int numberOfColumns() override { return 2; }
-  KDCoordinate rowHeight(int j) override { return this->expressionRowHeight(j); }
+  KDCoordinate rowHeight(int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
+  KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int index, int type) override;
@@ -57,6 +58,9 @@ protected:
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 2*Metric::HistoryHorizontalMargin;
+  static constexpr int k_memoizedCellHeightsCount = 5;
+  static_assert(StorageFunctionListController::k_memoizedCellHeightsCount == 5, "Wrong array size in initialization of StorageFunctionListController::m_memoizedCellHeight.");
+static_assert(StorageFunctionListController::k_memoizedCellHeightsCount % 2 == 1, "StorageFunctionListController::k_memoizedCellHeightsCount should be odd to be able to compute the middle element.");
   TabViewController * tabController() const;
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
@@ -66,10 +70,13 @@ private:
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
+  void resetMemoization();
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;
   KDCoordinate m_titlesColumnWidth;
+  KDCoordinate m_memoizedCellHeight[k_memoizedCellHeightsCount];
+  KDCoordinate m_cumulatedHeightForSelectedIndex;
 };
 
 }

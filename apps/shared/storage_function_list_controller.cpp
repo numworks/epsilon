@@ -20,7 +20,9 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
     }, this), KDFont::SmallFont, Palette::PurpleBright),
-  m_titlesColumnWidth(k_minTitleColumnWidth)
+  m_titlesColumnWidth(k_minTitleColumnWidth),
+  m_memoizedCellHeight {-1, -1, -1, -1, -1},
+  m_cumulatedHeightForSelectedIndex(-1)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -31,6 +33,57 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
 
 void StorageFunctionListController::viewWillAppear() {
   computeTitlesColumnWidth();
+}
+
+KDCoordinate StorageFunctionListController::rowHeight(int j) {
+  if (j < 0) {
+    return 0;
+  }
+  int currentSelectedRow = selectedRow();
+  constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
+  if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
+    int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
+    if (m_memoizedCellHeight[memoizedIndex] < 0) {
+      m_memoizedCellHeight[memoizedIndex] = expressionRowHeight(j);
+    }
+    return m_memoizedCellHeight[memoizedIndex];
+  }
+  return expressionRowHeight(j);
+}
+
+KDCoordinate StorageFunctionListController::cumulatedHeightFromIndex(int j) {
+  if (j <= 0) {
+    return 0;
+  }
+  int currentSelectedRow = selectedRow();
+  constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
+  /* If j is not easily computable from the memoized values, compute it the hard
+   * way. */
+  if (j < currentSelectedRow - halfMemoizationCount || j > currentSelectedRow + halfMemoizationCount) {
+    return TableViewDataSource::cumulatedHeightFromIndex(j);
+  }
+  // Recompute the memoized cumulatedHeight if needed
+  if (m_cumulatedHeightForSelectedIndex < 0) {
+    m_cumulatedHeightForSelectedIndex = TableViewDataSource::cumulatedHeightFromIndex(currentSelectedRow);
+  }
+  /* Compute the wanted cumulated height by adding/removing memoized cell
+   * heights */
+  KDCoordinate result = m_cumulatedHeightForSelectedIndex;
+  if (j <= currentSelectedRow) {
+    /* If j is smaller than the selected row, remove cell heights from the
+     * memoized value */
+    for (int i = j; i < currentSelectedRow; i++) {
+      result -= rowHeight(i);
+    }
+  } else {
+    /* If j is bigger than the selected row, add cell heights to the memoized
+     * value */
+    assert(j > currentSelectedRow && j <= currentSelectedRow + halfMemoizationCount);
+    for (int i = currentSelectedRow; i < j; i++) {
+      result += rowHeight(i);
+    }
+  }
+  return result;
 }
 
 KDCoordinate StorageFunctionListController::columnWidth(int i) {
@@ -204,9 +257,47 @@ void StorageFunctionListController::willExitResponderChain(Responder * nextFirst
   }
 }
 
-/* SelectableTableViewDelegate*/
+/* SelectableTableViewDelegate */
 
 void StorageFunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  constexpr int currentSelectedMemoizedIndex = k_memoizedCellHeightsCount/2 + 1; // Needs k_memoizedCellHeightsCount to be odd, which is static asserted in storage_function_list_controller.h
+  int currentSelectedY = selectedRow();
+
+  // The previously selected cell's height might have changed.
+  m_memoizedCellHeight[currentSelectedMemoizedIndex] = -1;
+
+  // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
+  if (currentSelectedY == previousSelectedCellY + 1) {
+    /* We selected the cell under the previous cell. Shift the memoized cell
+     * heights. */
+    for (int i = 0; i < k_memoizedCellHeightsCount - 1; i++) {
+      m_memoizedCellHeight[i] = m_memoizedCellHeight[i+1];
+    }
+    m_memoizedCellHeight[k_memoizedCellHeightsCount-1] = -1;
+    // Update m_cumulatedHeightForSelectedIndex
+    if (previousSelectedCellY >= 0) {
+      m_cumulatedHeightForSelectedIndex+= rowHeight(previousSelectedCellY);
+    } else {
+      assert(currentSelectedY == 0);
+      m_cumulatedHeightForSelectedIndex = 0;
+    }
+  } else if (currentSelectedY == previousSelectedCellY - 1) {
+    /* We selected the cell above the previous cell. Shift the memoized cell
+     * heights. */
+    for (int i = k_memoizedCellHeightsCount - 1; i > 0; i--) {
+      m_memoizedCellHeight[i] = m_memoizedCellHeight[i-1];
+    }
+    m_memoizedCellHeight[0] = -1;
+    // Update m_cumulatedHeightForSelectedIndex
+    if (currentSelectedY >= 0) {
+      m_cumulatedHeightForSelectedIndex-= rowHeight(currentSelectedY);
+    } else {
+      m_cumulatedHeightForSelectedIndex = 0;
+    }
+  } else if (previousSelectedCellY != currentSelectedY) {
+    resetMemoization();
+  }
+
   if (isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
     t->selectCellAtLocation(1, numberOfRows()-1);
   }
@@ -258,6 +349,13 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
 
 void StorageFunctionListController::didChangeModelsList() {
   computeTitlesColumnWidth();
+}
+
+void StorageFunctionListController::resetMemoization() {
+  m_cumulatedHeightForSelectedIndex = -1;
+  for (int i = 0; i < k_memoizedCellHeightsCount; i++) {
+    m_memoizedCellHeight[i] = -1;
+  }
 }
 
 }

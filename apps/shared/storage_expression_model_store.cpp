@@ -23,7 +23,7 @@ StorageExpressionModel * StorageExpressionModelStore::privateModelForRecord(Ion:
   }
   setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
   StorageExpressionModel * result = memoizedModelAtIndex(m_oldestMemoizedIndex);
-  m_oldestMemoizedIndex = m_oldestMemoizedIndex % k_maxNumberOfMemoizedModels;
+  m_oldestMemoizedIndex = (m_oldestMemoizedIndex+1) % k_maxNumberOfMemoizedModels;
   return result;
 }
 

@@ -163,7 +163,7 @@ exp    : pow              { $$ = $1; }
        ;
 
 final_exp : exp           { $$ = $1; }
-          | exp STO symb  { if (static_cast<Symbol&>($3).name() == Symbol::k_ans) { YYERROR; } ; $$ = Store($1, static_cast<Symbol &>($3)); }
+          | exp STO symb  { $$ = Store($1, static_cast<Symbol &>($3)); }
           | exp STO func  { if ($3.childAtIndex(0).type() != ExpressionNode::Type::Symbol) { YYERROR; } ; $$ = Store($1, static_cast<Function &>($3)); }
           | exp EQUAL exp { $$ = Equal($1, $3); }
           ;

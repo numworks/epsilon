@@ -28,10 +28,10 @@ QUIZ_CASE(poincare_create_all_layouts) {
   EmptyLayout e18;
   EmptyLayout e19;
   EmptyLayout e20;
-  ProductLayout e21(e18, e19, e20);
+  ProductLayout e21(e17, e18, e19, e20);
   EmptyLayout e22;
   EmptyLayout e23;
   EmptyLayout e24;
-  SumLayout e25(e22, e23, e24);
+  SumLayout e25(e21, e22, e23, e24);
   VerticalOffsetLayout e26(e25, VerticalOffsetLayoutNode::Type::Superscript);
 }

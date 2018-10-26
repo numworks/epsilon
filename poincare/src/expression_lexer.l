@@ -130,7 +130,8 @@ int { *yylval = Integral(); return INT_FUNCTION; }
 inverse { *yylval = MatrixInverse(); return FUNCTION; }
 lcm { *yylval = LeastCommonMultiple(); return FUNCTION; }
 ln { *yylval = NaperianLogarithm(); return FUNCTION; }
-log { return LOG_FUNCTION; }
+log\( { return LOG_FUNCTION; }
+log\_\{ { return LOG_FUNCTION_TWO_ARGUMENTS; }
 permute { *yylval = PermuteCoefficient(); return FUNCTION; }
 prediction95 { *yylval = PredictionInterval(); return FUNCTION; }
 prediction { *yylval = SimplePredictionInterval(); return FUNCTION; }

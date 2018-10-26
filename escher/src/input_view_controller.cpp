@@ -50,9 +50,11 @@ bool InputViewController::textFieldShouldFinishEditing(TextField * textField, Io
 }
 
 bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  inputViewDidFinishEditing();
-  m_textFieldDelegate->textFieldDidFinishEditing(textField, text, event);
-  return true;
+  if (inputViewDidFinishEditing()) {
+    m_textFieldDelegate->textFieldDidFinishEditing(textField, text, event);
+    return true;
+  }
+  return false;
 }
 
 bool InputViewController::textFieldDidAbortEditing(TextField * textField) {
@@ -74,9 +76,11 @@ bool InputViewController::layoutFieldDidReceiveEvent(LayoutField * layoutField, 
 }
 
 bool InputViewController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
-  inputViewDidFinishEditing();
-  m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, layoutR, event);
-  return true;
+  if (inputViewDidFinishEditing()) {
+    m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, layoutR, event);
+    return true;
+  }
+  return false;
 }
 
 bool InputViewController::layoutFieldDidAbortEditing(LayoutField * layoutField) {
@@ -103,9 +107,12 @@ NestedMenuController * InputViewController::variableBoxForInputEventHandler(Inpu
   return m_inputEventHandlerDelegate->variableBoxForInputEventHandler(handler);
 }
 
-void InputViewController::inputViewDidFinishEditing() {
-  m_successAction.perform(this);
-  dismissModalViewController();
+bool InputViewController::inputViewDidFinishEditing() {
+  if (m_successAction.perform(this)) {
+    dismissModalViewController();
+    return true;
+  }
+  return false;
 }
 
 void InputViewController::inputViewDidAbortEditing() {

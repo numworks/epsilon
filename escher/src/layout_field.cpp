@@ -196,6 +196,8 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       // Reinit layout for next use
       clearLayout();
+    } else {
+      setEditing(true);
     }
     return true;
   }

@@ -82,6 +82,7 @@ public:
   // Delegate
   void setDelegate(StorageDelegate * delegate) { m_delegate = delegate; }
   void notifyChangeToDelegate(const Record r = Record()) const;
+  Record::ErrorStatus notifyFullnessToDelegate() const;
 
   int numberOfRecordsWithExtension(const char * extension);
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
@@ -165,6 +166,7 @@ private:
 class StorageDelegate {
 public:
   virtual void storageDidChangeForRecord(const Storage::Record record) = 0;
+  virtual void storageIsFull() = 0;
 };
 
 }

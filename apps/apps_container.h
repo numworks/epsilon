@@ -57,6 +57,7 @@ public:
   void examDeactivatingPopUpIsDismissed() override;
   // Ion::StorageDelegate
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
+  void storageIsFull() override;
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:

@@ -13,7 +13,7 @@ int ProductLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Compute sizes.
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithNEquals();
+  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals();
 
   // Render the Product symbol.
   ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundNEqualsSize.width()-k_symbolWidth)/2),

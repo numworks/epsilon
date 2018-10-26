@@ -102,7 +102,7 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context) {
-        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).matches([](const Expression e, Context & context) { return e.isApproximate(context); }, context));
+        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && !static_cast<const Symbol&>(e).isPi() && !static_cast<const Symbol&>(e).isExponential() && !static_cast<const Symbol&>(e).isIComplex() && static_cast<const Symbol&>(e).matches([](const Expression e, Context & context) { return e.isApproximate(context); }, context));
     }, context);
 }
 

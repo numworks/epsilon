@@ -104,7 +104,13 @@ void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomp
   }
   if (cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left))) {
     // If the cursor is Left of the argument, move it to the upper bound
-    upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
+    cursor->setLayoutNode(upperBoundLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+    // If the cursor is Left of this, move it to the upper bound
+  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
+    cursor->setLayoutNode(upperBoundLayout());
     return;
   }
   LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
@@ -118,7 +124,13 @@ void SequenceLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
   }
   // If the cursor is Left of the argument, move it to the lower bound
   if (cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left))) {
-    lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
+    cursor->setLayoutNode(lowerBoundLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  // If the cursor is Left of this, move it to the variable bound
+  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
+    cursor->setLayoutNode(variableLayout());
     return;
   }
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);

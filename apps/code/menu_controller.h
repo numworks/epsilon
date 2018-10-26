@@ -69,17 +69,10 @@ private:
   static constexpr int ScriptCellType = 1;
   static constexpr int ScriptParameterCellType = 2;
   static constexpr int EmptyCellType = 3;
-  static constexpr int k_defaultScriptNameMaxSize = 9 + 2 + 1;
-  // k_defaultScriptNameMaxSize is the length of a name between script1.py and
-  // script99.py.
-  // 9 = strlen("script.py")
-  // 2 = maxLength of integers between 1 and 99.
-  // 1 = length of null terminating char.
   void addScript();
   void configureScript();
   void editScriptAtIndex(int scriptIndex);
   void numberedDefaultScriptName(char * buffer);
-  void intToText(int i, char * buffer);
   void updateAddScriptRowDisplay();
   ScriptStore * m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];

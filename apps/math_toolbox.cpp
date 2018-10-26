@@ -14,8 +14,8 @@ using namespace Poincare;
 const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg),
   ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommand),
-  ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg),
-  ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
+  ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommand),
+  ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommand)};
 
 const ToolboxMessageTree complexChildren[5] = {
   ToolboxMessageTree(I18n::Message::AbsCommandWithArg,I18n::Message::ComplexAbsoluteValue, I18n::Message::AbsCommandWithArg),

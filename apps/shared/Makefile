@@ -86,3 +86,5 @@ app_objs += $(addprefix apps/shared/,\
   vertical_cursor_view.o\
   zoom_parameter_controller.o\
 )
+
+test_objs += $(addprefix apps/shared/, storage_expression_model.o storage_function.o storage_cartesian_function.o)

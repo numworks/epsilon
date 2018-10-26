@@ -56,7 +56,7 @@ void ion_main(int argc, char * argv[]) {
 #if POINCARE_TREE_LOG
     Poincare::TreePool::sharedPool()->log();
 #endif
-    assert(false);
+    quiz_assert(false);
 #if !QUIZ_USE_CONSOLE
     while (1) {
       Ion::msleep(1000);

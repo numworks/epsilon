@@ -300,6 +300,12 @@ void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record)
   }
 }
 
+void AppsContainer::storageIsFull() {
+  if (activeApp()) {
+    activeApp()->displayWarning(I18n::Message::GlobalMemoryFull, true);
+  }
+}
+
 Window * AppsContainer::window() {
   return &m_window;
 }

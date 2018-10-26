@@ -165,7 +165,6 @@ bool StorageExpressionModelListController::handleEventOnExpression(Ion::Events::
 void StorageExpressionModelListController::addEmptyModel() {
   Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();
   if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-    app()->displayWarning(I18n::Message::GlobalMemoryFull);
     return;
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);

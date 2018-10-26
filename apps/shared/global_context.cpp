@@ -15,14 +15,8 @@ constexpr char GlobalContext::expExtension[];
 constexpr char GlobalContext::funcExtension[];
 //constexpr char GlobalContext::seqExtension[];
 
-static bool sStorageMemoryFull = false;
-
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
-}
-
-bool GlobalContext::storageMemoryFull() {
-  return sStorageMemoryFull;
 }
 
 Poincare::Expression GlobalContext::ExpressionFromRecord(Ion::Storage::Record record) {
@@ -64,7 +58,6 @@ const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbo
 }
 
 void GlobalContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
-  sStorageMemoryFull = false;
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
@@ -75,18 +68,11 @@ void GlobalContext::setExpressionForSymbol(const Expression & expression, const 
   Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
-  Ion::Storage::Record::ErrorStatus err = Ion::Storage::Record::ErrorStatus::None;
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    err = SetExpressionForActualSymbol(finalExpression, symbol, record);
+    SetExpressionForActualSymbol(finalExpression, symbol, record);
   } else {
     assert(symbol.type() == ExpressionNode::Type::Function);
-    err = SetExpressionForFunction(finalExpression, symbol, record);
-  }
-
-  // Handle a storage error
-  if (err != Ion::Storage::Record::ErrorStatus::None) {
-    assert(err == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
-    sStorageMemoryFull = true;
+    SetExpressionForFunction(finalExpression, symbol, record);
   }
 }
 

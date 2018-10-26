@@ -21,7 +21,6 @@ public:
 
   // Storage information
   static bool SymbolAbstractNameIsFree(const char * baseName);
-  static bool storageMemoryFull();
 
   // Expression from record
   static Poincare::Expression ExpressionFromRecord(Ion::Storage::Record record);

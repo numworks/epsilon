@@ -14,11 +14,13 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
       StorageFunctionListController * list = (StorageFunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(1);
+      return true;
     }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
       StorageFunctionListController * list = (StorageFunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
+      return true;
     }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_titlesColumnWidth(k_minTitleColumnWidth)
 {

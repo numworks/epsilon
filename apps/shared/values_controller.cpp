@@ -23,6 +23,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     ValuesController * valuesController = (ValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
+    return true;
   }, this), KDFont::SmallFont)
 {
   m_selectableTableView.setVerticalCellOverlap(0);

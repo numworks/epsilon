@@ -26,7 +26,7 @@ protected:
   virtual void didChangeModelsList() {}
   virtual void reinitExpression(ExpiringPointer<StorageExpressionModel> model);
   virtual void editExpression(Ion::Events::Event event);
-  virtual void editSelectedRecordWithText(const char * text);
+  virtual bool editSelectedRecordWithText(const char * text);
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) { return j; }
   virtual bool isAddEmptyRow(int j);

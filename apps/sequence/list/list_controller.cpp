@@ -131,8 +131,10 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
         mySequence->setContent(textBody);
+        return true; //TODO should return result of mySequence->setContent
         },
         [](void * context, void * sender){
+        return true;
       });
       break;
   case 1:
@@ -142,8 +144,10 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       InputViewController * myInputViewController = (InputViewController *)sender;
       const char * textBody = myInputViewController->textBody();
       mySequence->setFirstInitialConditionContent(textBody);
+      return true; //TODO should return result of mySequence->setFirstInitialConditionContent
       },
       [](void * context, void * sender){
+      return true;
     });
     break;
   default:
@@ -153,8 +157,10 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       InputViewController * myInputViewController = (InputViewController *)sender;
       const char * textBody = myInputViewController->textBody();
       mySequence->setSecondInitialConditionContent(textBody);
+      return true; //TODO should return the result of mySequence->setSecondInitialConditionContent
       },
       [](void * context, void * sender){
+      return true;
     });
   }
 }

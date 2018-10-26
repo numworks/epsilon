@@ -1,6 +1,4 @@
-#include <quiz.h>
 #include <apps/shared/global_context.h>
-#include <poincare/expression.h>
 #include <string.h>
 #include <ion.h>
 #include <stdlib.h>
@@ -62,12 +60,10 @@ void translate_in_ASCII_chars(char * expression) {
 }
 
 Expression parse_expression(const char * expression) {
-  quiz_print(expression);
   char buffer[500];
   strlcpy(buffer, expression, sizeof(buffer));
   translate_in_special_chars(buffer);
   Expression result = Expression::parse(buffer);
-  quiz_assert(!result.isUninitialized());
   return result;
 }
 
@@ -78,7 +74,16 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
 
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r) {
   Expression e = parse_expression(expression);
-  quiz_assert(e.isIdenticalTo(r));
+  bool identical = e.isIdenticalTo(r);
+#if POINCARE_TREE_LOG
+  if (!identical) {
+    std::cout << "Expecting" << std::endl;
+    r.log();
+    std::cout << "Got" << std::endl;
+    e.log();
+  }
+#endif
+  quiz_assert(identical);
 }
 
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName) {

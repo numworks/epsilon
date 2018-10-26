@@ -1,5 +1,6 @@
-#include <poincare/expression.h>
-#include <poincare/preferences.h>
+#include <poincare_nodes.h>
+#include <quiz.h>
+#include "poincare/src/parsing/parser.h"
 
 // Expressions
 

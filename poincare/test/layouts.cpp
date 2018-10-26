@@ -22,7 +22,7 @@ QUIZ_CASE(poincare_create_all_layouts) {
   FractionLayout e12(e8, e11);
   HorizontalLayout e13;
   LeftSquareBracketLayout e14;
-  IntegralLayout e15(e12, e13, e14);
+  IntegralLayout e15(e11, e12, e13, e14);
   NthRootLayout e16(e15);
   MatrixLayout e17;
   EmptyLayout e18;

@@ -299,10 +299,15 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
-  char numberedDefaultName[k_defaultScriptNameMaxSize];
+  static constexpr int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
+
+  char numberedDefaultName[bufferSize];
   if (strlen(text) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The user entered an empty name. Use a numbered default script name.
-    numberedDefaultScriptName(numberedDefaultName);
+    Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    int defaultNameLength = strlen(numberedDefaultName);
+    numberedDefaultName[defaultNameLength++] = '.';
+    strlcpy(&numberedDefaultName[defaultNameLength], ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
     newName = const_cast<const char *>(numberedDefaultName);
   } else {
     newName = text;
@@ -338,13 +343,14 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField) {
   const char * scriptName = script.fullName();
   if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
-    char numberedDefaultName[k_defaultScriptNameMaxSize];
-    numberedDefaultScriptName(numberedDefaultName);
-    scriptName = numberedDefaultName;
-    Script::ErrorStatus error = script.setName(numberedDefaultName);
+    char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
+    Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
+    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
     /* Because we use the numbered default name, the name should not be
      * already taken. Plus, the script could be added only if the storage has
      * enough available space to add a script named 'script99.py' */
+    (void) error; // Silence the "variable unused" warning if assertions are not enabled
     assert(error == Script::ErrorStatus::None);
     updateAddScriptRowDisplay();
   }
@@ -385,46 +391,6 @@ void MenuController::editScriptAtIndex(int scriptIndex) {
   Script script = m_scriptStore->scriptAtIndex(scriptIndex);
   m_editorController.setScript(script);
   stackViewController()->push(&m_editorController);
-}
-
-void MenuController::numberedDefaultScriptName(char * buffer) {
-  bool foundNewScriptNumber = false;
-  int currentScriptNumber = 1;
-  char newName[k_defaultScriptNameMaxSize];
-  memcpy(newName, ScriptStore::k_defaultScriptName, strlen(ScriptStore::k_defaultScriptName)+1);
-  // We will only name scripts from script1.py to script99.py.
-  while (!foundNewScriptNumber && currentScriptNumber < 100) {
-    // Change the number in the script name.
-    intToText(currentScriptNumber, &newName[strlen(ScriptStore::k_defaultScriptName)-(strlen(ScriptStore::k_scriptExtension) + 1)]);
-    assert(strlen(newName) + 1 + strlen(ScriptStore::k_scriptExtension) + 1 < k_defaultScriptNameMaxSize);
-    size_t currentNameLength = strlen(newName);
-    newName[currentNameLength++] = '.';
-    memcpy(&newName[currentNameLength], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension)+1);
-    if (m_scriptStore->scriptNamed(const_cast<const char *>(newName)).isNull()) {
-      foundNewScriptNumber = true;
-    }
-    currentScriptNumber++;
-  }
-  if (foundNewScriptNumber) {
-    memcpy(buffer, newName, strlen(newName)+1);
-    return;
-  }
-  memcpy(buffer, ScriptStore::k_defaultScriptName, strlen(ScriptStore::k_defaultScriptName)+1);
-}
-
-void MenuController::intToText(int i, char * buffer) {
-  // We only support integers from 0 to 99
-  // buffer should have the space for three chars.
-  assert(i>=0);
-  assert(i<100);
-  if (i/10 == 0) {
-    buffer[0] = i+'0';
-    buffer[1] = 0;
-    return;
-  }
-  buffer[0] = i/10+'0';
-  buffer[1] = i-10*(i/10)+'0';
-  buffer[2] = 0;
 }
 
 void MenuController::updateAddScriptRowDisplay() {

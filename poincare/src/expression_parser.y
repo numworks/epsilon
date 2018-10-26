@@ -73,7 +73,7 @@ using namespace Poincare;
 %nonassoc RIGHT_BRACKET
 %nonassoc LEFT_BRACE
 %nonassoc RIGHT_BRACE
-%nonassoc FUNCTION LOG_FUNCTION LOG_FUNCTION_TWO_ARGUMENTS DIFF_FUNCTION INT_FUNCTION
+%nonassoc FUNCTION LOG_FUNCTION LOG_FUNCTION_TWO_ARGUMENTS VARIABLE_DEPENDENT_FUNCTION
 %left COMMA
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
@@ -134,8 +134,7 @@ term   : TERM   { $$ = $1; }
 /* Special case for logarithm, as we do not at first if it needs 1 or 2 children */
        | LOG_FUNCTION lstData RIGHT_PARENTHESIS { if ($2.numberOfChildren() == 1) { $$ = Logarithm($2.childAtIndex(0)); } else if ($2.numberOfChildren() == 2) { $$ = Logarithm($2.childAtIndex(0), $2.childAtIndex(1));} else { YYERROR; } ; }
        | LOG_FUNCTION_TWO_ARGUMENTS exp RIGHT_BRACE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Logarithm($5, $2); }
-       | DIFF_FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; if ($3.childAtIndex(1).type() != ExpressionNode::Type::Symbol) { YYERROR; } ; $$ = $1; $$.setChildrenInPlace($3); }
-       | INT_FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; if ($3.childAtIndex(1).type() != ExpressionNode::Type::Symbol && $3.childAtIndex(1).type() != ExpressionNode::Type::EmptyExpression ) { YYERROR; } ; $$ = $1; $$.setChildrenInPlace($3); }
+       | VARIABLE_DEPENDENT_FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; if ($3.childAtIndex(1).type() != ExpressionNode::Type::Symbol && $3.childAtIndex(1).type() != ExpressionNode::Type::EmptyExpression ) { YYERROR; } ; $$ = $1; $$.setChildrenInPlace($3); }
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */
        | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }

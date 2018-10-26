@@ -11,8 +11,8 @@ extern "C" {
 namespace Poincare {
 
 
-Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout subscriptLayout, Layout superscriptLayout) const {
-  return SumLayout(argumentLayout, subscriptLayout, superscriptLayout);
+Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
+  return SumLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
 }
 
 template<typename T>

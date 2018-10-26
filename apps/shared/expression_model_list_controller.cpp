@@ -98,8 +98,10 @@ void ExpressionModelListController::editExpression(ExpressionModel * model, Ion:
     InputViewController * myInputViewController = (InputViewController *)sender;
     const char * textBody = myInputViewController->textBody();
     myModel->setContent(textBody);
+    return true; // TODO we should return a result from myModel->setContent, but we will remove ExpressionModelListController soon anyway
     },
     [](void * context, void * sender){
+    return true;
     });
 }
 

@@ -10,7 +10,11 @@ extern "C" {
 namespace Code {
 
 constexpr char ScriptStore::k_scriptExtension[];
-constexpr char ScriptStore::k_defaultScriptName[];
+
+
+bool ScriptStore::ScriptNameIsFree(const char * baseName) {
+  return Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_scriptExtension).isNull();
+}
 
 ScriptStore::ScriptStore()
 {

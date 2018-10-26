@@ -33,7 +33,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  bool shouldBeReplacedWhileReducing(Context & context) const;
+  bool isConstant() const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
 
   /* Approximation */
@@ -66,6 +66,7 @@ public:
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
 
   // Symbol properties
+  bool isConstant() const { return node()->isConstant(); }
   bool isPi() const { return node()->isPi(); }
   bool isExponential() const { return node()->isExponential(); }
   bool isIComplex() const { return node()->isIComplex(); }

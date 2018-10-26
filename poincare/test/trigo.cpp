@@ -233,8 +233,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("tanh(8*P*I/2)", "0", Radian);
   assert_parsed_expression_evaluates_to<float>("tanh(9*P*I/2)", "undef", Radian);
   // On C
-  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Degree);
+  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.00028)+0.000610241*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.00028)+0.000610241*I", Degree, Cartesian, 6);
 
   /* acosh: [-1,1]       ->  R*i
    *        ]-inf,-1[    -> Pi*i+R (even on real)

@@ -52,7 +52,7 @@ private:
     char m_textBuffer[k_bufferLength];
     ExpressionField m_expressionField;
   };
-  void inputViewDidFinishEditing();
+  bool inputViewDidFinishEditing();
   void inputViewDidAbortEditing();
   ExpressionFieldController m_expressionFieldController;
   Invocation m_successAction;

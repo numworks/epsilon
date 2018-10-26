@@ -186,7 +186,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<double>("root(3, 3+I)", "1.3820069623326-0.1524427794159*I");
 
   assert_parsed_expression_evaluates_to<float>("root(5^((-I)3^9),I)", "3.504", Degree, Cartesian, 4);
-  assert_parsed_expression_evaluates_to<double>("root(5^(-I)3^9,I)", "3.5039410843", Degree, Cartesian, 11);
+  assert_parsed_expression_evaluates_to<double>("root(5^((-I)3^9),I)", "3.5039410843", Degree, Cartesian, 11);
 
   assert_parsed_expression_evaluates_to<float>("R(3+I)", "1.755317+0.2848488*I");
   assert_parsed_expression_evaluates_to<double>("R(3+I)", "1.7553173018244+2.8484878459314E-1*I");

@@ -55,9 +55,8 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("P*x", 1);
 }
 
-void assert_parsed_expression_has_characteristic_range(const char * expression, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
+void assert_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, angleUnit);
   if (std::isnan(range)) {
@@ -68,17 +67,17 @@ void assert_parsed_expression_has_characteristic_range(const char * expression, 
 }
 
 QUIZ_CASE(poincare_characteristic_range) {
-  assert_parsed_expression_has_characteristic_range("cos(?)", 360.0f);
-  assert_parsed_expression_has_characteristic_range("cos(-?)", 360.0f);
-  assert_parsed_expression_has_characteristic_range("cos(?)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("cos(-?)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("sin(9*?+10)", 40.0f);
-  assert_parsed_expression_has_characteristic_range("sin(9*?+10)+cos(?/2)", 720.0f);
-  assert_parsed_expression_has_characteristic_range("sin(9*?+10)+cos(?/2)", 4.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("?", NAN);
-  assert_parsed_expression_has_characteristic_range("cos(3)+2", 0.0f);
-  assert_parsed_expression_has_characteristic_range("log(cos(40*?))", 9.0f);
-  assert_parsed_expression_has_characteristic_range("cos(cos(?))", 360.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)), 360.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder(Opposite(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)), 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Cosine::Builder(Opposite(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Sine::Builder(Addition(Multiplication(Rational(9),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational(10))), 40.0f);
+  assert_expression_has_characteristic_range(Addition(Sine::Builder(Addition(Multiplication(Rational(9),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational(10))),Cosine::Builder(Division(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX),Rational(2)))), 720.0f);
+  assert_expression_has_characteristic_range(Addition(Sine::Builder(Addition(Multiplication(Rational(9),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational(10))),Cosine::Builder(Division(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX),Rational(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX), NAN);
+  assert_expression_has_characteristic_range(Addition(Cosine::Builder(Rational(3)),Rational(2)), 0.0f);
+  assert_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(Multiplication(Rational(40),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)))), 9.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
 }
 
 void assert_parsed_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {

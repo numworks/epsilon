@@ -23,6 +23,7 @@ StorageValuesController::StorageValuesController(Responder * parentResponder, In
     StorageValuesController * valuesController = (StorageValuesController *) context;
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     stack->push(valuesController->intervalParameterController());
+    return true;
   }, this), k_font)
 {
   m_selectableTableView.setVerticalCellOverlap(0);

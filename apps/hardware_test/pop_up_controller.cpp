@@ -36,11 +36,13 @@ PopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
     PopUpController::ContentView * view = (PopUpController::ContentView *)context;
     view->app()->dismissModalViewController();
+    return true;
   }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     PopUpController::ContentView * view = (PopUpController::ContentView *)context;
     AppsContainer * appsContainer = (AppsContainer *)view->app()->container();
     appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
+    return true;
   }, this), KDFont::SmallFont),
   m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
   m_messageTextView1(KDFont::SmallFont, I18n::Message::HardwareTestLaunch1, 0.5, 0.5, KDColorWhite, KDColorBlack),

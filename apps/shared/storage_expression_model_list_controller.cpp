@@ -192,16 +192,17 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
         StorageExpressionModelListController * myController = static_cast<StorageExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
-        myController->editSelectedRecordWithText(textBody);
+        return myController->editSelectedRecordWithText(textBody);
       },
       [](void * context, void * sender){
+        return true;
       });
 }
 
-void StorageExpressionModelListController::editSelectedRecordWithText(const char * text) {
+bool StorageExpressionModelListController::editSelectedRecordWithText(const char * text) {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   ExpiringPointer<StorageExpressionModel> model =  modelStore()->modelForRecord(record);
-  model->setContent(text);
+  return (model->setContent(text) == Ion::Storage::Record::ErrorStatus::None);
 }
 
 bool StorageExpressionModelListController::removeModelRow(Ion::Storage::Record record) {

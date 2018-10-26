@@ -144,12 +144,12 @@ Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit a
   return Symbol(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
-bool SymbolNode::shouldBeReplacedWhileReducing(Context & context) const {
+bool SymbolNode::isConstant() const {
   if (isIComplex() || isPi() || isExponential()) {
     assert(m_name[1] == 0);
-    return false;
+    return true;
   }
-  return true;
+  return false;
 }
 
 template<typename T>
@@ -198,7 +198,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
     return *this;
   }
   const Expression e = context.expressionForSymbol(*this);
-  if (!e.isUninitialized() && node()->shouldBeReplacedWhileReducing(context)) {
+  if (!e.isUninitialized() && !node()->isConstant()) {
     // The stored expression had been beautified, so we need to call deepReduce
     Expression result = e.clone();
     replaceWithInPlace(result);

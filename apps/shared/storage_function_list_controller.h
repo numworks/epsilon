@@ -58,25 +58,20 @@ protected:
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
   static constexpr KDCoordinate k_functionTitleSumOfMargins = 2*Metric::HistoryHorizontalMargin;
-  static constexpr int k_memoizedCellHeightsCount = 5;
-  static_assert(StorageFunctionListController::k_memoizedCellHeightsCount == 5, "Wrong array size in initialization of StorageFunctionListController::m_memoizedCellHeight.");
-static_assert(StorageFunctionListController::k_memoizedCellHeightsCount % 2 == 1, "StorageFunctionListController::k_memoizedCellHeightsCount should be odd to be able to compute the middle element.");
   TabViewController * tabController() const;
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
+  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override;
   virtual StorageListParameterController * parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
-  void resetMemoization();
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;
   KDCoordinate m_titlesColumnWidth;
-  KDCoordinate m_memoizedCellHeight[k_memoizedCellHeightsCount];
-  KDCoordinate m_cumulatedHeightForSelectedIndex;
 };
 
 }

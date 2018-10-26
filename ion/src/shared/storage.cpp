@@ -96,10 +96,17 @@ void Storage::notifyChangeToDelegate(const Record record) const {
   }
 }
 
+Storage::Record::ErrorStatus Storage::notifyFullnessToDelegate() const {
+  if (m_delegate != nullptr) {
+    m_delegate->storageIsFull();
+  }
+  return Record::ErrorStatus::NotEnoughSpaceAvailable;
+}
+
 Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
   size_t recordSize = sizeOfRecordWithFullName(fullName, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return Record::ErrorStatus::NotEnoughSpaceAvailable;
+   return notifyFullnessToDelegate();
   }
   if (isFullNameTaken(fullName)) {
     return Record::ErrorStatus::NameTaken;
@@ -122,7 +129,7 @@ Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * full
 Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
   size_t recordSize = sizeOfRecordWithBaseNameAndExtension(baseName, extension, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return Record::ErrorStatus::NotEnoughSpaceAvailable;
+   return notifyFullnessToDelegate();
   }
   if (isBaseNameWithExtensionTaken(baseName, extension)) {
     return Record::ErrorStatus::NameTaken;
@@ -253,7 +260,7 @@ Storage::Record::ErrorStatus Storage::setFullNameOfRecord(const Record record, c
       record_size_t previousRecordSize = sizeOfRecordStarting(p);
       size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
       if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
-        return Record::ErrorStatus::NotEnoughSpaceAvailable;
+        return notifyFullnessToDelegate();
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideFullNameAtPosition(p+sizeof(record_size_t), fullName);
@@ -276,7 +283,7 @@ Storage::Record::ErrorStatus Storage::setBaseNameWithExtensionOfRecord(Record re
       record_size_t previousRecordSize = sizeOfRecordStarting(p);
       size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
       if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
-        return Record::ErrorStatus::NotEnoughSpaceAvailable;
+        return notifyFullnessToDelegate();
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideBaseNameWithExtensionAtPosition(p+sizeof(record_size_t), baseName, extension);
@@ -308,7 +315,7 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
       const char * fullName = fullNameOfRecordStarting(p);
       size_t newRecordSize = sizeOfRecordWithFullName(fullName, data.size);
       if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
-        return Record::ErrorStatus::NotEnoughSpaceAvailable;
+        return notifyFullnessToDelegate();
       }
       record_size_t fullNameSize = strlen(fullName)+1;
       overrideSizeAtPosition(p, newRecordSize);

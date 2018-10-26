@@ -54,7 +54,7 @@ public:
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
-  void displayWarning(I18n::Message warningMessage, bool specialExitKeys = false);
+  void displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message) 0, bool specialExitKeys = false);
   const Container * container() const;
   uint8_t m_magic; // Poor man's RTTI
 

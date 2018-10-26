@@ -235,7 +235,7 @@ void AppsContainer::run() {
     }
     switchTo(appSnapshotAtIndex(0));
     Poincare::Tidy();
-    activeApp()->displayWarning(I18n::Message::PoolMemoryFull, true);
+    activeApp()->displayWarning(I18n::Message::PoolMemoryFull, (I18n::Message) 0, true);
   }
   Container::run();
   switchTo(nullptr);
@@ -302,7 +302,7 @@ void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record)
 
 void AppsContainer::storageIsFull() {
   if (activeApp()) {
-    activeApp()->displayWarning(I18n::Message::StorageMemoryFull, true);
+    activeApp()->displayWarning(I18n::Message::StorageMemoryFull, (I18n::Message) 0, true);
   }
 }
 

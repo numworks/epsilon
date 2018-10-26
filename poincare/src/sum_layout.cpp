@@ -32,7 +32,7 @@ int SumLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Computes sizes.
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithNEquals();
+  KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals();
 
   // Render the Sum symbol.
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];

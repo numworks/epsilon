@@ -12,19 +12,19 @@ extern "C" {
 namespace Poincare {
 
 Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return createSequenceLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return createSequenceLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
 Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(1)->approximate(T(), context, angleUnit);
-  Evaluation<T> bInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, angleUnit);
   T start = aInput.toScalar();
   T end = bInput.toScalar();
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return Complex<T>::Undefined();
   }
-  VariableContext nContext = VariableContext("n", &context);
+  VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
   Evaluation<T> result = Complex<T>((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
     if (Expression::shouldStopProcessing()) {

@@ -19,7 +19,7 @@ public:
 private:
   const char * name() const override { return "sum"; }
   float emptySequenceValue() const override { return 0.0f; }
-  Layout createSequenceLayout(Layout argumentLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
+  Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
   Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);
   }
@@ -34,10 +34,11 @@ friend class SumNode;
 public:
   Sum();
   Sum(const SumNode * n) : Expression(n) {}
-  Sum(Expression operand0, Expression operand1, Expression operand2) : Sum() {
+  Sum(Expression operand0, Expression operand1, Expression operand2, Expression operand3) : Sum() {
     replaceChildAtIndexInPlace(0, operand0);
     replaceChildAtIndexInPlace(1, operand1);
     replaceChildAtIndexInPlace(2, operand2);
+    replaceChildAtIndexInPlace(3, operand3);
   }
 };
 

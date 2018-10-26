@@ -9,20 +9,34 @@ namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-constexpr char SequenceLayoutNode::k_nEquals[];
+constexpr char SequenceLayoutNode::k_equal[];
 
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (cursor->position() == LayoutCursor::Position::Left
-      && (cursor->layoutNode() == lowerBoundLayout()
-        || cursor->layoutNode() == upperBoundLayout()))
+  if (cursor->layoutNode() == upperBoundLayout())
   {
-    // Case: Left of the bounds. Go Left of the sequence.
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    // Case: Left of the upper bound. Go Left of the sequence.
     cursor->setLayoutNode(this);
     return;
   }
-  if (cursor->position() == LayoutCursor::Position::Left
-      && cursor->layoutNode() == argumentLayout())
+  if (cursor->layoutNode() == lowerBoundLayout())
   {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    // Case: Left of the lower bound. Go Right of the variable name.
+    cursor->setLayoutNode(variableLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  if (cursor->layoutNode() == variableLayout())
+  {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    // Case: Left of the variable name. Go Left of the sequence.
+    cursor->setLayoutNode(this);
+    return;
+  }
+  if (cursor->layoutNode() == argumentLayout())
+  {
+    assert(cursor->position() == LayoutCursor::Position::Left);
     // Case: Left of the argument. Go Right of the lower bound.
     cursor->setLayoutNode(lowerBoundLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
@@ -44,18 +58,26 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
 }
 
 void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (cursor->position() == LayoutCursor::Position::Right
-      && (cursor->layoutNode() == lowerBoundLayout()
-        || cursor->layoutNode() == upperBoundLayout()))
+  if (cursor->layoutNode() == lowerBoundLayout()
+        || cursor->layoutNode() == upperBoundLayout())
   {
+    assert(cursor->position() == LayoutCursor::Position::Right);
     // Case: Right of the bounds. Go Left of the argument.
     cursor->setLayoutNode(argumentLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
-  if (cursor->position() == LayoutCursor::Position::Right
-      && cursor->layoutNode() == argumentLayout())
+  if (cursor->layoutNode() == variableLayout())
   {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    // Case: Right of the variable name. Go Left of the lower bound.
+    cursor->setLayoutNode(lowerBoundLayout());
+    cursor->setPosition(LayoutCursor::Position::Left);
+    return;
+  }
+  if (cursor->layoutNode() == argumentLayout())
+  {
+    assert(cursor->position() == LayoutCursor::Position::Right);
     // Case: Right of the argument. Go Right.
     cursor->setLayoutNode(this);
     return;
@@ -75,8 +97,8 @@ void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
 }
 
 void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
-  // If the cursor is inside the lower bound, move it to the upper bound
+  if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true) || cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
+  // If the cursor is inside the lower bound or inside the variable name, move it to the upper bound
     upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
@@ -119,16 +141,25 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 
 // Protected
 
+KDSize SequenceLayoutNode::lowerBoundSizeWithVariableEquals() {
+  KDSize variableSize = variableLayout()->layoutSize();
+  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
+  KDSize equalSize = k_font->stringSize(k_equal);
+  return KDSize(
+      variableSize.width() + equalSize.width() + lowerBoundSize.width(),
+      subscriptBaseline() + max(max(variableSize.height() - variableLayout()->baseline(), lowerBoundSize.height() - lowerBoundLayout()->baseline()), equalSize.height()/2));
+}
+
 KDSize SequenceLayoutNode::computeSize() {
-  KDSize nEqualslowerBoundSize = lowerBoundSizeWithNEquals();
+  KDSize totalLowerBoundSize = lowerBoundSizeWithVariableEquals();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDSize argumentSize = argumentLayout()->layoutSize();
   KDSize argumentSizeWithParentheses = KDSize(
     argumentSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth(),
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
-    max(max(k_symbolWidth, nEqualslowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
-    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+nEqualslowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
+    max(max(k_symbolWidth, totalLowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
+    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
   return result;
 }
 
@@ -137,21 +168,22 @@ KDCoordinate SequenceLayoutNode::computeBaseline() {
 }
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
-  KDSize nEqualslowerBoundSize = lowerBoundSizeWithNEquals();
-  KDSize nEqualsSize = k_font->stringSize(k_nEquals);
+  KDSize variableSize = variableLayout()->layoutSize();
+  KDSize equalSize = k_font->stringSize(k_equal);
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  if (l == lowerBoundLayout()) {
-    x = nEqualsSize.width() +
-      max(max(0, (k_symbolWidth-nEqualslowerBoundSize.width())/2),
-          (upperBoundSize.width()-nEqualslowerBoundSize.width())/2);
-    y = baseline() + k_symbolHeight/2 + k_boundHeightMargin;
+  if (l == variableLayout()) {
+    x = completeLowerBoundX();
+    y = baseline() + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline() - variableLayout()->baseline();
+  } else if (l == lowerBoundLayout()) {
+    x = completeLowerBoundX() + equalSize.width() + variableSize.width();
+    y = baseline() + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline() - lowerBoundLayout()->baseline();
   } else if (l == upperBoundLayout()) {
-    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (nEqualslowerBoundSize.width()-upperBoundSize.width())/2);
+    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = max(max(k_symbolWidth, nEqualslowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::ParenthesisWidth();
+    x = max(max(k_symbolWidth, lowerBoundSizeWithVariableEquals().width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::ParenthesisWidth();
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
@@ -174,25 +206,16 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   buffer[numberOfChar++] = '(';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  // Write the argument
-  numberOfChar += const_cast<SequenceLayoutNode *>(this)->argumentLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the comma
-  buffer[numberOfChar++] = ',';
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the lower bound
-  numberOfChar += const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the comma
-  buffer[numberOfChar++] = ',';
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the upper bound
-  numberOfChar += const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
+  for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
+    if (i != 0) {
+      // Write the comma
+      buffer[numberOfChar++] = ',';
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    }
+    numberOfChar += argLayouts[i]->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  }
 
   // Write the closing parenthesis
   buffer[numberOfChar++] = ')';
@@ -201,9 +224,10 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
 }
 
 void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  // Render the "n="
-  KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy(KDPoint(-k_font->stringSize(k_nEquals).width(), 0));
-  ctx->drawString(k_nEquals, p.translatedBy(nEqualsPosition), k_font, expressionColor, backgroundColor);
+  // Render the "="
+  KDSize variableSize = variableLayout()->layoutSize();
+  KDPoint equalPosition = positionOfChild(variableLayout()).translatedBy(KDPoint(variableSize.width(), variableLayout()->baseline()-k_font->stringSize(k_equal).height()/2));
+  ctx->drawString(k_equal, p.translatedBy(equalPosition), k_font, expressionColor, backgroundColor);
 
   // Render the parentheses
   KDCoordinate argumentWithParenthesesHeight = ParenthesisLayoutNode::HeightGivenChildHeight(argumentLayout()->layoutSize().height());
@@ -220,12 +244,14 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   RightParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, rightParenthesisPoint, expressionColor, backgroundColor);
 }
 
-KDSize SequenceLayoutNode::lowerBoundSizeWithNEquals() {
-  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
-  KDSize nEqualsSize = k_font->stringSize(k_nEquals);
-  return KDSize(
-      nEqualsSize.width() + lowerBoundSize.width(),
-      max(nEqualsSize.height(), lowerBoundSize.height()));
+KDCoordinate SequenceLayoutNode::completeLowerBoundX() {
+  KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+ return max(max(0, (k_symbolWidth-lowerBoundSizeWithVariableEquals().width())/2),
+          (upperBoundSize.width()-lowerBoundSizeWithVariableEquals().width())/2);
+}
+
+KDCoordinate SequenceLayoutNode::subscriptBaseline() {
+  return max(max(variableLayout()->baseline(), lowerBoundLayout()->baseline()), k_font->stringSize(k_equal).height()/2);
 }
 
 }

@@ -60,6 +60,13 @@ def roots(a,b,c):
   else:
     return None)");
 
+constexpr ScriptTemplate spiralScriptTemplate("spiral.py", "\x00" R"(from turtle import *
+for i in range(255):
+  gray=255-i
+  color(gray,int(gray*0.75),int(gray*0.25))
+  forward(i*0.1)
+  left(10))");
+
 const ScriptTemplate * ScriptTemplate::Empty() {
   return &emptyScriptTemplate;
 }
@@ -78,6 +85,10 @@ const ScriptTemplate * ScriptTemplate::Mandelbrot() {
 
 const ScriptTemplate * ScriptTemplate::Polynomial() {
   return &polynomialScriptTemplate;
+}
+
+const ScriptTemplate * ScriptTemplate::Spiral() {
+  return &spiralScriptTemplate;
 }
 
 }

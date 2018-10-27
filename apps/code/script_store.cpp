@@ -17,6 +17,7 @@ ScriptStore::ScriptStore()
   addScriptFromTemplate(ScriptTemplate::Factorial());
   addScriptFromTemplate(ScriptTemplate::Mandelbrot());
   addScriptFromTemplate(ScriptTemplate::Polynomial());
+  addScriptFromTemplate(ScriptTemplate::Spiral());
 }
 
 void ScriptStore::deleteAllScripts() {

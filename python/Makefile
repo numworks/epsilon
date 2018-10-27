@@ -131,6 +131,8 @@ port_objs += $(addprefix python/port/,\
   helpers.o \
   modkandinsky.o \
   modkandinsky_impl.o \
+  modturtle.o \
+  modturtle_impl.o \
   mphalport.o \
 )
 
@@ -176,3 +178,5 @@ $(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
 # List all objects needed
 
 objs += $(extmod_objs) $(py_objs) $(port_objs)
+
+app_images += python/port/turtle_icon.png

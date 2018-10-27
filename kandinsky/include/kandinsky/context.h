@@ -22,7 +22,7 @@ public:
 
   // Rect
   void fillRect(KDRect rect, KDColor color);
-  void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
+  void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer, KDColor * prevPixels = nullptr);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
 protected:

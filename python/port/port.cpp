@@ -17,6 +17,7 @@ extern "C" {
 #include "py/repl.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
+#include "modturtle.h"
 #include "mphalport.h"
 }
 
@@ -107,7 +108,8 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
   mp_init();
 }
 
-void MicroPython::deinit(){
+void MicroPython::deinit() {
+  turtle_deinit();
   mp_deinit();
 }
 

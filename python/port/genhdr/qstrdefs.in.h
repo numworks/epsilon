@@ -24,6 +24,23 @@ Q(draw_string)
 Q(get_pixel)
 Q(set_pixel)
 
+// Turtle QSTRs
+
+Q(turtle)
+Q(forward)
+Q(backward)
+Q(right)
+Q(left)
+Q(goto)
+Q(setheading)
+Q(speed)
+
+Q(pendown)
+Q(penup)
+
+Q(color)
+Q(reset)
+
 // MicroPython QSTRs
 Q()
 Q(*)

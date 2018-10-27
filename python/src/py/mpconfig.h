@@ -619,7 +619,7 @@ typedef double mp_float_t;
 
 // Whether to call __init__ when importing builtin modules for the first time
 #ifndef MICROPY_MODULE_BUILTIN_INIT
-#define MICROPY_MODULE_BUILTIN_INIT (0)
+#define MICROPY_MODULE_BUILTIN_INIT (1)
 #endif
 
 // Whether module weak links are supported

@@ -12,6 +12,7 @@ public:
   static const ScriptTemplate * Mandelbrot();
   static const ScriptTemplate * Polynomial();
   static const ScriptTemplate * Spiral();
+  static const ScriptTemplate * Koch();
   const char * name() const { return m_name; }
   const char * content() const { return m_value+1; }
   const char * value() const { return m_value; }

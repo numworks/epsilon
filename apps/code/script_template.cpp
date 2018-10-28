@@ -62,8 +62,17 @@ def roots(a,b,c):
 
 constexpr ScriptTemplate spiralScriptTemplate("spiral.py", "\x00" R"(from turtle import *
 for i in range(255):
+  # Change pen width
+  s=int(1+i/16)
+  if s > 10:
+    s = 10
+  pensize(s)
+
+  # Change pen color
   gray=255-i
-  color(gray,int(gray*0.75),int(gray*0.25))
+  pencolor(gray,int(gray*0.75),int(gray*0.25))
+
+  # Draw a segment of the spiral
   forward(i*0.1)
   left(10))");
 

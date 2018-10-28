@@ -13,49 +13,53 @@ constexpr int t_x_offset = Ion::Display::Width / 2;
 constexpr int t_y_offset = (Ion::Display::Height-18) / 2;
 constexpr int t_size = 9;
 constexpr int t_icons = 8;
-constexpr KDPoint t_icon_offset(-t_size/2, -t_size/2);
+constexpr KDPoint t_icon_offset(-t_size/2 + 1, -t_size/2 + 1);
 constexpr KDSize t_icon_size(t_size, t_size);
 
 static KDColor t_color;
 static float t_heading;
 static float t_x, t_y;
 static bool t_penup;
+static bool t_hidden;
 static int t_speed;
+static int t_dotsize;
 
 static int t_mileage;
 static bool t_drawn;
 
 static KDColor *t_underneath;
 static KDColor *t_icon;
-
-constexpr KDCoordinate dotDiameter = 5;
-const uint8_t dotMask[dotDiameter][dotDiameter] = {
-  {0xE1, 0x45, 0x0C, 0x45, 0xE1},
-  {0x45, 0x00, 0x00, 0x00, 0x45},
-  {0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x45, 0x00, 0x00, 0x00, 0x45},
-  {0xE1, 0x45, 0x0C, 0x45, 0xE1},
-};
+static uint8_t *t_dot;
 
 static KDPoint pos_turtle(float x, float y) {
-  return KDPoint(x + t_x_offset, y + t_y_offset);
+  return KDPoint(round(x + t_x_offset), round(y + t_y_offset));
 }
 
 void draw_turtle() {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
-  int offset = int((t_heading / (2*M_PI)) * t_icons + 0.5) % t_icons * (t_size*t_size);
-
-  KDIonContext::sharedContext()->fillRectWithPixels(KDRect(pos_turtle(t_x, t_y).translatedBy(t_icon_offset), t_icon_size), &t_icon[offset], nullptr, t_drawn ? nullptr : t_underneath);
-
-  if (t_mileage > 1000) {
-    if (t_speed > 0) {
-      Ion::msleep(8 * (8 - t_speed));
-    }
-    t_mileage -= 1000;
+  int frame = (int)((t_heading / (2*M_PI)) * t_icons + 0.5);
+  if (frame < 0) {
+    frame = t_icons - ((-frame) % t_icons) - 1;
+  }
+  else {
+    frame = frame % t_icons;
   }
 
-  t_drawn = true;
+  int offset = frame * (t_size*t_size);
+
+  if (!t_hidden) {
+    KDIonContext::sharedContext()->fillRectWithPixels(KDRect(pos_turtle(t_x, t_y).translatedBy(t_icon_offset), t_icon_size), &t_icon[offset], nullptr, t_drawn ? nullptr : t_underneath);
+
+    if (t_mileage > 1000) {
+      if (t_speed > 0) {
+        Ion::msleep(8 * (8 - t_speed));
+      }
+      t_mileage -= 1000;
+    }
+
+    t_drawn = true;
+  }
 }
 
 void erase_turtle() {
@@ -69,9 +73,9 @@ void dot_turtle(float x, float y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
   if (!t_penup) {
-    KDColor colors[dotDiameter*dotDiameter];
-    KDRect rect(pos_turtle(x, y), KDSize(dotDiameter, dotDiameter));
-    KDIonContext::sharedContext()->blendRectWithMask(rect, t_color, &dotMask[0][0], colors);
+    KDColor colors[t_dotsize*t_dotsize];
+    KDRect rect(pos_turtle(x, y).translatedBy(KDPoint(-t_dotsize/2, -t_dotsize/2)), KDSize(t_dotsize, t_dotsize));
+    KDIonContext::sharedContext()->blendRectWithMask(rect, t_color, t_dot, colors);
   }
 
   if (t_speed > 0) {
@@ -175,8 +179,53 @@ mp_obj_t turtle_penup() {
   return mp_const_none;
 }
 
+mp_obj_t turtle_pensize(mp_obj_t size) {
+  int s = mp_obj_get_int(size);
+  if (s < 1) {
+    s = 1;
+  }
+  else if (s > 10) {
+    s = 10;
+  }
+
+  if (t_dot) {
+    delete[] t_dot;
+  }
+  t_dot = new uint8_t[s*s];
+  t_dotsize = s;
+
+  float middle = s / 2;
+  for (int j = 0; j < s; j++) {
+    for (int i = 0; i < s; i++) {
+      float distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / middle;
+      int value = distance * distance * 255;
+      if (value < 0) {
+        value = 0;
+      }
+      else if (value > 255) {
+        value = 255;
+      }
+      t_dot[j*s + i] = value;
+    }
+  }
+
+  return mp_const_none;
+}
+
 mp_obj_t turtle_color(mp_obj_t r, mp_obj_t g, mp_obj_t b) {
   t_color = KDColor::RGB888(mp_obj_get_int(r), mp_obj_get_int(g), mp_obj_get_int(b));
+  return mp_const_none;
+}
+
+mp_obj_t turtle_showturtle() {
+  t_hidden = false;
+  draw_turtle();
+  return mp_const_none;
+}
+
+mp_obj_t turtle_hideturtle() {
+  t_hidden = true;
+  erase_turtle();
   return mp_const_none;
 }
 
@@ -201,6 +250,9 @@ mp_obj_t turtle___init__() {
   t_penup = false;
   t_speed = 6;
   t_mileage = 0;
+  t_hidden = false;
+
+  turtle_pensize(MP_OBJ_NEW_SMALL_INT(5));
 
   return mp_const_none;
 }
@@ -210,4 +262,6 @@ void turtle_deinit() {
   t_underneath = nullptr;
   delete[] t_icon;
   t_icon = nullptr;
+  delete[] t_dot;
+  t_dot = nullptr;
 }

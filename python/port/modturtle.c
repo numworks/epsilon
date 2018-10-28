@@ -12,25 +12,46 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_speed_obj, turtle_speed);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_pendown_obj, turtle_pendown);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_penup_obj, turtle_penup);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_pensize_obj, turtle_pensize);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(turtle_color_obj, turtle_color);
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_showturtle_obj, turtle_showturtle);
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_hideturtle_obj, turtle_hideturtle);
+
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle___init___obj, turtle___init__);
 
 STATIC const mp_rom_map_elem_t turtle_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_turtle) },
     { MP_ROM_QSTR(MP_QSTR___init__), (mp_obj_t)&turtle___init___obj },
     { MP_ROM_QSTR(MP_QSTR_forward), (mp_obj_t)&turtle_forward_obj },
+        { MP_ROM_QSTR(MP_QSTR_fd), (mp_obj_t)&turtle_forward_obj },
     { MP_ROM_QSTR(MP_QSTR_backward), (mp_obj_t)&turtle_backward_obj },
+        { MP_ROM_QSTR(MP_QSTR_bk), (mp_obj_t)&turtle_backward_obj },
     { MP_ROM_QSTR(MP_QSTR_right), (mp_obj_t)&turtle_right_obj },
+        { MP_ROM_QSTR(MP_QSTR_rt), (mp_obj_t)&turtle_right_obj },
     { MP_ROM_QSTR(MP_QSTR_left), (mp_obj_t)&turtle_left_obj },
+        { MP_ROM_QSTR(MP_QSTR_lt), (mp_obj_t)&turtle_left_obj },
     { MP_ROM_QSTR(MP_QSTR_goto), (mp_obj_t)&turtle_goto_obj },
     { MP_ROM_QSTR(MP_QSTR_setheading), (mp_obj_t)&turtle_setheading_obj },
+        { MP_ROM_QSTR(MP_QSTR_seth), (mp_obj_t)&turtle_setheading_obj },
     { MP_ROM_QSTR(MP_QSTR_speed), (mp_obj_t)&turtle_speed_obj },
 
     { MP_ROM_QSTR(MP_QSTR_pendown), (mp_obj_t)&turtle_pendown_obj },
+        { MP_ROM_QSTR(MP_QSTR_pd), (mp_obj_t)&turtle_pendown_obj },
+        { MP_ROM_QSTR(MP_QSTR_down), (mp_obj_t)&turtle_pendown_obj },
     { MP_ROM_QSTR(MP_QSTR_penup), (mp_obj_t)&turtle_penup_obj },
+        { MP_ROM_QSTR(MP_QSTR_pu), (mp_obj_t)&turtle_penup_obj },
+        { MP_ROM_QSTR(MP_QSTR_up), (mp_obj_t)&turtle_penup_obj },
+    { MP_ROM_QSTR(MP_QSTR_pensize), (mp_obj_t)&turtle_pensize_obj },
+        { MP_ROM_QSTR(MP_QSTR_width), (mp_obj_t)&turtle_pensize_obj },
 
-    { MP_ROM_QSTR(MP_QSTR_color), (mp_obj_t)&turtle_color_obj },
+    { MP_ROM_QSTR(MP_QSTR_pencolor), (mp_obj_t)&turtle_color_obj },
+
+    { MP_ROM_QSTR(MP_QSTR_showturtle), (mp_obj_t)&turtle_showturtle_obj },
+        { MP_ROM_QSTR(MP_QSTR_st), (mp_obj_t)&turtle_showturtle_obj },
+    { MP_ROM_QSTR(MP_QSTR_hideturtle), (mp_obj_t)&turtle_hideturtle_obj },
+        { MP_ROM_QSTR(MP_QSTR_hd), (mp_obj_t)&turtle_hideturtle_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(turtle_module_globals, turtle_module_globals_table);

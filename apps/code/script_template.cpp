@@ -60,22 +60,34 @@ def roots(a,b,c):
   else:
     return None)");
 
-constexpr ScriptTemplate spiralScriptTemplate("spiral.py", "\x00" R"(from turtle import *
-for i in range(255):
-  # Change pen width
-  s=int(1+i/16)
-  if s > 10:
-    s = 10
-  pensize(s)
+constexpr ScriptTemplate spiralScriptTemplate("spiral.py", "\x01" R"(from turtle import *
+def spiral(N_iteration):
+  N_iteration *= 25
+  for i in range(N_iteration):
+# Change pen color
+    gray=255-(i*255/N_iteration)
+    pencolor(int(gray),int(gray*0.75),int(gray*0.25))
+# Draw a segment of the spiral
+    forward(i*0.1)
+    left(10))");
 
-  # Change pen color
-  gray=255-i
-  pencolor(gray,int(gray*0.75),int(gray*0.25))
-
-  # Draw a segment of the spiral
-  forward(i*0.1)
-  left(10))");
-
+constexpr ScriptTemplate kochScriptTemplate("koch.py", "\x01" R"(from turtle import *
+def koch(N_iteration):
+  pensize(1)
+# Define inner function for recursion
+  def _koch(n, l):
+    if n == 1:
+      forward(l)
+    else:
+      _koch(n-1,l/3)
+      left(60)
+      _koch(n-1,l/3)
+      right(120)
+      _koch(n-1,l/3)
+      left(60)
+      _koch(n-1,l/3)
+# Call inner function
+  _koch(N_iteration,140))");
 const ScriptTemplate * ScriptTemplate::Empty() {
   return &emptyScriptTemplate;
 }
@@ -98,6 +110,10 @@ const ScriptTemplate * ScriptTemplate::Polynomial() {
 
 const ScriptTemplate * ScriptTemplate::Spiral() {
   return &spiralScriptTemplate;
+}
+
+const ScriptTemplate * ScriptTemplate::Koch() {
+  return &kochScriptTemplate;
 }
 
 }

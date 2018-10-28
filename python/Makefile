@@ -163,7 +163,7 @@ $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
 
 # Icon dependency
-python/port/modturtle_impl.cpp: python/port/turtle_icon.cpp
+python/port/modturtle_impl.cpp: python/port/turtle_icon.o
 
 # QSTR generation
 
@@ -179,6 +179,6 @@ $(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
 
 # List all objects needed
 
-objs += $(extmod_objs) $(py_objs) $(port_objs)
+objs += $(extmod_objs) $(py_objs) $(port_objs) python/port/turtle_icon.o
 
 app_images += python/port/turtle_icon.png

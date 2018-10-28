@@ -162,6 +162,8 @@ ifeq ($(PLATFORM),emscripten)
 $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
 
+# Icon dependency
+python/port/modturtle_impl.cpp: python/port/turtle_icon.cpp
 
 # QSTR generation
 

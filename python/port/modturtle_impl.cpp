@@ -50,15 +50,17 @@ void draw_turtle() {
 
   if (!t_hidden) {
     KDIonContext::sharedContext()->fillRectWithPixels(KDRect(pos_turtle(t_x, t_y).translatedBy(t_icon_offset), t_icon_size), &t_icon[offset], nullptr, t_drawn ? nullptr : t_underneath);
+    t_drawn = true;
+  }
 
-    if (t_mileage > 1000) {
-      if (t_speed > 0) {
-        Ion::msleep(8 * (8 - t_speed));
-      }
+  if (t_mileage > 1000) {
+    if (t_speed > 0) {
+      Ion::msleep(8 * (8 - t_speed));
       t_mileage -= 1000;
     }
-
-    t_drawn = true;
+    else {
+      t_mileage = 0;
+    }
   }
 }
 
@@ -136,23 +138,13 @@ mp_obj_t turtle_goto(mp_obj_t x, mp_obj_t y) {
 mp_obj_t turtle_setheading(mp_obj_t angle) {
   micropython_port_should_interrupt();
 
-  float new_angle = mp_obj_get_float(angle) * t_heading_scale + t_heading_offset;
+  t_heading = mp_obj_get_float(angle) * t_heading_scale + t_heading_offset;
 
-  //if (t_speed == 0) {
-    t_heading = new_angle;
+  Ion::Display::waitForVBlank();
+  erase_turtle();
+  draw_turtle();
 
-    if (t_speed > 0) {
-      Ion::Display::waitForVBlank();
-    }
-    erase_turtle();
-    draw_turtle();
-
-    return mp_const_none;/*
-  }
-
-  micropython_port_should_interrupt();
-
-  return mp_const_none;*/
+  return mp_const_none;
 }
 
 mp_obj_t turtle_speed(mp_obj_t speed) {
@@ -197,7 +189,7 @@ mp_obj_t turtle_pensize(mp_obj_t size) {
   float middle = s / 2;
   for (int j = 0; j < s; j++) {
     for (int i = 0; i < s; i++) {
-      float distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / middle;
+      float distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / (middle+1);
       int value = distance * distance * 255;
       if (value < 0) {
         value = 0;

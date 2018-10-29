@@ -193,7 +193,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   // n unknown variables
   int n = 0;
-  while (m_variables[n++][0] != 0) {}
+  while (m_variables[n][0] != 0) { n++; }
   int m = numberOfDefinedModels(); // m equations
   /* Create the matrix (A | b) for the equation Ax=b */
   Matrix Ab;

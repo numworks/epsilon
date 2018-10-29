@@ -49,10 +49,11 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
    * - The empty controller is displayed
    */
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage && !isDisplayingEmptyController()) {
+    int rowIndex = selectedRow();
     m_selectableTableView.deselectTable();
-    Storage::Record record = recordAtIndex(selectedRow());
+    Storage::Record record = recordAtIndex(rowIndex);
     record.destroy();
-    int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows()-1 : selectedRow();
+    int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
     selectCellAtLocation(selectedColumn(), newSelectedRow);
     m_selectableTableView.reloadData();
     displayEmptyController();

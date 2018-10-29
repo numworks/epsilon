@@ -31,8 +31,13 @@ void RationalNode::initToMatchSize(size_t goalSize) {
   assert(goalSize != sizeof(RationalNode));
   int digitsSize = goalSize - sizeof(RationalNode);
   assert(digitsSize%sizeof(native_uint_t) == 0);
-  m_numberOfDigitsNumerator = digitsSize/sizeof(native_uint_t);
-  m_numberOfDigitsDenominator = 0;
+  /* We are initing the Rational to match a specific size. The built rational
+   * is dummy. However, we cannot assign to m_numberOfDigitsNumerator (or
+   * m_numberOfDigitsDenominator) values that are aboce k_maxNumberOfDigits.
+   * To prevent that, we evenly separe digits between numerator and denominator. */
+  size_t numberOfDigits = digitsSize/sizeof(native_uint_t);
+  m_numberOfDigitsNumerator = numberOfDigits/2;
+  m_numberOfDigitsDenominator = numberOfDigits-m_numberOfDigitsNumerator;
   assert(size() == goalSize);
 }
 

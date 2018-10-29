@@ -68,7 +68,7 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
   while(variables[variablesIndex] != 0) {
     variablesIndex+= maxSizeVariable;
   }
-  if (isVariable(m_name)) {
+  if (!isConstant() && isVariable(m_name)) {
     int index = 0;
     while (variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {

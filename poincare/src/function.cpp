@@ -1,5 +1,4 @@
 #include <poincare/function.h>
-#include <poincare/helpers.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
@@ -9,25 +8,6 @@
 #include <cmath>
 
 namespace Poincare {
-
-/* TreePool uses adresses and sizes that are multiples of 4 in order to make
- * node moves faster.*/
-static size_t NodeSize(size_t nameLength) {
-  return Helpers::AlignedSize(sizeof(FunctionNode)+nameLength+1, 4);
-}
-
-void FunctionNode::initToMatchSize(size_t goalSize) {
-  // TODO Factorize with symbol
-  assert(goalSize != sizeof(FunctionNode));
-  assert(goalSize > sizeof(FunctionNode));
-  size_t nameSize = goalSize - sizeof(FunctionNode);
-  SymbolAbstractNode::initName(nameSize);
-  assert(size() == goalSize);
-}
-
-size_t FunctionNode::size() const {
-  return NodeSize(strlen(m_name));
-}
 
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
@@ -108,7 +88,7 @@ Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::
 }
 
 Function::Function(const char * name) :
-  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(NodeSize(strlen(name))))
+  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(SymbolAbstract::AlignedNodeSize(strlen(name), sizeof(FunctionNode))))
 {
   static_cast<FunctionNode *>(Expression::node())->setName(name, strlen(name));
 }

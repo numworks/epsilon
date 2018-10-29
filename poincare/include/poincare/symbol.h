@@ -10,8 +10,6 @@ public:
   const char * name() const override { return m_name; }
 
   // TreeNode
-  void initToMatchSize(size_t goalSize) override;
-  size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -47,6 +45,7 @@ public:
 private:
   char m_name[0]; // MUST be the last member variable
 
+  size_t nodeSize() const override { return sizeof(SymbolNode); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   bool isSymbolChar(char c) const { const char symbolName[2] = {c, 0}; return strcmp(m_name, symbolName) == 0; }
 };

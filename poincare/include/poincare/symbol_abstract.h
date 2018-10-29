@@ -28,6 +28,8 @@ class SymbolAbstractNode : public ExpressionNode {
 public:
   virtual const char * name() const = 0;
   void setName(const char * newName, int length);
+  size_t size() const override;
+  void initToMatchSize(size_t goalSize) override;
 
   // ExpressionNode
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
@@ -43,10 +45,13 @@ public:
 #endif
 
 protected:
-  void initName(size_t nameSize);
+  virtual size_t nodeSize() const = 0;
 };
 
 class SymbolAbstract : public Expression {
+  friend class Function;
+  friend class Symbol;
+  friend class SymbolAbstractNode;
 public:
   const char * name() const { return node()->name(); }
   static size_t TruncateExtension(char * dst, const char * src, size_t len);
@@ -54,6 +59,8 @@ public:
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
+private:
+  static size_t AlignedNodeSize(size_t nameLength, size_t nodeSize);
 };
 
 }

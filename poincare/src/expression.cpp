@@ -119,6 +119,7 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
       if (strcmp(static_cast<const Symbol&>(e).name(), &variables[index*maxVariableSize]) == 0) {
         return true;
       }
+      index++;
     }
   }
   for (int i = 0; i < e.numberOfChildren(); i++) {

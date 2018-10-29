@@ -90,7 +90,7 @@ void assert_parsed_expression_has_variables(const char * expression, const char 
   int numberOfVariables = e.getVariables(globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
   quiz_assert(trueNumberOfVariables == numberOfVariables);
   if (numberOfVariables < 0) {
-    // Too many variables or variable name too long
+    // Too many variables
     return;
   }
   int index = 0;
@@ -109,8 +109,8 @@ QUIZ_CASE(poincare_get_variables) {
   assert_parsed_expression_has_variables("a+x^2+2*y+k!*A", variableBuffer3, 5);
   const char * variableBuffer4[] = {"BABA","abab", ""};
   assert_parsed_expression_has_variables("BABA+abab", variableBuffer4, 2);
-  const char * variableBuffer5[] = {""};
-  assert_parsed_expression_has_variables("BBBBBBBBBBBBBBBBBBBBBBBBBBBBB", variableBuffer5, -2);
+  const char * variableBuffer5[] = {"BBBBBB", ""};
+  assert_parsed_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
   assert_parsed_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
 }

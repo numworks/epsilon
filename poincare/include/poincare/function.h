@@ -12,8 +12,6 @@ public:
   const char * name() const override { return m_name; }
 
   // TreeNode
-  void initToMatchSize(size_t goalSize) override;
-  size_t size() const override;
   int numberOfChildren() const override { return 1; } //TODO allow any number of children? Needs templating
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -33,6 +31,7 @@ public:
 private:
   char m_name[0]; // MUST be the last member variable
 
+  size_t nodeSize() const override { return sizeof(FunctionNode); }
   VariableContext xContext(Context & parentContext) const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -34,7 +34,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("gcd(2,3)", ExpressionNode::Type::GreatCommonDivisor);
   assert_parsed_expression_type("im(2+I)", ExpressionNode::Type::ImaginaryPart);
   assert_parsed_expression_type("lcm(2,3)", ExpressionNode::Type::LeastCommonMultiple);
-  assert_parsed_expression_type("int(x, 2, 3)", ExpressionNode::Type::Integral);
+  assert_parsed_expression_type("int(x, x, 2, 3)", ExpressionNode::Type::Integral);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("inverse([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixInverse);
 #endif
@@ -43,7 +43,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
   assert_parsed_expression_type("prediction(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
   assert_parsed_expression_type("prediction95(0.1, 100)", ExpressionNode::Type::PredictionInterval);
-  assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
+  assert_parsed_expression_type("product(y,y, 4, 10)", ExpressionNode::Type::Product);
   assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
 
   assert_parsed_expression_type("random()", ExpressionNode::Type::Random);
@@ -54,7 +54,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
   assert_parsed_expression_type("R(2)", ExpressionNode::Type::SquareRoot);
   assert_parsed_expression_type("round(2,3)", ExpressionNode::Type::Round);
-  assert_parsed_expression_type("sum(n, 4, 10)", ExpressionNode::Type::Sum);
+  assert_parsed_expression_type("sum(n,n, 4, 10)", ExpressionNode::Type::Sum);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTrace);
   assert_parsed_expression_type("transpose([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTranspose);
@@ -109,8 +109,8 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("lcm(234,394)", "46098");
   assert_parsed_expression_evaluates_to<double>("lcm(234,394)", "46098");
 
-  assert_parsed_expression_evaluates_to<float>("int(x, 1, 2)", "1.5");
-  assert_parsed_expression_evaluates_to<double>("int(x, 1, 2)", "1.5");
+  assert_parsed_expression_evaluates_to<float>("int(x,x, 1, 2)", "1.5");
+  assert_parsed_expression_evaluates_to<double>("int(x,x, 1, 2)", "1.5");
 
   assert_parsed_expression_evaluates_to<float>("ln(2)", "0.6931472");
   assert_parsed_expression_evaluates_to<double>("ln(2)", "6.9314718055995E-1");
@@ -121,8 +121,8 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("permute(10, 4)", "5040");
   assert_parsed_expression_evaluates_to<double>("permute(10, 4)", "5040");
 
-  assert_parsed_expression_evaluates_to<float>("product(n, 4, 10)", "604800");
-  assert_parsed_expression_evaluates_to<double>("product(n, 4, 10)", "604800");
+  assert_parsed_expression_evaluates_to<float>("product(n,n, 4, 10)", "604800");
+  assert_parsed_expression_evaluates_to<double>("product(n,n, 4, 10)", "604800");
 
   assert_parsed_expression_evaluates_to<float>("quo(29, 10)", "2");
   assert_parsed_expression_evaluates_to<double>("quo(29, 10)", "2");
@@ -141,8 +141,8 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("R(-1)", "I");
   assert_parsed_expression_evaluates_to<double>("R(-1)", "I");
 
-  assert_parsed_expression_evaluates_to<float>("sum(n, 4, 10)", "49");
-  assert_parsed_expression_evaluates_to<double>("sum(n, 4, 10)", "49");
+  assert_parsed_expression_evaluates_to<float>("sum(r,r, 4, 10)", "49");
+  assert_parsed_expression_evaluates_to<double>("sum(k,k, 4, 10)", "49");
 
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
@@ -176,8 +176,8 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
   assert_parsed_expression_evaluates_to<double>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
 
-  assert_parsed_expression_evaluates_to<float>("product(2+n*I, 1, 5)", "(-100)-540*I");
-  assert_parsed_expression_evaluates_to<double>("product(2+n*I, 1, 5)", "(-100)-540*I");
+  assert_parsed_expression_evaluates_to<float>("product(2+k*I,k, 1, 5)", "(-100)-540*I");
+  assert_parsed_expression_evaluates_to<double>("product(2+o*I,o, 1, 5)", "(-100)-540*I");
 
   assert_parsed_expression_evaluates_to<float>("root(3+I, 3)", "1.459366+0.1571201*I");
   assert_parsed_expression_evaluates_to<double>("root(3+I, 3)", "1.4593656008684+1.5712012294394E-1*I");
@@ -191,8 +191,8 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("R(3+I)", "1.755317+0.2848488*I");
   assert_parsed_expression_evaluates_to<double>("R(3+I)", "1.7553173018244+2.8484878459314E-1*I");
 
-  assert_parsed_expression_evaluates_to<double>("sum(2+n*I,1,5)", "10+15*I");
-  assert_parsed_expression_evaluates_to<double>("sum(2+n*I,1,5)", "10+15*I");
+  assert_parsed_expression_evaluates_to<double>("sum(2+n*I,n,1,5)", "10+15*I");
+  assert_parsed_expression_evaluates_to<double>("sum(2+n*I,n,1,5)", "10+15*I");
 
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("transpose([[1,2,3][4,5,-6][7,8,9]])", "[[1,4,7][2,5,8][3,-6,9]]");
@@ -215,11 +215,11 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("root(-1,3)", "0.5+0.8660254*I");
   assert_parsed_expression_evaluates_to<double>("root(-1,3)", "0.5+8.6602540378444E-1*I");
 
-  assert_parsed_expression_evaluates_to<float>("int(int(x*x,0,x),0,4)", "21.33333");
-  assert_parsed_expression_evaluates_to<double>("int(int(x*x,0,x),0,4)", "21.333333333333");
+  assert_parsed_expression_evaluates_to<float>("int(int(x*x,x,0,x),x,0,4)", "21.33333");
+  assert_parsed_expression_evaluates_to<double>("int(int(x*x,x,0,x),x,0,4)", "21.333333333333");
 
-  assert_parsed_expression_evaluates_to<float>("int(1+cos(x), 0, 180)", "180");
-  assert_parsed_expression_evaluates_to<double>("int(1+cos(x), 0, 180)", "180");
+  assert_parsed_expression_evaluates_to<float>("int(1+cos(e),e, 0, 180)", "180");
+  assert_parsed_expression_evaluates_to<double>("int(1+cos(e),e, 0, 180)", "180");
 
   Expression exp = parse_expression("random()");
   assert_exp_is_bounded(exp, 0.0f, 1.0f);

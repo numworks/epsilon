@@ -15,8 +15,8 @@ QUIZ_CASE(poincare_store_evaluate) {
 }
 
 QUIZ_CASE(poincare_store_simplify) {
-  assert_parsed_expression_simplify_to("1+2>A", "A");
-  assert_parsed_expression_simplify_to("1+2>x", "x");
+  assert_parsed_expression_simplify_to("1+2>A", "3");
+  assert_parsed_expression_simplify_to("1+2>x", "3");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("A.exp").destroy();
@@ -25,32 +25,32 @@ QUIZ_CASE(poincare_store_simplify) {
 
 QUIZ_CASE(poincare_store_user_variable) {
   // Fill variable
-  assert_parsed_expression_simplify_to("1+2>Adadas", "Adadas");
+  assert_parsed_expression_simplify_to("1+2>Adadas", "3");
   assert_parsed_expression_simplify_to("Adadas", "3");
 
   // Fill f1
-  assert_parsed_expression_simplify_to("1+x>f1(x)", "f1(x)");
+  assert_parsed_expression_simplify_to("1+x>f1(x)", "1+?");
   assert_parsed_expression_simplify_to("f1(4)", "5");
   assert_parsed_expression_simplify_to("f1(Adadas)", "4");
 
   // Fill f2
-  assert_parsed_expression_simplify_to("x-1>f2(x)", "f2(x)");
+  assert_parsed_expression_simplify_to("x-1>f2(x)", "(-1)+?");
   assert_parsed_expression_simplify_to("f2(4)", "3");
   assert_parsed_expression_simplify_to("f2(Adadas)", "2");
 
-  // Define funcBoth with f1 and f2
-  assert_parsed_expression_simplify_to("f1(x)+f2(x)>funcBoth(x)", "funcBoth(x)");
-  assert_parsed_expression_simplify_to("funcBoth(4)", "4");
-  assert_parsed_expression_simplify_to("funcBoth(Adadas)", "3");
+  // Define fBoth with f1 and f2
+  assert_parsed_expression_simplify_to("f1(x)+f2(x)>fBoth(x)", "f1(?)+f2(?)");
+  assert_parsed_expression_simplify_to("fBoth(4)", "8");
+  assert_parsed_expression_simplify_to("fBoth(Adadas)", "6");
 
   // Change f2
-  assert_parsed_expression_simplify_to("x>f2(x)", "f2(x)");
+  assert_parsed_expression_simplify_to("x>f2(x)", "?");
   assert_parsed_expression_simplify_to("f2(4)", "4");
   assert_parsed_expression_simplify_to("f2(Adadas)", "3");
 
-  // Make sure funcBoth has changed
-  assert_parsed_expression_simplify_to("funcBoth(4)", "5");
-  assert_parsed_expression_simplify_to("funcBoth(Adadas)", "4");
+  // Make sure fBoth has changed
+  assert_parsed_expression_simplify_to("fBoth(4)", "9");
+  assert_parsed_expression_simplify_to("fBoth(Adadas)", "7");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("Adadas.exp").destroy();

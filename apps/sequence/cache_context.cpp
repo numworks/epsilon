@@ -45,7 +45,7 @@ int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
 template<typename T>
 int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
   assert(strlen(symbol.name()) == 4 || strlen(symbol.name()) == 6); // u(n) or u(n+1)
-  if (symbol.name()[3] == '(') { // .(n)
+  if (symbol.name()[3] == ')') { // .(n)
     return 0;
   }
   // .(n+1)

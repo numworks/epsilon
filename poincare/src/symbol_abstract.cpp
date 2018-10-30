@@ -25,7 +25,7 @@ void SymbolAbstractNode::initToMatchSize(size_t goalSize) {
 }
 
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
-  assert(e->type() == Type::Symbol || e->type() == Type::Function);
+  assert(type() == e->type());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
 }
 

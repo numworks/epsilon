@@ -1,4 +1,5 @@
 #include <poincare/trigonometry.h>
+#include <poincare/constant.h>
 #include <poincare/symbol.h>
 #include <poincare/preferences.h>
 #include <poincare/undefined.h>
@@ -79,8 +80,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   if ((angleUnit == Preferences::AngleUnit::Radian
         && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).numberOfChildren() == 2
-        && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Symbol
-        && e.childAtIndex(0).childAtIndex(1).convert<Symbol>().isPi()
+        && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Constant
+        && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isPi()
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
       || (angleUnit == Preferences::AngleUnit::Degree
         && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))
@@ -205,7 +206,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     newArgument = newArgument.shallowReduce(context, angleUnit);
     if (e.type() == ExpressionNode::Type::ArcCosine) {
       // Do the reduction after the if case, or it might change the result!
-      Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Symbol(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
+      Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
       Subtraction s;
       e.replaceWithInPlace(s);
       s.replaceChildAtIndexInPlace(0, pi);
@@ -294,7 +295,7 @@ Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Co
   if (inputIndex == 0 && e.type() != ExpressionNode::Type::Rational) {
     return Expression();
   }
-  if (inputIndex == 1 && e.type() != ExpressionNode::Type::Rational && e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Symbol) {
+  if (inputIndex == 1 && e.type() != ExpressionNode::Type::Rational && e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Constant) {
     return Expression();
   }
   if (inputIndex >1 && e.type() != ExpressionNode::Type::Rational && e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Power && e.type() != ExpressionNode::Type::Addition) {

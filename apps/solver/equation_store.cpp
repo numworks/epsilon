@@ -307,7 +307,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
       // C = Root((delta1+sqrt(-27a^2*delta))/2, 3)
       Expression * mult11Operands[3] = {new Rational(-27), new Power(a->clone(), new Rational(2), false), (*delta)->clone()};
       Expression * c = new Power(new Division(new Addition(delta1, new SquareRoot(new Multiplication(mult11Operands, 3, false), false), false), new Rational(2), false), new Rational(1,3), false);
-      Expression * unary3roots[2] = {new Addition(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Symbol(Ion::Charset::IComplex), false), new Rational(2), false), false), new Subtraction(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Symbol(Ion::Charset::IComplex), false), new Rational(2), false), false)};
+      Expression * unary3roots[2] = {new Addition(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Constant(Ion::Charset::IComplex), false), new Rational(2), false), false), new Subtraction(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Constant(Ion::Charset::IComplex), false), new Rational(2), false), false)};
       // x_k = -1/(3a)*(b+C*z+delta0/(zC)) with z = unary cube root
       for (int k = 0; k < 3; k++) {
         Expression * ccopy = c;

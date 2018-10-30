@@ -51,6 +51,7 @@ objs += $(addprefix poincare/src/,\
   complex_argument.o\
   confidence_interval.o\
   conjugate.o\
+  constant.o\
   cosine.o\
   decimal.o\
   derivative.o\

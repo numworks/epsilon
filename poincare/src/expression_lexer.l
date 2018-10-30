@@ -153,9 +153,9 @@ transpose { *yylval = MatrixTranspose(); return FUNCTION; }
 undef { *yylval = Undefined(); return TERM; }
 inf { *yylval = Infinity(false); return TERM; }
 \x1 { *yylval = Poincare::Symbol(yytext[0]); return FINAL_SYMBOL; } /* UnknownX */
-\x8a { *yylval = Poincare::Symbol(yytext[0]); return FINAL_SYMBOL; } /* Pi */
-\x8c { *yylval = Poincare::Symbol(yytext[0]); return FINAL_SYMBOL; } /* I complex */
-\x8f { *yylval = Poincare::Symbol(yytext[0]); return FINAL_SYMBOL; } /* Exponential */
+\x8a { *yylval = Poincare::Constant(yytext[0]); return FINAL_SYMBOL; } /* Pi */
+\x8c { *yylval = Poincare::Constant(yytext[0]); return FINAL_SYMBOL; } /* I complex */
+\x8f { *yylval = Poincare::Constant(yytext[0]); return FINAL_SYMBOL; } /* Exponential */
 \x90 { return STO; }
 \x91 { *yylval = SquareRoot(); return FUNCTION; }
 = { return EQUAL; }

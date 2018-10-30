@@ -14,19 +14,13 @@ namespace Poincare {
 
 constexpr char Symbol::k_ans[];
 
-ExpressionNode::Sign SymbolNode::sign() const {
-  /* TODO: Maybe, we will want to know that from a context given in parameter:
+/*ExpressionNode::Sign SymbolNode::sign() const {
+  TODO: Maybe, we will want to know that from a context given in parameter:
   if (context.expressionForSymbol(this) != nullptr) {
     return context.expressionForSymbol(this)->sign(context);
-  }*/
-  if (isPi()) {
-    return Sign::Positive;
   }
-  if (isExponential()) {
-    return Sign::Positive;
-  }
-  return Sign::Unknown;
 }
+*/
 
 Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
@@ -49,7 +43,7 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
   while(variables[variablesIndex] != 0) {
     variablesIndex+= maxSizeVariable;
   }
-  if (!isConstant() && isVariable(m_name)) {
+  if (isVariable(m_name)) {
     int index = 0;
     while (variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {
@@ -75,7 +69,7 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
     assert(m_name[1] == 0);
     return NAN;
   }
-  return 0.0;
+  return 0.0f;
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -125,20 +119,8 @@ Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit a
   return Symbol(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
-bool SymbolNode::isConstant() const {
-  if (isIComplex() || isPi() || isExponential()) {
-    assert(m_name[1] == 0);
-    return true;
-  }
-  return false;
-}
-
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  if (isIComplex()) {
-    assert(m_name[1] == 0);
-    return Complex<T>(0.0, 1.0);
-  }
   const Expression e = context.expressionForSymbol(Symbol(this));
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
@@ -179,7 +161,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
     return *this;
   }
   const Expression e = context.expressionForSymbol(*this);
-  if (!e.isUninitialized() && !node()->isConstant()) {
+  if (!e.isUninitialized()) {
     // The stored expression had been beautified, so we need to call deepReduce
     Expression result = e.clone();
     replaceWithInPlace(result);

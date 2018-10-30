@@ -1,5 +1,5 @@
 #include <poincare/naperian_logarithm.h>
-#include <poincare/symbol.h>
+#include <poincare/constant.h>
 #include <poincare/logarithm.h>
 #include <poincare/simplification_helper.h>
 
@@ -23,7 +23,7 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Logarithm l = Logarithm(childAtIndex(0), Symbol(Ion::Charset::Exponential));
+  Logarithm l = Logarithm(childAtIndex(0), Constant(Ion::Charset::Exponential));
   replaceWithInPlace(l);
   return l.shallowReduce(context, angleUnit);
 }

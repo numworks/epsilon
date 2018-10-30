@@ -223,6 +223,7 @@ template PowerNode * Poincare::TreePool::createTreeNode<PowerNode>(size_t size);
 template ComplexArgumentNode * Poincare::TreePool::createTreeNode<ComplexArgumentNode>(size_t size);
 template ConfidenceIntervalNode * Poincare::TreePool::createTreeNode<ConfidenceIntervalNode>(size_t size);
 template ConjugateNode * Poincare::TreePool::createTreeNode<ConjugateNode>(size_t size);
+template ConstantNode * Poincare::TreePool::createTreeNode<ConstantNode>(size_t size);
 template CosineNode * Poincare::TreePool::createTreeNode<CosineNode>(size_t size);
 template DecimalNode * Poincare::TreePool::createTreeNode<DecimalNode>(size_t size);
 template DerivativeNode * Poincare::TreePool::createTreeNode<DerivativeNode>(size_t size);

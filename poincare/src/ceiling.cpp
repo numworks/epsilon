@@ -1,4 +1,5 @@
 #include <poincare/ceiling.h>
+#include <poincare/constant.h>
 #include <poincare/ceiling_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -45,8 +46,8 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.type() == ExpressionNode::Type::Symbol) {
-    Symbol s = static_cast<Symbol&>(c);
+  if (c.type() == ExpressionNode::Type::Constant) {
+    Constant s = static_cast<Constant&>(c);
     Expression result;
     if (s.isPi()) {
       result = Rational(4);

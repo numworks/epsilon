@@ -9,7 +9,7 @@
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/simplification_helper.h>
-#include <poincare/symbol.h>
+#include <poincare/constant.h>
 #include <poincare/undefined.h>
 #include <cmath>
 #include <ion.h>
@@ -283,7 +283,7 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
     return *this;
   }
   assert(numberOfChildren() == 2);
-  Symbol e = Symbol(Ion::Charset::Exponential);
+  Constant e = Constant(Ion::Charset::Exponential);
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np(childAtIndex(0));
     replaceWithInPlace(np);

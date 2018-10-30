@@ -49,6 +49,7 @@ protected:
 };
 
 class SymbolAbstract : public Expression {
+  friend class Constant;
   friend class Function;
   friend class Symbol;
   friend class SymbolAbstractNode;

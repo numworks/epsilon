@@ -13,6 +13,7 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
+#include <poincare/constant.h>
 #include <poincare/cosine.h>
 #include <poincare/ceiling.h>
 #include <poincare/decimal.h>

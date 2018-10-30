@@ -73,6 +73,8 @@ def spiral(N_iteration):
 
 constexpr ScriptTemplate kochScriptTemplate("koch.py", "\x01" R"(from turtle import *
 def koch(N_iteration):
+# Save pencil size and set it to 1
+  prevSize = pensize()
   pensize(1)
 # Define inner function for recursion
   def _koch(n, l):
@@ -87,7 +89,10 @@ def koch(N_iteration):
       left(60)
       _koch(n-1,l/3)
 # Call inner function
-  _koch(N_iteration,140))");
+  _koch(N_iteration,140)
+# Restore pencil size
+  pensize(prevSize))");
+
 const ScriptTemplate * ScriptTemplate::Empty() {
   return &emptyScriptTemplate;
 }

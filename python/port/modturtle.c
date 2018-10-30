@@ -6,9 +6,11 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_forward_obj, turtle_forward);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_backward_obj, turtle_backward);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_right_obj, turtle_right);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_left_obj, turtle_left);
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(turtle_goto_obj, turtle_goto);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(turtle_goto_obj, 1, 2, turtle_goto);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_setheading_obj, turtle_setheading);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_speed_obj, turtle_speed);
+
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_position_obj, turtle_position);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_pendown_obj, turtle_pendown);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_penup_obj, turtle_penup);
@@ -33,9 +35,14 @@ STATIC const mp_rom_map_elem_t turtle_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_left), (mp_obj_t)&turtle_left_obj },
         { MP_ROM_QSTR(MP_QSTR_lt), (mp_obj_t)&turtle_left_obj },
     { MP_ROM_QSTR(MP_QSTR_goto), (mp_obj_t)&turtle_goto_obj },
+        { MP_ROM_QSTR(MP_QSTR_setpos), (mp_obj_t)&turtle_goto_obj },
+        { MP_ROM_QSTR(MP_QSTR_setposition), (mp_obj_t)&turtle_goto_obj },
     { MP_ROM_QSTR(MP_QSTR_setheading), (mp_obj_t)&turtle_setheading_obj },
         { MP_ROM_QSTR(MP_QSTR_seth), (mp_obj_t)&turtle_setheading_obj },
     { MP_ROM_QSTR(MP_QSTR_speed), (mp_obj_t)&turtle_speed_obj },
+
+    { MP_ROM_QSTR(MP_QSTR_position), (mp_obj_t)&turtle_position_obj },
+        { MP_ROM_QSTR(MP_QSTR_pos), (mp_obj_t)&turtle_position_obj },
 
     { MP_ROM_QSTR(MP_QSTR_pendown), (mp_obj_t)&turtle_pendown_obj },
         { MP_ROM_QSTR(MP_QSTR_pd), (mp_obj_t)&turtle_pendown_obj },

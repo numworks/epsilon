@@ -2,6 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/constant.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/nth_root.h>
@@ -363,7 +364,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     const Rational b = childAtIndex(1).convert<Rational>();
     // i^(p/q)
-    if (childAtIndex(0).type() == ExpressionNode::Type::Symbol && childAtIndex(0).convert<Symbol>().isIComplex()) {
+    if (childAtIndex(0).type() == ExpressionNode::Type::Constant && childAtIndex(0).convert<Constant>().isIComplex()) {
       Number r = Number::Multiplication(b, Rational(1, 2));
       Expression result = CreateComplexExponent(r);
       replaceWithInPlace(result);
@@ -394,7 +395,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     m0.shallowReduce(context, angleUnit);
     Multiplication m1 = Multiplication();
     replaceWithInPlace(m1);
-    m1.addChildAtIndexInPlace(Symbol(Ion::Charset::IComplex), 0, 0);
+    m1.addChildAtIndexInPlace(Constant(Ion::Charset::IComplex), 0, 0);
     m1.addChildAtIndexInPlace(*this, 1, 1);
     shallowReduce(context, angleUnit);
     return m1.shallowReduce(context, angleUnit);
@@ -886,8 +887,8 @@ bool Power::parentIsALogarithmOfSameBase() const {
   // parent = ln(e^x)
   if (p.type() == ExpressionNode::Type::NaperianLogarithm
       && p.childAtIndex(0) == *this
-      && childAtIndex(0).type() == ExpressionNode::Type::Symbol
-      && childAtIndex(0).convert<Symbol>().isExponential())
+      && childAtIndex(0).type() == ExpressionNode::Type::Constant
+      && childAtIndex(0).convert<Constant>().isExponential())
   {
     return true;
   }
@@ -896,7 +897,7 @@ bool Power::parentIsALogarithmOfSameBase() const {
 
 bool Power::isNthRootOfUnity() const {
   // We check we are equal to e^(i*pi) or e^(i*pi*rational)
-  if (childAtIndex(0).type() != ExpressionNode::Type::Symbol || !childAtIndex(0).convert<Symbol>().isExponential()) {
+  if (childAtIndex(0).type() != ExpressionNode::Type::Constant || !childAtIndex(0).convert<Constant>().isExponential()) {
     return false;
   }
   if (childAtIndex(1).type() != ExpressionNode::Type::Multiplication) {
@@ -906,11 +907,11 @@ bool Power::isNthRootOfUnity() const {
     return false;
   }
   const Expression i = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-1);
-  if (i.type() != ExpressionNode::Type::Symbol || !static_cast<const Symbol &>(i).isIComplex()) {
+  if (i.type() != ExpressionNode::Type::Constant || !static_cast<const Constant &>(i).isIComplex()) {
     return false;
   }
   const Expression pi = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-2);
-  if (pi.type() != ExpressionNode::Type::Symbol || !static_cast<const Symbol &>(pi).isPi()) {
+  if (pi.type() != ExpressionNode::Type::Constant || !static_cast<const Constant &>(pi).isPi()) {
     return false;
   }
   if (numberOfChildren() == 2) {
@@ -924,15 +925,15 @@ bool Power::isNthRootOfUnity() const {
 
 Expression Power::CreateComplexExponent(const Expression & r) {
   // Returns e^(i*pi*r)
-  const Symbol exp = Symbol(Ion::Charset::Exponential);
-  const Symbol iComplex = Symbol(Ion::Charset::IComplex);
-  const Symbol pi = Symbol(Ion::Charset::SmallPi);
+  const Constant exp = Constant(Ion::Charset::Exponential);
+  const Constant iComplex = Constant(Ion::Charset::IComplex);
+  const Constant pi = Constant(Ion::Charset::SmallPi);
   Multiplication mExp = Multiplication(iComplex, pi, r.clone());
   mExp.sortChildrenInPlace(PowerNode::SimplificationOrder, false);
   return Power(exp, mExp);
 #if 0
-  const Symbol iComplex = Symbol(Ion::Charset::IComplex);
-  const Symbol pi = Symbol(Ion::Charset::SmallPi);
+  const Constant iComplex = Constant(Ion::Charset::IComplex);
+  const Constant pi = Constant(Ion::Charset::SmallPi);
   Expression op = Multiplication(pi, r).shallowReduce(context, angleUnit);
   Cosine cos = Cosine(op).shallowReduce(context, angleUnit);;
   Sine sin = Sine(op).shallowReduce(context, angleUnit);

@@ -4,7 +4,6 @@
 #include <poincare/undefined.h>
 #include <poincare/preferences.h>
 #include <assert.h>
-#include <cmath>
 #include <ion.h>
 
 using namespace Poincare;
@@ -86,15 +85,6 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 
 const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract & symbol, Ion::Storage::Record r) {
   assert(symbol.type() == ExpressionNode::Type::Symbol);
-
-  // Constant symbols
-  Symbol s = static_cast<const Symbol &>(symbol);
-  if (s.isPi()) {
-    return Float<double>(M_PI);
-  }
-  if (s.isExponential()) {
-    return Float<double>(M_E);
-  }
   if (r.isNull() || !Ion::Storage::FullNameHasExtension(r.fullName(), expExtension, strlen(expExtension))) {
     return Expression();
   }

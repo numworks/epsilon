@@ -1,4 +1,5 @@
 #include <poincare/factorial.h>
+#include <poincare/constant.h>
 #include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/rational.h>
@@ -110,13 +111,11 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
     replaceWithInPlace(fact);
     return fact;
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
-    Symbol s = childAtIndex(0).convert<Symbol>();
-    if (s.isPi() || s.isExponential()) {
-      Expression result = Undefined();
-      replaceWithInPlace(result);
-      return result;
-    }
+  if (childAtIndex(0).type() == ExpressionNode::Type::Constant) {
+    // e! = undef, i! = undef, pi! = undef
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

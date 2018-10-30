@@ -19,7 +19,6 @@ public:
 
   // Expression Properties
   Type type() const override { return Type::Symbol; }
-  Sign sign() const override;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
@@ -31,23 +30,17 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  bool isConstant() const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 
-  /* Symbol properties */
-  bool isPi() const { return isSymbolChar(Ion::Charset::SmallPi); }
-  bool isExponential() const { return isSymbolChar(Ion::Charset::Exponential); }
-  bool isIComplex() const { return isSymbolChar(Ion::Charset::IComplex); }
 private:
   char m_name[0]; // MUST be the last member variable
 
   size_t nodeSize() const override { return sizeof(SymbolNode); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
-  bool isSymbolChar(char c) const { const char symbolName[2] = {c, 0}; return strcmp(m_name, symbolName) == 0; }
 };
 
 class Symbol final : public SymbolAbstract {
@@ -65,10 +58,6 @@ public:
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
 
   // Symbol properties
-  bool isConstant() const { return node()->isConstant(); }
-  bool isPi() const { return node()->isPi(); }
-  bool isExponential() const { return node()->isExponential(); }
-  bool isIComplex() const { return node()->isIComplex(); }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
   bool matches(ExpressionTest test, Context & context) const;

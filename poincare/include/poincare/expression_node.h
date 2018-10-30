@@ -80,6 +80,7 @@ public:
     Subtraction,
     Sum,
     Symbol,
+    Constant,
 
     Matrix,
     ConfidenceInterval,

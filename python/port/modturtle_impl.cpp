@@ -171,35 +171,20 @@ mp_obj_t turtle_penup() {
   return mp_const_none;
 }
 
-mp_obj_t turtle_pensize(mp_obj_t size) {
-  int s = mp_obj_get_int(size);
-  if (s < 1) {
-    s = 1;
-  }
-  else if (s > 10) {
-    s = 10;
+mp_obj_t turtle_pensize(size_t n_args, const mp_obj_t *args) {
+  if (n_args == 0) {
+    return MP_OBJ_NEW_SMALL_INT(t_dotsize);
   }
 
-  if (t_dot) {
-    delete[] t_dot;
+  int size = mp_obj_get_int(args[0]);
+  if (size < 1) {
+    size = 1;
   }
-  t_dot = new uint8_t[s*s];
-  t_dotsize = s;
+  else if (size > 10) {
+    size = 10;
+  }
 
-  float middle = s / 2;
-  for (int j = 0; j < s; j++) {
-    for (int i = 0; i < s; i++) {
-      float distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / (middle+1);
-      int value = distance * distance * 255;
-      if (value < 0) {
-        value = 0;
-      }
-      else if (value > 255) {
-        value = 255;
-      }
-      t_dot[j*s + i] = value;
-    }
-  }
+  turtle_initpen(size);
 
   return mp_const_none;
 }
@@ -244,9 +229,32 @@ mp_obj_t turtle___init__() {
   t_mileage = 0;
   t_hidden = false;
 
-  turtle_pensize(MP_OBJ_NEW_SMALL_INT(5));
+  turtle_initpen(5);
 
   return mp_const_none;
+}
+
+void turtle_initpen(int size) {
+  if (t_dot) {
+    delete[] t_dot;
+  }
+  t_dot = new uint8_t[size*size];
+  t_dotsize = size;
+
+  float middle = size / 2;
+  for (int j = 0; j < size; j++) {
+    for (int i = 0; i < size; i++) {
+      float distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / (middle+1);
+      int value = distance * distance * 255;
+      if (value < 0) {
+        value = 0;
+      }
+      else if (value > 255) {
+        value = 255;
+      }
+      t_dot[j*size + i] = value;
+    }
+  }
 }
 
 void turtle_deinit() {

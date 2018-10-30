@@ -12,7 +12,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_speed_obj, turtle_speed);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_pendown_obj, turtle_pendown);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(turtle_penup_obj, turtle_penup);
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(turtle_pensize_obj, turtle_pensize);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(turtle_pensize_obj, 0, 1, turtle_pensize);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(turtle_color_obj, turtle_color);
 

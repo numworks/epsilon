@@ -93,7 +93,8 @@ void dot_turtle(float x, float y) {
 mp_obj_t turtle_forward(mp_obj_t px) {
   float x = t_x + mp_obj_get_float(px)*sin(t_heading);
   float y = t_y + mp_obj_get_float(px)*cos(t_heading);
-  return turtle_goto(mp_obj_new_float(x), mp_obj_new_float(y));
+  turtle_moveto(x, y);
+  return mp_const_none;
 }
 
 mp_obj_t turtle_backward(mp_obj_t px) {
@@ -109,29 +110,21 @@ mp_obj_t turtle_left(mp_obj_t angle) {
   return turtle_setheading(mp_obj_new_float(new_angle));
 }
 
-mp_obj_t turtle_goto(mp_obj_t x, mp_obj_t y) {
-  float newx = mp_obj_get_float(x), newy = mp_obj_get_float(y);
-  float oldx = t_x, oldy = t_y;
-  float length = sqrt((newx - oldx) * (newx - oldx) + (newy - oldy) * (newy - oldy));
+mp_obj_t turtle_goto(size_t n_args, const mp_obj_t *args) {
+  float newx, newy;
 
-  if (length > 1) {
-    for (int i = 0; i < length; i++) {
-      float progress = i / length;
-
-      if (t_speed > 0) {
-        Ion::Display::waitForVBlank();
-      }
-      erase_turtle();
-      dot_turtle(newx * progress + oldx * (1 - progress), newy * progress + oldy * (1 - progress));
-      draw_turtle();
-    }
+  if (n_args == 1) {
+    mp_obj_t *mp_coords;
+    mp_obj_get_array_fixed_n(args[0], 2, &mp_coords);
+    newx = mp_obj_get_float(mp_coords[0]);
+    newy = mp_obj_get_float(mp_coords[1]);
+  }
+  else {
+    newx = mp_obj_get_float(args[0]);
+    newy = mp_obj_get_float(args[1]);
   }
 
-  Ion::Display::waitForVBlank();
-  erase_turtle();
-  dot_turtle(newx, newy);
-  draw_turtle();
-
+  turtle_moveto(newx, newy);
   return mp_const_none;
 }
 
@@ -159,6 +152,13 @@ mp_obj_t turtle_speed(mp_obj_t speed) {
 
   t_speed = new_speed;
   return mp_const_none;
+}
+
+mp_obj_t turtle_position() {
+  mp_obj_t mp_pos[2];
+  mp_pos[0] = mp_obj_new_float(t_x);
+  mp_pos[1] = mp_obj_new_float(t_y);
+  return mp_obj_new_tuple(2, mp_pos);
 }
 
 mp_obj_t turtle_pendown() {
@@ -255,6 +255,29 @@ void turtle_initpen(int size) {
       t_dot[j*size + i] = value;
     }
   }
+}
+
+void turtle_moveto(float x, float y) {
+  float oldx = t_x, oldy = t_y;
+  float length = sqrt((x - oldx) * (x - oldx) + (y - oldy) * (y - oldy));
+
+  if (length > 1) {
+    for (int i = 0; i < length; i++) {
+      float progress = i / length;
+
+      if (t_speed > 0) {
+        Ion::Display::waitForVBlank();
+      }
+      erase_turtle();
+      dot_turtle(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress));
+      draw_turtle();
+    }
+  }
+
+  Ion::Display::waitForVBlank();
+  erase_turtle();
+  dot_turtle(x, y);
+  draw_turtle();
 }
 
 void turtle_deinit() {

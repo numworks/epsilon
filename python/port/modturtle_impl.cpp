@@ -161,6 +161,10 @@ mp_obj_t turtle_position() {
   return mp_obj_new_tuple(2, mp_pos);
 }
 
+mp_obj_t turtle_heading() {
+  return mp_obj_new_float((t_heading - t_heading_offset) / t_heading_scale);
+}
+
 mp_obj_t turtle_pendown() {
   t_penup = false;
   return mp_const_none;
@@ -189,6 +193,10 @@ mp_obj_t turtle_pensize(size_t n_args, const mp_obj_t *args) {
   return mp_const_none;
 }
 
+mp_obj_t turtle_isdown() {
+  return t_penup ? mp_const_false : mp_const_true;
+}
+
 mp_obj_t turtle_color(mp_obj_t r, mp_obj_t g, mp_obj_t b) {
   t_color = KDColor::RGB888(mp_obj_get_int(r), mp_obj_get_int(g), mp_obj_get_int(b));
   return mp_const_none;
@@ -204,6 +212,10 @@ mp_obj_t turtle_hideturtle() {
   t_hidden = true;
   erase_turtle();
   return mp_const_none;
+}
+
+mp_obj_t turtle_isvisible() {
+  return t_hidden ? mp_const_false : mp_const_true;
 }
 
 mp_obj_t turtle___init__() {

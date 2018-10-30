@@ -13,13 +13,15 @@ static constexpr int MathModuleChildrenCount = 43;
 static constexpr int KandinskyModuleChildrenCount = 7;
 static constexpr int CMathModuleChildrenCount = 13;
 static constexpr int RandomModuleChildrenCount = 10;
+static constexpr int TurtleModuleChildrenCount = 14;
+
 static constexpr int conditionsChildrenCount = 9;
 static constexpr int forLoopChildrenCount = 4;
 static constexpr int functionsChildrenCount = 2;
 static constexpr int ifStatementChildrenCount = 5;
 static constexpr int loopsAndTestsChildrenCount = 4;
 static constexpr int menuChildrenCount = 4;
-static constexpr int modulesChildrenCount = 4;
+static constexpr int modulesChildrenCount = 5;
 static constexpr int whileLoopChildrenCount = 1;
 
 
@@ -138,11 +140,29 @@ const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandCosComplex, I18n::Message::PythonCos, I18n::Message::PythonCommandCos),
   ToolboxMessageTree(I18n::Message::PythonCommandSinComplex, I18n::Message::PythonSin, I18n::Message::PythonCommandSin)};
 
+const ToolboxMessageTree TurtleModuleChildren[TurtleModuleChildrenCount] = {
+  ToolboxMessageTree(I18n::Message::PythonCommandImportTurtle, I18n::Message::PythonImportTurtle, I18n::Message::PythonCommandImportTurtle),
+  ToolboxMessageTree(I18n::Message::PythonCommandImportFromTurtle, I18n::Message::PythonImportFromTurtle, I18n::Message::PythonCommandImportFromTurtle),
+  ToolboxMessageTree(I18n::Message::PythonCommandTurtleFunction, I18n::Message::PythonTurtleFunction, I18n::Message::PythonCommandTurtleFunctionWithoutArg),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandForward, I18n::Message::PythonTurtleForward, I18n::Message::PythonTurtleCommandForward),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandBackward, I18n::Message::PythonTurtleBackward, I18n::Message::PythonTurtleCommandBackward),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandLeft, I18n::Message::PythonTurtleLeft, I18n::Message::PythonTurtleCommandLeft),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandRight, I18n::Message::PythonTurtleRight, I18n::Message::PythonTurtleCommandRight),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPosition, I18n::Message::PythonTurtlePosition, I18n::Message::PythonTurtleCommandPosition),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandSetposition, I18n::Message::PythonTurtleSetposition, I18n::Message::PythonTurtleCommandSetposition),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandHeading, I18n::Message::PythonTurtleHeading, I18n::Message::PythonTurtleCommandHeading),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandSetheading, I18n::Message::PythonTurtleSetheading, I18n::Message::PythonTurtleCommandSetheading),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandSpeed, I18n::Message::PythonTurtleSpeed, I18n::Message::PythonTurtleCommandSpeed),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPencolor, I18n::Message::PythonTurtlePencolor, I18n::Message::PythonTurtleCommandPencolor),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPensize, I18n::Message::PythonTurtlePensize, I18n::Message::PythonTurtleCommandPensize)};
+
+
 const ToolboxMessageTree modulesChildren[modulesChildrenCount] = {
   ToolboxMessageTree(I18n::Message::MathModule, I18n::Message::Default, I18n::Message::Default, MathModuleChildren, MathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::CmathModule, I18n::Message::Default, I18n::Message::Default, CMathModuleChildren, CMathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::RandomModule, I18n::Message::Default, I18n::Message::Default, RandomModuleChildren, RandomModuleChildrenCount),
-  ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount)};
+  ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount),
+  ToolboxMessageTree(I18n::Message::TurtleModule, I18n::Message::Default, I18n::Message::Default, TurtleModuleChildren, TurtleModuleChildrenCount)};
 
 const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandPound, I18n::Message::PythonPound, I18n::Message::PythonCommandPound),

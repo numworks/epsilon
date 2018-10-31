@@ -13,6 +13,7 @@ src += $(addprefix kandinsky/src/,\
   ion_context.cpp \
   point.cpp \
   rect.cpp \
+  unicode/utf8decoder.cpp\
 )
 
 src += $(addprefix kandinsky/fonts/, \
@@ -22,7 +23,9 @@ src += $(addprefix kandinsky/fonts/, \
 
 tests += $(addprefix kandinsky/test/,\
   color.cpp\
+  font.cpp\
   rect.cpp\
+  utf8decoder.cpp\
 )
 
 RASTERIZER_CFLAGS := -std=c99 `pkg-config freetype2 --cflags`

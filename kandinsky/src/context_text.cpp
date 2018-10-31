@@ -1,35 +1,44 @@
 #include <assert.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
+#include <kandinsky/unicode/utf8decoder.h>
 
-constexpr int maxGlyphPixelCount = 180;
 constexpr static int k_tabCharacterWidth = 4;
 
 KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
-
   KDPoint position = p;
   KDSize glyphSize = font->glyphSize();
   KDFont::RenderPalette palette = font->renderPalette(textColor, backgroundColor);
 
-  KDColor glyph[maxGlyphPixelCount];
+  KDFont::GlyphBuffer glyphBuffer;
 
-  const char * end = text + maxLength;
-  while(*text != 0 && text != end) {
-    if (*text == '\n') {
+  UTF8Decoder decoder(text);
+  Codepoint codepoint = decoder.nextCodepoint();
+  while (codepoint != Null) {
+    if (codepoint == LineFeed) {
       position = KDPoint(0, position.y() + glyphSize.height());
-    } else if (*text == '\t') {
+      codepoint = decoder.nextCodepoint();
+    } else if (codepoint == Tabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
+      codepoint = decoder.nextCodepoint();
     } else {
-      // Fetch and draw glyph for current char
-      font->fetchGlyphForChar(*text, &palette, glyph);
+      assert(!codepoint.isCombining());
+      font->setGlyphGreyscalesForCodepoint(codepoint, &glyphBuffer);
+      codepoint = decoder.nextCodepoint();
+      while (codepoint.isCombining()) {
+        font->accumulateGlyphGreyscalesForCodepoint(codepoint, &glyphBuffer);
+        codepoint = decoder.nextCodepoint();
+      }
+      font->colorizeGlyphBuffer(&palette, &glyphBuffer);
+      // Flush accumulated content
       fillRectWithPixels(
-        KDRect(position, glyphSize.width(), glyphSize.height()),
-        glyph,
-        glyph // It's OK to trash the content of glyph since we'll re-fetch it for the next char anyway
+        KDRect(position, glyphSize),
+        glyphBuffer.colorBuffer(),
+        glyphBuffer.colorBuffer() // It's OK to trash the content of the color buffer since we'll re-fetch it for the next char anyway
       );
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
     }
-    text++;
   }
+
   return position;
 }

@@ -2,6 +2,7 @@
 #define POINCARE_SEQUENCE_H
 
 #include <poincare/expression.h>
+#include <poincare/symbol.h>
 #include <poincare/approximation_helper.h>
 
 namespace Poincare {

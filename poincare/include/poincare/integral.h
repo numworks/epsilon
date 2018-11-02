@@ -2,6 +2,7 @@
 #define POINCARE_INTEGRAL_H
 
 #include <poincare/expression.h>
+#include <poincare/symbol.h>
 
 namespace Poincare {
 
@@ -49,14 +50,21 @@ private:
 class Integral final : public Expression {
 public:
   Integral(const IntegralNode * n) : Expression(n) {}
-  static Integral Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return Integral(child0, child1, child2, child3); }
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3)); }
+  static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return Integral(child0, child1, child2, child3); }
+  static Expression UntypedBuilder(Expression children) {
+    if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+      // Second parameter must be a Symbol.
+      return Expression();
+    }
+    return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
+  }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
 private:
   Integral(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {
+    assert(child1.type() == ExpressionNode::Type::Symbol);
     replaceChildAtIndexInPlace(0, child0);
     replaceChildAtIndexInPlace(1, child1);
     replaceChildAtIndexInPlace(2, child2);

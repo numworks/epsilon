@@ -56,6 +56,11 @@ class SymbolAbstract : public Expression {
 public:
   const char * name() const { return node()->name(); }
   static size_t TruncateExtension(char * dst, const char * src, size_t len);
+  static bool ValidInContext(SymbolAbstract & s, Context * context) {
+    // Retrive from context the expression corresponding to s
+    Expression f = context ? context->expressionForSymbol(s) : Expression();
+    return f.isUninitialized() || f.type() == s.type();
+  }
   constexpr static size_t k_maxNameSize = 8;
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}

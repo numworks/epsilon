@@ -87,10 +87,10 @@ Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::
   return e.approximateToEvaluation<T>(newContext, angleUnit);
 }
 
-Function::Function(const char * name) :
-  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(SymbolAbstract::AlignedNodeSize(strlen(name), sizeof(FunctionNode))))
+Function::Function(const char * name, size_t length) :
+  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(SymbolAbstract::AlignedNodeSize(length, sizeof(FunctionNode))))
 {
-  static_cast<FunctionNode *>(Expression::node())->setName(name, strlen(name));
+  static_cast<FunctionNode *>(Expression::node())->setName(name, length);
 }
 
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

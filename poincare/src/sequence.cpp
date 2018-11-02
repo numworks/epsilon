@@ -1,6 +1,5 @@
 #include <poincare/sequence.h>
 #include <poincare/decimal.h>
-#include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 extern "C" {

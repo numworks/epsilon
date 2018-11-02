@@ -57,6 +57,14 @@ public:
   Symbol(char name);
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
 
+  static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
+    // create an expression only if it is not in the context or defined as a symbol
+    Symbol s(name, length);
+    if (SymbolAbstract::ValidInContext(s, context)) {
+      return s;
+    }
+    return Expression();
+  }
   // Symbol properties
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);

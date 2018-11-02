@@ -46,9 +46,9 @@ private:
 
 class Function : public SymbolAbstract {
 public:
-  explicit Function(const char * name);
+  Function(const char * name, size_t length);
   Function(const FunctionNode * n) : SymbolAbstract(n) {}
-  explicit Function(const char * name, Expression child) : Function(name) {
+  Function(const char * name, size_t length, Expression child) : Function(name, length) {
     replaceChildAtIndexInPlace(0, child);
   }
 

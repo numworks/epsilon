@@ -62,12 +62,14 @@ class Expression : public TreeHandle {
   friend class PermuteCoefficient;
   friend class Power;
   friend class PredictionInterval;
+  friend class Product;
   friend class RealPart;
   friend class Round;
   friend class Sine;
   friend class SquareRoot;
   friend class Store;
   friend class Subtraction;
+  friend class Sum;
   friend class Symbol;
   friend class Tangent;
   friend class Trigonometry;

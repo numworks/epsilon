@@ -33,11 +33,18 @@ class Product final : public Expression {
 friend class ProductNode;
 public:
   Product(const ProductNode * n) : Expression(n) {}
-  static Product Builder(Expression child0, Expression child1, Expression child2, Expression child3) { return Product(child0, child1, child2, child3); }
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3)); }
+  static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return Product(child0, child1, child2, child3); }
+  static Expression UntypedBuilder(Expression children) {
+    if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+      // Second parameter must be a Symbol.
+      return Expression();
+    }
+    return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
+  }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("product", 4, &UntypedBuilder);
 private:
   Product(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<ProductNode>()) {
+    assert(child1.type() == ExpressionNode::Type::Symbol);
     replaceChildAtIndexInPlace(0, child0);
     replaceChildAtIndexInPlace(1, child1);
     replaceChildAtIndexInPlace(2, child2);

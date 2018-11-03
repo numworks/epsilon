@@ -24,6 +24,16 @@ Q(draw_string)
 Q(get_pixel)
 Q(set_pixel)
 
+// utime QSTRs
+Q(time)
+Q(sleep)
+Q(sleep_ms)
+Q(sleep_us)
+Q(ticks_ms)
+Q(ticks_us)
+Q(ticks_add)
+Q(ticks_diff)
+
 // MicroPython QSTRs
 Q()
 Q(*)

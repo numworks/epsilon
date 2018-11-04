@@ -4,6 +4,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_3(modkandinsky_color_obj, modkandinsky_color);
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(modkandinsky_get_pixel_obj, modkandinsky_get_pixel);
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(modkandinsky_set_pixel_obj, modkandinsky_set_pixel);
 STATIC MP_DEFINE_CONST_FUN_OBJ_3(modkandinsky_draw_string_obj, modkandinsky_draw_string);
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(modkandinsky_wait_vblank_obj, modkandinsky_wait_vblank);
 
 STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_kandinsky) },
@@ -11,6 +12,7 @@ STATIC const mp_rom_map_elem_t modkandinsky_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_get_pixel), (mp_obj_t)&modkandinsky_get_pixel_obj },
   { MP_ROM_QSTR(MP_QSTR_set_pixel), (mp_obj_t)&modkandinsky_set_pixel_obj },
   { MP_ROM_QSTR(MP_QSTR_draw_string), (mp_obj_t)&modkandinsky_draw_string_obj },
+  { MP_ROM_QSTR(MP_QSTR_wait_vblank), (mp_obj_t)&modkandinsky_wait_vblank_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(modkandinsky_module_globals, modkandinsky_module_globals_table);

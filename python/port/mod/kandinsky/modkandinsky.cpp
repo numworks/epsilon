@@ -2,7 +2,11 @@ extern "C" {
 #include "modkandinsky.h"
 }
 #include <kandinsky.h>
+#include <ion.h>
 #include "port.h"
+
+#undef MP_OBJ_TO_PTR
+#define MP_OBJ_TO_PTR(o) ((mp_obj_base_t*)o)
 
 /* KDIonContext::sharedContext needs to be set to the wanted Rect before
  * calling kandinsky_get_pixel, kandinsky_set_pixel and kandinsky_draw_string.
@@ -46,3 +50,8 @@ mp_obj_t modkandinsky_draw_string(mp_obj_t text, mp_obj_t x, mp_obj_t y) {
   return mp_const_none;
 }
 
+mp_obj_t modkandinsky_wait_vblank() {
+  Ion::Display::waitForVBlank();
+
+  return mp_const_none;
+}

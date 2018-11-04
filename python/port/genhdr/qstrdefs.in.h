@@ -23,6 +23,7 @@ Q(color)
 Q(draw_string)
 Q(get_pixel)
 Q(set_pixel)
+Q(wait_vblank)
 
 // utime QSTRs
 Q(time)

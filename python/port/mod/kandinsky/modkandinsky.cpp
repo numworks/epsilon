@@ -4,6 +4,7 @@ extern "C" {
 #include <py/runtime.h>
 }
 #include <kandinsky.h>
+#include <ion.h>
 #include "port.h"
 
 static KDColor ColorForTuple(mp_obj_t tuple) {
@@ -83,5 +84,11 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   KDColor color = ColorForTuple(args[4]);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
   KDIonContext::sharedContext()->fillRect(rect, color);
+  return mp_const_none;
+}
+
+mp_obj_t modkandinsky_wait_vblank() {
+  micropython_port_interrupt_if_needed();
+  Ion::Display::waitForVBlank();
   return mp_const_none;
 }

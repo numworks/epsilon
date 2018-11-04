@@ -21,6 +21,7 @@ public:
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
 
   // Rect
+  void fetchRect(KDRect rect, KDColor * pixels);
   void fillRect(KDRect rect, KDColor color);
   void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);

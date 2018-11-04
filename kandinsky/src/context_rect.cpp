@@ -5,6 +5,30 @@ KDRect KDContext::absoluteFillRect(KDRect rect) {
   return rect.translatedBy(m_origin).intersectedWith(m_clippingRect);
 }
 
+void KDContext::fetchRect(KDRect rect, KDColor * pixels) {
+  KDRect absoluteRect = absoluteFillRect(rect);
+
+  if (absoluteRect.isEmpty()) {
+    return;
+  }
+
+  if (absoluteRect.width() == rect.width() && absoluteRect.height() == rect.height()) {
+    pullRect(absoluteRect, pixels);
+    return;
+  }
+
+  KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
+  KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
+  startingI = startingI > 0 ? startingI : 0;
+  startingJ = startingJ > 0 ? startingJ : 0;
+
+  for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
+    KDRect absoluteRow = KDRect(absoluteRect.x(), absoluteRect.y()+j, absoluteRect.width(), 1);
+    KDColor * rowPixels = (KDColor *)pixels+startingI+rect.width()*(startingJ+j);
+    pullRect(absoluteRow, rowPixels);
+  }
+}
+
 void KDContext::fillRect(KDRect rect, KDColor color) {
   KDRect absoluteRect = absoluteFillRect(rect);
   if (absoluteRect.isEmpty()) {

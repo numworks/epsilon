@@ -15,12 +15,12 @@ public:
   class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
     Snapshot();
-    CurveViewCursor * cursor();
-    uint32_t * modelVersion();
-    uint32_t * rangeVersion();
-    Poincare::Preferences::AngleUnit * angleUnitVersion();
-    Interval * interval();
-    int * indexFunctionSelectedByCursor();
+    CurveViewCursor * cursor() { return &m_cursor; }
+    uint32_t * modelVersion() { return &m_modelVersion; }
+    uint32_t * rangeVersion() { return &m_rangeVersion; }
+    Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
+    Interval * interval() { return &m_interval; }
+    int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
   protected:
     CurveViewCursor m_cursor;
@@ -36,7 +36,9 @@ public:
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 protected:
-  StorageFunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  StorageFunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
+    ExpressionFieldDelegateApp(container, snapshot, rootViewController)
+  {}
   bool isAcceptableExpression(const Poincare::Expression expression, Responder * responder) override;
 };
 

@@ -36,10 +36,6 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-CalculationStore * App::Snapshot::calculationStore() {
-  return &m_calculationStore;
-}
-
 void App::Snapshot::tidy() {
   m_calculationStore.tidy();
 }

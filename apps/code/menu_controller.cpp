@@ -302,15 +302,22 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   static constexpr int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
 
   char numberedDefaultName[bufferSize];
-  if (strlen(text) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
+  if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
+    newName = text;
+  } else {
     // The user entered an empty name. Use a numbered default script name.
-    Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
     numberedDefaultName[defaultNameLength++] = '.';
     strlcpy(&numberedDefaultName[defaultNameLength], ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
+    /* If there are already scripts named script1.py, script2.py,... until
+     * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
+     * default name and let the user modify it. */
+    if (!foundDefaultName) {
+      textField->setText(numberedDefaultName);
+      textField->setCursorLocation(defaultNameLength);
+    }
     newName = const_cast<const char *>(numberedDefaultName);
-  } else {
-    newName = text;
   }
   Script::ErrorStatus error = Script::nameCompliant(newName) ? m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(newName) : Script::ErrorStatus::NonCompliantName;
   if (error == Script::ErrorStatus::None) {

@@ -18,23 +18,23 @@ static inline void intToText(int i, char * buffer, int bufferSize) {
   buffer[2] = 0;
 }
 
-void Script::DefaultName(char buffer[], size_t bufferSize) {
+bool Script::DefaultName(char buffer[], size_t bufferSize) {
   assert(bufferSize >= k_defaultScriptNameMaxSize);
   static constexpr char defaultScriptName[] = "script";
   static constexpr int defaultScriptNameLength = 6;
   memcpy(buffer, defaultScriptName, bufferSize);
 
-  // We will only name scripts from script1.py to script99.py.
   int currentScriptNumber = 1;
-  while (currentScriptNumber < 100) {
+  while (currentScriptNumber <= k_maxNumberOfDefaultScriptNames) {
     // Change the number in the script name.
     intToText(currentScriptNumber, &buffer[defaultScriptNameLength], bufferSize - defaultScriptNameLength );
     if (ScriptStore::ScriptNameIsFree(buffer)) {
-      return;
+      return true;
     }
     currentScriptNumber++;
   }
-  assert(false);
+  // We did not find a new script name
+  return false;
 }
 
 bool Script::nameCompliant(const char * name) {

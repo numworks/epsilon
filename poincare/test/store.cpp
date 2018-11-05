@@ -58,3 +58,27 @@ QUIZ_CASE(poincare_store_user_variable) {
   Ion::Storage::sharedStorage()->recordNamed("f2.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("funcBoth.func").destroy();
 }
+
+QUIZ_CASE(poincare_store_that_should_fail) {
+  // Create a helper function
+  assert_parsed_expression_simplify_to("1>g(x)", "1");
+
+  // Store only works on variables or functions
+  assert_expression_not_parsable("2>f(2)");
+  assert_expression_not_parsable("3>f(g(4))");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}
+
+QUIZ_CASE(poincare_store_overwrite) {
+  assert_parsed_expression_simplify_to("-1>g(x)", "-1");
+  assert_parsed_expression_simplify_to("1+g(x)>f(x)", "1+g(?)");
+  assert_parsed_expression_simplify_to("2>g", "2");
+  assert_parsed_expression_evaluates_to<double>("g(4)", "undef");
+  assert_parsed_expression_evaluates_to<double>("f(4)", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.exp").destroy();
+}

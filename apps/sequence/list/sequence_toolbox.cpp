@@ -46,6 +46,7 @@ HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtLocation(0, index) == 2) {
     static_cast<ExpressionTableCell *>(cell)->setLayout(m_addedCellLayout[index]);
+    cell->reloadCell();
     return;
   }
   MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));

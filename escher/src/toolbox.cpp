@@ -35,6 +35,7 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(messageTree->label());
+  myCell->reloadCell();
 }
 
 int Toolbox::typeAtLocation(int i, int j) {

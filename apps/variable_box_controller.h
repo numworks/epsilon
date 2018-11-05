@@ -52,6 +52,7 @@ private:
   Ion::Storage::Record recordAtIndex(int rowIndex);
   bool displayEmptyController();
   bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
+  void resetMemoization();
   Page m_currentPage;
   Page m_lockPageDelete;
   ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];

@@ -46,7 +46,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
-   * expression, use the funciton record handle. */
+   * expression, use the function record handle. */
   StorageCartesianFunction f = StorageCartesianFunction(record);
   return f.expressionWithSymbol();
 }

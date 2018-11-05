@@ -58,6 +58,9 @@ bool WarningController::handleEvent(Ion::Events::Event event) {
       return false;
     }
   }
+  if (event == Ion::Events::USBPlug || event == Ion::Events::USBEnumeration) {
+    return false;
+  }
   app()->dismissModalViewController();
   return true;
 }

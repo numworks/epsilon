@@ -22,7 +22,7 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    CalculationStore * calculationStore();
+    CalculationStore * calculationStore() { return &m_calculationStore; }
   private:
     void tidy() override;
     CalculationStore m_calculationStore;

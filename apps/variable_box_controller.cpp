@@ -104,6 +104,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);
   myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
+  myCell->reloadCell();
 }
 
 KDCoordinate VariableBoxController::rowHeight(int index) {

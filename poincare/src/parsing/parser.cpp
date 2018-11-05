@@ -36,11 +36,11 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseSymbol, // Token::Symbol
     &Parser::raiseError // Token::Undefined
   };
-  popToken();
   Expression leftHandSide;
   do {
+    popToken();
     (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide);
-  } while (m_status == Status::Progress && popTokenUntil(stoppingType));
+  } while (m_status == Status::Progress && nextTokenHasPrecedenceOver(stoppingType));
   return leftHandSide;
 }
 
@@ -63,12 +63,8 @@ bool Parser::canPopToken(Token::Type type) {
   return false;
 }
 
-bool Parser::popTokenUntil(Token::Type stoppingType) {
-  if ((m_pendingImplicitMultiplication && Token::ImplicitTimes > stoppingType) || (!m_pendingImplicitMultiplication && m_nextToken.type() > stoppingType)) {
-    popToken();
-    return true;
-  }
-  return false;
+bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
+  return ((m_pendingImplicitMultiplication) ? Token::ImplicitTimes : m_nextToken.type()) > stoppingType;
 }
 
 void Parser::isThereImplicitMultiplication() {

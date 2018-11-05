@@ -57,12 +57,15 @@ size_t TextField::ContentView::editedTextLength() const {
 
 void TextField::ContentView::setText(const char * text) {
   reloadRectFromCursorPosition(0);
+  int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
-    int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);
     m_currentDraftTextLength = textLength;
   } else {
     strlcpy(m_textBuffer, text, m_textBufferSize);
+    if (m_textBuffer == m_draftTextBuffer) {
+      m_currentDraftTextLength = textLength;
+    }
   }
   reloadRectFromCursorPosition(0);
 }

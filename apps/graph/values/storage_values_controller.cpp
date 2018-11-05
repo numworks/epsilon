@@ -41,10 +41,13 @@ void StorageValuesController::willDisplayCellAtLocation(HighlightCell * cell, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
-    Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(i));
     const size_t bufferNameSize = Shared::StorageFunction::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
-    if (isDerivativeColumn(i)) {
+    bool isDerivative = isDerivativeColumn(i);
+    /* isDerivativeColumn uses expiring pointers, so "function" must be created
+     * after the isDerivativeColumn call, else it will expire. */
+    Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(i));
+    if (isDerivative) {
       function->derivativeNameWithArgument(bufferName, bufferNameSize, StorageCartesianFunctionStore::Symbol());
     } else {
       function->nameWithArgument(bufferName, bufferNameSize, StorageCartesianFunctionStore::Symbol());
@@ -139,9 +142,12 @@ StorageFunctionParameterController * StorageValuesController::functionParameterC
 }
 
 double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  if (isDerivativeColumn(columnIndex)) {
+  bool isDerivative = isDerivativeColumn(columnIndex);
+  /* isDerivativeColumn uses expiring pointers, so "function" must be created
+   * after the isDerivativeColumn call, else it will expire. */
+  Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  if (isDerivative) {
     return function->approximateDerivative(abscissa, myApp->localContext());
   }
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());

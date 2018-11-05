@@ -118,7 +118,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
   const Expression e = context.expressionForSymbol(*this);
   if (!e.isUninitialized()) {
-    // We need to replace the unknown witht the child
+    // We need to replace the unknown with the child
     Expression result = e.clone();
     Symbol x = Symbol(Symbol::SpecialSymbols::UnknownX);
     result = result.replaceSymbolWithExpression(x, childAtIndex(0));

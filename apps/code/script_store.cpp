@@ -30,7 +30,7 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit);
+  return Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit;
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {

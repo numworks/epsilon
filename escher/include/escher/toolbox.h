@@ -27,7 +27,6 @@ protected:
   virtual const ToolboxMessageTree * rootModel() = 0;
   virtual MessageTableCellWithMessage * leafCellAtIndex(int index) override = 0;
   virtual MessageTableCellWithChevron * nodeCellAtIndex(int index) override = 0;
-  Stack m_stack;
   ToolboxMessageTree * m_messageTreeModel;
   /* m_messageTreeModel points at the messageTree of the tree (describing the
    * whole model) where we are located. It enables to know which rows are leaves

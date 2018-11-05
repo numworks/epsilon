@@ -36,9 +36,8 @@ void VariableBoxController::viewDidDisappear() {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
     m_leafCells[i].setAccessoryLayout(Layout());
-    m_layouts[i] = Layout();
   }
-  m_firstMemoizedLayoutIndex = 0;
+  resetMemoization();
   NestedMenuController::viewDidDisappear();
 }
 
@@ -156,8 +155,10 @@ bool VariableBoxController::selectSubMenu(int selectedRow) {
 bool VariableBoxController::returnToPreviousMenu() {
   if (isDisplayingEmptyController()) {
     pop();
+  } else {
+    m_selectableTableView.deselectTable();
+    resetMemoization();
   }
-  m_selectableTableView.deselectTable();
   m_currentPage = Page::RootMenu;
   return NestedMenuController::returnToPreviousMenu();
 }
@@ -240,4 +241,11 @@ bool VariableBoxController::displayEmptyController() {
     return true;
   }
   return false;
+}
+
+void VariableBoxController::resetMemoization() {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_layouts[i] = Layout();
+  }
+  m_firstMemoizedLayoutIndex = 0;
 }

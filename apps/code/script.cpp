@@ -30,7 +30,7 @@ void Script::DefaultName(char buffer[], size_t bufferSize) {
     // Change the number in the script name.
     intToText(currentScriptNumber, &buffer[defaultScriptNameLength], bufferSize - defaultScriptNameLength );
     if (ScriptStore::ScriptNameIsFree(buffer)) {
-      break;
+      return;
     }
     currentScriptNumber++;
   }

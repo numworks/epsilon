@@ -27,7 +27,7 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    if (unparsableText(textField->text(), textField)) {
+    if (!isAcceptableText(textField->text(), textField)) {
       return true;
     }
   }
@@ -54,13 +54,17 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool TextFieldDelegateApp::unparsableText(const char * text, Responder * responder) {
+bool TextFieldDelegateApp::isAcceptableText(const char * text, Responder * responder) {
   Expression exp = Expression::parse(text);
+  return isAcceptableExpression(exp, responder);
+}
+
+bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp, Responder * responder) {
   if (exp.isUninitialized()) {
     responder->app()->displayWarning(I18n::Message::SyntaxError);
-    return true;
+    return false;
   }
-  return false;
+  return true;
 }
 
 }

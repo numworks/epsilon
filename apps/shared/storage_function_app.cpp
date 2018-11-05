@@ -67,4 +67,18 @@ void StorageFunctionApp::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
+
+bool StorageFunctionApp::isAcceptableExpression(const Expression exp, Responder * responder) {
+  if (TextFieldDelegateApp::isAcceptableExpression(exp, responder)) {
+    assert(!exp.isUninitialized());
+    if (exp.type() == ExpressionNode::Type::Store) {
+      // We do not want to allow a function to be "3->a" or "5->f(x)"
+      responder->app()->displayWarning(I18n::Message::StoreExpressionNotAcceptedAsFunction);
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
 }

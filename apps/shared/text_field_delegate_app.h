@@ -19,10 +19,10 @@ public:
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
-protected:
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
   bool isFinishingEvent(Ion::Events::Event event);
-  bool unparsableText(const char * text, Responder * responder);
+  bool isAcceptableText(const char * text, Responder * responder);
+  virtual bool isAcceptableExpression(const Poincare::Expression expression, Responder * responder);
 };
 
 }

@@ -37,6 +37,7 @@ public:
   void willBecomeInactive() override;
 protected:
   StorageFunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  bool isAcceptableExpression(const Poincare::Expression expression, Responder * responder) override;
 };
 
 }

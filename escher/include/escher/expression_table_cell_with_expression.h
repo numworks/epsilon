@@ -9,7 +9,7 @@ public:
   ExpressionTableCellWithExpression();
   View * accessoryView() const override;
   void setHighlighted(bool highlight) override;
-  void setAccessoryLayout(Poincare::Layout layoutR);
+  void setAccessoryLayout(Poincare::Layout l);
 private:
   ExpressionView m_accessoryExpressionView;
 };

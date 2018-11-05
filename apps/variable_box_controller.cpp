@@ -99,7 +99,10 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   } else {
     assert(m_currentPage == Page::Function);
     StorageCartesianFunction f(record);
-    symbolLength = f.nameWithArgument(symbolName, Shared::StorageFunction::k_maxNameWithArgumentSize, Graph::StorageCartesianFunctionStore::Symbol());
+    symbolLength = f.nameWithArgument(
+        symbolName,
+        Shared::StorageFunction::k_maxNameWithArgumentSize,
+        Graph::StorageCartesianFunctionStore::Symbol());
   }
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);

@@ -1,145 +1,168 @@
 #include "tokenizer.h"
-
 #include <ion/charset.h>
-
-#include <poincare/empty_expression.h>
 #include <poincare/number.h>
-#include <poincare/symbol.h>
 
 namespace Poincare {
 
-bool Tokenizer::canPopChar(char c) {
-  if (currentChar() == c) {
-    popChar();
+static inline bool isLetter(const char c) {
+  return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
+}
+
+static inline bool isDigit(const char c) {
+  return '0' <= c && c <= '9';
+}
+
+const char Tokenizer::popChar() {
+  const char nextChar = *m_nextCharP;
+  m_nextCharP++;
+  return nextChar;
+  // Note that, after returning, m_nextCharP points to the character after nextChar.
+}
+
+bool Tokenizer::canPopChar (const char c) {
+  if (*m_nextCharP == c) {
+    m_nextCharP++;
     return true;
   }
   return false;
 }
 
+size_t Tokenizer::popIdentifier() {
+  // Since this method is only called by popToken,
+  // currentChar is necessary a letter.
+  size_t length = 1;
+  char nextChar = *m_nextCharP;
+  while (isLetter(nextChar) || isDigit(nextChar) || nextChar == '_') {
+    length++;
+    nextChar = *++m_nextCharP;
+  }
+  return length;
+}
+
 size_t Tokenizer::popDigits() {
   size_t length = 0;
-  char c = currentChar();
-  while (c >= '0' && c <= '9') {
+  while (isDigit(*m_nextCharP)) {
     length++;
-    c = popChar();
+    m_nextCharP++;
   }
   return length;
 }
 
 Token Tokenizer::popNumber() {
-  const char * integralPartText = m_text;
+  /* This method is only called by popToken, after popping a dot or a digit.
+   * Hence one needs to get one character back. */
+  m_nextCharP--;
+
+  const char * integralPartText = m_nextCharP;
   size_t integralPartLength = popDigits();
 
-  const char * decimalPartText = m_text;
-  size_t decimalPartLength = 0;
+  const char * fractionalPartText = m_nextCharP;
+  size_t fractionalPartLength = 0;
   if (canPopChar('.')) {
-    decimalPartText = m_text;
-    decimalPartLength = popDigits();
+    fractionalPartText = m_nextCharP;
+    fractionalPartLength = popDigits();
   }
 
-  if (integralPartLength == 0 && decimalPartLength == 0) {
-    return Token(Token::Type::Undefined);
+  if (integralPartLength == 0 && fractionalPartLength == 0) {
+    return Token(Token::Undefined);
   }
 
-  const char * exponentPartText = m_text;
+  const char * exponentPartText = m_nextCharP;
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
   if (canPopChar(Ion::Charset::Exponent)) {
     exponentIsNegative = canPopChar('-');
-    exponentPartText = m_text;
+    exponentPartText = m_nextCharP;
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
-      return Token(Token::Type::Undefined);
+      return Token(Token::Undefined);
     }
   }
 
-  Token result(Token::Type::Number);
-  result.setExpression(Number::ParseNumber(integralPartText, integralPartLength, decimalPartText, decimalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
-  return result;
-}
-
-static inline bool isLetter(char c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-Token Tokenizer::popSymbol() {
-  const char * text = m_text;
-  int length = 1;
-  char c = popChar();
-  while (isLetter(c) || (c >= '0' && c <= '9') || c == '_') {
-    length++;
-    c = popChar();
-  }
-  Token result(Token::Type::Symbol);
-  result.setExpression(Symbol(text, length));
+  Token result(Token::Number);
+  result.setExpression(Number::ParseNumber(integralPartText, integralPartLength, fractionalPartText, fractionalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
   return result;
 }
 
 Token Tokenizer::popToken() {
-  while (canPopChar(' ')){};
-  const char c = currentChar();
-  if ((c == '.') || (c >= '0' && c <= '9')) {
+  // Skip whitespaces
+  while (canPopChar(' ')) {}
+
+  // Save for later use (since m_nextCharP is altered by popChar, popNumber, popIdentifier).
+  const char * start = m_nextCharP;
+
+  const char currentChar = popChar();
+  // According to currentChar, recognize the Token::Type.
+  if (currentChar == '.' || isDigit(currentChar)) {
     return popNumber();
   }
-  if (isLetter(c)) {
-    return popSymbol();
+  if (isLetter(currentChar)) {
+    Token result(Token::Identifier);
+    result.setString(start, popIdentifier());
+    return result;
   }
-  if (c >= '(' && c <= '/' && c != '.') {
-    const Token::Type typeForChar[] = {
-      Token::Type::LeftParenthesis,
-      Token::Type::RightParenthesis,
-      Token::Type::Times,
-      Token::Type::Plus,
-      Token::Type::Comma,
-      Token::Type::Minus,
-      Token::Type::Undefined,
-      Token::Type::Slash,
+  if ('(' <= currentChar && currentChar <= '/') {
+    // Those characters form a contiguous range in the ascii character set,
+    // so one can make searching faster with this lookup table.
+    constexpr Token::Type typeForChar[] = {
+      Token::LeftParenthesis,
+      Token::RightParenthesis,
+      Token::Times,
+      Token::Plus,
+      Token::Comma,
+      Token::Minus,
+      Token::Undefined,
+      Token::Slash
     };
-    popChar();
-    return Token(typeForChar[c - '(']);
+    // The dot character is the second last of that range,
+    // but it is matched before (with popNumber).
+    assert(currentChar != '.');
+    return Token(typeForChar[currentChar - '(']);
   }
-  if (canPopChar(Ion::Charset::MultiplicationSign) || canPopChar(Ion::Charset::MiddleDot)) {
-    return Token(Token::Type::Times);
+  if (currentChar == Ion::Charset::MultiplicationSign || currentChar == Ion::Charset::MiddleDot) {
+    return Token(Token::Times);
   }
-  if (canPopChar('!')) {
-    return Token(Token::Type::Bang);
+  if (currentChar == '!') {
+    return Token(Token::Bang);
   }
-  if (canPopChar('=')) {
-    return Token(Token::Type::Equal);
+  if (currentChar == '=') {
+    return Token(Token::Equal);
   }
-  if (canPopChar('[')) {
-    return Token(Token::Type::LeftBracket);
+  if (currentChar == '[') {
+    return Token(Token::LeftBracket);
   }
-  if (canPopChar(']')) {
-    return Token(Token::Type::RightBracket);
+  if (currentChar == ']') {
+    return Token(Token::RightBracket);
   }
-  if (canPopChar('^')) {
-    return Token(Token::Type::Caret);
+  if (currentChar == '^') {
+    return Token(Token::Caret);
   }
-  if (canPopChar('{')) {
-    return Token(Token::Type::LeftBrace);
+  if (currentChar == '{') {
+    return Token(Token::LeftBrace);
   }
-  if (canPopChar('}')) {
-    return Token(Token::Type::RightBrace);
+  if (currentChar == '}') {
+    return Token(Token::RightBrace);
   }
-  if (c == Ion::Charset::SmallPi || c == Ion::Charset::IComplex || c == Ion::Charset::Exponential || c == Ion::Charset::Root) {
-    Token result(Token::Type::Symbol);
-    result.setExpression(Symbol(m_text,1));
-    popChar();
+  if (currentChar == Ion::Charset::SmallPi || currentChar == Ion::Charset::IComplex || currentChar == Ion::Charset::Exponential) {
+    Token result(Token::Constant);
+    result.setString(start, 1);
     return result;
   }
-  if (canPopChar(Ion::Charset::Empty)) {
-    Token result(Token::Type::Undefined); //FIXME
-    result.setExpression(EmptyExpression());
+  if (currentChar == Ion::Charset::Root) {
+    Token result(Token::Identifier);
+    result.setString(start, 1);
     return result;
   }
-  if (canPopChar(Ion::Charset::Sto)) {
-    return Token(Token::Type::Store);
+  if (currentChar == Ion::Charset::Empty) {
+    return Token(Token::Empty);
   }
-  if (canPopChar(0)) {
-    return Token(Token::Type::EndOfStream);
+  if (currentChar == Ion::Charset::Sto) {
+    return Token(Token::Store);
   }
-  return Token(Token::Type::Undefined);
+  if (currentChar == 0) {
+    return Token(Token::EndOfStream);
+  }
+  return Token(Token::Undefined);
 }
 
 }

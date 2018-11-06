@@ -11,6 +11,7 @@
 #include <ion/led.h>
 #include <ion/power.h>
 #include <ion/storage.h>
+#include <ion/timing.h>
 #include <ion/usb.h>
 #include <stdint.h>
 #include <string.h>
@@ -27,8 +28,6 @@ namespace Ion {
 
 void msleep(long ms);
 void usleep(long us);
-extern "C" long millis();
-extern "C" long micros();
 
 const char * serialNumber();
 const char * softwareVersion();

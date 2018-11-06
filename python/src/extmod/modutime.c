@@ -30,8 +30,7 @@
 #include "py/smallint.h"
 #include "py/runtime.h"
 
-long millis();
-long micros();
+#include "ion/timing.h"
 
 void delay_ms(mp_uint_t delay) {
     uint32_t start = millis();

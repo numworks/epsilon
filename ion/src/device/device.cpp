@@ -41,11 +41,11 @@ void Ion::usleep(long us) {
 
 extern volatile long millis_elapsed;
 
-long Ion::millis() {
+uint32_t Ion::millis() {
   return millis_elapsed;
 }
 
-long Ion::micros() {
+uint32_t Ion::micros() {
     uint32_t c1 = CM4.STCVR()->getCURRENT();
     uint32_t ms1 = millis_elapsed;
     uint32_t c2 = CM4.STCVR()->getCURRENT();

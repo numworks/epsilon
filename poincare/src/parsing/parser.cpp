@@ -448,7 +448,11 @@ Expression Parser::parseVector() {
     return Matrix();
   }
   Expression commaSeparatedList = parseCommaSeparatedList();
-  if (!popTokenIfType(Token::RightBracket) || m_status != Status::Progress) {
+  if (m_status != Status::Progress) {
+    // There has been an error during the parsing of the comma separated list
+    return Expression();
+  }
+  if (!popTokenIfType(Token::RightBracket)) {
     m_status = Status::Error; // Right bracket missing.
     return Matrix();
   }

@@ -396,18 +396,18 @@ void Parser::parseIdentifier(Expression & leftHandSide) {
 Expression Parser::parseFunctionParameters() {
   if (!popTokenIfType(Token::LeftParenthesis)) {
     m_status = Status::Error; // Left parenthesis missing.
-    return Matrix();
+    return Expression();
   }
   if (popTokenIfType(Token::RightParenthesis)) {
     return Matrix(); // The function has no parameter.
   }
   Expression commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
-    return Matrix();
+    return Expression();
   }
   if (!popTokenIfType(Token::RightParenthesis)) {
     m_status = Status::Error; // Right parenthesis missing.
-    return Matrix();
+    return Expression();
   }
   return commaSeparatedList;
 }
@@ -445,7 +445,7 @@ void Parser::parseMatrix(Expression & leftHandSide) {
 Expression Parser::parseVector() {
   if (!popTokenIfType(Token::LeftBracket)) {
     m_status = Status::Error; // Left bracket missing.
-    return Matrix();
+    return Expression();
   }
   Expression commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
@@ -454,7 +454,7 @@ Expression Parser::parseVector() {
   }
   if (!popTokenIfType(Token::RightBracket)) {
     m_status = Status::Error; // Right bracket missing.
-    return Matrix();
+    return Expression();
   }
   return commaSeparatedList;
 }
@@ -465,7 +465,7 @@ Expression Parser::parseCommaSeparatedList() {
   do {
     Expression item = parseUntil(Token::Comma);
     if (m_status != Status::Progress) {
-      return Matrix();
+      return Expression();
     }
     commaSeparatedList.addChildAtIndexInPlace(item, length, length);
     length++;

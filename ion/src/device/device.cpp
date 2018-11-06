@@ -46,11 +46,11 @@ uint32_t Ion::millis() {
 }
 
 uint32_t Ion::micros() {
-    uint32_t c1 = CM4.STCVR()->getCURRENT();
+    uint32_t c1 = CM4.SYST_CVR()->getCURRENT();
     uint32_t ms1 = millis_elapsed;
-    uint32_t c2 = CM4.STCVR()->getCURRENT();
+    uint32_t c2 = CM4.SYST_CVR()->getCURRENT();
     uint32_t ms2 = millis_elapsed;
-    uint32_t load = CM4.STRVR()->getRELOAD();
+    uint32_t load = CM4.SYST_RVR()->getRELOAD();
 
     return ((c1 > c2) ? ms1 : ms2) * 1000 + ((load - c2) * 1000) / (load + 1);
 }
@@ -201,15 +201,15 @@ void initPeripherals() {
   Console::Device::init();
   SWD::Device::init();
 
-  CM4.STRVR()->setRELOAD(11999);
-  CM4.STCVR()->setCURRENT(0);
-  CM4.STCSR()->setCLKSOURCE(CM4::STCSR::CLKSOURCE::AHB_DIV8);
-  CM4.STCSR()->setTICKINT(true);
-  CM4.STCSR()->setENABLE(true);
+  CM4.SYST_RVR()->setRELOAD(11999);
+  CM4.SYST_CVR()->setCURRENT(0);
+  CM4.SYST_CSR()->setCLKSOURCE(CM4::SYST_CSR::CLKSOURCE::AHB_DIV8);
+  CM4.SYST_CSR()->setTICKINT(true);
+  CM4.SYST_CSR()->setENABLE(true);
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {
-  CM4.STCSR()->setENABLE(false);
+  CM4.SYST_CSR()->setENABLE(false);
 
   SWD::Device::shutdown();
   Console::Device::shutdown();

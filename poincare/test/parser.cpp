@@ -144,6 +144,7 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_parsed_expression_is("1^2", Power(Rational(1),Rational(2)));
   assert_parsed_expression_is("1^2^3", Power(Rational(1),Power(Rational(2),Rational(3))));
   assert_parsed_expression_is("1=2", Equal(Rational(1),Rational(2)));
+  assert_raises_parsing_error("=5");
   assert_raises_parsing_error("1=2=3");
   assert_parsed_expression_is("-1", Opposite(Rational(1)));
   assert_parsed_expression_is("(-1)", Parenthesis(Opposite(Rational(1))));

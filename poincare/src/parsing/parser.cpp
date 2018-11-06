@@ -164,6 +164,10 @@ void Parser::parseCaret(Expression & leftHandSide) {
 }
 
 void Parser::parseEqual(Expression & leftHandSide) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Equal must have a left operand
+    return;
+  }
   if (leftHandSide.type() == ExpressionNode::Type::Equal) {
     m_status = Status::Error; // Equal is not associative
     return;

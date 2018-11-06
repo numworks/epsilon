@@ -361,6 +361,10 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     return;
   }
   Expression parameter = parseCommaSeparatedList();
+  if (m_status != Status::Progress) {
+    return;
+  }
+  assert(!parameter.isUninitialized());
   if (parameter.numberOfChildren() != 1) {
     m_status = Status::Error; // Unexpected number of paramters.
     return;

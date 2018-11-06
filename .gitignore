@@ -2,6 +2,7 @@
 *.o
 *.elf
 *.exe
+*.mpy
 
 # No dependency files
 *.d
@@ -18,6 +19,11 @@ poincare/src/simplification/rulegen/rules_lexer.cpp
 poincare/src/simplification/rulegen/rules_parser.cpp
 poincare/src/simplification/rulegen/rulegen
 poincare/src/simplification/demo_ruleset.h
+
+# No MicroPython generated files
+python/port/frozen/frozen.c
+python/src/mpy-cross/mpy-cross
+__pycache__
 
 # Font related generated files.
 kandinsky/fonts/rasterizer

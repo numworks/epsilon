@@ -134,7 +134,30 @@ port_objs += $(addprefix python/port/,\
   mod/time/modtime.o \
   mod/time/modtime_table.o \
   mphalport.o \
+  frozen/frozen.o \
 )
+
+# MicroPython cross-compiler
+
+HOSTMPY = python/src/mpy-cross/mpy-cross
+MPYTOOL = python/src/tools/mpy-tool.py
+
+FROZEN_MPY_FILES = $(addprefix python/port/frozen/, turtle.mpy)
+
+python/port/frozen/%.mpy: python/port/frozen/%.py $(HOSTMPY)
+	@echo "HOSTMPY $@"
+	$(Q) $(HOSTMPY) -s $(notdir $<) -O3 -o $@ $<
+
+.DELETE_ON_ERROR: python/port/frozen.c
+python/port/frozen/frozen.c: $(FROZEN_MPY_FILES) python/port/genhdr/qstrdefs.in.h $(MPY_TOOL)
+	@echo "GEN     $@"
+	$(Q) $(MPYTOOL) -f -q python/port/genhdr/qstrdefs.in.h $(MPYTOOL_FLAGS) $(FROZEN_MPY_FILES) > $@
+
+$(HOSTMPY): $(addprefix python/src/mpy-cross/, main.c gccollect.c) $(wildcard python/src/py/*.c)
+	@echo "HOSTCC  $@"
+	$(Q) $(HOSTCC) -Ipython/src/mpy-cross -Ipython/src -O3 --std=gnu99 $^ -lm -o $@
+
+products += $(FROZEN_MPY_FILES)
 
 # Workarounds
 

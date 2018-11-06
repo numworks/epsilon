@@ -112,3 +112,5 @@ extern const struct _mp_obj_module_t modtime_module;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module) }, \
     { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) },
+
+#define MICROPY_QSTR_EXTRA_POOL     mp_qstr_frozen_const_pool

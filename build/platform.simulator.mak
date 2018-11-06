@@ -6,3 +6,4 @@ USE_LIBA = 0
 EXE = elf
 EPSILON_ONBOARDING_APP = 0
 SFLAGS += -fPIE
+MPYTOOL_FLAGS = -mmpz-dig-size $(shell echo $$(( $(shell getconf LONG_BIT) / 2)) )

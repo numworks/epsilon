@@ -634,7 +634,7 @@ typedef double mp_float_t;
 
 // Whether frozen modules are supported in the form of .mpy files
 #ifndef MICROPY_MODULE_FROZEN_MPY
-#define MICROPY_MODULE_FROZEN_MPY (1)
+#define MICROPY_MODULE_FROZEN_MPY (0)
 #endif
 
 // Convenience macro for whether frozen modules are supported

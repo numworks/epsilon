@@ -351,7 +351,12 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField) {
   if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
-    Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    if (!foundDefaultName) {
+      // If we did not find a default name, delete the script
+      deleteScript(script);
+      return true;
+    }
     Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
     scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
     /* Because we use the numbered default name, the name should not be

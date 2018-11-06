@@ -1,4 +1,5 @@
 #include "storage_expression_model_list_controller.h"
+#include <poincare/symbol.h>
 
 namespace Shared {
 
@@ -183,9 +184,16 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
   char initialTextContent[TextField::maxBufferSize()];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<StorageExpressionModel> model =  modelStore()->modelForRecord(record);
+    ExpiringPointer<StorageExpressionModel> model = modelStore()->modelForRecord(record);
     model->text(initialTextContent, TextField::maxBufferSize());
     initialText = initialTextContent;
+    // Replace Poincare::Symbol::SpecialSymbols::UnknownX with 'x'
+    size_t initialTextLength = strlen(initialText);
+    for (size_t i = 0; i < initialTextLength; i++) {
+      if (initialTextContent[i] == Poincare::Symbol::SpecialSymbols::UnknownX) {
+        initialTextContent[i] = Poincare::Symbol::k_unknownXReadableChar;
+      }
+    }
   }
   inputController()->edit(this, event, this, initialText,
       [](void * context, void * sender){

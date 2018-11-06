@@ -167,7 +167,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
            * text is variableX, with X the row index. For instance, x0, x1,...*/
           int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Equation::k_maxVariableSize);
           bufferSymbol[length++] = j+'0';
-          bufferSymbol[2] = 0;
+          bufferSymbol[length] = 0;
           break;
       }
       symbolCell->setText(bufferSymbol);

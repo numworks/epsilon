@@ -25,6 +25,6 @@ int main(int argc, char * argv[]) {
 void Ion::msleep(long ms) {
 }
 
-long Ion::millis() {
+uint32_t Ion::millis() {
   return SDL_GetTicks();
 }

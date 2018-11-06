@@ -147,7 +147,9 @@ int SolutionsController::numberOfColumns() {
 
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
+    // Name of the variable or discriminant
     if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
+      // Discriminant
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
       deltaCell->setLayout(m_delta2Layout);
     } else {
@@ -156,10 +158,14 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       char bufferSymbol[Equation::k_maxVariableSize+1]; // Hold at maximum Delta = b^2-4ac or the variable name + a digit
       switch (m_equationStore->type()) {
         case EquationStore::Type::LinearSystem:
+          /* The system has more than one variable: the cell text is the
+           * variable name */
           strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Equation::k_maxVariableSize);
           break;
         default:
-          int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Equation::k_maxVariableSize);
+          /* The system has one variable but might have many solutions: the cell
+           * text is variableX, with X the row index. For instance, x0, x1,...*/
+          int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Equation::k_maxVariableSize);
           bufferSymbol[length++] = j+'0';
           bufferSymbol[2] = 0;
           break;
@@ -167,6 +173,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       symbolCell->setText(bufferSymbol);
     }
   } else {
+    // Value of the variable or discriminant
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
       char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

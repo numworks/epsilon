@@ -10,19 +10,19 @@ using namespace Ion;
 VariableBoxEmptyController::VariableBoxEmptyView::VariableBoxEmptyView() :
   m_layoutExample(0.5f, 0.5f, KDColorBlack, Palette::WallScreen)
 {
-  I18n::Message messages[k_numberOfMessages] = {I18n::Message::EmptyVariableBox0, I18n::Message::Default, I18n::Message::EmptyVariableBox1, I18n::Message::EmptyVariableBox2, I18n::Message::EmptyVariableBox3};
   for (int i = 0; i < k_numberOfMessages; i++) {
     m_messages[i].setFont(k_font);
     m_messages[i].setAlignment(0.5f, 0.5f);
     m_messages[i].setBackgroundColor(Palette::WallScreen);
-    m_messages[i].setMessage(messages[i]);
   }
   m_messages[0].setAlignment(0.5f,1.0f);
   m_messages[k_numberOfMessages-1].setAlignment(0.5f,0.0f);
 }
 
-void VariableBoxEmptyController::VariableBoxEmptyView::setMessage(I18n::Message message) {
-  m_messages[1].setMessage(message);
+void VariableBoxEmptyController::VariableBoxEmptyView::setMessages(I18n::Message *  message) {
+  for (int i = 0; i < k_numberOfMessages; i++) {
+    m_messages[i].setMessage(message[i]);
+  }
 }
 
 void VariableBoxEmptyController::VariableBoxEmptyView::setLayout(Poincare::Layout layout) {
@@ -49,7 +49,7 @@ void VariableBoxEmptyController::VariableBoxEmptyView::layoutSubviews() {
   KDCoordinate textHeight = k_font->glyphSize().height();
   KDCoordinate layoutHeight = m_layoutExample.minimalSizeForOptimalDisplay().height();
   KDCoordinate margin = (height - k_numberOfMessages*textHeight-layoutHeight)/2;
-  m_layoutExample.setFrame(KDRect(0, margin+3*textHeight, width, layoutHeight));
+  m_layoutExample.setFrame(KDRect(0, margin+k_layoutRowIndex*textHeight, width, layoutHeight));
   KDCoordinate currentHeight = 0;
   for (uint8_t i = 0; i < k_numberOfMessages; i++) {
     if (i == k_layoutRowIndex) {
@@ -76,19 +76,23 @@ void VariableBoxEmptyController::viewDidDisappear() {
 }
 
 void VariableBoxEmptyController::setType(Type type) {
-  I18n::Message message = I18n::Message::Default;
+  I18n::Message messages[VariableBoxEmptyView::k_numberOfMessages] = {I18n::Message::Default, I18n::Message::Default, I18n::Message::Default, I18n::Message::EnableCharacters};
   Layout layout;
   switch (type) {
     case Type::Expressions:
     {
-      message = I18n::Message::EmptyExpressionBox;
+      messages[0] = I18n::Message::EmptyExpressionBox0;
+      messages[1] = I18n::Message::EmptyExpressionBox1;
+      messages[2] = I18n::Message::EmptyExpressionBox2;
       char storeExpression[] = {'3', Ion::Charset::Sto, 'A', 0};
       layout = LayoutHelper::String(storeExpression, sizeof(storeExpression)-1, VariableBoxEmptyView::k_font);
       break;
     }
     case Type::Functions:
     {
-      message = I18n::Message::EmptyFunctionBox;
+      messages[0] = I18n::Message::EmptyFunctionBox0;
+      messages[1] = I18n::Message::EmptyFunctionBox1;
+      messages[2] = I18n::Message::EmptyFunctionBox2;
       char storeFunction[] = {'3', '+', Graph::StorageCartesianFunctionStore::Symbol(), Ion::Charset::Sto, 'f', '(', Graph::StorageCartesianFunctionStore::Symbol(), ')', 0};
       layout = LayoutHelper::String(storeFunction, sizeof(storeFunction)-1, VariableBoxEmptyView::k_font);
       break;
@@ -96,6 +100,6 @@ void VariableBoxEmptyController::setType(Type type) {
     default:
       assert(false);
   }
-  m_view.setMessage(message);
+  m_view.setMessages(messages);
   m_view.setLayout(layout);
 }

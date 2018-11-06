@@ -193,6 +193,8 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_raises_parsing_error("*1");
   assert_raises_parsing_error("1^^2");
   assert_raises_parsing_error("^1");
+  assert_raises_parsing_error("t0000000");
+  assert_raises_parsing_error("[[t0000000[");
 }
 
 Matrix BuildMatrix(int rows, int columns, Expression entries[]) {

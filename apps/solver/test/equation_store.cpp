@@ -161,6 +161,17 @@ QUIZ_CASE(equation_solve) {
 
   double solutions17[] = {0};
   assert_equation_approximate_solve_to("R(y)=0", -900.0, 1000.0, "y", solutions17, 1, false);
+
+  // Long variable names
+  const char * variablesabcde[] = {"abcde", ""};
+  const char * equations18[] = {"2abcde+3=4", 0};
+  const char * solutions18[] = {"(1)/(2)"};
+  assert_equation_system_exact_solve_to(equations18,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesabcde, solutions18, 1);
+
+  const char * variablesBig1Big2[] = {"Big1", "Big2", ""};
+  const char * equations19[] = {"Big1+Big2=0", "3Big1+Big2=-5", 0};
+  const char * solutions19[] = {"-(5)/(2)", "(5)/(2)"};
+  assert_equation_system_exact_solve_to(equations19,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesBig1Big2, solutions19, 2);
 }
 
 }

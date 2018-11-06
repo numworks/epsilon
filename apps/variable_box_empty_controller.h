@@ -22,14 +22,14 @@ private:
   public:
     static constexpr const KDFont * k_font = KDFont::SmallFont;
     VariableBoxEmptyView();
-    void setMessage(I18n::Message message);
+    void setMessages(I18n::Message * message);
     void setLayout(Poincare::Layout layout);
+    constexpr static int k_numberOfMessages = 4;
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-    constexpr static int k_numberOfMessages = 5;
-    constexpr static int k_layoutRowIndex = 3;
+    constexpr static int k_layoutRowIndex = 2;
     MessageTextView m_messages[k_numberOfMessages];
     ExpressionView m_layoutExample;
   };

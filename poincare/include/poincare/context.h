@@ -5,7 +5,6 @@ namespace Poincare {
 
 class Expression;
 class SymbolAbstract;
-class Symbol; //TODO remove?
 
 class Context {
 public:

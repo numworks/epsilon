@@ -136,7 +136,7 @@ Symbol::Symbol(char name) : Symbol(&name, 1) {}
 
 bool Symbol::isSeriesSymbol(const char * c) {
   // [NV][1-3]
-  if ((c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {
+  if (c[2] == 0 && (c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {
     return true;
   }
   return false;
@@ -144,7 +144,7 @@ bool Symbol::isSeriesSymbol(const char * c) {
 
 bool Symbol::isRegressionSymbol(const char * c) {
   // [XY][1-3]
-  if ((c[0] == 'X' || c[0] == 'Y') && c[1] >= '1' && c[1] <= '3') {
+  if (c[2] == 0 && (c[0] == 'X' || c[0] == 'Y') && c[1] >= '1' && c[1] <= '3') {
     return true;
   }
   return false;

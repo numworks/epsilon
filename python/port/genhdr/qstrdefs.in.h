@@ -16,6 +16,13 @@
 QCFG(BYTES_IN_LEN, (1))
 QCFG(BYTES_IN_HASH, (2))
 
+// Private turtle QSTRs
+
+Q(_turtle)
+Q(stamp)
+Q(draw_turtle)
+Q(erase_turtle)
+
 // Kandinsky QSTRs
 
 Q(kandinsky)

@@ -25,6 +25,10 @@ python/port/frozen/frozen.c
 python/src/mpy-cross/mpy-cross
 __pycache__
 
+# Ignore turtle icon generated files
+python/port/mod/_turtle/turtle_icon.cpp
+python/port/mod/_turtle/turtle_icon.h
+
 # Font related generated files.
 kandinsky/fonts/rasterizer
 kandinsky/src/font_large.cpp

@@ -133,6 +133,8 @@ port_objs += $(addprefix python/port/,\
   mod/kandinsky/modkandinsky_table.o \
   mod/time/modtime.o \
   mod/time/modtime_table.o \
+  mod/_turtle/mod_turtle.o \
+  mod/_turtle/mod_turtle_table.o \
   mphalport.o \
   frozen/frozen.o \
 )
@@ -185,6 +187,10 @@ ifeq ($(PLATFORM),emscripten)
 $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
 
+# Icon dependency
+
+app_images += python/port/mod/_turtle/turtle_icon.png
+app_objs += python/port/mod/_turtle/mod_turtle.o
 
 # QSTR generation
 

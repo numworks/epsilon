@@ -9,7 +9,7 @@ namespace USB {
 namespace Device {
 
 void Calculator::PollAndReset(bool exitWithKeyboard) {
-  CM4.STCSR()->setTICKINT(false);
+  CM4.SYST_CSR()->setTICKINT(false);
   char serialNumber[Ion::Device::SerialNumberLength+1];
   Ion::Device::copySerialNumber(serialNumber);
   Calculator c(serialNumber);
@@ -38,7 +38,7 @@ void Calculator::PollAndReset(bool exitWithKeyboard) {
      * will enter the newly flashed firmware. */
     Ion::Device::jumpReset();
   }
-  CM4.STCSR()->setTICKINT(true);
+  CM4.SYST_CSR()->setTICKINT(true);
 }
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {

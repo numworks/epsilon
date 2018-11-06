@@ -46,13 +46,14 @@ protected:
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity) and false is returned. */
   bool insertTextAtLocation(const char * textBuffer, int location);
-  virtual bool removeEndOfLine();
+  bool removeEndOfLine();
   ContentView * contentView() {
     return const_cast<ContentView *>(nonEditableContentView());
   }
   virtual const ContentView * nonEditableContentView() const = 0;
 private:
   virtual void willSetCursorLocation(int * location) {}
+  virtual bool privateRemoveEndOfLine();
 };
 
 #endif

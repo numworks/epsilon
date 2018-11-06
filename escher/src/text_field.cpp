@@ -162,6 +162,19 @@ bool TextField::ContentView::removeEndOfLine() {
   return true;
 }
 
+void TextField::ContentView::willModifyTextBuffer() {
+  /* This method should be called when the buffer is modified outside the
+   * content view, for instance from the textfield directly. */
+  reloadRectFromCursorPosition(0);
+}
+
+void TextField::ContentView::didModifyTextBuffer() {
+  /* This method should be called when the buffer is modified outside the
+   * content view, for instance from the textfield directly. */
+  m_currentDraftTextLength = strlen(m_draftTextBuffer);
+  layoutSubviews();
+}
+
 void TextField::ContentView::layoutSubviews() {
   if (!m_isEditing) {
     m_cursorView.setFrame(KDRectZero);
@@ -287,7 +300,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Clear && isEditing()) {
     if (!removeEndOfLine()) {
-      setEditing(true, true);
+      removeWholeText();
     }
     return true;
   }
@@ -447,4 +460,8 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   }
   setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
+}
+
+void TextField::removeWholeText() {
+  setEditing(true, true);
 }

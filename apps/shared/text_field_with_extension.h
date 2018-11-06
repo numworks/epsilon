@@ -25,6 +25,9 @@ public:
   {}
 private:
   void willSetCursorLocation(int * location) override;
+  bool privateRemoveEndOfLine() override;
+  void removeWholeText() override;
+  bool removeTextBeforeExtension(bool whole);
   size_t m_extensionLength;
 };
 

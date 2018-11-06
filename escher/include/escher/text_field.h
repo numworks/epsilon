@@ -56,6 +56,8 @@ protected:
     KDSize minimalSizeForOptimalDisplay() const override;
     bool removeChar() override;
     bool removeEndOfLine() override;
+    void willModifyTextBuffer();
+    void didModifyTextBuffer();
     /* In some app (ie Calculation), text fields record expression results whose
      * lengths can reach 70 (ie
      * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).
@@ -80,6 +82,7 @@ protected:
 private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
+  virtual void removeWholeText();
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

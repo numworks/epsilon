@@ -96,9 +96,13 @@ bool TextInput::insertTextAtLocation(const char * text, int location) {
 }
 
 bool TextInput::removeEndOfLine() {
-  if (contentView()->removeEndOfLine()) {
+  if (privateRemoveEndOfLine()) {
     scrollToCursor();
     return true;
   }
   return false;
+}
+
+bool TextInput::privateRemoveEndOfLine() {
+  return contentView()->removeEndOfLine();
 }

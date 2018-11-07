@@ -419,7 +419,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
   if (eventTextLength == 0) {
     setCursorLocation(0);
-    return m_delegate->textFieldDidHandleEvent(this, true, true);
+    return m_delegate->textFieldDidHandleEvent(this, true, previousTextLength != 0);
   }
 
   size_t eventTextSize = min(eventTextLength + 1, TextField::maxBufferSize());

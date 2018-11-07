@@ -127,10 +127,6 @@ int VariableBoxController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-void VariableBoxController::lockDeleteEvent(Page page) {
-  m_lockPageDelete = page;
-}
-
 ExpressionTableCellWithExpression * VariableBoxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];

@@ -32,7 +32,7 @@ public:
     Expression = 1,
     Function = 2
   };
-  void lockDeleteEvent(Page page);
+  void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 private:
   constexpr static int k_maxNumberOfDisplayedRows = 6; //240/Metric::ToolboxRowHeight
   constexpr static int k_numberOfMenuRows = 2;

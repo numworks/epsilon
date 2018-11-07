@@ -102,7 +102,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.reduceChildren(context, angleUnit, replaceSymbols);
+  matrix.deepReduceChildren(context, angleUnit, replaceSymbols);
   return matrix;
 }
 

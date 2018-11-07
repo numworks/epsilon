@@ -162,10 +162,10 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   }
   const Expression e = context.expressionForSymbol(*this);
   if (!e.isUninitialized()) {
-    // The stored expression had been beautified, so we need to call deepReduce
+    // The stored expression is beautified, so we need to call reduce
     Expression result = e.clone();
     replaceWithInPlace(result);
-    return result.deepReduce(context, angleUnit);
+    return result.reduce(context, angleUnit);
   }
   return *this;
 }

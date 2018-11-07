@@ -95,6 +95,10 @@ void ExpressionNode::reduceChildren(Context & context, Preferences::AngleUnit an
   Expression(this).defaultReduceChildren(context, angleUnit, replaceSymbols);
 }
 
+void ExpressionNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  Expression(this).defaultDeepReduceChildren(context, angleUnit, replaceSymbols);
+}
+
 Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return Expression(this).defaultShallowReduce(context, angleUnit, replaceSymbols);
 }

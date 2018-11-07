@@ -103,6 +103,9 @@ const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract &
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
   if (!previousRecord.isNull() && Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
+    /* A function can overwrite a variable, but a variable cannot be created if
+     * it has the same name as an existing function. */
+    // TODO Pop up "Name taken for a function"
     return Ion::Storage::Record::ErrorStatus::NameTaken;
   }
   // Delete any record with same name (as it is going to be overriden)

@@ -102,6 +102,9 @@ const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract &
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
+  if (!previousRecord.isNull() && Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
+    return Ion::Storage::Record::ErrorStatus::NameTaken;
+  }
   // Delete any record with same name (as it is going to be overriden)
   previousRecord.destroy();
   return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), expExtension, expression.addressInPool(), expression.size());

@@ -5,6 +5,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -67,6 +68,9 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   context.setExpressionForSymbol(finalValue.simplify(context, angleUnit, false), symbol(), context);
   Expression e = context.expressionForSymbol(symbol());
+  if (e.isUninitialized()) {
+    return Undefined();
+  }
   replaceWithInPlace(e);
   return e.shallowReduce(context, angleUnit, replaceSymbols);
 }

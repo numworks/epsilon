@@ -40,7 +40,8 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbol. */
   Store s(this);
-  context.setExpressionForSymbol(s.value(), s.symbol(), context);
+  Expression expressionToStore = s.value().clone().simplify(context, angleUnit, false);
+  context.setExpressionForSymbol(expressionToStore, s.symbol(), context);
   Expression e = context.expressionForSymbol(s.symbol());
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
@@ -60,8 +61,7 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
     assert(symbol().type() == ExpressionNode::Type::Symbol);
     finalValue = childAtIndex(0);
   }
-  finalValue = finalValue.deepReduce(context, angleUnit, false);
-  context.setExpressionForSymbol(finalValue, symbol(), context);
+  context.setExpressionForSymbol(finalValue.simplify(context, angleUnit, false), symbol(), context);
   Expression e = context.expressionForSymbol(symbol());
   replaceWithInPlace(e);
   return e.shallowReduce(context, angleUnit, replaceSymbols);

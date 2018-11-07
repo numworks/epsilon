@@ -4,7 +4,7 @@
 
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression() :
   ExpressionTableCell(Layout::Horizontal),
-  m_accessoryExpressionView(1.0f, 0.5f, KDColorBlack, KDColorWhite)
+  m_accessoryExpressionView(1.0f, 0.5f, Palette::GreyDark, KDColorWhite)
 {}
 
 View * ExpressionTableCellWithExpression::accessoryView() const {

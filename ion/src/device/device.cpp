@@ -143,6 +143,7 @@ void initSysTick() {
 
 void shutdownSysTick() {
   CM4.SYST_CSR()->setENABLE(false);
+  CM4.SYST_CSR()->setTICKINT(false);
 }
 
 void coreReset() {

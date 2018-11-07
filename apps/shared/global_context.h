@@ -15,8 +15,10 @@ class Integer;
 
 class GlobalContext final : public Poincare::Context {
 public:
-  static constexpr char funcExtension[] = "func"; // TODO: store this elsewhere?
+  static constexpr int k_numberOfExtensions = 2;
   static constexpr char expExtension[] = "exp"; // TODO: store this elsewhere?
+  static constexpr char funcExtension[] = "func"; // TODO: store this elsewhere?
+  static constexpr const char * k_extensions[] = {expExtension, funcExtension};
   //static constexpr char seqExtension[] = "seq";
 
   // Storage information
@@ -29,6 +31,9 @@ public:
 
   // Set expression for record
   static Ion::Storage::Record::ErrorStatus SetExpressionForFunctionRecord(Poincare::Expression e, Ion::Storage::Record record, const char * baseName);
+
+  // Destroy records
+  static void DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension);
 
   /* Expression for symbol
    * The expression recorded in global context is already an expression.

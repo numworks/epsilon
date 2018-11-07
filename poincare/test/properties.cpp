@@ -118,14 +118,14 @@ void assert_parsed_expression_has_polynomial_coefficient(const char * expression
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  e = e.deepReduce(globalContext, angleUnit);
+  e = e.reduce(globalContext, angleUnit);
   Expression coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
   int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, globalContext, Radian);
   for (int i = 0; i <= d; i++) {
     Expression f = parse_expression(coefficients[i]);
     quiz_assert(!f.isUninitialized());
-    coefficientBuffer[i] = coefficientBuffer[i].deepReduce(globalContext, angleUnit);
-    f = f.deepReduce(globalContext, angleUnit);
+    coefficientBuffer[i] = coefficientBuffer[i].reduce(globalContext, angleUnit);
+    f = f.reduce(globalContext, angleUnit);
     quiz_assert(coefficientBuffer[i].isIdenticalTo(f));
   }
   quiz_assert(coefficients[d+1] == 0);

@@ -43,7 +43,7 @@ Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::Ang
 
 Expression Equal::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression sub = Subtraction(childAtIndex(0).clone(), childAtIndex(1).clone());
-  return sub.deepReduce(context, angleUnit);
+  return sub.reduce(context, angleUnit);
 }
 
 Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

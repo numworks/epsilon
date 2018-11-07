@@ -145,9 +145,9 @@ public:
    * order) and 'constant' with the constant of the expression. */
   bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
-   * of the first 3 polynomial coefficients and return polynomialDegree.
-   * coefficients has up to 3 entries. It supposed to be called on Reduced
-   * expression. */
+   * of the first 3 polynomial coefficients and returns the  polynomial degree.
+   * It is supposed to be called on a reduced expression.
+   * coefficients has up to 3 entries.  */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
@@ -167,7 +167,7 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
     return node()->reduceChildren(context, angleUnit, replaceSymbols);
   }
@@ -253,7 +253,12 @@ protected:
 
 private:
   /* Simplification */
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+    return node()->deepReduceChildren(context, angleUnit, replaceSymbols);
+  }
   void defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
+  void defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }
 

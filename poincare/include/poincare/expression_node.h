@@ -144,6 +144,7 @@ public:
 
   /* Simplification */
   /*!*/ virtual void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
+  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
   /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   /* Return a clone of the denominator part of the expression */

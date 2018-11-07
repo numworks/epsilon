@@ -78,6 +78,21 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   selectColumn(i);
   selectRow(j);
 
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
+  }
+
+  /* We need to scroll:
+   * - After notifying the delegate. For instance,
+   *   StorageExpressionModelListController needs to update its memoized cell
+   *   height values before any scroll.
+   * - Before setting the first responder. If the first responder is a view, it
+   *   might change during the scroll. */
+
+  if (selectedRow() >= 0) {
+    scrollToCell(selectedColumn(), selectedRow());
+  }
+
   HighlightCell * cell = selectedCell();
   if (cell) {
     // Update first responder
@@ -89,12 +104,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
       }
     }
   }
-  if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
-  }
-  if (selectedRow() >= 0) {
-    scrollToCell(selectedColumn(), selectedRow());
-  }
+
   cell = selectedCell();
   if (cell) {
     cell->setHighlighted(true);

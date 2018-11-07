@@ -10,21 +10,21 @@ StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Resp
 
 bool StoreSelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    return selecNonHiddenCellAtLocation(selectedColumn(), selectedRow()+1);
+    return selectNonHiddenCellAtLocation(selectedColumn(), selectedRow()+1);
   }
   if (event == Ion::Events::Up) {
-    return selecNonHiddenCellAtLocation(selectedColumn(), selectedRow()-1);
+    return selectNonHiddenCellAtLocation(selectedColumn(), selectedRow()-1);
   }
   if (event == Ion::Events::Left) {
-    return selecNonHiddenCellAtLocation(selectedColumn()-1, selectedRow());
+    return selectNonHiddenCellAtLocation(selectedColumn()-1, selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selecNonHiddenCellAtLocation(selectedColumn()+1, selectedRow());
+    return selectNonHiddenCellAtLocation(selectedColumn()+1, selectedRow());
   }
   return false;
 }
 
-bool StoreSelectableTableView::selecNonHiddenCellAtLocation(int i, int j) {
+bool StoreSelectableTableView::selectNonHiddenCellAtLocation(int i, int j) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }

@@ -216,6 +216,10 @@ Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, co
   return Record();
 }
 
+void Storage::destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension) {
+  recordBaseNamedWithExtension(baseName, extension).destroy();
+}
+
 void Storage::destroyRecordsWithExtension(const char * extension) {
   size_t extensionLength = strlen(extension);
   char * currentRecordStart = (char *)m_buffer;

@@ -54,6 +54,9 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
     strlcpy(baseName, text, textLength - argumentLength + 1);
   }
 
+  // Delete any variable with the same name
+  GlobalContext::DestroyRecordsBaseNamedWithoutExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/);
+
   // Set the name
   Ion::Storage::Record::ErrorStatus error =  StorageFunction::BaseNameCompliant(baseName) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 

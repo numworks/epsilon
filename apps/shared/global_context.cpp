@@ -13,6 +13,7 @@ namespace Shared {
 constexpr char GlobalContext::expExtension[];
 constexpr char GlobalContext::funcExtension[];
 //constexpr char GlobalContext::seqExtension[];
+constexpr const char * GlobalContext::k_extensions[];
 
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
@@ -49,6 +50,14 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
    * expression, use the function record handle. */
   StorageCartesianFunction f = StorageCartesianFunction(record);
   return f.expressionWithSymbol();
+}
+
+void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension) {
+  for (int i = 0; i < k_numberOfExtensions; i++) {
+    if (strcmp(k_extensions[i], extension) != 0) {
+      Ion::Storage::sharedStorage()->destroyRecordWithBaseNameAndExtension(baseName, k_extensions[i]);
+    }
+  }
 }
 
 const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbol) {

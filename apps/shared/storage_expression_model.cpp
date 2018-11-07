@@ -31,7 +31,7 @@ Expression StorageExpressionModel::expression(Poincare::Context * context) const
   if (m_expression.isUninitialized()) {
     assert(!isNull());
     Ion::Storage::Record::Data recordData = value();
-    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData)).deepReduce(*context, Preferences::AngleUnit::Degree, true);
+    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData)).reduce(*context, Preferences::AngleUnit::Degree, true);
   }
   return m_expression;
 }

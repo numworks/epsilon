@@ -172,6 +172,13 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 void Expression::defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   for (int i = 0; i < numberOfChildren(); i++) {
+    childAtIndex(i).reduce(context, angleUnit, replaceSymbols);
+  }
+}
+
+void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    assert(!childAtIndex(i).recursivelyMatches(IsMatrix, context));
     childAtIndex(i).deepReduce(context, angleUnit, replaceSymbols);
   }
 }
@@ -289,9 +296,19 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
   return e;
 }
 
+Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+#if MATRIX_EXACT_REDUCING
+#else
+  if (recursivelyMatches(IsMatrix, context)) {
+    return *this;
+  }
+#endif
+  return deepReduce(context, angleUnit, replaceSymbols);
+}
+
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  assert(!IsMatrix(*this, context));
-  reduceChildren(context, angleUnit, replaceSymbols);
+  assert(!recursivelyMatches(IsMatrix, context));
+  deepReduceChildren(context, angleUnit, replaceSymbols);
   return shallowReduce(context, angleUnit, replaceSymbols);
 }
 

@@ -18,6 +18,10 @@ void StoreNode::reduceChildren(Context & context, Preferences::AngleUnit angleUn
   Expression(this).defaultReduceChildren(context, angleUnit, false);
 }
 
+void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  Expression(this).defaultDeepReduceChildren(context, angleUnit, false);
+}
+
 Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return Store(this).shallowReduce(context, angleUnit, replaceSymbols);
 }

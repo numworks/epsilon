@@ -334,7 +334,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   numerator.shallowReduce(context, angleUnit);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  inverseDenominator.deepReduce(context, angleUnit);
+  inverseDenominator.reduce(context, angleUnit);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop). */

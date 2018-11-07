@@ -46,13 +46,24 @@ uint32_t Ion::millis() {
 }
 
 uint32_t Ion::micros() {
-    uint32_t c1 = CM4.SYST_CVR()->getCURRENT();
-    uint32_t ms1 = millis_elapsed;
-    uint32_t c2 = CM4.SYST_CVR()->getCURRENT();
-    uint32_t ms2 = millis_elapsed;
-    uint32_t load = CM4.SYST_RVR()->getRELOAD();
-
-    return ((c1 > c2) ? ms1 : ms2) * 1000 + ((load - c2) * 1000) / (load + 1);
+  // Here, we can use the current value of the systick counter to get a
+  // microsecond resolution counter. The problem is that the systick interrupt
+  // may occur between reading millis_elapsed and reading the current value
+  // of the systick counter. To cope with this, we do two consecutive reading
+  // of both values. Do not forget that the counter counts backwards down to zero.
+  uint32_t c1 = CM4.SYST_CVR()->getCURRENT();
+  uint32_t ms1 = millis_elapsed;
+  uint32_t c2 = CM4.SYST_CVR()->getCURRENT();
+  uint32_t ms2 = millis_elapsed;
+  uint32_t load = CM4.SYST_RVR()->getRELOAD();
+  // If c1 > c2, then no systick interrupt occured between reading c1 and ms1, so ms1
+  // value is correct, else an interrupt occured and ms2 value is correct. So we
+  // have the milliseconds part : "((c1 > c2) ? ms1 : ms2) * 1000"
+  // Then, we just add and scale the value of c2, as it is correct in both case.
+  // We do "(load - c2)" to convert from a backward count to a forward count,
+  // and then scale it to microseconds "* 1000) / (load + 1)" (as load is
+  // the number of ticks per milliseconds minus one)
+  return ((c1 > c2) ? ms1 : ms2) * 1000 + ((load - c2) * 1000) / (load + 1);
 }
 
 uint32_t Ion::crc32(const uint32_t * data, size_t length) {

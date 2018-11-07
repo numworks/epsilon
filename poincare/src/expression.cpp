@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-#include <stdio.h>
-
 /* Constructor & Destructor */
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }

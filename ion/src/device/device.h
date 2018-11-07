@@ -11,6 +11,10 @@ void initFPU();
 #if 0
 void initMPU();
 #endif
+
+void initSysTick();
+void shutdownSysTick();
+
 void coreReset();
 void jumpReset();
 

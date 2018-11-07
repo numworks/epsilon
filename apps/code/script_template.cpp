@@ -60,6 +60,19 @@ def roots(a,b,c):
   else:
     return None)");
 
+constexpr ScriptTemplate kochScriptTemplate("koch.py", "\x01" R"(import turtle
+def koch(N_iteration, length):
+  if N_iteration <= 1:
+    turtle.forward(length)
+  else:
+    koch(N_iteration-1,length/3)
+    turtle.left(60)
+    koch(N_iteration-1,length/3)
+    turtle.right(120)
+    koch(N_iteration-1,length/3)
+    turtle.left(60)
+    koch(N_iteration-1,length/3))");
+
 const ScriptTemplate * ScriptTemplate::Empty() {
   return &emptyScriptTemplate;
 }
@@ -78,6 +91,10 @@ const ScriptTemplate * ScriptTemplate::Mandelbrot() {
 
 const ScriptTemplate * ScriptTemplate::Polynomial() {
   return &polynomialScriptTemplate;
+}
+
+const ScriptTemplate * ScriptTemplate::Koch() {
+  return &kochScriptTemplate;
 }
 
 }

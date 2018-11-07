@@ -11,6 +11,7 @@ public:
   static const ScriptTemplate * Fibonacci();
   static const ScriptTemplate * Mandelbrot();
   static const ScriptTemplate * Polynomial();
+  static const ScriptTemplate * Koch();
   const char * name() const { return m_name; }
   const char * content() const { return m_value+1; }
   const char * value() const { return m_value; }

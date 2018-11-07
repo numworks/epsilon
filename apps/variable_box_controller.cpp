@@ -32,13 +32,20 @@ void VariableBoxController::viewDidDisappear() {
   if (isDisplayingEmptyController()) {
     pop();
   }
-  // Tidy the layouts used to display the VariableBoxController to clean TreePool
+
+  NestedMenuController::viewDidDisappear();
+
+  /* NestedMenuController::viewDidDisappear might need cell heights, which would
+   * use the VariableBoxController cell heights memoization. We thus reset the
+   * VariableBoxController layouts only after calling the parent's
+   * viewDidDisappear. */
+
+  // Tidy the layouts displayed in the VariableBoxController to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
     m_leafCells[i].setAccessoryLayout(Layout());
   }
   resetMemoization();
-  NestedMenuController::viewDidDisappear();
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {

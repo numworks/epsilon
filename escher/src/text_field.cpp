@@ -411,8 +411,18 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
 
 bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
   size_t previousTextLength = strlen(text());
+  size_t eventTextLength = strlen(eventText);
 
-  size_t eventTextSize = min(strlen(eventText) + 1, TextField::maxBufferSize());
+  if (!isEditing()) {
+    setEditing(true);
+  }
+
+  if (eventTextLength == 0) {
+    setCursorLocation(0);
+    return m_delegate->textFieldDidHandleEvent(this, true, true);
+  }
+
+  size_t eventTextSize = min(eventTextLength + 1, TextField::maxBufferSize());
   char buffer[TextField::maxBufferSize()];
   size_t bufferIndex = 0;
 
@@ -448,9 +458,6 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     }
   }
 
-  if (!isEditing()) {
-    setEditing(true);
-  }
   int nextCursorLocation = draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {
     /* The cursor position depends on the text as we sometimes want to position

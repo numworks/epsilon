@@ -98,6 +98,7 @@ public:
   Record recordBaseNamedWithExtensions(const char * baseName, const char * extension[], size_t numberOfExtensions);
 
   // Record destruction
+  void destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension);
   void destroyRecordsWithExtension(const char * extension);
 
 private:

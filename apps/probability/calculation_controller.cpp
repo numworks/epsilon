@@ -187,8 +187,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 }
 
-bool CalculationController::textFieldDidHandleEvent(::TextField * textField, bool returnValue, bool textHasChanged) {
-  if (returnValue && textHasChanged) {
+bool CalculationController::textFieldDidHandleEvent(::TextField * textField, bool returnValue, bool textSizeDidChange) {
+  if (returnValue && textSizeDidChange) {
     /* We do not reload the responder because the first responder might be the
      * toolbox (or the variable  box) and reloading the responder would corrupt
      * the first responder. */

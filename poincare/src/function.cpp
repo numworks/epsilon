@@ -123,7 +123,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
     Symbol x = Symbol(Symbol::SpecialSymbols::UnknownX);
     result = result.replaceSymbolWithExpression(x, childAtIndex(0));
     replaceWithInPlace(result);
-    return result.reduce(context, angleUnit, replaceSymbols);
+    return result.deepReduce(context, angleUnit, replaceSymbols);
   }
   return *this;
 }

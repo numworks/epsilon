@@ -257,7 +257,14 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool creat
     cumulatedNumberOfElements += m_data[series][1][sortedElementIndex];
   }
   if (createMiddleElement && std::fabs(cumulatedNumberOfElements - numberOfElementsAtFrequencyK) < DBL_EPSILON) {
+    /* There is an element of cumulated frequency k, so the result is the mean
+     * between this element and the next element (in terms of cumulated
+     * frequency) that has a non-null frequency. */
     int nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
+    while (m_data[series][1][nextElementIndex] == 0 && bufferValues[nextElementIndex] != DBL_MAX) {
+      bufferValues[nextElementIndex] = DBL_MAX;
+      nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
+    }
     if (bufferValues[nextElementIndex] != DBL_MAX) {
       return (m_data[series][0][sortedElementIndex] + m_data[series][0][nextElementIndex]) / 2.0;
     }

@@ -49,6 +49,12 @@ public:
     return (m_bitField>>(uint8_t)k) & 1;
   }
   operator uint64_t() const { return m_bitField; }
+  void setKey(Key k) {
+    m_bitField |= (uint64_t)1 << (uint8_t)k;
+  }
+  void clearKey(Key k) {
+    m_bitField &= ~((uint64_t)1 << (uint8_t)k);
+  }
 private:
   uint64_t m_bitField;
 };

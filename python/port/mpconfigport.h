@@ -90,7 +90,7 @@
 // (This scheme won't work if we want to mix Thumb and normal ARM code.)
 #define MICROPY_MAKE_POINTER_CALLABLE(p) (p)
 
-#define MICROPY_VM_HOOK_LOOP micropython_port_should_interrupt();
+#define MICROPY_VM_HOOK_LOOP micropython_port_vm_hook_loop();
 
 typedef intptr_t mp_int_t; // must be pointer size
 typedef uintptr_t mp_uint_t; // must be pointer size

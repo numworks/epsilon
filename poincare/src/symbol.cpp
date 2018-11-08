@@ -5,6 +5,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
+#include <poincare/undefined.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion.h>
 #include <cmath>
@@ -119,11 +120,26 @@ Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit a
   return Symbol(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
+Expression SymbolNode::replaceSymbols(Context & context) {
+  return Symbol(this).replaceSymbols(context);
+}
+
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  const Expression e = context.expressionForSymbol(Symbol(this));
+  Expression e = context.expressionForSymbol(Symbol(this));
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
+  }
+
+  /* First, replace all the symbols iteratively. This prevents a memory
+   * failure symbols are defined circularly. */
+  while (e.hasSymbols(context)) {
+    assert(Expression::RecursionCountResetisLocked());
+    Expression::IncrementRecursionCount();
+    if (Expression::RecursionMaximalDepthExceeded()) {
+      return Complex<T>::Undefined();
+    }
+    e = e.replaceSymbols(context);
   }
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
@@ -163,7 +179,18 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   const Expression e = context.expressionForSymbol(*this);
   if (!e.isUninitialized()) {
     // The stored expression is beautified, so we need to call reduce
-    Expression result = e.clone();
+    Expression result = e;
+    /* First, replace all the symbols iteratively. This prevents a memory
+     * failure symbols are defined circularly. */
+    while (result.hasSymbols(context)) {
+      assert(RecursionCountResetisLocked());
+      IncrementRecursionCount();
+      if (RecursionMaximalDepthExceeded()) {
+        replaceWithInPlace(e);
+        return e;
+      }
+      result = result.replaceSymbols(context);
+    }
     replaceWithInPlace(result);
     return result.deepReduce(context, angleUnit);
   }
@@ -191,6 +218,15 @@ int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName
   }
   coefficients[0] = clone();
   return 0;
+}
+
+Expression Symbol::replaceSymbols(Context & context) {
+  Expression e = context.expressionForSymbol(*this);
+  if (e.isUninitialized()) {
+    e = Undefined();
+  }
+  replaceWithInPlace(e);
+  return e;
 }
 
 }

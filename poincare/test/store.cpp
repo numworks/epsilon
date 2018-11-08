@@ -72,14 +72,24 @@ QUIZ_CASE(poincare_store_that_should_fail) {
 }
 
 QUIZ_CASE(poincare_store_overwrite) {
+  assert_parsed_expression_simplify_to("2>g", "2");
+  assert_parsed_expression_simplify_to("-1>g(x)", "-1");
+  assert_parsed_expression_evaluates_to<double>("g(4)", "-1");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}
+
+QUIZ_CASE(poincare_store_do_not_overwrite) {
   assert_parsed_expression_simplify_to("-1>g(x)", "-1");
   assert_parsed_expression_simplify_to("1+g(x)>f(x)", "1+g(?)");
-  assert_parsed_expression_simplify_to("2>g", "2");
-  assert_parsed_expression_evaluates_to<double>("g(4)", "undef");
-  assert_parsed_expression_evaluates_to<double>("f(4)", "undef");
+  assert_parsed_expression_simplify_to("2>g", "undef");
+  assert_parsed_expression_evaluates_to<double>("g(4)", "-1");
+  assert_parsed_expression_evaluates_to<double>("f(4)", "0");
+
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("g.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_store_2_circular_variables) {

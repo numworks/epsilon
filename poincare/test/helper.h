@@ -22,6 +22,7 @@ void assert_expression_not_parsable(const char * expression);
 void assert_parsed_expression_type(const char * expression, Poincare::ExpressionNode::Type type);
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r);
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x");
+void assert_simplify(const char * expression);
 
 template<typename T>
 void assert_parsed_expression_evaluates_to(const char * expression, const char * approximation, Poincare::Preferences::AngleUnit angleUnit = Degree, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, int numberOfSignificantDigits = -1);

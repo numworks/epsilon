@@ -98,8 +98,19 @@ void assert_parsed_expression_is(const char * expression, Poincare::Expression r
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
+  Expression result = e.clone().simplify(globalContext, Radian);
+  if (result.isUninitialized()) {
+    result = e;
+  }
+  quiz_assert(result.polynomialDegree(globalContext, symbolName) == degree);
+}
+
+void assert_simplify(const char * expression) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression);
+  quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, Radian);
-  quiz_assert(e.polynomialDegree(globalContext, symbolName) == degree);
+  quiz_assert(!e.isUninitialized());
 }
 
 typedef Expression (*ProcessExpression)(Expression, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);

@@ -77,8 +77,71 @@ QUIZ_CASE(poincare_store_overwrite) {
   assert_parsed_expression_simplify_to("2>g", "2");
   assert_parsed_expression_evaluates_to<double>("g(4)", "undef");
   assert_parsed_expression_evaluates_to<double>("f(4)", "undef");
-
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.exp").destroy();
+}
+
+QUIZ_CASE(poincare_store_2_circular_variables) {
+  assert_simplify("a>b");
+  assert_simplify("b>a");
+  assert_parsed_expression_evaluates_to<double>("a", "undef");
+  assert_parsed_expression_evaluates_to<double>("b", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+}
+
+QUIZ_CASE(poincare_store_3_circular_variables) {
+  assert_simplify("a>b");
+  assert_simplify("b>c");
+  assert_simplify("c>a");
+  assert_parsed_expression_evaluates_to<double>("a", "undef");
+  assert_parsed_expression_evaluates_to<double>("b", "undef");
+  assert_parsed_expression_evaluates_to<double>("c", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("c.exp").destroy();
+}
+
+QUIZ_CASE(poincare_store_2_circular_functions) {
+  assert_simplify("f(x)>g(x)");
+  assert_simplify("g(x)>f(x)");
+  assert_parsed_expression_evaluates_to<double>("f(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("g(1)", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}
+
+QUIZ_CASE(poincare_store_3_circular_functions) {
+  assert_simplify("f(x)>g(x)");
+  assert_simplify("g(x)>h(x)");
+  assert_simplify("h(x)>f(x)");
+  assert_parsed_expression_evaluates_to<double>("f(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("g(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("h(1)", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
+}
+
+QUIZ_CASE(poincare_store_circular_variables_and_functions) {
+  assert_simplify("a>b");
+  assert_simplify("b>a");
+  assert_simplify("a>f(x)");
+  assert_parsed_expression_evaluates_to<double>("f(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("a", "undef");
+  assert_parsed_expression_evaluates_to<double>("b", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
 }

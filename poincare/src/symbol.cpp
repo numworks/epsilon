@@ -165,7 +165,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
     // The stored expression is beautified, so we need to call reduce
     Expression result = e.clone();
     replaceWithInPlace(result);
-    return result.reduce(context, angleUnit);
+    return result.deepReduce(context, angleUnit);
   }
   return *this;
 }

@@ -5,8 +5,9 @@ LD = emcc
 EMSCRIPTEN_ASYNC_SYMBOLS = \
 SAFE_HEAP_LOAD \
 SAFE_HEAP_STORE \
+_IonEventsEmscriptenKeyDown \
+_IonEventsEmscriptenKeyUp \
 _IonEventsEmscriptenPushEvent \
-_IonEventsEmscriptenPushKey \
 __Z8ion_mainiPPc \
 __ZN10Invocation7performEPv \
 __ZN11MicroPython20ExecutionEnvironment7runCodeEPKc \
@@ -27,6 +28,7 @@ __ZN3Ion6Events5EventC2Ei \
 __ZN3Ion6Events5EventC2ENS_8Keyboard3KeyEbb \
 __ZN3Ion6Events8getEventEPi \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
+__ZN3Ion8Keyboard4scanEv \
 __ZN4Code14MenuController21openConsoleWithScriptENS_6ScriptE \
 __ZN4Code14MenuController23didBecomeFirstResponderEv \
 __ZN4Code14MenuController28openConsoleWithScriptAtIndexEi \
@@ -61,6 +63,7 @@ _do_load_from_lexer \
 _fun_bc_call \
 _fun_builtin_var_call \
 _main \
+_micropython_port_should_interrupt \
 _mp_builtin___import__ \
 _mp_builtin_input \
 _mp_call_function_0 \
@@ -82,4 +85,4 @@ endif
 EMFLAGS += -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushKey", "_IonEventsEmscriptenPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenKeyDown", "_IonEventsEmscriptenKeyUp", "_IonEventsEmscriptenPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]'

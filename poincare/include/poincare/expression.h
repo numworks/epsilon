@@ -90,7 +90,11 @@ class Expression : public TreeHandle {
   friend class SymbolNode;
 
 public:
+  static void TidyAfterException() {
+    UnlockRecursionCountReset();
+  }
   static bool isExpression() { return true; }
+
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
   Expression clone() const;
@@ -253,6 +257,11 @@ protected:
 
 private:
   /* Simplification */
+  static constexpr int sRecursionLimit = 2000; //TODO value?
+  static bool ResetRecursionCountAndLockReset();
+  static void UnlockRecursionCountReset();
+  static void IncrementRecursionCount();
+  static bool RecursionMaximalDepthExceeded();
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
     return node()->deepReduceChildren(context, angleUnit, replaceSymbols);

@@ -141,7 +141,11 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
   assert_parsed_expression_process_to(expression, approximation, angleUnit, complexFormat, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
-        return e.simplify(context, angleUnit).approximate<T>(context, angleUnit, complexFormat);
+        Expression result = e.clone().simplify(context, angleUnit);
+        if (result.isUninitialized()) {
+          result = e;
+        }
+        return result.approximate<T>(context, angleUnit, complexFormat);
       }, numberOfDigits);
 }
 
@@ -149,7 +153,12 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "--------- Simplification ---------" << endl;
 #endif
-  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) { return e.simplify(context, angleUnit); });
+  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
+      Expression result = e.clone().simplify(context, angleUnit);
+      if (result.isUninitialized()) {
+        return e;
+      }
+      return result;});
 }
 
 void assert_parsed_expression_serialize_to(Expression expression, const char * serializedExpression, Preferences::PrintFloatMode mode, int numberOfSignifiantDigits) {

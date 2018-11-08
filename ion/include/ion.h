@@ -26,9 +26,6 @@ void ion_main(int argc, char * argv[]);
 
 namespace Ion {
 
-void msleep(long ms);
-void usleep(long us);
-
 const char * serialNumber();
 const char * softwareVersion();
 const char * patchLevel();

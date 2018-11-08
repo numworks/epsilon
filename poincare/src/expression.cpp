@@ -295,9 +295,17 @@ int Expression::defaultGetPolynomialCoefficients(Context & context, const char *
 }
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
+  // Reset recursion count if needed
+  bool willHaveToUnlock = ResetRecursionCountAndLockReset();
+
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].deepReduce(context, angleUnit);
+  }
+
+  // Unlock recursion count reinitialization if needed
+  if (willHaveToUnlock) {
+    UnlockRecursionCountReset();
   }
   return degree;
 }

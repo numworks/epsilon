@@ -205,6 +205,28 @@ QUIZ_CASE(data_statistics) {
       /* sum */ 6.0,
       /* squaredValueSum */ 12.0);
 
+  /* 1 2 3 4
+   * 0 1 0 1 */
+  double n8[4] = {1.0, 2.0, 3.0, 4.0};
+  double v8[4] = {0.0, 1.0, 0.0, 1.0};
+  assert_data_statictics_equal_to(
+      n8,
+      v8,
+      4,
+      /* sumOfOccurrences */ 2.0,
+      /* maxValue */ 4.0,
+      /* minValue */ 2.0,
+      /* range */ 2.0,
+      /* mean */ 3.0,
+      /* variance */ 1.0,
+      /* standardDeviation */ 1.0,
+      /* sampleStandardDeviation */ 1.414,
+      /* firstQuartile */ 2.0,
+      /* thirdQuartile */ 4.0,
+      /* quartileRange */ 2.0,
+      /* median */ 3.0,
+      /* sum */ 6.0,
+      /* squaredValueSum */ 20.0);
 }
 
 }

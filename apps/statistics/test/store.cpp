@@ -41,14 +41,17 @@ void assert_data_statictics_equal_to(double n[], double v[], int numberOfData, d
 }
 
 QUIZ_CASE(data_statistics) {
+
   /* 1 2 3 4
    * 1 1 1 1 */
-  double n1[4] = {1.0, 2.0, 3.0, 4.0};
-  double v1[4] = {1.0, 1.0, 1.0, 1.0};
+
+  constexpr int listLength1 = 4;
+  double n1[listLength1] = {1.0, 2.0, 3.0, 4.0};
+  double v1[listLength1] = {1.0, 1.0, 1.0, 1.0};
   assert_data_statictics_equal_to(
       n1,
       v1,
-      4,
+      listLength1,
       /* sumOfOccurrences */ 4.0,
       /* maxValue */ 4.0,
       /* minValue */ 1.0,
@@ -68,12 +71,13 @@ QUIZ_CASE(data_statistics) {
   /* 1 2 3 4 5 6 7 8 9 10 11
    * 1 1 1 1 1 1 1 1 1  1  1 */
 
-  double n2[11] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
-  double v2[11] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  constexpr int listLength2 = 11;
+  double n2[listLength2] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
+  double v2[listLength2] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   assert_data_statictics_equal_to(
       n2,
       v2,
-      11,
+      listLength2,
       /* sumOfOccurrences */ 11.0,
       /* maxValue */ 11.0,
       /* minValue */ 1.0,
@@ -92,12 +96,13 @@ QUIZ_CASE(data_statistics) {
   /* 1 2 3 4 5 6 7 8 9 10 11 12
    * 1 1 1 1 1 1 1 1 1  1  1  1 */
 
-  double n3[12] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
-  double v3[12] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  constexpr int listLength3 = 13;
+  double n3[listLength3] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
+  double v3[listLength3] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   assert_data_statictics_equal_to(
       n3,
       v3,
-      12,
+      listLength3,
       /* sumOfOccurrences */ 12.0,
       /* maxValue */ 12.0,
       /* minValue */ 1.0,
@@ -115,12 +120,14 @@ QUIZ_CASE(data_statistics) {
 
   /*   1    2   3      5     10
    * 0.2 0.05 0.3 0.0001 0.4499 */
-  double n4[5] = {1.0, 2.0, 3.0, 5.0, 10.0};
-  double v4[5] = {0.2, 0.05, 0.3, 0.0001, 0.4499};
+
+  constexpr int listLength4 = 5;
+  double n4[listLength4] = {1.0, 2.0, 3.0, 5.0, 10.0};
+  double v4[listLength4] = {0.2, 0.05, 0.3, 0.0001, 0.4499};
   assert_data_statictics_equal_to(
       n4,
       v4,
-      5,
+      listLength4,
       /* sumOfOccurrences */ 1.0,
       /* maxValue */ 10.0,
       /* minValue */ 1.0,
@@ -138,12 +145,14 @@ QUIZ_CASE(data_statistics) {
 
   /*   1      -2   3   5  10
    * 0.4 0.00005 0.9 0.4 0.5 */
-  double n5[5] = {1.0, -2.0, 3.0, 5.0, 10.0};
-  double v5[5] = {0.4, 0.00005, 0.9, 0.4, 0.5};
+
+  constexpr int listLength5 = 5;
+  double n5[listLength5] = {1.0, -2.0, 3.0, 5.0, 10.0};
+  double v5[listLength5] = {0.4, 0.00005, 0.9, 0.4, 0.5};
   assert_data_statictics_equal_to(
       n5,
       v5,
-      5,
+      listLength5,
       /* sumOfOccurrences */ 2.2,
       /* maxValue */ 10.0,
       /* minValue */ -2.0,
@@ -161,12 +170,14 @@ QUIZ_CASE(data_statistics) {
 
   /* -7 -10 12 5 -2
    *  4   5  3 1  9 */
-  double n6[6] = {-7.0, -10.0, 1.0, 2.0, 5.0, -2.0};
-  double v6[6] = {4.0, 5.0, 3.0, 0.5, 1.0, 9.0};
+
+  constexpr int listLength6 = 6;
+  double n6[listLength6] = {-7.0, -10.0, 1.0, 2.0, 5.0, -2.0};
+  double v6[listLength6] = {4.0, 5.0, 3.0, 0.5, 1.0, 9.0};
   assert_data_statictics_equal_to(
       n6,
       v6,
-      6,
+      listLength6,
       /* sumOfOccurrences */ 22.5,
       /* maxValue */ 5.0,
       /* minValue */ -10.0,
@@ -184,12 +195,14 @@ QUIZ_CASE(data_statistics) {
 
   /* 1 1 1 10 3 -1 3
    * 1 1 1  0 0  0 1 */
-  double n7[7] = {1.0, 1.0, 1.0, 10.0, 3.0, -1.0, 3.0};
-  double v7[7] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+
+  constexpr int listLength7 = 7;
+  double n7[listLength7] = {1.0, 1.0, 1.0, 10.0, 3.0, -1.0, 3.0};
+  double v7[listLength7] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0};
   assert_data_statictics_equal_to(
       n7,
       v7,
-      7,
+      listLength7,
       /* sumOfOccurrences */ 4.0,
       /* maxValue */ 3.0,
       /* minValue */ 1.0,
@@ -207,12 +220,14 @@ QUIZ_CASE(data_statistics) {
 
   /* 1 2 3 4
    * 0 1 0 1 */
-  double n8[4] = {1.0, 2.0, 3.0, 4.0};
-  double v8[4] = {0.0, 1.0, 0.0, 1.0};
+
+  constexpr int listLength8 = 4;
+  double n8[listLength8] = {1.0, 2.0, 3.0, 4.0};
+  double v8[listLength8] = {0.0, 1.0, 0.0, 1.0};
   assert_data_statictics_equal_to(
       n8,
       v8,
-      4,
+      listLength8,
       /* sumOfOccurrences */ 2.0,
       /* maxValue */ 4.0,
       /* minValue */ 2.0,

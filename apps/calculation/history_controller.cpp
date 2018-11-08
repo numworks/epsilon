@@ -53,11 +53,13 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
-      ScrollableExactApproximateExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == ScrollableExactApproximateExpressionsView::SubviewType::ExactOutput) {
-        editController->insertTextBody(calculation->exactOutputText());
-      } else {
+      ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
+      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
+          && !calculation->shouldOnlyDisplayExactOutput())
+      {
         editController->insertTextBody(calculation->approximateOutputText());
+      } else {
+        editController->insertTextBody(calculation->exactOutputText());
       }
     }
     return true;

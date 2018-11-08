@@ -46,6 +46,9 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
    * setExpressionForSymbol. */
   Store s(this);
   Expression expressionToStore = s.value().clone().simplify(context, angleUnit, false);
+  if (expressionToStore.isUninitialized() || expressionToStore.isUndefined()) {
+    expressionToStore = s.value();
+  }
   context.setExpressionForSymbol(expressionToStore, s.symbol(), context);
   Expression e = context.expressionForSymbol(s.symbol());
   if (e.isUninitialized()) {
@@ -66,7 +69,11 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
     assert(symbol().type() == ExpressionNode::Type::Symbol);
     finalValue = childAtIndex(0);
   }
-  context.setExpressionForSymbol(finalValue.simplify(context, angleUnit, false), symbol(), context);
+  Expression expressionToStore = finalValue.clone().simplify(context, angleUnit, false);
+  if (expressionToStore.isUninitialized() || expressionToStore.isUndefined()) {
+    expressionToStore = finalValue;
+  }
+  context.setExpressionForSymbol(expressionToStore, symbol(), context);
   Expression e = context.expressionForSymbol(symbol());
   if (e.isUninitialized()) {
     return Undefined();

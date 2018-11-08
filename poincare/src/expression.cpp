@@ -14,7 +14,7 @@
 namespace Poincare {
 
 static int sRecursionCount = 0;
-static bool sRecursionCountReinitializationIsLocked = false;
+static bool sRecursionCountResetIsLocked = false;
 
 /* Constructor & Destructor */
 
@@ -120,6 +120,11 @@ bool Expression::isApproximate(Context & context) const {
 }
 
 bool Expression::IsMatrix(const Expression e, Context & context) {
+  assert(RecursionCountResetisLocked());
+  IncrementRecursionCount();
+  if (RecursionMaximalDepthExceeded()) {
+    return false;
+  }
   return e.type() == ExpressionNode::Type::Matrix
     || e.type() == ExpressionNode::Type::ConfidenceInterval
     || e.type() == ExpressionNode::Type::MatrixDimension
@@ -241,6 +246,20 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
+bool Expression::hasSymbols(Context & context) const {
+  return recursivelyMatches([](const Expression e, Context & context) {
+      return e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function;
+      }, context);
+}
+
+Expression Expression::defaultReplaceSymbols(Context & context) {
+  int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    childAtIndex(i).replaceSymbols(context);
+  }
+  return *this;
+}
+
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
   bool willHaveToUnlock = ResetRecursionCountAndLockReset();
@@ -356,24 +375,16 @@ Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUni
 }
 
 bool Expression::ResetRecursionCountAndLockReset() {
-  if (!sRecursionCountReinitializationIsLocked) {
+  if (!sRecursionCountResetIsLocked) {
     sRecursionCount = 0;
-    sRecursionCountReinitializationIsLocked = true;
+    sRecursionCountResetIsLocked = true;
     return true;
   }
   return false;
 }
 
 void Expression::UnlockRecursionCountReset() {
-  sRecursionCountReinitializationIsLocked = false;
-}
-
-void Expression::IncrementRecursionCount() {
-  sRecursionCount++;
-}
-
-bool Expression::RecursionMaximalDepthExceeded() {
-  return sRecursionCount >= Expression::sRecursionLimit;
+  sRecursionCountResetIsLocked = false;
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -402,6 +413,18 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
     e.childAtIndex(i).deepBeautify(context, angleUnit);
   }
   return e;
+}
+
+void Expression::IncrementRecursionCount() {
+  sRecursionCount++;
+}
+
+bool Expression::RecursionMaximalDepthExceeded() {
+  return sRecursionCount >= Expression::sRecursionLimit;
+}
+
+bool Expression::RecursionCountResetisLocked() {
+  return sRecursionCountResetIsLocked;
 }
 
 Expression Expression::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {

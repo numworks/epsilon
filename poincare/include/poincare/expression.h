@@ -247,8 +247,14 @@ protected:
 
   /* Properties */
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
+  bool hasSymbols(Context & context) const;
+  Expression replaceSymbols(Context & context) { return node()->replaceSymbols(context); }
+  Expression defaultReplaceSymbols(Context & context);
 
   /* Simplification */
+  static void IncrementRecursionCount();
+  static bool RecursionMaximalDepthExceeded();
+  static bool RecursionCountResetisLocked();
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) { return node()->shallowReduce(context, angleUnit, replaceSymbols); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
@@ -260,8 +266,6 @@ private:
   static constexpr int sRecursionLimit = 2000; //TODO value?
   static bool ResetRecursionCountAndLockReset();
   static void UnlockRecursionCountReset();
-  static void IncrementRecursionCount();
-  static bool RecursionMaximalDepthExceeded();
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
     return node()->deepReduceChildren(context, angleUnit, replaceSymbols);

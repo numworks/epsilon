@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-/* should_interrupt effectively does something once every 20000 calls. It checks
- * if a key is down to raise an interruption flag. */
-void micropython_port_should_interrupt();
+void micropython_port_vm_hook_loop();
 
 #ifdef __cplusplus
 }

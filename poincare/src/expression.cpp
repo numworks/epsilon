@@ -88,14 +88,32 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context) {
-        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).matches([](const Expression e, Context & context) { return e.isApproximate(context); }, context));
-    }, context);
+      return e.type() == ExpressionNode::Type::Decimal
+      || e.type() == ExpressionNode::Type::Float
+        || IsMatrix(e, context)
+        || (e.type() == ExpressionNode::Type::Symbol
+            && static_cast<const Symbol&>(e).matches(
+              [](const Expression e, Context & context) {
+              return e.isApproximate(context); },
+              context));
+        }, context);
 }
 
 bool Expression::IsMatrix(const Expression e, Context & context) {
-  return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).matches([](const Expression e, Context & context){
-        return e.recursivelyMatches([](const Expression e, Context & context) { return Expression::IsMatrix(e, context); }, context);
-      }, context));
+  return e.type() == ExpressionNode::Type::Matrix
+    || e.type() == ExpressionNode::Type::ConfidenceInterval
+    || e.type() == ExpressionNode::Type::MatrixDimension
+    || e.type() == ExpressionNode::Type::PredictionInterval
+    || e.type() == ExpressionNode::Type::MatrixInverse
+    || e.type() == ExpressionNode::Type::MatrixTranspose
+    || (e.type() == ExpressionNode::Type::Symbol
+        && static_cast<const Symbol&>(e).matches(
+          [](const Expression e, Context & context) {
+          return e.recursivelyMatches(
+              [](const Expression e, Context & context) {
+              return Expression::IsMatrix(e, context); },
+              context);
+          }, context));
 }
 
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {

@@ -116,19 +116,3 @@ void Ion::msleep(long ms) {
     }
   }
 }
-
-static auto start = std::chrono::high_resolution_clock::now();
-
-uint32_t Ion::millis() {
-  sDisplay->redraw();
-  Fl::wait(0);
-  auto elapsed = std::chrono::high_resolution_clock::now() - start;
-  return std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
-}
-
-uint32_t Ion::micros() {
-  sDisplay->redraw();
-  Fl::wait(0);
-  auto elapsed = std::chrono::high_resolution_clock::now() - start;
-  return std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-}

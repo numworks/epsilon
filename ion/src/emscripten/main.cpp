@@ -2,9 +2,6 @@
 #include "display.h"
 #include "events_keyboard.h"
 #include "../../../apps/global_preferences.h"
-extern "C" {
-#include <SDL/SDL.h>
-}
 
 extern "C" {
 const char * IonSoftwareVersion();
@@ -23,8 +20,4 @@ int main(int argc, char * argv[]) {
 }
 
 void Ion::msleep(long ms) {
-}
-
-uint32_t Ion::millis() {
-  return SDL_GetTicks();
 }

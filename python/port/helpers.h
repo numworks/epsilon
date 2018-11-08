@@ -8,7 +8,7 @@ extern "C" {
 
 /* should_interrupt effectively does something once every 20000 calls. It checks
  * if a key is down to raise an interruption flag. */
-bool micropython_port_should_interrupt();
+bool micropython_port_should_interrupt(bool);
 
 #ifdef __cplusplus
 }

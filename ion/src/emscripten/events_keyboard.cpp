@@ -83,6 +83,13 @@ Ion::Keyboard::State Ion::Keyboard::scan() {
    * function setTimeout, which can be called with a value of zero. Doing so
    * puts the callback at the end of the queue of callbacks to be processed. */
   emscripten_sleep(0);
+
+  /* Grab this opporunity to refresh the display. In practice, this routine is
+   * called from micropython_port_vm_hook_loop once in a while, so this gives us
+   * an opportunity to refresh the display during the execution of a
+   * long-running Python script. */
+  Ion::Display::Emscripten::refresh();
+
   return sKeyboardState;
 }
 

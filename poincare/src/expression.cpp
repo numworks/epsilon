@@ -176,7 +176,6 @@ void Expression::defaultReduceChildren(Context & context, Preferences::AngleUnit
 
 void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    assert(!childAtIndex(i).recursivelyMatches(IsMatrix, context));
     childAtIndex(i).deepReduce(context, angleUnit, replaceSymbols);
   }
 }
@@ -280,32 +279,29 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
 
 Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   sSimplificationHasBeenInterrupted = false;
-#if MATRIX_EXACT_REDUCING
-#else
-  if (recursivelyMatches(IsMatrix, context)) {
-    return *this;
-  }
-#endif
   Expression e = deepReduce(context, angleUnit, replaceSymbols);
+  if (sSimplificationHasBeenInterrupted) {
+    return Expression();
+  }
   e = e.deepBeautify(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
-    e = Expression();
+    return Expression();
   }
   return e;
 }
 
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-#if MATRIX_EXACT_REDUCING
-#else
-  if (recursivelyMatches(IsMatrix, context)) {
-    return *this;
-  }
-#endif
   return deepReduce(context, angleUnit, replaceSymbols);
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  assert(!recursivelyMatches(IsMatrix, context));
+#if MATRIX_EXACT_REDUCING
+#else
+  if (IsMatrix(*this, context)) {
+    sSimplificationHasBeenInterrupted = true;
+    return *this;
+  }
+#endif
   deepReduceChildren(context, angleUnit, replaceSymbols);
   return shallowReduce(context, angleUnit, replaceSymbols);
 }

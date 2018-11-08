@@ -243,12 +243,20 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
-  assert(sRecursionCountReinitializationIsLocked == true);
+  bool willHaveToUnlock = ResetRecursionCountAndLockReset();
+
   IncrementRecursionCount();
+  Evaluation<U> result;
   if (RecursionMaximalDepthExceeded()) {
-    return Complex<U>::Undefined(); // TODO Propagate error "Recursion too deep"
+    result = Complex<U>::Undefined(); // TODO Propagate error "Recursion too deep"
+  } else {
+   result = node()->approximate(U(), context, angleUnit);
   }
-  return node()->approximate(U(), context, angleUnit);
+
+  if (willHaveToUnlock) {
+    UnlockRecursionCountReset();
+  }
+  return result;
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {

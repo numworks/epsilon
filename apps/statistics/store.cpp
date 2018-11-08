@@ -124,7 +124,8 @@ double Store::minValueForAllSeries() const {
 
 double Store::maxValue(int series) const {
   double max = -DBL_MAX;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
     if (m_data[series][0][k] > max && m_data[series][1][k] > 0) {
       max = m_data[series][0][k];
     }
@@ -134,7 +135,8 @@ double Store::maxValue(int series) const {
 
 double Store::minValue(int series) const {
   double min = DBL_MAX;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
     if (m_data[series][0][k] < min && m_data[series][1][k] > 0) {
       min = m_data[series][0][k];
     }
@@ -183,7 +185,8 @@ double Store::median(int series) const {
 
 double Store::sum(int series) const {
   double result = 0;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
     result += m_data[series][0][k]*m_data[series][1][k];
   }
   return result;
@@ -191,7 +194,8 @@ double Store::sum(int series) const {
 
 double Store::squaredValueSum(int series) const {
   double result = 0;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
     result += m_data[series][0][k]*m_data[series][0][k]*m_data[series][1][k];
   }
   return result;
@@ -233,7 +237,8 @@ double Store::defaultValue(int series, int i, int j) const {
 
 double Store::sumOfValuesBetween(int series, double x1, double x2) const {
   double result = 0;
-  for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
     if (m_data[series][0][k] < x2 && x1 <= m_data[series][0][k]) {
       result += m_data[series][1][k];
     }
@@ -246,29 +251,31 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool creat
   assert(k >= 0.0 && k <= 1.0);
   double totalNumberOfElements = sumOfOccurrences(series);
   double numberOfElementsAtFrequencyK = totalNumberOfElements * k;
-
-  double bufferValues[numberOfPairsOfSeries(series)];
-  memcpy(bufferValues, m_data[series][0], numberOfPairsOfSeries(series)*sizeof(double));
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  double bufferValues[numberOfPairs];
+  memcpy(bufferValues, m_data[series][0], numberOfPairs*sizeof(double));
   int sortedElementIndex = 0;
   double cumulatedNumberOfElements = 0.0;
   while (cumulatedNumberOfElements < numberOfElementsAtFrequencyK-DBL_EPSILON) {
-    sortedElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
+    sortedElementIndex = minIndex(bufferValues, numberOfPairs);
     bufferValues[sortedElementIndex] = DBL_MAX;
     cumulatedNumberOfElements += m_data[series][1][sortedElementIndex];
   }
+
   if (createMiddleElement && std::fabs(cumulatedNumberOfElements - numberOfElementsAtFrequencyK) < DBL_EPSILON) {
     /* There is an element of cumulated frequency k, so the result is the mean
      * between this element and the next element (in terms of cumulated
      * frequency) that has a non-null frequency. */
-    int nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
+    int nextElementIndex = minIndex(bufferValues, numberOfPairs);
     while (m_data[series][1][nextElementIndex] == 0 && bufferValues[nextElementIndex] != DBL_MAX) {
       bufferValues[nextElementIndex] = DBL_MAX;
-      nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
+      nextElementIndex = minIndex(bufferValues, numberOfPairs);
     }
     if (bufferValues[nextElementIndex] != DBL_MAX) {
       return (m_data[series][0][sortedElementIndex] + m_data[series][0][nextElementIndex]) / 2.0;
     }
   }
+
   return m_data[series][0][sortedElementIndex];
 }
 

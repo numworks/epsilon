@@ -574,7 +574,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
      * base if any. Otherwise, we add it as an new child. */
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
-        Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor)).reduce(context, angleUnit);
+        Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(context, angleUnit);
         if (sub.sign() == ExpressionNode::Sign::Negative) { // index[0] < index[1]
           sub = Opposite(sub);
           if (factor.type() == ExpressionNode::Type::Power) {

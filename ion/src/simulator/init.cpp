@@ -116,3 +116,16 @@ void Ion::mssleep(long ms) {
     }
   }
 }
+
+void Ion::ussleep(long us) {
+  auto start = std::chrono::high_resolution_clock::now();
+  while (true) {
+    sDisplay->redraw();
+    Fl::wait(0);
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    if (microseconds >= us) {
+      break;
+    }
+  }
+}

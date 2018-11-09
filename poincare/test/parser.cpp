@@ -195,6 +195,9 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_raises_parsing_error("^1");
   assert_raises_parsing_error("t0000000");
   assert_raises_parsing_error("[[t0000000[");
+  assert_parsed_expression_is("0=0", Equal(Rational(0), Rational(0)));
+  assert_raises_parsing_error("0>x=0");
+  assert_raises_parsing_error("0=0>x");
 }
 
 Matrix BuildMatrix(int rows, int columns, Expression entries[]) {
@@ -335,6 +338,7 @@ QUIZ_CASE(poincare_parser_parse_store) {
   assert_parsed_expression_is("1>f(x)", Store(Rational(1),Function("f",1,Symbol("x",1))));
   assert_parsed_expression_is("x>f(x)", Store(Symbol("x",1),Function("f",1,Symbol("x",1))));
   assert_parsed_expression_is("n>f(x)", Store(Symbol("n",1),Function("f",1,Symbol("x",1))));
+  assert_raises_parsing_error("a>b>c");
   assert_raises_parsing_error("1>2");
   assert_raises_parsing_error("1>");
   assert_raises_parsing_error(">2");

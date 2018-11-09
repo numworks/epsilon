@@ -64,12 +64,16 @@ public:
     m_text = text;
     m_length = length;
   }
+  static int CompareNonNullTerminatedName(const char * nonNullTerminatedName, size_t nonNullTerminatedNameLength, const char * nullTerminatedName) {
+    /* Compare m_text to name, similarly to strcmp, assuming
+     *  - m_text is not null-terminated
+     *  - name is.*/
+    int diff = strncmp(nonNullTerminatedName, nullTerminatedName, nonNullTerminatedNameLength);
+    return (diff != 0) ? diff : strcmp("", nullTerminatedName + nonNullTerminatedNameLength);
+
+  }
   int compareTo(const char * name) const {
-    // Compare m_text to name, similarly to strcmp, assuming
-    //  - m_text is not null-terminated
-    //  - name is.
-    int diff = strncmp(m_text, name, m_length);
-    return (diff != 0) ? diff : strcmp("", name + m_length);
+    return CompareNonNullTerminatedName(m_text, m_length, name);
   }
 private:
   Type m_type;

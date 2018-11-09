@@ -23,9 +23,8 @@ VariableBoxController::VariableBoxController() :
 }
 
 void VariableBoxController::viewWillAppear() {
-  NestedMenuController::viewWillAppear();
   m_currentPage = Page::RootMenu;
-  m_selectableTableView.reloadData();
+  NestedMenuController::viewWillAppear();
 }
 
 void VariableBoxController::viewDidDisappear() {
@@ -94,6 +93,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
     I18n::Message label = nodeLabelAtIndex(index);
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(label);
+    myCell->reloadCell();
     return;
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;

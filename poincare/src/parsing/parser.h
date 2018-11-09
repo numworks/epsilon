@@ -30,6 +30,8 @@ public:
   Expression parse();
   Status getStatus() const { return m_status; }
 
+  static bool IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);
+
 private:
   Expression parseUntil(Token::Type stoppingType);
 
@@ -62,7 +64,7 @@ private:
   Expression parseVector();
   Expression parseFunctionParameters();
   Expression parseCommaSeparatedList();
-  bool isReservedFunction(const Expression::FunctionHelper * const * & functionHelper) const;
+  bool currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const;
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
   bool isSpecialIdentifier() const;
   void parseSpecialIdentifier(Expression & leftHandSide);
@@ -131,9 +133,10 @@ private:
     &SquareRoot::s_functionHelper
   };
   static constexpr const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
-    /* The method isReservedFunction passes through the successive entries of the above array
-     * in order to determine whether m_currentToken corresponds to an entry.
-     * As a helper, the static constexpr s_reservedFunctionsUpperBound marks the end of the array. */
+  /* The method currentTokenIsReservedFunction passes through the successive
+   * entries of the above array in order to determine whether m_currentToken
+   * corresponds to an entry. As a helper, the static constexpr
+   * s_reservedFunctionsUpperBound marks the end of the array. */
 };
 
 }

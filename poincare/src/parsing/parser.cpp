@@ -2,6 +2,8 @@
 
 namespace Poincare {
 
+constexpr const Expression::FunctionHelper * Parser::s_reservedFunctions[];
+
 Expression Parser::parse() {
   Expression result = parseUntil(Token::EndOfStream);
   if (m_status == Status::Progress) {
@@ -9,6 +11,20 @@ Expression Parser::parse() {
     return result;
   }
   return Expression();
+}
+
+bool Parser::IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper) {
+  const Expression::FunctionHelper * const * reservedFunction = &s_reservedFunctions[0];
+  assert(reservedFunction < s_reservedFunctionsUpperBound);
+  int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
+  while (reservedFunction < s_reservedFunctionsUpperBound && nameDifference > 0) {
+    reservedFunction++;
+    nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
+  }
+  if (functionHelper != nullptr) {
+    *functionHelper = reservedFunction;
+  }
+  return (reservedFunction < s_reservedFunctionsUpperBound && nameDifference == 0);
 }
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
@@ -188,7 +204,7 @@ void Parser::parseStore(Expression & leftHandSide) {
   // At this point, m_currentToken is Token::Store.
   popToken();
   const Expression::FunctionHelper * const * functionHelper;
-  if (!m_currentToken.is(Token::Identifier) || isReservedFunction(functionHelper) || isSpecialIdentifier()) {
+  if (!m_currentToken.is(Token::Identifier) || currentTokenIsReservedFunction(&functionHelper) || isSpecialIdentifier()) {
     m_status = Status::Error; // The right-hand side of Token::Store must be symbol or function that is not reserved.
     return;
   }
@@ -249,15 +265,8 @@ void Parser::parseBang(Expression & leftHandSide) {
   isThereImplicitMultiplication();
 }
 
-constexpr const Expression::FunctionHelper * Parser::s_reservedFunctions[];
-
-bool Parser::isReservedFunction(const Expression::FunctionHelper * const * & functionHelper) const {
-  // Look up in the array of reserved functions (e.g. Cosine...) whether the current Token corresponds to a reserved function.
-  functionHelper = &s_reservedFunctions[0]; // Initialize functionHelper to point at the beginning of the array.
-  while (functionHelper < s_reservedFunctionsUpperBound && m_currentToken.compareTo((**functionHelper).name()) > 0) {
-    functionHelper++;
-  }
-  return (functionHelper < s_reservedFunctionsUpperBound && m_currentToken.compareTo((**functionHelper).name()) == 0);
+bool Parser::currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const {
+  return IsReservedFunctionName(m_currentToken.text(), m_currentToken.length(), functionHelper);
 }
 
 bool Parser::isSpecialIdentifier() const {
@@ -390,9 +399,10 @@ void Parser::parseIdentifier(Expression & leftHandSide) {
     return;
   }
   const Expression::FunctionHelper * const * functionHelper;
-    // If m_currentToken corresponds to a reserved function, the method isReservedFunction
-    // will make functionHelper point to an element of s_reservedFunctions.
-  if (isReservedFunction(functionHelper)) {
+    /* If m_currentToken corresponds to a reserved function, the method
+     * currentTokenIsReservedFunction will make functionHelper point to an
+     * element of s_reservedFunctions. */
+  if (currentTokenIsReservedFunction(&functionHelper)) {
     parseReservedFunction(leftHandSide, functionHelper);
   } else if (isSpecialIdentifier()) {
     parseSpecialIdentifier(leftHandSide);

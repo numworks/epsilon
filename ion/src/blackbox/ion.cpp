@@ -3,3 +3,6 @@
 
 void Ion::mssleep(long ms) {
 }
+
+void Ion::ussleep(long us) {
+}

@@ -221,16 +221,19 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-bool Expression::hasSymbols(Context & context) const {
+bool Expression::hasReplaceableSymbols(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context) {
-      return e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function;
+      return (e.type() == ExpressionNode::Type::Symbol
+          && !context.expressionForSymbol(static_cast<const Symbol &>(e)).isUninitialized())
+      || (e.type() == ExpressionNode::Type::Function
+           && !context.expressionForSymbol(static_cast<const Function &>(e)).isUninitialized());
       }, context);
 }
 
-Expression Expression::defaultReplaceSymbols(Context & context) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).replaceSymbols(context);
+    childAtIndex(i).replaceReplaceableSymbols(context);
   }
   return *this;
 }
@@ -327,12 +330,12 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
    * symbols are likely to be defined circularly, in which case we return an
    * uninitialized expression.*/
   int replacementCount = 0;
-  while (e.hasSymbols(context)) {
+  while (e.hasReplaceableSymbols(context)) {
     replacementCount++;
     if (replacementCount > k_maxSymbolReplacementsCount) {
       return Expression();
     }
-    e = e.replaceSymbols(context);
+    e = e.replaceReplaceableSymbols(context);
   }
   return e;
 }

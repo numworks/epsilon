@@ -168,13 +168,17 @@ void Parser::parseEqual(Expression & leftHandSide) {
     m_status = Status::Error; // Equal must have a left operand
     return;
   }
-  if (leftHandSide.type() == ExpressionNode::Type::Equal) {
-    m_status = Status::Error; // Equal is not associative
-    return;
-  }
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Equal)) {
+    if (rightHandSide.type() == ExpressionNode::Type::Store) {
+      m_status = Status::Error; // Equal cannot have a Store on the right
+      return;
+    }
     leftHandSide = Equal(leftHandSide, rightHandSide);
+  }
+  if (!m_nextToken.is(Token::EndOfStream)) {
+    m_status = Status::Error; // Equal should be top-most expression in Tree
+    return;
   }
 }
 

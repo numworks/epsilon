@@ -78,8 +78,15 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (e.isUninitialized()) {
     return Undefined();
   }
+  if (symbol().type() == ExpressionNode::Type::Function) {
+    // Replace the xUnknown symbol with the variable initially used
+    assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
+    Expression userDefinedUnknown = symbol().childAtIndex(0);
+    Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
+    e = e.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
+  }
   replaceWithInPlace(e);
-  return e.shallowReduce(context, angleUnit, replaceSymbols);
+  return e;
 }
 
 }

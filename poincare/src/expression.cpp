@@ -312,9 +312,6 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
 Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   sSimplificationHasBeenInterrupted = false;
   Expression e = reduce(context, angleUnit, replaceSymbols);
-  if (sSimplificationHasBeenInterrupted) {
-    return Expression();
-  }
   e = e.deepBeautify(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
     return Expression();

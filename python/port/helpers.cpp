@@ -12,11 +12,11 @@ void micropython_port_vm_hook_loop() {
   /* Doing too many things here slows down Python execution quite a lot. So we
    * only do things once in a while and return as soon as possible otherwise. */
   static int c = 0;
-  c++;
-  if (c % 20000 != 0) {
+
+  c = (c + 1) % 20000;
+  if (c != 0) {
     return;
   }
-  c = 0;
 
   /* Check if the user asked for an interruption from the keyboard */
   Ion::Keyboard::State scan = Ion::Keyboard::scan();

@@ -24,16 +24,16 @@ extern "C" {
 
 // Public Ion methods
 
-/* TODO: The delay methods 'mssleep' and 'ussleep' are currently dependent on the
+/* TODO: The delay methods 'msleep' and 'usleep' are currently dependent on the
  * optimizations chosen by the compiler. To prevent that and to gain in
  * precision, we could use the controller cycle counter (Systick). */
 
-void Ion::mssleep(long ms) {
+void Ion::msleep(long ms) {
   for (volatile long i=0; i<8852*ms; i++) {
       __asm volatile("nop");
   }
 }
-void Ion::ussleep(long us) {
+void Ion::usleep(long us) {
   for (volatile long i=0; i<9*us; i++) {
     __asm volatile("nop");
   }

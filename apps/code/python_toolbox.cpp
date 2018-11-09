@@ -21,7 +21,7 @@ static constexpr int loopsAndTestsChildrenCount = 4;
 static constexpr int menuChildrenCount = 4;
 static constexpr int modulesChildrenCount = 5;
 static constexpr int whileLoopChildrenCount = 1;
-static constexpr int TimeModuleChildrenCount = 10;
+static constexpr int TimeModuleChildrenCount = 6;
 
 
 const ToolboxMessageTree forLoopChildren[forLoopChildrenCount] = {
@@ -129,12 +129,8 @@ const ToolboxMessageTree TimeModuleChildren[TimeModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandImportFromTime, I18n::Message::PythonImportFromTime, I18n::Message::PythonCommandImportFromTime),
   ToolboxMessageTree(I18n::Message::PythonCommandTimeFunction, I18n::Message::PythonTimeFunction, I18n::Message::PythonCommandTimeFunctionWithoutArg),
   ToolboxMessageTree(I18n::Message::PythonCommandTimeSleep, I18n::Message::PythonTimeSleep, I18n::Message::PythonCommandTimeSleep),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeSleepMs, I18n::Message::PythonTimeSleepMs, I18n::Message::PythonCommandTimeSleepMs),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeSleepUs, I18n::Message::PythonTimeSleepUs, I18n::Message::PythonCommandTimeSleepUs),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeTicksMs, I18n::Message::PythonTimeTicksMs, I18n::Message::PythonCommandTimeTicksMs),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeTicksUs, I18n::Message::PythonTimeTicksUs, I18n::Message::PythonCommandTimeTicksUs),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeTicksDiff, I18n::Message::PythonTimeTicksDiff, I18n::Message::PythonCommandTimeTicksDiff),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeTicksAdd, I18n::Message::PythonTimeTicksAdd, I18n::Message::PythonCommandTimeTicksAdd),
+  ToolboxMessageTree(I18n::Message::PythonCommandTimeClock, I18n::Message::PythonTimeClock, I18n::Message::PythonCommandTimeClock),
+  ToolboxMessageTree(I18n::Message::PythonCommandTimeTime, I18n::Message::PythonTimeClock, I18n::Message::PythonCommandTimeTime)
 };
 
 const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {

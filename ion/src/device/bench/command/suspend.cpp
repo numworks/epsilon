@@ -12,7 +12,7 @@ void Suspend(const char * input) {
     return;
   }
   reply(sOK);
-  Ion::mssleep(100);
+  Ion::msleep(100);
   Ion::Power::suspend();
 }
 

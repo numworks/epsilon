@@ -56,7 +56,7 @@ inline void activateRow(uint8_t row) {
   Device::RowGPIO.ODR()->setBitRange(9, 0, rowState);
 
   // TODO: 100 us seems to work, but wasn't really calculated
-  ussleep(100);
+  usleep(100);
 }
 
 inline bool columnIsActive(uint8_t column) {

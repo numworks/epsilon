@@ -74,8 +74,7 @@ _mp_execute_bytecode \
 _mp_hal_input \
 _mp_import_name \
 _mp_parse_compile_execute \
-_mssleep \
-_ussleep
+_msleep
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END
 EMFLAGS = -s PRECISE_F32=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(EMTERPRETIFY_WHITELIST:,END=)]'

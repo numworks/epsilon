@@ -35,14 +35,7 @@
 void delay_ms(mp_uint_t delay) {
     uint32_t start = millis();
     while (millis() - start < delay && !micropython_port_should_interrupt(true)) {
-      mssleep(1);
-    }
-}
-
-void delay_us(mp_uint_t delay) {
-    uint32_t start = micros();
-    while (micros() - start < delay && !micropython_port_should_interrupt(false)) {
-      ussleep(1);
+      msleep(1);
     }
 }
 
@@ -56,64 +49,17 @@ STATIC mp_obj_t time_sleep(mp_obj_t seconds_o) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_utime_sleep_obj, time_sleep);
 
-STATIC mp_obj_t time_sleep_ms(mp_obj_t arg) {
-    mp_int_t ms = mp_obj_get_int(arg);
-    if (ms > 0) {
-        delay_ms(ms);
-    }
-    return mp_const_none;
+STATIC mp_obj_t time_clock(void) {
+    return mp_obj_new_float(millis() / 1000.0);
 }
-MP_DEFINE_CONST_FUN_OBJ_1(mp_utime_sleep_ms_obj, time_sleep_ms);
-
-STATIC mp_obj_t time_sleep_us(mp_obj_t arg) {
-    mp_int_t us = mp_obj_get_int(arg);
-    if (us > 0) {
-        delay_us(us);
-    }
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_1(mp_utime_sleep_us_obj, time_sleep_us);
-
-STATIC mp_obj_t time_ticks_ms(void) {
-    return MP_OBJ_NEW_SMALL_INT(millis() & (MICROPY_PY_UTIME_TICKS_PERIOD - 1));
-}
-MP_DEFINE_CONST_FUN_OBJ_0(mp_utime_ticks_ms_obj, time_ticks_ms);
-
-STATIC mp_obj_t time_ticks_us(void) {
-    return MP_OBJ_NEW_SMALL_INT(micros() & (MICROPY_PY_UTIME_TICKS_PERIOD - 1));
-}
-MP_DEFINE_CONST_FUN_OBJ_0(mp_utime_ticks_us_obj, time_ticks_us);
-
-STATIC mp_obj_t time_ticks_diff(mp_obj_t end_in, mp_obj_t start_in) {
-    // we assume that the arguments come from ticks_xx so are small ints
-    mp_uint_t start = MP_OBJ_SMALL_INT_VALUE(start_in);
-    mp_uint_t end = MP_OBJ_SMALL_INT_VALUE(end_in);
-    // Optimized formula avoiding if conditions. We adjust difference "forward",
-    // wrap it around and adjust back.
-    mp_int_t diff = ((end - start + MICROPY_PY_UTIME_TICKS_PERIOD / 2) & (MICROPY_PY_UTIME_TICKS_PERIOD - 1))
-                   - MICROPY_PY_UTIME_TICKS_PERIOD / 2;
-    return MP_OBJ_NEW_SMALL_INT(diff);
-}
-MP_DEFINE_CONST_FUN_OBJ_2(mp_utime_ticks_diff_obj, time_ticks_diff);
-
-STATIC mp_obj_t time_ticks_add(mp_obj_t ticks_in, mp_obj_t delta_in) {
-    // we assume that first argument come from ticks_xx so is small int
-    mp_uint_t ticks = MP_OBJ_SMALL_INT_VALUE(ticks_in);
-    mp_uint_t delta = mp_obj_get_int(delta_in);
-    return MP_OBJ_NEW_SMALL_INT((ticks + delta) & (MICROPY_PY_UTIME_TICKS_PERIOD - 1));
-}
-MP_DEFINE_CONST_FUN_OBJ_2(mp_utime_ticks_add_obj, time_ticks_add);
+MP_DEFINE_CONST_FUN_OBJ_0(mp_utime_time_obj, time_clock);
+MP_DEFINE_CONST_FUN_OBJ_0(mp_utime_clock_obj, time_clock);
 
 STATIC const mp_rom_map_elem_t time_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_time) },
-
     { MP_ROM_QSTR(MP_QSTR_sleep), MP_ROM_PTR(&mp_utime_sleep_obj) },
-    { MP_ROM_QSTR(MP_QSTR_sleep_ms), MP_ROM_PTR(&mp_utime_sleep_ms_obj) },
-    { MP_ROM_QSTR(MP_QSTR_sleep_us), MP_ROM_PTR(&mp_utime_sleep_us_obj) },
-    { MP_ROM_QSTR(MP_QSTR_ticks_ms), MP_ROM_PTR(&mp_utime_ticks_ms_obj) },
-    { MP_ROM_QSTR(MP_QSTR_ticks_us), MP_ROM_PTR(&mp_utime_ticks_us_obj) },
-    { MP_ROM_QSTR(MP_QSTR_ticks_add), MP_ROM_PTR(&mp_utime_ticks_add_obj) },
-    { MP_ROM_QSTR(MP_QSTR_ticks_diff), MP_ROM_PTR(&mp_utime_ticks_diff_obj) },
+    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&mp_utime_time_obj) },
+    { MP_ROM_QSTR(MP_QSTR_clock), MP_ROM_PTR(&mp_utime_clock_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(time_module_globals, time_module_globals_table);

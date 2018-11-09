@@ -257,7 +257,7 @@ void AppsContainer::displayExamModePopUp(bool activate) {
 void AppsContainer::shutdownDueToLowBattery() {
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     m_emptyBatteryWindow.redraw(true);
-    Ion::mssleep(3000);
+    Ion::msleep(3000);
     Ion::Power::suspend();
   }
   window()->redraw(true);

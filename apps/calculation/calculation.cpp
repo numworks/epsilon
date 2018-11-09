@@ -36,7 +36,7 @@ void Calculation::reset() {
 void Calculation::setContent(const char * c, Context * context, Expression ansExpression) {
   reset();
   {
-    Symbol ansSymbol = Symbol(Symbol::k_ans, 3);
+    Symbol ansSymbol = Symbol::Ans();
     Expression input = Expression::parse(c).replaceSymbolWithExpression(ansSymbol, ansExpression);
     /* We do not store directly the text enter by the user because we do not want
      * to keep Ans symbol in the calculation store. */

@@ -265,13 +265,14 @@ bool Parser::isReservedFunction(const Expression::FunctionHelper * const * & fun
 bool Parser::isSpecialIdentifier() const {
   // TODO Avoid special cases if possible
   return (
-    m_currentToken.compareTo("inf")   == 0 ||
-    m_currentToken.compareTo("undef") == 0 ||
-    m_currentToken.compareTo("u_")    == 0 ||
-    m_currentToken.compareTo("v_")    == 0 ||
-    m_currentToken.compareTo("u")     == 0 ||
-    m_currentToken.compareTo("v")     == 0 ||
-    m_currentToken.compareTo("log_")  == 0
+    m_currentToken.compareTo(Symbol::k_ans) == 0 ||
+    m_currentToken.compareTo("inf")         == 0 ||
+    m_currentToken.compareTo("undef")       == 0 ||
+    m_currentToken.compareTo("u_")          == 0 ||
+    m_currentToken.compareTo("v_")          == 0 ||
+    m_currentToken.compareTo("u")           == 0 ||
+    m_currentToken.compareTo("v")           == 0 ||
+    m_currentToken.compareTo("log_")        == 0
   );
 }
 
@@ -326,7 +327,9 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
 }
 
 void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
-  if (m_currentToken.compareTo("inf") == 0) {
+  if (m_currentToken.compareTo(Symbol::k_ans) == 0) {
+    leftHandSide = Symbol::Ans();
+  } else if (m_currentToken.compareTo("inf") == 0) {
     leftHandSide = Infinity(false);
   } else if (m_currentToken.compareTo("undef") == 0) {
     leftHandSide = Undefined();

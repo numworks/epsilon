@@ -195,7 +195,6 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_raises_parsing_error("^1");
   assert_raises_parsing_error("t0000000");
   assert_raises_parsing_error("[[t0000000[");
-  assert_parsed_expression_is("0=0", Equal(Rational(0), Rational(0)));
   assert_raises_parsing_error("0>x=0");
   assert_raises_parsing_error("0=0>x");
 }
@@ -334,7 +333,6 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
 QUIZ_CASE(poincare_parser_parse_store) {
   assert_parsed_expression_is("1>a", Store(Rational(1),Symbol("a",1)));
   assert_parsed_expression_is("1>e", Store(Rational(1),Symbol("e",1)));
-  assert_parsed_expression_is("1>ans", Store(Rational(1),Symbol("ans",3)));
   assert_parsed_expression_is("1>f(x)", Store(Rational(1),Function("f",1,Symbol("x",1))));
   assert_parsed_expression_is("x>f(x)", Store(Symbol("x",1),Function("f",1,Symbol("x",1))));
   assert_parsed_expression_is("n>f(x)", Store(Symbol("n",1),Function("f",1,Symbol("x",1))));
@@ -360,6 +358,8 @@ QUIZ_CASE(poincare_parser_parse_store) {
   assert_raises_parsing_error("1>acos");
   assert_raises_parsing_error("1>f(2)");
   assert_raises_parsing_error("1>f(f)");
+  assert_raises_parsing_error("1>ans");
+  assert_raises_parsing_error("ans>ans");
 }
 
 QUIZ_CASE(poincare_parser_implicit_multiplication) {

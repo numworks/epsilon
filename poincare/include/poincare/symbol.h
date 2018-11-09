@@ -49,7 +49,8 @@ class Symbol final : public SymbolAbstract {
   friend class Store;
   friend class SymbolNode;
 public:
-  static constexpr char k_ans[] = "ans";
+  static constexpr int k_ansLength = 3;
+  static constexpr char k_ans[k_ansLength+1] = "ans";
   static constexpr char k_unknownXReadableChar = 'x';
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -59,7 +60,7 @@ public:
   Symbol(const char * name, int length);
   Symbol(char name);
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
-
+  static Symbol Ans() { return Symbol(k_ans, k_ansLength); }
   static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
     // create an expression only if it is not in the context or defined as a symbol
     Symbol s(name, length);

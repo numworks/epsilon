@@ -93,7 +93,7 @@ bool App::textInputIsCorrect(const char * text) {
   }
   Expression ansExpression = static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext());
   {
-    Symbol ansSymbol = Symbol(Symbol::k_ans, 3);
+    Symbol ansSymbol = Symbol::Ans();
     exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
   }
   char buffer[Calculation::k_printedExpressionSize];

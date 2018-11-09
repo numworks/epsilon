@@ -15,8 +15,8 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide);
   static constexpr TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
-    &Parser::parseEqual,           // Token::Equal
     &Parser::parseStore,           // Token::Store
+    &Parser::parseEqual,           // Token::Equal
     &Parser::parseUnexpected,      // Token::RightBracket
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
@@ -170,10 +170,8 @@ void Parser::parseEqual(Expression & leftHandSide) {
   }
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Equal)) {
-    if (rightHandSide.type() == ExpressionNode::Type::Store) {
-      m_status = Status::Error; // Equal cannot have a Store on the right
-      return;
-    }
+    /* We parse until finding a token of lesser precedence than Equal. The next
+     * token is thus either EndOfStream or Store. */
     leftHandSide = Equal(leftHandSide, rightHandSide);
   }
   if (!m_nextToken.is(Token::EndOfStream)) {

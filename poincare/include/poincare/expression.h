@@ -172,6 +172,7 @@ public:
   void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
     return node()->reduceChildren(context, angleUnit, replaceSymbols);
   }
+  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -256,6 +257,8 @@ protected:
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 
 private:
+  static constexpr int k_maxSymbolReplacementsCount = 30;
+
   /* Simplification */
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

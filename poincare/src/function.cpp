@@ -15,16 +15,18 @@ Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symb
 
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Expression e = context.expressionForSymbol(Function(this));
+  e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return -1;
   }
-/*TODO Context should be float or double ?*/
+  // TODO Context should be float or double ?
   VariableContext newContext = xContext(context);
   return e.polynomialDegree(newContext, symbolName);
 }
 
 int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   Expression e = context.expressionForSymbol(Function(this));
+  e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return -1;
   }
@@ -34,6 +36,7 @@ int FunctionNode::getPolynomialCoefficients(Context & context, const char * symb
 
 int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   Expression e = context.expressionForSymbol(Function(this));
+  e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return 0;
   }
@@ -43,6 +46,7 @@ int FunctionNode::getVariables(Context & context, isVariableTest isVariable, cha
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
+  e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return 0.0f;
   }
@@ -80,6 +84,7 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Function(this));
+  e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -116,7 +121,8 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (!replaceSymbols) {
     return *this;
   }
-  const Expression e = context.expressionForSymbol(*this);
+  Expression e = context.expressionForSymbol(*this);
+  e = ExpressionWithoutSymbols(e, context);
   if (!e.isUninitialized()) {
     // We need to replace the unknown with the child
     Expression result = e.clone();

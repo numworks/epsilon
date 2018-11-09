@@ -14,9 +14,6 @@ void Init() {
 void Tidy() {
   // Clean Integer
   Integer::TidyIntegerBuffer();
-
-  // Unlock recursion count
-  Expression::TidyAfterException();
 }
 
 }

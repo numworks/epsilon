@@ -13,9 +13,6 @@
 
 namespace Poincare {
 
-static int sRecursionCount = 0;
-static bool sRecursionCountResetIsLocked = false;
-
 /* Constructor & Destructor */
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
@@ -78,32 +75,15 @@ bool Expression::isRationalOne() const {
 }
 
 bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
-  // Reset recursion count if needed
-  bool willHaveToUnlock = ResetRecursionCountAndLockReset();
-
-  bool result = false;
-
-  IncrementRecursionCount();
-  if (RecursionMaximalDepthExceeded()) {
-    //TODO propagate recursion error?
-  } else {
-    if (test(*this, context)) {
-      result = true;
-    } else {
-      for (int i = 0; i < this->numberOfChildren(); i++) {
-        if (childAtIndex(i).recursivelyMatches(test, context)) {
-          result = true;
-          break;
-        }
-      }
+  if (test(*this, context)) {
+    return true;
+  }
+  for (int i = 0; i < this->numberOfChildren(); i++) {
+    if (childAtIndex(i).recursivelyMatches(test, context)) {
+      return true;
     }
   }
-
-  // Unlock recursion count reset if needed
-  if (willHaveToUnlock) {
-    UnlockRecursionCountReset();
-  }
-  return result;
+  return false;
 }
 
 bool Expression::isApproximate(Context & context) const {
@@ -120,11 +100,6 @@ bool Expression::isApproximate(Context & context) const {
 }
 
 bool Expression::IsMatrix(const Expression e, Context & context) {
-  assert(RecursionCountResetisLocked());
-  IncrementRecursionCount();
-  if (RecursionMaximalDepthExceeded()) {
-    return false;
-  }
   return e.type() == ExpressionNode::Type::Matrix
     || e.type() == ExpressionNode::Type::ConfidenceInterval
     || e.type() == ExpressionNode::Type::MatrixDimension
@@ -262,20 +237,7 @@ Expression Expression::defaultReplaceSymbols(Context & context) {
 
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
-  bool willHaveToUnlock = ResetRecursionCountAndLockReset();
-
-  IncrementRecursionCount();
-  Evaluation<U> result;
-  if (RecursionMaximalDepthExceeded()) {
-    result = Complex<U>::Undefined(); // TODO Propagate error "Recursion too deep"
-  } else {
-   result = node()->approximate(U(), context, angleUnit);
-  }
-
-  if (willHaveToUnlock) {
-    UnlockRecursionCountReset();
-  }
-  return result;
+  return node()->approximate(U(), context, angleUnit);
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression) {
@@ -295,17 +257,9 @@ int Expression::defaultGetPolynomialCoefficients(Context & context, const char *
 }
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
-  // Reset recursion count if needed
-  bool willHaveToUnlock = ResetRecursionCountAndLockReset();
-
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].deepReduce(context, angleUnit);
-  }
-
-  // Unlock recursion count reinitialization if needed
-  if (willHaveToUnlock) {
-    UnlockRecursionCountReset();
   }
   return degree;
 }
@@ -369,39 +323,10 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
 }
 
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  // Reset recursion count if needed
-  bool willHaveToUnlock = ResetRecursionCountAndLockReset();
-
-  Expression result = deepReduce(context, angleUnit, replaceSymbols);
-
-  // Unlock recursion count reinitialization if needed
-  if (willHaveToUnlock) {
-    UnlockRecursionCountReset();
-  }
-
-  return result;
-}
-
-bool Expression::ResetRecursionCountAndLockReset() {
-  if (!sRecursionCountResetIsLocked) {
-    sRecursionCount = 0;
-    sRecursionCountResetIsLocked = true;
-    return true;
-  }
-  return false;
-}
-
-void Expression::UnlockRecursionCountReset() {
-  sRecursionCountResetIsLocked = false;
+  return deepReduce(context, angleUnit, replaceSymbols);
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  IncrementRecursionCount();
-  if (RecursionMaximalDepthExceeded()) {
-    sSimplificationHasBeenInterrupted = true;
-    return *this;
-  }
-
 #if MATRIX_EXACT_REDUCING
 #else
   if (IsMatrix(*this, context)) {
@@ -421,18 +346,6 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
     e.childAtIndex(i).deepBeautify(context, angleUnit);
   }
   return e;
-}
-
-void Expression::IncrementRecursionCount() {
-  sRecursionCount++;
-}
-
-bool Expression::RecursionMaximalDepthExceeded() {
-  return sRecursionCount >= Expression::sRecursionLimit;
-}
-
-bool Expression::RecursionCountResetisLocked() {
-  return sRecursionCountResetIsLocked;
 }
 
 Expression Expression::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {

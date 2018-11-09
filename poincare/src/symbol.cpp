@@ -127,19 +127,9 @@ Expression SymbolNode::replaceSymbols(Context & context) {
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Symbol(this));
+  e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
-  }
-
-  int replacementCount = 0;
-  /* First, replace all the symbols iteratively. This prevents a memory
-   * failure symbols are defined circularly. */
-  while (e.hasSymbols(context)) {
-    replacementCount++;
-    if (replacementCount > Symbol::k_maxReplacementsCount) {
-      return Complex<T>::Undefined();
-    }
-    e = e.replaceSymbols(context);
   }
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
@@ -168,18 +158,7 @@ bool Symbol::isRegressionSymbol(const char * c) {
 
 bool Symbol::matches(ExpressionTest test, Context & context) const {
   Expression e = context.expressionForSymbol(*this);
-  if (!e.isUninitialized()) {
-    /* First, replace all the symbols iteratively. This prevents a memory
-     * failure symbols are defined circularly. */
-    int replacementCount = 0;
-    while (e.hasSymbols(context)) {
-      replacementCount++;
-      if (replacementCount > k_maxReplacementsCount) {
-        return false; //TODO
-      }
-      e = e.replaceSymbols(context);
-    }
-  }
+  e = ExpressionWithoutSymbols(e, context);
   return !e.isUninitialized() && test(e, context);
 }
 
@@ -188,24 +167,16 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   if (!replaceSymbols) {
     return *this;
   }
-  const Expression e = context.expressionForSymbol(*this);
-  if (!e.isUninitialized()) {
-    // The stored expression is beautified, so we need to call reduce
-    Expression result = e;
-    /* First, replace all the symbols iteratively. This prevents a memory
-     * failure symbols are defined circularly. */
-    int replacementCount = 0;
-    while (result.hasSymbols(context)) {
-      replacementCount++;
-      if (replacementCount > k_maxReplacementsCount) {
-        return *this;
-      }
-      result = result.replaceSymbols(context);
-    }
-    replaceWithInPlace(result);
-    return result.deepReduce(context, angleUnit);
+  Expression result = context.expressionForSymbol(*this);
+  // The stored expression is beautified, so we need to call reduce
+  /* First, replace all the symbols iteratively. This prevents a memory
+   * failure symbols are defined circularly. */
+  result = ExpressionWithoutSymbols(result, context);
+  if (result.isUninitialized()) {
+    return *this;
   }
-  return *this;
+  replaceWithInPlace(result);
+  return result.deepReduce(context, angleUnit);
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

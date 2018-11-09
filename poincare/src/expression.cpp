@@ -322,6 +322,24 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
   return e;
 }
 
+Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context) {
+  if (e.isUninitialized()) {
+    return e;
+  }
+  /* Replace all the symbols iteratively. If we make too many replacements, the
+   * symbols are likely to be defined circularly, in which case we return an
+   * uninitialized expression.*/
+  int replacementCount = 0;
+  while (e.hasSymbols(context)) {
+    replacementCount++;
+    if (replacementCount > k_maxSymbolReplacementsCount) {
+      return Expression();
+    }
+    e = e.replaceSymbols(context);
+  }
+  return e;
+}
+
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   return deepReduce(context, angleUnit, replaceSymbols);
 }

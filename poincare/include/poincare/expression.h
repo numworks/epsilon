@@ -90,9 +90,6 @@ class Expression : public TreeHandle {
   friend class SymbolNode;
 
 public:
-  static void TidyAfterException() {
-    UnlockRecursionCountReset();
-  }
   static bool isExpression() { return true; }
 
   /* Constructor & Destructor */
@@ -252,9 +249,6 @@ protected:
   Expression defaultReplaceSymbols(Context & context);
 
   /* Simplification */
-  static void IncrementRecursionCount();
-  static bool RecursionMaximalDepthExceeded();
-  static bool RecursionCountResetisLocked();
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) { return node()->shallowReduce(context, angleUnit, replaceSymbols); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
@@ -263,9 +257,6 @@ protected:
 
 private:
   /* Simplification */
-  static constexpr int sRecursionLimit = 2000; //TODO value?
-  static bool ResetRecursionCountAndLockReset();
-  static void UnlockRecursionCountReset();
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
     return node()->deepReduceChildren(context, angleUnit, replaceSymbols);

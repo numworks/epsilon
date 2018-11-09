@@ -134,11 +134,6 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   /* First, replace all the symbols iteratively. This prevents a memory
    * failure symbols are defined circularly. */
   while (e.hasSymbols(context)) {
-    assert(Expression::RecursionCountResetisLocked());
-    Expression::IncrementRecursionCount();
-    if (Expression::RecursionMaximalDepthExceeded()) {
-      return Complex<T>::Undefined();
-    }
     e = e.replaceSymbols(context);
   }
   return e.approximateToEvaluation<T>(context, angleUnit);
@@ -183,12 +178,6 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
     /* First, replace all the symbols iteratively. This prevents a memory
      * failure symbols are defined circularly. */
     while (result.hasSymbols(context)) {
-      assert(RecursionCountResetisLocked());
-      IncrementRecursionCount();
-      if (RecursionMaximalDepthExceeded()) {
-        replaceWithInPlace(e);
-        return e;
-      }
       result = result.replaceSymbols(context);
     }
     replaceWithInPlace(result);

@@ -47,6 +47,7 @@ private:
 class Symbol final : public SymbolAbstract {
   friend class Expression;
   friend class Store;
+  friend class SymbolNode;
 public:
   static constexpr char k_ans[] = "ans";
   static constexpr char k_unknownXReadableChar = 'x';

@@ -63,6 +63,7 @@ public:
   }
   constexpr static size_t k_maxNameSize = 8;
 protected:
+  static constexpr int k_maxReplacementsCount = 100;
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:

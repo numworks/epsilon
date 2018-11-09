@@ -106,7 +106,7 @@ public:
   /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
-  /*!*/ virtual Expression replaceSymbols(Context & context);
+  /*!*/ virtual Expression replaceReplaceableSymbols(Context & context);
   typedef bool (*isVariableTest)(const char * c);
   virtual int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
   virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;

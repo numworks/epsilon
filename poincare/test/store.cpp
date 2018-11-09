@@ -29,22 +29,22 @@ QUIZ_CASE(poincare_store_user_variable) {
   assert_parsed_expression_simplify_to("Adadas", "3");
 
   // Fill f1
-  assert_parsed_expression_simplify_to("1+x>f1(x)", "1+?");
+  assert_parsed_expression_simplify_to("1+x>f1(x)", "1+x");
   assert_parsed_expression_simplify_to("f1(4)", "5");
   assert_parsed_expression_simplify_to("f1(Adadas)", "4");
 
   // Fill f2
-  assert_parsed_expression_simplify_to("x-1>f2(x)", "(-1)+?");
+  assert_parsed_expression_simplify_to("x-1>f2(x)", "(-1)+x");
   assert_parsed_expression_simplify_to("f2(4)", "3");
   assert_parsed_expression_simplify_to("f2(Adadas)", "2");
 
   // Define fBoth with f1 and f2
-  assert_parsed_expression_simplify_to("f1(x)+f2(x)>fBoth(x)", "f1(?)+f2(?)");
+  assert_parsed_expression_simplify_to("f1(x)+f2(x)>fBoth(x)", "f1(x)+f2(x)");
   assert_parsed_expression_simplify_to("fBoth(4)", "8");
   assert_parsed_expression_simplify_to("fBoth(Adadas)", "6");
 
   // Change f2
-  assert_parsed_expression_simplify_to("x>f2(x)", "?");
+  assert_parsed_expression_simplify_to("x>f2(x)", "x");
   assert_parsed_expression_simplify_to("f2(4)", "4");
   assert_parsed_expression_simplify_to("f2(Adadas)", "3");
 
@@ -82,7 +82,7 @@ QUIZ_CASE(poincare_store_overwrite) {
 
 QUIZ_CASE(poincare_store_do_not_overwrite) {
   assert_parsed_expression_simplify_to("-1>g(x)", "-1");
-  assert_parsed_expression_simplify_to("1+g(x)>f(x)", "1+g(?)");
+  assert_parsed_expression_simplify_to("1+g(x)>f(x)", "1+g(x)");
   assert_parsed_expression_simplify_to("2>g", "undef");
   assert_parsed_expression_evaluates_to<double>("g(4)", "-1");
   assert_parsed_expression_evaluates_to<double>("f(4)", "0");

@@ -2,6 +2,7 @@
 #include "display.h"
 #include "events_keyboard.h"
 #include "../../../apps/global_preferences.h"
+#include <emscripten.h>
 
 extern "C" {
 const char * IonSoftwareVersion();
@@ -19,5 +20,10 @@ int main(int argc, char * argv[]) {
   return 0;
 }
 
-void Ion::msleep(long ms) {
+void Ion::mssleep(long ms) {
+  emscripten_sleep(ms);
+}
+
+void Ion::ussleep(long us) {
+  emscripten_sleep(us/1000);
 }

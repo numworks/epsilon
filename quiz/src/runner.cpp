@@ -39,7 +39,7 @@ static inline void ion_main_inner() {
   quiz_print("ALL TESTS FINISHED");
 #if !QUIZ_USE_CONSOLE
   while (1) {
-    Ion::msleep(1000);
+    Ion::mssleep(1000);
   }
 #endif
 }
@@ -59,7 +59,7 @@ void ion_main(int argc, char * argv[]) {
     quiz_assert(false);
 #if !QUIZ_USE_CONSOLE
     while (1) {
-      Ion::msleep(1000);
+      Ion::mssleep(1000);
     }
 #endif
   }

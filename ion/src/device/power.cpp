@@ -29,7 +29,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
     /* Update LEDS
      * if the standby mode was stopped due to a "stop charging" event, we wait
      * a while to be sure that the plug state of the USB is up-to-date. */
-    msleep(200);
+    mssleep(200);
     //Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
 #endif
 

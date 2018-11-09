@@ -104,7 +104,7 @@ Ion::Events::Event Ion::Events::getEvent(int * timeout) {
 
 #include <chrono>
 
-void Ion::msleep(long ms) {
+void Ion::mssleep(long ms) {
   auto start = std::chrono::high_resolution_clock::now();
   while (true) {
     sDisplay->redraw();

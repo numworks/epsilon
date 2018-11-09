@@ -11,8 +11,8 @@ namespace Ion {
 EXTERNC uint32_t millis();
 EXTERNC uint32_t micros();
 
-EXTERNC void msleep(long ms);
-EXTERNC void usleep(long us);
+EXTERNC void mssleep(long ms);
+EXTERNC void ussleep(long us);
 
 #ifdef __cplusplus
 }

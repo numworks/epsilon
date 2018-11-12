@@ -204,7 +204,7 @@ void Parser::parseStore(Expression & leftHandSide) {
   // At this point, m_currentToken is Token::Store.
   popToken();
   const Expression::FunctionHelper * const * functionHelper;
-  if (!m_currentToken.is(Token::Identifier) || currentTokenIsReservedFunction(&functionHelper) || isSpecialIdentifier()) {
+  if (!m_currentToken.is(Token::Identifier) || currentTokenIsReservedFunction(&functionHelper) || currentTokenIsSpecialIdentifier()) {
     m_status = Status::Error; // The right-hand side of Token::Store must be symbol or function that is not reserved.
     return;
   }
@@ -269,7 +269,7 @@ bool Parser::currentTokenIsReservedFunction(const Expression::FunctionHelper * c
   return IsReservedFunctionName(m_currentToken.text(), m_currentToken.length(), functionHelper);
 }
 
-bool Parser::isSpecialIdentifier() const {
+bool Parser::currentTokenIsSpecialIdentifier() const {
   // TODO Avoid special cases if possible
   return (
     m_currentToken.compareTo(Symbol::k_ans) == 0 ||
@@ -404,7 +404,7 @@ void Parser::parseIdentifier(Expression & leftHandSide) {
      * element of s_reservedFunctions. */
   if (currentTokenIsReservedFunction(&functionHelper)) {
     parseReservedFunction(leftHandSide, functionHelper);
-  } else if (isSpecialIdentifier()) {
+  } else if (currentTokenIsSpecialIdentifier()) {
     parseSpecialIdentifier(leftHandSide);
   } else {
     parseCustomIdentifier(leftHandSide, m_currentToken.text(), m_currentToken.length());

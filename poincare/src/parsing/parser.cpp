@@ -13,6 +13,13 @@ Expression Parser::parse() {
   return Expression();
 }
 
+bool Parser::IsReservedName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper) {
+  return IsReservedFunctionName(name, nameLength, functionHelper)
+    || IsSpecialIdentifierName(name, nameLength);
+}
+
+// Private
+
 bool Parser::IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper) {
   const Expression::FunctionHelper * const * reservedFunction = &s_reservedFunctions[0];
   assert(reservedFunction < s_reservedFunctionsUpperBound);

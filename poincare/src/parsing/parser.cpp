@@ -27,6 +27,20 @@ bool Parser::IsReservedFunctionName(const char * name, size_t nameLength, const 
   return (reservedFunction < s_reservedFunctionsUpperBound && nameDifference == 0);
 }
 
+bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
+  // TODO Avoid special cases if possible
+  return (
+    Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans) == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "inf")         == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "undef")       == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "u_")          == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "v_")          == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "u")           == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "v")           == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "log_")        == 0
+  );
+}
+
 Expression Parser::parseUntil(Token::Type stoppingType) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide);
   static constexpr TokenParser tokenParsers[] = {
@@ -270,17 +284,7 @@ bool Parser::currentTokenIsReservedFunction(const Expression::FunctionHelper * c
 }
 
 bool Parser::currentTokenIsSpecialIdentifier() const {
-  // TODO Avoid special cases if possible
-  return (
-    m_currentToken.compareTo(Symbol::k_ans) == 0 ||
-    m_currentToken.compareTo("inf")         == 0 ||
-    m_currentToken.compareTo("undef")       == 0 ||
-    m_currentToken.compareTo("u_")          == 0 ||
-    m_currentToken.compareTo("v_")          == 0 ||
-    m_currentToken.compareTo("u")           == 0 ||
-    m_currentToken.compareTo("v")           == 0 ||
-    m_currentToken.compareTo("log_")        == 0
-  );
+  return IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length());
 }
 
 void Parser::parseConstant(Expression & leftHandSide) {

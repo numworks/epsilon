@@ -14,7 +14,6 @@ public:
     return false;
   }
   Poincare::Expression standardForm(Poincare::Context * context) const;
-  constexpr static int k_maxVariableSize = 11;
 private:
   void tidyStandardForm();
   mutable Poincare::Expression m_standardForm;

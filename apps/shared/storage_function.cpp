@@ -1,5 +1,6 @@
 #include "storage_function.h"
 #include <poincare/symbol.h>
+#include "poincare/src/parsing/parser.h"
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -16,6 +17,8 @@ bool StorageFunction::BaseNameCompliant(const char * baseName) {
     return false;
   }
   const char * currentChar = baseName;
+
+  // The name should only have allowed characters
   while (*currentChar != 0) {
     if (!((*currentChar >= 'A' && *currentChar <= 'Z')
         || (*currentChar >= 'a' && *currentChar <= 'z')
@@ -24,6 +27,11 @@ bool StorageFunction::BaseNameCompliant(const char * baseName) {
       return false;
     }
     currentChar++;
+  }
+
+  // The name should not be a reserved name
+  if (Parser::IsReservedName(baseName, strlen(baseName))) {
+    return false;
   }
   return true;
 }

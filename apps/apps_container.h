@@ -62,6 +62,7 @@ private:
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
+  void updateLED();
 
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;

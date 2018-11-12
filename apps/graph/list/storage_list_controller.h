@@ -20,6 +20,7 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   constexpr static int k_maxNumberOfDisplayableRows = 5;
   Shared::StorageListParameterController * parameterController() override;

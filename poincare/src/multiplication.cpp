@@ -68,11 +68,16 @@ Expression MultiplicationNode::setSign(Sign s, Context & context, Preferences::A
 }
 
 bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if ((static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative)
+        || static_cast<const ExpressionNode *>(child)->type() == ExpressionNode::Type::Opposite)
+  {
+    if (child == childAtIndex(0)) {
+      return false;
+    }
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
+  Type types[] = {Type::Subtraction, Type::Addition};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 2);
 }
 
 Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

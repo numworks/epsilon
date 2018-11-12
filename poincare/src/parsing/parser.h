@@ -66,7 +66,7 @@ private:
   Expression parseCommaSeparatedList();
   bool currentTokenIsReservedFunction(const Expression::FunctionHelper * const * * functionHelper) const;
   void parseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
-  bool isSpecialIdentifier() const;
+  bool currentTokenIsSpecialIdentifier() const;
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);

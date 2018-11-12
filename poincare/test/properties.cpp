@@ -83,7 +83,7 @@ QUIZ_CASE(poincare_characteristic_range) {
 void assert_parsed_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  constexpr static int k_maxVariableSize = 10;
+  constexpr static int k_maxVariableSize = Poincare::SymbolAbstract::k_maxNameSize;
   char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
   Shared::GlobalContext globalContext;
   int numberOfVariables = e.getVariables(globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);

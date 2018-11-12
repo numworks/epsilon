@@ -103,6 +103,11 @@ bool App::textInputIsCorrect(const char * text) {
   if (length >= Calculation::k_printedExpressionSize-1) {
     return false;
   }
+  exp = Expression::parse(buffer);
+  if (exp.isUninitialized()) {
+    // The ans replacement made the expression unparsable
+    return false;
+  }
   return true;
 }
 

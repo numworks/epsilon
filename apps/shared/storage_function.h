@@ -8,10 +8,16 @@ namespace Shared {
 
 class StorageFunction : public StorageExpressionModel {
 public:
+  enum class NameNotCompliantError {
+    None = 0,
+    CharacterNotAllowed,
+    NameCannotStartWithNumber,
+    ReservedName
+  };
   constexpr static int k_parenthesedArgumentLength = 3;
   static char k_parenthesedArgument[k_parenthesedArgumentLength+1];
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
-  static bool BaseNameCompliant(const char * baseName);
+  static bool BaseNameCompliant(const char * baseName, NameNotCompliantError * error = nullptr);
 
   // Constructors
   StorageFunction(Ion::Storage::Record record) : StorageExpressionModel(record){}

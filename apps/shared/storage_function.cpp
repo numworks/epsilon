@@ -11,11 +11,16 @@ namespace Shared {
 
 char StorageFunction::k_parenthesedArgument[]("(x)");
 
-bool StorageFunction::BaseNameCompliant(const char * baseName) {
-  if (baseName[0] == 0 || (baseName[0] >= '0' && baseName[0] <= '9')) {
-    // The name cannot be empty nor start with a number
+bool StorageFunction::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
+  assert(baseName[0] != 0);
+  if (baseName[0] >= '0' && baseName[0] <= '9') {
+    // The name cannot start with a number
+    if (error != nullptr) {
+      *error = NameNotCompliantError::NameCannotStartWithNumber;
+    }
     return false;
   }
+
   const char * currentChar = baseName;
 
   // The name should only have allowed characters
@@ -23,7 +28,11 @@ bool StorageFunction::BaseNameCompliant(const char * baseName) {
     if (!((*currentChar >= 'A' && *currentChar <= 'Z')
         || (*currentChar >= 'a' && *currentChar <= 'z')
         || (*currentChar >= '0' && *currentChar <= '9')
-        || *currentChar == '_')) {
+        || *currentChar == '_'))
+    {
+      if (error != nullptr) {
+        *error = NameNotCompliantError::CharacterNotAllowed;
+      }
       return false;
     }
     currentChar++;
@@ -31,6 +40,9 @@ bool StorageFunction::BaseNameCompliant(const char * baseName) {
 
   // The name should not be a reserved name
   if (Parser::IsReservedName(baseName, strlen(baseName))) {
+    if (error != nullptr) {
+      *error = NameNotCompliantError::ReservedName;
+    }
     return false;
   }
   return true;

@@ -3,6 +3,7 @@
 
 #include "equation.h"
 #include "../shared/expression_model_store.h"
+#include <poincare/symbol_abstract.h>
 #include <stdint.h>
 
 namespace Solver {
@@ -85,7 +86,7 @@ private:
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
-  char m_variables[Poincare::Expression::k_maxNumberOfVariables][Equation::k_maxVariableSize];
+  char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];

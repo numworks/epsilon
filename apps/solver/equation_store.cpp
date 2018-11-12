@@ -107,13 +107,13 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
     }
-    numberOfVariables = e.getVariables(*context, [](const char * symbol) { return true; }, (char *)m_variables, Equation::k_maxVariableSize);
+    numberOfVariables = e.getVariables(*context, [](const char * symbol) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize);
     if (numberOfVariables == -1) {
       return Error::TooManyVariables;
     }
-    if (numberOfVariables == -2) {
-      return Error::VariableNameTooLong;
-    }
+    /* The equation has been parsed so there should be no
+     * Error::VariableNameTooLong*/
+    assert(numberOfVariables >= 0);
   }
 
   /* 1- Linear System? */
@@ -124,7 +124,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients((char *)m_variables, Equation::k_maxVariableSize, coefficients[i], &constants[i], *context, preferences->angleUnit());
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], *context, preferences->angleUnit());
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0

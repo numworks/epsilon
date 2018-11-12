@@ -7,6 +7,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -155,17 +156,17 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
       symbolCell->setFont(KDFont::LargeFont);
-      char bufferSymbol[Equation::k_maxVariableSize+1]; // Hold at maximum Delta = b^2-4ac or the variable name + a digit
+      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+1]; // Hold at maximum Delta = b^2-4ac or the variable name + a digit
       switch (m_equationStore->type()) {
         case EquationStore::Type::LinearSystem:
           /* The system has more than one variable: the cell text is the
            * variable name */
-          strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Equation::k_maxVariableSize);
+          strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Poincare::SymbolAbstract::k_maxNameSize);
           break;
         default:
           /* The system has one variable but might have many solutions: the cell
            * text is variableX, with X the row index. For instance, x0, x1,...*/
-          int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Equation::k_maxVariableSize);
+          int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Poincare::SymbolAbstract::k_maxNameSize);
           bufferSymbol[length++] = j+'0';
           bufferSymbol[length] = 0;
           break;

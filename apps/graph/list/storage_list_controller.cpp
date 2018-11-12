@@ -58,7 +58,8 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   GlobalContext::DestroyRecordsBaseNamedWithoutExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/);
 
   // Set the name
-  Ion::Storage::Record::ErrorStatus error =  StorageFunction::BaseNameCompliant(baseName) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
+  StorageFunction::NameNotCompliantError nameError = StorageFunction::NameNotCompliantError::None;
+  Ion::Storage::Record::ErrorStatus error = StorageFunction::BaseNameCompliant(baseName, &nameError) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, GlobalContext::funcExtension /*TODO store elsewhere?*/) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
@@ -85,7 +86,15 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Ion::Storage::Record::ErrorStatus::NonCompliantName) {
-    app()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
+    assert(nameError != StorageFunction::NameNotCompliantError::None);
+    if (nameError == StorageFunction::NameNotCompliantError::CharacterNotAllowed) {
+      app()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
+    } else if (nameError == StorageFunction::NameNotCompliantError::NameCannotStartWithNumber) {
+      app()->displayWarning(I18n::Message::NameCannotStartWithNumber);
+    } else {
+      assert(nameError == StorageFunction::NameNotCompliantError::ReservedName);
+      app()->displayWarning(I18n::Message::ReservedName);
+    }
   } else {
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     app()->displayWarning(I18n::Message::NameTooLong);
@@ -104,6 +113,13 @@ bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
 
 bool StorageListController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::Up || event == Ion::Events::Down || Shared::TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+}
+
+bool StorageListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
+    return false;
+  }
+  return Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }
 
 StorageListParameterController * StorageListController::parameterController() {

@@ -31,6 +31,7 @@ public:
   Status getStatus() const { return m_status; }
 
   static bool IsReservedFunctionName(const char * name, size_t nameLength, const Expression::FunctionHelper * const * * functionHelper = nullptr);
+  static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
 
 private:
   Expression parseUntil(Token::Type stoppingType);

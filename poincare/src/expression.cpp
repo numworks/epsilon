@@ -354,6 +354,9 @@ Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angl
 #endif
 
   deepReduceChildren(context, angleUnit, replaceSymbols);
+  if (sSimplificationHasBeenInterrupted) {
+    return *this;
+  }
   return shallowReduce(context, angleUnit, replaceSymbols);
 }
 

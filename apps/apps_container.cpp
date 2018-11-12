@@ -145,10 +145,21 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   window()->redraw(true);
 }
 
+void AppsContainer::updateLED() {
+  if (Ion::USB::isPlugged()) {
+    Ion::LED::setColor(Ion::Battery::isCharging() ? KDColorYellow : KDColorGreen);
+  } else {
+    Ion::LED::setColor(KDColorBlack);
+  }
+}
+
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = updateAlphaLock();
   bool didProcessEvent = false;
 
+  if (event == Ion::Events::USBEnumeration || event == Ion::Events::USBPlug || event == Ion::Events::BatteryCharging) {
+    updateLED();
+  }
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
@@ -158,6 +169,8 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
          * event loop, we update the battery state "manually" here. */
         updateBatteryState();
         Ion::USB::DFU();
+        // Update LED when exciting DFU mode
+        updateLED();
         bool switched = switchTo(activeSnapshot);
         assert(switched);
         (void) switched; // Silence compilation warning about unused variable.

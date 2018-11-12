@@ -328,14 +328,27 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
   }
   /* Replace all the symbols iteratively. If we make too many replacements, the
    * symbols are likely to be defined circularly, in which case we return an
-   * uninitialized expression.*/
-  int replacementCount = 0;
+   * uninitialized expression.
+   * We need a static "replacement count" to aggregate all calls to
+   * ExpressionWithoutSymbols, as this method might be called from
+   * hasReplaceableSymbols. */
+  static int replacementCount = 0;
+  static bool lock = false;
+  bool unlock = false;
+  if (!lock) {
+    replacementCount = 0;
+    lock = true;
+    unlock = true;
+  }
   while (e.hasReplaceableSymbols(context)) {
     replacementCount++;
     if (replacementCount > k_maxSymbolReplacementsCount) {
       return Expression();
     }
     e = e.replaceReplaceableSymbols(context);
+  }
+  if (unlock) {
+    lock = false;
   }
   return e;
 }

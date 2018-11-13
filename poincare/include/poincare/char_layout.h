@@ -17,6 +17,7 @@ public:
 
   // CharLayout
   virtual void setChar(char c) { m_char = c; }
+  char character() const { return m_char; }
   const KDFont * font() const { return m_font; }
   void setFont(const KDFont * font) { m_font = font; }
 
@@ -24,6 +25,7 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  bool isChar() const override { return true; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
   // TreeNode
@@ -55,8 +57,10 @@ private:
 
 class CharLayout final : public Layout {
 public:
+  CharLayout(const CharLayoutNode * n) : Layout(n) {}
   CharLayout(char c, const KDFont * font = KDFont::LargeFont);
   const KDFont * font() const { return const_cast<CharLayout *>(this)->node()->font(); }
+  char character() const {return const_cast<CharLayout *>(this)->node()->character();}
 private:
   using Layout::node;
   CharLayoutNode * node() { return static_cast<CharLayoutNode *>(Layout::node());}

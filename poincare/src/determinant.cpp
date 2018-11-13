@@ -49,7 +49,7 @@ Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit 
 #endif
 #endif
   // det(A) = A if A is not a matrix
-  if (!c0.recursivelyMatches(Expression::IsMatrix, context)) {
+  if (!c0.recursivelyMatches(Expression::IsMatrix, context, true)) {
     replaceWithInPlace(c0);
     return c0;
   }

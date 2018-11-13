@@ -74,12 +74,12 @@ bool Expression::isRationalOne() const {
   return type() == ExpressionNode::Type::Rational && convert<const Rational>().isOne();
 }
 
-bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
-  if (test(*this, context)) {
+bool Expression::recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols) const {
+  if (test(*this, context, replaceSymbols)) {
     return true;
   }
   for (int i = 0; i < this->numberOfChildren(); i++) {
-    if (childAtIndex(i).recursivelyMatches(test, context)) {
+    if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols)) {
       return true;
     }
   }
@@ -87,19 +87,20 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 }
 
 bool Expression::isApproximate(Context & context) const {
-  return recursivelyMatches([](const Expression e, Context & context) {
+  return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
       return e.type() == ExpressionNode::Type::Decimal
       || e.type() == ExpressionNode::Type::Float
-        || IsMatrix(e, context)
+        || IsMatrix(e, context, replaceSymbols)
         || (e.type() == ExpressionNode::Type::Symbol
+            && replaceSymbols
             && static_cast<const Symbol&>(e).matches(
-              [](const Expression e, Context & context) {
+              [](const Expression e, Context & context, bool replaceSymbols) {
               return e.isApproximate(context); },
               context));
-        }, context);
+        }, context, true);
 }
 
-bool Expression::IsMatrix(const Expression e, Context & context) {
+bool Expression::IsMatrix(const Expression e, Context & context, bool replaceSymbols) {
   return e.type() == ExpressionNode::Type::Matrix
     || e.type() == ExpressionNode::Type::ConfidenceInterval
     || e.type() == ExpressionNode::Type::MatrixDimension
@@ -107,12 +108,13 @@ bool Expression::IsMatrix(const Expression e, Context & context) {
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixTranspose
     || (e.type() == ExpressionNode::Type::Symbol
+        && replaceSymbols
         && static_cast<const Symbol&>(e).matches(
-          [](const Expression e, Context & context) {
+          [](const Expression e, Context & context, bool replaceSymbols) {
           return e.recursivelyMatches(
-              [](const Expression e, Context & context) {
-              return Expression::IsMatrix(e, context); },
-              context);
+              [](const Expression e, Context & context, bool replaceSymbols) {
+              return Expression::IsMatrix(e, context, replaceSymbols); },
+              context, replaceSymbols);
           }, context));
 }
 
@@ -135,7 +137,7 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
 }
 
 bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
-  assert(!recursivelyMatches(IsMatrix, context));
+  assert(!recursivelyMatches(IsMatrix, context, true));
   // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
   int index = 0;
   while (variables[index*maxVariableSize] != 0) {
@@ -161,7 +163,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
         /* degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
-        assert(!recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Undefined; }, context));
+        assert(!recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Undefined; }, context, true));
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
@@ -222,12 +224,12 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 }
 
 bool Expression::hasReplaceableSymbols(Context & context) const {
-  return recursivelyMatches([](const Expression e, Context & context) {
+  return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
       return (e.type() == ExpressionNode::Type::Symbol
           && !context.expressionForSymbol(static_cast<const Symbol &>(e)).isUninitialized())
       || (e.type() == ExpressionNode::Type::Function
            && !context.expressionForSymbol(static_cast<const Function &>(e)).isUninitialized());
-      }, context);
+      }, context, false);
 }
 
 Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
@@ -360,7 +362,7 @@ Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUni
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
 #if MATRIX_EXACT_REDUCING
 #else
-  if (IsMatrix(*this, context)) {
+  if (IsMatrix(*this, context, replaceSymbols)) {
     sSimplificationHasBeenInterrupted = true;
     return *this;
   }

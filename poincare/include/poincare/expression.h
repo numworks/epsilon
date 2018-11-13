@@ -114,10 +114,10 @@ public:
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   bool isRationalOne() const;
-  typedef bool (*ExpressionTest)(const Expression e, Context & context);
-  bool recursivelyMatches(ExpressionTest test, Context & context) const;
+  typedef bool (*ExpressionTest)(const Expression e, Context & context, bool replaceSymbols);
+  bool recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols) const;
   bool isApproximate(Context & context) const;
-  static bool IsMatrix(const Expression e, Context & context);
+  static bool IsMatrix(const Expression e, Context & context, bool replaceSymbols);
   /* 'characteristicXRange' tries to assess the range on x where the expression
    * (considered as a function on x) has an interesting evolution. For example,
    * the period of the function on 'x' if it is periodic. If

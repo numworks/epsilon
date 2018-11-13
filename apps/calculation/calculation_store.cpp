@@ -96,9 +96,9 @@ Expression CalculationStore::ansExpression(Context * context) {
    * To avoid turning 'ans->A' in '2->A->A' (or 2->A=A) which cannot be parsed),
    * ans is replaced by the approximation output in when any Store or Equal
    * expression appears.*/
-  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput().recursivelyMatches([](const Expression e, Context & context) {
-      return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
-      }, *context);
+  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput().recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
+          return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
+        }, *context, false);
   if (lastCalculation->input().isApproximate(*context) || exactOuptutInvolvesStoreEqual) {
     return lastCalculation->approximateOutput(context);
   }

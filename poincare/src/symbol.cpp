@@ -159,7 +159,7 @@ bool Symbol::isRegressionSymbol(const char * c) {
 bool Symbol::matches(ExpressionTest test, Context & context) const {
   Expression e = context.expressionForSymbol(*this);
   e = ExpressionWithoutSymbols(e, context);
-  return !e.isUninitialized() && test(e, context);
+  return !e.isUninitialized() && test(e, context, true);
 }
 
 Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

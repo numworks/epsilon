@@ -54,12 +54,12 @@ KDCoordinate Calculation::height(Context * context) {
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     Layout approximateLayout = createApproximateOutputLayout(context);
     Layout exactLayout = createExactOutputLayout();
-    if (shouldOnlyDisplayApproximateOutput(context)) {
-      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
-      m_height = inputHeight+approximateOutputHeight;
-    } else if (shouldOnlyDisplayExactOutput()) {
+    if (shouldOnlyDisplayExactOutput()) {
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       m_height = inputHeight+exactOutputHeight;
+    } else if (shouldOnlyDisplayApproximateOutput(context)) {
+      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
+      m_height = inputHeight+approximateOutputHeight;
     } else {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
@@ -138,6 +138,9 @@ Layout Calculation::createApproximateOutputLayout(Context * context) {
 }
 
 bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
+  if (shouldOnlyDisplayExactOutput()) {
+    return false;
+  }
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     return true;
   }

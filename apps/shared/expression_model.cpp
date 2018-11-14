@@ -21,7 +21,7 @@ const char * ExpressionModel::text() const {
 
 Poincare::Expression ExpressionModel::expression(Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
-    m_expression = PoincareHelpers::ParseAndSimplify(m_text, *context);
+    m_expression = Expression::parse(m_text);
   }
   return m_expression;
 }

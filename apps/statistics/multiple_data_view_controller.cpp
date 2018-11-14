@@ -30,8 +30,8 @@ void MultipleDataViewController::viewWillAppear() {
   multipleDataView()->setDisplayBanner(true);
   if (*m_selectedSeriesIndex < 0) {
     *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
-    multipleDataView()->selectDataView(*m_selectedSeriesIndex);
   }
+  multipleDataView()->selectDataView(*m_selectedSeriesIndex);
   reloadBannerView();
   multipleDataView()->reload();
 }

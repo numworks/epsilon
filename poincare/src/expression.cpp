@@ -317,11 +317,10 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
 Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   sSimplificationHasBeenInterrupted = false;
   Expression e = reduce(context, angleUnit, replaceSymbols);
-  e = e.deepBeautify(context, angleUnit);
-  if (sSimplificationHasBeenInterrupted) {
-    return Expression();
+  if (!sSimplificationHasBeenInterrupted) {
+    e = e.deepBeautify(context, angleUnit);
   }
-  return e;
+  return sSimplificationHasBeenInterrupted ? Expression() : e;
 }
 
 Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context) {

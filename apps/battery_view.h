@@ -5,7 +5,11 @@
 
 class BatteryView : public TransparentView {
 public:
-  BatteryView();
+  BatteryView() :
+    m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
+    m_isCharging(false),
+    m_isPlugged(false)
+  {}
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);

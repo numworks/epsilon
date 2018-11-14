@@ -165,7 +165,6 @@ bool Symbol::matches(ExpressionTest test, Context & context) const {
 }
 
 Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  assert(strcmp(name(), k_ans) != 0);
   if (!replaceSymbols) {
     return *this;
   }

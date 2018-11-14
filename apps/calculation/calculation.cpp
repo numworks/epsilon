@@ -151,6 +151,8 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
+  /* If the input has a "sto", we do not want to display the approximate output.
+   * This prevents x->f(x) from displaying x RoundEqual undef. */
   return strchr(m_inputText, Ion::Charset::Sto) != nullptr;
 }
 

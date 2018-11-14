@@ -72,7 +72,7 @@ void MultipleDataView::layoutDataSubviews() {
   int numberDataSubviews = m_store->numberOfNonEmptySeries();
   assert(numberDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
-  KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberDataSubviews;
+  KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberDataSubviews + 1; // +1 to make sure that all pixel rows are drawn
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (!m_store->seriesIsEmpty(i)) {

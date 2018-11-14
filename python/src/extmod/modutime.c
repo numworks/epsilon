@@ -34,7 +34,7 @@
 
 void delay_ms(mp_uint_t delay) {
     uint32_t start = millis();
-    while (millis() - start < delay && !micropython_port_should_interrupt(true)) {
+    while (millis() - start < delay && !micropython_port_should_interrupt()) {
       msleep(1);
     }
 }

@@ -127,6 +127,8 @@ Expression SymbolNode::replaceReplaceableSymbols(Context & context) {
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = context.expressionForSymbol(Symbol(this));
+  /* Replace all the symbols iteratively. This prevents a memory failure when
+   * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
@@ -168,9 +170,9 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
     return *this;
   }
   Expression result = context.expressionForSymbol(*this);
-  // The stored expression is beautified, so we need to call reduce
-  /* First, replace all the symbols iteratively. This prevents a memory
-   * failure symbols are defined circularly. */
+  /* The stored expression is as entered by the user, so we need to call reduce
+   * First, replace all the symbols iteratively. This prevents a memory failure
+   * when symbols are defined circularly. */
   result = ExpressionWithoutSymbols(result, context);
   if (result.isUninitialized()) {
     return *this;

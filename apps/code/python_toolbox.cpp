@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Code {
 
-static constexpr int catalogChildrenCount = 96;
+static constexpr int catalogChildrenCount = 95;
 static constexpr int MathModuleChildrenCount = 43;
 static constexpr int KandinskyModuleChildrenCount = 7;
 static constexpr int CMathModuleChildrenCount = 13;
@@ -19,9 +19,8 @@ static constexpr int functionsChildrenCount = 2;
 static constexpr int ifStatementChildrenCount = 5;
 static constexpr int loopsAndTestsChildrenCount = 4;
 static constexpr int menuChildrenCount = 4;
-static constexpr int modulesChildrenCount = 5;
+static constexpr int modulesChildrenCount = 4;
 static constexpr int whileLoopChildrenCount = 1;
-static constexpr int TimeModuleChildrenCount = 6;
 
 
 const ToolboxMessageTree forLoopChildren[forLoopChildrenCount] = {
@@ -124,15 +123,6 @@ const ToolboxMessageTree RandomModuleChildren[RandomModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandUniform, I18n::Message::PythonUniform, I18n::Message::PythonCommandUniform)
 };
 
-const ToolboxMessageTree TimeModuleChildren[TimeModuleChildrenCount] = {
-  ToolboxMessageTree(I18n::Message::PythonCommandImportTime, I18n::Message::PythonImportTime, I18n::Message::PythonCommandImportTime),
-  ToolboxMessageTree(I18n::Message::PythonCommandImportFromTime, I18n::Message::PythonImportFromTime, I18n::Message::PythonCommandImportFromTime),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeFunction, I18n::Message::PythonTimeFunction, I18n::Message::PythonCommandTimeFunctionWithoutArg),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeSleep, I18n::Message::PythonTimeSleep, I18n::Message::PythonCommandTimeSleep),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeClock, I18n::Message::PythonTimeClock, I18n::Message::PythonCommandTimeClock),
-  ToolboxMessageTree(I18n::Message::PythonCommandTimeTime, I18n::Message::PythonTimeClock, I18n::Message::PythonCommandTimeTime)
-};
-
 const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandImportCmath, I18n::Message::PythonImportCmath, I18n::Message::PythonCommandImportCmath),
   ToolboxMessageTree(I18n::Message::PythonCommandImportFromCmath, I18n::Message::PythonImportFromCmath, I18n::Message::PythonCommandImportFromCmath),
@@ -152,7 +142,6 @@ const ToolboxMessageTree modulesChildren[modulesChildrenCount] = {
   ToolboxMessageTree(I18n::Message::MathModule, I18n::Message::Default, I18n::Message::Default, MathModuleChildren, MathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::CmathModule, I18n::Message::Default, I18n::Message::Default, CMathModuleChildren, CMathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::RandomModule, I18n::Message::Default, I18n::Message::Default, RandomModuleChildren, RandomModuleChildrenCount),
-  ToolboxMessageTree(I18n::Message::TimeModule, I18n::Message::Default, I18n::Message::Default, TimeModuleChildren, TimeModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount)};
 
 const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
@@ -207,7 +196,6 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandImportKandinsky, I18n::Message::PythonImportKandinsky, I18n::Message::PythonCommandImportKandinsky),
   ToolboxMessageTree(I18n::Message::PythonCommandImportMath, I18n::Message::PythonImportMath, I18n::Message::PythonCommandImportMath),
   ToolboxMessageTree(I18n::Message::PythonCommandImportRandom, I18n::Message::PythonImportRandom, I18n::Message::PythonCommandImportRandom),
-  ToolboxMessageTree(I18n::Message::PythonCommandImportTime, I18n::Message::PythonImportTime, I18n::Message::PythonCommandImportTime),
   ToolboxMessageTree(I18n::Message::PythonCommandInput, I18n::Message::PythonInput, I18n::Message::PythonCommandInput),
   ToolboxMessageTree(I18n::Message::PythonCommandInt, I18n::Message::PythonInt, I18n::Message::PythonCommandInt),
   ToolboxMessageTree(I18n::Message::PythonCommandIsFinite, I18n::Message::PythonIsFinite, I18n::Message::PythonCommandIsFinite),
@@ -361,3 +349,4 @@ void PythonToolbox::scrollToAndSelectChild(int i) {
 }
 
 }
+

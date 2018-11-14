@@ -16,11 +16,11 @@ extern "C" {
 namespace Poincare {
 
 void StoreNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  Expression(this).defaultReduceChildren(context, angleUnit, false);
+  return;
 }
 
 void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  Expression(this).defaultDeepReduceChildren(context, angleUnit, false);
+  return;
 }
 
 Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
@@ -45,11 +45,8 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbol. */
   Store s(this);
-  Expression expressionToStore = s.value().clone().simplify(context, angleUnit, false);
-  if (expressionToStore.isUninitialized() || expressionToStore.isUndefined()) {
-    expressionToStore = s.value();
-  }
-  context.setExpressionForSymbol(expressionToStore, s.symbol(), context);
+  assert(!s.value().isUninitialized());
+  context.setExpressionForSymbol(s.value(), s.symbol(), context);
   Expression e = context.expressionForSymbol(s.symbol());
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
@@ -69,11 +66,8 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
     assert(symbol().type() == ExpressionNode::Type::Symbol);
     finalValue = childAtIndex(0);
   }
-  Expression expressionToStore = finalValue.clone().simplify(context, angleUnit, false);
-  if (expressionToStore.isUninitialized() || expressionToStore.isUndefined()) {
-    expressionToStore = finalValue;
-  }
-  context.setExpressionForSymbol(expressionToStore, symbol(), context);
+  assert(!finalValue.isUninitialized());
+  context.setExpressionForSymbol(finalValue, symbol(), context);
   Expression e = context.expressionForSymbol(symbol());
   if (e.isUninitialized()) {
     return Undefined();

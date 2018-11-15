@@ -17,6 +17,7 @@ ListParameterController::ListParameterController(ListController * listController
     Metric::CommonBottomMargin, Metric::CommonLeftMargin),
   m_sequence(nullptr)
 {
+  static_cast<ExpressionView *>(m_typeCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 const char * ListParameterController::title() {

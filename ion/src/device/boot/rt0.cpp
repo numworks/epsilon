@@ -1,10 +1,9 @@
-extern "C" {
-#include "rt0.h"
-}
+#include "isr.h"
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
 #include "../device.h"
+#include "../timing.h"
 #include "../console.h"
 
 typedef void (*cxx_constructor)();
@@ -93,8 +92,6 @@ void start() {
   abort();
 }
 
-volatile uint64_t millis_elapsed = 0;
-
-void __attribute__((interrupt)) sysTick() {
-  millis_elapsed++;
+void __attribute__((interrupt)) isr_systick() {
+  Ion::Timing::Device::MillisElapsed++;
 }

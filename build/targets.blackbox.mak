@@ -14,9 +14,9 @@ libepsilon_%.o: $(libepsilon_objs) $(app_objs) $(app_image_objs) ion/src/blackbo
 	@echo "LD      $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -r -s -o $@
 
-compare: ion/src/blackbox/compare.o libepsilon_first.o libepsilon_second.o
+compare: ion/src/blackbox/compare.o
 	@echo "LD      $@"
-	$(Q) $(LD) $^ $(LDFLAGS) -L. -o $@
+	$(Q) $(LD) $^ libepsilon_first.o libepsilon_second.o $(LDFLAGS) -L. -o $@
 
 # Integration tests
 
@@ -46,5 +46,15 @@ epsilon_fuzz: epsilon.$(EXE)
 	@afl-fuzz -i tests -o afl ./epsilon.$(EXE)
 else
 epsilon_fuzz:
+	@echo "Fuzzing requires TOOLCHAIN=afl"
+endif
+
+.PHONY: compare_fuzz
+ifeq ($(TOOLCHAIN),afl)
+compare_fuzz: compare
+	@echo "FUZZ    $<"
+	@afl-fuzz -t 3000 -i tests -o afl ./compare
+else
+compare_fuzz:
 	@echo "Fuzzing requires TOOLCHAIN=afl"
 endif

@@ -171,7 +171,6 @@ bool StorageFunctionGraphController::moveCursorVertically(int direction) {
       }
     }
     if (isNextFunction) {
-      selectFunctionWithCursor(i);
       nextY = newY;
       nextActiveFunctionIndex = i;
     }
@@ -179,6 +178,7 @@ bool StorageFunctionGraphController::moveCursorVertically(int direction) {
   if (nextActiveFunctionIndex < 0) {
     return false;
   }
+  selectFunctionWithCursor(nextActiveFunctionIndex);
   m_cursor->moveTo(m_cursor->x(), nextY);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;

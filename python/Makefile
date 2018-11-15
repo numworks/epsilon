@@ -146,6 +146,13 @@ MPYTOOL = python/src/tools/mpy-tool.py
 
 FROZEN_MPY_FILES = $(addprefix python/port/frozen/, turtle.mpy)
 
+ifeq ($(OS),Windows_NT)
+  HOSTMPY_EXTRA_SOURCES = python/src/ports/windows/fmode.c
+  products += python/src/ports/windows/fmode.o
+else
+  HOSTMPY_EXTRA_SOURCES =
+endif
+
 python/port/frozen/%.mpy: python/port/frozen/%.py $(HOSTMPY)
 	@echo "HOSTMPY $@"
 	$(Q) $(HOSTMPY) -s $(notdir $<) -O3 -o $@ $<
@@ -155,7 +162,7 @@ python/port/frozen/frozen.c: $(FROZEN_MPY_FILES) python/port/genhdr/qstrdefs.in.
 	@echo "GEN     $@"
 	$(Q) $(MPYTOOL) -f -q python/port/genhdr/qstrdefs.in.h $(MPYTOOL_FLAGS) $(FROZEN_MPY_FILES) > $@
 
-$(HOSTMPY): $(addprefix python/src/mpy-cross/, main.c gccollect.c) $(wildcard python/src/py/*.c)
+$(HOSTMPY): $(addprefix python/src/mpy-cross/, main.c gccollect.c) $(wildcard python/src/py/*.c) $(HOSTMPY_EXTRA_SOURCES)
 	@echo "HOSTCC  $@"
 	$(Q) $(HOSTCC) -Ipython/src/mpy-cross -Ipython/src -O3 --std=gnu99 $^ -lm -o $@
 

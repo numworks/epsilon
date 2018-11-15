@@ -74,11 +74,6 @@ QUIZ_CASE(equation_solve) {
   const char * equations0[] = {"x+y+z+a+b+c+d=0", 0};
   assert_equation_system_exact_solve_to(equations0, EquationStore::Error::TooManyVariables, EquationStore::Type::LinearSystem, (const char **)variables1, nullptr, 0);
 
-  // tototototot = 0
-  /* The variable name being too long, the expression 'tototototot = 0' cannot be defined. */
-  const char * equations01[] = {"tototototot=0", 0};
-  assert_equation_system_exact_solve_to(equations01, EquationStore::Error::EquationUndefined, EquationStore::Type::LinearSystem, (const char **)variables1, nullptr, 0);
-
   // x^2+y = 0
   const char * equations1[] = {"x^2+y=0", 0};
   assert_equation_system_exact_solve_to(equations1, EquationStore::Error::NonLinearSystem, EquationStore::Type::LinearSystem, (const char **)variables1, nullptr, 0);

@@ -59,7 +59,6 @@ __ZThn36_N4Code17ConsoleController9inputTextEPKc \
 __ZZN4Code14MenuControllerC1EP9ResponderPNS_11ScriptStoreEP19ButtonRowControllerbEN3__08__invokeEPvS8_ \
 __ZZN4Code14MenuControllerC1EP9ResponderPNS_11ScriptStoreEP19ButtonRowControllerbENK3__0clEPvS8_ \
 _delay_ms \
-_delay_us \
 _do_load \
 _do_load_from_lexer \
 _fun_bc_call \

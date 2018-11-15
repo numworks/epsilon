@@ -204,6 +204,9 @@ int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName
 }
 
 Expression Symbol::replaceReplaceableSymbols(Context & context) {
+  if (isSystemSymbol()) {
+    return *this;
+  }
   Expression e = context.expressionForSymbol(*this);
   if (e.isUninitialized()) {
     return *this;

@@ -1,10 +1,21 @@
 /* Compare two Epsilon versions
  *
- * git checkout first_hash
- * make -j8 PLATFORM=blackbox clean libepsilon_first.dylib
- * git checkout second_hash
- * make -j8 PLATFORM=blackbox clean libepsilon_second.dylib
- * make PLATFORM=blackbox compare
+ * This tool compares the frames step-by-step of scenarios played on two
+ * different epsilon versions, and shows the first frame where pixels differ
+ * between the versions.
+ *
+ * To use it, first create the two epsilon versions to compare, in a library
+ * format:
+ *      git checkout first_hash
+ *      make -j8 PLATFORM=blackbox clean libepsilon_first.o
+ *      git checkout second_hash
+ *      make -j8 PLATFORM=blackbox clean libepsilon_second.o
+ *
+ * To compare the versions on a given scenario:
+ *      make -j8 PLATFORM=blackbox compare
+ *      ./compare path/to/scenario
+ * To fuzz over scenarios that are in a folder named "tests":
+ *      make -j8 PLATFORM=blackbox TOOLCHAIN=afl compare_fuzz
  */
 
 #undef EPSILON_LIB_PREFIX
@@ -49,4 +60,5 @@ int main(int argc, char * argv[]) {
 
   first.join();
   second.join();
+  exit(0);
 }

@@ -1,6 +1,7 @@
 #include <ion/usb.h>
 #include <string.h>
 #include <assert.h>
+#include <ion/src/device/device.h>
 
 extern char _stack_end;
 extern char _dfu_bootloader_flash_start;
@@ -47,7 +48,12 @@ void DFU() {
 
   memcpy(dfu_bootloader_ram_start, &_dfu_bootloader_flash_start, dfu_bootloader_size);
 
-  /* 4- Jump to DFU bootloader code. We made sure in the linker script that the
+  /* 4- Disable all interrupts
+   * The interrupt service routines live in the Flash and could be overwritten
+   * by garbage during a firmware upgrade opration, so we disable them. */
+  Device::shutdownSysTick();
+
+  /* 5- Jump to DFU bootloader code. We made sure in the linker script that the
    * first function we want to call is at the beginning of the DFU code. */
 
   PollFunctionPointer dfu_bootloader_entry = reinterpret_cast<PollFunctionPointer>(dfu_bootloader_ram_start);
@@ -63,7 +69,10 @@ void DFU() {
 
   dfu_bootloader_entry(true);
 
-  /* 5- That's all. The DFU bootloader on the stack is now dead code that will
+  /* 5- Restore interrupts */
+  Device::initSysTick();
+
+  /* 6- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */
 }
 

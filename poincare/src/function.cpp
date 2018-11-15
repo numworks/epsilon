@@ -55,9 +55,25 @@ float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUn
 }
 
 VariableContext FunctionNode::xContext(Context & parentContext) const {
+  Symbol unknownXSymbol(Symbol::SpecialSymbols::UnknownX);
+  Expression child = Expression(childAtIndex(0));
   const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
   VariableContext xContext = VariableContext(x, &parentContext);
-  xContext.setExpressionForSymbol(Expression(childAtIndex(0)), Symbol(x, 1), xContext);
+
+  /* If the parentContext already has an expression for UnknownX, we have to
+   * replace in childAtIndex(0) any occurence of UnknownX by its value in
+   * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
+  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol);
+  if (!unknownXValue.isUninitialized()) {
+    xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
+    child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);
+  }
+  /* We here assert that child contains no occurrence of UnknownX to avoid
+   * creating an infinite loop (for instance: unknownXSymbol = unknownXSymbol+2). */
+  assert(!child.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
+        return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol &>(e).isSystemSymbol();
+      }, parentContext, false));
+  xContext.setExpressionForSymbol(child, unknownXSymbol, xContext);
   return xContext;
 }
 

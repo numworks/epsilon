@@ -24,9 +24,10 @@ public:
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
+  virtual void highlightSelection() {}
   virtual Responder * tabController() const = 0;
   virtual void reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;

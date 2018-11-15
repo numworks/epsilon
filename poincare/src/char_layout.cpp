@@ -71,7 +71,7 @@ KDSize CharLayoutNode::computeSize() {
 }
 
 KDCoordinate CharLayoutNode::computeBaseline() {
-  return (m_font->glyphSize().height()+1)/2; //TODO +1 ?
+  return m_font->glyphSize().height()/2;
 }
 
 void CharLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

@@ -138,19 +138,45 @@ bool StorageFunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
   StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
   double y = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(currentActiveFunctionIndex))->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-  int nextActiveFunctionIndex = currentActiveFunctionIndex;
+  int nextActiveFunctionIndex = -1;
   double nextY = direction > 0 ? DBL_MAX : -DBL_MAX;
   int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < activeFunctionsCount; i++) {
+    if (i == currentActiveFunctionIndex) {
+      continue;
+    }
     double newY = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i))->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-    bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
+    bool isNextFunction = false;
+    /* Choosing the next function to select quite complex because we need to
+     * take care of functions that have the same values at the current x. When
+     * moving up, if several functions have the same value, we select the
+     * function of higher index. When going down, we select the function of
+     * lower index. */
+    if (direction > 0) {
+      if (newY > y && newY < nextY) {
+        isNextFunction = true;
+      } else if (newY == nextY) {
+        assert(i > nextActiveFunctionIndex);
+        isNextFunction = true;
+      } else if (newY == y && i < currentActiveFunctionIndex) {
+        isNextFunction = true;
+      }
+    } else {
+      if (newY < y && newY > nextY) {
+        isNextFunction = true;
+      } else if (newY == nextY) {
+        assert(i > nextActiveFunctionIndex);
+      } else if (newY == y && i > currentActiveFunctionIndex) {
+        isNextFunction = true;
+      }
+    }
     if (isNextFunction) {
       selectFunctionWithCursor(i);
       nextY = newY;
       nextActiveFunctionIndex = i;
     }
   }
-  if (nextActiveFunctionIndex == currentActiveFunctionIndex) {
+  if (nextActiveFunctionIndex < 0) {
     return false;
   }
   m_cursor->moveTo(m_cursor->x(), nextY);

@@ -226,6 +226,7 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 bool Expression::hasReplaceableSymbols(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
       return (e.type() == ExpressionNode::Type::Symbol
+          && !static_cast<const Symbol &>(e).isSystemSymbol()
           && !context.expressionForSymbol(static_cast<const Symbol &>(e)).isUninitialized())
       || (e.type() == ExpressionNode::Type::Function
            && !context.expressionForSymbol(static_cast<const Function &>(e)).isUninitialized());

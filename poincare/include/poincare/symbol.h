@@ -70,6 +70,7 @@ public:
     return Expression();
   }
   // Symbol properties
+  bool isSystemSymbol() const { return name()[0] == SpecialSymbols::UnknownX && name()[1] == 0; }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
   bool matches(ExpressionTest test, Context & context) const;

@@ -15,8 +15,8 @@ QUIZ_CASE(poincare_store_evaluate) {
 }
 
 QUIZ_CASE(poincare_store_simplify) {
-  assert_parsed_expression_simplify_to("1+2>A", "3");
-  assert_parsed_expression_simplify_to("1+2>x", "3");
+  assert_parsed_expression_simplify_to("1+2>A", "1+2");
+  assert_parsed_expression_simplify_to("1+2>x", "1+2");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("A.exp").destroy();
@@ -25,7 +25,7 @@ QUIZ_CASE(poincare_store_simplify) {
 
 QUIZ_CASE(poincare_store_matrix) {
   assert_parsed_expression_evaluates_to<double>("[[7]]>a", "[[7]]");
-  assert_parsed_expression_simplify_to("1+1>a", "2");
+  assert_parsed_expression_simplify_to("1+1>a", "1+1");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -33,7 +33,7 @@ QUIZ_CASE(poincare_store_matrix) {
 
 QUIZ_CASE(poincare_store_user_variable) {
   // Fill variable
-  assert_parsed_expression_simplify_to("1+2>Adadas", "3");
+  assert_parsed_expression_simplify_to("1+2>Adadas", "1+2");
   assert_parsed_expression_simplify_to("Adadas", "3");
 
   // Fill f1
@@ -42,7 +42,7 @@ QUIZ_CASE(poincare_store_user_variable) {
   assert_parsed_expression_simplify_to("f1(Adadas)", "4");
 
   // Fill f2
-  assert_parsed_expression_simplify_to("x-1>f2(x)", "(-1)+x");
+  assert_parsed_expression_simplify_to("x-1>f2(x)", "x-1");
   assert_parsed_expression_simplify_to("f2(4)", "3");
   assert_parsed_expression_simplify_to("f2(Adadas)", "2");
 

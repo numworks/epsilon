@@ -125,6 +125,26 @@ QUIZ_CASE(poincare_store_3_circular_variables) {
   Ion::Storage::sharedStorage()->recordNamed("c.exp").destroy();
 }
 
+QUIZ_CASE(poincare_store_1_circular_function) {
+  // g: x -> f(x)+1
+  assert_simplify("f(x)+1>g(x)");
+  assert_parsed_expression_evaluates_to<double>("g(1)", "undef");
+  // f: x -> x+1
+  assert_simplify("x+1>f(x)");
+  assert_parsed_expression_evaluates_to<double>("g(1)", "3");
+  assert_parsed_expression_evaluates_to<double>("f(1)", "2");
+  // h: x -> h(x)
+  assert_simplify("h(x)>h(x)");
+  assert_parsed_expression_evaluates_to<double>("f(1)", "2");
+  assert_parsed_expression_evaluates_to<double>("g(1)", "3");
+  assert_parsed_expression_evaluates_to<double>("h(1)", "undef");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("h.func").destroy();
+}
+
 QUIZ_CASE(poincare_store_2_circular_functions) {
   assert_simplify("f(x)>g(x)");
   assert_simplify("g(x)>f(x)");

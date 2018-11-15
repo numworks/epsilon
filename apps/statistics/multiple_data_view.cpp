@@ -5,6 +5,11 @@ using namespace Shared;
 
 namespace Statistics {
 
+void MultipleDataView::setDisplayBanner(bool display) {
+  m_displayBanner = display;
+  layoutBanner();
+}
+
 void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {

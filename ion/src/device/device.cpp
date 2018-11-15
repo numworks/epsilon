@@ -28,18 +28,18 @@ extern "C" {
  * optimizations chosen by the compiler. To prevent that and to gain in
  * precision, we could use the controller cycle counter (Systick). */
 
-void Ion::msleep(long ms) {
-  for (volatile long i=0; i<8852*ms; i++) {
+void Ion::msleep(uint32_t ms) {
+  for (volatile uint32_t i=0; i<8852*ms; i++) {
       __asm volatile("nop");
   }
 }
-void Ion::usleep(long us) {
-  for (volatile long i=0; i<9*us; i++) {
+void Ion::usleep(uint32_t us) {
+  for (volatile uint32_t i=0; i<9*us; i++) {
     __asm volatile("nop");
   }
 }
 
-extern volatile long millis_elapsed;
+extern volatile uint32_t millis_elapsed;
 
 uint32_t Ion::millis() {
   return millis_elapsed;

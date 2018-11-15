@@ -40,6 +40,7 @@ private:
   ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
   Page pageAtIndex(int index);
+  void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
   bool returnToPreviousMenu() override;
   bool selectLeaf(int selectedRow) override;

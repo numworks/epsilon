@@ -29,3 +29,10 @@ bool micropython_port_should_interrupt() {
   Ion::Keyboard::Key interruptKey = static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
   return scan.keyDown(interruptKey);
 }
+
+void micropython_port_interruptible_msleep(uint32_t delay) {
+  uint32_t start = Ion::Timing::millis();
+  while (Ion::Timing::millis() - start < delay && !micropython_port_should_interrupt()) {
+    Ion::Timing::msleep(1);
+  }
+}

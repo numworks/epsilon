@@ -129,8 +129,8 @@ port_objs += $(addprefix python/port/,\
   port.o \
   builtins.o\
   helpers.o \
-  modkandinsky.o \
-  modkandinsky_impl.o \
+  mod/kandinsky/modkandinsky.o \
+  mod/kandinsky/modkandinsky_table.o \
   mod/time/modtime.o \
   mod/time/modtime_table.o \
   mphalport.o \

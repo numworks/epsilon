@@ -23,7 +23,7 @@ VariableBoxController::VariableBoxController() :
 }
 
 void VariableBoxController::viewWillAppear() {
-  m_currentPage = Page::RootMenu;
+  assert(m_currentPage == Page::RootMenu);
   NestedMenuController::viewWillAppear();
 }
 
@@ -44,7 +44,10 @@ void VariableBoxController::viewDidDisappear() {
     m_leafCells[i].setLayout(Layout());
     m_leafCells[i].setAccessoryLayout(Layout());
   }
-  resetMemoization();
+  /* We reset the page when view disappears rather than when it appears because
+   * subview layout is done before viewWillAppear. If the page at that point is
+   * wrong, the memoized layouts are going be filled with wrong layouts. */
+  setPage(Page::RootMenu);
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -149,9 +152,14 @@ VariableBoxController::Page VariableBoxController::pageAtIndex(int index) {
   return pages[index];
 }
 
+void VariableBoxController::setPage(Page page) {
+  m_currentPage = page;
+  resetMemoization();
+}
+
 bool VariableBoxController::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
-  m_currentPage = pageAtIndex(selectedRow);
+  setPage(pageAtIndex(selectedRow));
   bool selectSubMenu = NestedMenuController::selectSubMenu(selectedRow);
   if (displayEmptyController()) {
     return true;
@@ -164,9 +172,8 @@ bool VariableBoxController::returnToPreviousMenu() {
     pop();
   } else {
     m_selectableTableView.deselectTable();
-    resetMemoization();
   }
-  m_currentPage = Page::RootMenu;
+  setPage(Page::RootMenu);
   return NestedMenuController::returnToPreviousMenu();
 }
 

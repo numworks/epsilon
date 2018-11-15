@@ -1,4 +1,4 @@
-#include "rt0.h"
+#include "isr.h"
 extern const void * _stack_start;
 
 /* Interrupt Service Routines are void->void functions */
@@ -28,7 +28,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // DebugMonitor service routine,
   0, // Reserved
   0, // PendSV service routine,
-  sysTick, // SysTick service routine
+  isr_systick, // SysTick service routine
   0, // WWDG service routine
   0, // PVD service routine
   0, // TampStamp service routine

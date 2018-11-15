@@ -1,20 +1,19 @@
 #ifndef ION_TIMING_H
 #define ION_TIMING_H
 
-#ifdef __cplusplus
-#define EXTERNC extern "C"
+#include <stdint.h>
+
 namespace Ion {
+namespace Timing {
+
 void usleep(uint32_t us);
-#else
-#define EXTERNC
-#endif
+void msleep(uint32_t ms);
 
-EXTERNC uint64_t millis();
+/* millis is the number of milliseconds ellapsed since a random epoch.
+ * On the device, epoch is the boot time. */
+uint64_t millis();
 
-EXTERNC void msleep(uint32_t ms);
-
-#ifdef __cplusplus
 }
-#endif
+}
 
 #endif

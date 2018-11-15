@@ -107,8 +107,8 @@ typedef long mp_off_t;
 #define MP_STATE_PORT MP_STATE_VM
 
 extern const struct _mp_obj_module_t kandinsky_module;
-extern const struct _mp_obj_module_t time_module;
+extern const struct _mp_obj_module_t modtime_module;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&kandinsky_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&time_module) },
+    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) },

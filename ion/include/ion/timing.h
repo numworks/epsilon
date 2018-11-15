@@ -9,7 +9,7 @@ void usleep(uint32_t us);
 #define EXTERNC
 #endif
 
-EXTERNC uint32_t millis();
+EXTERNC uint64_t millis();
 
 EXTERNC void msleep(uint32_t ms);
 

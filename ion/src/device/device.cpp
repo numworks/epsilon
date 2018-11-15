@@ -39,9 +39,9 @@ void Ion::usleep(uint32_t us) {
   }
 }
 
-extern volatile uint32_t millis_elapsed;
+extern volatile uint64_t millis_elapsed;
 
-uint32_t Ion::millis() {
+uint64_t Ion::millis() {
   return millis_elapsed;
 }
 

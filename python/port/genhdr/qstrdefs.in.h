@@ -27,8 +27,7 @@ Q(set_pixel)
 // utime QSTRs
 Q(time)
 Q(sleep)
-Q(time)
-Q(clock)
+Q(monotonic)
 
 // MicroPython QSTRs
 Q()

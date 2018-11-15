@@ -123,7 +123,6 @@ py_objs = $(addprefix python/src/py/,\
 
 extmod_objs += $(addprefix python/src/extmod/,\
   modurandom.o \
-	modutime.o \
 )
 
 port_objs += $(addprefix python/port/,\
@@ -132,6 +131,7 @@ port_objs += $(addprefix python/port/,\
   helpers.o \
   modkandinsky.o \
   modkandinsky_impl.o \
+  modtime.o \
   mphalport.o \
 )
 

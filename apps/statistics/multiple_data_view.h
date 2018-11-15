@@ -26,7 +26,7 @@ public:
   virtual int seriesOfSubviewAtIndex(int index) = 0;
 
   // Display
-  void setDisplayBanner(bool display) { m_displayBanner = display; }
+  void setDisplayBanner(bool display);
   virtual void reload();
 
   // View

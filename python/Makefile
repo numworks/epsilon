@@ -131,7 +131,8 @@ port_objs += $(addprefix python/port/,\
   helpers.o \
   modkandinsky.o \
   modkandinsky_impl.o \
-  modtime.o \
+  mod/time/modtime.o \
+  mod/time/modtime_table.o \
   mphalport.o \
 )
 

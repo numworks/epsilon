@@ -27,6 +27,7 @@ objs += $(addprefix ion/src/device/, \
   sd_card.o\
   stack.o\
   swd.o \
+  timing.o \
   usb.o \
   wakeup.o \
 )

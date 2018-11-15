@@ -6,8 +6,7 @@ extern "C" {
 #endif
 #include <stdbool.h>
 
-/* should_interrupt effectively does something once every 20000 calls. It checks
- * if a key is down to raise an interruption flag. */
+void micropython_port_vm_hook_loop();
 bool micropython_port_should_interrupt();
 
 #ifdef __cplusplus

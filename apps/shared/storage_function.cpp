@@ -69,6 +69,9 @@ int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg
 
 template<typename T>
 T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
+  if (isCircularlyDefined(context)) {
+    return NAN;
+  }
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
   return expression(context).approximateWithValueForSymbol(unknownX, x, *context, Preferences::sharedPreferences()->angleUnit());
 }

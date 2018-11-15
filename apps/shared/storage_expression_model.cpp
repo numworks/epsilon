@@ -14,7 +14,8 @@ namespace Shared {
 StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
   Storage::Record(record),
   m_expression(),
-  m_layout()
+  m_layout(),
+  m_circular(-1)
 {
 }
 
@@ -25,6 +26,13 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
   } else {
     e.serialize(buffer, bufferSize);
   }
+}
+
+bool StorageExpressionModel::isCircularlyDefined(Poincare::Context * context) const {
+  if (m_circular == -1) {
+    m_circular = Expression::ExpressionWithoutSymbols(expression(context), *context).isUninitialized();
+  }
+  return m_circular;
 }
 
 Expression StorageExpressionModel::expression(Poincare::Context * context) const {
@@ -63,6 +71,7 @@ bool StorageExpressionModel::isEmpty() {
 void StorageExpressionModel::tidy() {
   m_layout = Layout();
   m_expression = Expression();
+  m_circular = 0;
 }
 
 Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char * c) {
@@ -102,6 +111,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(E
    * the m_layout and m_expression. */
   m_layout = Layout();
   m_expression = Expression();
+  m_circular = 0;
   return error;
 }
 

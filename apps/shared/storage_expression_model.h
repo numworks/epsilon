@@ -32,11 +32,13 @@ public:
 protected:
   virtual size_t metaDataSize() const = 0;
   Ion::Storage::Record record() const;
+  bool isCircularlyDefined(Poincare::Context * context) const;
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:
   void * expressionAddressForValue(Ion::Storage::Record::Data recordData) const;
   size_t expressionSizeForValue(Ion::Storage::Record::Data recordData) const;
+  mutable int m_circular;
 };
 
 }

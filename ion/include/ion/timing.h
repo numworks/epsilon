@@ -4,14 +4,14 @@
 #ifdef __cplusplus
 #define EXTERNC extern "C"
 namespace Ion {
-void usleep(long us);
+void usleep(uint32_t us);
 #else
 #define EXTERNC
 #endif
 
 EXTERNC uint32_t millis();
 
-EXTERNC void msleep(long ms);
+EXTERNC void msleep(uint32_t ms);
 
 #ifdef __cplusplus
 }

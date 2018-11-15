@@ -20,10 +20,10 @@ int main(int argc, char * argv[]) {
   return 0;
 }
 
-void Ion::msleep(long ms) {
+void Ion::msleep(uint32_t ms) {
   emscripten_sleep(ms);
 }
 
-void Ion::usleep(long us) {
+void Ion::usleep(uint32_t us) {
   emscripten_sleep(us/1000);
 }

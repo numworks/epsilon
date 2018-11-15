@@ -24,21 +24,6 @@ extern "C" {
 
 // Public Ion methods
 
-/* TODO: The delay methods 'msleep' and 'usleep' are currently dependent on the
- * optimizations chosen by the compiler. To prevent that and to gain in
- * precision, we could use the controller cycle counter (Systick). */
-
-void Ion::msleep(long ms) {
-  for (volatile long i=0; i<8852*ms; i++) {
-      __asm volatile("nop");
-  }
-}
-void Ion::usleep(long us) {
-  for (volatile long i=0; i<9*us; i++) {
-    __asm volatile("nop");
-  }
-}
-
 uint32_t Ion::crc32(const uint32_t * data, size_t length) {
   bool initialCRCEngineState = RCC.AHB1ENR()->getCRCEN();
   RCC.AHB1ENR()->setCRCEN(true);
@@ -113,6 +98,23 @@ void initMPU() {
   MPU.CTRL()->setENABLE(true);
 }
 #endif
+
+void initSysTick() {
+  // CPU clock is 96 MHz, and systick clock source is divided by 8
+  // To get 1 ms systick overflow we need to reset it to
+  // 96 000 000 (Hz) / 8 / 1 000 (ms/s) - 1 (because the counter resets *after* counting to 0)
+  CM4.SYST_RVR()->setRELOAD(11999);
+  CM4.SYST_CVR()->setCURRENT(0);
+  CM4.SYST_CSR()->setCLKSOURCE(CM4::SYST_CSR::CLKSOURCE::AHB_DIV8);
+  CM4.SYST_CSR()->setTICKINT(true);
+  CM4.SYST_CSR()->setENABLE(true);
+}
+
+void shutdownSysTick() {
+  CM4.SYST_CSR()->setENABLE(false);
+  CM4.SYST_CSR()->setTICKINT(false);
+}
+
 void coreReset() {
   // Perform a full core reset
   CM4.AIRCR()->requestReset();
@@ -184,9 +186,11 @@ void initPeripherals() {
 #endif
   Console::Device::init();
   SWD::Device::init();
+  initSysTick();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {
+  shutdownSysTick();
   SWD::Device::shutdown();
   Console::Device::shutdown();
 #if USE_SD_CARD

@@ -50,6 +50,7 @@ dfu_objs += ion/src/device/device.o
 dfu_objs += ion/src/device/usb.o
 dfu_objs += ion/src/device/base64.o
 dfu_objs += ion/src/device/flash.o
+dfu_objs += ion/src/device/timing.o
 
 ion/src/device/usb/dfu.elf: LDSCRIPT = ion/src/device/usb/dfu.ld
 ion/src/device/usb/dfu.elf: $(usb_objs) $(dfu_objs)

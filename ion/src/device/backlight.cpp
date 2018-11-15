@@ -45,12 +45,12 @@ void shutdown() {
 
 void suspend() {
   GPIOC.ODR()->set(6, false);
-  msleep(3); // Might not need to be blocking
+  Timing::msleep(3); // Might not need to be blocking
 }
 
 void resume() {
   GPIOC.ODR()->set(6, true);
-  usleep(50);
+  Timing::usleep(50);
   uint8_t level = sLevel;
   sLevel = 0xF;
   setLevel(level);
@@ -74,9 +74,9 @@ uint8_t level() {
 void sendPulses(int n) {
   for (int i=0; i<n; i++) {
     GPIOC.ODR()->set(6, false);
-    usleep(20);
+    Timing::usleep(20);
     GPIOC.ODR()->set(6, true);
-    usleep(20);
+    Timing::usleep(20);
   }
 }
 

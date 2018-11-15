@@ -13,6 +13,7 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
+  KDCoordinate rowHeight(int j) override;
 protected:
   constexpr static int k_totalNumberOfCell = 2;
 private:

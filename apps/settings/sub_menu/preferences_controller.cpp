@@ -108,6 +108,12 @@ void PreferencesController::willDisplayCellForIndex(HighlightCell * cell, int in
   myCell->setLayout(layoutForPreferences(m_messageTreeModel->children(index)->label()));
 }
 
+KDCoordinate PreferencesController::rowHeight(int j) {
+  /* We cheat for the Writing format subcontroller, because the Edition2D layout
+   * needs more vertical space. */
+  return GenericSubController::rowHeight(j) + (m_messageTreeModel->label() == I18n::Message::EditionMode ? 2 : 0);
+}
+
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {
   Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {

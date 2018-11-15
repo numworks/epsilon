@@ -86,6 +86,7 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
       app()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }
+    m_contentView.formulaInputView()->resetTextField();
     m_contentView.displayFormulaInput(false);
     if (fillColumnWithFormula(expression)) {
       app()->setFirstResponder(&m_contentView);

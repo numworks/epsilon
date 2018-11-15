@@ -9,6 +9,7 @@ public:
   BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont);
   KDSize minimalSizeForOptimalDisplay() const override;
   TextField * textField() { return &m_textField; }
+  void resetTextField();
   void setBufferText(const char * text);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 

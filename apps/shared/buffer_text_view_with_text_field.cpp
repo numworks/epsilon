@@ -16,6 +16,10 @@ KDSize BufferTextViewWithTextField::minimalSizeForOptimalDisplay() const {
   return m_bufferTextView.minimalSizeForOptimalDisplay();
 }
 
+void BufferTextViewWithTextField::resetTextField() {
+  m_textField.setEditing(m_textField.isEditing(), true);
+}
+
 void BufferTextViewWithTextField::setBufferText(const char * text) {
   m_bufferTextView.setText(text);
 }

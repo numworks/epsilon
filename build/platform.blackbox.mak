@@ -7,3 +7,5 @@ ifeq ($(DEBUG),1)
 else
 SFLAGS += -DNDEBUG
 endif
+
+MPYTOOL_FLAGS = -mmpz-dig-size $(shell echo $$(( $(shell getconf LONG_BIT) / 2)) )

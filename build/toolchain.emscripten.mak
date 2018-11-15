@@ -58,12 +58,13 @@ __ZThn32_N4Code17ConsoleController9inputTextEPKc \
 __ZThn36_N4Code17ConsoleController9inputTextEPKc \
 __ZZN4Code14MenuControllerC1EP9ResponderPNS_11ScriptStoreEP19ButtonRowControllerbEN3__08__invokeEPvS8_ \
 __ZZN4Code14MenuControllerC1EP9ResponderPNS_11ScriptStoreEP19ButtonRowControllerbENK3__0clEPvS8_ \
-_delay_ms \
 _do_load \
 _do_load_from_lexer \
 _fun_bc_call \
 _fun_builtin_var_call \
 _main \
+_micropython_port_interruptible_msleep \
+_micropython_port_should_interrupt \
 _micropython_port_vm_hook_loop \
 _mp_builtin___import__ \
 _mp_builtin_input \

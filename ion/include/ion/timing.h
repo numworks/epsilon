@@ -10,7 +10,6 @@ void usleep(long us);
 #endif
 
 EXTERNC uint32_t millis();
-EXTERNC uint32_t micros();
 
 EXTERNC void msleep(long ms);
 

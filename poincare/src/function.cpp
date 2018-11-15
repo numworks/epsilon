@@ -143,6 +143,7 @@ Expression Function::replaceReplaceableSymbols(Context & context) {
   if (e.isUninitialized()) {
     return *this;
   }
+  e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
   replaceWithInPlace(e);
   return e;
 }

@@ -40,14 +40,39 @@ public:
     REGS_BOOL_FIELD(SLEEPDEEP, 2);
   };
 
+  class SYST_CSR : public Register32 {
+  public:
+    enum class CLKSOURCE : uint8_t {
+      AHB_DIV8 = 0,
+      AHB = 1
+    };
+    REGS_BOOL_FIELD(COUNTFLAG, 16);
+    REGS_TYPE_FIELD(CLKSOURCE, 2, 2);
+    REGS_BOOL_FIELD(TICKINT, 1);
+    REGS_BOOL_FIELD(ENABLE, 0);
+  };
+
+  class SYST_RVR : public Register32 {
+  public:
+    REGS_FIELD(RELOAD, uint32_t, 23, 0);
+  };
+
+  class SYST_CVR : public Register32 {
+  public:
+    REGS_FIELD(CURRENT, uint32_t, 23, 0);
+  };
+
   constexpr CM4() {};
-  REGS_REGISTER_AT(VTOR, 0x08);
-  REGS_REGISTER_AT(AIRCR, 0x0C);
-  REGS_REGISTER_AT(SCR, 0x10);
-  REGS_REGISTER_AT(CPACR, 0x88);
+  REGS_REGISTER_AT(SYST_CSR, 0x10);
+  REGS_REGISTER_AT(SYST_RVR, 0x14);
+  REGS_REGISTER_AT(SYST_CVR, 0x18);
+  REGS_REGISTER_AT(VTOR, 0xD08);
+  REGS_REGISTER_AT(AIRCR, 0xD0C);
+  REGS_REGISTER_AT(SCR, 0xD10);
+  REGS_REGISTER_AT(CPACR, 0xD88);
 private:
   constexpr uint32_t Base() const {
-    return 0xE000ED00;
+    return 0xE000E000;
   }
 };
 

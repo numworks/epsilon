@@ -19,9 +19,13 @@ void micropython_port_vm_hook_loop() {
   }
 
   /* Check if the user asked for an interruption from the keyboard */
-  Ion::Keyboard::State scan = Ion::Keyboard::scan();
-  if (scan.keyDown(static_cast<Ion::Keyboard::Key>(mp_interrupt_char))) {
+  if (micropython_port_should_interrupt()) {
     mp_keyboard_interrupt();
   }
 }
 
+bool micropython_port_should_interrupt() {
+  Ion::Keyboard::State scan = Ion::Keyboard::scan();
+  Ion::Keyboard::Key interruptKey = static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
+  return scan.keyDown(interruptKey);
+}

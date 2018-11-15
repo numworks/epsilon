@@ -162,7 +162,7 @@ void initGPIO() {
   TearingEffectPin.group().MODER()->setMode(TearingEffectPin.pin(), GPIO::MODER::Mode::Input);
   TearingEffectPin.group().PUPDR()->setPull(TearingEffectPin.pin(), GPIO::PUPDR::Pull::None);
 
-  msleep(120);
+  Timing::msleep(120);
 }
 
 
@@ -247,10 +247,10 @@ void shutdownFSMC() {
 
 void initPanel() {
   send_command(Command::Reset);
-  msleep(5);
+  Timing::msleep(5);
 
   send_command(Command::SleepOut);
-  msleep(5);
+  Timing::msleep(5);
 
   send_command(Command::PixelFormatSet, 0x05);
   send_command(Command::TearingEffectLineOn, 0x00);
@@ -262,7 +262,7 @@ void initPanel() {
 void shutdownPanel() {
   send_command(Command::DisplayOff);
   send_command(Command::SleepIn);
-  msleep(5);
+  Timing::msleep(5);
 }
 
 void setDrawingArea(KDRect r, Orientation o) {

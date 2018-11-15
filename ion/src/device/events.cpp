@@ -6,11 +6,11 @@ namespace Events {
 
 static bool sleepWithTimeout(int duration, int * timeout) {
   if (*timeout >= duration) {
-    msleep(duration);
+    Timing::msleep(duration);
     *timeout -= duration;
     return false;
   } else {
-    msleep(*timeout);
+    Timing::msleep(*timeout);
     *timeout = 0;
     return true;
   }

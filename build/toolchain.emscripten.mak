@@ -58,6 +58,7 @@ __ZThn32_N4Code17ConsoleController9inputTextEPKc \
 __ZThn36_N4Code17ConsoleController9inputTextEPKc \
 __ZZN4Code14MenuControllerC1EP9ResponderPNS_11ScriptStoreEP19ButtonRowControllerbEN3__08__invokeEPvS8_ \
 __ZZN4Code14MenuControllerC1EP9ResponderPNS_11ScriptStoreEP19ButtonRowControllerbENK3__0clEPvS8_ \
+_delay_ms \
 _do_load \
 _do_load_from_lexer \
 _fun_bc_call \
@@ -71,7 +72,8 @@ _mp_call_function_n_kw \
 _mp_execute_bytecode \
 _mp_hal_input \
 _mp_import_name \
-_mp_parse_compile_execute
+_mp_parse_compile_execute \
+_msleep
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END
 EMFLAGS = -s PRECISE_F32=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(EMTERPRETIFY_WHITELIST:,END=)]'

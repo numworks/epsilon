@@ -344,7 +344,8 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
   while (e.hasReplaceableSymbols(context)) {
     replacementCount++;
     if (replacementCount > k_maxSymbolReplacementsCount) {
-      return Expression();
+      e = Expression();
+      break;
     }
     e = e.replaceReplaceableSymbols(context);
   }

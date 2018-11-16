@@ -135,6 +135,7 @@ port_objs += $(addprefix python/port/,\
   mod/time/modtime_table.o \
   mod/turtle/modturtle.o \
   mod/turtle/modturtle_table.o \
+  mod/turtle/turtle.o \
   mphalport.o \
 )
 
@@ -165,7 +166,7 @@ $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
 
 # Icon dependency
-python/port/mod/turtle/modturtle.cpp: python/port/mod/turtle/turtle_icon.o
+python/port/mod/turtle/turtle.cpp: python/port/mod/turtle/turtle_icon.o
 
 # QSTR generation
 

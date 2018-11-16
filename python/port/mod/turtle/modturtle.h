@@ -21,9 +21,3 @@ mp_obj_t modturtle_color(mp_obj_t r, mp_obj_t g, mp_obj_t b);
 
 mp_obj_t modturtle_showturtle();
 mp_obj_t modturtle_hideturtle();
-
-mp_obj_t modturtle___init__();
-
-void modturtle_initpen(int size);
-void modturtle_moveto(float x, float y);
-void modturtle_deinit();

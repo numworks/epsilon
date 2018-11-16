@@ -14,7 +14,7 @@ void KDContext::fillRect(KDRect rect, KDColor color) {
 }
 
 /* Note: we support the case where workingBuffer IS equal to pixels */
-void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer, KDColor * prevPixels) {
+void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer) {
   KDRect absoluteRect = absoluteFillRect(rect);
 
   if (absoluteRect.isEmpty()) {
@@ -27,9 +27,6 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
    * continuous area. */
 
   if (absoluteRect.width() == rect.width() && absoluteRect.height() == rect.height()) {
-    if (prevPixels) {
-      pullRect(absoluteRect, prevPixels);
-    }
     pushRect(absoluteRect, pixels);
     return;
   }
@@ -50,9 +47,6 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
     for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
       KDRect absoluteRow = KDRect(absoluteRect.x(), absoluteRect.y()+j, absoluteRect.width(), 1);
       KDColor * rowPixels = (KDColor *)pixels+startingI+rect.width()*(startingJ+j);
-      if (prevPixels) {
-        pullRect(absoluteRow, prevPixels + startingI+rect.width()*(startingJ+j));
-      }
       pushRect(absoluteRow, rowPixels);
     }
   } else {

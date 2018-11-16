@@ -22,11 +22,8 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_showturtle_obj, modturtle_showturtle)
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_hideturtle_obj, modturtle_hideturtle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_isvisible_obj, modturtle_isvisible);
 
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle___init___obj, modturtle___init__);
-
 STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_turtle) },
-  { MP_ROM_QSTR(MP_QSTR___init__), (mp_obj_t)&modturtle___init___obj },
   { MP_ROM_QSTR(MP_QSTR_forward), (mp_obj_t)&modturtle_forward_obj },
   { MP_ROM_QSTR(MP_QSTR_fd), (mp_obj_t)&modturtle_forward_obj },
   { MP_ROM_QSTR(MP_QSTR_backward), (mp_obj_t)&modturtle_backward_obj },

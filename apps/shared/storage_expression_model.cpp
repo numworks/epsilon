@@ -20,7 +20,7 @@ StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
 }
 
 void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
-  Expression e = expressionWithSymbol();
+  Expression e = expressionClone();
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
@@ -44,7 +44,7 @@ Expression StorageExpressionModel::expressionReduced(Poincare::Context * context
   return m_expression;
 }
 
-Expression StorageExpressionModel::expressionWithSymbol() const {
+Expression StorageExpressionModel::expressionClone() const {
   assert(!isNull());
   Ion::Storage::Record::Data recordData = value();
   /* A new Expression has to be created at each call (because it might be tempered with after calling) */
@@ -53,7 +53,7 @@ Expression StorageExpressionModel::expressionWithSymbol() const {
 
 Layout StorageExpressionModel::layout() {
   if (m_layout.isUninitialized()) {
-    m_layout = PoincareHelpers::CreateLayout(expressionWithSymbol());
+    m_layout = PoincareHelpers::CreateLayout(expressionClone());
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout();
     }

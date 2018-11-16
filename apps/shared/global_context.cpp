@@ -49,7 +49,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   StorageCartesianFunction f = StorageCartesianFunction(record);
-  return f.expressionWithSymbol();
+  return f.expressionClone();
 }
 
 void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension) {

@@ -199,6 +199,12 @@ QUIZ_CASE(poincare_store_composed_functions) {
   assert_parsed_expression_evaluates_to<double>("g(3)+[[1]]", "[[18]]");
   assert_parsed_expression_evaluates_to<double>("g(5)", "45");
 
+  // g: x->x+1
+  assert_simplify("x+1>g(x)");
+  assert_parsed_expression_evaluates_to<double>("f(g(4))", "25");
+  // Add a matrix to bypass simplification
+  assert_parsed_expression_evaluates_to<double>("f(g(4))+[[1]]", "[[26]]");
+
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();

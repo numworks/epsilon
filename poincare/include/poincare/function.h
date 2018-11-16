@@ -32,7 +32,6 @@ private:
   char m_name[0]; // MUST be the last member variable
 
   size_t nodeSize() const override { return sizeof(FunctionNode); }
-  VariableContext xContext(Context & parentContext) const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -46,6 +45,7 @@ private:
 };
 
 class Function : public SymbolAbstract {
+friend class FunctionNode;
 public:
   Function(const char * name, size_t length);
   Function(const FunctionNode * n) : SymbolAbstract(n) {}
@@ -65,6 +65,9 @@ public:
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression replaceReplaceableSymbols(Context & context);
+private:
+  Expression expand(Context & context);
+  VariableContext unknownXContext(Context & parentContext) const;
 };
 
 }

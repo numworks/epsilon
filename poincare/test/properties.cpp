@@ -53,6 +53,9 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("prediction(0.2,10)+1", -1);
   assert_parsed_expression_polynomial_degree("2-x-x^3", 3);
   assert_parsed_expression_polynomial_degree("P*x", 1);
+  // f: x->x^2+Px+1
+  assert_simplify("1+P*x+x^2>f(x)");
+  assert_parsed_expression_polynomial_degree("f(x)", 2);
 }
 
 void assert_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
@@ -78,6 +81,8 @@ QUIZ_CASE(poincare_characteristic_range) {
   assert_expression_has_characteristic_range(Addition(Cosine::Builder(Rational(3)),Rational(2)), 0.0f);
   assert_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(Multiplication(Rational(40),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)))), 9.0f);
   assert_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
+  assert_simplify("cos(x)>f(x)");
+  assert_expression_has_characteristic_range(Function("f",1,Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)), 360.0f);
 }
 
 void assert_parsed_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
@@ -112,6 +117,10 @@ QUIZ_CASE(poincare_get_variables) {
   assert_parsed_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
   assert_parsed_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
+  // f: x->1+Px+x^2+toto
+  assert_simplify("1+P*x+x^2+toto>f(x)");
+  const char * variableBuffer7[] = {"tata","toto", ""};
+  assert_parsed_expression_has_variables("f(tata)", variableBuffer7, 2);
 }
 
 void assert_parsed_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
@@ -141,4 +150,8 @@ QUIZ_CASE(poincare_get_polynomial_coefficients) {
   //assert_parsed_expression_has_polynomial_coefficient("2*(n+1)^3-4n+32*x", "n", coefficient2);
   const char * coefficient3[] = {"1", "-P", "1", 0}; //x^2-Pi*x+1
   assert_parsed_expression_has_polynomial_coefficient("x^2-P*x+1", "x", coefficient3);
+  // f: x->x^2+Px+1
+  const char * coefficient4[] = {"1", "P", "1", 0}; //x^2+Pi*x+1
+  assert_simplify("1+P*x+x^2>f(x)");
+  assert_parsed_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
 }

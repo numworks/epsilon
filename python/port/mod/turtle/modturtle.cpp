@@ -1,9 +1,15 @@
 extern "C" {
 #include "modturtle.h"
+#include <py/gc.h>
 }
 #include "turtle.h"
 
 static Turtle sTurtle;
+
+void modturtle_gc_collect() {
+  // Mark the shared sTurtle object as a GC root
+  gc_collect_root((void **)&sTurtle, sizeof(Turtle));
+}
 
 mp_obj_t modturtle___init__() {
   sTurtle = Turtle();

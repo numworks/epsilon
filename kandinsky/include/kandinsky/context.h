@@ -13,6 +13,7 @@ public:
   // Pixel manipulation
   void setPixel(KDPoint p, KDColor c);
   KDColor getPixel(KDPoint p);
+  void getPixels(KDRect r, KDColor * pixels);
 
   // Text
   KDPoint drawString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);
@@ -22,7 +23,7 @@ public:
 
   // Rect
   void fillRect(KDRect rect, KDColor color);
-  void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer, KDColor * prevPixels = nullptr);
+  void fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor * workingBuffer);
   void blendRectWithMask(KDRect rect, KDColor color, const uint8_t * mask, KDColor * workingBuffer);
   void strokeRect(KDRect rect, KDColor color);
 protected:

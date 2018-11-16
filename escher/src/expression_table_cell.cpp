@@ -20,5 +20,7 @@ void ExpressionTableCell::setHighlighted(bool highlight) {
 
 void ExpressionTableCell::setLayout(Poincare::Layout layout) {
   m_labelExpressionView.setLayout(layout);
-  layoutSubviews();
+  if (!layout.isUninitialized()) {
+    layoutSubviews();
+  }
 }

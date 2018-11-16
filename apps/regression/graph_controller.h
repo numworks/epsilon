@@ -1,7 +1,6 @@
 #ifndef REGRESSION_GRAPH_CONTROLLER_H
 #define REGRESSION_GRAPH_CONTROLLER_H
 
-#include <escher.h>
 #include "banner_view.h"
 #include "store.h"
 #include "graph_options_controller.h"
@@ -55,7 +54,8 @@ private:
 
   // InteractiveCurveViewRangeDelegate
   float displayTopMarginRatio() override;
-  float displayBottomMarginRatio() override;  Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
+  float displayBottomMarginRatio() override;
+  Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 
   Shared::CursorView m_crossCursorView;
   Shared::RoundCursorView m_roundCursorView;

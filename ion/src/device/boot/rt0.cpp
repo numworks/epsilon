@@ -1,10 +1,9 @@
-extern "C" {
-#include "rt0.h"
-}
+#include "isr.h"
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
 #include "../device.h"
+#include "../timing.h"
 #include "../console.h"
 
 typedef void (*cxx_constructor)();
@@ -91,4 +90,8 @@ void start() {
   non_inlined_ion_main();
 
   abort();
+}
+
+void __attribute__((interrupt)) isr_systick() {
+  Ion::Timing::Device::MillisElapsed++;
 }

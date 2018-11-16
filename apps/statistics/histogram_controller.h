@@ -19,17 +19,18 @@ public:
 
   // ViewController
   const char * title() override;
+  void viewWillAppear() override;
   MultipleDataView * multipleDataView() override { return &m_view; }
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
   constexpr static int k_maxIntervalLegendLength = 33;
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
+  void highlightSelection() override;
   Responder * tabController() const override;
   void reloadBannerView() override;
   void initRangeParameters();

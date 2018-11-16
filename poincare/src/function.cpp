@@ -15,7 +15,7 @@ Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symb
 
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
   Function f(this);
-  Expression e = f.expand(context);
+  Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return -1;
   }
@@ -24,7 +24,7 @@ int FunctionNode::polynomialDegree(Context & context, const char * symbolName) c
 
 int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   Function f(this);
-  Expression e = f.expand(context);
+  Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return -1;
   }
@@ -33,7 +33,7 @@ int FunctionNode::getPolynomialCoefficients(Context & context, const char * symb
 
 int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   Function f(this);
-  Expression e = f.expand(context);
+  Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return 0;
   }
@@ -42,7 +42,7 @@ int FunctionNode::getVariables(Context & context, isVariableTest isVariable, cha
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   Function f(this);
-  Expression e = f.expand(context);
+  Expression e = SymbolAbstract::Expand(f,context, true);
   if (e.isUninitialized()) {
     return 0.0f;
   }
@@ -76,7 +76,7 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Function f(this);
-  Expression e = f.expand(context);
+  Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -112,7 +112,8 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (!replaceSymbols) {
     return *this;
   }
-  Expression e = expand(context);
+  Function f(*this);
+  Expression e = SymbolAbstract::Expand(f, context, true);
   if (!e.isUninitialized()) {
     replaceWithInPlace(e);
     return e.deepReduce(context, angleUnit, replaceSymbols);
@@ -127,15 +128,6 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
   }
   e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
   replaceWithInPlace(e);
-  return e;
-}
-
-Expression Function::expand(Context & context) const {
-  Expression e = context.expressionForSymbol(*this, true);
-  e = ExpressionWithoutSymbols(e, context);
-  if (!e.isUninitialized()) {
-    e = e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
-  }
   return e;
 }
 

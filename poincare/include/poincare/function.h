@@ -62,11 +62,11 @@ public:
     return Expression();
   }
 
+  // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression shallowReplaceReplaceableSymbols(Context & context);
 private:
-  Expression expand(Context & context) const;
   //VariableContext unknownXContext(Context & parentContext) const;
 };
 

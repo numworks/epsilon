@@ -48,10 +48,17 @@ protected:
   virtual size_t nodeSize() const = 0;
 };
 
+/* WARNING: symbol abstract cannot have any virtual methods. Otherwise,
+ * inheriting Expression won't fulfil the requirement:
+ * 'sizeof(Expression) == sizeof(ExpressionInheritingFromSymbolAbstract)
+ * due to the virtual table. */
+
 class SymbolAbstract : public Expression {
   friend class Constant;
   friend class Function;
+  friend class FunctionNode;
   friend class Symbol;
+  friend class SymbolNode;
   friend class SymbolAbstractNode;
 public:
   const char * name() const { return node()->name(); }
@@ -61,11 +68,14 @@ public:
     Expression f = context ? context->expressionForSymbol(s, false) : Expression();
     return f.isUninitialized() || f.type() == s.type();
   }
+  static bool matches(const SymbolAbstract & symbol, ExpressionTest test, Context & context);
   constexpr static size_t k_maxNameSize = 8;
+
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
+  static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);
   static size_t AlignedNodeSize(size_t nameLength, size_t nodeSize);
 };
 

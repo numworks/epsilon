@@ -57,15 +57,14 @@ size_t TextField::ContentView::editedTextLength() const {
 
 void TextField::ContentView::setText(const char * text) {
   reloadRectFromCursorPosition(0);
-  int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);
-  if (m_isEditing) {
-    strlcpy(m_draftTextBuffer, text, m_textBufferSize);
+  size_t textRealLength = strlen(text);
+  int textLength = textRealLength >= m_textBufferSize ? m_textBufferSize-1 : textRealLength;
+  // Copy the text
+  strlcpy(m_isEditing ? m_draftTextBuffer : m_textBuffer, text, m_textBufferSize);
+  // Update the draft text length and cursor location
+  if (m_isEditing || m_textBuffer == m_draftTextBuffer) {
     m_currentDraftTextLength = textLength;
-  } else {
-    strlcpy(m_textBuffer, text, m_textBufferSize);
-    if (m_textBuffer == m_draftTextBuffer) {
-      m_currentDraftTextLength = textLength;
-    }
+    setCursorLocation(textLength);
   }
   reloadRectFromCursorPosition(0);
 }
@@ -228,9 +227,6 @@ size_t TextField::draftTextLength() const {
 void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
-  if (isEditing()) {
-    setCursorLocation(draftTextLength());
-  }
 }
 
 void TextField::setAlignment(float horizontalAlignment, float verticalAlignment) {

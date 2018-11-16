@@ -126,7 +126,8 @@ Expression SymbolNode::shallowReplaceReplaceableSymbols(Context & context) {
 
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Symbol(this).expand(context, false);
+  Symbol s(this);
+  Expression e = SymbolAbstract::Expand(s, context, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -155,16 +156,12 @@ bool Symbol::isRegressionSymbol(const char * c) {
   return false;
 }
 
-bool Symbol::matches(ExpressionTest test, Context & context) const {
-  Expression e = expand(context, false);
-  return !e.isUninitialized() && test(e, context, true);
-}
-
 Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
   if (!replaceSymbols) {
     return *this;
   }
-  Expression result = expand(context, true);
+  Symbol s = *this;
+  Expression result = SymbolAbstract::Expand(s, context, true);
   if (result.isUninitialized()) {
     return *this;
   }
@@ -206,13 +203,6 @@ Expression Symbol::shallowReplaceReplaceableSymbols(Context & context) {
   }
   replaceWithInPlace(e);
   return e;
-}
-
-Expression Symbol::expand(Context & context, bool clone) const {
-  /* Replace all the symbols iteratively. This prevents a memory failure when
-   * symbols are defined circularly. */
-  Expression e = context.expressionForSymbol(*this, clone);
-  return ExpressionWithoutSymbols(e, context);
 }
 
 }

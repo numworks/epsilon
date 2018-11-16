@@ -73,7 +73,6 @@ public:
   bool isSystemSymbol() const { return name()[0] == SpecialSymbols::UnknownX && name()[1] == 0; }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
-  bool matches(ExpressionTest test, Context & context) const;
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
@@ -82,7 +81,6 @@ public:
   Expression shallowReplaceReplaceableSymbols(Context & context);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
-  Expression expand(Context & context, bool cloneContextValue) const;
 };
 
 }

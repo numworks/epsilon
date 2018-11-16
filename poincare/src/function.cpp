@@ -121,7 +121,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
 }
 
 Expression Function::replaceReplaceableSymbols(Context & context) {
-  Expression e = context.expressionForSymbol(*this);
+  Expression e = context.expressionForSymbol(*this, true);
   if (e.isUninitialized()) {
     return *this;
   }
@@ -131,7 +131,7 @@ Expression Function::replaceReplaceableSymbols(Context & context) {
 }
 
 Expression Function::expand(Context & context) const {
-  Expression e = context.expressionForSymbol(*this);
+  Expression e = context.expressionForSymbol(*this, true);
   e = ExpressionWithoutSymbols(e, context);
   if (!e.isUninitialized()) {
     e = e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
@@ -155,7 +155,7 @@ VariableContext Function::unknownXContext(Context & parentContext) const {
   /* If the parentContext already has an expression for UnknownX, we have to
    * replace in childAtIndex(0) any occurence of UnknownX by its value in
    * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
-  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol);
+  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol, true);
   if (!unknownXValue.isUninitialized()) {
     xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
     child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);

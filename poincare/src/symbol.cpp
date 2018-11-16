@@ -17,8 +17,8 @@ constexpr char Symbol::k_ans[];
 
 /*ExpressionNode::Sign SymbolNode::sign() const {
   TODO: Maybe, we will want to know that from a context given in parameter:
-  if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->sign(context);
+  if (context.expressionForSymbol(this, false) != nullptr) {
+    return context.expressionForSymbol(this, false)->sign(context);
   }
 }
 */
@@ -126,7 +126,7 @@ Expression SymbolNode::replaceReplaceableSymbols(Context & context) {
 
 template<typename T>
 Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Symbol(this).expand(context);
+  Expression e = Symbol(this).expand(context, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -156,7 +156,7 @@ bool Symbol::isRegressionSymbol(const char * c) {
 }
 
 bool Symbol::matches(ExpressionTest test, Context & context) const {
-  Expression e = expand(context);
+  Expression e = expand(context, false);
   return !e.isUninitialized() && test(e, context, true);
 }
 
@@ -164,7 +164,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   if (!replaceSymbols) {
     return *this;
   }
-  Expression result = expand(context);
+  Expression result = expand(context, true);
   if (result.isUninitialized()) {
     return *this;
   }
@@ -200,7 +200,7 @@ Expression Symbol::replaceReplaceableSymbols(Context & context) {
   if (isSystemSymbol()) {
     return *this;
   }
-  Expression e = context.expressionForSymbol(*this);
+  Expression e = context.expressionForSymbol(*this, true);
   if (e.isUninitialized()) {
     return *this;
   }
@@ -208,10 +208,10 @@ Expression Symbol::replaceReplaceableSymbols(Context & context) {
   return e;
 }
 
-Expression Symbol::expand(Context & context) const {
+Expression Symbol::expand(Context & context, bool clone) const {
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. */
-  Expression e = context.expressionForSymbol(*this);
+  Expression e = context.expressionForSymbol(*this, clone);
   return ExpressionWithoutSymbols(e, context);
 }
 

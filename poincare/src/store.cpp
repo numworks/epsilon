@@ -47,7 +47,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   Store s(this);
   assert(!s.value().isUninitialized());
   context.setExpressionForSymbol(s.value(), s.symbol(), context);
-  Expression e = context.expressionForSymbol(s.symbol());
+  Expression e = context.expressionForSymbol(s.symbol(), false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -68,7 +68,7 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   assert(!finalValue.isUninitialized());
   context.setExpressionForSymbol(finalValue, symbol(), context);
-  Expression e = context.expressionForSymbol(symbol());
+  Expression e = context.expressionForSymbol(symbol(), true);
   if (e.isUninitialized()) {
     return Undefined();
   }

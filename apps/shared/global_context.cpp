@@ -60,7 +60,7 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseNam
   }
 }
 
-const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbol) {
+const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
   return ExpressionForSymbolAndRecord(symbol, r);
 }

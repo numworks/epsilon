@@ -120,8 +120,8 @@ Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit a
   return Symbol(this).shallowReduce(context, angleUnit, replaceSymbols);
 }
 
-Expression SymbolNode::replaceReplaceableSymbols(Context & context) {
-  return Symbol(this).replaceReplaceableSymbols(context);
+Expression SymbolNode::shallowReplaceReplaceableSymbols(Context & context) {
+  return Symbol(this).shallowReplaceReplaceableSymbols(context);
 }
 
 template<typename T>
@@ -196,7 +196,7 @@ int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::replaceReplaceableSymbols(Context & context) {
+Expression Symbol::shallowReplaceReplaceableSymbols(Context & context) {
   if (isSystemSymbol()) {
     return *this;
   }

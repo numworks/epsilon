@@ -236,7 +236,7 @@ bool Expression::hasReplaceableSymbols(Context & context) const {
 Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).replaceReplaceableSymbols(context);
+    childAtIndex(i).shallowReplaceReplaceableSymbols(context);
   }
   return *this;
 }
@@ -348,7 +348,7 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
       e = Expression();
       break;
     }
-    e = e.replaceReplaceableSymbols(context);
+    e = e.shallowReplaceReplaceableSymbols(context);
   }
   if (unlock) {
     lock = false;

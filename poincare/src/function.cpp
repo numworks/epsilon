@@ -61,8 +61,8 @@ Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit
   return Function(this).shallowReduce(context, angleUnit, replaceSymbols); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::replaceReplaceableSymbols(Context & context) {
-  return Function(this).replaceReplaceableSymbols(context);
+Expression FunctionNode::shallowReplaceReplaceableSymbols(Context & context) {
+  return Function(this).shallowReplaceReplaceableSymbols(context);
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
@@ -120,7 +120,7 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
   return *this;
 }
 
-Expression Function::replaceReplaceableSymbols(Context & context) {
+Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
   Expression e = context.expressionForSymbol(*this, true);
   if (e.isUninitialized()) {
     return *this;

@@ -37,7 +37,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
-  Expression replaceReplaceableSymbols(Context & context) override;
+  Expression shallowReplaceReplaceableSymbols(Context & context) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override;
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override;
@@ -64,7 +64,7 @@ public:
 
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
-  Expression replaceReplaceableSymbols(Context & context);
+  Expression shallowReplaceReplaceableSymbols(Context & context);
 private:
   Expression expand(Context & context) const;
   //VariableContext unknownXContext(Context & parentContext) const;

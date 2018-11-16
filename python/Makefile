@@ -129,12 +129,12 @@ port_objs += $(addprefix python/port/,\
   port.o \
   builtins.o\
   helpers.o \
-  modturtle.o \
-  modturtle_impl.o \
   mod/kandinsky/modkandinsky.o \
   mod/kandinsky/modkandinsky_table.o \
   mod/time/modtime.o \
   mod/time/modtime_table.o \
+  mod/turtle/modturtle.o \
+  mod/turtle/modturtle_table.o \
   mphalport.o \
 )
 
@@ -165,7 +165,7 @@ $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
 
 # Icon dependency
-python/port/modturtle_impl.cpp: python/port/turtle_icon.o
+python/port/mod/turtle/modturtle.cpp: python/port/mod/turtle/turtle_icon.o
 
 # QSTR generation
 
@@ -181,6 +181,6 @@ $(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
 
 # List all objects needed
 
-objs += $(extmod_objs) $(py_objs) $(port_objs) python/port/turtle_icon.o
+objs += $(extmod_objs) $(py_objs) $(port_objs) python/port/mod/turtle/turtle_icon.o
 
-app_images += python/port/turtle_icon.png
+app_images += python/port/mod/turtle/turtle_icon.png

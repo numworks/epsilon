@@ -1,7 +1,7 @@
 extern "C" {
 #include "modturtle.h"
 }
-#include "helpers.h"
+#include "../../helpers.h"
 #include <kandinsky.h>
 #include <ion.h>
 #include <math.h>
@@ -91,27 +91,27 @@ void dot_turtle(float x, float y) {
   t_y = y;
 }
 
-mp_obj_t turtle_forward(mp_obj_t px) {
+mp_obj_t modturtle_forward(mp_obj_t px) {
   float x = t_x + mp_obj_get_float(px)*sin(t_heading);
   float y = t_y + mp_obj_get_float(px)*cos(t_heading);
-  turtle_moveto(x, y);
+  modturtle_moveto(x, y);
   return mp_const_none;
 }
 
-mp_obj_t turtle_backward(mp_obj_t px) {
-  return turtle_forward(mp_obj_new_float(-mp_obj_get_float(px)));
+mp_obj_t modturtle_backward(mp_obj_t px) {
+  return modturtle_forward(mp_obj_new_float(-mp_obj_get_float(px)));
 }
 
-mp_obj_t turtle_right(mp_obj_t angle) {
-  return turtle_left(mp_obj_new_float(-mp_obj_get_float(angle)));
+mp_obj_t modturtle_right(mp_obj_t angle) {
+  return modturtle_left(mp_obj_new_float(-mp_obj_get_float(angle)));
 }
 
-mp_obj_t turtle_left(mp_obj_t angle) {
+mp_obj_t modturtle_left(mp_obj_t angle) {
   float new_angle = ((t_heading - t_heading_offset) + (mp_obj_get_float(angle) * t_heading_scale)) / t_heading_scale;
-  return turtle_setheading(mp_obj_new_float(new_angle));
+  return modturtle_setheading(mp_obj_new_float(new_angle));
 }
 
-mp_obj_t turtle_goto(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modturtle_goto(size_t n_args, const mp_obj_t *args) {
   float newx, newy;
 
   if (n_args == 1) {
@@ -125,11 +125,11 @@ mp_obj_t turtle_goto(size_t n_args, const mp_obj_t *args) {
     newy = mp_obj_get_float(args[1]);
   }
 
-  turtle_moveto(newx, newy);
+  modturtle_moveto(newx, newy);
   return mp_const_none;
 }
 
-mp_obj_t turtle_setheading(mp_obj_t angle) {
+mp_obj_t modturtle_setheading(mp_obj_t angle) {
   micropython_port_should_interrupt();
 
   t_heading = mp_obj_get_float(angle) * t_heading_scale + t_heading_offset;
@@ -141,7 +141,7 @@ mp_obj_t turtle_setheading(mp_obj_t angle) {
   return mp_const_none;
 }
 
-mp_obj_t turtle_speed(mp_obj_t speed) {
+mp_obj_t modturtle_speed(mp_obj_t speed) {
   int new_speed = mp_obj_get_int(speed);
 
   if (new_speed < 0) {
@@ -155,28 +155,28 @@ mp_obj_t turtle_speed(mp_obj_t speed) {
   return mp_const_none;
 }
 
-mp_obj_t turtle_position() {
+mp_obj_t modturtle_position() {
   mp_obj_t mp_pos[2];
   mp_pos[0] = mp_obj_new_float(t_x);
   mp_pos[1] = mp_obj_new_float(t_y);
   return mp_obj_new_tuple(2, mp_pos);
 }
 
-mp_obj_t turtle_heading() {
+mp_obj_t modturtle_heading() {
   return mp_obj_new_float((t_heading - t_heading_offset) / t_heading_scale);
 }
 
-mp_obj_t turtle_pendown() {
+mp_obj_t modturtle_pendown() {
   t_penup = false;
   return mp_const_none;
 }
 
-mp_obj_t turtle_penup() {
+mp_obj_t modturtle_penup() {
   t_penup = true;
   return mp_const_none;
 }
 
-mp_obj_t turtle_pensize(size_t n_args, const mp_obj_t *args) {
+mp_obj_t modturtle_pensize(size_t n_args, const mp_obj_t *args) {
   if (n_args == 0) {
     return MP_OBJ_NEW_SMALL_INT(t_dotsize);
   }
@@ -189,37 +189,37 @@ mp_obj_t turtle_pensize(size_t n_args, const mp_obj_t *args) {
     size = 10;
   }
 
-  turtle_initpen(size);
+  modturtle_initpen(size);
 
   return mp_const_none;
 }
 
-mp_obj_t turtle_isdown() {
+mp_obj_t modturtle_isdown() {
   return t_penup ? mp_const_false : mp_const_true;
 }
 
-mp_obj_t turtle_color(mp_obj_t r, mp_obj_t g, mp_obj_t b) {
+mp_obj_t modturtle_color(mp_obj_t r, mp_obj_t g, mp_obj_t b) {
   t_color = KDColor::RGB888(mp_obj_get_int(r), mp_obj_get_int(g), mp_obj_get_int(b));
   return mp_const_none;
 }
 
-mp_obj_t turtle_showturtle() {
+mp_obj_t modturtle_showturtle() {
   t_hidden = false;
   draw_turtle();
   return mp_const_none;
 }
 
-mp_obj_t turtle_hideturtle() {
+mp_obj_t modturtle_hideturtle() {
   t_hidden = true;
   erase_turtle();
   return mp_const_none;
 }
 
-mp_obj_t turtle_isvisible() {
+mp_obj_t modturtle_isvisible() {
   return t_hidden ? mp_const_false : mp_const_true;
 }
 
-mp_obj_t turtle___init__() {
+mp_obj_t modturtle___init__() {
   if (!t_underneath) {
     t_underneath = new KDColor[t_size * t_size];
   }
@@ -242,12 +242,12 @@ mp_obj_t turtle___init__() {
   t_mileage = 0;
   t_hidden = false;
 
-  turtle_initpen(5);
+  modturtle_initpen(5);
 
   return mp_const_none;
 }
 
-void turtle_initpen(int size) {
+void modturtle_initpen(int size) {
   if (t_dot) {
     delete[] t_dot;
   }
@@ -270,7 +270,7 @@ void turtle_initpen(int size) {
   }
 }
 
-void turtle_moveto(float x, float y) {
+void modturtle_moveto(float x, float y) {
   float oldx = t_x, oldy = t_y;
   float length = sqrt((x - oldx) * (x - oldx) + (y - oldy) * (y - oldy));
 
@@ -293,7 +293,7 @@ void turtle_moveto(float x, float y) {
   draw_turtle();
 }
 
-void turtle_deinit() {
+void modturtle_deinit() {
   delete[] t_underneath;
   t_underneath = nullptr;
   delete[] t_icon;

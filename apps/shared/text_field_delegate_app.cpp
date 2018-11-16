@@ -7,12 +7,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  InputEventHandlerDelegateApp(container, snapshot, rootViewController),
-  TextFieldDelegate()
-{
-}
-
 Context * TextFieldDelegateApp::localContext() {
   return container()->globalContext();
 }
@@ -37,7 +31,19 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
   return false;
 }
 
+
+bool TextFieldDelegateApp::isAcceptableText(const char * text, Responder * responder) {
+  Expression exp = Expression::parse(text);
+  return isAcceptableExpression(exp, responder);
+}
+
 /* Protected */
+
+TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
+  InputEventHandlerDelegateApp(container, snapshot, rootViewController),
+  TextFieldDelegate()
+{
+}
 
 bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
@@ -54,19 +60,18 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool TextFieldDelegateApp::isAcceptableText(const char * text, Responder * responder) {
-  Expression exp = Expression::parse(text);
-  return isAcceptableExpression(exp, responder);
-}
-
 bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp, Responder * responder) {
   if (exp.isUninitialized()) {
-    responder->app()->displayWarning(I18n::Message::SyntaxError);
+    if (responder != nullptr) {
+      responder->app()->displayWarning(I18n::Message::SyntaxError);
+    }
     return false;
   }
   if (exp.type() == ExpressionNode::Type::Store) {
     // Most textfields do not allow Store "3->a" or "5->f(x)"
-    responder->app()->displayWarning(I18n::Message::StoreExpressionNotAllowed);
+    if (responder != nullptr) {
+      responder->app()->displayWarning(I18n::Message::StoreExpressionNotAllowed);
+    }
     return false;
   }
   return true;

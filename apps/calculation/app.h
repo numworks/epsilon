@@ -28,8 +28,9 @@ public:
     CalculationStore m_calculationStore;
   };
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
-  bool textInputIsCorrect(const char * text);
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
+  // TextFieldDelegateApp
+  bool isAcceptableExpression(const Poincare::Expression expression, Responder * responder) override;
   char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

@@ -1,6 +1,7 @@
 #include <py/obj.h>
 
 mp_obj_t modturtle___init__();
+void modturtle_gc_collect();
 
 mp_obj_t modturtle_forward(mp_obj_t px);
 mp_obj_t modturtle_backward(mp_obj_t px);

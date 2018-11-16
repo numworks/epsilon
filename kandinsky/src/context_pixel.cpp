@@ -16,3 +16,8 @@ KDColor KDContext::getPixel(KDPoint p) {
   }
   return KDColorBlack;
 }
+
+void KDContext::getPixels(KDRect r, KDColor * pixels) {
+  KDRect rect = r.translatedBy(m_origin);
+  pullRect(rect, pixels);
+}

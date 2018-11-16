@@ -35,6 +35,9 @@
 // add bunch of once-off options. May need refactoring later
 #define MICROPY_CPYTHON_COMPAT (0)
 
+// modturtle needs a hook upon init
+#define MICROPY_MODULE_BUILTIN_INIT (1)
+
 // Support for async/await/async for/async with
 #define MICROPY_PY_ASYNC_AWAIT (0)
 

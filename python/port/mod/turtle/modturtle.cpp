@@ -5,6 +5,14 @@ extern "C" {
 
 static Turtle sTurtle;
 
+mp_obj_t modturtle___init__() {
+  sTurtle = Turtle();
+  /* Note: we don't even bother writing a destructor for Turtle because this
+   * init function is called once, and only once, per MicroPython init cycle.
+   * When the previous Turtle object is destroyed, its VM is long gone. */
+  return mp_const_none;
+}
+
 mp_obj_t modturtle_forward(mp_obj_t px) {
   sTurtle.forward(mp_obj_get_float(px));
   return mp_const_none;

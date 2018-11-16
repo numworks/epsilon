@@ -41,7 +41,7 @@ Poincare::Expression::Coordinate2D IntersectionGraphController::computeNewPointO
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
     if (record != m_record) {
-      Poincare::Expression e = functionStore()->modelForRecord(record)->expression(context);
+      Poincare::Expression e = functionStore()->modelForRecord(record)->expressionReduced(context);
       Poincare::Expression::Coordinate2D intersection = functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, step, max, context, e);
       if ((std::isnan(result.abscissa) || std::fabs(intersection.abscissa-start) < std::fabs(result.abscissa-start)) && !std::isnan(intersection.abscissa)) {
         m_intersectedRecord = record;

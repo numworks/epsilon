@@ -256,43 +256,37 @@ bool GraphController::moveCursorHorizontally(int direction) {
   }
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
     m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globalContext());
+  double y = yValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  int closestRegressionSeries = -1;
+  Poincare::Context * context = globalContext();
+  double x = m_cursor->x();
+  double y = m_cursor->y();
+
+  // Find the closest regression
+  int selectedRegressionIndex = *m_selectedDotIndex == -1 ? *m_selectedSeriesIndex : -1;
+  int closestRegressionSeries = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
+
+  // Find the closest dot
   int closestDotSeries = -1;
-  int dotSelected = -1;
-  Poincare::Context * globContext = globalContext();
+  double selectedDotY = *m_selectedDotIndex == -1 ? (direction > 0 ? -DBL_MAX : DBL_MAX) : y;
+  int dotSelected = m_store->closestVerticalDot(direction, x, selectedDotY, *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries, context);
 
-  if (*m_selectedDotIndex == -1) {
-    // The current cursor is on a regression
-    // Check the closest regression
-    closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), *m_selectedSeriesIndex, globContext);
-    // Check the closest dot
-    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), direction > 0 ? -FLT_MAX : FLT_MAX, *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries, globContext);
-  } else {
-    // The current cursor is on a dot
-    // Check the closest regression
-    closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), -1, globContext);
-    // Check the closest dot
-    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), m_cursor->y(), *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries, globContext);
-  }
-
+  // Choose between selecting the regression or the dot
   bool validRegression = closestRegressionSeries > -1;
   bool validDot = dotSelected >= 0 && dotSelected <= m_store->numberOfPairsOfSeries(closestDotSeries);
-
   if (validRegression && validDot) {
     /* Compare the abscissa distances to select either the dot or the
      * regression. If they are equal, compare the ordinate distances. */
     double dotDistanceX = -1;
     if (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) {
-      dotDistanceX = std::fabs(m_store->meanOfColumn(closestDotSeries, 0) - m_cursor->x());
+      dotDistanceX = std::fabs(m_store->meanOfColumn(closestDotSeries, 0) - x);
     } else {
-      dotDistanceX = std::fabs(m_store->get(closestDotSeries, 0, dotSelected) - m_cursor->x());
+      dotDistanceX = std::fabs(m_store->get(closestDotSeries, 0, dotSelected) - x);
     }
     if (dotDistanceX != 0) {
       /* The regression X distance to the point is 0, so it is closer than the
@@ -300,12 +294,12 @@ bool GraphController::moveCursorVertically(int direction) {
       validDot = false;
     } else {
       // Compare the y distances
-      double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionSeries, m_cursor->x(), globContext) - m_cursor->y());
+      double regressionDistanceY = std::fabs(yValue(closestRegressionSeries, x, context) - y);
       double dotDistanceY = -1;
       if (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) {
-        dotDistanceY = std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - m_cursor->y());
+        dotDistanceY = std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y);
       } else {
-        dotDistanceY = std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - m_cursor->y());
+        dotDistanceY = std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
       }
       if (regressionDistanceY <= dotDistanceY) {
         validDot = false;
@@ -314,28 +308,36 @@ bool GraphController::moveCursorVertically(int direction) {
       }
     }
   }
-  if (!validDot && validRegression) {
+
+  assert(!validDot || !validRegression);
+
+  if (validRegression) {
     // Select the regression
     *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
-    m_cursor->moveTo(m_cursor->x(), m_store->yValueForXValue(*m_selectedSeriesIndex, m_cursor->x(), globContext));
+    m_cursor->moveTo(x, yValue(*m_selectedSeriesIndex, x, context));
     m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     return true;
   }
 
-  if (validDot && !validRegression) {
+  if (validDot) {
+    // Select the dot
     m_view.setCursorView(&m_crossCursorView);
     *m_selectedSeriesIndex = closestDotSeries;
     *m_selectedDotIndex = dotSelected;
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+      // Select the mean dot
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
       m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
-      return true;
+    } else {
+      // Select a data point dot
+      m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     }
-    m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     return true;
   }
+
+  // There was no suitable selection
   return false;
 }
 
@@ -349,6 +351,22 @@ uint32_t GraphController::rangeVersion() {
 
 bool GraphController::isCursorVisible() {
   return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+}
+
+bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
+  return newIndex != currentIndex && !m_store->seriesIsEmpty(newIndex);
+}
+
+double GraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {
+  return m_store->yValueForXValue(curveIndex, x, context);
+}
+
+bool GraphController::suitableYValue(double y) const {
+  return m_store->yMin() <= y && y <= m_store->yMax();
+}
+
+int GraphController::numberOfCurves() const {
+  return Store::k_numberOfSeries;
 }
 
 float GraphController::cursorBottomMarginRatio() {

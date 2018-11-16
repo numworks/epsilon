@@ -73,7 +73,7 @@ T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * conte
     return NAN;
   }
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expression(context).approximateWithValueForSymbol(unknownX, x, *context, Preferences::sharedPreferences()->angleUnit());
+  return expressionReduced(context).approximateWithValueForSymbol(unknownX, x, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 StorageFunction::FunctionRecordData * StorageFunction::recordData() const {

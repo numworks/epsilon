@@ -8,8 +8,8 @@ extern "C" {
 #include "port.h"
 #include "turtle_icon.h"
 
-constexpr float t_heading_offset = M_PI_2;
-constexpr float t_heading_scale = M_PI / 180;
+constexpr mp_float_t t_heading_offset = M_PI_2;
+constexpr mp_float_t t_heading_scale = M_PI / 180;
 constexpr int t_x_offset = Ion::Display::Width / 2;
 constexpr int t_y_offset = (Ion::Display::Height-18) / 2;
 constexpr int t_size = 9;
@@ -18,8 +18,8 @@ constexpr KDPoint t_icon_offset(-t_size/2 + 1, -t_size/2 + 1);
 constexpr KDSize t_icon_size(t_size, t_size);
 
 static KDColor t_color;
-static float t_heading;
-static float t_x, t_y;
+static mp_float_t t_heading;
+static mp_float_t t_x, t_y;
 static bool t_penup;
 static bool t_hidden;
 static int t_speed;
@@ -32,7 +32,7 @@ static KDColor *t_underneath;
 static KDColor *t_icon;
 static uint8_t *t_dot;
 
-static KDPoint pos_turtle(float x, float y) {
+static KDPoint pos_turtle(mp_float_t x, mp_float_t y) {
   return KDPoint(round(x + t_x_offset), round(y + t_y_offset));
 }
 
@@ -72,7 +72,7 @@ void erase_turtle() {
   }
 }
 
-void dot_turtle(float x, float y) {
+void dot_turtle(mp_float_t x, mp_float_t y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
   if (!t_penup) {
@@ -92,8 +92,8 @@ void dot_turtle(float x, float y) {
 }
 
 mp_obj_t modturtle_forward(mp_obj_t px) {
-  float x = t_x + mp_obj_get_float(px)*sin(t_heading);
-  float y = t_y + mp_obj_get_float(px)*cos(t_heading);
+  mp_float_t x = t_x + mp_obj_get_float(px)*sin(t_heading);
+  mp_float_t y = t_y + mp_obj_get_float(px)*cos(t_heading);
   modturtle_moveto(x, y);
   return mp_const_none;
 }
@@ -107,12 +107,12 @@ mp_obj_t modturtle_right(mp_obj_t angle) {
 }
 
 mp_obj_t modturtle_left(mp_obj_t angle) {
-  float new_angle = ((t_heading - t_heading_offset) + (mp_obj_get_float(angle) * t_heading_scale)) / t_heading_scale;
+  mp_float_t new_angle = ((t_heading - t_heading_offset) + (mp_obj_get_float(angle) * t_heading_scale)) / t_heading_scale;
   return modturtle_setheading(mp_obj_new_float(new_angle));
 }
 
 mp_obj_t modturtle_goto(size_t n_args, const mp_obj_t *args) {
-  float newx, newy;
+  mp_float_t newx, newy;
 
   if (n_args == 1) {
     mp_obj_t *mp_coords;
@@ -254,10 +254,10 @@ void modturtle_initpen(int size) {
   t_dot = new uint8_t[size*size];
   t_dotsize = size;
 
-  float middle = size / 2;
+  mp_float_t middle = size / 2;
   for (int j = 0; j < size; j++) {
     for (int i = 0; i < size; i++) {
-      float distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / (middle+1);
+      mp_float_t distance = sqrt((j - middle)*(j - middle) + (i - middle)*(i - middle)) / (middle+1);
       int value = distance * distance * 255;
       if (value < 0) {
         value = 0;
@@ -270,13 +270,13 @@ void modturtle_initpen(int size) {
   }
 }
 
-void modturtle_moveto(float x, float y) {
-  float oldx = t_x, oldy = t_y;
-  float length = sqrt((x - oldx) * (x - oldx) + (y - oldy) * (y - oldy));
+void modturtle_moveto(mp_float_t x, mp_float_t y) {
+  mp_float_t oldx = t_x, oldy = t_y;
+  mp_float_t length = sqrt((x - oldx) * (x - oldx) + (y - oldy) * (y - oldy));
 
   if (length > 1) {
     for (int i = 0; i < length; i++) {
-      float progress = i / length;
+      mp_float_t progress = i / length;
 
       if (t_speed > 0) {
         Ion::Display::waitForVBlank();

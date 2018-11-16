@@ -193,7 +193,26 @@ QUIZ_CASE(poincare_store_composed_functions) {
   assert_parsed_expression_evaluates_to<double>("g(3)", "1");
   assert_parsed_expression_evaluates_to<double>("g(5)", "9");
 
+  // g: x->f(x-2)+f(x+1)
+  assert_simplify("f(x-2)+f(x+1)>g(x)");
+  // Add a matrix to bypass simplification
+  assert_parsed_expression_evaluates_to<double>("g(3)+[[1]]", "[[18]]");
+  assert_parsed_expression_evaluates_to<double>("g(5)", "45");
+
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}
+
+QUIZ_CASE(poincare_store_functions_with_context) {
+  // f: x->x^2
+  assert_simplify("x^2>f(x)");
+  // Approximate f(?-2) with ? = 5
+  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
+  assert_parsed_expression_approximates_with_value_for_symbol(Function("f", 1, Subtraction(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(2))), x, 5.0, 9.0);
+  // Approximate f(?-1)+f(?+1) with ? = 3
+  assert_parsed_expression_approximates_with_value_for_symbol(Addition(Function("f", 1, Subtraction(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(1))), Function("f", 1, Addition(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(1)))), x, 3.0, 20.0);
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }

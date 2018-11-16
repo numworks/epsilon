@@ -14,7 +14,7 @@ public:
 
   // Context
   void setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) override;
-  const Expression expressionForSymbol(const SymbolAbstract & symbol) override;
+  const Expression expressionForSymbol(const SymbolAbstract & symbol, bool clone) override;
 
 private:
   const char * m_name;

@@ -15,7 +15,7 @@ CacheContext<T>::CacheContext(Context * parentContext) :
 }
 
 template<typename T>
-const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & symbol) {
+const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
   // [u|v](n(+1)?)
   if (symbol.type() == ExpressionNode::Type::Symbol
     && (symbol.name()[0] ==  SequenceStore::k_sequenceNames[0][0] || symbol.name()[0] ==  SequenceStore::k_sequenceNames[1][0])
@@ -24,7 +24,7 @@ const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & sym
     Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
     return Float<T>(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
   }
-  return VariableContext::expressionForSymbol(symbol);
+  return VariableContext::expressionForSymbol(symbol, clone);
 }
 
 template<typename T>

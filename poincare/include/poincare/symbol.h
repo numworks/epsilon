@@ -82,7 +82,7 @@ public:
   Expression replaceReplaceableSymbols(Context & context);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
-  Expression expand(Context & context) const;
+  Expression expand(Context & context, bool cloneContextValue) const;
 };
 
 }

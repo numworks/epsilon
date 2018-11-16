@@ -167,6 +167,7 @@ tests += $(addprefix poincare/test/,\
   subtraction.cpp\
   symbol.cpp\
   trigo.cpp\
+  user_variable.cpp\
   vertical_offset_layout.cpp\
 )
 

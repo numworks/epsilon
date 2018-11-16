@@ -183,3 +183,17 @@ QUIZ_CASE(poincare_store_circular_variables_and_functions) {
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("b.exp").destroy();
 }
+
+QUIZ_CASE(poincare_store_composed_functions) {
+  // f: x->x^2
+  assert_simplify("x^2>f(x)");
+  // g: x->f(x-2)
+  assert_simplify("f(x-2)>g(x)");
+  assert_parsed_expression_evaluates_to<double>("f(2)", "4");
+  assert_parsed_expression_evaluates_to<double>("g(3)", "1");
+  assert_parsed_expression_evaluates_to<double>("g(5)", "9");
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("g.func").destroy();
+}

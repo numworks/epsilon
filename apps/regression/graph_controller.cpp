@@ -69,22 +69,26 @@ void GraphController::selectRegressionCurve() {
   m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
+// Private
+
 Poincare::Context * GraphController::globalContext() {
   return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
 }
 
-CurveView * GraphController::curveView() {
-  return &m_view;
+float GraphController::cursorBottomMarginRatio() {
+  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height()/2 + 2 + estimatedBannerHeight())/k_viewHeight;
+  return f;
 }
 
-InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
-  return m_store;
+float GraphController::estimatedBannerHeight() const {
+  if (selectedSeriesIndex() < 0) {
+    return KDFont::SmallFont->glyphSize().height() * 3;
+  }
+  float result = KDFont::SmallFont->glyphSize().height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
+  return result;
 }
 
-bool GraphController::handleEnter() {
-  stackController()->push(&m_graphOptionsController);
-  return true;
-}
+// SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
   if (*m_selectedSeriesIndex < 0) {
@@ -222,21 +226,6 @@ void GraphController::reloadBannerView() {
   }
 }
 
-void GraphController::initRangeParameters() {
-  m_store->setDefault();
-}
-
-void GraphController::initCursorParameters() {
-  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
-    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
-  }
-  double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
-  double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
-  m_cursor->moveTo(x, y);
-  m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
-  *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
-}
-
 bool GraphController::moveCursorHorizontally(int direction) {
   if (*m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
@@ -260,6 +249,35 @@ bool GraphController::moveCursorHorizontally(int direction) {
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
+}
+
+InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
+  return m_store;
+}
+
+CurveView * GraphController::curveView() {
+  return &m_view;
+}
+
+bool GraphController::handleEnter() {
+  stackController()->push(&m_graphOptionsController);
+  return true;
+}
+
+// InteractiveCurveViewController
+void GraphController::initRangeParameters() {
+  m_store->setDefault();
+}
+
+void GraphController::initCursorParameters() {
+  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
+    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
+  }
+  double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+  double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
+  m_cursor->moveTo(x, y);
+  m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
 }
 
 bool GraphController::moveCursorVertically(int direction) {
@@ -295,12 +313,9 @@ bool GraphController::moveCursorVertically(int direction) {
     } else {
       // Compare the y distances
       double regressionDistanceY = std::fabs(yValue(closestRegressionSeries, x, context) - y);
-      double dotDistanceY = -1;
-      if (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) {
-        dotDistanceY = std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y);
-      } else {
+      double dotDistanceY = (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) ?
+        dotDistanceY = std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
         dotDistanceY = std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
-      }
       if (regressionDistanceY <= dotDistanceY) {
         validDot = false;
       } else {
@@ -369,11 +384,6 @@ int GraphController::numberOfCurves() const {
   return Store::k_numberOfSeries;
 }
 
-float GraphController::cursorBottomMarginRatio() {
-  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height()/2 + 2 + estimatedBannerHeight())/k_viewHeight;
-  return f;
-}
-
 float GraphController::displayTopMarginRatio() {
   return 0.12f; // cursorHeight/graphViewHeight
 }
@@ -381,14 +391,6 @@ float GraphController::displayTopMarginRatio() {
 float GraphController::displayBottomMarginRatio() {
   float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight())/k_viewHeight;
   return f;
-}
-
-float GraphController::estimatedBannerHeight() const {
-  if (selectedSeriesIndex() < 0) {
-    return KDFont::SmallFont->glyphSize().height() * 3;
-  }
-  float result = KDFont::SmallFont->glyphSize().height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
-  return result;
 }
 
 InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

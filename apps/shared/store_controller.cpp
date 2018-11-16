@@ -26,6 +26,9 @@ StoreController::ContentView::ContentView(DoublePairStore * store, Responder * p
 
 void StoreController::ContentView::displayFormulaInput(bool display) {
   if (m_displayFormulaInputView != display) {
+    if (display) {
+      m_formulaInputView.textField()->setText("");
+    }
     m_displayFormulaInputView = display;
     layoutSubviews();
     markRectAsDirty(bounds());

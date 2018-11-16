@@ -65,6 +65,11 @@ Q(isvisible)
 Q(pencolor)
 Q(reset)
 
+// utime QSTRs
+Q(time)
+Q(sleep)
+Q(monotonic)
+
 // MicroPython QSTRs
 Q()
 Q(*)

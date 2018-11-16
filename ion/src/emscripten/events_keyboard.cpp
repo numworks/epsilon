@@ -52,13 +52,22 @@ private:
 
 static Queue<Ion::Events::Event, 1024> sEventQueue;
 
-void IonEventsEmscriptenPushKey(int keyNumber) {
+Ion::Keyboard::State sKeyboardState;
+
+void IonEventsEmscriptenKeyDown(int keyNumber) {
+  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
+  sKeyboardState.setKey(key);
   /* Note: This uses the *current* modifier state to generate the event. If some
    * other modifiers were in the queue before, those won't be taken into account
    * when the event corresponding to this key is dequeued.
    * In practice, this should not happen because we push keys one by one. */
-  Ion::Events::Event event = Ion::Events::Event((Ion::Keyboard::Key)keyNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
+  Ion::Events::Event event = Ion::Events::Event(key, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
   sEventQueue.enqueue(event);
+}
+
+void IonEventsEmscriptenKeyUp(int keyNumber) {
+  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
+  sKeyboardState.clearKey(key);
 }
 
 void IonEventsEmscriptenPushEvent(int eventNumber) {
@@ -66,19 +75,22 @@ void IonEventsEmscriptenPushEvent(int eventNumber) {
 }
 
 Ion::Keyboard::State Ion::Keyboard::scan() {
-  // FIXME
-  // On the Emscripten platform, scan() is used in :
-  //   - shouldInterrupt(), from interruptHelper.h
-  //   - apps_container.cpp
-  //   - apps/hardware_test/keyboard_test_controller.cpp
-  //  We would like to check if there is a Back event that would interrupt the
-  //  Python or Poincare computation, but it is quite difficult to get because
-  //  the runLoop is blocking in JavaScript and Events do not get pushed in
-  //  sEvent.
-  //  We still need to override the dummy/events_keyboard.cpp function, which
-  //  returns that all keys are always pressed and thus interrupts Python
-  //  computations after 20000 calls.
-  return 0;
+  /* The following call to emscripten_sleep gives the JS VM a chance to do a run
+   * loop iteration. This in turns gives the browser an opportunity to call the
+   * IonEventsEmscriptenPushKey function, therefore modifying the sKeyboardState
+   * global variable before it is returned by this Ion::Keyboard::scan.
+   * On Emterpreter-async, emscripten_sleep is actually a wrapper around the JS
+   * function setTimeout, which can be called with a value of zero. Doing so
+   * puts the callback at the end of the queue of callbacks to be processed. */
+  emscripten_sleep(0);
+
+  /* Grab this opporunity to refresh the display. In practice, this routine is
+   * called from micropython_port_vm_hook_loop once in a while, so this gives us
+   * an opportunity to refresh the display during the execution of a
+   * long-running Python script. */
+  Ion::Display::Emscripten::refresh();
+
+  return sKeyboardState;
 }
 
 namespace Ion {

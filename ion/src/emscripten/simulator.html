@@ -268,8 +268,11 @@ function screenshot() {
 var spans = document.querySelectorAll(".calculator .keyboard span");
 for (var i=0; i< spans.length; i++) {
   var span = spans[i];
-  span.addEventListener("click", function(e) {
-    Module._IonEventsEmscriptenPushKey(this.getAttribute("data-key"));
+  span.addEventListener("mousedown", function(e) {
+    Module._IonEventsEmscriptenKeyDown(this.getAttribute("data-key"));
+  });
+  span.addEventListener("mouseup", function(e) {
+    Module._IonEventsEmscriptenKeyUp(this.getAttribute("data-key"));
   });
 }
 

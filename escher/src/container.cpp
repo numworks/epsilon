@@ -1,6 +1,5 @@
 #include <escher/container.h>
 #include <assert.h>
-#include <setjmp.h>
 
 Container::Container() :
   RunLoop(),

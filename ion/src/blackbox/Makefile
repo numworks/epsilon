@@ -12,6 +12,7 @@ objs += $(addprefix ion/src/shared/, \
   events.o \
   power.o \
   random.o \
+  timing.o \
   dummy/backlight.o \
   dummy/battery.o \
   dummy/events_modifier.o \

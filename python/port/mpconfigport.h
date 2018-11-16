@@ -90,7 +90,7 @@
 // (This scheme won't work if we want to mix Thumb and normal ARM code.)
 #define MICROPY_MAKE_POINTER_CALLABLE(p) (p)
 
-#define MICROPY_VM_HOOK_LOOP micropython_port_should_interrupt();
+#define MICROPY_VM_HOOK_LOOP micropython_port_vm_hook_loop();
 
 typedef intptr_t mp_int_t; // must be pointer size
 typedef uintptr_t mp_uint_t; // must be pointer size
@@ -106,9 +106,12 @@ typedef long mp_off_t;
 
 #define MP_STATE_PORT MP_STATE_VM
 
-extern const struct _mp_obj_module_t kandinsky_module;
+extern const struct _mp_obj_module_t modkandinsky_module;
+extern const struct _mp_obj_module_t modtime_module;
 extern const struct _mp_obj_module_t turtle_module;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&kandinsky_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&turtle_module) }
+    { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&turtle_module) }, \
+

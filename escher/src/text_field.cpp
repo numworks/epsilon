@@ -382,7 +382,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     return handleEventWithText(m_contentView.textBuffer());
   }
-  didHandleEvent = privateHandleEvent(event);
+  if (!didHandleEvent) {
+    didHandleEvent = privateHandleEvent(event);
+  }
   return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 

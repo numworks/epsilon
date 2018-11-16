@@ -7,7 +7,10 @@ extern "C" {
 #include "turtle_icon.h"
 
 template <typename T> static inline T * allocate(size_t count) {
-  // We forward dynamic allocations to the Python heap
+  /* We forward dynamic allocations to the Python GC so we don't have to bother
+   * with deallocation. For this to work well, the Turtle object who owns the
+   * allocated areas need to be added to MicroPython's GC roots, otherwise those
+   * buffers will be wiped out by the GC too early. */
   return static_cast<T*>(m_malloc(sizeof(T) * count));
 }
 

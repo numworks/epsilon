@@ -25,7 +25,7 @@ void Turtle::forward(mp_float_t length) {
 
 void Turtle::left(mp_float_t angle) {
   setHeading(
-      ((m_heading - k_headingOffset) + (angle * k_headingScale)) / k_headingScale
+    ((m_heading - k_headingOffset) + (angle * k_headingScale)) / k_headingScale
   );
 }
 
@@ -61,7 +61,7 @@ mp_float_t Turtle::heading() const {
 void Turtle::setHeading(mp_float_t angle) {
   micropython_port_vm_hook_loop();
 
-  m_heading = angle * k_headingScale + k_headingScale;
+  m_heading = angle * k_headingScale + k_headingOffset;
 
   Ion::Display::waitForVBlank();
   erase();

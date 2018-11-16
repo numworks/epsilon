@@ -27,7 +27,7 @@ int ExpressionNode::getPolynomialCoefficients(Context & context, const char * sy
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-Expression ExpressionNode::replaceReplaceableSymbols(Context & context) {
+Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context & context) {
   return Expression(this).defaultReplaceReplaceableSymbols(context);
 }
 

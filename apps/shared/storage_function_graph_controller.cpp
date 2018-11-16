@@ -119,6 +119,11 @@ double StorageFunctionGraphController::defaultCursorAbscissa() {
   return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
 }
 
+StorageFunctionStore * StorageFunctionGraphController::functionStore() const {
+  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  return myApp->functionStore();
+}
+
 void StorageFunctionGraphController::initCursorParameters() {
   double x = defaultCursorAbscissa();
   StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
@@ -136,50 +141,14 @@ void StorageFunctionGraphController::initCursorParameters() {
 
 bool StorageFunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
-  double y = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(currentActiveFunctionIndex))->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-  int nextActiveFunctionIndex = -1;
-  double nextY = direction > 0 ? DBL_MAX : -DBL_MAX;
-  int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
-  for (int i = 0; i < activeFunctionsCount; i++) {
-    if (i == currentActiveFunctionIndex) {
-      continue;
-    }
-    double newY = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i))->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-    bool isNextFunction = false;
-    /* Choosing the next function to select quite complex because we need to
-     * take care of functions that have the same values at the current x. When
-     * moving up, if several functions have the same value, we select the
-     * function of higher index. When going down, we select the function of
-     * lower index. */
-    if (direction > 0) {
-      if (newY > y && newY < nextY) {
-        isNextFunction = true;
-      } else if (newY == nextY) {
-        assert(i > nextActiveFunctionIndex);
-        isNextFunction = true;
-      } else if (newY == y && i < currentActiveFunctionIndex) {
-        isNextFunction = true;
-      }
-    } else {
-      if (newY < y && newY > nextY) {
-        isNextFunction = true;
-      } else if (newY == nextY) {
-        assert(i > nextActiveFunctionIndex);
-      } else if (newY == y && i > currentActiveFunctionIndex) {
-        isNextFunction = true;
-      }
-    }
-    if (isNextFunction) {
-      nextY = newY;
-      nextActiveFunctionIndex = i;
-    }
-  }
+  Poincare::Context * context = static_cast<StorageFunctionApp *>(app())->localContext();
+
+  int nextActiveFunctionIndex = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
   if (nextActiveFunctionIndex < 0) {
     return false;
   }
   selectFunctionWithCursor(nextActiveFunctionIndex);
-  m_cursor->moveTo(m_cursor->x(), nextY);
+  m_cursor->moveTo(m_cursor->x(), yValue(nextActiveFunctionIndex, m_cursor->x(), context));
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
@@ -200,9 +169,16 @@ bool StorageFunctionGraphController::isCursorVisible() {
   return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
-StorageFunctionStore * StorageFunctionGraphController::functionStore() const {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
-  return myApp->functionStore();
+bool StorageFunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
+  return newIndex != currentIndex;
+}
+
+double StorageFunctionGraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {
+  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateAtAbscissa(x, context);
+}
+
+int StorageFunctionGraphController::numberOfCurves() const {
+  return functionStore()->numberOfActiveFunctions();
 }
 
 }

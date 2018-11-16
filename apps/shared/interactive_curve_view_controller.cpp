@@ -1,6 +1,7 @@
 #include "interactive_curve_view_controller.h"
 #include "text_field_delegate_app.h"
 #include <cmath>
+#include <float.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -159,6 +160,51 @@ Responder * InteractiveCurveViewController::tabController() const{
 
 StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
+int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
+  double x = m_cursor->x();
+  double y = m_cursor->y();
+  double nextY = goingUp ? DBL_MAX : -DBL_MAX;
+  int nextCurveIndex = -1;
+  int curvesCount = numberOfCurves();
+  for (int i = 0; i < curvesCount; i++) {
+    if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
+      continue;
+    }
+    double newY = yValue(i, x, context);
+    if (!suitableYValue(newY)) {
+      continue;
+    }
+    bool isNextCurve = false;
+    /* Choosing the closest vertical curve is quite complex because we need to
+     * take care of curves that have the same values at the current x. When
+     * moving up, if several curves have the same value, we choose the curve
+     * of higher index. When going down, we select the curve of lower index. */
+    if (goingUp) {
+      if (newY > y && newY < nextY) {
+        isNextCurve = true;
+      } else if (newY == nextY) {
+        assert(i > nextCurveIndex);
+        isNextCurve = true;
+      } else if (newY == y && i < currentCurveIndex) {
+        isNextCurve = true;
+      }
+    } else {
+      if (newY < y && newY > nextY) {
+        isNextCurve = true;
+      } else if (newY == nextY) {
+        assert(i > nextCurveIndex);
+      } else if (newY == y && i > currentCurveIndex) {
+        isNextCurve = true;
+      }
+    }
+    if (isNextCurve) {
+      nextY = newY;
+      nextCurveIndex = i;
+    }
+  }
+  return nextCurveIndex;
 }
 
 }

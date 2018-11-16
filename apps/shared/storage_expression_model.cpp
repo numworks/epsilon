@@ -30,12 +30,12 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
 
 bool StorageExpressionModel::isCircularlyDefined(Poincare::Context * context) const {
   if (m_circular == -1) {
-    m_circular = Expression::ExpressionWithoutSymbols(expression(context), *context).isUninitialized();
+    m_circular = Expression::ExpressionWithoutSymbols(expressionReduced(context), *context).isUninitialized();
   }
   return m_circular;
 }
 
-Expression StorageExpressionModel::expression(Poincare::Context * context) const {
+Expression StorageExpressionModel::expressionReduced(Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
     assert(!isNull());
     Ion::Storage::Record::Data recordData = value();
@@ -47,6 +47,7 @@ Expression StorageExpressionModel::expression(Poincare::Context * context) const
 Expression StorageExpressionModel::expressionWithSymbol() const {
   assert(!isNull());
   Ion::Storage::Record::Data recordData = value();
+  /* A new Expression has to be created at each call (because it might be tempered with after calling) */
   return Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData));
 }
 

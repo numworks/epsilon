@@ -118,6 +118,7 @@ typedef Expression (*ProcessExpression)(Expression, Context & context, Preferenc
 void assert_parsed_expression_process_to(const char * expression, const char * result, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ProcessExpression process, int numberOfSignifiantDigits = PrintFloat::k_numberOfStoredSignificantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
+
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << " Entry expression: " << expression << "----"  << endl;
   print_expression(e, 0);
@@ -147,6 +148,13 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
         }
         return result.approximate<T>(context, angleUnit, complexFormat);
       }, numberOfDigits);
+}
+
+template<typename T>
+void assert_parsed_expression_approximates_with_value_for_symbol(Expression expression, const char * symbol, T value, T approximation, Poincare::Preferences::AngleUnit angleUnit) {
+  Shared::GlobalContext globalContext;
+  T result = expression.approximateWithValueForSymbol(symbol, value, globalContext, angleUnit);
+  quiz_assert(std::fabs(result - approximation) < 10.0*Expression::epsilon<T>());
 }
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Preferences::AngleUnit angleUnit) {
@@ -199,3 +207,5 @@ void assert_expression_layout_serialize_to(Poincare::Layout layout, const char *
 
 template void assert_parsed_expression_evaluates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
 template void assert_parsed_expression_evaluates_to<double>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, float, float, Poincare::Preferences::AngleUnit);
+template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, double, double, Poincare::Preferences::AngleUnit);

@@ -246,7 +246,7 @@ protected:
   /* Properties */
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
   bool hasReplaceableSymbols(Context & context) const;
-  Expression replaceReplaceableSymbols(Context & context) { return node()->replaceReplaceableSymbols(context); }
+  Expression shallowReplaceReplaceableSymbols(Context & context) { return node()->shallowReplaceReplaceableSymbols(context); }
   Expression defaultReplaceReplaceableSymbols(Context & context);
 
   /* Simplification */

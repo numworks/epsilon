@@ -64,6 +64,11 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp, Responde
     responder->app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
+  if (exp.type() == ExpressionNode::Type::Store) {
+    // Most textfields do not allow Store "3->a" or "5->f(x)"
+    responder->app()->displayWarning(I18n::Message::StoreExpressionNotAllowed);
+    return false;
+  }
   return true;
 }
 

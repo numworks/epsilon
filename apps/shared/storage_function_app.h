@@ -39,7 +39,6 @@ protected:
   StorageFunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
     ExpressionFieldDelegateApp(container, snapshot, rootViewController)
   {}
-  bool isAcceptableExpression(const Poincare::Expression expression, Responder * responder) override;
 };
 
 }

@@ -31,7 +31,7 @@ void VariableContext::setExpressionForSymbol(const Expression & expression, cons
 
 const Expression VariableContext::expressionForSymbol(const SymbolAbstract & symbol) {
   if (strcmp(symbol.name(), m_name) == 0) {
-    return m_value;
+    return m_value.clone();
   } else {
     return m_parentContext->expressionForSymbol(symbol);
   }

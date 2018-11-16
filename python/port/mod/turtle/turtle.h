@@ -25,7 +25,8 @@ public:
     m_dotMask(nullptr),
     m_dotWorkingPixelBuffer(nullptr),
     m_iconsPixels(nullptr)
-  {}
+  {
+  }
 
   void forward(mp_float_t length);
   void backward(mp_float_t length) { forward(-length); }
@@ -58,7 +59,6 @@ private:
   static constexpr mp_float_t k_headingScale = M_PI / 180;
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
   static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - 18) / 2;
-  static constexpr KDSize k_iconSize = KDSize(9, 9);
   static constexpr int k_numberOfIcons = 8;
 
   KDPoint position(mp_float_t x, mp_float_t y) const;
@@ -68,10 +68,7 @@ private:
   bool hasDotMask();
   bool hasDotBuffers();
 
-  KDRect iconRect() const {
-    KDPoint iconOffset = KDPoint(-k_iconSize.width()/2 + 1, -k_iconSize.height()/2 + 1);
-    return KDRect(position().translatedBy(iconOffset), k_iconSize);
-  }
+  KDRect iconRect() const;
 
   const KDColor * icon();
 
@@ -97,8 +94,6 @@ private:
   uint8_t * m_dotMask;
   KDColor * m_dotWorkingPixelBuffer;
   KDColor * m_iconsPixels;
-
-  // KDColor m_pixelBuffer[100];
 };
 
 #endif

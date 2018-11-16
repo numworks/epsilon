@@ -6,6 +6,8 @@ extern "C" {
 #include "../../port.h"
 #include "turtle_icon.h"
 
+static constexpr KDSize k_iconSize = KDSize(9, 9);
+
 template <typename T> static inline T * allocate(size_t count) {
   /* We forward dynamic allocations to the Python GC so we don't have to bother
    * with deallocation. For this to work well, the Turtle object who owns the
@@ -149,6 +151,11 @@ bool Turtle::hasDotBuffers() {
     m_dotWorkingPixelBuffer = allocate<KDColor>(m_penSize * m_penSize);
   }
   return m_dotWorkingPixelBuffer && hasDotMask();
+}
+
+KDRect Turtle::iconRect() const {
+  KDPoint iconOffset = KDPoint(-k_iconSize.width()/2 + 1, -k_iconSize.height()/2 + 1);
+  return KDRect(position().translatedBy(iconOffset), k_iconSize);
 }
 
 const KDColor * Turtle::icon() {

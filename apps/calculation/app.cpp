@@ -48,46 +48,24 @@ App::App(Container * container, Snapshot * snapshot) :
 }
 
 bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::XNT && TextFieldDelegateApp::textFieldDidReceiveEvent(textField, event)) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event) && textField->text()[0] == 0) {
     return true;
   }
-  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    if (textField->text()[0] == 0) {
-      return true;
-    }
-    if (!textInputIsCorrect(textField->text())) {
-      displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-  }
-  return false;
+  return Shared::ExpressionFieldDelegateApp::textFieldDidReceiveEvent(textField, event);
 }
 
 bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  if (event == Ion::Events::XNT && ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event)) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText()) {
     return true;
   }
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutField->hasText()) {
-      return true;
-    }
-
-    char bufferForParsing[Calculation::k_printedExpressionSize];
-    layoutField->serialize(bufferForParsing, Calculation::k_printedExpressionSize);
-
-    if (!textInputIsCorrect(bufferForParsing)) {
-      displayWarning(I18n::Message::SyntaxError);
-      return true;
-    }
-  }
-  return false;
+  return Shared::ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool App::textInputIsCorrect(const char * text) {
+bool App::isAcceptableExpression(const Poincare::Expression expression, Responder * responder) {
   /* Here, we check that the expression entered by the user can be printed with
    * less than k_printedExpressionLength characters. Otherwise, we prevent the
    * user from adding this expression to the calculation store. */
-  Expression exp = Expression::parse(text);
+  Expression exp = expression;
   if (exp.isUninitialized()) {
     return false;
   }

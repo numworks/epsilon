@@ -47,9 +47,8 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   return MultipleDataViewController::handleEvent(event);
 }
 
-void HistogramController::didBecomeFirstResponder() {
-  MultipleDataViewController::didBecomeFirstResponder();
-
+void HistogramController::viewWillAppear() {
+  MultipleDataViewController::viewWillAppear();
   uint32_t storeChecksum = m_store->storeChecksum();
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
@@ -67,8 +66,6 @@ void HistogramController::didBecomeFirstResponder() {
     initBarSelection();
     reloadBannerView();
   }
-  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(selectedSeriesIndex()));
-  selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex));
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
@@ -78,6 +75,11 @@ void HistogramController::willExitResponderChain(Responder * nextFirstResponder)
     }
   }
   MultipleDataViewController::willExitResponderChain(nextFirstResponder);
+}
+
+void HistogramController::highlightSelection() {
+  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(selectedSeriesIndex()));
+  selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex));
 }
 
 Responder * HistogramController::tabController() const {

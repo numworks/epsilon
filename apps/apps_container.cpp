@@ -136,6 +136,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      /* Just after a software update, the battery timer does not have time to
+       * fire before the calculator enters DFU mode. As the DFU mode blocks the
+       * event loop, we update the battery state "manually" here. */
+      updateBatteryState();
       switchTo(usbConnectedAppSnapshot());
       Ion::USB::DFU();
       switchTo(activeSnapshot);
@@ -237,9 +241,10 @@ void AppsContainer::run() {
 }
 
 bool AppsContainer::updateBatteryState() {
-  if (m_window.updateBatteryLevel() ||
-      m_window.updateIsChargingState() ||
-      m_window.updatePluggedState()) {
+  bool batteryLevelUpdated = m_window.updateBatteryLevel();
+  bool pluggedStateUpdated = m_window.updatePluggedState();
+  bool chargingStateUpdated = m_window.updateIsChargingState();
+  if (batteryLevelUpdated || pluggedStateUpdated || chargingStateUpdated) {
     return true;
   }
   return false;
@@ -257,7 +262,7 @@ void AppsContainer::displayExamModePopUp(bool activate) {
 void AppsContainer::shutdownDueToLowBattery() {
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     m_emptyBatteryWindow.redraw(true);
-    Ion::msleep(3000);
+    Ion::Timing::msleep(3000);
     Ion::Power::suspend();
   }
   window()->redraw(true);

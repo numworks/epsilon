@@ -55,7 +55,7 @@ void draw_turtle() {
 
   if (t_mileage > 1000) {
     if (t_speed > 0) {
-      Ion::msleep(8 * (8 - t_speed));
+      Ion::Timing::msleep(8 * (8 - t_speed));
       t_mileage -= 1000;
     }
     else {

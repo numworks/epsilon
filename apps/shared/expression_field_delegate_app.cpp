@@ -33,6 +33,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       return true;
     }
     if (!isAcceptableText(buffer, layoutField)) {
+      displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }

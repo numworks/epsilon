@@ -43,56 +43,6 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
   }
 }
 
-int Store::closestVerticalRegression(int direction, double x, double y, int currentRegressionSeries, Poincare::Context * globalContext) {
-  /* The conditions to test on all the regressions are in this order:
-   * - the current regression is not the current regression
-   * - the next regression point should be within the window abscissa bounds
-   * - it is the closest one in abscissa to x
-   * - it is above y if direction > 0 and below otherwise */
-
-  int nextRegressionSeries = -1;
-  float nextY = direction > 0 ? FLT_MAX : -FLT_MAX;
-
-  for (int i = 0; i < k_numberOfSeries; i ++) {
-    if (i == currentRegressionSeries || seriesIsEmpty(i)) {
-      continue;
-    }
-    double newY = yValueForXValue(i, x, globalContext);
-    if (newY < m_yMin || newY > m_yMax) {
-      continue;
-    }
-    bool isNextRegression = false;
-    /* Choosing the next regression to select quite complex because we need to
-     * take care of regressions that have the same values at the current x. When
-     * moving up, if several regressions have the same value, we select the
-     * regression of higher index. When going down, we select the regression of
-     * lower index. */
-    if (direction > 0) {
-      if (newY > y && newY < nextY) {
-        isNextRegression = true;
-      } else if (newY == nextY) {
-        assert(i > nextRegressionSeries);
-        isNextRegression = true;
-      } else if (newY == y && i < currentRegressionSeries) {
-        isNextRegression = true;
-      }
-    } else {
-      if (newY < y && newY > nextY) {
-        isNextRegression = true;
-      } else if (newY == nextY) {
-        assert(i > nextRegressionSeries);
-      } else if (newY == y && i > currentRegressionSeries) {
-        isNextRegression = true;
-      }
-    }
-    if (isNextRegression) {
-      nextY = newY;
-      nextRegressionSeries = i;
-    }
-  }
-  return nextRegressionSeries;
-}
-
 /* Dots */
 
 int Store::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {

@@ -13,7 +13,7 @@ template<typename T>
 class CacheContext : public Poincare::VariableContext {
 public:
   CacheContext(Poincare::Context * parentContext);
-  const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol) override;
+  const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol, bool clone) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);

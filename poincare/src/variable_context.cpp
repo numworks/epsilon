@@ -29,11 +29,11 @@ void VariableContext::setExpressionForSymbol(const Expression & expression, cons
   }
 }
 
-const Expression VariableContext::expressionForSymbol(const SymbolAbstract & symbol) {
+const Expression VariableContext::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
   if (strcmp(symbol.name(), m_name) == 0) {
-    return m_value.clone();
+    return clone ? m_value.clone() : m_value;
   } else {
-    return m_parentContext->expressionForSymbol(symbol);
+    return m_parentContext->expressionForSymbol(symbol, clone);
   }
 }
 

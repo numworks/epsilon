@@ -91,12 +91,14 @@ bool Expression::isApproximate(Context & context) const {
       return e.type() == ExpressionNode::Type::Decimal
       || e.type() == ExpressionNode::Type::Float
         || IsMatrix(e, context, replaceSymbols)
-        || (e.type() == ExpressionNode::Type::Symbol
+        || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
             && replaceSymbols
-            && static_cast<const Symbol&>(e).matches(
-              [](const Expression e, Context & context, bool replaceSymbols) {
-              return e.isApproximate(context); },
-              context));
+            && SymbolAbstract::matches(
+                static_cast<const SymbolAbstract&>(e),
+                [](const Expression e, Context & context, bool replaceSymbols) {
+                  return e.isApproximate(context);
+                },
+                context));
         }, context, true);
 }
 
@@ -107,15 +109,18 @@ bool Expression::IsMatrix(const Expression e, Context & context, bool replaceSym
     || e.type() == ExpressionNode::Type::PredictionInterval
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixTranspose
-    || (e.type() == ExpressionNode::Type::Symbol
+    || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
         && replaceSymbols
-        && static_cast<const Symbol&>(e).matches(
-          [](const Expression e, Context & context, bool replaceSymbols) {
-          return e.recursivelyMatches(
-              [](const Expression e, Context & context, bool replaceSymbols) {
-              return Expression::IsMatrix(e, context, replaceSymbols); },
-              context, replaceSymbols);
-          }, context));
+        && SymbolAbstract::matches(
+            static_cast<const Symbol&>(e),
+            [](const Expression e, Context & context, bool replaceSymbols) {
+              return e.recursivelyMatches(
+                  [](const Expression e, Context & context, bool replaceSymbols) {
+                    return Expression::IsMatrix(e, context, replaceSymbols);
+                  },
+                  context, replaceSymbols);
+            },
+            context));
 }
 
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {

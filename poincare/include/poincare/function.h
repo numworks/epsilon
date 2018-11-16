@@ -66,8 +66,8 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression replaceReplaceableSymbols(Context & context);
 private:
-  Expression expand(Context & context);
-  VariableContext unknownXContext(Context & parentContext) const;
+  Expression expand(Context & context) const;
+  //VariableContext unknownXContext(Context & parentContext) const;
 };
 
 }

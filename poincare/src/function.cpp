@@ -14,67 +14,39 @@ Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symb
 }
 
 int FunctionNode::polynomialDegree(Context & context, const char * symbolName) const {
-  Expression e = context.expressionForSymbol(Function(this));
-  e = Expression::ExpressionWithoutSymbols(e, context);
+  Function f(this);
+  Expression e = f.expand(context);
   if (e.isUninitialized()) {
     return -1;
   }
-  // TODO Context should be float or double ?
-  VariableContext newContext = xContext(context);
-  return e.polynomialDegree(newContext, symbolName);
+  return e.polynomialDegree(context, symbolName);
 }
 
 int FunctionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
-  Expression e = context.expressionForSymbol(Function(this));
-  e = Expression::ExpressionWithoutSymbols(e, context);
+  Function f(this);
+  Expression e = f.expand(context);
   if (e.isUninitialized()) {
     return -1;
   }
-  VariableContext newContext = xContext(context);
-  return e.getPolynomialCoefficients(newContext, symbolName, coefficients);
+  return e.getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
 int FunctionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
-  Expression e = context.expressionForSymbol(Function(this));
-  e = Expression::ExpressionWithoutSymbols(e, context);
+  Function f(this);
+  Expression e = f.expand(context);
   if (e.isUninitialized()) {
     return 0;
   }
-  VariableContext newContext = xContext(context);
-  return e.getVariables(newContext, isVariable, variables, maxSizeVariable);
+  return e.getVariables(context, isVariable, variables, maxSizeVariable);
 }
 
 float FunctionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e = context.expressionForSymbol(Function(this));
-  e = Expression::ExpressionWithoutSymbols(e, context);
+  Function f(this);
+  Expression e = f.expand(context);
   if (e.isUninitialized()) {
     return 0.0f;
   }
-  VariableContext newContext = xContext(context);
-  return e.characteristicXRange(newContext, angleUnit);
-}
-
-VariableContext FunctionNode::xContext(Context & parentContext) const {
-  Symbol unknownXSymbol(Symbol::SpecialSymbols::UnknownX);
-  Expression child = Expression(childAtIndex(0));
-  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
-  VariableContext xContext = VariableContext(x, &parentContext);
-
-  /* If the parentContext already has an expression for UnknownX, we have to
-   * replace in childAtIndex(0) any occurence of UnknownX by its value in
-   * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
-  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol);
-  if (!unknownXValue.isUninitialized()) {
-    xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
-    child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);
-  }
-  /* We here assert that child contains no occurrence of UnknownX to avoid
-   * creating an infinite loop (for instance: unknownXSymbol = unknownXSymbol+2). */
-  assert(!child.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
-        return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol &>(e).isSystemSymbol();
-      }, parentContext, false));
-  xContext.setExpressionForSymbol(child, unknownXSymbol, xContext);
-  return xContext;
+  return e.characteristicXRange(context, angleUnit);
 }
 
 Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -103,13 +75,12 @@ Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context
 
 template<typename T>
 Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = context.expressionForSymbol(Function(this));
-  e = Expression::ExpressionWithoutSymbols(e, context);
+  Function f(this);
+  Expression e = f.expand(context);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  VariableContext newContext = xContext(context);
-  return e.approximateToEvaluation<T>(newContext, angleUnit);
+  return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
 Function::Function(const char * name, size_t length) :
@@ -141,15 +112,10 @@ Expression Function::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (!replaceSymbols) {
     return *this;
   }
-  Expression e = context.expressionForSymbol(*this);
-  e = ExpressionWithoutSymbols(e, context);
+  Expression e = expand(context);
   if (!e.isUninitialized()) {
-    // We need to replace the unknown with the child
-    Expression result = e.clone();
-    Symbol x = Symbol(Symbol::SpecialSymbols::UnknownX);
-    result = result.replaceSymbolWithExpression(x, childAtIndex(0));
-    replaceWithInPlace(result);
-    return result.deepReduce(context, angleUnit, replaceSymbols);
+    replaceWithInPlace(e);
+    return e.deepReduce(context, angleUnit, replaceSymbols);
   }
   return *this;
 }
@@ -163,5 +129,45 @@ Expression Function::replaceReplaceableSymbols(Context & context) {
   replaceWithInPlace(e);
   return e;
 }
+
+Expression Function::expand(Context & context) const {
+  Expression e = context.expressionForSymbol(*this);
+  e = ExpressionWithoutSymbols(e, context);
+  if (!e.isUninitialized()) {
+    e = e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
+  }
+  return e;
+}
+
+// TODO: should we avoid replacing unknown X in-place but use a context instead?
+#if 0
+VariableContext Function::unknownXContext(Context & parentContext) const {
+  Symbol unknownXSymbol(Symbol::SpecialSymbols::UnknownX);
+  Expression child = childAtIndex(0);
+  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
+  /* COMMENT */
+  if (child.type() == ExpressionNode::Type::Symbol && static_cast<Symbol &>(child).isSystemSymbol()) {
+    return parentContext;
+  }
+
+  VariableContext xContext = VariableContext(x, &parentContext);
+
+  /* If the parentContext already has an expression for UnknownX, we have to
+   * replace in childAtIndex(0) any occurence of UnknownX by its value in
+   * parentContext. That way, we handle: evaluatin f(x-1) with x = 2 & f:x->x^2 */
+  Expression unknownXValue = parentContext.expressionForSymbol(unknownXSymbol);
+  if (!unknownXValue.isUninitialized()) {
+    xContext = static_cast<VariableContext &>(parentContext); // copy the parentContext
+    child.replaceSymbolWithExpression(unknownXSymbol, unknownXValue);
+  }
+  /* We here assert that child contains no occurrence of UnknownX to avoid
+   * creating an infinite loop (for instance: unknownXSymbol = unknownXSymbol+2). */
+  assert(!child.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbol) {
+        return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol &>(e).isSystemSymbol();
+      }, parentContext, false));
+  xContext.setExpressionForSymbol(child, unknownXSymbol, xContext);
+  return xContext;
+}
+#endif
 
 }

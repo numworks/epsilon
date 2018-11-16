@@ -1,6 +1,7 @@
 extern "C" {
 #include "modturtle.h"
 }
+#include "helpers.h"
 #include <kandinsky.h>
 #include <ion.h>
 #include <math.h>
@@ -55,7 +56,7 @@ void draw_turtle() {
 
   if (t_mileage > 1000) {
     if (t_speed > 0) {
-      Ion::Timing::msleep(8 * (8 - t_speed));
+      micropython_port_interruptible_msleep(8 * (8 - t_speed));
       t_mileage -= 1000;
     }
     else {

@@ -24,7 +24,7 @@ void IntersectionGraphController::reloadBannerView() {
   size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = "                  ";
-  int spaceLength = strlen(space);
+  int spaceLength = (int)strlen(space);
   const char * legend = "0(x)=0(x)=";
   int legendLength = strlen(legend);
   int numberOfChar = 0;

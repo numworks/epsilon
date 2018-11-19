@@ -515,6 +515,8 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       Power p1 = Power(childAtIndex(0).clone(), a.childAtIndex(0).clone());
       Power thisRef = *this;
       childAtIndex(1).convert<Addition>().removeChildAtIndexInPlace(0); // p2 = a^(c+...)
+      // if addition had only 2 children
+      childAtIndex(1).convert<Addition>().squashUnaryHierarchyInPlace();
       Multiplication m = Multiplication(p1);
       replaceWithInPlace(m);
       m.addChildAtIndexInPlace(thisRef, 1, 1);

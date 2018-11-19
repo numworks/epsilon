@@ -49,7 +49,7 @@ public:
     Undefined
   };
 
-  Token(Type type) : m_type(type) {};
+  Token(Type type) : m_type(type), m_text(0) {};
 
   Type type() const { return m_type; }
   bool is(Type t) const { return m_type == t; }

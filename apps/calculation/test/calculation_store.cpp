@@ -69,13 +69,25 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   store.push("1/2", &globalContext);
   lastCalculation = store.calculationAtIndex(1);
   quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(&globalContext) == ::Calculation::Calculation::EqualSign::Equal);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
   quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
 
   store.deleteAll();
   store.push("1/3", &globalContext);
   lastCalculation = store.calculationAtIndex(1);
   quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(&globalContext) == ::Calculation::Calculation::EqualSign::Approximation);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
   quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
 
   store.deleteAll();
+  store.push("1/0", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
+  quiz_assert(strcmp(lastCalculation->approximateOutputText(),"undef") == 0);
+
+  store.deleteAll();
+  store.push("2x-x", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
+  quiz_assert(strcmp(lastCalculation->exactOutputText(),"x") == 0);
 }

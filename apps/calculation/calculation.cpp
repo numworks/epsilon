@@ -2,10 +2,9 @@
 #include "calculation_store.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <string.h>
 #include <cmath>
-#include <poincare/symbol.h>
-#include <poincare/undefined.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -155,9 +154,7 @@ bool Calculation::shouldOnlyDisplayExactOutput() {
    * This prevents:
    * x->f(x) from displaying x = undef
    * x+x form displaying 2x = undef */
-  if (strcmp(m_approximateOutputText, Undefined::Name()) == 0) {
-    return true;
-  }
+  return strcmp(m_approximateOutputText, Undefined::Name()) == 0;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

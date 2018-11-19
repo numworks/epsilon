@@ -61,7 +61,7 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::E
   return Shared::ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool App::isAcceptableExpression(const Poincare::Expression expression, Responder * responder) {
+bool App::isAcceptableExpression(const Poincare::Expression expression) {
   /* Here, we check that the expression entered by the user can be printed with
    * less than k_printedExpressionLength characters. Otherwise, we prevent the
    * user from adding this expression to the calculation store. */

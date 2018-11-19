@@ -30,7 +30,7 @@ public:
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
-  bool isAcceptableExpression(const Poincare::Expression expression, Responder * responder) override;
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
   char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

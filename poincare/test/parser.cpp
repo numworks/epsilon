@@ -75,6 +75,7 @@ QUIZ_CASE(poincare_parser_tokenize_numbers) {
   assert_tokenizes_as_undefined_token("1.E");
   assert_tokenizes_as_undefined_token("1E--4");
   assert_tokenizes_as_undefined_token("1.EE4");
+  assert_tokenizes_as_undefined_token("1E2E4");
 }
 
 QUIZ_CASE(poincare_parser_parse_numbers) {
@@ -197,6 +198,7 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_raises_parsing_error("[[t0000000[");
   assert_raises_parsing_error("0>x=0");
   assert_raises_parsing_error("0=0>x");
+  assert_raises_parsing_error("1E2E3");
 }
 
 Matrix BuildMatrix(int rows, int columns, Expression entries[]) {

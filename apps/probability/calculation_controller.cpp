@@ -273,14 +273,23 @@ TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {
+    if (currentChar >= k_maxNumberOfTitleCharacters) {
+      break;
+    }
     m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters);
+    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters - currentChar);
     currentChar += 3;
+    if (currentChar >= k_maxNumberOfTitleCharacters) {
+      break;
+    }
     const size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
     char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, bufferSize - currentChar);
+    strlcpy(m_titleBuffer+currentChar, buffer, k_maxNumberOfTitleCharacters - currentChar);
     currentChar += strlen(buffer);
+    if (currentChar >= k_maxNumberOfTitleCharacters) {
+      break;
+    }
     m_titleBuffer[currentChar++] = ' ';
   }
   m_titleBuffer[currentChar-1] = 0;

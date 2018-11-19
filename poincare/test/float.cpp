@@ -40,7 +40,7 @@ QUIZ_CASE(poincare_float_evaluate) {
   assert_float_evaluates_to<float>(Float<float>(0.0000009999999999999995), "0.000001");
   assert_float_evaluates_to<float>(Float<float>(-1.2345E-1), "-0.12345");
 
-  assert_float_evaluates_to<double>(Float<double>(INFINITY), "inf");
+  assert_float_evaluates_to<double>(Float<double>(INFINITY), Infinity::Name());
   assert_float_evaluates_to<float>(Float<float>(0.0f), "0");
   assert_float_evaluates_to<float>(Float<float>(NAN), Undefined::Name());
 

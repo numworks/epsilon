@@ -268,5 +268,5 @@ QUIZ_CASE(poincare_integer_serialize) {
   assert_integer_serializes_to(Integer("2345678909876"), "2345678909876");
   assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
   assert_integer_serializes_to(MaxInteger(), MaxIntegerString());
-  assert_integer_serializes_to(OverflowedInteger(), "inf");
+  assert_integer_serializes_to(OverflowedInteger(), Infinity::Name());
 }

@@ -49,6 +49,12 @@ public:
     node()->setNegative(negative);
   }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  static const char * Name() {
+    return "inf";
+  }
+  static int NameSize() {
+    return 4;
+  }
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };

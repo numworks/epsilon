@@ -28,7 +28,7 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(1,0)", "0");
   assert_parsed_expression_simplify_to("log(2,0)", "0");
   assert_parsed_expression_simplify_to("log(0,14)", "-inf");
-  assert_parsed_expression_simplify_to("log(0,0.14)", "inf");
+  assert_parsed_expression_simplify_to("log(0,0.14)", Infinity::Name());
   assert_parsed_expression_simplify_to("log(0,0.14+I)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(2,1)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(x,1)", Undefined::Name());

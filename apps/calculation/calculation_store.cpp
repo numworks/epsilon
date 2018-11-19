@@ -6,11 +6,6 @@ using namespace Poincare;
 
 namespace Calculation {
 
-CalculationStore::CalculationStore() :
-  m_startIndex(0)
-{
-}
-
 Calculation * CalculationStore::push(const char * text, Context * context) {
   Calculation * result = &m_calculations[m_startIndex];
   result->setContent(text, context, ansExpression(context));

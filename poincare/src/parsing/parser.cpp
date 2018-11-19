@@ -75,11 +75,6 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected       // Token::Undefined
   };
   Expression leftHandSide;
-  // Avoid reading out of buffer (calling popToken would read the character after EndOfStream)
-  if (m_nextToken.is(Token::EndOfStream)) {
-    m_status = Status::Error; // Expression misses a rightHandSide
-    return leftHandSide;
-  }
   do {
     popToken();
     (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide);
@@ -93,7 +88,13 @@ void Parser::popToken() {
     m_pendingImplicitMultiplication = false;
   } else {
     m_currentToken = m_nextToken;
-    m_nextToken = m_tokenizer.popToken();
+    if (m_currentToken.is(Token::EndOfStream)) {
+      /* Avoid reading out of buffer (calling popToken would read the character
+       * after EndOfStream) */
+      m_status = Status::Error; // Expression misses a rightHandSide
+    } else {
+      m_nextToken = m_tokenizer.popToken();
+    }
   }
 }
 

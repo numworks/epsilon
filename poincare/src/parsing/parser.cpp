@@ -75,6 +75,11 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected       // Token::Undefined
   };
   Expression leftHandSide;
+  // Avoid reading out of buffer (calling popToken would read the character after EndOfStream)
+  if (m_nextToken.is(Token::EndOfStream)) {
+    m_status = Status::Error; // Expression misses a rightHandSide
+    return leftHandSide;
+  }
   do {
     popToken();
     (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide);

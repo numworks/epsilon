@@ -109,7 +109,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
     m_exactOutputLayout = Poincare::Layout();
   }
   if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
-    m_exactOutputLayout = calculation->createExactOutputLayout(calculationApp->localContext());
+    m_exactOutputLayout = calculation->createExactOutputLayout();
   }
   m_approximateOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
   m_scrollableOutputView.setLayouts(m_approximateOutputLayout, m_exactOutputLayout);

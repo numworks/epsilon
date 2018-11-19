@@ -45,8 +45,8 @@ QUIZ_CASE(poincare_user_variable_simple) {
 QUIZ_CASE(poincare_user_variable_2_circular_variables) {
   assert_simplify("a>b");
   assert_simplify("b>a");
-  assert_parsed_expression_evaluates_to<double>("a", "undef");
-  assert_parsed_expression_evaluates_to<double>("b", "undef");
+  assert_parsed_expression_evaluates_to<double>("a", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("b", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -57,9 +57,9 @@ QUIZ_CASE(poincare_user_variable_3_circular_variables) {
   assert_simplify("a>b");
   assert_simplify("b>c");
   assert_simplify("c>a");
-  assert_parsed_expression_evaluates_to<double>("a", "undef");
-  assert_parsed_expression_evaluates_to<double>("b", "undef");
-  assert_parsed_expression_evaluates_to<double>("c", "undef");
+  assert_parsed_expression_evaluates_to<double>("a", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("b", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("c", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -70,7 +70,7 @@ QUIZ_CASE(poincare_user_variable_3_circular_variables) {
 QUIZ_CASE(poincare_user_variable_1_circular_function) {
   // g: x -> f(x)+1
   assert_simplify("f(x)+1>g(x)");
-  assert_parsed_expression_evaluates_to<double>("g(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("g(1)", Undefined::Name());
   // f: x -> x+1
   assert_simplify("x+1>f(x)");
   assert_parsed_expression_evaluates_to<double>("g(1)", "3");
@@ -79,7 +79,7 @@ QUIZ_CASE(poincare_user_variable_1_circular_function) {
   assert_simplify("h(x)>h(x)");
   assert_parsed_expression_evaluates_to<double>("f(1)", "2");
   assert_parsed_expression_evaluates_to<double>("g(1)", "3");
-  assert_parsed_expression_evaluates_to<double>("h(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -90,8 +90,8 @@ QUIZ_CASE(poincare_user_variable_1_circular_function) {
 QUIZ_CASE(poincare_user_variable_2_circular_functions) {
   assert_simplify("f(x)>g(x)");
   assert_simplify("g(x)>f(x)");
-  assert_parsed_expression_evaluates_to<double>("f(1)", "undef");
-  assert_parsed_expression_evaluates_to<double>("g(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("f(1)", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("g(1)", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -102,9 +102,9 @@ QUIZ_CASE(poincare_user_variable_3_circular_functions) {
   assert_simplify("f(x)>g(x)");
   assert_simplify("g(x)>h(x)");
   assert_simplify("h(x)>f(x)");
-  assert_parsed_expression_evaluates_to<double>("f(1)", "undef");
-  assert_parsed_expression_evaluates_to<double>("g(1)", "undef");
-  assert_parsed_expression_evaluates_to<double>("h(1)", "undef");
+  assert_parsed_expression_evaluates_to<double>("f(1)", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("g(1)", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("h(1)", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -116,9 +116,9 @@ QUIZ_CASE(poincare_user_variable_circular_variables_and_functions) {
   assert_simplify("a>b");
   assert_simplify("b>a");
   assert_simplify("a>f(x)");
-  assert_parsed_expression_evaluates_to<double>("f(1)", "undef");
-  assert_parsed_expression_evaluates_to<double>("a", "undef");
-  assert_parsed_expression_evaluates_to<double>("b", "undef");
+  assert_parsed_expression_evaluates_to<double>("f(1)", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("a", Undefined::Name());
+  assert_parsed_expression_evaluates_to<double>("b", Undefined::Name());
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

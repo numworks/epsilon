@@ -2,6 +2,7 @@
 #include <poincare/preferences.h>
 #include <poincare/ieee754.h>
 #include <poincare/integer.h>
+#include <poincare/undefined.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -79,14 +80,9 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
 
   if (std::isinf(f) || std::isnan(f)) {
-    int currentChar = 0;
-    buffer[currentChar++] = 'u';
-    buffer[currentChar++] = 'n';
-    buffer[currentChar++] = 'd';
-    buffer[currentChar++] = 'e';
-    buffer[currentChar++] = 'f';
-    buffer[currentChar] = 0;
-    return currentChar;
+    assert(Undefined::NameSize() < PrintFloat::k_maxFloatBufferLength);
+    strlcpy(buffer, Undefined::Name(), PrintFloat::k_maxFloatBufferLength);
+    return Undefined::NameSize() - 1;
   }
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);

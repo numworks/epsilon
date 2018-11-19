@@ -72,8 +72,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("tan(2)", "-2.1850398632615", Radian);
   assert_parsed_expression_evaluates_to<double>("tan(2)", "3.4920769491748E-2", Degree);
   // Tangent-style
-  assert_parsed_expression_evaluates_to<float>("tan(P/2)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<double>("tan(3*P/2)", "undef", Radian);
+  assert_parsed_expression_evaluates_to<float>("tan(P/2)", Undefined::Name(), Radian);
+  assert_parsed_expression_evaluates_to<double>("tan(3*P/2)", Undefined::Name(), Radian);
   assert_parsed_expression_evaluates_to<float>("tan(3*P)", "0", Radian);
   assert_parsed_expression_evaluates_to<float>("tan(-540)", "0", Degree);
   // On R*i
@@ -228,11 +228,11 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("tanh(43*I)", "-1.4983873388552*I", Radian);
   // Tangent-style
   // FIXME: this depends on the libm implementation and does not work on travis/appveyor servers
-  /*assert_parsed_expression_evaluates_to<float>("tanh(P*I/2)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(5*P*I/2)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(7*P*I/2)", "undef", Radian);
+  /*assert_parsed_expression_evaluates_to<float>("tanh(P*I/2)", Undefined::Name(), Radian);
+  assert_parsed_expression_evaluates_to<float>("tanh(5*P*I/2)", Undefined::Name(), Radian);
+  assert_parsed_expression_evaluates_to<float>("tanh(7*P*I/2)", Undefined::Name(), Radian);
   assert_parsed_expression_evaluates_to<float>("tanh(8*P*I/2)", "0", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(9*P*I/2)", "undef", Radian);*/
+  assert_parsed_expression_evaluates_to<float>("tanh(9*P*I/2)", Undefined::Name(), Radian);*/
   // On C
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.00028)+0.000610241*I", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.00028)+0.000610241*I", Degree, Cartesian, 6);
@@ -429,7 +429,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(P/12)", "2-R(3)");
   assert_parsed_expression_simplify_to("tan(-P/12)", "(-2)+R(3)");
   assert_parsed_expression_simplify_to("tan(-P*R(2))", "-tan(R(2)*P)");
-  assert_parsed_expression_simplify_to("tan(1311P/6)", "undef");
+  assert_parsed_expression_simplify_to("tan(1311P/6)", Undefined::Name());
   assert_parsed_expression_simplify_to("tan(-P17/8)", "1-R(2)");
   assert_parsed_expression_simplify_to("tan(41P/6)", "-R(3)/3");
   assert_parsed_expression_simplify_to("tan(P/4+1000P)", "1");
@@ -445,7 +445,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(15)", "2-R(3)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-15)", "(-2)+R(3)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-180*R(2))", "-tan(180*R(2))", Preferences::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("tan(39330)", "undef", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(39330)", Undefined::Name(), Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-382.5)", "1-R(2)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(1230)", "-R(3)/3", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(180045)", "1", Preferences::AngleUnit::Degree);

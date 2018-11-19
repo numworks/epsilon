@@ -144,7 +144,7 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     return true;
   }
-  if (strcmp(m_exactOutputText, "undef") == 0) {
+  if (strcmp(m_exactOutputText, Undefined::Name()) == 0) {
     return true;
   }
   return input().isApproximate(*context) || exactOutput().isApproximate(*context);
@@ -155,7 +155,7 @@ bool Calculation::shouldOnlyDisplayExactOutput() {
    * This prevents:
    * x->f(x) from displaying x = undef
    * x+x form displaying 2x = undef */
-  if (strcmp(m_approximateOutputText, "undef") == 0) {
+  if (strcmp(m_approximateOutputText, Undefined::Name()) == 0) {
     return true;
   }
 }

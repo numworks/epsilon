@@ -39,6 +39,12 @@ private:
 class Undefined final : public Number {
 public:
   Undefined() : Number(TreePool::sharedPool()->createTreeNode<UndefinedNode>()) {}
+  static const char * Name() {
+    return "undef";
+  }
+  static int NameSize() {
+    return 6;
+  }
 };
 
 }

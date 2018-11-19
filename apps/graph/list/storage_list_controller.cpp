@@ -3,6 +3,7 @@
 #include "../../i18n.h"
 #include <assert.h>
 #include <escher/metric.h>
+#include <apps/apps_container.h>
 
 using namespace Shared;
 
@@ -32,6 +33,7 @@ const char * StorageListController::title() {
 void StorageListController::renameSelectedFunction() {
   assert(selectedColumn() == 0);
   assert(selectedRow() >= 0 && selectedRow() < numberOfRows()-1); // TODO change if sometimes the addFunction row is not displayed
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   TextFieldFunctionTitleCell * selectedTitleCell = (TextFieldFunctionTitleCell *)(selectableTableView()->selectedCell());
   app()->setFirstResponder(selectedTitleCell);
   selectedTitleCell->setEditing(true);
@@ -82,6 +84,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
     if (selectTab) {
       m_selectableTableView.parentResponder()->handleEvent(event);
     }
+    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
@@ -108,6 +111,7 @@ bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   app()->setFirstResponder(&m_selectableTableView);
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 

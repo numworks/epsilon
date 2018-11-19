@@ -53,7 +53,7 @@ KDCoordinate Calculation::height(Context * context) {
     if (shouldOnlyDisplayApproximateOutput(context)) {
       m_height = inputHeight+approximateOutputHeight;
     } else {
-      Layout exactLayout = createExactOutputLayout(context);
+      Layout exactLayout = createExactOutputLayout();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       m_height = inputHeight + outputHeight;
@@ -102,7 +102,7 @@ void Calculation::tidy() {
   m_equalSign = EqualSign::Unknown;
 }
 
-Expression Calculation::exactOutput(Context * context) {
+Expression Calculation::exactOutput() {
   /* Because the angle unit might have changed, we do not simplify again. We
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
@@ -114,8 +114,8 @@ Expression Calculation::exactOutput(Context * context) {
   return exactOutput;
 }
 
-Layout Calculation::createExactOutputLayout(Context * context) {
-  return PoincareHelpers::CreateLayout(exactOutput(context));
+Layout Calculation::createExactOutputLayout() {
+  return PoincareHelpers::CreateLayout(exactOutput());
 }
 
 Expression Calculation::approximateOutput(Context * context) {
@@ -136,7 +136,7 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, "undef") == 0) {
     return true;
   }
-  return input().isApproximate(*context) || exactOutput(context).isApproximate(*context);
+  return input().isApproximate(*context) || exactOutput().isApproximate(*context);
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
@@ -145,7 +145,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
   char buffer[k_printedExpressionSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  m_equalSign = exactOutput(context).isEqualToItsApproximationLayout(approximateOutput(context), buffer, k_printedExpressionSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  m_equalSign = exactOutput().isEqualToItsApproximationLayout(approximateOutput(context), buffer, k_printedExpressionSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

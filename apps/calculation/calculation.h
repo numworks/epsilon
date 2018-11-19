@@ -28,8 +28,8 @@ public:
   Poincare::Expression input();
   Poincare::Layout createInputLayout();
   Poincare::Expression approximateOutput(Poincare::Context * context);
-  Poincare::Expression exactOutput(Poincare::Context * context);
-  Poincare::Layout createExactOutputLayout(Poincare::Context * context);
+  Poincare::Expression exactOutput();
+  Poincare::Layout createExactOutputLayout();
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context);
   bool isEmpty();
   void tidy();

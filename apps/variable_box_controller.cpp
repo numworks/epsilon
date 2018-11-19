@@ -191,7 +191,7 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
   Storage::Record record = recordAtIndex(selectedRow);
   assert(Shared::StorageFunction::k_maxNameWithArgumentSize > 0);
   assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
-  size_t nameToHandleMaxSize = Shared::StorageFunction::k_maxNameWithArgumentSize - 1;
+  constexpr size_t nameToHandleMaxSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
   char nameToHandle[nameToHandleMaxSize];
   size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
 
@@ -199,6 +199,8 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
     // Add parentheses to a function name
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength++] = '(';
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength++] = Ion::Charset::Empty;
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength++] = ')';
     assert(nameLength < nameToHandleMaxSize);

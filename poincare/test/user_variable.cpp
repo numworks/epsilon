@@ -1,6 +1,7 @@
 #include <quiz.h>
 #include <ion.h>
 #include <assert.h>
+#include <apps/shared/global_context.h>
 #include "helper.h"
 
 using namespace Poincare;
@@ -161,5 +162,21 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
   assert_parsed_expression_approximates_with_value_for_symbol(Addition(Function("f", 1, Subtraction(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(1))), Function("f", 1, Addition(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(1)))), x, 3.0, 20.0);
 
   // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+}
+
+QUIZ_CASE(poincare_user_variable_properties) {
+  Shared::GlobalContext context;
+
+  assert_simplify("[[1]]>a");
+  assert(Symbol('a').isApproximate(context));
+  assert(Poincare::Expression::IsMatrix(Symbol('a'), context, true));
+
+  assert_simplify("[[x]]>f(x)");
+  assert(Function("f", 1, Rational(2)).isApproximate(context));
+  assert(Poincare::Expression::IsMatrix(Function("f", 1, Symbol('x')), context, true));
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }

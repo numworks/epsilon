@@ -2,6 +2,7 @@
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/infinity.h>
+#include <poincare/undefined.h>
 #include <poincare/layout_helper.h>
 #include <poincare/ieee754.h>
 #include <assert.h>
@@ -140,7 +141,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   }
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
   assert(strcmp(tempBuffer, "inf") != 0 && strcmp(tempBuffer, "-inf") != 0);
-  if (strcmp(tempBuffer, "undef") == 0) {
+  if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     return currentChar;
   }

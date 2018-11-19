@@ -37,14 +37,14 @@ bool Parser::IsReservedFunctionName(const char * name, size_t nameLength, const 
 bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   // TODO Avoid special cases if possible
   return (
-    Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans) == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "inf")         == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "undef")       == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "u_")          == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "v_")          == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "u")           == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "v")           == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "log_")        == 0
+    Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "inf")             == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "u_")              == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "v_")              == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "v")               == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, "log_")            == 0
   );
 }
 
@@ -349,7 +349,7 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     leftHandSide = Symbol::Ans();
   } else if (m_currentToken.compareTo("inf") == 0) {
     leftHandSide = Infinity(false);
-  } else if (m_currentToken.compareTo("undef") == 0) {
+  } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined();
   } else if (m_currentToken.compareTo("u_") == 0 || m_currentToken.compareTo("v_") == 0) { // Special case for sequences (e.g. "u_{n}")
     parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftBrace, Token::RightBrace);

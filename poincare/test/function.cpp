@@ -247,7 +247,7 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
   assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
   assert_parsed_expression_simplify_to("factor(10007)", "10007");
-  assert_parsed_expression_simplify_to("factor(10007^2)", "undef");
+  assert_parsed_expression_simplify_to("factor(10007^2)", Undefined::Name());
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
@@ -264,6 +264,6 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("round(12.9,-1)", "10");
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
-  assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
+  assert_parsed_expression_simplify_to("permute(20,-10)", Undefined::Name());
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 }

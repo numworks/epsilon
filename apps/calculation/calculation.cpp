@@ -145,7 +145,11 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
   char buffer[k_printedExpressionSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  m_equalSign = exactOutput().isEqualToItsApproximationLayout(approximateOutput(context), buffer, k_printedExpressionSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  Expression exactOutputExpression = Expression::ParseAndSimplify(m_exactOutputText, *context, preferences->angleUnit());
+  if (exactOutputExpression.isUninitialized()) {
+    exactOutputExpression = Undefined();
+  }
+  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, k_printedExpressionSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

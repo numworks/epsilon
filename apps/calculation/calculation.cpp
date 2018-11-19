@@ -151,9 +151,13 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
-  /* If the input has a "sto", we do not want to display the approximate output.
-   * This prevents x->f(x) from displaying x RoundEqual undef. */
-  return strchr(m_inputText, Ion::Charset::Sto) != nullptr;
+  /* If the approximateOutput is undef, we not not want to display it.
+   * This prevents:
+   * x->f(x) from displaying x = undef
+   * x+x form displaying 2x = undef */
+  if (strcmp(m_approximateOutputText, "undef") == 0) {
+    return true;
+  }
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

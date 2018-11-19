@@ -21,7 +21,8 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    if (!isAcceptableText(textField->text(), textField)) {
+    if (!isAcceptableText(textField->text())) {
+      textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }
@@ -32,9 +33,9 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 }
 
 
-bool TextFieldDelegateApp::isAcceptableText(const char * text, Responder * responder) {
+bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   Expression exp = Expression::parse(text);
-  return isAcceptableExpression(exp, responder);
+  return isAcceptableExpression(exp);
 }
 
 /* Protected */
@@ -60,18 +61,12 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp, Responder * responder) {
+bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   if (exp.isUninitialized()) {
-    if (responder != nullptr) {
-      responder->app()->displayWarning(I18n::Message::SyntaxError);
-    }
     return false;
   }
   if (exp.type() == ExpressionNode::Type::Store) {
     // Most textfields do not allow Store "3->a" or "5->f(x)"
-    if (responder != nullptr) {
-      responder->app()->displayWarning(I18n::Message::StoreExpressionNotAllowed);
-    }
     return false;
   }
   return true;

@@ -64,7 +64,6 @@ void TextField::ContentView::setText(const char * text) {
   // Update the draft text length and cursor location
   if (m_isEditing || m_textBuffer == m_draftTextBuffer) {
     m_currentDraftTextLength = textLength;
-    setCursorLocation(textLength);
   }
   reloadRectFromCursorPosition(0);
 }
@@ -227,6 +226,9 @@ size_t TextField::draftTextLength() const {
 void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
+  /* Set the cursor location here and not in ContentView::setText so that
+   * TextInput::willSetCursorLocation is called. */
+  setCursorLocation(strlen(text));
 }
 
 void TextField::setAlignment(float horizontalAlignment, float verticalAlignment) {

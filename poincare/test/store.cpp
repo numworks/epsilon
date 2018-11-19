@@ -55,7 +55,7 @@ QUIZ_CASE(poincare_store_overwrite) {
 QUIZ_CASE(poincare_store_do_not_overwrite) {
   assert_parsed_expression_simplify_to("-1>g(x)", "-1");
   assert_parsed_expression_simplify_to("1+g(x)>f(x)", "1+g(x)");
-  assert_parsed_expression_simplify_to("2>g", "undef");
+  assert_parsed_expression_simplify_to("2>g", Undefined::Name());
   assert_parsed_expression_evaluates_to<double>("g(4)", "-1");
   assert_parsed_expression_evaluates_to<double>("f(4)", "0");
 

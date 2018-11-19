@@ -42,6 +42,6 @@ QUIZ_CASE(poincare_float_evaluate) {
 
   assert_float_evaluates_to<double>(Float<double>(INFINITY), "inf");
   assert_float_evaluates_to<float>(Float<float>(0.0f), "0");
-  assert_float_evaluates_to<float>(Float<float>(NAN), "undef");
+  assert_float_evaluates_to<float>(Float<float>(NAN), Undefined::Name());
 
 }

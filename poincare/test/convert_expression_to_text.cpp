@@ -283,6 +283,6 @@ QUIZ_CASE(poincare_approximation_to_text) {
 
   assert_expression_prints_to(Float<double>(INFINITY), "inf", DecimalMode);
   assert_expression_prints_to(Float<float>(0.0f), "0", DecimalMode);
-  assert_expression_prints_to(Float<float>(NAN), "undef", DecimalMode);
+  assert_expression_prints_to(Float<float>(NAN), Undefined::Name(), DecimalMode);
 
 }

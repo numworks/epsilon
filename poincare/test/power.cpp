@@ -12,9 +12,9 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<float>("4^(3+I)", "11.74125+62.91378*I");
   assert_parsed_expression_evaluates_to<double>("(3+I)^(3+I)", "(-11.898191759852)+19.592921596609*I");
 
-  assert_parsed_expression_evaluates_to<double>("0^0", "undef");
+  assert_parsed_expression_evaluates_to<double>("0^0", Undefined::Name());
   assert_parsed_expression_evaluates_to<double>("0^2", "0");
-  assert_parsed_expression_evaluates_to<double>("0^(-2)", "undef");
+  assert_parsed_expression_evaluates_to<double>("0^(-2)", Undefined::Name());
   assert_parsed_expression_evaluates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384*I", Radian, Cartesian, 12);
   assert_parsed_expression_evaluates_to<double>("(-0.1)^4", "0.0001", Radian, Cartesian, 12);
 #if MATRICES_ARE_DEFINED
@@ -42,8 +42,8 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("1^x", "1");
   assert_parsed_expression_simplify_to("x^1", "x");
   assert_parsed_expression_simplify_to("0^3", "0");
-  assert_parsed_expression_simplify_to("0^0", "undef");
-  assert_parsed_expression_simplify_to("0^(-3)", "undef");
+  assert_parsed_expression_simplify_to("0^0", Undefined::Name());
+  assert_parsed_expression_simplify_to("0^(-3)", Undefined::Name());
   assert_parsed_expression_simplify_to("4^0.5", "2");
   assert_parsed_expression_simplify_to("8^0.5", "2*R(2)");
   assert_parsed_expression_simplify_to("(12^4*3)^(0.5)", "144*R(3)");

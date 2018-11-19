@@ -140,11 +140,16 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
-  assert(strcmp(tempBuffer, "inf") != 0 && strcmp(tempBuffer, "-inf") != 0);
+
+  // Assert that m is not +/-inf
+  assert(strcmp(tempBuffer, Infinity::Name()) != 0);
+  assert(!(tempBuffer[0] == '-' && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
+
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     return currentChar;
   }
+
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */

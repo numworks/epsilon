@@ -267,7 +267,7 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
   assert_parsed_expression_is("I", Constant(Ion::Charset::IComplex));
   assert_parsed_expression_is("P", Constant(Ion::Charset::SmallPi));
   assert_parsed_expression_is("X", Constant(Ion::Charset::Exponential));
-  assert_parsed_expression_is("inf", Infinity(false));
+  assert_parsed_expression_is(Infinity::Name(), Infinity(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined());
 
   assert_raises_parsing_error("u");

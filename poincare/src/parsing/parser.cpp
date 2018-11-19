@@ -38,7 +38,7 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   // TODO Avoid special cases if possible
   return (
     Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
-    Token::CompareNonNullTerminatedName(name, nameLength, "inf")             == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u_")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "v_")              == 0 ||
@@ -347,7 +347,7 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
 void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   if (m_currentToken.compareTo(Symbol::k_ans) == 0) {
     leftHandSide = Symbol::Ans();
-  } else if (m_currentToken.compareTo("inf") == 0) {
+  } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
     leftHandSide = Infinity(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined();

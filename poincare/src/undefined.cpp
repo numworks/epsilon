@@ -18,7 +18,7 @@ Expression UndefinedNode::setSign(Sign s, Context & context, Preferences::AngleU
 }
 
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::String(Undefined::Name(), Undefined::NameSize());
+  return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
 }
 
 int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

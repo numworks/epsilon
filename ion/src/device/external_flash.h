@@ -1,6 +1,10 @@
 #ifndef ION_DEVICE_EXTERNAL_FLASH_H
 #define ION_DEVICE_EXTERNAL_FLASH_H
 
+#include <stdint.h>
+#include <stddef.h>
+#include "regs/regs.h"
+
 // Quad-SPI on STM32 microcontroller
 // https://www.st.com/resource/en/application_note/dm00227538.pdf
 
@@ -18,16 +22,42 @@ namespace Ion {
 namespace ExternalFlash {
 namespace Device {
 
-// Read, Erase, Write
-// at the fastest possible speed
+/*  Pin | Role                 | Mode                  | Function
+ * -----+----------------------+-----------------------+-----------------
+ *  PB2 | QUADSPI CLK          | Alternate Function  9 | QUADSPI_CLK
+ *  PB6 | QUADSPI BK1_NCS      | Alternate Function 10 | QUADSPI_BK1_NCS
+ *  PC8 | QUADSPI BK1_IO2/WP   | Alternate Function  9 | QUADSPI_BK1_IO2
+ *  PC9 | QUADSPI BK1_IO0/SO   | Alternate Function  9 | QUADSPI_BK1_IO0
+ * PD12 | QUADSPI BK1_IO1/SI   | Alternate Function  9 | QUADSPI_BK1_IO1
+ * PD13 | QUADSPI BK1_IO3/HOLD | Alternate Function  9 | QUADSPI_BK1_IO3
+ */
 
-void eraseChip(); //block?
+void init();
+void shutdown();
 
-void program(uint32_t * source, uint32_t * destination, size_t length);
+void initGPIO();
+void initQSPI();
+void initChip();
 
-void read(); // in indirect read mode
+void MassErase();
+void EraseSector(int sector);
+void WriteMemory(uint32_t * source, uint32_t * destination, size_t length);
 
-// memory-mapped mode
+enum class Command : uint8_t {
+  ReadStatusRegister = 0x05,
+  WriteEnable = 0x06,
+  FastRead = 0x0B,
+  QuadPageProgram = 0x33,
+  EnableQPI = 0x38,
+  ChipErase = 0xC7
+};
+
+constexpr static uint32_t QSPIBaseAddress = 0x90000000;
+
+constexpr static GPIOPin QSPIPins[] = {
+  GPIOPin(GPIOB, 2), GPIOPin(GPIOB, 6), GPIOPin(GPIOC, 9), GPIOPin(GPIOD,12),
+  GPIOPin(GPIOC, 8), GPIOPin(GPIOD,13)
+};
 
 }
 }

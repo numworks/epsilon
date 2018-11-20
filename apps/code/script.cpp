@@ -22,7 +22,7 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   assert(bufferSize >= k_defaultScriptNameMaxSize);
   static constexpr char defaultScriptName[] = "script";
   static constexpr int defaultScriptNameLength = 6;
-  memcpy(buffer, defaultScriptName, bufferSize);
+  strlcpy(buffer, defaultScriptName, bufferSize);
 
   int currentScriptNumber = 1;
   while (currentScriptNumber <= k_maxNumberOfDefaultScriptNames) {

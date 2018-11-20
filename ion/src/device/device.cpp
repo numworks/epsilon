@@ -15,6 +15,7 @@ extern "C" {
 #include "usb.h"
 #include "bench/bench.h"
 #include "base64.h"
+#include "external_flash.h"
 
 #define USE_SD_CARD 0
 
@@ -187,6 +188,7 @@ void initPeripherals() {
   Console::Device::init();
   SWD::Device::init();
   initSysTick();
+  ExternalFlash::Device::init();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {

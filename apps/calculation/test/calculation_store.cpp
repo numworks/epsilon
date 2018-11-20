@@ -51,7 +51,7 @@ QUIZ_CASE(calculation_store) {
 }
 
 QUIZ_CASE(calculation_display_exact_approximate) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   CalculationStore store;
 
   store.push("1+3/4", &globalContext);

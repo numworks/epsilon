@@ -362,6 +362,7 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
 }
 
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+  sSimplificationHasBeenInterrupted = false;
   return deepReduce(context, angleUnit, replaceSymbols);
 }
 

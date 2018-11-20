@@ -54,7 +54,7 @@ void EvenOddDoubleBufferTextCellWithSeparator::setHighlighted(bool highlight) {
     if (m_firstTextSelected) {
       m_firstBufferTextView.setHighlighted(true);
     } else {
-      m_secondBufferTextView.setHighlighted(false);
+      m_secondBufferTextView.setHighlighted(true);
     }
   }
   reloadCell();

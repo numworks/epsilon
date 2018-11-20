@@ -74,6 +74,9 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
 }
 
 bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression) {
+  if (expression.isUninitialized()) {
+    return false;
+  }
   Expression exp = expression;
   if (replaceAns){
     exp = expression.clone();

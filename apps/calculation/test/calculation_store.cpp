@@ -90,4 +90,17 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   lastCalculation = store.calculationAtIndex(1);
   quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
   quiz_assert(strcmp(lastCalculation->exactOutputText(),"x") == 0);
+
+  store.deleteAll();
+  store.push("[[1,2,3]]", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
+
+  store.deleteAll();
+  store.push("[[1,x,3]]", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
+  store.deleteAll();
 }

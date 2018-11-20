@@ -1,6 +1,7 @@
 #ifndef CALCULATION_CALCULATION_H
 #define CALCULATION_CALCULATION_H
 
+#include <apps/constant.h>
 #include <escher.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
@@ -36,15 +37,14 @@ public:
   bool shouldOnlyDisplayApproximateOutput(Poincare::Context * context);
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
-  constexpr static int k_printedExpressionSize = 2*::TextField::maxBufferSize();
 private:
   static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::maxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */
-  char m_inputText[k_printedExpressionSize];
-  char m_exactOutputText[k_printedExpressionSize];
-  char m_approximateOutputText[k_printedExpressionSize];
+  char m_inputText[Constant::MaxSerializedExpressionSize];
+  char m_exactOutputText[Constant::MaxSerializedExpressionSize];
+  char m_approximateOutputText[Constant::MaxSerializedExpressionSize];
   KDCoordinate m_height;
   EqualSign m_equalSign;
 };

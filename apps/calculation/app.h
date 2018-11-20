@@ -31,6 +31,7 @@ public:
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool storeExpressionAllowed() const override { return true; }
   char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

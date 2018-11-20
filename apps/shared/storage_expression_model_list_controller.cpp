@@ -1,4 +1,5 @@
 #include "storage_expression_model_list_controller.h"
+#include <apps/constant.h>
 #include <poincare/symbol.h>
 
 namespace Shared {
@@ -181,11 +182,12 @@ void StorageExpressionModelListController::reinitExpression(ExpiringPointer<Stor
 
 void StorageExpressionModelListController::editExpression(Ion::Events::Event event) {
   char * initialText = nullptr;
-  char initialTextContent[TextField::maxBufferSize()];
+  constexpr int initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
+  char initialTextContent[initialTextContentMaxSize];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
     ExpiringPointer<StorageExpressionModel> model = modelStore()->modelForRecord(record);
-    model->text(initialTextContent, TextField::maxBufferSize());
+    model->text(initialTextContent, initialTextContentMaxSize);
     initialText = initialTextContent;
     // Replace Poincare::Symbol::SpecialSymbols::UnknownX with 'x'
     size_t initialTextLength = strlen(initialText);

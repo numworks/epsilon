@@ -38,4 +38,11 @@ void StorageFunctionApp::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
+bool StorageFunctionApp::isAcceptableExpression(const Poincare::Expression expression) {
+  if (!TextFieldDelegateApp::ExpressionCanBeSerialized(expression, false, Expression())) {
+    return false;
+  }
+  return TextFieldDelegateApp::isAcceptableExpression(expression);
+}
+
 }

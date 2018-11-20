@@ -1,5 +1,7 @@
 #include "text_field_delegate_app.h"
-#include "../apps_container.h"
+#include <apps/apps_container.h>
+#include <apps/constant.h>
+#include <apps/shared/poincare_helpers.h>
 #include <cmath>
 #include <string.h>
 
@@ -65,9 +67,33 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   if (exp.isUninitialized()) {
     return false;
   }
-  if (exp.type() == ExpressionNode::Type::Store) {
-    // Most textfields do not allow Store "3->a" or "5->f(x)"
+  if (!storeExpressionAllowed() && exp.type() == ExpressionNode::Type::Store) {
     return false;
+  }
+  return true;
+}
+
+bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression) {
+  Expression exp = expression;
+  if (replaceAns){
+    exp = expression.clone();
+    Symbol ansSymbol = Symbol::Ans();
+    exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  }
+  constexpr int maxSerializationSize = Constant::MaxSerializedExpressionSize;
+  char buffer[maxSerializationSize];
+  int length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
+  /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
+   * escaped before printing utterly the expression. */
+  if (length >= maxSerializationSize-1) {
+    return false;
+  }
+  if (replaceAns) {
+    exp = Expression::parse(buffer);
+    if (exp.isUninitialized()) {
+      // The ans replacement made the expression unparsable
+      return false;
+    }
   }
   return true;
 }

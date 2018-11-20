@@ -38,7 +38,6 @@ void EvenOddDoubleBufferTextCellWithSeparator::selectFirstText(bool selectFirstT
   m_firstTextSelected = selectFirstText;
   m_firstBufferTextView.setHighlighted(selectFirstText);
   m_secondBufferTextView.setHighlighted(!selectFirstText);
-  reloadCell();
 }
 
 void EvenOddDoubleBufferTextCellWithSeparator::reloadCell() {
@@ -57,7 +56,6 @@ void EvenOddDoubleBufferTextCellWithSeparator::setHighlighted(bool highlight) {
       m_secondBufferTextView.setHighlighted(true);
     }
   }
-  reloadCell();
 }
 
 void EvenOddDoubleBufferTextCellWithSeparator::setEven(bool even) {

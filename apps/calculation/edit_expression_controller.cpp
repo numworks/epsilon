@@ -155,9 +155,9 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   App * calculationApp = (App *)app();
   if (layoutR.isUninitialized()) {
     assert(text);
-    strlcpy(m_cacheBuffer, text, Calculation::k_printedExpressionSize);
+    strlcpy(m_cacheBuffer, text, k_cacheBufferSize);
   } else {
-    layoutR.serialize(m_cacheBuffer, Calculation::k_printedExpressionSize);
+    layoutR.serialize(m_cacheBuffer, k_cacheBufferSize);
   }
   m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
   m_historyController->reload();

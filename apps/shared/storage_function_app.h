@@ -35,10 +35,13 @@ public:
   virtual StorageFunctionStore * functionStore() = 0;
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
+
 protected:
   StorageFunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
     ExpressionFieldDelegateApp(container, snapshot, rootViewController)
   {}
+  // TextFieldDelegateApp
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
 };
 
 }

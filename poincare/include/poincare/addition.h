@@ -61,7 +61,7 @@ class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
   Addition();
-  Addition(Expression e1) : Addition() {
+  explicit Addition(Expression e1) : Addition() {
     addChildAtIndexInPlace(e1, 0, 0);
   }
   Addition(Expression e1, Expression e2) : Addition() {

@@ -2,6 +2,7 @@
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/char_layout.h>
 #include <poincare/empty_layout.h>
+#include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
 
@@ -16,6 +17,37 @@ Layout Layout::clone() const {
   return cast;
 }
 
+int Layout::serializeParsedExpression(char * buffer, int bufferSize) const {
+  /* This method fixes the following problem:
+   * Some layouts have a special serialization so they can be parsed afterwards,
+   * such has logBase3(2) that serializes as log_{3}(2). When handling the
+   * layout text, we want to use log(2,3) because we might paste the text in a
+   * LinearEdition textfield, so what we really want is the parsed expression's
+   * serialization. */
+  if (bufferSize <= 0) {
+    return 0;
+  }
+  serializeForParsing(buffer, bufferSize);
+  Poincare::Expression e = Poincare::Expression::parse(buffer);
+  if (e.isUninitialized()) {
+    buffer[0] = 0;
+    return 0;
+  }
+  return e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode());
+}
+
+bool Layout::recursivelyMatches(LayoutTest test) const {
+  if (test(*this)) {
+    return true;
+  }
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (childAtIndex(i).recursivelyMatches(test)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // Cursor
 LayoutCursor Layout::cursor() const {
   assert(!isUninitialized());
@@ -27,7 +59,7 @@ LayoutCursor Layout::equivalentCursor(LayoutCursor * cursor) {
   return node()->equivalentCursor(cursor);
 }
 
-Layout Layout::childAtIndex(int i) {
+Layout Layout::childAtIndex(int i) const {
   TreeHandle c = TreeHandle::childAtIndex(i);
   return static_cast<Layout &>(c);
 }

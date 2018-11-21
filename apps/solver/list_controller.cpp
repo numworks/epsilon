@@ -1,5 +1,6 @@
 #include "list_controller.h"
 #include "app.h"
+#include <poincare/char_layout.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -120,6 +121,12 @@ bool textRepresentsAnEquality(const char * text) {
   return false;
 }
 
+bool layoutRepresentsAnEquality(Poincare::Layout l) {
+  return l.recursivelyMatches(
+      [](Poincare::Layout layout) {
+      return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '"'; });
+}
+
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!textRepresentsAnEquality(textField->text())) {
@@ -139,13 +146,10 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    char buffer[TextField::maxBufferSize()];
-    layoutField->serialize(buffer, TextField::maxBufferSize());
-    if (!textRepresentsAnEquality(buffer)) {
+    if (!layoutRepresentsAnEquality(layoutField->layout())) {
       layoutField->handleEvent(Ion::Events::ShiftRight);
       layoutField->handleEventWithText("=0");
-      layoutField->serialize(buffer, TextField::maxBufferSize());
-      if (!textRepresentsAnEquality(buffer)) {
+      if (!layoutRepresentsAnEquality(layoutField->layout())) {
         app()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }

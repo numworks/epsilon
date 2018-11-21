@@ -17,7 +17,7 @@ namespace Poincare {
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
 
-Expression Expression::parse(char const * string) {
+Expression Expression::Parse(char const * string) {
   if (string[0] == 0) {
     return Expression();
   }
@@ -307,7 +307,7 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 /* Simplification */
 
 Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  Expression exp = parse(text);
+  Expression exp = Parse(text);
   if (exp.isUninitialized()) {
     return Undefined();
   }
@@ -315,7 +315,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
-    return parse(text);
+    return Parse(text);
   }
   return exp;
 }

@@ -110,7 +110,7 @@ Poincare::Expression Sequence::secondInitialConditionExpression(Context * contex
 
 Poincare::Layout Sequence::firstInitialConditionLayout() {
   if (m_firstInitialConditionLayout.isUninitialized()) {
-    Expression nonSimplifedExpression = Expression::parse(m_firstInitialConditionText);
+    Expression nonSimplifedExpression = Expression::Parse(m_firstInitialConditionText);
     if (!nonSimplifedExpression.isUninitialized()) {
       m_firstInitialConditionLayout = PoincareHelpers::CreateLayout(nonSimplifedExpression);
     }
@@ -120,7 +120,7 @@ Poincare::Layout Sequence::firstInitialConditionLayout() {
 
 Poincare::Layout Sequence::secondInitialConditionLayout() {
   if (m_secondInitialConditionLayout.isUninitialized()) {
-    Expression nonSimplifedExpression = Expression::parse(m_secondInitialConditionText);
+    Expression nonSimplifedExpression = Expression::Parse(m_secondInitialConditionText);
     if (!nonSimplifedExpression.isUninitialized()) {
       m_secondInitialConditionLayout = PoincareHelpers::CreateLayout(nonSimplifedExpression);
     }

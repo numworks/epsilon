@@ -16,7 +16,7 @@ static inline void assert_approximation_equals(const Expression i, float f) {
 }
 
 static inline void assert_parsed_expression_is_equal_to(const char * exp, Expression e) {
-  Expression result = Expression::parse(exp);
+  Expression result = Expression::Parse(exp);
   quiz_assert(!result.isUninitialized());
   quiz_assert(result.isIdenticalTo(e));
 }

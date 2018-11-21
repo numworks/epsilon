@@ -36,7 +36,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 
 
 bool TextFieldDelegateApp::isAcceptableText(const char * text) {
-  Expression exp = Expression::parse(text);
+  Expression exp = Expression::Parse(text);
   return isAcceptableExpression(exp);
 }
 
@@ -92,7 +92,7 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
     return false;
   }
   if (replaceAns) {
-    exp = Expression::parse(buffer);
+    exp = Expression::Parse(buffer);
     if (exp.isUninitialized()) {
       // The ans replacement made the expression unparsable
       return false;

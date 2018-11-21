@@ -302,14 +302,14 @@ Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Co
     return Expression();
   }
   for (int i = 0; i < k_numberOfEntries; i++) {
-    Expression input = Expression::parse(cheatTable[i][inputIndex]);
+    Expression input = Expression::Parse(cheatTable[i][inputIndex]);
     if (input.isUninitialized()) {
       continue;
     }
     input = input.deepReduce(context, angleUnit);
     bool rightInput = input.isIdenticalTo(e);
     if (rightInput) {
-      Expression output = Expression::parse(cheatTable[i][outputIndex]);
+      Expression output = Expression::Parse(cheatTable[i][outputIndex]);
       if (output.isUninitialized()) {
         return Expression();
       }

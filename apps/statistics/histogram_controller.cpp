@@ -80,6 +80,10 @@ void HistogramController::willExitResponderChain(Responder * nextFirstResponder)
 void HistogramController::highlightSelection() {
   HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(selectedSeriesIndex()));
   selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex));
+  // if the selectedBar was outside of range, we need to scroll
+  if (m_store->scrollToSelectedBarIndex(selectedSeriesIndex(), *m_selectedBarIndex)) {
+    multipleDataView()->reload();
+  }
 }
 
 Responder * HistogramController::tabController() const {

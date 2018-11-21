@@ -28,14 +28,14 @@ namespace Device {
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Single;
 
-static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t * data, size_t dataLength);
+static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
 static inline void send_command(Command c) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     DefaultOperatingMode,
     c,
-    0, nullptr, 0
+    0, 0, nullptr, 0
   );
 }
 
@@ -44,7 +44,7 @@ static inline void send_command_single(Command c) {
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     QUADSPI::CCR::OperatingMode::Single,
     c,
-    0, nullptr, 0
+    0, 0, nullptr, 0
   );
 }
 
@@ -53,7 +53,7 @@ static inline void send_write_command(Command c, uint32_t address, uint8_t * dat
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     DefaultOperatingMode,
     c,
-    address, data, dataLength
+    address, 0, data, dataLength
   );
 }
 
@@ -62,7 +62,7 @@ static inline void send_read_command(Command c, uint32_t address, uint8_t * data
     QUADSPI::CCR::FunctionalMode::IndirectRead,
     DefaultOperatingMode,
     c,
-    address, data, dataLength
+    address, 0, data, dataLength
   );
 }
 
@@ -83,17 +83,18 @@ static void set_as_memory_mapped() {
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
     Command::ReadData,
-    0, nullptr, 0
+    0, 0, nullptr, 0
   );
 }
 
-void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t * data, size_t dataLength) {
+void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setDMODE(operatingMode);
   }
   QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
+  ccr.setDCYC(dummyCycles);
   if (address != 0 || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setADMODE(operatingMode);
     ccr.setADSIZE(QUADSPI::CCR::Size::ThreeBytes);

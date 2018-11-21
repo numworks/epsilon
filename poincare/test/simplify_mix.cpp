@@ -11,14 +11,6 @@ using namespace std;
 using namespace Poincare;
 
 QUIZ_CASE(poincare_simplify_mix) {
-
-  // 0 and infinity
-  assert_parsed_expression_simplify_to("0/0", Undefined::Name());
-  assert_parsed_expression_simplify_to("0/inf", "0");
-  assert_parsed_expression_simplify_to("inf/0", Undefined::Name());
-  assert_parsed_expression_simplify_to("0*inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("3*inf/inf", "inf/inf"); //TODO undef would be better
-
   // Root at denominator
   assert_parsed_expression_simplify_to("1/(R(2)+R(3))", "(-R(2))+R(3)");
   assert_parsed_expression_simplify_to("1/(5+R(3))", "(5-R(3))/22");

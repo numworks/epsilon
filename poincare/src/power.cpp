@@ -81,13 +81,21 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
+  std::complex<T> result = std::pow(c, d);
+  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() >= 0.0) {
+    /* pow: (R+, R) -> R+
+     * However, std::pow(2.0, 1000) = (INFINITY, NAN). Openbsd pow of a
+     * positive real and another real has a undefined imaginary when the real
+     * result is infinity. To avoid this, we force the imaginary part of
+     * pow(R+,R) to 0.0. */
+    result.imag(0.0);
+  }
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
    * avoid weird results as e(i*pi) = -1+6E-17*i, we compute the argument of
    * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
    * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
-  std::complex<T> result = std::pow(c, d);
   return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 

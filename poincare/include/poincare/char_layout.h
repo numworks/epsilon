@@ -28,6 +28,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isChar() const override { return true; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool canBeOmittedMultiplicationRightFactor() const override;
 
   // TreeNode
   size_t size() const override { return sizeof(CharLayoutNode); }

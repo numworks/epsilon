@@ -89,7 +89,7 @@ QUIZ_CASE(poincare_rational_simplify) {
   assert_parsed_expression_simplify_to(buffer, buffer);
   // 1/OverflowedIntegerString()
   strlcpy(buffer+2, BigOverflowedIntegerString(), 400-2);
-  assert_parsed_expression_simplify_to(buffer, "1/inf");
+  assert_parsed_expression_simplify_to(buffer, "0");
   // MaxIntegerString()
   assert_parsed_expression_simplify_to(MaxIntegerString(), MaxIntegerString());
   // OverflowedIntegerString()

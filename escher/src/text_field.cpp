@@ -262,7 +262,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
      * This will call textFieldDidAbortEditing if the textfield is still editing,
      * which we do not want, as we are not really aborting edition, just
      * displaying a pop-up before returning to edition.
-     * We thus set editiong to false. */
+     * We thus set editing to false. */
     setEditing(false, m_hasTwoBuffers);
     if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
       /* We allow overscroll to avoid calling layoutSubviews twice because the
@@ -270,14 +270,12 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
       reloadScroll(true);
       return true;
     }
-    setEditing(true, m_hasTwoBuffers);
+    setEditing(true, false);
     if (m_hasTwoBuffers) {
       /* if the text was refused (textInputDidFinishEditing returned false, we
        * reset the textfield in the same state as before */
-      char bufferDraft[ContentView::k_maxBufferSize];
-      strlcpy(bufferDraft, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
-      setText(bufferText);
-      setText(bufferDraft);
+      setText(m_contentView.textBuffer());
+      strlcpy(m_contentView.textBuffer(), bufferText, ContentView::k_maxBufferSize);
       setCursorLocation(cursorLoc);
     }
     return true;

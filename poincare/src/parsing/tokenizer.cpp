@@ -122,6 +122,12 @@ Token Tokenizer::popToken() {
   if (currentChar == Ion::Charset::MultiplicationSign || currentChar == Ion::Charset::MiddleDot) {
     return Token(Token::Times);
   }
+  if (currentChar == '^') {
+    return Token(Token::Caret);
+  }
+  if (currentChar == Ion::Charset::Superscript) {
+    return Token(Token::Superscript);
+  }
   if (currentChar == '!') {
     return Token(Token::Bang);
   }
@@ -133,9 +139,6 @@ Token Tokenizer::popToken() {
   }
   if (currentChar == ']') {
     return Token(Token::RightBracket);
-  }
-  if (currentChar == '^') {
-    return Token(Token::Caret);
   }
   if (currentChar == '{') {
     return Token(Token::LeftBrace);

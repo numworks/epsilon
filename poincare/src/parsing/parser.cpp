@@ -54,6 +54,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseStore,           // Token::Store
     &Parser::parseEqual,           // Token::Equal
+    &Parser::parseSuperscript,     // Token::Superscript
     &Parser::parseUnexpected,      // Token::RightBracket
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
@@ -248,6 +249,23 @@ void Parser::parseStore(Expression & leftHandSide) {
     return;
   }
   leftHandSide = Store(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
+}
+
+void Parser::parseSuperscript(Expression & leftHandSide) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Power must have a left operand
+    return;
+  }
+  Expression rightHandSide = parseUntil(Token::Superscript);
+  if (m_status != Status::Progress) {
+    return;
+  }
+  if (!popTokenIfType(Token::Superscript)) {
+    m_status = Status::Error; // Right superscript marker missing.
+    return;
+  }
+  leftHandSide = Power(leftHandSide, rightHandSide);
+  isThereImplicitMultiplication();
 }
 
 bool Parser::parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType) {

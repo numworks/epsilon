@@ -129,19 +129,15 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
       }
       // Find the pointed layout.
       Layout pointedLayout;
-      if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
-        /* Special case: if the text is "random()", the cursor should not be set
-         * inside the parentheses. */
-        pointedLayout = resultLayout;
-      } else if (resultLayout.isHorizontal()) {
-        /* If the layout is horizontal, pick the first open parenthesis. For now,
-         * all horizontal layouts in MathToolbox have parentheses. */
-        for (int i = 0; i < resultLayout.numberOfChildren(); i++) {
-          Layout l = resultLayout.childAtIndex(i);
-          if (l.isLeftParenthesis()) {
-            pointedLayout = l;
-            break;
-          }
+      if (!forceCursorRightOfText) {
+        if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
+          /* Special case: if the text is "random()", the cursor should not be set
+           * inside the parentheses. */
+          pointedLayout = resultLayout;
+        } else if (resultLayout.isHorizontal()) {
+          pointedLayout = resultLayout.recursivelyMatches(
+              [](Poincare::Layout layout) {
+              return layout.isLeftParenthesis() || layout.isEmpty();});
         }
       }
       /* Insert the layout. If pointedLayout is uninitialized, the cursor will

@@ -41,7 +41,7 @@ public:
 
   // Layout properties
   typedef bool (*LayoutTest)(const Layout l);
-  bool recursivelyMatches(LayoutTest test) const;
+  Layout recursivelyMatches(LayoutTest test) const;
   bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
   bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }
   bool isHorizontal() const { return const_cast<Layout *>(this)->node()->isHorizontal(); }

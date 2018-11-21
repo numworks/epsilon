@@ -123,7 +123,7 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
    * functions changes, it might not be the case anymore so make sure to modify
    * canBeOmittedMultiplicationRightFactor if needed. */
   int numberOfOpenParentheses = 0;
-  return isCollapsable(&numberOfOpenParentheses, false) && !isVerticalOffset();
+  return isCollapsable(&numberOfOpenParentheses, false);
 }
 
 // Private

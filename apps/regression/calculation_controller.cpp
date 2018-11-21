@@ -1,5 +1,4 @@
 #include "calculation_controller.h"
-#include "../constant.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/char_layout.h>
@@ -246,7 +245,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
 KDCoordinate CalculationController::columnWidth(int i) {
   if (i == 0) {
-    return k_smallCalculationCellWidth;
+    return k_titleCalculationCellWidth;
   }
   Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthNonEmptySeries(i-1));
   if (currentType == Model::Type::Quartic) {
@@ -255,7 +254,7 @@ KDCoordinate CalculationController::columnWidth(int i) {
   if (currentType == Model::Type::Cubic) {
     return k_cubicCalculationCellWidth;
   }
-  return k_smallCalculationCellWidth;
+  return k_minCalculationCellWidth;
 }
 
 KDCoordinate CalculationController::rowHeight(int j) {

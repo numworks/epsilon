@@ -24,6 +24,9 @@ public:
        * token of lesser precedence than Equal, and this prevents expressions
        * such as "3=4>a". Tokenizer::parseStore uses a special algorithm that
        * prevents (3>4=a). */
+    Superscript,
+      /* Superscript marks the limit of a power. For instance:
+       * 2 Superscript 3! Superscript ! is (2^(3!))! */
     RightBracket,
     RightParenthesis,
     RightBrace,

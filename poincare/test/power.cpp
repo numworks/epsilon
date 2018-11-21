@@ -10,7 +10,7 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<float>("2^3", "8");
   assert_parsed_expression_evaluates_to<double>("(3+I)^4", "28+96*I");
   assert_parsed_expression_evaluates_to<float>("4^(3+I)", "11.74125+62.91378*I");
-  assert_parsed_expression_evaluates_to<double>("(3+I)^(3+I)", "(-11.898191759852)+19.592921596609*I");
+  assert_parsed_expression_evaluates_to<double>("(3+I)^(3+I)", "-11.898191759852+19.592921596609*I");
 
   assert_parsed_expression_evaluates_to<double>("0^0", Undefined::Name());
   assert_parsed_expression_evaluates_to<double>("0^2", "0");
@@ -61,8 +61,8 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("R(x*144)", "12*R(x)");
   assert_parsed_expression_simplify_to("R(x*144*P^2)", "12*R(x)*P");
   assert_parsed_expression_simplify_to("R(x*144*P)", "12*R(x)*R(P)");
-  assert_parsed_expression_simplify_to("(-1)*(2+(-4*R(2)))", "(-2)+4*R(2)");
-  assert_parsed_expression_simplify_to("R(2-4*R(2))", "R((-2)+4*R(2))*I");
+  assert_parsed_expression_simplify_to("(-1)*(2+(-4*R(2)))", "-2+4*R(2)");
+  assert_parsed_expression_simplify_to("R(2-4*R(2))", "R(-2+4*R(2))*I");
   assert_parsed_expression_simplify_to("x^(1/2)", "R(x)");
   assert_parsed_expression_simplify_to("x^(-1/2)", "1/R(x)");
   assert_parsed_expression_simplify_to("x^(1/7)", "root(x,7)");

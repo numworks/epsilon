@@ -314,8 +314,8 @@ bool GraphController::moveCursorVertically(int direction) {
       // Compare the y distances
       double regressionDistanceY = std::fabs(yValue(closestRegressionSeries, x, context) - y);
       double dotDistanceY = (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) ?
-        dotDistanceY = std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
-        dotDistanceY = std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
+        std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
+        std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
       if (regressionDistanceY <= dotDistanceY) {
         validDot = false;
       } else {

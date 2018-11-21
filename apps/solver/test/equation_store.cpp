@@ -41,7 +41,7 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   }
   int n = type == EquationStore::Type::PolynomialMonovariable ? numberOfSolutions+1 : numberOfSolutions; // Check Delta for PolynomialMonovariable
   for (int i = 0; i < n; i++) {
-    equationStore.exactSolutionLayoutAtIndex(i, true).serializeParsedExpression(buffer, 200);
+    equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, 200);
     translate_in_ASCII_chars(buffer);
     quiz_assert(strcmp(buffer, solutions[i]) == 0);
   }
@@ -120,7 +120,7 @@ QUIZ_CASE(equation_solve) {
 
   // x^2+x+1=3*x^2+pi*x-R(5)
   const char * equations11[] = {"x^2+x+1=3*x^2+P*x-R(5)", 0};
-  const char * solutions11[] = {"(1-P+R(9+8*R(5)-2*P+P^(2)))/(4)", "(1-P-R(9+8*R(5)-2*P+P^(2)))/(4)", "9+8*R(5)-2*P+P^(2)"};
+  const char * solutions11[] = {"(1-P+R(9+8*R(5)-2*P+P$2$))/(4)", "(1-P-R(9+8*R(5)-2*P+P$2$))/(4)", "9+8*R(5)-2*P+P$2$"};
   assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 2);
 
   // TODO

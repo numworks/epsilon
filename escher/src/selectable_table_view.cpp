@@ -142,9 +142,12 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       Clipboard::sharedClipboard()->store(text);
       return true;
     }
-    Poincare::Layout layoutR = cell->layout();
-    if (!layoutR.isUninitialized()) {
-      Clipboard::sharedClipboard()->store(layoutR);
+    Poincare::Layout l = cell->layout();
+    if (!l.isUninitialized()) {
+      constexpr int bufferSize = TextField::maxBufferSize();
+      char buffer[bufferSize];
+      l.serializeParsedExpression(buffer, bufferSize);
+      Clipboard::sharedClipboard()->store(buffer);
       return true;
     }
   }

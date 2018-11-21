@@ -95,6 +95,9 @@ App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
 }
 
 void AppsContainer::reset() {
+  // Empty stored variable
+  Ion::Storage::sharedStorage()->destroyRecordsWithExtension("exp");
+  // Empty clipboard
   Clipboard::sharedClipboard()->reset();
   for (int i = 0; i < numberOfApps(); i++) {
     appSnapshotAtIndex(i)->reset();

@@ -53,7 +53,7 @@ QUIZ_CASE(poincare_multiplication_simplify) {
   assert_parsed_expression_simplify_to("2^P*(1/2)^P", "1");
   assert_parsed_expression_simplify_to("A^3*A^(-3)", "1");
   assert_parsed_expression_simplify_to("(x+1)*(x+2)", "2+3*x+x^2");
-  assert_parsed_expression_simplify_to("(x+1)*(x-1)", "(-1)+x^2");
+  assert_parsed_expression_simplify_to("(x+1)*(x-1)", "-1+x^2");
   assert_parsed_expression_simplify_to("11P/(22P+11P)", "1/3");
   assert_parsed_expression_simplify_to("11/(22P+11P)", "1/(3*P)");
   assert_parsed_expression_simplify_to("-11/(22P+11P)", "-1/(3*P)");

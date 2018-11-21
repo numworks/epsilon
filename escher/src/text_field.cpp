@@ -422,37 +422,12 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
   size_t eventTextSize = min(eventTextLength + 1, TextField::maxBufferSize());
   char buffer[TextField::maxBufferSize()];
-  size_t bufferIndex = 0;
-
-  /* DIRTY
-   * We use the notation "_{}" to indicate a subscript layout. In a text field,
-   * such a subscript should be written using parentheses. For instance: "u_{n}"
-   * should be inserted as "u(n)".
-   * We thus remove underscores and changes brackets into parentheses. */
-  bool specialUnderScore = false;
-  for (size_t i = bufferIndex; i < eventTextSize; i++) {
-    if (eventText[i] == '_') {
-      specialUnderScore = ((i < eventTextSize - 1) && (eventText[i+1] == '{')) ? true : false;
-      if (!specialUnderScore) {
-         buffer[bufferIndex++] = '_';
-      }
-    } else if (eventText[i] == '{' && specialUnderScore) {
-      buffer[bufferIndex++] = '(';
-    } else if (eventText[i] == '}' && specialUnderScore) {
-      buffer[bufferIndex++] = ')';
-      specialUnderScore = false;
-    } else {
-      buffer[bufferIndex++] = eventText[i];
-    }
-  }
-
-  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(buffer);
 
   int newBufferIndex = 0;
   // Remove EmptyChars
-  for (size_t i = newBufferIndex; i < bufferIndex; i++) {
-    if (buffer[i] != Ion::Charset::Empty) {
-      buffer[newBufferIndex++] = buffer[i];
+  for (size_t i = 0; i < eventTextSize; i++) {
+    if (eventText[i] != Ion::Charset::Empty) {
+      buffer[newBufferIndex++] = eventText[i];
     }
   }
 
@@ -461,7 +436,12 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     /* The cursor position depends on the text as we sometimes want to position
      * the cursor at the end of the text and sometimes after the first
      * parenthesis. */
-    nextCursorLocation = cursorLocation() + (forceCursorRightOfText? strlen(buffer) : cursorIndexInCommand);
+    nextCursorLocation = cursorLocation();
+    if (forceCursorRightOfText) {
+      nextCursorLocation+= strlen(buffer);
+    } else {
+      nextCursorLocation+= TextInputHelpers::CursorIndexInCommand(eventText);
+    }
   }
   setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);

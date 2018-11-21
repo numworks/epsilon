@@ -39,6 +39,7 @@ void translate_in_special_chars(char * expression) {
       case '*': *c = Ion::Charset::MultiplicationSign; break;
       case '>': *c = Ion::Charset::Sto; break;
       case '?': *c = Poincare::Symbol::SpecialSymbols::UnknownX; break;
+      case '$': *c = Ion::Charset::Superscript; break;
     }
   }
 }
@@ -55,6 +56,7 @@ void translate_in_ASCII_chars(char * expression) {
       case Ion::Charset::MiddleDot: *c = '*'; break;
       case Ion::Charset::Sto: *c = '>'; break;
       case Poincare::Symbol::SpecialSymbols::UnknownX: *c = '?'; break;
+      case Ion::Charset::Superscript: *c = '$'; break;
     }
   }
 }
@@ -186,7 +188,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
   Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
-  el.serialize(buffer, bufferSize);
+  el.serializeForParsing(buffer, bufferSize);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialized to: " << buffer << " ----\n"  << endl;
 #endif
@@ -196,7 +198,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 void assert_expression_layout_serialize_to(Poincare::Layout layout, const char * serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
-  layout.serialize(buffer, bufferSize);
+  layout.serializeForParsing(buffer, bufferSize);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << serialization << "----"  << endl;
   cout << "---- serialized to: " << buffer << " ----"  << endl;

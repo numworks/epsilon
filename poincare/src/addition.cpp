@@ -31,7 +31,11 @@ int AdditionNode::getPolynomialCoefficients(Context & context, const char * symb
 
 // Layout
 bool AdditionNode::childNeedsParenthesis(const TreeNode * child) const {
-  if ((static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) || static_cast<const ExpressionNode *>(child)->type() == Type::Opposite) {
+  if (((static_cast<const ExpressionNode *>(child)->isNumber()
+          && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative)
+        || static_cast<const ExpressionNode *>(child)->type() == Type::Opposite)
+      && child != childAtIndex(0))
+  {
     return true;
   }
   return false;

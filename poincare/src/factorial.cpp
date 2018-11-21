@@ -21,8 +21,8 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 7);
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
 }
 
 // Simplification

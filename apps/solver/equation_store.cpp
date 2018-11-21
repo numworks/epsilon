@@ -176,8 +176,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
       char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      m_exactSolutionExactLayouts[i].serialize(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionApproximateLayouts[i].serialize(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionExactLayouts[i].serializeForParsing(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionApproximateLayouts[i].serializeForParsing(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
       m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {

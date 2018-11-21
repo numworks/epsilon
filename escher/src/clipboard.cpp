@@ -11,7 +11,7 @@ void Clipboard::store(const char * storedText) {
 }
 
 void Clipboard::store(Poincare::Layout layoutR) {
-  layoutR.serialize(m_textBuffer, TextField::maxBufferSize());
+  layoutR.serializeParsedExpression(m_textBuffer, TextField::maxBufferSize());
 }
 
 const char * Clipboard::storedText() {

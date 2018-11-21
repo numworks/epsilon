@@ -36,16 +36,17 @@ int Layout::serializeParsedExpression(char * buffer, int bufferSize) const {
   return e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode());
 }
 
-bool Layout::recursivelyMatches(LayoutTest test) const {
+Layout Layout::recursivelyMatches(LayoutTest test) const {
   if (test(*this)) {
-    return true;
+    return *this;
   }
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).recursivelyMatches(test)) {
-      return true;
+    Layout childResult = childAtIndex(i).recursivelyMatches(test);
+    if (!childResult.isUninitialized()) {
+      return childResult;
     }
   }
-  return false;
+  return Layout();
 }
 
 // Cursor

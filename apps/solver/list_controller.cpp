@@ -122,9 +122,10 @@ bool textRepresentsAnEquality(const char * text) {
 }
 
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
-  return l.recursivelyMatches(
+  Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
       return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '"'; });
+  return !match.isUninitialized();
 }
 
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {

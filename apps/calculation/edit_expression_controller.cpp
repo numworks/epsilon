@@ -157,7 +157,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
     assert(text);
     strlcpy(m_cacheBuffer, text, k_cacheBufferSize);
   } else {
-    layoutR.serialize(m_cacheBuffer, k_cacheBufferSize);
+    layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize);
   }
   m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
   m_historyController->reload();

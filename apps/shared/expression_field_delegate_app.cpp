@@ -25,7 +25,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
     }
     char buffer[TextField::maxBufferSize()];
     int bufferSize = TextField::maxBufferSize();
-    int length = layoutField->serialize(buffer, bufferSize);
+    int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
     if (length >= bufferSize-1) {
       /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
        * escaped before printing utterly the expression. */

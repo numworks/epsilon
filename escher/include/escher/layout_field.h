@@ -27,7 +27,6 @@ public:
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
   }
   bool hasText() const { return layout().hasText(); }
-  int serialize(char * buffer, int bufferLength) { return layout().serialize(buffer, bufferLength); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   char XNTChar(char defaultXNTChar) override;
 

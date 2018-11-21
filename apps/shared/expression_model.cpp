@@ -21,14 +21,14 @@ const char * ExpressionModel::text() const {
 
 Poincare::Expression ExpressionModel::expression(Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
-    m_expression = Expression::parse(m_text);
+    m_expression = Expression::Parse(m_text);
   }
   return m_expression;
 }
 
 Layout ExpressionModel::layout() {
   if (m_layout.isUninitialized()) {
-    Expression nonSimplifiedExpression = Expression::parse(m_text);
+    Expression nonSimplifiedExpression = Expression::Parse(m_text);
     m_layout = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
   }
   return m_layout;

@@ -80,7 +80,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char 
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
-    expressionToStore = Expression::parse(c);
+    expressionToStore = Expression::Parse(c);
     if (!expressionToStore.isUninitialized()) {
       Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
       expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);

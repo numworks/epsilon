@@ -117,7 +117,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     m_contentView.cursor()->addEmptyMatrixLayout();
   } else {
-    Expression resultExpression = Expression::parse(text);
+    Expression resultExpression = Expression::Parse(text);
     if (resultExpression.isUninitialized()) {
       KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
       m_contentView.cursor()->insertText(text);

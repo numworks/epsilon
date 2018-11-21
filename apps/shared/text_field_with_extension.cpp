@@ -23,7 +23,7 @@ void TextFieldWithExtension::removeWholeText() {
 bool TextFieldWithExtension::removeTextBeforeExtension(bool whole) {
   int extensionIndex = strlen(text()) - m_extensionLength;
   assert(extensionIndex >= 0 && extensionIndex < ContentView::k_maxBufferSize - m_extensionLength);
-  size_t destinationIndex = whole ? 0 : cursorLocation();
+  int destinationIndex = whole ? 0 : cursorLocation();
   if (destinationIndex == extensionIndex) {
     return false;
   }

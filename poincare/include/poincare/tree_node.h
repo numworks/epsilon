@@ -83,7 +83,7 @@ public:
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 
   // Serialization
-  virtual int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const { assert(false); return 0; }
+  virtual int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { assert(false); return 0; }
   virtual bool childNeedsParenthesis(const TreeNode * child) const { return false; };
 
   template <typename T>

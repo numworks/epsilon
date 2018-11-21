@@ -24,6 +24,9 @@ int SubtractionNode::polynomialDegree(Context & context, const char * symbolName
 // Private
 
 bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
+  if (child == childAtIndex(0)) {
+    return false;
+  }
   if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
     return true;
   }

@@ -31,6 +31,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool mustHaveLeftSibling() const override { return true; }
   bool isVerticalOffset() const override { return true; }
+  bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
   // TreeNode
   size_t size() const override { return sizeof(VerticalOffsetLayoutNode); }

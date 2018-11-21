@@ -34,7 +34,7 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(x,1)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(12925)", "2*log(5)+log(11)+log(47)");
   assert_parsed_expression_simplify_to("ln(12925)", "2*ln(5)+ln(11)+ln(47)");
-  assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "(-2*log(5,6))+log(7,6)+3*log(11,6)+log(17,6)-log(47,6)");
+  assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "-2*log(5,6)+log(7,6)+3*log(11,6)+log(17,6)-log(47,6)");
   assert_parsed_expression_simplify_to("ln(2/3)", "ln(2)-ln(3)");
   assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "log(158389/1175,-6)");
   assert_parsed_expression_simplify_to("ln(R(2))", "ln(2)/2");
@@ -58,6 +58,6 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(100)", "2");
   assert_parsed_expression_simplify_to("log(1000000)", "6");
   assert_parsed_expression_simplify_to("log(70992768,14)", "5+2*log(2,14)+log(3,14)+log(11,14)");
-  assert_parsed_expression_simplify_to("log(1/6991712,14)", "(-5)-log(13,14)");
+  assert_parsed_expression_simplify_to("log(1/6991712,14)", "-5-log(13,14)");
   assert_parsed_expression_simplify_to("log(4,10)", "2*log(2)");
 }

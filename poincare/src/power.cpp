@@ -5,6 +5,7 @@
 #include <poincare/constant.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
+#include <poincare/infinity.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
@@ -386,6 +387,29 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       return result.shallowReduce(context, angleUnit);
     }
   }
+
+  // (±inf)^x
+  if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
+    Expression result;
+    if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+      // --> 0 if x < 0
+      result = Rational(0);
+    } else if (childAtIndex(1).sign() == ExpressionNode::Sign::Positive) {
+      // --> (±inf) if x > 0
+      result = Infinity(false);
+      if (childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
+        // (-inf)^x --> (-1)^x*inf
+        Power p(Rational(-1), childAtIndex(1));
+        result = Multiplication(p, result);
+        p.shallowReduce(context, angleUnit);
+      }
+    }
+    if (!result.isUninitialized()) {
+      replaceWithInPlace(result);
+      return result.shallowReduce(context, angleUnit);
+    }
+  }
+
   bool letPowerAtRoot = parentIsALogarithmOfSameBase();
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational a = childAtIndex(0).convert<Rational>();

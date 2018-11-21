@@ -4,7 +4,27 @@ namespace Ion {
 namespace ExternalFlash {
 namespace Device {
 
-/* Explain here how QuadSPI and QPI are different. */
+/* The external flash and the Quad-SPI peripheral support
+ * several operating modes, corresponding to different numbers of signals
+ * used to communicate during each phase of the command sequence.
+ *
+ *   Mode name for | Number of signals used during each phase:
+ *  external flash | Instruction | Address | Alt. bytes | Data
+ * ----------------+-------------+---------+------------+------
+ * Standard    SPI |      1      |    1    |     1      |   1
+ * Dual-Output SPI |      1      |    1    |     1      |   2
+ * Dual-I/O    SPI |      1      |    2    |     2      |   2
+ * Quad-Output SPI |      1      |    1    |     1      |   4
+ * Quad-I/O    SPI |      1      |    4    |     4      |   4
+ *             QPI |      4      |    4    |     4      |   4
+ *
+ * The external flash supports clock frequencies up to 104MHz for all instructions,
+ * except for Read Data (0x03) which is supported up to 50Mhz.
+ *
+ * After the external flash receives a Read instructions and shifts a byte out,
+ * it automatically increments the provided address and shifts out the corresponding byte,
+ * and so on as long as the clock continues, allowing for a continuous stream of data.
+ */
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Single;
 
@@ -62,7 +82,7 @@ static void set_as_memory_mapped() {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
-    Command::FastRead,
+    Command::ReadData,
     0, nullptr, 0
   );
 }
@@ -73,14 +93,17 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setDMODE(operatingMode);
   }
+  QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
   if (address != 0 || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setADMODE(operatingMode);
     ccr.setADSIZE(QUADSPI::CCR::Size::ThreeBytes);
-    QUADSPI.AR()->set(address);
   }
   ccr.setIMODE(operatingMode);
   ccr.setINSTRUCTION(static_cast<uint8_t>(c));
   QUADSPI.CCR()->set(ccr);
+  if (address != 0) {
+    QUADSPI.AR()->set(address);
+  }
 
   // FIXME: Handle access sizes
   if (functionalMode == QUADSPI::CCR::FunctionalMode::IndirectWrite) {
@@ -120,7 +143,7 @@ void initQSPI() {
   // Enable QUADSPI AHB3 peripheral clocks
   RCC.AHB3ENR()->setQSPIEN(true);
   // Configure controller for target device
-  QUADSPI.DCR()->setFSIZE(22); // 2^(22+1) bytes in device
+  QUADSPI.DCR()->setFSIZE(FlashNumberOfAddressBits-1);
 
   QUADSPI.DCR()->setCSHT(7); // Highest value. TODO: make it optimal
   QUADSPI.CR()->setPRESCALER(255); // Highest value. TODO: make it optimal

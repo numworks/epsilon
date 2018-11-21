@@ -36,7 +36,7 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
   reset();
   {
     Symbol ansSymbol = Symbol::Ans();
-    Expression input = Expression::parse(c).replaceSymbolWithExpression(ansSymbol, ansExpression);
+    Expression input = Expression::Parse(c).replaceSymbolWithExpression(ansSymbol, ansExpression);
     /* We do not store directly the text enter by the user because we do not want
      * to keep Ans symbol in the calculation store. */
     PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
@@ -82,7 +82,7 @@ const char * Calculation::approximateOutputText() {
 }
 
 Expression Calculation::input() {
-  return Expression::parse(m_inputText);
+  return Expression::Parse(m_inputText);
 }
 
 Layout Calculation::createInputLayout() {
@@ -114,7 +114,7 @@ Expression Calculation::exactOutput() {
    * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
-  Expression exactOutput = Expression::parse(m_exactOutputText);
+  Expression exactOutput = Expression::Parse(m_exactOutputText);
   if (exactOutput.isUninitialized()) {
     return Undefined();
   }
@@ -128,7 +128,7 @@ Layout Calculation::createExactOutputLayout() {
 Expression Calculation::approximateOutput(Context * context) {
   /* To ensure that the expression 'm_output' is a matrix or a complex, we
    * call 'evaluate'. */
-  Expression exp = Expression::parse(m_approximateOutputText);
+  Expression exp = Expression::Parse(m_approximateOutputText);
   return PoincareHelpers::Approximate<double>(exp, *context);
 }
 

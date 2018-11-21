@@ -84,7 +84,7 @@ bool StoreController::textFieldShouldFinishEditing(TextField * textField, Ion::E
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (textField == m_contentView.formulaInputView()->textField()) {
     // Handle formula input
-    Expression expression = Expression::parse(textField->text());
+    Expression expression = Expression::Parse(textField->text());
     if (expression.isUninitialized()) {
       app()->displayWarning(I18n::Message::SyntaxError);
       return false;

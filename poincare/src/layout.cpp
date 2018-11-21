@@ -28,7 +28,7 @@ int Layout::serializeParsedExpression(char * buffer, int bufferSize) const {
     return 0;
   }
   serializeForParsing(buffer, bufferSize);
-  Poincare::Expression e = Poincare::Expression::parse(buffer);
+  Poincare::Expression e = Poincare::Expression::Parse(buffer);
   if (e.isUninitialized()) {
     buffer[0] = 0;
     return 0;

@@ -64,7 +64,7 @@ Expression parse_expression(const char * expression, bool canBeUnparsable) {
   char buffer[500];
   strlcpy(buffer, expression, sizeof(buffer));
   translate_in_special_chars(buffer);
-  Expression result = Expression::parse(buffer);
+  Expression result = Expression::Parse(buffer);
   if (!canBeUnparsable) {
     quiz_assert(!result.isUninitialized());
   }

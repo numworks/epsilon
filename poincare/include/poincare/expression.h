@@ -95,7 +95,7 @@ public:
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
   Expression clone() const;
-  static Expression parse(char const * string);
+  static Expression Parse(char const * string);
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */

@@ -174,7 +174,6 @@ void initChip() {
 void MassErase() {
   send_command(Command::WriteEnable);
   send_command(Command::ChipErase);
-  //send_command(ReadStatusRegister);
   wait();
   set_as_memory_mapped();
 }
@@ -187,10 +186,27 @@ void EraseSector() {
 }
 
 void WriteMemory(uint8_t * source, uint8_t * destination, size_t length) {
-  send_command(Command::WriteEnable);
-  //send_write_command(Command::QuadPageProgram, (destination-reinterpret_cast<uint32_t *>(QSPIBaseAddress)), source, length);
-  // TODO: Apprently, here we must issue a new send_command every 256 byte
-  wait();
+  /* Each 256-byte page of the external flash memory (contained in a previously erased area)
+   * may be programmed in burst mode with a single Page Program instruction.
+   * However, when the end of a page is reached, the addressing wraps to the beginning.
+   * Hence a Page Program instruction must be issued for each page. */
+  static constexpr size_t PageSize = 256;
+  constexpr Command pageProgram = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? Command::PageProgram : Command::QuadPageProgram;
+  uint8_t offset = reinterpret_cast<uint32_t>(destination) & (PageSize - 1);
+  size_t lengthThatFitsInPage = PageSize - offset;
+  while (length > 0) {
+    if (lengthThatFitsInPage > length) {
+      lengthThatFitsInPage = length;
+    }
+    send_command(Command::WriteEnable);
+    wait();
+    send_write_command(pageProgram, destination, source, lengthThatFitsInPage);
+    length -= lengthThatFitsInPage;
+    destination += lengthThatFitsInPage;
+    source += lengthThatFitsInPage;
+    lengthThatFitsInPage = PageSize;
+    wait();
+  }
   set_as_memory_mapped();
 }
 

@@ -5,6 +5,13 @@ namespace Poincare {
 
 namespace Helpers {
 
+size_t AlignedSize(size_t realSize, size_t alignment) {
+  size_t modulo = realSize % alignment;
+  size_t result = realSize + (modulo == 0 ? 0 : alignment - modulo);
+  assert(result % alignment == 0);
+  return result;
+}
+
 size_t Gcd(size_t a, size_t b) {
   int i = a;
   int j = b;

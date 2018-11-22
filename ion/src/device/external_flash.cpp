@@ -26,64 +26,65 @@ namespace Device {
  * and so on as long as the clock continues, allowing for a continuous stream of data.
  */
 
-static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Single;
+class ExternalFlashStatusRegister {
+public:
+  class StatusRegister1 : Register8 {
+  public:
+    using Register8::Register8;
+    REGS_BOOL_FIELD_R(BUSY, 0);
+  };
+  class StatusRegister2 : Register8 {
+  public:
+    using Register8::Register8;
+    REGS_BOOL_FIELD_W(QE, 1);
+  };
+};
+
+static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
-static inline void send_command(Command c) {
+static inline void send_command(Command c, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    DefaultOperatingMode,
+    operatingMode,
     c,
     0, 0, nullptr, 0
   );
 }
 
-static inline void send_command_single(Command c) {
+static inline void send_write_command(Command c, uint32_t address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    QUADSPI::CCR::OperatingMode::Single,
-    c,
-    0, 0, nullptr, 0
-  );
-}
-
-static inline void send_write_command(Command c, uint32_t address, uint8_t * data, size_t dataLength) {
-  send_command_full(
-    QUADSPI::CCR::FunctionalMode::IndirectWrite,
-    DefaultOperatingMode,
+    operatingMode,
     c,
     address, 0, data, dataLength
   );
 }
 
-static inline void send_read_command(Command c, uint32_t address, uint8_t * data, size_t dataLength) {
+static inline void send_read_command(Command c, uint32_t address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectRead,
-    DefaultOperatingMode,
+    operatingMode,
     c,
     address, 0, data, dataLength
   );
 }
 
-static inline void wait() {
-  class ExternalFlashStatusRegister : Register16 {
-  public:
-    using Register16::Register16;
-    REGS_BOOL_FIELD(BUSY, 0);
-  };
-  ExternalFlashStatusRegister statusRegister(0);
+static inline void wait(QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+  ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {
-    send_read_command(Command::ReadStatusRegister, 0, reinterpret_cast<uint8_t *>(&statusRegister), sizeof(statusRegister));
-  } while (statusRegister.getBUSY());
+    send_read_command(Command::ReadStatusRegister, 0, reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
+  } while (statusRegister1.getBUSY());
 }
 
 static void set_as_memory_mapped() {
+  constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? 8 : 4;
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
     Command::FastRead,
-    0, 8, nullptr, 0
+    0, FastReadDummyCycles, nullptr, 0
   );
 }
 
@@ -93,7 +94,9 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setDMODE(operatingMode);
   }
-  QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
+  if (functionalMode != QUADSPI::CCR::FunctionalMode::MemoryMapped) {
+    QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
+  }
   ccr.setDCYC(dummyCycles);
   if (address != 0 || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setADMODE(operatingMode);
@@ -154,9 +157,16 @@ void initQSPI() {
 
 void initChip() {
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
-   * it to switch to QPI, hence the "_single". */
+   * it to switch to QPI. */
   if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
-   send_command_single(Command::EnableQPI);
+    send_command(Command::WriteEnable, QUADSPI::CCR::OperatingMode::Single);
+    ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
+    statusRegister2.setQE(true);
+    wait(QUADSPI::CCR::OperatingMode::Single);
+    send_write_command(Command::WriteStatusRegister2, 0, reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), QUADSPI::CCR::OperatingMode::Single);
+    wait(QUADSPI::CCR::OperatingMode::Single);
+    send_command(Command::EnableQPI, QUADSPI::CCR::OperatingMode::Single);
+    wait();
   }
   set_as_memory_mapped();
 }

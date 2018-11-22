@@ -24,7 +24,6 @@ public:
   public:
     Snapshot();
     App * unpack(Container * container) override;
-    void reset() override;
     Descriptor * descriptor() override;
     ScriptStore * scriptStore();
 #if EPSILON_GETOPT

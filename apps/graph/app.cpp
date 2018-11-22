@@ -33,7 +33,6 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   StorageFunctionApp::Snapshot::reset();
-  m_functionStore.removeAll();
   m_graphRange.setDefault();
 }
 

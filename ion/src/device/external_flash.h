@@ -41,7 +41,7 @@ void initChip();
 
 void MassErase();
 void EraseSector(int sector);
-void WriteMemory(uint32_t * source, uint32_t * destination, size_t length);
+void WriteMemory(uint8_t * source, uint8_t * destination, size_t length);
 
 enum class Command : uint8_t {
   ReadStatusRegister = 0x05,
@@ -55,7 +55,7 @@ enum class Command : uint8_t {
 };
 
 constexpr static uint32_t QSPIBaseAddress = 0x90000000;
-constexpr static uint32_t FlashNumberOfAddressBits = 23;
+constexpr static uint8_t FlashNumberOfAddressBits = 23;
 constexpr static uint32_t FlashAddressSpaceSize = 1 << FlashNumberOfAddressBits;
 
 constexpr static GPIOPin QSPIPins[] = {

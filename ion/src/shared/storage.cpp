@@ -214,6 +214,11 @@ Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, co
   return Record();
 }
 
+void Storage::destroyAllRecords() {
+  overrideSizeAtPosition(m_buffer, 0);
+  notifyChangeToDelegate();
+}
+
 void Storage::destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension) {
   recordBaseNamedWithExtension(baseName, extension).destroy();
 }

@@ -37,13 +37,17 @@ private:
   }
   uint8_t charAsIndex(char c) const {
     // FIXME: This is most likely false for chars greater than 127
-    return static_cast<uint8_t>(c) - 0x20;
-     // FIXME: 0x20 is a magic value...
+    return static_cast<uint8_t>(c) - k_magicCharOffsetValue;
+  }
+  int signedCharAsIndex(char c) const {
+    return static_cast<int>(c) - k_magicCharOffsetValue;
   }
 
   KDSize m_glyphSize;
   const uint16_t * m_glyphDataOffset;
   const uint8_t * m_data;
+  static constexpr uint8_t k_magicCharOffsetValue = 0x20; // FIXME: Value from kandinsky/fonts/rasterizer.c (CHARACTER_RANGE_START). 0x20 because we do not want have a glyph for the first 20 ASCII characters
+  static constexpr uint8_t k_numberOfGlyphs = 120; // FIXME: Value from kandinsky/fonts/rasterizer.c (GLYPH_COUNT)
 };
 
 #endif

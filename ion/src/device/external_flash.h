@@ -45,6 +45,7 @@ void WriteMemory(uint32_t * source, uint32_t * destination, size_t length);
 
 enum class Command : uint8_t {
   ReadStatusRegister = 0x05,
+  WriteStatusRegister2 = 0x31,
   WriteEnable = 0x06,
   ReadData = 0x03,
   FastRead = 0x0B,

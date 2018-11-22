@@ -8,6 +8,7 @@
 #if POINCARE_TREE_LOG
 #include <ostream>
 #endif
+#include <poincare/helpers.h>
 #include <poincare/preferences.h>
 
 /* What's in a TreeNode, really?
@@ -18,6 +19,19 @@
  */
 
 namespace Poincare {
+
+#if __EMSCRIPTEN__
+/* Emscripten memory representation assumes loads and stores are aligned.
+ * Because the TreePool buffer is going to store double values, Node addresses
+ * have to be aligned on 8 bytes (provided that emscripten addresses are 8 bytes
+ * long which ensures that v-tables are also aligned). */
+typedef uint64_t AlignedNodeBuffer;
+#else
+/* Memory copies are done quicker on 4 bytes aligned data. We force the TreePool
+ * to allocate 4-byte aligned range to leverage this. */
+typedef uint32_t AlignedNodeBuffer;
+#endif
+constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 
 class TreeNode {
   friend class TreePool;
@@ -122,7 +136,7 @@ public:
     /* Simple version would be "return this + 1;", with pointer arithmetics
      * taken care of by the compiler. Unfortunately, we want TreeNode to have a
      * VARIABLE size */
-    return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
+    return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + Helpers::AlignedSize(size(), ByteAlignment));
   }
   TreeNode * nextSibling() const;
   TreeNode * lastDescendant() const;

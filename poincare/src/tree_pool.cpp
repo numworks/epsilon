@@ -93,7 +93,7 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
 
 #if POINCARE_TREE_LOG
 void TreePool::flatLog(std::ostream & stream) {
-  size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(m_buffer);
+  size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(buffer());
   stream << "<TreePool format=\"flat\" size=\"" << size << "\">";
   for (TreeNode * node : allNodes()) {
     node->log(stream, false);
@@ -103,7 +103,7 @@ void TreePool::flatLog(std::ostream & stream) {
 }
 
 void TreePool::treeLog(std::ostream & stream) {
-  stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-m_buffer) << "\">";
+  stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-buffer()) << "\">";
   for (TreeNode * node : roots()) {
     node->log(stream, true);
   }
@@ -125,7 +125,8 @@ int TreePool::numberOfNodes() const {
 }
 
 void * TreePool::alloc(size_t size) {
-  if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {
+  size = Helpers::AlignedSize(size, ByteAlignment);
+  if (m_cursor >= buffer() + BufferSize || m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
   void * result = m_cursor;
@@ -134,8 +135,9 @@ void * TreePool::alloc(size_t size) {
 }
 
 void TreePool::dealloc(TreeNode * node, size_t size) {
+  size = Helpers::AlignedSize(size, ByteAlignment);
   char * ptr = reinterpret_cast<char *>(node);
-  assert(ptr >= m_buffer && ptr < m_cursor);
+  assert(ptr >= buffer() && ptr < m_cursor);
 
   // Step 1 - Compact the pool
   memmove(

@@ -23,7 +23,7 @@ public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
   static void RegisterPool(TreePool * pool) {  assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
 
-  TreePool() : m_cursor(m_buffer) {}
+  TreePool() : m_cursor(buffer()) {}
 
   // Node
   TreeNode * node(int identifier) const {
@@ -66,7 +66,7 @@ private:
   }
 
   // Iterators
-  TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
+  TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(constBuffer())); }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   class Nodes {
@@ -140,8 +140,10 @@ private:
 
   void freePoolFromNode(TreeNode * firstNodeToDiscard);
 
+  char * buffer() { return reinterpret_cast<char *>(m_alignedBuffer); }
+  const char * constBuffer() const { return reinterpret_cast<const char *>(m_alignedBuffer); }
+  AlignedNodeBuffer m_alignedBuffer[BufferSize/ByteAlignment];
   char * m_cursor;
-  char m_buffer[BufferSize];
   IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
 };

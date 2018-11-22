@@ -54,11 +54,11 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseStore,           // Token::Store
     &Parser::parseEqual,           // Token::Equal
-    &Parser::parseSuperscript,     // Token::Superscript
     &Parser::parseUnexpected,      // Token::RightBracket
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
+    &Parser::parseSuperscript,     // Token::Superscript
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times

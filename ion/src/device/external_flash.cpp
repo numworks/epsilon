@@ -82,8 +82,8 @@ static void set_as_memory_mapped() {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
-    Command::ReadData,
-    0, 0, nullptr, 0
+    Command::FastRead,
+    0, 8, nullptr, 0
   );
 }
 

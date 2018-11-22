@@ -42,18 +42,18 @@ public:
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
 
-static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
+static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
 static inline void send_command(Command c, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     operatingMode,
     c,
-    0, 0, nullptr, 0
+    nullptr, 0, nullptr, 0
   );
 }
 
-static inline void send_write_command(Command c, uint32_t address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static inline void send_write_command(Command c, uint8_t * address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     operatingMode,
@@ -62,7 +62,7 @@ static inline void send_write_command(Command c, uint32_t address, uint8_t * dat
   );
 }
 
-static inline void send_read_command(Command c, uint32_t address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static inline void send_read_command(Command c, uint8_t * address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectRead,
     operatingMode,
@@ -74,7 +74,7 @@ static inline void send_read_command(Command c, uint32_t address, uint8_t * data
 static inline void wait(QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {
-    send_read_command(Command::ReadStatusRegister, 0, reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
+    send_read_command(Command::ReadStatusRegister, nullptr, reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
   } while (statusRegister1.getBUSY());
 }
 
@@ -84,11 +84,11 @@ static void set_as_memory_mapped() {
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
     Command::FastRead,
-    0, FastReadDummyCycles, nullptr, 0
+    nullptr, FastReadDummyCycles, nullptr, 0
   );
 }
 
-void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint32_t address, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
+void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
@@ -98,15 +98,15 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
     QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
   }
   ccr.setDCYC(dummyCycles);
-  if (address != 0 || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
+  if (address != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setADMODE(operatingMode);
     ccr.setADSIZE(QUADSPI::CCR::Size::ThreeBytes);
   }
   ccr.setIMODE(operatingMode);
   ccr.setINSTRUCTION(static_cast<uint8_t>(c));
   QUADSPI.CCR()->set(ccr);
-  if (address != 0) {
-    QUADSPI.AR()->set(address);
+  if (address != nullptr) {
+    QUADSPI.AR()->set(reinterpret_cast<uint32_t>(address));
   }
 
   // FIXME: Handle access sizes
@@ -163,7 +163,7 @@ void initChip() {
     ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
     statusRegister2.setQE(true);
     wait(QUADSPI::CCR::OperatingMode::Single);
-    send_write_command(Command::WriteStatusRegister2, 0, reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), QUADSPI::CCR::OperatingMode::Single);
+    send_write_command(Command::WriteStatusRegister2, nullptr, reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), QUADSPI::CCR::OperatingMode::Single);
     wait(QUADSPI::CCR::OperatingMode::Single);
     send_command(Command::EnableQPI, QUADSPI::CCR::OperatingMode::Single);
     wait();
@@ -186,7 +186,7 @@ void EraseSector() {
   set_as_memory_mapped();
 }
 
-void WriteMemory(uint32_t * source, uint32_t * destination, size_t length) {
+void WriteMemory(uint8_t * source, uint8_t * destination, size_t length) {
   send_command(Command::WriteEnable);
   //send_write_command(Command::QuadPageProgram, (destination-reinterpret_cast<uint32_t *>(QSPIBaseAddress)), source, length);
   // TODO: Apprently, here we must issue a new send_command every 256 byte

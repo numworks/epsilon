@@ -247,7 +247,6 @@ protected:
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
   bool hasReplaceableSymbols(Context & context) const;
   Expression shallowReplaceReplaceableSymbols(Context & context) { return node()->shallowReplaceReplaceableSymbols(context); }
-  Expression defaultReplaceReplaceableSymbols(Context & context);
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }

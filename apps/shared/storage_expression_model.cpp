@@ -30,7 +30,7 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
 
 bool StorageExpressionModel::isCircularlyDefined(Poincare::Context * context) const {
   if (m_circular == -1) {
-    m_circular = Expression::ExpressionWithoutSymbols(expressionReduced(context), *context).isUninitialized();
+    m_circular = Expression::ExpressionWithoutSymbols(expressionClone(), *context).isUninitialized();
   }
   return m_circular;
 }

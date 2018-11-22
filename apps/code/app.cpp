@@ -30,10 +30,6 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(container, this);
 }
 
-void App::Snapshot::reset() {
-  m_scriptStore.deleteAllScripts();
-}
-
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;

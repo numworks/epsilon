@@ -40,7 +40,13 @@ private:
     return static_cast<uint8_t>(c) - k_magicCharOffsetValue;
   }
   int signedCharAsIndex(char c) const {
-    return static_cast<int>(c) - k_magicCharOffsetValue;
+    int cInt = c;
+    if (cInt < 0) {
+      /* A char casted as int takes its value between -127 and +128, but we want
+       * a positive value. -127 is thus 129, -126 is 130, etc. */
+      cInt+=128+(cInt-(-127)+1);
+    }
+    return cInt - k_magicCharOffsetValue;
   }
 
   KDSize m_glyphSize;

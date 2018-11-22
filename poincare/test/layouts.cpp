@@ -14,14 +14,26 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
   Expression e = parse_expression(buffer);
-  e = e.simplify(context, Preferences::AngleUnit::Degree);
-  bool identical = e.isIdenticalTo(r.simplify(context, Preferences::AngleUnit::Degree));
+  Expression eSimplified = e.clone().simplify(context, Preferences::AngleUnit::Degree);
+  if (eSimplified.isUninitialized()) {
+    /* In case the simplification is impossible (if there are matrices for
+     * instance), use the non simplified expression */
+    eSimplified = e;
+  }
+  Expression rSimplified = r.clone().simplify(context, Preferences::AngleUnit::Degree);
+  if (rSimplified.isUninitialized()) {
+    /* In case the simplification is impossible (if there are matrices for
+     * instance), use the non simplified expression */
+    rSimplified = r;
+  }
+
+  bool identical = eSimplified.isIdenticalTo(rSimplified);
 #if POINCARE_TREE_LOG
   if (!identical) {
     std::cout << "Expecting" << std::endl;
-    r.log();
+    rSimplified.log();
     std::cout << "Got" << std::endl;
-    e.log();
+    eSimplified.log();
   }
 #endif
   quiz_assert(identical);
@@ -195,5 +207,50 @@ QUIZ_CASE(poincare_parse_layouts) {
           Rational(7),
           Rational(5))),
       Rational(3));
+  assert_parsed_layout_is(l, e);
+
+  // [[3^2!, 7][4,5]
+  l = MatrixLayout(
+      HorizontalLayout(
+        CharLayout('3'),
+        VerticalOffsetLayout(
+          CharLayout('2'),
+          VerticalOffsetLayoutNode::Type::Superscript),
+        CharLayout('!')),
+      CharLayout('7'),
+      CharLayout('4'),
+      CharLayout('5'));
+  Matrix m = Matrix(
+      Factorial(
+        Power(
+          Rational(3),
+          Rational(2))));
+  m.addChildAtIndexInPlace(Rational(7), 1, 1);
+  m.addChildAtIndexInPlace(Rational(4), 2, 2);
+  m.addChildAtIndexInPlace(Rational(5), 3, 3);
+  m.setDimensions(2,2);
+  e = m;
+  assert_parsed_layout_is(l, e);
+
+  // 2^det([[3!, 7][4,5])
+  l = HorizontalLayout(
+      CharLayout('2'),
+      VerticalOffsetLayout(
+        MatrixLayout(
+          HorizontalLayout(
+            CharLayout('3'),
+            CharLayout('!')),
+          CharLayout('7'),
+          CharLayout('4'),
+          CharLayout('5')),
+        VerticalOffsetLayoutNode::Type::Superscript));
+  m = Matrix(
+      Factorial(
+        Rational(3)));
+  m.addChildAtIndexInPlace(Rational(7), 1, 1);
+  m.addChildAtIndexInPlace(Rational(4), 2, 2);
+  m.addChildAtIndexInPlace(Rational(5), 3, 3);
+  m.setDimensions(2,2);
+  e = Power(Rational(2), m);
   assert_parsed_layout_is(l, e);
 }

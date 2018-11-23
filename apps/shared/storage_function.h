@@ -15,7 +15,7 @@ public:
     ReservedName
   };
   constexpr static int k_parenthesedArgumentLength = 3;
-  static char k_parenthesedArgument[k_parenthesedArgumentLength+1];
+  static constexpr char k_parenthesedArgument[k_parenthesedArgumentLength+1] = "(x)";
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
   static bool BaseNameCompliant(const char * baseName, NameNotCompliantError * error = nullptr);
 

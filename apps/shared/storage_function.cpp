@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-char StorageFunction::k_parenthesedArgument[]("(x)");
+constexpr char StorageFunction::k_parenthesedArgument[];
 
 bool StorageFunction::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
   assert(baseName[0] != 0);
@@ -62,9 +62,12 @@ void StorageFunction::setActive(bool active) {
 
 int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
   const char * functionName = fullName();
-  k_parenthesedArgument[1] = arg;
   size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
-  return baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
+  int result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
+  if (baseNameLength+1 < bufferSize - 1) {
+    buffer[baseNameLength+1] = arg;
+  }
+  return result;
 }
 
 template<typename T>

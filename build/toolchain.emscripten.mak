@@ -79,7 +79,7 @@ EMFLAGS += -s ASSERTIONS=1
 EMFLAGS += -s SAFE_HEAP=1
 endif
 
-EMFLAGS += -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'
+EMFLAGS += -s WASM=0 -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'
 
 SFLAGS += $(EMFLAGS)
 LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushKey", "_IonEventsEmscriptenPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]'

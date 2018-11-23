@@ -238,6 +238,14 @@ bool Expression::hasReplaceableSymbols(Context & context) const {
       }, context, false);
 }
 
+Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
+  int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    childAtIndex(i).shallowReplaceReplaceableSymbols(context);
+  }
+  return *this;
+}
+
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
   return node()->approximate(U(), context, angleUnit);

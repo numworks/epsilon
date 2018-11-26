@@ -159,6 +159,12 @@ public:
   Expression replaceUnknown(const Symbol & symbol);
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
+  /* Complex */
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const { return node()->realPart(context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const { return node()->imaginaryPart(context, angleUnit); }
+  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const { return node()->complexNorm(context, angleUnit); }
+  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const { return node()->complexArgument(context, angleUnit); }
+
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
    * same structures and all their nodes have same types and values (ie,

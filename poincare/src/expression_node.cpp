@@ -1,6 +1,14 @@
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
-#include <poincare/symbol.h>
+#include <poincare/addition.h>
+#include <poincare/arc_tangent.h>
+#include <poincare/division.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
+#include <poincare/sign_function.h>
+#include <poincare/square_root.h>
+#include <poincare/subtraction.h>
+#include <poincare/constant.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
@@ -61,6 +69,44 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
     }
   }
   return range;
+}
+
+Expression ExpressionNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Expression();
+}
+
+Expression ExpressionNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Expression();
+}
+
+Expression ExpressionNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression a = realPart(context, angleUnit);
+  Expression b = imaginaryPart(context, angleUnit);
+  if (!a.isUninitialized() && !b.isUninitialized()) {
+    // sqrt(a^2+b^2)
+    return SquareRoot::Builder(Addition(Power(a, Rational(2)), Power(b, Rational(2))));
+  }
+  return Expression();
+}
+
+Expression ExpressionNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression a = realPart(context, angleUnit);
+  Expression b = imaginaryPart(context, angleUnit);
+  if (!a.isUninitialized() && !b.isUninitialized()) {
+    if (b.type() != Type::Rational || !static_cast<Rational &>(b).isZero()) {
+      // arctan(a/b) or (180/Pi)*arctan(a/b)
+      Expression arcTangent = ArcTangent::Builder(Division(a, b.clone()));
+      if (angleUnit == Preferences::AngleUnit::Degree) {
+        arcTangent = arcTangent.degreeToRadian();
+      }
+      // sign(b) * Pi/2 - arctan(a/b)
+      return Subtraction(Multiplication(SignFunction::Builder(b), Division(Constant(Ion::Charset::SmallPi), Rational(2))), arcTangent);
+    } else {
+      // (1-sign(a))*Pi/2
+      return Multiplication(Subtraction(Rational(1), SignFunction::Builder(a)), Division(Constant(Ion::Charset::SmallPi), Rational(2)));
+    }
+  }
+  return Expression();
 }
 
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) {

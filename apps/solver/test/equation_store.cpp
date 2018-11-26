@@ -120,7 +120,7 @@ QUIZ_CASE(equation_solve) {
 
   // x^2+x+1=3*x^2+pi*x-R(5)
   const char * equations11[] = {"x^2+x+1=3*x^2+P*x-R(5)", 0};
-  const char * solutions11[] = {"(1-P+R(9+8*R(5)-2*P+P$2$))/(4)", "(1-P-R(9+8*R(5)-2*P+P$2$))/(4)", "9+8*R(5)-2*P+P$2$"};
+  const char * solutions11[] = {"(1-P+R(9+8*R(5)-2*P+P$2#))/(4)", "(1-P-R(9+8*R(5)-2*P+P$2#))/(4)", "9+8*R(5)-2*P+P$2#"};
   assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 2);
 
   // TODO

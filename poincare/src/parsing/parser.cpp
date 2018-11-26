@@ -54,11 +54,11 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseStore,           // Token::Store
     &Parser::parseEqual,           // Token::Equal
+    &Parser::parseUnexpected,      // Token::RightSuperscript
     &Parser::parseUnexpected,      // Token::RightBracket
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
-    &Parser::parseSuperscript,     // Token::Superscript
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times
@@ -66,6 +66,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseImplicitTimes,   // Token::ImplicitTimes
     &Parser::parseCaret,           // Token::Power
     &Parser::parseBang,            // Token::Bang
+    &Parser::parseLeftSuperscript, // Token::LeftSuperscript
     &Parser::parseMatrix,          // Token::LeftBracket
     &Parser::parseLeftParenthesis, // Token::LeftParenthesis
     &Parser::parseUnexpected,      // Token::LeftBrace
@@ -251,16 +252,16 @@ void Parser::parseStore(Expression & leftHandSide) {
   leftHandSide = Store(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
 }
 
-void Parser::parseSuperscript(Expression & leftHandSide) {
+void Parser::parseLeftSuperscript(Expression & leftHandSide) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Power must have a left operand
     return;
   }
-  Expression rightHandSide = parseUntil(Token::Superscript);
+  Expression rightHandSide = parseUntil(Token::RightSuperscript);
   if (m_status != Status::Progress) {
     return;
   }
-  if (!popTokenIfType(Token::Superscript)) {
+  if (!popTokenIfType(Token::RightSuperscript)) {
     m_status = Status::Error; // Right superscript marker missing.
     return;
   }

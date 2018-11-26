@@ -13,6 +13,8 @@
 
 namespace Poincare {
 
+bool Expression::sSymbolReplacementsCountLock = false;
+
 /* Constructor & Destructor */
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
@@ -340,11 +342,10 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
    * ExpressionWithoutSymbols, as this method might be called from
    * hasReplaceableSymbols. */
   static int replacementCount = 0;
-  static bool lock = false;
   bool unlock = false;
-  if (!lock) {
+  if (!sSymbolReplacementsCountLock) {
     replacementCount = 0;
-    lock = true;
+    sSymbolReplacementsCountLock = true;
     unlock = true;
   }
   while (e.hasReplaceableSymbols(context)) {
@@ -356,7 +357,7 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
     e = e.shallowReplaceReplaceableSymbols(context);
   }
   if (unlock) {
-    lock = false;
+    sSymbolReplacementsCountLock = false;
   }
   return e;
 }

@@ -14,6 +14,9 @@ void Init() {
 void Tidy() {
   // Clean Integer
   Integer::TidyIntegerBuffer();
+
+  // Clean Expression (reset the SymbolReplacementsLock)
+  Expression::Tidy();
 }
 
 }

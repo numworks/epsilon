@@ -28,6 +28,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isChar() const override { return true; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool canBeOmittedMultiplicationLeftFactor() const override;
   bool canBeOmittedMultiplicationRightFactor() const override;
 
   // TreeNode
@@ -53,6 +54,7 @@ protected:
 
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  bool isMultiplicationChar() const;
   char m_char;
   const KDFont * m_font;
 };

@@ -63,6 +63,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
    * selected calculation has not changed. */
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
   HighlightCell * cell = cellAtLocation(i, j);
+  assert(cell);
   cell->setHighlighted(true);
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, selectedColumn(), selectedRow());

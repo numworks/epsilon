@@ -259,7 +259,7 @@ protected:
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 
 private:
-  static constexpr int k_maxSymbolReplacementsCount = 30;
+  static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
   /* Simplification */
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);

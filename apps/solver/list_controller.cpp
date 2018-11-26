@@ -124,7 +124,7 @@ bool textRepresentsAnEquality(const char * text) {
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '"'; });
+      return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '='; });
   return !match.isUninitialized();
 }
 

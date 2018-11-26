@@ -158,6 +158,7 @@ void SelectableTableView::unhighlightSelectedCell() {
   if (selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns() &&
       selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows()) {
     HighlightCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());
+    assert(previousCell);
     previousCell->setHighlighted(false);
   }
 }

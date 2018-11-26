@@ -253,4 +253,15 @@ QUIZ_CASE(poincare_parse_layouts) {
   m.setDimensions(2,2);
   e = Power(Rational(2), m);
   assert_parsed_layout_is(l, e);
+
+  // 2e^3
+  l = HorizontalLayout(
+      CharLayout('2'),
+      CharLayout(Ion::Charset::Exponential),
+      VerticalOffsetLayout(
+        CharLayout('3'),
+        VerticalOffsetLayoutNode::Type::Superscript));
+  e = Multiplication(Rational(2),Power(Constant(Ion::Charset::Exponential),Parenthesis(Rational(3))));
+  assert_parsed_expression_is("2X^(3)", Multiplication(Rational(2),Power(Constant(Ion::Charset::Exponential),Parenthesis(Rational(3)))));
+  assert_parsed_layout_is(l, e);
 }

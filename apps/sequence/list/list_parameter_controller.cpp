@@ -159,7 +159,9 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
   if (previousSelectedCellY == 1) {
 #endif
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
+    if (myCell) {
+      myCell->setEditing(false);
+    }
     app()->setFirstResponder(&m_selectableTableView);
   }
 #if FUNCTION_COLOR_CHOICE

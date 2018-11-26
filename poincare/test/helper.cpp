@@ -201,6 +201,7 @@ void assert_expression_layout_serialize_to(Poincare::Layout layout, const char *
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   layout.serializeForParsing(buffer, bufferSize);
+  translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << serialization << "----"  << endl;
   cout << "---- serialized to: " << buffer << " ----"  << endl;

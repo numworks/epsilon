@@ -384,6 +384,7 @@ QUIZ_CASE(poincare_parser_implicit_multiplication) {
   assert_parsed_expression_is("sin(1)2", Multiplication(Sine::Builder(Rational(1)),Rational(2)));
   assert_parsed_expression_is("1cos(2)", Multiplication(Rational(1),Cosine::Builder(Rational(2))));
   assert_parsed_expression_is("1!2", Multiplication(Factorial(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("2X^(3)", Multiplication(Rational(2),Power(Constant(Ion::Charset::Exponential),Parenthesis(Rational(3)))));
   Expression m1[] = {Rational(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {Rational(2)}; Matrix M2 = BuildMatrix(1,1,m2);
   assert_parsed_expression_is("[[1]][[2]]", Multiplication(M1,M2));
@@ -405,7 +406,8 @@ QUIZ_CASE(poincare_parser_expression_evaluation) {
 
   assert_parsed_expression_evaluates_to<float>("-2-3", "-5");
   assert_parsed_expression_evaluates_to<float>("1.2*X^(1)", "3.261938");
-  assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", Radian, Cartesian, 6); // WARNING: the 7th significant digits is wrong on simulator
+  assert_parsed_expression_evaluates_to<float>("2X^(3)", "40.1711", Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbos simulator
+  assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on simulator
   assert_parsed_expression_evaluates_to<double>("X^2*X^(1)", "20.085536923188");
   assert_parsed_expression_evaluates_to<double>("2*3^4+2", "164");
   assert_parsed_expression_evaluates_to<float>("-2*3^4+2", "-160");

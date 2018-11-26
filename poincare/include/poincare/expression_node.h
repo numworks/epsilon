@@ -115,6 +115,12 @@ public:
   virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
+  /* Complex */
+  virtual Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const;
+  virtual Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const;
+  virtual Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const;
+  virtual Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const;
+
   /* Simplification */
   /* SimplificationOrder returns:
    *   1 if e1 > e2

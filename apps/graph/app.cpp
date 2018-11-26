@@ -33,7 +33,8 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   StorageFunctionApp::Snapshot::reset();
-  m_graphRange.setDefault();
+  *(modelVersion()) = 0;
+  *(rangeVersion()) = 0;
 }
 
 void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {

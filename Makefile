@@ -35,6 +35,7 @@ include escher/Makefile
 # Executable Makefiles
 include apps/Makefile
 include build/struct_layout/Makefile
+include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
 products += $(objs)

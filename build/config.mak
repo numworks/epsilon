@@ -11,6 +11,7 @@ EPSILON_APPS ?= calculation graph code statistics probability solver sequence re
 EPSILON_I18N ?= en fr es de pt
 EPSILON_GETOPT ?= 0
 MATRICES_ARE_DEFINED ?=1
+ESCHER_LOG_EVENTS_BINARY ?= 0
 
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
@@ -36,3 +37,4 @@ ifeq (update,$(EPSILON_BOOT_PROMPT))
 SFLAGS += -DEPSILON_BOOT_PROMPT=$(EPSILON_UPDATE_PROMPT)
 endif
 SFLAGS += -DMATRICES_ARE_DEFINED=$(MATRICES_ARE_DEFINED)
+SFLAGS += -DESCHER_LOG_EVENTS_BINARY=$(ESCHER_LOG_EVENTS_BINARY)

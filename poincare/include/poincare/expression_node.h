@@ -77,6 +77,7 @@ public:
     Randint,
     RealPart,
     Round,
+    SignFunction,
     SquareRoot,
     Subtraction,
     Sum,

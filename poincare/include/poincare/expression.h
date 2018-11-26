@@ -66,6 +66,7 @@ class Expression : public TreeHandle {
   friend class Product;
   friend class RealPart;
   friend class Round;
+  friend class SignFunction;
   friend class Sine;
   friend class SquareRoot;
   friend class Store;

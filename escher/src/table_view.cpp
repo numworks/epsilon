@@ -98,7 +98,10 @@ void TableView::ContentView::scrollToCell(int x, int y) const {
 }
 
 void TableView::ContentView::reloadCellAtLocation(int i, int j) {
-  m_dataSource->willDisplayCellAtLocation(cellAtLocation(i, j), i, j);
+  HighlightCell * cell = cellAtLocation(i, j);
+  if (cell) {
+    m_dataSource->willDisplayCellAtLocation(cellAtLocation(i, j), i, j);
+  }
 }
 
 int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
@@ -123,6 +126,9 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index, int type) const
 HighlightCell * TableView::ContentView::cellAtLocation(int x, int y) {
   int relativeX = x-columnsScrollingOffset();
   int relativeY = y-rowsScrollingOffset();
+  if (relativeY >= numberOfDisplayableRows() || relativeX >= numberOfDisplayableColumns()) {
+    return nullptr;
+  }
   int type = m_dataSource->typeAtLocation(x, y);
   int index = relativeY*numberOfDisplayableColumns()+relativeX;
   int typeIndex = typeIndexFromSubviewIndex(index, type);

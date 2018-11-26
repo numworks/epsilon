@@ -223,7 +223,9 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
     if (previousSelectedCellY > -1 && previousSelectedCellY < m_consoleStore.numberOfLines()) {
       // Reset the scroll of the previous cell
       ConsoleLineCell * previousCell = (ConsoleLineCell *)(t->cellAtLocation(previousSelectedCellX, previousSelectedCellY));
-      previousCell->reloadCell();
+      if (previousCell) {
+        previousCell->reloadCell();
+      }
     }
     ConsoleLineCell * selectedCell = (ConsoleLineCell *)(t->selectedCell());
     selectedCell->reloadCell();

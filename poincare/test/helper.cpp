@@ -39,7 +39,8 @@ void translate_in_special_chars(char * expression) {
       case '*': *c = Ion::Charset::MultiplicationSign; break;
       case '>': *c = Ion::Charset::Sto; break;
       case '?': *c = Poincare::Symbol::SpecialSymbols::UnknownX; break;
-      case '$': *c = Ion::Charset::Superscript; break;
+      case '$': *c = Ion::Charset::LeftSuperscript; break;
+      case '#': *c = Ion::Charset::RightSuperscript; break;
     }
   }
 }
@@ -56,7 +57,8 @@ void translate_in_ASCII_chars(char * expression) {
       case Ion::Charset::MiddleDot: *c = '*'; break;
       case Ion::Charset::Sto: *c = '>'; break;
       case Poincare::Symbol::SpecialSymbols::UnknownX: *c = '?'; break;
-      case Ion::Charset::Superscript: *c = '$'; break;
+      case Ion::Charset::LeftSuperscript: *c = '$'; break;
+      case Ion::Charset::RightSuperscript: *c = '#'; break;
     }
   }
 }

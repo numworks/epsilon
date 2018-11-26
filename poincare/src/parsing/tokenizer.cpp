@@ -125,8 +125,11 @@ Token Tokenizer::popToken() {
   if (currentChar == '^') {
     return Token(Token::Caret);
   }
-  if (currentChar == Ion::Charset::Superscript) {
-    return Token(Token::Superscript);
+  if (currentChar == Ion::Charset::LeftSuperscript) {
+    return Token(Token::LeftSuperscript);
+  }
+  if (currentChar == Ion::Charset::RightSuperscript) {
+    return Token(Token::RightSuperscript);
   }
   if (currentChar == '!') {
     return Token(Token::Bang);

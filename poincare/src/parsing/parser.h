@@ -61,7 +61,7 @@ private:
   void parseCaret(Expression & leftHandSide);
   void parseEqual(Expression & leftHandSide);
   void parseStore(Expression & leftHandSide);
-  void parseSuperscript(Expression & leftHandSide);
+  void parseLeftSuperscript(Expression & leftHandSide);
 
   // Parsing helpers
   bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);

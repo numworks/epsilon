@@ -21,10 +21,33 @@ namespace Device {
  * The external flash supports clock frequencies up to 104MHz for all instructions,
  * except for Read Data (0x03) which is supported up to 50Mhz.
  *
- * After the external flash receives a Read instructions and shifts a byte out,
- * it automatically increments the provided address and shifts out the corresponding byte,
- * and so on as long as the clock continues, allowing for a continuous stream of data.
- */
+ *
+ *                Quad-SPI block diagram
+ *
+ *               +----------------------+          +------------+
+ *               |       Quad-SPI       |          |            |
+ *               |      peripheral      |          |  External  |
+ *               |                      |   read   |   flash    |
+ *   AHB    <--  |   data   <-- 32-byte |   <--    |   memory   |
+ *  matrix  -->  | regsiter -->  FIFO   |    -->   |            |
+ *               +----------------------+   write  +------------+
+ *
+ * Any data transmitted to or from the external flash memory go through a 32-byte FIFO.
+ *
+ * Read or write operations are performed in burst mode, that is,
+ * after any data byte is transmitted between the Quad-SPI and the flash memory,
+ * the latter automatically increments the specified address and
+ * the next byte to read or write is respectively pushed in or popped from the FIFO.
+ * and so on, as long as the clock continues.
+ *
+ * If the FIFO gets full in a read operation or
+ * if the FIFO gets empty in a write operation,
+ * the operation stalls and CLK stays low until firmware services the FIFO.
+ *
+ * If the FIFO gets full in a write operation,
+ * the operation is stalled until the FIFO has enough space to accept the amount of data being written.
+ * If the FIFO does not have as many bytes as requested by the read operation and if BUSY=1,
+ * the operation is stalled until enough data is present or until the transfer is complete, whichever happens first. */
 
 class ExternalFlashStatusRegister {
 public:
@@ -79,6 +102,15 @@ static inline void wait(QUADSPI::CCR::OperatingMode operatingMode = DefaultOpera
 }
 
 static void set_as_memory_mapped() {
+  /* In memory-mapped mode, all AHB masters may access the external flash memory as an internal one:
+   * the programmed instruction is sent automatically whenever an AHB master reads in the Quad-SPI flash bank area.
+   * (The QUADSPI_DLR register has no meaning and any access to QUADSPI_DR returns zero.)
+   *
+   * To anticipate sequential reads, the nCS signal is maintained low so as to
+   * keep the read operation active and prefetch the subsequent bytes in the FIFO.
+   *
+   * It goes low, only if the low-power timeout counter is enabled.
+   * (Flash memories tend to consume more when nCS is held low.) */
   constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? 8 : 4;
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
@@ -109,7 +141,6 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
     QUADSPI.AR()->set(reinterpret_cast<uint32_t>(address));
   }
 
-  // FIXME: Handle access sizes
   if (functionalMode == QUADSPI::CCR::FunctionalMode::IndirectWrite) {
     for (size_t i=0; i<dataLength; i++) {
       QUADSPI.DR()->set(data[i]);

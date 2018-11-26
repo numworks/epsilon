@@ -34,9 +34,6 @@ int CharLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
   if (*numberOfOpenParenthesis <= 0) {
     if (m_char == '+'
-        || m_char == '*'
-        || m_char == Ion::Charset::MultiplicationSign
-        || m_char == Ion::Charset::MiddleDot
         || m_char == Ion::Charset::Sto
         || m_char == '='
         || m_char == ',')
@@ -65,8 +62,15 @@ bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft
   return true;
 }
 
+bool CharLayoutNode::canBeOmittedMultiplicationLeftFactor() const {
+  if (isMultiplicationChar()) {
+    return false;
+  }
+  return LayoutNode::canBeOmittedMultiplicationRightFactor();
+}
+
 bool CharLayoutNode::canBeOmittedMultiplicationRightFactor() const {
-  if (m_char == '!') {
+  if (m_char == '!' || isMultiplicationChar()) {
     return false;
   }
   return LayoutNode::canBeOmittedMultiplicationRightFactor();
@@ -84,6 +88,12 @@ KDCoordinate CharLayoutNode::computeBaseline() {
 void CharLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   char string[2] = {m_char, 0};
   ctx->drawString(string, p, m_font, expressionColor, backgroundColor);
+}
+
+bool CharLayoutNode::isMultiplicationChar() const {
+  return m_char == '*'
+    || m_char == Ion::Charset::MultiplicationSign
+    || m_char == Ion::Charset::MiddleDot;
 }
 
 CharLayout::CharLayout(char c, const KDFont * font) :

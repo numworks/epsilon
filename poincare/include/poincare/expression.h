@@ -208,6 +208,8 @@ public:
     Expression (* const m_untypedBuilder)(Expression children);
   };
 
+  static void Tidy() { sSymbolReplacementsCountLock = false; }
+
 protected:
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
 
@@ -258,7 +260,7 @@ protected:
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 30;
-
+  static bool sSymbolReplacementsCountLock;
   /* Simplification */
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {

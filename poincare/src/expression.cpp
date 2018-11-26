@@ -378,6 +378,14 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
   return e;
 }
 
+Expression Expression::radianToDegree() {
+  return Multiplication(*this, Division(Rational(180), Constant(Ion::Charset::SmallPi)));
+}
+
+Expression Expression::degreeToRadian( ) {
+  return Multiplication(*this, Division(Constant(Ion::Charset::SmallPi), Rational(180)));
+}
+
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
   return deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);

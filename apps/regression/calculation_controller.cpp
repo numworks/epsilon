@@ -91,6 +91,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       /* If the selection stays in the same column, we copy the subselection
        * from previous cell. Otherwise, the selection has jumped to another
        * column, we thus subselect the other subcell. */
+       assert(myPreviousCell);
       firstSubCellSelected = t->selectedColumn() == previousSelectedCellX ? myPreviousCell->firstTextSelected() : !myPreviousCell->firstTextSelected();
     }
     myCell->selectFirstText(firstSubCellSelected);

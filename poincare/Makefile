@@ -112,6 +112,7 @@ objs += $(addprefix poincare/src/,\
   round.o\
   sequence.o\
   serialization_helper.o\
+  sign_function.o\
   simplification_helper.o\
   sine.o\
   square_root.o\

@@ -272,6 +272,7 @@ template RandomNode * Poincare::TreePool::createTreeNode<RandomNode>(size_t size
 template RationalNode * Poincare::TreePool::createTreeNode<RationalNode>(size_t size);
 template RealPartNode * Poincare::TreePool::createTreeNode<RealPartNode>(size_t size);
 template RoundNode * Poincare::TreePool::createTreeNode<RoundNode>(size_t size);
+template SignFunctionNode * Poincare::TreePool::createTreeNode<SignFunctionNode>(size_t size);
 template SineNode * Poincare::TreePool::createTreeNode<SineNode>(size_t size);
 template SquareRootNode * Poincare::TreePool::createTreeNode<SquareRootNode>(size_t size);
 template SubtractionNode * Poincare::TreePool::createTreeNode<SubtractionNode>(size_t size);

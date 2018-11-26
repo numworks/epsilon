@@ -127,6 +127,7 @@ private:
     &DivisionRemainder::s_functionHelper,
     &NthRoot::s_functionHelper,
     &Round::s_functionHelper,
+    &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
     &Sum::s_functionHelper,

@@ -27,6 +27,10 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
   Sign sign() const override;
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, true); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, false); }
+
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit, compute<float>);
@@ -42,6 +46,9 @@ public:
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+
+private:
+  Expression complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const;
 };
 
 class Opposite final : public Expression {

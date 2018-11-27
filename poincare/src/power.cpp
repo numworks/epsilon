@@ -8,6 +8,7 @@
 #include <poincare/infinity.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
+#include <poincare/naperian_logarithm.h>
 #include <poincare/parenthesis.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
@@ -79,6 +80,27 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 }
 
 // Private
+
+Expression PowerNode::complexPolarPart(Context & context, Preferences::AngleUnit angleUnit, bool norm) const {
+  Power p(this);
+  // Power(r*e^(i*th), c+id)
+  Expression r = p.childAtIndex(0).complexNorm(context, angleUnit);
+  Expression th = p.childAtIndex(0).complexArgument(context, angleUnit);
+  Expression c = p.childAtIndex(1).realPart(context, angleUnit);
+  Expression d = p.childAtIndex(1).imaginaryPart(context, angleUnit);
+  if (r.isUninitialized() || th.isUninitialized() || c.isUninitialized() || d.isUninitialized()) {
+    return Expression();
+  }
+  if (norm) {
+    // R = e^(c*ln(r)-th*d)
+    // R = r^c*e^(-th*d)
+    return Multiplication(Power(r, c), Power(Constant(Ion::Charset::Exponential), Opposite(Multiplication(th, d))));
+    //return Power(Constant(Ion::Charset::Exponential), Subtraction(Multiplication(c, NaperianLogarithm::Builder(r)), Multiplication(d, th)));
+  } else {
+    // TH = d*ln(r)+c*th
+    return Addition(Multiplication(th, c), Multiplication(d, NaperianLogarithm::Builder(r)));
+  }
+}
 
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {

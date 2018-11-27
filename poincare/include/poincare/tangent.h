@@ -2,6 +2,7 @@
 #define POINCARE_TANGENT_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -22,6 +23,9 @@ public:
   Type type() const override { return Type::Tangent; }
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartOfComplexFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartOfComplexFunction(this, context, angleUnit); }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

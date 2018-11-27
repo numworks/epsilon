@@ -28,6 +28,32 @@ ExpressionNode::Sign MultiplicationNode::sign() const {
   return (Sign)sign;
 }
 
+Expression MultiplicationNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+  Multiplication m(this);
+  Multiplication norm;
+  for (int i = 0; i < m.numberOfChildren(); i++) {
+    Expression r = m.childAtIndex(i).complexNorm(context, angleUnit);
+    if (r.isUninitialized()) {
+      return Expression();
+    }
+    norm.addChildAtIndexInPlace(r, norm.numberOfChildren(), norm.numberOfChildren());
+  }
+  return norm;
+}
+
+Expression MultiplicationNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
+  Multiplication m(this);
+  Addition arg;
+  for (int i = 0; i < m.numberOfChildren(); i++) {
+    Expression r = m.childAtIndex(i).complexArgument(context, angleUnit);
+    if (r.isUninitialized()) {
+      return Expression();
+    }
+    arg.addChildAtIndexInPlace(r, arg.numberOfChildren(), arg.numberOfChildren());
+  }
+  return arg;
+}
+
 int MultiplicationNode::polynomialDegree(Context & context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * c : children()) {

@@ -16,6 +16,10 @@ public:
   }
 #endif
 
+  // Complex
+  using ExpressionNode::realPart;
+  using ExpressionNode::imaginaryPart;
+
   // Properties
   Type type() const override { return Type::Undefined; }
   int polynomialDegree(Context & context, const char * symbolName) const override;

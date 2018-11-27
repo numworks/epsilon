@@ -3,7 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -24,6 +24,9 @@ public:
   Sign sign() const override { return Sign::Positive; }
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 private:
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;

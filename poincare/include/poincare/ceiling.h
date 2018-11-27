@@ -3,6 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -17,6 +18,10 @@ public:
     stream << "Ceiling";
   }
 #endif
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::Ceiling; }

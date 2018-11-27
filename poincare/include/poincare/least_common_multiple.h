@@ -2,6 +2,7 @@
 #define POINCARE_LEAST_COMMON_MULTIPLE_H
 
 #include <poincare/expression.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -18,6 +19,10 @@ public:
 #endif
   // ExpressionNode
   Type type() const override { return Type::LeastCommonMultiple; }
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 private:
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

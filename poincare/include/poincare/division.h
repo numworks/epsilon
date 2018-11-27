@@ -22,6 +22,11 @@ public:
   }
 #endif
 
+  /* Property */
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
+  // TODO: implement
+
   // Properties
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
@@ -49,6 +54,9 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
 private:
+  // Complex
+  Expression complexPart(Context & context, Preferences::AngleUnit angleUnit, bool isReal) const;
+  // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);

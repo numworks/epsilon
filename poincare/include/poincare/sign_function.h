@@ -2,6 +2,7 @@
 #define POINCARE_SIGN_FUNCTION_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -22,6 +23,11 @@ public:
   Type type() const override { return Type::SignFunction; }
   Sign sign() const override;
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

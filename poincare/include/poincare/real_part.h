@@ -3,6 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -20,6 +21,10 @@ public:
 
   // Properties
   Type type() const override { return Type::RealPart; }
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

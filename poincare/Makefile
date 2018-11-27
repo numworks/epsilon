@@ -49,6 +49,7 @@ objs += $(addprefix poincare/src/,\
   ceiling.o\
   complex.o\
   complex_argument.o\
+  complex_helper.o\
   confidence_interval.o\
   conjugate.o\
   constant.o\
@@ -141,6 +142,7 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\
+  complex.cpp\
   complex_to_expression.cpp\
   convert_expression_to_text.cpp\
   decimal.cpp\

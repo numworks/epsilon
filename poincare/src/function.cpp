@@ -9,6 +9,24 @@
 
 namespace Poincare {
 
+Expression FunctionNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  Function f(this);
+  Expression e = SymbolAbstract::Expand(f, context, true);
+  if (e.isUninitialized()) {
+    return f.clone();
+  }
+  return e.realPart(context, angleUnit);
+}
+
+Expression FunctionNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  Function f(this);
+  Expression e = SymbolAbstract::Expand(f, context, false);
+  if (e.isUninitialized()) {
+    return Rational(0);
+  }
+  return e.imaginaryPart(context, angleUnit);
+}
+
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }

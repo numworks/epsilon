@@ -27,6 +27,10 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
+
   // Evaluation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c+d); }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
@@ -36,6 +40,8 @@ public:
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
 private:
+  // Complex
+  Expression complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const;
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

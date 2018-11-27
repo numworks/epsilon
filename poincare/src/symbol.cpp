@@ -77,6 +77,24 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
   return 0.0f;
 }
 
+Expression SymbolNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  Symbol s(this);
+  Expression e = SymbolAbstract::Expand(s, context, false);
+  if (e.isUninitialized()) {
+    return s.clone();
+  }
+  return e.realPart(context, angleUnit);
+}
+
+Expression SymbolNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  Symbol s(this);
+  Expression e = SymbolAbstract::Expand(s, context, false);
+  if (e.isUninitialized()) {
+    return Rational(0);
+  }
+  return e.imaginaryPart(context, angleUnit);
+}
+
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
     assert(m_name[1] == 0);

@@ -4,6 +4,7 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -18,6 +19,10 @@ public:
     stream << "Sine";
   }
 #endif
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartOfComplexFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartOfComplexFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::Sine; }

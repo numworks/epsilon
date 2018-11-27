@@ -27,6 +27,14 @@ ExpressionNode::Sign OppositeNode::sign() const {
   return Sign::Unknown;
 }
 
+Expression OppositeNode::complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
+  Expression a = real ? childAtIndex(0)->realPart(context, angleUnit) : childAtIndex(0)->imaginaryPart(context, angleUnit);
+  if (a.isUninitialized()) {
+    return Expression();
+  }
+  return Opposite(a);
+}
+
 /* Layout */
 
 bool OppositeNode::childNeedsParenthesis(const TreeNode * child) const {

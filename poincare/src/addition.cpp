@@ -29,6 +29,20 @@ int AdditionNode::getPolynomialCoefficients(Context & context, const char * symb
 
 // Private
 
+Expression AdditionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
+  Expression e(this);
+  Addition result;
+  int nbOfChildren = e.numberOfChildren();
+  for (int i = 0; i < nbOfChildren; i++) {
+   Expression part = real ? e.childAtIndex(i).realPart(context, angleUnit) : e.childAtIndex(i).imaginaryPart(context, angleUnit);
+    if (part.isUninitialized()) {
+      return Expression();
+    }
+    result.addChildAtIndexInPlace(part, result.numberOfChildren(), result.numberOfChildren());
+  }
+  return result;
+}
+
 // Layout
 bool AdditionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (((static_cast<const ExpressionNode *>(child)->isNumber()

@@ -183,6 +183,7 @@ void assert_parsed_expression_serialize_to(Expression expression, const char * s
 #endif
   char buffer[500];
   expression.serialize(buffer, sizeof(buffer), mode, numberOfSignifiantDigits);
+  translate_in_ASCII_chars(buffer);
   quiz_assert(strcmp(buffer, serializedExpression) == 0);
 }
 

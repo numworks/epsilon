@@ -2,6 +2,7 @@
 #include <poincare/conjugate_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/opposite.h>
 #include <assert.h>
 #include <cmath>
 
@@ -10,6 +11,18 @@ namespace Poincare {
 constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
 
 int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
+
+Expression ConjugateNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  return childAtIndex(0)->realPart(context, angleUnit);
+}
+
+Expression ConjugateNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression e = childAtIndex(0)->imaginaryPart(context, angleUnit);
+  if (!e.isUninitialized()) {
+    return Opposite(e);
+  }
+  return Expression();
+}
 
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));

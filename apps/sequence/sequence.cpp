@@ -159,19 +159,22 @@ Poincare::Layout Sequence::definitionName() {
     if (m_type == Type::Explicit) {
       m_definitionName = HorizontalLayout(
         CharLayout(name()[0], KDFont::LargeFont),
-        VerticalOffsetLayout(LayoutHelper::String("n", 1, KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout(LayoutHelper::String("n", 1, KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript),
+        CharLayout('=', KDFont::LargeFont)
       );
     }
     if (m_type == Type::SingleRecurrence) {
       m_definitionName = HorizontalLayout(
         CharLayout(name()[0], KDFont::LargeFont),
-        VerticalOffsetLayout(LayoutHelper::String("n+1", 3, KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout(LayoutHelper::String("n+1", 3, KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript),
+        CharLayout('=', KDFont::LargeFont)
       );
     }
     if (m_type == Type::DoubleRecurrence) {
       m_definitionName = HorizontalLayout(
         CharLayout(name()[0], KDFont::LargeFont),
-        VerticalOffsetLayout(LayoutHelper::String("n+2", 3, KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout(LayoutHelper::String("n+2", 3, KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript),
+        CharLayout('=', KDFont::LargeFont)
       );
     }
   }
@@ -188,7 +191,8 @@ Poincare::Layout Sequence::firstInitialConditionName() {
     Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDFont::LargeFont);
     m_firstInitialConditionName = HorizontalLayout(
         CharLayout(name()[0], KDFont::LargeFont),
-        VerticalOffsetLayout(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout(indexLayout, VerticalOffsetLayoutNode::Type::Subscript),
+        CharLayout('=', KDFont::LargeFont)
       );
   }
   return m_firstInitialConditionName;
@@ -202,7 +206,8 @@ Poincare::Layout Sequence::secondInitialConditionName() {
       Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDFont::LargeFont);
       m_secondInitialConditionName = HorizontalLayout(
         CharLayout(name()[0], KDFont::LargeFont),
-        VerticalOffsetLayout(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout(indexLayout, VerticalOffsetLayoutNode::Type::Subscript),
+        CharLayout('=', KDFont::LargeFont)
       );
     }
   }

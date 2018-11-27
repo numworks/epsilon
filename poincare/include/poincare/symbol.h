@@ -26,6 +26,10 @@ public:
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override;
+
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

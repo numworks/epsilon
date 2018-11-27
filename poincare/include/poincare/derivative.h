@@ -2,6 +2,7 @@
 #define POINCARE_DERIVATIVE_H
 
 #include <poincare/expression.h>
+#include <poincare/complex_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 
@@ -18,6 +19,10 @@ public:
     stream << "Derivative";
   }
 #endif
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::Derivative; }

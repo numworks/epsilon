@@ -2,6 +2,7 @@
 #define POINCARE_IMAGINARY_PART_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -20,6 +21,10 @@ public:
 
   // Properties
   Type type() const override { return Type::ImaginaryPart; }
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

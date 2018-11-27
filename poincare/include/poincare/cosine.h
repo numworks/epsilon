@@ -2,6 +2,7 @@
 #define POINCARE_COSINE_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
 
@@ -18,6 +19,10 @@ public:
     stream << "Cosine";
   }
 #endif
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartOfComplexFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartOfComplexFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::Cosine; }

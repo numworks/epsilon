@@ -2,6 +2,7 @@
 #define POINCARE_SQUARE_ROOT_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 #include <ion/charset.h>
 
@@ -21,7 +22,11 @@ public:
   }
 #endif
 
-
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartFromPolarParts(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartFromPolarParts(this, context, angleUnit); }
+  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

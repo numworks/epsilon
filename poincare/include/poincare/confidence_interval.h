@@ -2,6 +2,7 @@
 #define POINCARE_CONFIDENCE_INTERVAL_H
 
 #include <poincare/expression.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -18,6 +19,10 @@ public:
 #endif
 
   // ExpressionNode
+
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartRealFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::ConfidenceInterval; }

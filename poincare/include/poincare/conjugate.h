@@ -18,6 +18,9 @@ public:
   }
 #endif
 
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override;
+
   // Properties
   Type type() const override { return Type::Conjugate; }
 private:

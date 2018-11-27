@@ -2,6 +2,7 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/complex_helper.h>
 #include <poincare/n_ary_expression_node.h>
 
 namespace Poincare {
@@ -24,6 +25,13 @@ public:
   Sign sign() const override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
+
+  // Complex
+  // TODO: implement realPart and imaginaryPart to optimize?
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartFromPolarParts(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartFromPolarParts(this, context, angleUnit); }
+  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c*d); }

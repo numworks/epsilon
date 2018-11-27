@@ -4,6 +4,8 @@
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
+#include <poincare/addition.h>
+#include <poincare/subtraction.h>
 #include <poincare/serialization_helper.h>
 #include <cmath>
 #include <assert.h>
@@ -42,6 +44,22 @@ int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Division(this).shallowReduce(context, angleUnit, target);
+}
+
+Expression DivisionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
+  Division e(this);
+  Expression a = e.childAtIndex(0).realPart(context, angleUnit);
+  Expression b = e.childAtIndex(0).imaginaryPart(context, angleUnit);
+  Expression c = e.childAtIndex(1).realPart(context, angleUnit);
+  Expression d = e.childAtIndex(1).imaginaryPart(context, angleUnit);
+  if (a.isUninitialized() || b.isUninitialized() || c.isUninitialized() || d.isUninitialized()) {
+    return Expression();
+  }
+  Expression denominator = Addition(Power(c.clone(), Rational(2)), Power(d.clone(), Rational(2)));
+  if (real) {
+    return Division(Addition(Multiplication(a, c), Multiplication(b, d)), denominator);
+  }
+  return Division(Subtraction(Multiplication(b, c), Multiplication(a, d)), denominator);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {

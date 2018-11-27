@@ -2,6 +2,7 @@
 #define POINCARE_NTH_ROOT_H
 
 #include <poincare/expression.h>
+#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -19,7 +20,15 @@ public:
   }
 #endif
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartFromPolarParts(this, context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartFromPolarParts(this, context, angleUnit); }
+  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPolarPart(context, angleUnit, true); }
+  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPolarPart(context, angleUnit, false); }
+
 private:
+  // Complex
+  Expression complexPolarPart(Context & context, Preferences::AngleUnit angleUnit, bool isNorm) const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

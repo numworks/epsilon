@@ -21,6 +21,10 @@ public:
   Type type() const override { return Type::Parenthesis; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
+  // Complex
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->realPart(context, angleUnit); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->imaginaryPart(context, angleUnit); }
+
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

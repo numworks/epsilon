@@ -4,6 +4,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/nth_root_layout.h>
+#include <poincare/division.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -13,6 +14,24 @@ namespace Poincare {
 constexpr Expression::FunctionHelper SquareRoot::s_functionHelper;
 
 int SquareRootNode::numberOfChildren() const { return SquareRoot::s_functionHelper.numberOfChildren(); }
+
+Expression SquareRootNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression r = childAtIndex(0)->complexNorm(context, angleUnit);
+  if (r.isUninitialized()) {
+    return Expression();
+  }
+  // R = sqrt(r)
+  return SquareRoot::Builder(r);
+}
+
+Expression SquareRootNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression th = childAtIndex(0)->complexArgument(context, angleUnit);
+  if (th.isUninitialized()) {
+    return Expression();
+  }
+  // TH = th/2
+  return Division(th, Rational(2));
+}
 
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));

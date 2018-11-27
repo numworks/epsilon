@@ -23,6 +23,16 @@ int SubtractionNode::polynomialDegree(Context & context, const char * symbolName
 
 // Private
 
+Expression SubtractionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
+  Subtraction e(this);
+  Expression a0 = real ? e.childAtIndex(0).realPart(context, angleUnit) : e.childAtIndex(0).imaginaryPart(context, angleUnit);
+  Expression a1 = real ? e.childAtIndex(1).realPart(context, angleUnit) : e.childAtIndex(1).imaginaryPart(context, angleUnit);
+  if (a0.isUninitialized() || a1.isUninitialized()) {
+    return Expression();
+  }
+  return Subtraction(a0, a1);
+}
+
 bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (child == childAtIndex(0)) {
     return false;

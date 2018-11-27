@@ -2,6 +2,7 @@
 #include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/rational.h>
 #include <ion.h>
 #include <cmath>
 #include <assert.h>
@@ -13,6 +14,20 @@ ExpressionNode::Sign ConstantNode::sign() const {
     return Sign::Positive;
   }
   return Sign::Unknown;
+}
+
+Expression ConstantNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  if (isIComplex()) {
+    return Rational(0);
+  }
+  return Constant(this).clone();
+}
+
+Expression ConstantNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
+  if (isIComplex()) {
+    return Rational(1);
+  }
+  return Rational(0);
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

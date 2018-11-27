@@ -41,7 +41,7 @@ public:
 protected:
   KDRect textFieldFrame() const;
 private:
-  constexpr static int k_textFieldBufferSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
+  constexpr static int k_textFieldBufferSize = Shared::StorageFunction::k_maxNameWithArgumentAndEqualSize;
   Shared::TextFieldWithExtension m_textField;
   char m_textFieldBuffer[k_textFieldBufferSize];
 };

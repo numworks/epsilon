@@ -7,7 +7,7 @@ namespace Graph {
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 0.5f, 0.5f)
+  m_textField(Shared::StorageFunction::k_parenthesedArgumentWithEqualLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 0.5f, 0.5f)
   {}
 
 void TextFieldFunctionTitleCell::setHighlighted(bool highlight) {

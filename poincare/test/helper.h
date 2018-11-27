@@ -15,6 +15,7 @@ constexpr Poincare::Preferences::ComplexFormat Polar = Poincare::Preferences::Co
 constexpr Poincare::Preferences::PrintFloatMode DecimalMode = Poincare::Preferences::PrintFloatMode::Decimal;
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode = Poincare::Preferences::PrintFloatMode::Scientific;
 
+bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression got);
 void translate_in_special_chars(char * expression);
 void translate_in_ASCII_chars(char * expression);
 Poincare::Expression parse_expression(const char * expression, bool canBeUnparsable = false);

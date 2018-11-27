@@ -28,6 +28,19 @@ const char * BigOverflowedIntegerString() {
   return s;
 }
 
+bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression got) {
+  bool identical = expected.isIdenticalTo(got);
+#if POINCARE_TREE_LOG
+  if (!identical) {
+    std::cout << "Expecting" << std::endl;
+    expected.log();
+    std::cout << "Got" << std::endl;
+    got.log();
+  }
+#endif
+  return identical;
+}
+
 void translate_in_special_chars(char * expression) {
   for (char *c = expression; *c; c++) {
     switch (*c) {
@@ -87,16 +100,7 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
 
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r) {
   Expression e = parse_expression(expression);
-  bool identical = e.isIdenticalTo(r);
-#if POINCARE_TREE_LOG
-  if (!identical) {
-    std::cout << "Expecting" << std::endl;
-    r.log();
-    std::cout << "Got" << std::endl;
-    e.log();
-  }
-#endif
-  quiz_assert(identical);
+  quiz_assert(expressions_are_equal(r, e));
 }
 
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName) {

@@ -30,7 +30,7 @@ public:
   // Properties
   Type type() const override { return Type::Power; }
   Sign sign() const override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
@@ -73,7 +73,7 @@ class Power final : public Expression {
 public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

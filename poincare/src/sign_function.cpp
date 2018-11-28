@@ -16,7 +16,7 @@ ExpressionNode::Sign SignFunctionNode::sign() const {
   return childAtIndex(0)->sign();
 }
 
-Expression SignFunctionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   SignFunction sign(this);
   Rational r(s == ExpressionNode::Sign::Positive ? 1 : -1);
   sign.replaceWithInPlace(r);

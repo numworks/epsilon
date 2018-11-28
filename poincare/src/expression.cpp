@@ -416,7 +416,7 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
   return e;
 }
 
-Expression Expression::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   return node()->setSign(s, context, angleUnit);
 }
 

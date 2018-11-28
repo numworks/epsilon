@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
 
 int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
-Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
 }
 
@@ -28,7 +28,7 @@ Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::Angl
   return AbsoluteValue(this).shallowReduce(context, angleUnit);
 }
 
-Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
 }
@@ -51,7 +51,7 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
     return c;
   }
   if (c.sign() == ExpressionNode::Sign::Negative) {
-    Expression result = c.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+    Expression result = c.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
     replaceWithInPlace(result);
     return result;
   }

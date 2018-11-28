@@ -47,7 +47,7 @@ ExpressionNode::Sign PowerNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression PowerNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   return Power(this).setSign(s, context, angleUnit);
 }
 
@@ -244,7 +244,7 @@ Power::Power(Expression base, Expression exponent) : Expression(TreePool::shared
   replaceChildAtIndexInPlace(1, exponent);
 }
 
-Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   assert(childAtIndex(0).sign() == ExpressionNode::Sign::Negative);
   Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit), childAtIndex(1));
@@ -552,7 +552,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         // (sign(a)*b*...)^r
         if (factor.sign() == ExpressionNode::Sign::Negative) {
           m.replaceChildAtIndexInPlace(i, Rational(-1));
-          factor = factor.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+          factor = factor.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
         } else {
           m.removeChildAtIndexInPlace(i);
         }
@@ -732,7 +732,7 @@ Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angl
 // Simplification
 Expression Power::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
-    Expression positivePowerClone = Power(childAtIndex(0).clone(), childAtIndex(1).clone().setSign(ExpressionNode::Sign::Positive, context, angleUnit));
+    Expression positivePowerClone = Power(childAtIndex(0).clone(), childAtIndex(1).clone().setSign(ExpressionNode::Sign::Positive, &context, angleUnit));
     if (positivePowerClone.childAtIndex(1).type() == ExpressionNode::Type::Rational && positivePowerClone.childAtIndex(1).convert<Rational>().isOne()) {
       return positivePowerClone.childAtIndex(0);
     }
@@ -803,7 +803,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   if (numberOfPrimeFactors < 0) {
     /* We could not break i in prime factors (it might take either too many
      * factors or too much time). */
-    Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, context, angleUnit);
+    Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, &context, angleUnit);
     return Power(Rational(i), rClone);
   }
 

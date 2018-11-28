@@ -55,11 +55,8 @@ void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
 }
 
 KDRect TextFieldFunctionTitleCell::textFieldFrame() const {
-  KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
-  if (m_orientation == Orientation::VerticalIndicator){
-    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness-k_separatorThickness, bounds().height()-k_separatorThickness);
-  }
-  return textFrame;
+  assert(m_orientation == Orientation::VerticalIndicator);
+  return KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness, bounds().height()-k_separatorThickness);
 }
 
 }

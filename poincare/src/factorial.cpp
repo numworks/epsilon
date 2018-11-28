@@ -12,6 +12,13 @@
 
 namespace Poincare {
 
+// Property
+
+Expression FactorialNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+  assert(s == Sign::Positive);
+  return Factorial(this);
+}
+
 // Layout
 
 bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {

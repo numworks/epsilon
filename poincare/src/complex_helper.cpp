@@ -13,9 +13,7 @@ Expression ComplexHelper::cartesianPartOfComplexFunction(const ExpressionNode * 
     return Expression();
   }
   if (real) {
-    Expression result = e.clone();
-    result.replaceChildAtIndexInPlace(0, e.childAtIndex(0).realPart(context, angleUnit));
-    return result;
+    return e.clone().deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
   }
   return Rational(0);
 }
@@ -31,14 +29,14 @@ Expression ComplexHelper::complexCartesianPartFromPolarParts(const ExpressionNod
   if (r.isUninitialized() || th.isUninitialized()) {
     return Expression();
   }
-  Expression argument = angleUnit == Preferences::AngleUnit::Radian ? th : th.radianToDegree();
+  Expression argument = angleUnit == Preferences::AngleUnit::Radian ? th : th.radianToDegree(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
   Expression trigo;
   if (isReal) {
     trigo = Cosine::Builder(argument);
   } else {
     trigo = Sine::Builder(argument);
   }
-  return Multiplication(r, trigo);
+  return Multiplication(r, trigo.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation)).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
 }
 
 }

@@ -43,8 +43,16 @@ Expression MultiplicationNode::complexCartesianPart(Context & context, Preferenc
     if (childReal.isUninitialized() || childImag.isUninitialized()) {
       return Expression();
     }
-    Expression newReal = Subtraction(Multiplication(real.clone(), childReal.clone()), Multiplication(imag.clone(), childImag.clone()));
-    Expression newImag = Addition(Multiplication(real, childImag), Multiplication(imag, childReal));
+    Expression newReal =
+      Subtraction(
+        Multiplication(real.clone(), childReal.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+        Multiplication(imag.clone(), childImag.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
+    Expression newImag =
+      Addition(
+        Multiplication(real, childImag).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+        Multiplication(imag, childReal).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
     real = newReal;
     imag = newImag;
   }
@@ -61,7 +69,7 @@ Expression MultiplicationNode::complexNorm(Context & context, Preferences::Angle
     }
     norm.addChildAtIndexInPlace(r, norm.numberOfChildren(), norm.numberOfChildren());
   }
-  return norm;
+  return norm.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
 /*Expression MultiplicationNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {

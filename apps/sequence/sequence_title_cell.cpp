@@ -7,9 +7,15 @@ using namespace Poincare;
 namespace Sequence {
 
 SequenceTitleCell::SequenceTitleCell() :
-  Shared::FunctionTitleCell(),
-  m_titleTextView(0.5f, 0.5f)
+  Shared::FunctionTitleCell(Orientation::VerticalIndicator),
+  m_titleTextView(k_verticalOrientationHorizontalAlignment, 0.5f)
 {
+}
+
+void SequenceTitleCell::setOrientation(Orientation orientation) {
+  float horizontalAlignment = orientation == Orientation::VerticalIndicator ? k_verticalOrientationHorizontalAlignment : k_horizontalOrientationHorizontalAlignment;
+  m_titleTextView.setAlignment(horizontalAlignment, 0.5f);
+  FunctionTitleCell::setOrientation(orientation);
 }
 
 void SequenceTitleCell::setLayout(Poincare::Layout layout) {

@@ -12,7 +12,7 @@ public:
     VerticalIndicator
   };
   FunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator);
-  void setOrientation(Orientation orientation);
+  virtual void setOrientation(Orientation orientation);
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   virtual const KDFont * font() const = 0;

@@ -324,12 +324,12 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::ParseAndProcess(const char * text, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, bool complexSimplify) {
   Expression exp = Parse(text);
   if (exp.isUninitialized()) {
     return Undefined();
   }
-  exp = exp.simplify(context, angleUnit);
+  exp = complexSimplify ? exp.simplifyForComplexFormat(context, angleUnit, complexFormat) : exp.simplify(context, angleUnit);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
@@ -345,6 +345,52 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
     e = e.deepBeautify(context, angleUnit);
   }
   return sSimplificationHasBeenInterrupted ? Expression() : e;
+}
+
+bool isZero(const Expression e) {
+  return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isZero();
+}
+bool isOne(const Expression e) {
+  return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isOne();
+}
+bool isMinusOne(const Expression e) {
+  Expression c = e.numberOfChildren() > 0 ? e.childAtIndex(0) : Expression();
+  return e.type() == ExpressionNode::Type::Opposite && e.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isOne();
+}
+
+Expression Expression::simplifyForComplexFormat(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
+  sSimplificationHasBeenInterrupted = false;
+  Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  if (sSimplificationHasBeenInterrupted) {
+    return Expression();
+  }
+  Expression ra = complexFormat == Preferences::ComplexFormat::Cartesian ? e.realPart(context, angleUnit) : e.complexNorm(context, angleUnit);
+  Expression tb = complexFormat == Preferences::ComplexFormat::Cartesian ? e.imaginaryPart(context, angleUnit) : e.complexArgument(context, angleUnit);
+  if (ra.isUninitialized() || tb.isUninitialized()) {
+    return e.deepBeautify(context, angleUnit);
+  }
+  ra = ra.simplify(context, angleUnit);
+  tb = tb.simplify(context, angleUnit);
+  if (ra.isUninitialized() || tb.isUninitialized()) {
+    return e.deepBeautify(context, angleUnit);
+  }
+  e = CreateComplexExpression(ra, tb, complexFormat,
+      ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined,
+      isZero(ra), isOne(ra), isZero(tb), isOne(tb), isMinusOne(tb),
+      tb.type() == ExpressionNode::Type::Opposite || (tb.type() == ExpressionNode::Type::Rational && tb.sign() == ExpressionNode::Sign::Negative),
+      [](Expression e) {
+        if (e.type() == ExpressionNode::Type::Opposite) {
+          return e.childAtIndex(0);
+        } else {
+          assert(e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Rational || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Infinity);
+          return Expression(static_cast<Number &>(e).setSign(ExpressionNode::Sign::Positive));
+        }
+      }
+    );
+  if (sSimplificationHasBeenInterrupted) {
+    return Expression();
+  }
+  return e;
 }
 
 Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context) {

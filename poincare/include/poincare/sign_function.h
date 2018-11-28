@@ -22,7 +22,7 @@ public:
   // Properties
   Type type() const override { return Type::SignFunction; }
   Sign sign() const override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   // Complex
   Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartRealFunction(this, context, angleUnit); }

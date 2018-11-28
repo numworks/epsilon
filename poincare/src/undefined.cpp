@@ -13,7 +13,7 @@ int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) 
   return -1;
 }
 
-Expression UndefinedNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression UndefinedNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   return Undefined();
 }
 

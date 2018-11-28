@@ -9,7 +9,7 @@ class InfinityNode final : public NumberNode {
 public:
 
   void setNegative(bool negative) { m_negative = negative; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   // TreeNode
   size_t size() const override { return sizeof(InfinityNode); }
@@ -48,7 +48,7 @@ public:
   Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {
     node()->setNegative(negative);
   }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit);
   static const char * Name() {
     return "inf";
   }

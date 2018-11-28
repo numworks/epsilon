@@ -26,7 +26,7 @@ public:
   // Properties
   Type type() const override { return Type::Random; }
   Sign sign() const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -52,7 +52,7 @@ public:
   template<typename T> static T random();
 private:
   Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit);
 };
 
 }

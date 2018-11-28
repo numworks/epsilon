@@ -106,7 +106,7 @@ public:
   virtual bool isNumber() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol);
-  /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context & context);

@@ -61,7 +61,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
 
   // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
   if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
-    e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit).shallowReduce(context, angleUnit, target);
+    e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit).shallowReduce(context, angleUnit, target);
     if (e.type() == ExpressionNode::Type::Cosine) {
       return e.shallowReduce(context, angleUnit, target);
     } else {
@@ -198,7 +198,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   {
     Expression newArgument;
     if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
-      newArgument = e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+      newArgument = e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
     } else {
       newArgument = e.childAtIndex(0);
       static_cast<Multiplication&>(newArgument).removeChildAtIndexInPlace(0);

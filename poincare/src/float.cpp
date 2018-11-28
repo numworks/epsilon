@@ -4,7 +4,7 @@
 namespace Poincare {
 
 template<typename T>
-Expression FloatNode<T>::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression FloatNode<T>::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   Expression thisExpr = Number(this);
   Expression result = Float<T>(-m_value);
   thisExpr.replaceWithInPlace(result);

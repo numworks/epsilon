@@ -28,15 +28,39 @@ Expression NthRootNode::complexPolarPart(Context & context, Preferences::AngleUn
   if (r.isUninitialized() || th.isUninitialized() || c.isUninitialized() || d.isUninitialized()) {
     return Expression();
   }
-  Expression denominator = Addition(Power(c.clone(), Rational(2)), Power(d.clone(), Rational(2)));
+  Expression denominator = 
+    Addition(
+      Power(c.clone(), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+      Power(d.clone(), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+    ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
   if (isNorm) {
     // R = e^((c*ln(r)+th*d)/(c^2+d^2))
     // R = r^(c/(c^2+d^2))*e^(th*d/(c^2+d^2))
-    return Multiplication(Power(r, Division(c, denominator.clone())), Power(Constant(Ion::Charset::Exponential), Division(Multiplication(d, th), denominator)));
+    return Multiplication(
+            Power(
+              r,
+              Division(c, denominator.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+            Power(
+              Constant(Ion::Charset::Exponential),
+              Division(
+                Multiplication(d, th).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+                denominator)
+              ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
     //return Power(Constant(Ion::Charset::Exponential), Division(Addition(Multiplication(c, NaperianLogarithm::Builder(r)), Multiplication(d, th)), denominator));
   } else {
     // TH = (th*c-d*ln(r))/(c^2+d^2)
-    return Division(Subtraction(Multiplication(th, c), Multiplication(d, NaperianLogarithm::Builder(r))), denominator);
+    return Division(
+            Subtraction(
+              Multiplication(th, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+              Multiplication(
+                d,
+                NaperianLogarithm::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+              ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+            denominator
+          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
   }
 }
 

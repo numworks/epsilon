@@ -84,7 +84,12 @@ Expression ExpressionNode::complexNorm(Context & context, Preferences::AngleUnit
   Expression b = imaginaryPart(context, angleUnit);
   if (!a.isUninitialized() && !b.isUninitialized()) {
     // sqrt(a^2+b^2)
-    return SquareRoot::Builder(Addition(Power(a, Rational(2)), Power(b, Rational(2))));
+    return SquareRoot::Builder(
+        Addition(
+          Power(a, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+          Power(b, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
   }
   return Expression();
 }
@@ -95,15 +100,27 @@ Expression ExpressionNode::complexArgument(Context & context, Preferences::Angle
   if (!a.isUninitialized() && !b.isUninitialized()) {
     if (b.type() != Type::Rational || !static_cast<Rational &>(b).isZero()) {
       // arctan(a/b) or (180/Pi)*arctan(a/b)
-      Expression arcTangent = ArcTangent::Builder(Division(a, b.clone()));
+      Expression arcTangent = ArcTangent::Builder(Division(a, b.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
       if (angleUnit == Preferences::AngleUnit::Degree) {
-        arcTangent = arcTangent.degreeToRadian();
+        arcTangent = arcTangent.degreeToRadian(context, angleUnit, ReductionTarget::BottomUpComputation);
       }
       // sign(b) * Pi/2 - arctan(a/b)
-      return Subtraction(Multiplication(SignFunction::Builder(b), Division(Constant(Ion::Charset::SmallPi), Rational(2))), arcTangent);
+      return Subtraction(
+          Multiplication(
+            SignFunction::Builder(b).shallowReduce(context, angleUnit),
+            Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+          ),
+          arcTangent
+        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
     } else {
       // (1-sign(a))*Pi/2
-      return Multiplication(Subtraction(Rational(1), SignFunction::Builder(a)), Division(Constant(Ion::Charset::SmallPi), Rational(2)));
+      return Multiplication(
+               Subtraction(
+                 Rational(1),
+                 SignFunction::Builder(a).shallowReduce(context, angleUnit)
+               ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+               Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
     }
   }
   return Expression();

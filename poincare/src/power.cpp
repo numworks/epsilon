@@ -94,11 +94,25 @@ Expression PowerNode::complexPolarPart(Context & context, Preferences::AngleUnit
   if (norm) {
     // R = e^(c*ln(r)-th*d)
     // R = r^c*e^(-th*d)
-    return Multiplication(Power(r, c), Power(Constant(Ion::Charset::Exponential), Opposite(Multiplication(th, d))));
+    return Multiplication(
+            Power(r, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+            Power(
+              Constant(Ion::Charset::Exponential),
+              Opposite(
+                Multiplication(th, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+              ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
     //return Power(Constant(Ion::Charset::Exponential), Subtraction(Multiplication(c, NaperianLogarithm::Builder(r)), Multiplication(d, th)));
   } else {
     // TH = d*ln(r)+c*th
-    return Addition(Multiplication(th, c), Multiplication(d, NaperianLogarithm::Builder(r)));
+    return Addition(
+            Multiplication(th, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+            Multiplication(
+              d,
+              NaperianLogarithm::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
   }
 }
 
@@ -448,7 +462,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   /* We do not apply some rules to a^b if:
    * - the parent node is a logarithm of same base a. In this case there is a
    *  simplication of form ln(e^(3^(1/2))->3^(1/2).
-   * - the reduction is being BottomUp. In this case, we do not yet have any
+   * - the reduction is being BottomUpComputation. In this case, we do not yet have any
    *   information on the parent which could later be a logarithm of the same
    *   base.
    */

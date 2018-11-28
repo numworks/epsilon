@@ -13,6 +13,7 @@ public:
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
+  void setOrientation(Orientation orientation) override;
   const KDFont * font() const override {
     return Poincare::CharLayoutNode::k_defaultFont;
   }
@@ -20,6 +21,8 @@ public:
     return m_titleTextView.layout();
   }
 private:
+  static constexpr float k_horizontalOrientationHorizontalAlignment = 0.5f;
+  static constexpr float k_verticalOrientationHorizontalAlignment = 1.0f;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

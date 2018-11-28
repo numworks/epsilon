@@ -41,7 +41,7 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
      * to keep Ans symbol in the calculation store. */
     PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
   }
-  Expression exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
+  Expression exactOutput = PoincareHelpers::ParseAndSimplifyForComplexFormat(m_inputText, *context);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   Expression approximateOutput = PoincareHelpers::Approximate<double>(exactOutput, *context);
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));

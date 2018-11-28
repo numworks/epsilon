@@ -54,8 +54,7 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_cartesian_parts("I+I", "0", "2");
   assert_expression_has_complex_cartesian_parts("-2+2*I", "-2", "2");
   assert_expression_has_complex_cartesian_parts("(3+I)-(2+4*I)", "1", "-3");
-  // TODO: implement TODO of multiplication
-  //assert_expression_has_complex_cartesian_parts("(2+3*I)*(4-2*I)", "14", "8");
+  assert_expression_has_complex_cartesian_parts("(2+3*I)*(4-2*I)", "14", "8");
   assert_expression_has_complex_cartesian_parts("(3+I)/2", "3/2", "1/2");
   assert_expression_has_complex_cartesian_parts("(3+I)/(2+I)", "7/5", "-1/5");
   assert_expression_has_complex_cartesian_parts("(3+I)^(2+I)", "10*cos((-4*atan(3)+ln(2)+ln(5)+2*P)/2)*X^((2*atan(3)-P)/2)", "10*sin((-4*atan(3)+ln(2)+ln(5)+2*P)/2)*X^((2*atan(3)-P)/2)", Radian);
@@ -134,8 +133,7 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_polar_parts("I+I", "2", "P/2");
   assert_expression_has_complex_polar_parts("-2+2*I", "2*R(2)", "(3*P)/4", Radian);
   assert_expression_has_complex_polar_parts("(3+I)-(2+4*I)", "R(10)", "(2*atan(1/3)-P)/2", Radian);
-  // TODO: implement TODO of multiplication
-  //assert_expression_has_complex_polar_parts("(2+3*I)*(4-2*I)", "2*R(65)", "(2*atan(7/4)-P)/2", Radian);
+  assert_expression_has_complex_polar_parts("(2+3*I)*(4-2*I)", "2*R(65)", "(-2*atan(7/4)+P)/2", Radian);
   assert_expression_has_complex_polar_parts("(3+I)/2", "R(10)/2", "(-2*atan(3)+P)/2", Radian);
   assert_expression_has_complex_polar_parts("(3+I)/(2+I)", "R(2)", "(2*atan(7)-P)/2", Radian);
   assert_expression_has_complex_polar_parts("(3+I)^(2+I)", "10*X^((2*atan(3)-P)/2)", "(-4*atan(3)+ln(2)+ln(5)+2*P)/2", Radian);

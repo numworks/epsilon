@@ -25,7 +25,10 @@ public:
   /* Property */
   Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
   Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
-  // TODO: implement
+  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
+  /* If we use the formula arg(a/b) = arg(a)-arg(b), we are likely to end up
+   * with subtractions of arcTangent. To avoid that, we compute the argument(a/b)
+   * from the real and imaginary part of a/b. */
 
   // Properties
   Type type() const override { return Type::Division; }

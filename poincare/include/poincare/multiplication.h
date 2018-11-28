@@ -2,7 +2,6 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/complex_helper.h>
 #include <poincare/n_ary_expression_node.h>
 
 namespace Poincare {
@@ -27,11 +26,13 @@ public:
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Complex
-  // TODO: implement realPart and imaginaryPart to optimize?
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartFromPolarParts(this, context, angleUnit); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartFromPolarParts(this, context, angleUnit); }
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, true); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, false); }
   Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
-  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
+  /* If we use the formula arg(a*b) = arg(a)+arg(b), we are likely to end up
+   * with additions of arcTangent. To avoid that, we compute the argument(a*b)
+   * from the real and imaginary part of a*b. */
+  //Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c*d); }
@@ -41,6 +42,9 @@ public:
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
 
 private:
+  // Complex
+  Expression complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const;
+
   // Property
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 

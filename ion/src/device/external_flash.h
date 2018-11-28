@@ -40,7 +40,11 @@ void initQSPI();
 void initChip();
 
 void MassErase();
-void EraseSector(int sector);
+
+constexpr int NumberOfSectors = 128;
+int SectorAtAddress(uint32_t address);
+void EraseSector(int i);
+
 void WriteMemory(uint8_t * source, uint8_t * destination, size_t length);
 
 enum class Command : uint8_t {
@@ -53,12 +57,15 @@ enum class Command : uint8_t {
   PageProgram = 0x02,
   QuadPageProgram = 0x33,
   EnableQPI = 0x38,
-  ChipErase = 0xC7
+  // Erase the whole chip or a 64-Kbyte block as being "1"
+  ChipErase = 0xC7,
+  Erase64KbyteBlock = 0xD8,
 };
 
 constexpr static uint32_t QSPIBaseAddress = 0x90000000;
-constexpr static uint8_t FlashNumberOfAddressBits = 23;
-constexpr static uint32_t FlashAddressSpaceSize = 1 << FlashNumberOfAddressBits;
+constexpr static uint8_t NumberOfAddressBitsInChip = 23;
+constexpr static uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
+constexpr static uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
 
 constexpr static GPIOPin QSPIPins[] = {
   GPIOPin(GPIOB, 2), GPIOPin(GPIOB, 6), GPIOPin(GPIOC, 9), GPIOPin(GPIOD,12),

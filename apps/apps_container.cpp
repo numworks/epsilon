@@ -217,22 +217,28 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   refreshPreferences();
-#if EPSILON_ONBOARDING_APP
-  switchTo(onBoardingAppSnapshot());
-#else
-  if (numberOfApps() == 2) {
-    switchTo(appSnapshotAtIndex(1));
-  } else {
-    switchTo(appSnapshotAtIndex(0));
-  }
-#endif
 
   /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
    * called. During a longjump, the stack pointer is set to this stored stack
    * pointer value, so the method where we call setjump must remain in the call
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
-  if (!ExceptionRun(ecp)) {
+
+  if (ExceptionRun(ecp)) {
+    /* Normal execution. The exception checkpoint must be created before
+     * switching to the first app, because the first app might create nodes on
+     * the pool. */
+#if EPSILON_ONBOARDING_APP
+    switchTo(onBoardingAppSnapshot());
+#else
+    if (numberOfApps() == 2) {
+      switchTo(appSnapshotAtIndex(1));
+    } else {
+      switchTo(appSnapshotAtIndex(0));
+    }
+#endif
+  } else {
+    // Exception
     if (activeApp() != nullptr) {
       activeApp()->snapshot()->reset();
     }

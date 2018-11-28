@@ -24,7 +24,6 @@ FunctionListController::FunctionListController(Responder * parentResponder, Func
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setShowsIndicators(false);
 }
 
 int FunctionListController::numberOfColumns() {
@@ -36,7 +35,7 @@ KDCoordinate FunctionListController::columnWidth(int i) {
     case 0:
       return k_functionNameWidth;
     case 1:
-      return selectableTableView()->bounds().width()-k_functionNameWidth;
+      return selectableTableView()->bounds().width() - k_functionNameWidth;
     default:
       assert(false);
       return 0;

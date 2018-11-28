@@ -52,13 +52,13 @@ template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix
   return result;
 }
 
-Expression SubtractionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Subtraction(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression SubtractionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Subtraction(this).shallowReduce(context, angleUnit);
 }
 
 Subtraction::Subtraction() : Expression(TreePool::sharedPool()->createTreeNode<SubtractionNode>()) {}
 
-Expression Subtraction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Subtraction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefined()) {
     return e;

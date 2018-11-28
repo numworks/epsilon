@@ -21,8 +21,8 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
-Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return ComplexArgument(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return ComplexArgument(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
@@ -30,7 +30,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>(std::arg(c));
 }
 
-Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

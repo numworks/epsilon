@@ -34,8 +34,8 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
-Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Derivative(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Derivative(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
@@ -132,7 +132,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
   return ans;
 }
 
-Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

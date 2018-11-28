@@ -166,11 +166,11 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
-  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
-  Expression simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
-  Expression reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
-  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-    return node()->reduceChildren(context, angleUnit, replaceSymbols);
+  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression reduce(Context & context, Preferences::AngleUnit angleUnit);
+  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+    return node()->reduceChildren(context, angleUnit);
   }
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
 
@@ -253,7 +253,7 @@ protected:
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) { return node()->shallowReduce(context, angleUnit, replaceSymbols); }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowReduce(context, angleUnit); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
@@ -262,13 +262,13 @@ private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
   /* Simplification */
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
-  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-    return node()->deepReduceChildren(context, angleUnit, replaceSymbols);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
+  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+    return node()->deepReduceChildren(context, angleUnit);
   }
-  void defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
-  void defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols);
-  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  void defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
+  void defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
+  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }
 
   /* Approximation */

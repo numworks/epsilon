@@ -195,19 +195,19 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 // Private
 
-void Expression::defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+void Expression::defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    childAtIndex(i).reduce(context, angleUnit, replaceSymbols);
+    childAtIndex(i).reduce(context, angleUnit);
   }
 }
 
-void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    childAtIndex(i).deepReduce(context, angleUnit, replaceSymbols);
+    childAtIndex(i).deepReduce(context, angleUnit);
   }
 }
 
-Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
       Expression result = Undefined();
@@ -308,12 +308,12 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
   Expression exp = Parse(text);
   if (exp.isUninitialized()) {
     return Undefined();
   }
-  exp = exp.simplify(context, angleUnit, replaceSymbols);
+  exp = exp.simplify(context, angleUnit);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
@@ -322,9 +322,9 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
   return exp;
 }
 
-Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  Expression e = reduce(context, angleUnit, replaceSymbols);
+  Expression e = reduce(context, angleUnit);
   if (!sSimplificationHasBeenInterrupted) {
     e = e.deepBeautify(context, angleUnit);
   }
@@ -362,25 +362,25 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
   return e;
 }
 
-Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(context, angleUnit, replaceSymbols);
+  return deepReduce(context, angleUnit);
 }
 
-Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
 #if MATRIX_EXACT_REDUCING
 #else
-  if (IsMatrix(*this, context, replaceSymbols)) {
+  if (IsMatrix(*this, context, true)) {
     sSimplificationHasBeenInterrupted = true;
     return *this;
   }
 #endif
 
-  deepReduceChildren(context, angleUnit, replaceSymbols);
+  deepReduceChildren(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
     return *this;
   }
-  return shallowReduce(context, angleUnit, replaceSymbols);
+  return shallowReduce(context, angleUnit);
 }
 
 Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {

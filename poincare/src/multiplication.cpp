@@ -90,8 +90,8 @@ int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
 }
 
-Expression MultiplicationNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Multiplication(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression MultiplicationNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Multiplication(this).shallowReduce(context, angleUnit);
 }
 
 Expression MultiplicationNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -129,7 +129,7 @@ Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Pr
   return shallowReduce(context, angleUnit);
 }
 
-Expression Multiplication::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Multiplication::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return privateShallowReduce(context, angleUnit, true, true);
 }
 

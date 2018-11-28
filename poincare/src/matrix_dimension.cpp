@@ -11,8 +11,8 @@ constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
 
 int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return MatrixDimension(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return MatrixDimension(this).shallowReduce(context, angleUnit);
 }
 
 Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -37,7 +37,7 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
   return MatrixComplex<T>(operands, 1, 2);
 }
 
-Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

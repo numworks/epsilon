@@ -19,11 +19,11 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return ImaginaryPart(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return ImaginaryPart(this).shallowReduce(context, angleUnit);
 }
 
-Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

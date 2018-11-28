@@ -25,9 +25,9 @@ public:
 
 private:
   // Simplification
-  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) override;
-  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) override;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
+  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit) override;
+  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -56,7 +56,7 @@ public:
   }
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

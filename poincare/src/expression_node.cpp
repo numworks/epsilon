@@ -95,16 +95,16 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-void ExpressionNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  Expression(this).defaultReduceChildren(context, angleUnit, replaceSymbols);
+void ExpressionNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression(this).defaultReduceChildren(context, angleUnit);
 }
 
-void ExpressionNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  Expression(this).defaultDeepReduceChildren(context, angleUnit, replaceSymbols);
+void ExpressionNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression(this).defaultDeepReduceChildren(context, angleUnit);
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Expression(this).defaultShallowReduce(context, angleUnit, replaceSymbols);
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Expression(this).defaultShallowReduce(context, angleUnit);
 }
 
 Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

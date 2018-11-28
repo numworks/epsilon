@@ -18,11 +18,11 @@ int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 
-Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return NaperianLogarithm(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return NaperianLogarithm(this).shallowReduce(context, angleUnit);
 }
 
-Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

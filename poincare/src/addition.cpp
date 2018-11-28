@@ -40,7 +40,7 @@ Expression AdditionNode::complexPart(Context & context, Preferences::AngleUnit a
     }
     result.addChildAtIndexInPlace(part, result.numberOfChildren(), result.numberOfChildren());
   }
-  return result;
+  return result.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
 // Layout

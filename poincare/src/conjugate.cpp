@@ -19,7 +19,7 @@ Expression ConjugateNode::realPart(Context & context, Preferences::AngleUnit ang
 Expression ConjugateNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e = childAtIndex(0)->imaginaryPart(context, angleUnit);
   if (!e.isUninitialized()) {
-    return Opposite(e);
+    return Opposite(e).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
   }
   return Expression();
 }

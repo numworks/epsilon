@@ -32,7 +32,7 @@ Expression OppositeNode::complexCartesianPart(Context & context, Preferences::An
   if (a.isUninitialized()) {
     return Expression();
   }
-  return Opposite(a);
+  return Opposite(a).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
 /* Layout */

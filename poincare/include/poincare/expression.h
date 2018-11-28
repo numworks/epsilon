@@ -185,8 +185,8 @@ public:
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
-  Expression radianToDegree();
-  Expression degreeToRadian();
+  Expression radianToDegree(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression degreeToRadian(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();

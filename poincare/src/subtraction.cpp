@@ -30,7 +30,7 @@ Expression SubtractionNode::complexPart(Context & context, Preferences::AngleUni
   if (a0.isUninitialized() || a1.isUninitialized()) {
     return Expression();
   }
-  return Subtraction(a0, a1);
+  return Subtraction(a0, a1).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
 bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {

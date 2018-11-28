@@ -14,7 +14,7 @@ public:
     return cartesianPartOfComplexFunction(e, context, angleUnit, false);
   }
   static Expression realPartRealFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit) {
-    return Expression(e).clone();
+    return Expression(e).clone().deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
   }
   static Expression imaginaryPartRealFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit);
   // static Expression realPartMatrix(const Expression e, Context & context, Preferences::AngleUnit angleUnit);

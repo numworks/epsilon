@@ -21,7 +21,7 @@ Expression SquareRootNode::complexNorm(Context & context, Preferences::AngleUnit
     return Expression();
   }
   // R = sqrt(r)
-  return SquareRoot::Builder(r);
+  return SquareRoot::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
 Expression SquareRootNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
@@ -30,7 +30,7 @@ Expression SquareRootNode::complexArgument(Context & context, Preferences::Angle
     return Expression();
   }
   // TH = th/2
-  return Division(th, Rational(2));
+  return Division(th, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

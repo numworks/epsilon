@@ -19,8 +19,8 @@ int ArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.name());
 }
 
-Expression ArcCosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return ArcCosine(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression ArcCosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return ArcCosine(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
@@ -38,7 +38,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcCosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression ArcCosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

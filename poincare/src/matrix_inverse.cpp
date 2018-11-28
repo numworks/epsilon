@@ -14,8 +14,8 @@ constexpr Expression::FunctionHelper MatrixInverse::s_functionHelper;
 
 int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return MatrixInverse(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return MatrixInverse(this).shallowReduce(context, angleUnit);
 }
 
 Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -42,7 +42,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
   return inverse;
 }
 
-Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

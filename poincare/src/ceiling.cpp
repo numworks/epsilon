@@ -31,11 +31,11 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Ceiling(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Ceiling(this).shallowReduce(context, angleUnit);
 }
 
-Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

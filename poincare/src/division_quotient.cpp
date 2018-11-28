@@ -12,8 +12,8 @@ constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
 
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
-Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return DivisionQuotient(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return DivisionQuotient(this).shallowReduce(context, angleUnit);
 }
 
 Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -35,7 +35,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
   return Complex<T>(std::floor(f1/f2));
 }
 
-Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

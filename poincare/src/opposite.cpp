@@ -60,15 +60,15 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Opposite(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Opposite(this).shallowReduce(context, angleUnit);
 }
 
 /* Simplification */
 
 Opposite::Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
 
-Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefined()) {
     return result;

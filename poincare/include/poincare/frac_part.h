@@ -25,7 +25,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -43,7 +43,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 private:
   explicit FracPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {
     replaceChildAtIndexInPlace(0, child);

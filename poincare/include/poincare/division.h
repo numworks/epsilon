@@ -46,7 +46,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 
 private:
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
@@ -66,7 +66,7 @@ public:
   }
   Division(const DivisionNode * n) : Expression(n) {}
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

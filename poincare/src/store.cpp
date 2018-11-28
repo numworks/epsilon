@@ -15,16 +15,16 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+void StoreNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   return;
 }
 
-void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   return;
 }
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Store(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Store(this).shallowReduce(context, angleUnit);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -54,7 +54,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol

@@ -30,11 +30,11 @@ int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
-Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Cosine(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Cosine(this).shallowReduce(context, angleUnit);
 }
 
-Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

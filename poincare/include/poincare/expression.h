@@ -26,6 +26,8 @@ class Expression : public TreeHandle {
   friend class BinomialCoefficient;
   friend class Ceiling;
   friend class CommonLogarithm;
+  template<typename T>
+  friend class ComplexNode;
   friend class ComplexArgument;
   friend class ComplexHelper;
   friend class ConfidenceInterval;
@@ -287,6 +289,10 @@ private:
   /* Properties */
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
   int defaultGetPolynomialCoefficients(Context & context, const char * symbol, Expression expression[]) const;
+
+  /* Builder */
+  typedef Expression (*TransformExpression)(Expression e);
+  static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isMinusOneTb, bool isNegativeTb, TransformExpression inverse);
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

@@ -86,6 +86,8 @@ private:
 class Decimal final : public Number {
 friend class Number;
 friend class DecimalNode;
+template<typename T>
+friend class ComplexNode;
 public:
   static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentIsNegative = false);
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);

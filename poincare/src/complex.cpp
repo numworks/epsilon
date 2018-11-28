@@ -42,67 +42,24 @@ T ComplexNode<T>::toScalar() const {
 
 template<typename T>
 Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
-  if (std::isnan(this->real()) || std::isnan(this->imag())) {
-    return Undefined();
-  }
+  T ra, tb;
   if (complexFormat == Preferences::ComplexFormat::Cartesian) {
-      Expression real;
-      Expression imag;
-      if (this->real() != 0 || this->imag() == 0) {
-        real = Number::DecimalNumber<T>(this->real());
-      }
-      if (this->imag() != 0) {
-        if (this->imag() == 1.0 || this->imag() == -1) {
-          imag = Constant(Ion::Charset::IComplex);
-        } else if (this->imag() > 0) {
-          imag = Multiplication(Number::DecimalNumber(this->imag()), Constant(Ion::Charset::IComplex));
-        } else {
-          imag = Multiplication(Number::DecimalNumber(-this->imag()), Constant(Ion::Charset::IComplex));
-        }
-      }
-      if (imag.isUninitialized()) {
-        return real;
-      } else if (real.isUninitialized()) {
-        if (this->imag() > 0) {
-          return imag;
-        } else {
-          return Opposite(imag);
-        }
-        return imag;
-      } else if (this->imag() > 0) {
-        return Addition(real, imag);
-      } else {
-        return Subtraction(real, imag);
-      }
-  }
-  assert(complexFormat == Preferences::ComplexFormat::Polar);
-  Expression norm;
-  Expression exp;
-  T r = std::abs(*this);
-  T th = std::arg(*this);
-  if (r != 1 || th == 0) {
-    norm = Number::DecimalNumber(r);
-  }
-  if (r != 0 && th != 0) {
-    Expression arg;
-    if (th == 1.0) {
-      arg = Constant(Ion::Charset::IComplex);
-    } else if (th == -1.0) {
-      arg = Opposite(Constant(Ion::Charset::IComplex));
-    } else if (th > 0) {
-      arg = Multiplication(Number::DecimalNumber(th), Constant(Ion::Charset::IComplex));
-    } else {
-      arg = Opposite(Multiplication(Number::DecimalNumber(-th), Constant(Ion::Charset::IComplex)));
-    }
-    exp = Power(Constant(Ion::Charset::Exponential), arg);
-  }
-  if (exp.isUninitialized()) {
-    return norm;
-  } else if (norm.isUninitialized()) {
-    return exp;
+    ra = this->real();
+    tb = this->imag();
   } else {
-    return Multiplication(norm, exp);
+    ra = std::abs(*this);
+    tb = std::arg(*this);
   }
+  return Expression::CreateComplexExpression(
+      Number::DecimalNumber<T>(ra),
+      Number::DecimalNumber<T>(tb),
+      complexFormat,
+      (std::isnan(this->real()) || std::isnan(this->imag())),
+      ra == 0.0, ra == 1.0, tb == 0.0, tb == 1.0, tb == -1.0, tb < 0.0,
+      [](Expression e) {
+        assert(e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Rational || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Infinity);
+        return Expression(static_cast<Number &>(e).setSign(ExpressionNode::Sign::Positive)); }
+    );
 }
 
 template <typename T>

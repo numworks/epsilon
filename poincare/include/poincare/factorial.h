@@ -21,6 +21,9 @@ public:
 
   // Properties
   Type type() const override { return Type::Factorial; }
+  Sign sign() const override { return Sign::Positive; }
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+
 private:
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;

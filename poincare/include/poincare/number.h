@@ -46,7 +46,9 @@ public:
   static Number Power(const Number & i, const Number & j);
   static int NaturalOrder(const Number & i, const Number & j);
 
-  Number setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) { return Expression::setSign(s, context, angleUnit).convert<Number>(); }
+  /* Number::setSign does not need a context or an angle unit (a number can be
+   * Infinity, Undefined, Float, Decimal, Rational). */
+  Number setSign(ExpressionNode::Sign s) { return Expression::setSign(s, nullptr, Preferences::AngleUnit::Degree).convert<Number>(); }
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

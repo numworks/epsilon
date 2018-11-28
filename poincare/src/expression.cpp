@@ -455,6 +455,75 @@ U Expression::epsilon() {
   return epsilon;
 }
 
+/* Builder */
+
+Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isMinusOneTb, bool isNegativeTb, TransformExpression inverse) {
+  if (undefined) {
+    return Undefined();
+  }
+  switch (complexFormat) {
+    case Preferences::ComplexFormat::Cartesian:
+    {
+      Expression real;
+      Expression imag;
+      if (!isZeroRa || isZeroTb) {
+        real = ra;
+      }
+      if (!isZeroTb) {
+        if (isOneTb || isMinusOneTb) {
+          imag = Constant(Ion::Charset::IComplex);
+        } else if (isNegativeTb) {
+          imag = Multiplication(inverse(tb), Constant(Ion::Charset::IComplex));
+        } else {
+          imag = Multiplication(tb , Constant(Ion::Charset::IComplex));
+        }
+      }
+      if (imag.isUninitialized()) {
+        return real;
+      } else if (real.isUninitialized()) {
+        if (isNegativeTb) {
+          return Opposite(imag);
+        } else {
+          return imag;
+        }
+      } else if (isNegativeTb) {
+        return Subtraction(real, imag);
+      } else {
+        return Addition(real, imag);
+      }
+    }
+    default:
+    {
+      assert(complexFormat == Preferences::ComplexFormat::Polar);
+      Expression norm;
+      Expression exp;
+      if (!isOneRa || isZeroTb) {
+        norm = ra;
+      }
+      if (!isZeroRa && !isZeroTb) {
+        Expression arg;
+        if (isOneTb) {
+          arg = Constant(Ion::Charset::IComplex);
+        } else if (isMinusOneTb) {
+          arg = Opposite(Constant(Ion::Charset::IComplex));
+        } else if (isNegativeTb) {
+          arg = Opposite(Multiplication(inverse(tb), Constant(Ion::Charset::IComplex)));
+        } else {
+          arg = Multiplication(tb, Constant(Ion::Charset::IComplex));
+        }
+        exp = Power(Constant(Ion::Charset::Exponential), arg);
+      }
+      if (exp.isUninitialized()) {
+        return norm;
+      } else if (norm.isUninitialized()) {
+        return exp;
+      } else {
+        return Multiplication(norm, exp);
+      }
+    }
+  }
+}
+
 /* Expression roots/extrema solver*/
 
 typename Expression::Coordinate2D Expression::nextMinimum(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {

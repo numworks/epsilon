@@ -57,11 +57,12 @@ int ListController::numberOfExpressionRows() {
 };
 
 KDCoordinate ListController::expressionRowHeight(int j) {
+  KDCoordinate defaultHeight = Metric::StoreRowHeight;
   if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() && j == numberOfRows() - 1) {
-    return Metric::StoreRowHeight;
+    // Add sequence row
+    return defaultHeight;
   }
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
-  KDCoordinate defaultHeight = 2*k_expressionCellVerticalMargin + (sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight);
   Layout layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();

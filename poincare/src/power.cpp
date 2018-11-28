@@ -140,8 +140,8 @@ int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 
 // Simplify
 
-Expression PowerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Power(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression PowerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Power(this).shallowReduce(context, angleUnit);
 }
 
 Expression PowerNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -253,7 +253,7 @@ int Power::getPolynomialCoefficients(Context & context, const char * symbolName,
   return -1;
 }
 
-Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
 
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

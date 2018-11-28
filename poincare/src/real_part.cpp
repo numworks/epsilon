@@ -19,11 +19,11 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return RealPart(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return RealPart(this).shallowReduce(context, angleUnit);
 }
 
-Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

@@ -51,8 +51,8 @@ int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Addition(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Addition(this).shallowReduce(context, angleUnit);
 }
 
 Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -141,7 +141,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
   return result;
 }
 
-Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

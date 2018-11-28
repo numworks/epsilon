@@ -36,7 +36,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression shallowReplaceReplaceableSymbols(Context & context) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override;
@@ -64,7 +64,7 @@ public:
 
   // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowReplaceReplaceableSymbols(Context & context);
 private:
   //VariableContext unknownXContext(Context & parentContext) const;

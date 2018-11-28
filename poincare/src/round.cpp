@@ -21,8 +21,8 @@ int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
 
-Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Round(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Round(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
@@ -38,7 +38,7 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
   return Complex<T>(std::round(f1*err)/err);
 }
 
-Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

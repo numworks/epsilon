@@ -24,8 +24,8 @@ int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::s_functionHelper.name());
 }
 
-Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return AbsoluteValue(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return AbsoluteValue(this).shallowReduce(context, angleUnit);
 }
 
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
@@ -33,7 +33,7 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Pre
   return *this;
 }
 
-Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefined()) {
     return e;

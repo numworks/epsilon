@@ -48,13 +48,13 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return CommonLogarithm(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return CommonLogarithm(this).shallowReduce(context, angleUnit);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Logarithm(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Logarithm(this).shallowReduce(context, angleUnit);
 }
 
 template<>
@@ -85,7 +85,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
   return Complex<U>(result);
 }
 
-Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols){
+Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -102,10 +102,10 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleU
 #endif
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational(10));
   replaceWithInPlace(log);
-  return log.shallowReduce(context, angleUnit, replaceSymbols);
+  return log.shallowReduce(context, angleUnit);
 }
 
-Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols){
+Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

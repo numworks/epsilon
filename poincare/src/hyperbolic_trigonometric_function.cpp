@@ -2,11 +2,11 @@
 
 namespace Poincare {
 
-Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

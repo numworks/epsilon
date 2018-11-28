@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression InfinityNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   return Infinity(this).setSign(s, context, angleUnit);
 }
 
@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
   return Complex<T>(m_negative ? -INFINITY : INFINITY);
 }
 
-Expression Infinity::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Infinity::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   Expression result = Infinity(s == ExpressionNode::Sign::Negative);
   replaceWithInPlace(result);
   return result;

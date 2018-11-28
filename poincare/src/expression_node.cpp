@@ -21,7 +21,7 @@ Expression ExpressionNode::replaceUnknown(const Symbol & symbol) {
   return Expression(this).defaultReplaceUnknown(symbol);
 }
 
-Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression ExpressionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   assert(false);
   return Expression();
 }

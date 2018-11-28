@@ -112,7 +112,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
-Expression MultiplicationNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression MultiplicationNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   return Multiplication(this).setSign(s, context, angleUnit);
 }
 
@@ -168,14 +168,14 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
   }
 }
 
-Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i).sign() == ExpressionNode::Sign::Negative) {
       replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit));
     }
   }
-  return shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
+  return shallowReduce(*context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
 }
 
 Expression Multiplication::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -195,7 +195,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
     if (child0.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(child0).isMinusOne()) {
       removeChildAtIndexInPlace(0);
     } else {
-      child0.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+      child0.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
     }
     Expression e = squashUnaryHierarchyInPlace();
     Opposite o = Opposite();
@@ -664,8 +664,8 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
     return;
   }
   Number sumPQ = Number::Addition(p, q);
-  Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-  Number absQ = q.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+  Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+  Number absQ = q.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
   Expression tan = Tangent::Builder(x.clone());
   if (Number::NaturalOrder(absP, absQ) < 0) {
     // Replace sin(x) by tan(x) or sin(x)^p by tan(x)^p
@@ -753,7 +753,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
   while (i < numberOfChildren()) {
     if (childAtIndex(i).type() == ExpressionNode::Type::Power && childAtIndex(i).childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
      Expression e = childAtIndex(i);
-     e.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+     e.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
      removeChildAtIndexInPlace(i);
      m.addChildAtIndexInPlace(e, m.numberOfChildren(), m.numberOfChildren());
      e.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);

@@ -40,8 +40,8 @@ int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
 }
 
-Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Division(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Division(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
@@ -67,7 +67,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 Division::Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
 
-Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
+Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {

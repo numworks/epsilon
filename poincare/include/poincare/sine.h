@@ -31,7 +31,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -49,7 +49,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sin", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 private:
   explicit Sine(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {
     replaceChildAtIndexInPlace(0, child);

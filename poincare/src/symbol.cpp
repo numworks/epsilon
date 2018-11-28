@@ -116,8 +116,8 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return strlcpy(buffer, m_name, bufferSize);
 }
 
-Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  return Symbol(this).shallowReduce(context, angleUnit, replaceSymbols);
+Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return Symbol(this).shallowReduce(context, angleUnit);
 }
 
 Expression SymbolNode::shallowReplaceReplaceableSymbols(Context & context) {
@@ -156,10 +156,7 @@ bool Symbol::isRegressionSymbol(const char * c) {
   return false;
 }
 
-Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols) {
-  if (!replaceSymbols) {
-    return *this;
-  }
+Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Symbol s = *this;
   Expression result = SymbolAbstract::Expand(s, context, true);
   if (result.isUninitialized()) {

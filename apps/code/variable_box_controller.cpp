@@ -48,7 +48,8 @@ static bool shouldAddObject(const char * name, int maxLength) {
 }
 
 int VariableBoxController::numberOfRows() {
-  return m_scriptNodesCount < k_maxScriptNodesCount ? m_scriptNodesCount : k_maxScriptNodesCount;
+  assert(m_scriptNodesCount <= k_maxScriptNodesCount);
+  return m_scriptNodesCount;
 }
 
 int VariableBoxController::reusableCellCount(int type) {
@@ -57,6 +58,8 @@ int VariableBoxController::reusableCellCount(int type) {
 }
 
 void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index < m_scriptNodesCount);
+  assert(m_scriptNodesCount <= k_maxScriptNodesCount);
   ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
   myCell->setScriptNode(&m_scriptNodes[index]);
 }
@@ -90,6 +93,7 @@ HighlightCell * VariableBoxController::leafCellAtIndex(int index) {
 
 bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(rowIndex >= 0 && rowIndex < m_scriptNodesCount);
+  assert(m_scriptNodesCount <= k_maxScriptNodesCount);
   m_selectableTableView.deselectTable();
   ScriptNode selectedScriptNode = m_scriptNodes[rowIndex];
   insertTextInCaller(selectedScriptNode.name());
@@ -109,13 +113,17 @@ void VariableBoxController::insertTextInCaller(const char * text) {
 }
 
 void VariableBoxController::addFunctionAtIndex(const char * functionName, int scriptIndex) {
-  m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
-  m_scriptNodesCount++;
+  if (m_scriptNodesCount < k_maxScriptNodesCount) {
+    m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
+    m_scriptNodesCount++;
+  }
 }
 
 void VariableBoxController::addVariableAtIndex(const char * variableName, int scriptIndex) {
-  m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
-  m_scriptNodesCount++;
+  if (m_scriptNodesCount < k_maxScriptNodesCount) {
+    m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
+    m_scriptNodesCount++;
+  }
 }
 
 }

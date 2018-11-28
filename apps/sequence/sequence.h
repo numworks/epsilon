@@ -36,6 +36,7 @@ public:
   int numberOfElements();
   Poincare::Layout nameLayout();
   Poincare::Layout definitionName();
+  Poincare::Layout definitionNameWithEqual();
   Poincare::Layout firstInitialConditionName();
   Poincare::Layout secondInitialConditionName();
   bool isDefined() override;
@@ -64,7 +65,7 @@ private:
   Poincare::Layout m_firstInitialConditionLayout;
   Poincare::Layout m_secondInitialConditionLayout;
   Poincare::Layout m_nameLayout;
-  Poincare::Layout m_definitionName;
+  Poincare::Layout m_definitionNameWithEqual;
   Poincare::Layout m_firstInitialConditionName;
   Poincare::Layout m_secondInitialConditionName;
   int m_initialRank;

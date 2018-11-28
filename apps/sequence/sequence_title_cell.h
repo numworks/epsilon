@@ -21,8 +21,8 @@ public:
     return m_titleTextView.layout();
   }
 private:
-  static constexpr float k_horizontalOrientationHorizontalAlignment = 0.5f;
-  static constexpr float k_verticalOrientationHorizontalAlignment = 1.0f;
+  static constexpr float k_horizontalOrientationAlignment = 0.5f;
+  static constexpr float k_verticalOrientationHorizontalAlignment = 0.9f;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

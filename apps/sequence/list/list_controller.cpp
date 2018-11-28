@@ -195,7 +195,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setLayout(sequence->definitionName());
+    myCell->setLayout(sequence->definitionNameWithEqual());
   }
   if (sequenceDefinitionForRow(j) == 1) {
     myCell->setLayout(sequence->firstInitialConditionName());

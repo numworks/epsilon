@@ -46,6 +46,16 @@ Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit
   return Division(this).shallowReduce(context, angleUnit, target);
 }
 
+Expression DivisionNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+  Division d(this);
+  Expression r0 = d.childAtIndex(0).complexNorm(context, angleUnit);
+  Expression r1 = d.childAtIndex(1).complexNorm(context, angleUnit);
+  if (r0.isUninitialized() || r1.isUninitialized()) {
+    return Expression();
+  }
+  return Division(r0,r1);
+}
+
 Expression DivisionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
   Division e(this);
   Expression a = e.childAtIndex(0).realPart(context, angleUnit);

@@ -28,6 +28,29 @@ ExpressionNode::Sign MultiplicationNode::sign() const {
   return (Sign)sign;
 }
 
+Expression MultiplicationNode::complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool realPart) const {
+  Multiplication m(this);
+  int nbChildren = m.numberOfChildren();
+  assert(nbChildren > 0);
+  Expression real = m.childAtIndex(0).realPart(context, angleUnit);
+  Expression imag = m.childAtIndex(0).imaginaryPart(context, angleUnit);
+  for (int i = 1; i < nbChildren; i++) {
+    if (real.isUninitialized() || imag.isUninitialized()) {
+      return Expression();
+    }
+    Expression childReal = m.childAtIndex(i).realPart(context, angleUnit);
+    Expression childImag = m.childAtIndex(i).imaginaryPart(context, angleUnit);
+    if (childReal.isUninitialized() || childImag.isUninitialized()) {
+      return Expression();
+    }
+    Expression newReal = Subtraction(Multiplication(real.clone(), childReal.clone()), Multiplication(imag.clone(), childImag.clone()));
+    Expression newImag = Addition(Multiplication(real, childImag), Multiplication(imag, childReal));
+    real = newReal;
+    imag = newImag;
+  }
+  return realPart ? real : imag;
+}
+
 Expression MultiplicationNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
   Multiplication m(this);
   Multiplication norm;
@@ -41,7 +64,7 @@ Expression MultiplicationNode::complexNorm(Context & context, Preferences::Angle
   return norm;
 }
 
-Expression MultiplicationNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
+/*Expression MultiplicationNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
   Multiplication m(this);
   Addition arg;
   for (int i = 0; i < m.numberOfChildren(); i++) {
@@ -53,7 +76,7 @@ Expression MultiplicationNode::complexArgument(Context & context, Preferences::A
   }
   return arg;
 }
-
+*/
 int MultiplicationNode::polynomialDegree(Context & context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * c : children()) {

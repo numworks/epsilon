@@ -178,7 +178,7 @@ void initQSPI() {
   // Enable QUADSPI AHB3 peripheral clocks
   RCC.AHB3ENR()->setQSPIEN(true);
   // Configure controller for target device
-  QUADSPI.DCR()->setFSIZE(FlashNumberOfAddressBits-1);
+  QUADSPI.DCR()->setFSIZE(NumberOfAddressBitsInChip - 1);
 
   QUADSPI.DCR()->setCSHT(7); // Highest value. TODO: make it optimal
   QUADSPI.CR()->setPRESCALER(255); // Highest value. TODO: make it optimal
@@ -202,16 +202,27 @@ void initChip() {
   set_as_memory_mapped();
 }
 
+int SectorAtAddress(uint32_t address) {
+  int i = address >> NumberOfAddressBitsIn64KbyteBlock;
+  if (i >= NumberOfSectors) {
+    return -1;
+  }
+  return i;
+}
+
 void MassErase() {
   send_command(Command::WriteEnable);
+  wait();
   send_command(Command::ChipErase);
   wait();
   set_as_memory_mapped();
 }
 
-void EraseSector() {
+void EraseSector(int i) {
+  assert(i >= 0 && i < NumberOfSectors);
   send_command(Command::WriteEnable);
-  //send_command(Command::BlockErase /* PICK SIZE */, addressOfSector);
+  wait();
+  send_write_command(Command::Erase64KbyteBlock, reinterpret_cast<uint8_t *>(i << NumberOfAddressBitsIn64KbyteBlock), nullptr, 0);
   wait();
   set_as_memory_mapped();
 }

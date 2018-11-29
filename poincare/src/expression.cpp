@@ -144,6 +144,8 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
 }
 
 bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
+  // Reset interrupting flag because we use deepReduce
+  sSimplificationHasBeenInterrupted = false;
   assert(!recursivelyMatches(IsMatrix, context, true));
   // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
   int index = 0;
@@ -270,6 +272,8 @@ int Expression::defaultGetPolynomialCoefficients(Context & context, const char *
 }
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
+  // Reset interrupting flag because we use deepReduce
+  sSimplificationHasBeenInterrupted = false;
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
     coefficients[i] = coefficients[i].deepReduce(context, angleUnit);

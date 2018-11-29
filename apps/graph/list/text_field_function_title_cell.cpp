@@ -48,6 +48,11 @@ void TextFieldFunctionTitleCell::setText(const char * title) {
   m_textField.setText(title);
 }
 
+void TextFieldFunctionTitleCell::setHorizontalAlignment(float alignment) {
+  assert(alignment >= 0.0f && alignment <= 1.0f);
+  m_textField.setAlignment(alignment, verticalAlignment());
+}
+
 void TextFieldFunctionTitleCell::layoutSubviews() {
   KDRect frame = subviewFrame();
   m_textField.setFrame(frame);
@@ -57,19 +62,23 @@ void TextFieldFunctionTitleCell::layoutSubviews() {
       min(
         1.0f,
         ((float)(maxTextFieldX - k_textFieldRightMargin))/((float)maxTextFieldX)));
-  KDCoordinate glyphHeight = font()->glyphSize().height();
-  float verticalAlignment = max(
-      0.0f,
-      min(
-        1.0f,
-        m_baseline < 0 ? 0.5f : ((float)(m_baseline - glyphHeight/2))/((float)frame.height()+1-glyphHeight)));
-  m_textField.setAlignment(horizontalAlignment, verticalAlignment);
+  m_textField.setAlignment(horizontalAlignment, verticalAlignment());
 }
 
 void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
   if (isEditing()) {
     app()->setFirstResponder(&m_textField);
   }
+}
+
+float TextFieldFunctionTitleCell::verticalAlignment() const {
+  KDCoordinate glyphHeight = font()->glyphSize().height();
+  return max(
+      0.0f,
+      min(
+        1.0f,
+        m_baseline < 0 ? 0.5f : ((float)(m_baseline - glyphHeight/2))/((float)subviewFrame().height()+1-glyphHeight)));
+
 }
 
 }

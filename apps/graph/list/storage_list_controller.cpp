@@ -40,6 +40,7 @@ void StorageListController::renameSelectedFunction() {
 
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   TextFieldFunctionTitleCell * selectedTitleCell = (TextFieldFunctionTitleCell *)(selectableTableView()->selectedCell());
+  selectedTitleCell->setHorizontalAlignment(1.0f);
   app()->setFirstResponder(selectedTitleCell);
   selectedTitleCell->setEditing(true);
 }

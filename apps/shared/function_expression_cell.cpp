@@ -2,11 +2,6 @@
 
 namespace Shared {
 
-FunctionExpressionCell::FunctionExpressionCell() :
-  EvenOddExpressionCell()
-{
-}
-
 KDSize FunctionExpressionCell::minimalSizeForOptimalDisplay() const {
   KDSize expressionSize = m_expressionView.minimalSizeForOptimalDisplay();
   return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin, expressionSize.height()+k_separatorThickness);

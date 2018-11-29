@@ -42,16 +42,14 @@ void StorageListController::renameSelectedFunction() {
 bool StorageListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   // Compute the new name
   size_t textLength = strlen(text);
-  size_t argumentLength = StorageFunction::k_parenthesedArgumentWithEqualLength;
-  constexpr int maxBaseNameSize = StorageFunction::k_maxNameWithArgumentAndEqualSize;
+  size_t argumentLength = StorageFunction::k_parenthesedArgumentLength;
+  constexpr int maxBaseNameSize = StorageFunction::k_maxNameWithArgumentSize;
   char baseName[maxBaseNameSize];
   if (textLength <= argumentLength) {
     // The user entered an empty name. Use a default function name.
     StorageCartesianFunction::DefaultName(baseName, maxBaseNameSize);
     size_t defaultNameLength = strlen(baseName);
-    assert(defaultNameLength + Shared::StorageCartesianFunction::k_maxNameWithArgumentAndEqualSize < maxBaseNameSize);
     strlcpy(baseName + defaultNameLength, StorageFunction::k_parenthesedArgument, maxBaseNameSize - defaultNameLength);
-    strlcpy(baseName + defaultNameLength + StorageFunction::k_parenthesedArgumentLength, StorageFunction::k_equal, maxBaseNameSize - defaultNameLength - StorageFunction::k_parenthesedArgumentLength);
     textField->setText(baseName);
     baseName[defaultNameLength] = 0;
   } else {
@@ -168,7 +166,7 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
 
 void StorageListController::setFunctionNameInTextField(ExpiringPointer<StorageFunction> function, TextField * textField) {
   char bufferName[BufferTextView::k_maxNumberOfChar];
-  function->nameWithArgumentAndEqual(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
+  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
   textField->setText(bufferName);
 }
 

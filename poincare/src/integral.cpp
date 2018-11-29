@@ -38,7 +38,7 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name());
 }
 
-Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Integral(this).shallowReduce(context, angleUnit);
 }
 

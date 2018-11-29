@@ -40,8 +40,8 @@ int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
 }
 
-Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Division(this).shallowReduce(context, angleUnit);
+Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Division(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
@@ -67,7 +67,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 Division::Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
 
-Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -76,9 +76,9 @@ Expression Division::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
   Expression p = Power(childAtIndex(1), Rational(-1));
   Multiplication m = Multiplication(childAtIndex(0), p);
-  p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
+  p.shallowReduce(context, angleUnit, target); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
   replaceWithInPlace(m);
-  return m.shallowReduce(context, angleUnit);
+  return m.shallowReduce(context, angleUnit, target);
 }
 
 }

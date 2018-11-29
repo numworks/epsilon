@@ -13,7 +13,7 @@ constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
 
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return MatrixTrace(this).shallowReduce(context, angleUnit);
 }
 

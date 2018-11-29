@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit);
 }
 

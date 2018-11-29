@@ -185,7 +185,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     equation = polynomialCoefficients[0];
     index++;
   }
-  constant[0] = Opposite(equation.clone()).deepReduce(context, angleUnit);
+  constant[0] = Opposite(equation.clone()).deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
@@ -201,9 +201,9 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 // Private
 
-void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    childAtIndex(i).deepReduce(context, angleUnit);
+    childAtIndex(i).deepReduce(context, angleUnit, target);
   }
 }
 
@@ -274,7 +274,7 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   sSimplificationHasBeenInterrupted = false;
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
-    coefficients[i] = coefficients[i].deepReduce(context, angleUnit);
+    coefficients[i] = coefficients[i].deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
   }
   return degree;
 }
@@ -326,7 +326,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
 
 Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  Expression e = reduce(context, angleUnit);
+  Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
   if (!sSimplificationHasBeenInterrupted) {
     e = e.deepBeautify(context, angleUnit);
   }
@@ -366,10 +366,10 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
 
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(context, angleUnit);
+  return deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
 }
 
-Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
 #if MATRIX_EXACT_REDUCING
 #else
   if (IsMatrix(*this, context, true)) {
@@ -378,11 +378,11 @@ Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angl
   }
 #endif
 
-  deepReduceChildren(context, angleUnit);
+  deepReduceChildren(context, angleUnit, target);
   if (sSimplificationHasBeenInterrupted) {
     return *this;
   }
-  return shallowReduce(context, angleUnit);
+  return shallowReduce(context, angleUnit, target);
 }
 
 Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {

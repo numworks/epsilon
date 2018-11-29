@@ -57,8 +57,8 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Function(this).shallowReduce(context, angleUnit); // This uses Symbol::shallowReduce
+Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Function(this).shallowReduce(context, angleUnit, target); // This uses Symbol::shallowReduce
 }
 
 Expression FunctionNode::shallowReplaceReplaceableSymbols(Context & context) {
@@ -108,12 +108,12 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Function f(*this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (!e.isUninitialized()) {
     replaceWithInPlace(e);
-    return e.deepReduce(context, angleUnit);
+    return e.deepReduce(context, angleUnit, target);
   }
   return *this;
 }

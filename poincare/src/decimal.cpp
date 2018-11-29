@@ -85,7 +85,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   return ((int)sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Decimal(this).shallowReduce(context, angleUnit);
 }
 

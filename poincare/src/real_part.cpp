@@ -19,7 +19,7 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return RealPart(this).shallowReduce(context, angleUnit);
 }
 

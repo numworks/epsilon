@@ -34,7 +34,7 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
-Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Derivative(this).shallowReduce(context, angleUnit);
 }
 

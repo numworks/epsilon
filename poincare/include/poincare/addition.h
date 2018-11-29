@@ -42,7 +42,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Evaluation */
@@ -74,7 +74,7 @@ public:
     }
   }
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 private:
@@ -84,7 +84,7 @@ private:
 
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2);
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
-  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };
 

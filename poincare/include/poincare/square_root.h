@@ -27,7 +27,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -46,7 +46,7 @@ public:
   static_assert('\x91' == Ion::Charset::Root, "Charset error");
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
   explicit SquareRoot(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
     replaceChildAtIndexInPlace(0, child);

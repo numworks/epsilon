@@ -19,7 +19,7 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
-Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return FracPart(this).shallowReduce(context, angleUnit);
 }
 

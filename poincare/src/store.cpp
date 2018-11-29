@@ -15,11 +15,11 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
+void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   return;
 }
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Store(this).shallowReduce(context, angleUnit);
 }
 

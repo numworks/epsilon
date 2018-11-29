@@ -51,8 +51,8 @@ int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Addition(this).shallowReduce(context, angleUnit);
+Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Addition(this).shallowReduce(context, angleUnit, target);
 }
 
 Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
@@ -141,7 +141,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
   return result;
 }
 
-Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -231,7 +231,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
       continue;
     }
     if (TermsHaveIdenticalNonNumeralFactors(e1, e2)) {
-      factorizeChildrenAtIndexesInPlace(i, i+1, context, angleUnit);
+      factorizeChildrenAtIndexesInPlace(i, i+1, context, angleUnit, target);
       continue;
     }
     i++;
@@ -254,9 +254,11 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
   // Step 5: Let's remove the addition altogether if it has a single child
   Expression result = squashUnaryHierarchyInPlace();
 
-  // Step 6: Last but not least, let's put everything under a common denominator
+  /* Step 6: Let's put everything under a common denominator.
+   * This step is done only for ReductionTarget::User if the parent expression
+   * is not an addition. */
   Expression p = result.parent();
-  if (result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
+  if (target == ExpressionNode::ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
      result = factorizeOnCommonDenominator(context, angleUnit);
   }
@@ -327,7 +329,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   for (int i = 0; i < numberOfChildren(); i++) {
     Multiplication m = Multiplication(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
-    m.privateShallowReduce(context, angleUnit, true, false);
+    m.privateShallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User, true, false);
   }
 
   // Step 3: Add the denominator
@@ -335,18 +337,18 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   Multiplication result = Multiplication(numerator, inverseDenominator);
 
   // Step 4: Simplify the numerator
-  numerator.shallowReduce(context, angleUnit);
+  numerator.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  inverseDenominator.deepReduce(context, angleUnit);
+  inverseDenominator.deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop). */
   replaceWithInPlace(result);
-  return result.privateShallowReduce(context, angleUnit, false, true);
+  return result.privateShallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User, false, true);
 }
 
-void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {
+void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   /* This function factorizes two children which only differ by a rational
    * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
    * could be merged, and this turned into AdditionNode(5*pi). */
@@ -382,7 +384,7 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context
   }
 
   // Step 5: Reduce the multiplication (in case the new rational factor is zero)
-  m.shallowReduce(context, angleUnit);
+  m.shallowReduce(context, angleUnit, target);
 }
 
 template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>);

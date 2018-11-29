@@ -16,7 +16,7 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-Expression ParenthesisNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ParenthesisNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Parenthesis(this).shallowReduce(context, angleUnit);
 }
 

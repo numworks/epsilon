@@ -20,7 +20,7 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return GreatCommonDivisor(this).shallowReduce(context, angleUnit);
 }
 

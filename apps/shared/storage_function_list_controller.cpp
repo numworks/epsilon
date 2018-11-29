@@ -279,9 +279,13 @@ void StorageFunctionListController::configureFunction(Ion::Storage::Record recor
   stack->push(parameterController());
 }
 
-void StorageFunctionListController::computeTitlesColumnWidth() {
+void StorageFunctionListController::computeTitlesColumnWidth(bool forceMax) {
+  if (forceMax) {
+    m_titlesColumnWidth = nameWidth(StorageFunction::k_maxNameWithArgumentSize - 1)+k_functionTitleSumOfMargins;
+    return;
+  }
   KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
-  m_titlesColumnWidth = maxTitleWidth < k_minTitleColumnWidth ? k_minTitleColumnWidth : maxTitleWidth;
+  m_titlesColumnWidth = max(maxTitleWidth, k_minTitleColumnWidth);
 }
 
 TabViewController * StorageFunctionListController::tabController() const {
@@ -308,7 +312,7 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = max(maxNameLength, dotPosition-functionName);
   }
-  return (maxNameLength + StorageFunction::k_parenthesedArgumentLength) * titleCells(0)->font()->glyphSize().width();
+  return nameWidth(maxNameLength + StorageFunction::k_parenthesedArgumentLength);
 }
 
 void StorageFunctionListController::didChangeModelsList() {
@@ -353,6 +357,11 @@ void StorageFunctionListController::shiftMemoization(bool newCellIsUnder) {
     }
   }
   StorageExpressionModelListController::shiftMemoization(newCellIsUnder);
+}
+
+KDCoordinate StorageFunctionListController::nameWidth(int nameLength) const {
+  assert(nameLength >= 0);
+  return nameLength * const_cast<StorageFunctionListController *>(this)->titleCells(0)->font()->glyphSize().width();
 }
 
 }

@@ -27,7 +27,6 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setShowsIndicators(false);
 }
 
 /* TableViewDataSource */

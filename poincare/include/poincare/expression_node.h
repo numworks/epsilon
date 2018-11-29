@@ -144,7 +144,6 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual void reduceChildren(Context & context, Preferences::AngleUnit angleUnit);
   /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
   /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

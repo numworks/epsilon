@@ -25,7 +25,6 @@ public:
 
 private:
   // Simplification
-  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit) override;
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   // Layout

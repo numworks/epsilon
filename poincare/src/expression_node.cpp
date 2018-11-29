@@ -95,10 +95,6 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-void ExpressionNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression(this).defaultReduceChildren(context, angleUnit);
-}
-
 void ExpressionNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   Expression(this).defaultDeepReduceChildren(context, angleUnit);
 }

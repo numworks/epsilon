@@ -38,8 +38,6 @@ public:
 
   // Responder
   void didBecomeFirstResponder() override;
-protected:
-  KDRect textFieldFrame() const;
 private:
   constexpr static float k_horizontalAlignment = 1.0f;
   constexpr static int k_textFieldBufferSize = Shared::StorageFunction::k_maxNameWithArgumentAndEqualSize;

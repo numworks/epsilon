@@ -59,6 +59,10 @@ bool Expression::shouldStopProcessing() {
   return false;
 }
 
+void Expression::resetInterruption() {
+  sSimplificationHasBeenInterrupted = false;
+}
+
 /* Hierarchy */
 
 Expression Expression::childAtIndex(int i) const {
@@ -196,12 +200,6 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 }
 
 // Private
-
-void Expression::defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    childAtIndex(i).reduce(context, angleUnit);
-  }
-}
 
 void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   for (int i = 0; i < numberOfChildren(); i++) {

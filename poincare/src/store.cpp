@@ -15,10 +15,6 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
-  return;
-}
-
 void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
   return;
 }

@@ -172,6 +172,7 @@ void StorageExpressionModelListController::addEmptyModel() {
 
 void StorageExpressionModelListController::reinitExpression(ExpiringPointer<StorageExpressionModel> model) {
   model->setContent("");
+  resetMemoization();
   selectableTableView()->reloadData();
 }
 
@@ -197,6 +198,7 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
         StorageExpressionModelListController * myController = static_cast<StorageExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
+        myController->resetMemoization();
         return myController->editSelectedRecordWithText(textBody);
       },
       [](void * context, void * sender){

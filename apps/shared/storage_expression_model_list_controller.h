@@ -23,7 +23,7 @@ protected:
   // Responder
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addEmptyModel();
-  virtual void didChangeModelsList() {}
+  virtual void didChangeModelsList() { resetMemoization(); }
   virtual void reinitExpression(ExpiringPointer<StorageExpressionModel> model);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);

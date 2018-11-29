@@ -17,6 +17,7 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment) { m_expressionView.setAlignment(horizontalAlignment, verticalAlignment); }
   void setLeftMargin(KDCoordinate margin);
   void setRightMargin(KDCoordinate margin);
+  KDPoint drawingOrigin() const { return m_expressionView.drawingOrigin(); }
   Poincare::Layout layout() const override { return m_expressionView.layout(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:

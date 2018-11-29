@@ -148,6 +148,8 @@ HighlightCell * StorageListController::expressionCells(int index) {
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
+  StorageExpressionModelListController::willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
+  titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
     ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());

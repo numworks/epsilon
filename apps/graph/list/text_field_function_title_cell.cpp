@@ -4,10 +4,13 @@
 
 namespace Graph {
 
+static inline float min(float x, float y) { return (x<y ? x : y); }
+static inline float max(float x, float y) { return (x>y ? x : y); }
+
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::StorageFunction::k_parenthesedArgumentWithEqualLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 1.0f, 0.5f)
+  m_textField(Shared::StorageFunction::k_parenthesedArgumentWithEqualLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, k_horizontalAlignment, 0.5f)
   {}
 
 void TextFieldFunctionTitleCell::setHighlighted(bool highlight) {
@@ -45,7 +48,11 @@ void TextFieldFunctionTitleCell::setText(const char * title) {
 }
 
 void TextFieldFunctionTitleCell::layoutSubviews() {
-  m_textField.setFrame(textFieldFrame());
+  KDRect frame = textFieldFrame();
+  m_textField.setFrame(frame);
+  KDCoordinate glyphHeight = font()->glyphSize().height();
+  float verticalAlignment = max(0.0f, min(1.0f, m_baseline < 0 ? 0.5f : ((float)(m_baseline - glyphHeight/2))/((float)frame.height()+1-glyphHeight)));
+  m_textField.setAlignment(k_horizontalAlignment, verticalAlignment);
 }
 
 void TextFieldFunctionTitleCell::didBecomeFirstResponder() {

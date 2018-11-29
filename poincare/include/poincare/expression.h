@@ -102,6 +102,7 @@ public:
   typedef bool (*CircuitBreaker)();
   static void setCircuitBreaker(CircuitBreaker cb);
   static bool shouldStopProcessing();
+  static void resetInterruption();
 
   /* Hierarchy */
   Expression childAtIndex(int i) const;
@@ -169,9 +170,6 @@ public:
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);
-  void reduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
-    return node()->reduceChildren(context, angleUnit);
-  }
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
 
   /* Approximation Helper */
@@ -266,7 +264,6 @@ private:
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
     return node()->deepReduceChildren(context, angleUnit);
   }
-  void defaultReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
   void defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }

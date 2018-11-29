@@ -39,7 +39,7 @@ public:
   // Responder
   void didBecomeFirstResponder() override;
 private:
-  constexpr static float k_horizontalAlignment = 1.0f;
+  constexpr static KDCoordinate k_textFieldRightMargin = 4;
   constexpr static int k_textFieldBufferSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
   Shared::TextFieldWithExtension m_textField;
   char m_textFieldBuffer[k_textFieldBufferSize];

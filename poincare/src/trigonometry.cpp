@@ -38,13 +38,13 @@ float Trigonometry::characteristicXRange(const Expression & e, Context & context
   return 2.0f*pi/std::fabs(a);
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(e.type() == ExpressionNode::Type::Sine
       || e.type() == ExpressionNode::Type::Cosine
       || e.type() == ExpressionNode::Type::Tangent);
 
   // Step 1. Try finding an easy standard calculation reduction
-  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit);
+  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
     return lookup;
@@ -61,15 +61,15 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
 
   // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
   if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
-    e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit).shallowReduce(context, angleUnit);
+    e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit).shallowReduce(context, angleUnit, target);
     if (e.type() == ExpressionNode::Type::Cosine) {
-      return e.shallowReduce(context, angleUnit);
+      return e.shallowReduce(context, angleUnit, target);
     } else {
       Multiplication m(Rational(-1));
       e.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(e, 1, 1);
-      e.shallowReduce(context, angleUnit);
-      return m.shallowReduce(context, angleUnit);
+      e.shallowReduce(context, angleUnit, target);
+      return m.shallowReduce(context, angleUnit, target);
     }
   }
 
@@ -121,20 +121,20 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
       Expression newR = Rational(div.remainder, rDenominator);
       Expression rationalParent = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0) : e;
       rationalParent.replaceChildAtIndexInPlace(0, newR);
-      newR.shallowReduce(context, angleUnit);
+      newR.shallowReduce(context, angleUnit, target);
       if (angleUnit == Preferences::AngleUnit::Radian) {
-        e.childAtIndex(0).shallowReduce(context, angleUnit);
+        e.childAtIndex(0).shallowReduce(context, angleUnit, target);
       }
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e.type() != ExpressionNode::Type::Tangent) {
         /* Step 4.6. If we subtracted an odd number of Pi in 4.2, we need to
          * multiply the result by -1 (because cos((2k+1)Pi + x) = -cos(x) */
         unaryCoefficient *= -1;
       }
-      Expression simplifiedCosine = e.shallowReduce(context, angleUnit); // recursive
+      Expression simplifiedCosine = e.shallowReduce(context, angleUnit, target); // recursive
       Multiplication m = Multiplication(Rational(unaryCoefficient));
       simplifiedCosine.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
-      return m.shallowReduce(context, angleUnit);
+      return m.shallowReduce(context, angleUnit, target);
     }
     assert(r.sign() == ExpressionNode::Sign::Positive);
   }
@@ -155,7 +155,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
   return false;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(e.type() == ExpressionNode::Type::ArcCosine || e.type() == ExpressionNode::Type::ArcSine || e.type() == ExpressionNode::Type::ArcTangent);
   ExpressionNode::Type correspondingType = e.type() == ExpressionNode::Type::ArcCosine ? ExpressionNode::Type::Cosine : (e.type() == ExpressionNode::Type::ArcSine ? ExpressionNode::Type::Sine : ExpressionNode::Type::Tangent);
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180;
@@ -183,7 +183,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   }
 
   // Step 3. Try finding an easy standard calculation reduction
-  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit);
+  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
     return lookup;
@@ -203,7 +203,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
       newArgument = e.childAtIndex(0);
       static_cast<Multiplication&>(newArgument).removeChildAtIndexInPlace(0);
     }
-    newArgument = newArgument.shallowReduce(context, angleUnit);
+    newArgument = newArgument.shallowReduce(context, angleUnit, target);
     if (e.type() == ExpressionNode::Type::ArcCosine) {
       // Do the reduction after the if case, or it might change the result!
       Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
@@ -211,14 +211,14 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
       e.replaceWithInPlace(s);
       s.replaceChildAtIndexInPlace(0, pi);
       s.replaceChildAtIndexInPlace(1, e);
-      e.shallowReduce(context, angleUnit);
-      return s.shallowReduce(context, angleUnit);
+      e.shallowReduce(context, angleUnit, target);
+      return s.shallowReduce(context, angleUnit, target);
     } else {
       Multiplication m(Rational(-1));
       e.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(e, 1, 1);
-      e.shallowReduce(context, angleUnit);
-      return m.shallowReduce(context, angleUnit);
+      e.shallowReduce(context, angleUnit, target);
+      return m.shallowReduce(context, angleUnit, target);
     }
   }
 
@@ -278,7 +278,7 @@ constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][5] =
  {"165",    "\x8A*11*12^(-1)",   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "",                                   ""},
  {"180",    "\x8A",              "-1",                                 "0",                                  "0"}};
 
-Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(type == ExpressionNode::Type::Sine
       || type == ExpressionNode::Type::Cosine
       || type == ExpressionNode::Type::Tangent
@@ -306,14 +306,14 @@ Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Co
     if (input.isUninitialized()) {
       continue;
     }
-    input = input.deepReduce(context, angleUnit);
+    input = input.deepReduce(context, angleUnit, target);
     bool rightInput = input.isIdenticalTo(e);
     if (rightInput) {
       Expression output = Expression::Parse(cheatTable[i][outputIndex]);
       if (output.isUninitialized()) {
         return Expression();
       }
-      return output.deepReduce(context, angleUnit);
+      return output.deepReduce(context, angleUnit, target);
     }
   }
   return Expression();

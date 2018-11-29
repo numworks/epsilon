@@ -21,7 +21,7 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
-Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return ComplexArgument(this).shallowReduce(context, angleUnit);
 }
 

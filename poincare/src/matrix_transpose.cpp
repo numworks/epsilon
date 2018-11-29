@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
 
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return MatrixTranspose(this).shallowReduce(context, angleUnit);
 }
 

@@ -20,7 +20,7 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
 }
 
-Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return DivisionRemainder(this).shallowReduce(context, angleUnit);
 }
 

@@ -144,8 +144,13 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  enum class ReductionTarget {
+    BottomUpComputation = 0,
+    TopDownComputation = 1,
+    User
+  };
+  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;

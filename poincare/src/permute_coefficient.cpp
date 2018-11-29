@@ -23,7 +23,7 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return PermuteCoefficient(this).shallowReduce(context, angleUnit);
 }
 

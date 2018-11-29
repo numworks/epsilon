@@ -17,9 +17,6 @@ public:
   constexpr static int k_parenthesedArgumentLength = 3;
   static constexpr char k_parenthesedArgument[k_parenthesedArgumentLength+1] = "(x)";
   constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
-  constexpr static int k_parenthesedArgumentWithEqualLength = k_parenthesedArgumentLength + 1;
-  static constexpr char k_equal[] = "=";
-  constexpr static int k_maxNameWithArgumentAndEqualSize = k_maxNameWithArgumentSize + 1;
   static bool BaseNameCompliant(const char * baseName, NameNotCompliantError * error = nullptr);
 
   // Constructors
@@ -32,7 +29,6 @@ public:
 
   // Name
   int nameWithArgument(char * buffer, size_t bufferSize, char arg);
-  int nameWithArgumentAndEqual(char * buffer, size_t bufferSize, char arg);
 
   // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {

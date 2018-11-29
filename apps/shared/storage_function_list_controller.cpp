@@ -25,6 +25,12 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
     }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_titlesColumnWidth(k_minTitleColumnWidth)
 {
+  /* m_memoizedCellBaseline is not initialized by the call to
+   * resetMemoizationForIndex in StorageExpressionModelListController's
+   * constructor, because it is a virtual method in a constructor. */
+  for (int i = 0; i < k_memoizedCellsCount; i++) {
+    m_memoizedCellBaseline[i] = -1;
+  }
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
 }
@@ -98,7 +104,7 @@ int StorageFunctionListController::indexFromCumulatedHeight(KDCoordinate offsetY
 
   KDCoordinate currentCumulatedHeight = cumulatedHeightFromIndex(currentSelectedRow);
   if (offsetY > currentCumulatedHeight) {
-    int iMax = min(k_memoizedCellHeightsCount/2 + 1, rowsCount - currentSelectedRow);
+    int iMax = min(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
     for (int i = 0; i < iMax; i++) {
       currentCumulatedHeight+= rowHeight(currentSelectedRow + i);
       if (offsetY <= currentCumulatedHeight) {
@@ -106,7 +112,7 @@ int StorageFunctionListController::indexFromCumulatedHeight(KDCoordinate offsetY
       }
     }
   } else {
-    int iMax = min(k_memoizedCellHeightsCount/2, currentSelectedRow);
+    int iMax = min(k_memoizedCellsCount/2, currentSelectedRow);
     for (int i = 1; i <= iMax; i++) {
       currentCumulatedHeight-= rowHeight(currentSelectedRow-i);
       if (offsetY > currentCumulatedHeight) {
@@ -311,6 +317,41 @@ void StorageFunctionListController::didChangeModelsList() {
 
 KDCoordinate StorageFunctionListController::notMemoizedCumulatedHeightFromIndex(int j) {
   return TableViewDataSource::cumulatedHeightFromIndex(j);
+}
+
+KDCoordinate StorageFunctionListController::baseline(int j) {
+  if (j < 0) {
+    return -1;
+  }
+  int currentSelectedRow = selectedRow();
+  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
+  if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
+    int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
+    if (m_memoizedCellBaseline[memoizedIndex] < 0) {
+      m_memoizedCellBaseline[memoizedIndex] = privateBaseline(j);
+    }
+    return m_memoizedCellBaseline[memoizedIndex];
+  }
+  return privateBaseline(j);
+}
+
+void StorageFunctionListController::resetMemoizationForIndex(int index) {
+  assert(index >= 0 && index < k_memoizedCellsCount);
+  m_memoizedCellBaseline[index] = -1;
+  StorageExpressionModelListController::resetMemoizationForIndex(index);
+}
+
+void StorageFunctionListController::shiftMemoization(bool newCellIsUnder) {
+  if (newCellIsUnder) {
+    for (int i = 0; i < k_memoizedCellsCount - 1; i++) {
+      m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i+1];
+    }
+  } else {
+    for (int i = k_memoizedCellsCount - 1; i > 0; i--) {
+      m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i-1];
+    }
+  }
+  StorageExpressionModelListController::shiftMemoization(newCellIsUnder);
 }
 
 }

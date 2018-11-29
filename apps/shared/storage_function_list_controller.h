@@ -55,6 +55,9 @@ protected:
   void configureFunction(Ion::Storage::Record record);
   void computeTitlesColumnWidth();
   StorageFunctionStore * modelStore() override;
+  KDCoordinate baseline(int j);
+  void resetMemoizationForIndex(int index) override;
+  void shiftMemoization(bool newCellIsUnder) override;
   SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
@@ -69,10 +72,12 @@ private:
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
+  virtual KDCoordinate privateBaseline(int j) const = 0;
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;
   KDCoordinate m_titlesColumnWidth;
+  KDCoordinate m_memoizedCellBaseline[k_memoizedCellsCount];
 };
 
 }

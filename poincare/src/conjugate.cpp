@@ -19,7 +19,7 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
-Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Conjugate(this).shallowReduce(context, angleUnit);
 }
 

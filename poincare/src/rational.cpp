@@ -143,7 +143,7 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 
 // Simplification
 
-Expression RationalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression RationalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Rational(this).shallowReduce(context, angleUnit);
 }
 

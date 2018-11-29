@@ -27,7 +27,7 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Factorial(this).shallowReduce(context, angleUnit);
 }
 

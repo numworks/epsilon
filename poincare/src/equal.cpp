@@ -20,7 +20,7 @@ extern "C" {
 }
 namespace Poincare {
 
-Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Equal(this).shallowReduce(context, angleUnit);
 }
 

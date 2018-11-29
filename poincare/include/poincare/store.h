@@ -25,8 +25,8 @@ public:
 
 private:
   // Simplification
-  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) override;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -24,8 +24,8 @@ int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name());
 }
 
-Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return NthRoot(this).shallowReduce(context, angleUnit);
+Expression NthRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return NthRoot(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T>
@@ -43,7 +43,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
   return result;
 }
 
-Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -57,9 +57,9 @@ Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angl
 #endif
   Expression invIndex = Power(childAtIndex(1), Rational(-1));
   Power p = Power(childAtIndex(0), invIndex);
-  invIndex.shallowReduce(context, angleUnit);
+  invIndex.shallowReduce(context, angleUnit, target);
   replaceWithInPlace(p);
-  return p.shallowReduce(context, angleUnit);
+  return p.shallowReduce(context, angleUnit, target);
 }
 
 }

@@ -48,13 +48,13 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return CommonLogarithm(this).shallowReduce(context, angleUnit);
+Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  return CommonLogarithm(this).shallowReduce(context, angleUnit, target);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Logarithm(this).shallowReduce(context, angleUnit);
+Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  return Logarithm(this).shallowReduce(context, angleUnit, target);
 }
 
 template<>
@@ -85,7 +85,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
   return Complex<U>(result);
 }
 
-Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
+Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -102,10 +102,10 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::AngleU
 #endif
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational(10));
   replaceWithInPlace(log);
-  return log.shallowReduce(context, angleUnit);
+  return log.shallowReduce(context, angleUnit, target);
 }
 
-Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
+Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -128,9 +128,13 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     return f;
   }
 
-  /* We do not apply some rules if the parent node is a power of b. In this
-   * case there is a simplication of form e^ln(3^(1/2))->3^(1/2) */
-  bool letLogAtRoot = parentIsAPowerOfSameBase();
+  /* We do not apply some rules if:
+   * - the parent node is a power of b. In this case there is a simplication of
+   *   form e^ln(3^(1/2))->3^(1/2).
+   * - the reduction is being BottomUp. In this case, we do not yet have any
+   *   information on the parent which could later be a power of b.
+   */
+  bool letLogAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsAPowerOfSameBase();
   // log(x^y, b)->y*log(x, b) if x>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign() == ExpressionNode::Sign::Positive) {
     Power p = static_cast<Power &>(c);
@@ -140,8 +144,8 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     Multiplication mult(y);
     replaceWithInPlace(mult);
     mult.addChildAtIndexInPlace(*this, 1, 1); // --> y*log(x,b)
-    shallowReduce(context, angleUnit); // reduce log (ie log(e, e) = 1)
-    return mult.shallowReduce(context, angleUnit);
+    shallowReduce(context, angleUnit, target); // reduce log (ie log(e, e) = 1)
+    return mult.shallowReduce(context, angleUnit, target);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Multiplication) {
@@ -153,15 +157,15 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
         static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);
         a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
-        newLog.shallowReduce(context, angleUnit);
+        newLog.shallowReduce(context, angleUnit, target);
       }
     }
     if (a.numberOfChildren() > 0) {
-      c.shallowReduce(context, angleUnit);
-      Expression reducedLastLog = shallowReduce(context, angleUnit);
+      c.shallowReduce(context, angleUnit, target);
+      Expression reducedLastLog = shallowReduce(context, angleUnit, target);
       reducedLastLog.replaceWithInPlace(a);
       a.addChildAtIndexInPlace(reducedLastLog, a.numberOfChildren(), a.numberOfChildren());
-      return a.shallowReduce(context, angleUnit);
+      return a.shallowReduce(context, angleUnit, target);
     }
   }
   // log(r) with r Rational
@@ -176,10 +180,10 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
       r = Rational(newNumerator, newDenomitor);
     }
     // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
-    a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(), false, context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
-    a.addChildAtIndexInPlace(splitLogarithmInteger(r.integerDenominator(), true, context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
+    a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(), false, context, angleUnit, target), a.numberOfChildren(), a.numberOfChildren());
+    a.addChildAtIndexInPlace(splitLogarithmInteger(r.integerDenominator(), true, context, angleUnit, target), a.numberOfChildren(), a.numberOfChildren());
     replaceWithInPlace(a);
-    return a.shallowReduce(context, angleUnit);
+    return a.shallowReduce(context, angleUnit, target);
   }
   return *this;
 }
@@ -270,7 +274,7 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   return i;
 }
 
-Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(!i.isZero());
   assert(!i.isNegative());
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
@@ -300,7 +304,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
     Multiplication m = Multiplication(Rational(coefficients[index]), e);
     e.simpleShallowReduce(context, angleUnit);
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-    m.shallowReduce(context, angleUnit);
+    m.shallowReduce(context, angleUnit, target);
   }
   return a;
 }

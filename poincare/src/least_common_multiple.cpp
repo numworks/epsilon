@@ -21,7 +21,7 @@ int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preference
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::s_functionHelper.name());
 }
 
-Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return LeastCommonMultiple(this).shallowReduce(context, angleUnit);
 }
 

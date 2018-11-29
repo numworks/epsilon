@@ -251,7 +251,7 @@ protected:
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowReduce(context, angleUnit); }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) { return node()->shallowReduce(context, angleUnit, target); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
@@ -260,11 +260,11 @@ private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
   /* Simplification */
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
-  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit) {
-    return node()->deepReduceChildren(context, angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+    return node()->deepReduceChildren(context, angleUnit, target);
   }
-  void defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit);
+  void defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }
 

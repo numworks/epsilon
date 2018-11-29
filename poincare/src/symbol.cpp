@@ -116,8 +116,8 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return strlcpy(buffer, m_name, bufferSize);
 }
 
-Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Symbol(this).shallowReduce(context, angleUnit);
+Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Symbol(this).shallowReduce(context, angleUnit, target);
 }
 
 Expression SymbolNode::shallowReplaceReplaceableSymbols(Context & context) {
@@ -156,7 +156,7 @@ bool Symbol::isRegressionSymbol(const char * c) {
   return false;
 }
 
-Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Symbol s = *this;
   Expression result = SymbolAbstract::Expand(s, context, true);
   if (result.isUninitialized()) {
@@ -164,7 +164,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   }
   replaceWithInPlace(result);
   // The stored expression is as entered by the user, so we need to call reduce
-  return result.deepReduce(context, angleUnit);
+  return result.deepReduce(context, angleUnit, target);
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

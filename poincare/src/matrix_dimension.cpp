@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
 
 int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return MatrixDimension(this).shallowReduce(context, angleUnit);
 }
 

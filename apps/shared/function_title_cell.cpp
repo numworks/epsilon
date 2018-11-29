@@ -3,12 +3,6 @@
 
 namespace Shared {
 
-FunctionTitleCell::FunctionTitleCell(Orientation orientation) :
-  EvenOddCell(),
-  m_orientation(orientation)
-{
-}
-
 void FunctionTitleCell::setOrientation(Orientation orientation) {
   m_orientation = orientation;
   reloadCell();
@@ -17,6 +11,13 @@ void FunctionTitleCell::setOrientation(Orientation orientation) {
 void FunctionTitleCell::setColor(KDColor color) {
   m_functionColor = color;
   reloadCell();
+}
+
+void FunctionTitleCell::setBaseline(KDCoordinate baseline) {
+  if (m_baseline != baseline) {
+    m_baseline = baseline;
+    reloadCell();
+  }
 }
 
 void FunctionTitleCell::drawRect(KDContext * ctx, KDRect rect) const {

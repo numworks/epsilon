@@ -72,7 +72,7 @@ static inline void send_command(Command c, QUADSPI::CCR::OperatingMode operating
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     operatingMode,
     c,
-    nullptr, 0, nullptr, 0
+    reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), 0, nullptr, 0
   );
 }
 
@@ -97,7 +97,7 @@ static inline void send_read_command(Command c, uint8_t * address, uint8_t * dat
 static inline void wait(QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {
-    send_read_command(Command::ReadStatusRegister, nullptr, reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
+    send_read_command(Command::ReadStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
   } while (statusRegister1.getBUSY());
 }
 
@@ -116,7 +116,7 @@ static void set_as_memory_mapped() {
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
     Command::FastRead,
-    nullptr, FastReadDummyCycles, nullptr, 0
+    reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), FastReadDummyCycles, nullptr, 0
   );
 }
 
@@ -130,14 +130,14 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
     QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
   }
   ccr.setDCYC(dummyCycles);
-  if (address != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
+  if (address != reinterpret_cast<uint8_t *>(FlashAddressSpaceSize) || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setADMODE(operatingMode);
     ccr.setADSIZE(QUADSPI::CCR::Size::ThreeBytes);
   }
   ccr.setIMODE(operatingMode);
   ccr.setINSTRUCTION(static_cast<uint8_t>(c));
   QUADSPI.CCR()->set(ccr);
-  if (address != nullptr) {
+  if (address != reinterpret_cast<uint8_t *>(FlashAddressSpaceSize)) {
     QUADSPI.AR()->set(reinterpret_cast<uint32_t>(address));
   }
 
@@ -194,7 +194,7 @@ void initChip() {
     ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
     statusRegister2.setQE(true);
     wait(QUADSPI::CCR::OperatingMode::Single);
-    send_write_command(Command::WriteStatusRegister2, nullptr, reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), QUADSPI::CCR::OperatingMode::Single);
+    send_write_command(Command::WriteStatusRegister2, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister2), sizeof(statusRegister2), QUADSPI::CCR::OperatingMode::Single);
     wait(QUADSPI::CCR::OperatingMode::Single);
     send_command(Command::EnableQPI, QUADSPI::CCR::OperatingMode::Single);
     wait();

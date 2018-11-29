@@ -312,6 +312,7 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
 }
 
 void StorageFunctionListController::didChangeModelsList() {
+  StorageExpressionModelListController::didChangeModelsList();
   computeTitlesColumnWidth();
 }
 

@@ -48,7 +48,7 @@ void TextFieldFunctionTitleCell::setText(const char * title) {
 }
 
 void TextFieldFunctionTitleCell::layoutSubviews() {
-  KDRect frame = textFieldFrame();
+  KDRect frame = subviewFrame();
   m_textField.setFrame(frame);
   KDCoordinate glyphHeight = font()->glyphSize().height();
   float verticalAlignment = max(0.0f, min(1.0f, m_baseline < 0 ? 0.5f : ((float)(m_baseline - glyphHeight/2))/((float)frame.height()+1-glyphHeight)));
@@ -59,11 +59,6 @@ void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
   if (isEditing()) {
     app()->setFirstResponder(&m_textField);
   }
-}
-
-KDRect TextFieldFunctionTitleCell::textFieldFrame() const {
-  assert(m_orientation == Orientation::VerticalIndicator);
-  return KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness, bounds().height()-k_separatorThickness);
 }
 
 }

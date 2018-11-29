@@ -25,9 +25,11 @@ public:
 protected:
   constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
+  KDRect subviewFrame() const;
   Orientation m_orientation;
   KDCoordinate m_baseline;
 private:
+  constexpr static KDCoordinate k_equalWidthWithMargins = 10; // Ad hoc value
   KDColor m_functionColor;
 };
 

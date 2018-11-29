@@ -33,6 +33,11 @@ const char * StorageListController::title() {
 void StorageListController::renameSelectedFunction() {
   assert(selectedColumn() == 0);
   assert(selectedRow() >= 0 && selectedRow() < numberOfRows()-1); // TODO change if sometimes the addFunction row is not displayed
+
+  // Increase the size of the name column
+  computeTitlesColumnWidth(true);
+  selectableTableView()->reloadData();
+
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   TextFieldFunctionTitleCell * selectedTitleCell = (TextFieldFunctionTitleCell *)(selectableTableView()->selectedCell());
   app()->setFirstResponder(selectedTitleCell);
@@ -107,6 +112,9 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 }
 
 bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
+  // Put the name column back to normal size
+  computeTitlesColumnWidth();
+  selectableTableView()->reloadData();
   ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);

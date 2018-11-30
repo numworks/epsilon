@@ -10,6 +10,7 @@ SequenceTitleCell::SequenceTitleCell() :
   Shared::FunctionTitleCell(Orientation::VerticalIndicator),
   m_titleTextView(k_verticalOrientationHorizontalAlignment, k_horizontalOrientationAlignment)
 {
+  m_titleTextView.setRightMargin(3);
 }
 
 void SequenceTitleCell::setOrientation(Orientation orientation) {

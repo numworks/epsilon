@@ -42,7 +42,7 @@ public:
 private:
   constexpr static KDCoordinate k_textFieldRightMargin = 4;
   constexpr static int k_textFieldBufferSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
-  float verticalAlignment() const;
+  float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const override;
   Shared::TextFieldWithExtension m_textField;
   char m_textFieldBuffer[k_textFieldBufferSize];
 };

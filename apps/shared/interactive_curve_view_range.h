@@ -10,18 +10,25 @@ namespace Shared {
 
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
-  InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate = nullptr);
-  void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
-  void setCursor(CurveViewCursor * cursor);
+  InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate = nullptr) :
+    MemoizedCurveViewRange(),
+    m_yAuto(true),
+    m_delegate(delegate),
+    m_cursor(cursor)
+  {}
+
+  void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
+  void setCursor(CurveViewCursor * cursor) { m_cursor = cursor; }
   uint32_t rangeChecksum() override;
 
-  //CurveViewWindow
-  bool yAuto();
+  bool yAuto() const { return m_yAuto; }
+  void setYAuto(bool yAuto);
+
+  // CurveViewWindow
   void setXMin(float f) override;
   void setXMax(float f) override;
   void setYMin(float f) override;
   void setYMax(float f) override;
-  void setYAuto(bool yAuto);
 
   // Window
   void zoom(float ratio, float x, float y);
@@ -42,6 +49,7 @@ private:
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
+  void notifyRangeChange();
   CurveViewCursor * m_cursor;
 };
 

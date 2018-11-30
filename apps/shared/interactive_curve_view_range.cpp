@@ -9,22 +9,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewRange::InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
-  MemoizedCurveViewRange(),
-  m_yAuto(true),
-  m_delegate(delegate),
-  m_cursor(cursor)
-{
-}
-
-void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
-  m_delegate = delegate;
-}
-
-void InteractiveCurveViewRange::setCursor(CurveViewCursor * cursor) {
-  m_cursor = cursor;
-}
-
 uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[5] = {m_xMin, m_xMax, m_yMin, m_yMax, m_yAuto ? 1.0f : 0.0f};
   size_t dataLengthInBytes = 5*sizeof(float);
@@ -32,8 +16,9 @@ uint32_t InteractiveCurveViewRange::rangeChecksum() {
   return Ion::crc32((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
-bool InteractiveCurveViewRange::yAuto() {
-  return m_yAuto;
+void InteractiveCurveViewRange::setYAuto(bool yAuto) {
+  m_yAuto = yAuto;
+  notifyRangeChange();
 }
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
@@ -43,9 +28,7 @@ void InteractiveCurveViewRange::setXMin(float xMin) {
     newXMin = m_xMax - k_minFloat;
     MemoizedCurveViewRange::setXMin(clipped(newXMin, false));
   }
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
-  }
+  notifyRangeChange();
 }
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
@@ -55,9 +38,7 @@ void InteractiveCurveViewRange::setXMax(float xMax) {
     newXMax = m_xMin + k_minFloat;
     MemoizedCurveViewRange::setXMax(clipped(newXMax, true));
   }
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
-  }
+  notifyRangeChange();
 }
 
 void InteractiveCurveViewRange::setYMin(float yMin) {
@@ -75,13 +56,6 @@ void InteractiveCurveViewRange::setYMax(float yMax) {
   if (newYMax - m_yMin < k_minFloat) {
     newYMax = m_yMin + k_minFloat;
     MemoizedCurveViewRange::setYMax(clipped(newYMax, true));
-  }
-}
-
-void InteractiveCurveViewRange::setYAuto(bool yAuto) {
-  m_yAuto = yAuto;
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
   }
 }
 
@@ -131,9 +105,7 @@ void InteractiveCurveViewRange::roundAbscissa() {
   }
   m_xMax = newXMax;
   MemoizedCurveViewRange::setXMin(newXMin);
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
-  }
+  notifyRangeChange();
 }
 
 void InteractiveCurveViewRange::normalize() {
@@ -238,6 +210,12 @@ float InteractiveCurveViewRange::clipped(float x, bool isMax) {
   float clippedX = x > max ? max : x;
   clippedX = clippedX < min ? min : clippedX;
   return clippedX;
+}
+
+void InteractiveCurveViewRange::notifyRangeChange() {
+  if (m_delegate) {
+    m_delegate->didChangeRange(this);
+  }
 }
 
 }

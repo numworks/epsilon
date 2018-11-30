@@ -142,8 +142,11 @@ Responder * InteractiveCurveViewController::defaultController() {
 void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
+    if (*m_modelVersion == 0 || numberOfCurves() == 1) {
+      initRangeParameters();
+    }
     *m_modelVersion = newModelVersion;
-    initRangeParameters();
+    didChangeRange(interactiveCurveViewRange());
     /* Warning: init cursor parameter before reloading banner view. Indeed,
      * reloading banner view needs an updated cursor to load the right data. */
     initCursorParameters();

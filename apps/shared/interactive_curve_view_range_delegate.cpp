@@ -5,7 +5,6 @@
 
 namespace Shared {
 
-
 bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
   if (!interactiveCurveViewRange->yAuto()) {
     return false;

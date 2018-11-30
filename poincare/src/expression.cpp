@@ -360,19 +360,21 @@ bool isMinusOne(const Expression e) {
 
 Expression Expression::simplifyForComplexFormat(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
   sSimplificationHasBeenInterrupted = false;
-  Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  // We simplify before extracting the real and imaginary part to develop expression of type (a+b*i)^3 for example
+  // We could have deepReduce the expression but we want to keep division which are easier to extract complex parts from
+  Expression e = simplify(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
     return Expression();
   }
   Expression ra = complexFormat == Preferences::ComplexFormat::Cartesian ? e.realPart(context, angleUnit) : e.complexNorm(context, angleUnit);
   Expression tb = complexFormat == Preferences::ComplexFormat::Cartesian ? e.imaginaryPart(context, angleUnit) : e.complexArgument(context, angleUnit);
   if (ra.isUninitialized() || tb.isUninitialized()) {
-    return e.deepBeautify(context, angleUnit);
+    return e;
   }
   ra = ra.simplify(context, angleUnit);
   tb = tb.simplify(context, angleUnit);
   if (ra.isUninitialized() || tb.isUninitialized()) {
-    return e.deepBeautify(context, angleUnit);
+    return e;
   }
   e = CreateComplexExpression(ra, tb, complexFormat,
       ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined,

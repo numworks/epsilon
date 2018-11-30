@@ -61,7 +61,7 @@ protected:
   SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
-  static constexpr KDCoordinate k_functionTitleSumOfMargins = 15;
+  static constexpr KDCoordinate k_functionTitleSumOfMargins = 25;
   TabViewController * tabController() const;
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();

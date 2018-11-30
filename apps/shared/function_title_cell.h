@@ -26,10 +26,12 @@ protected:
   constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDRect subviewFrame() const;
+  float verticalAlignment() const;
   Orientation m_orientation;
   KDCoordinate m_baseline;
 private:
   constexpr static KDCoordinate k_equalWidthWithMargins = 10; // Ad hoc value
+  virtual float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const { assert(false); return 0; }
   KDColor m_functionColor;
 };
 

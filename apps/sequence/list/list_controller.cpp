@@ -192,10 +192,15 @@ HighlightCell * ListController::expressionCells(int index) {
 }
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
+  assert(j>=0 && j < k_maxNumberOfRows);
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
+  // Update the corresponding expression cell to get its baseline
+  willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
+  myCell->setBaseline(baseline(j));
+  // Set the layout
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setLayout(sequence->definitionNameWithEqual());
+    myCell->setLayout(sequence->definitionName());
   }
   if (sequenceDefinitionForRow(j) == 1) {
     myCell->setLayout(sequence->firstInitialConditionName());
@@ -203,6 +208,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   if (sequenceDefinitionForRow(j) == 2) {
     myCell->setLayout(sequence->secondInitialConditionName());
   }
+  // Set the color
   KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
   myCell->setColor(nameColor);
 }
@@ -297,6 +303,17 @@ void ListController::reinitExpression(Shared::ExpressionModel * model) {
       break;
   }
   selectableTableView()->reloadData();
+}
+
+KDCoordinate ListController::baseline(int j) const {
+  //TODO copied from Graph::StorageListController, will be refactored when Sequence is a StorageApp
+  assert(j>=0 && j<k_maxNumberOfRows);
+  Shared::FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
+  Poincare::Layout layout = cell->layout();
+  if (layout.isUninitialized()) {
+    return 0.5*const_cast<ListController *>(this)->rowHeight(j);
+  }
+  return 0.5*(const_cast<ListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
 }
 
 }

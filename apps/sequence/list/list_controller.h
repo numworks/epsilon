@@ -44,6 +44,7 @@ private:
   void reinitExpression(Shared::ExpressionModel * model) override;
   void editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) override;
   bool removeModelRow(Shared::ExpressionModel * model) override;
+  KDCoordinate baseline(int j) const;
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceStore * m_sequenceStore;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];

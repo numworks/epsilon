@@ -155,9 +155,11 @@ HighlightCell * StorageListController::expressionCells(int index) {
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
+  // Update the corresponding expression cell in order to geet the baseline
   StorageExpressionModelListController::willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
   titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
+    // Set name and color if the name is not being edited
     ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
@@ -187,7 +189,6 @@ KDCoordinate StorageListController::privateBaseline(int j) const {
     return -1;
   }
   return 0.5*(const_cast<StorageListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
-
 }
 
 }

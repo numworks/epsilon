@@ -52,18 +52,16 @@ View * SequenceTitleCell::subviewAtIndex(int index) {
 }
 
 void SequenceTitleCell::layoutSubviews() {
-  KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
   if (m_orientation == Orientation::VerticalIndicator) {
-    KDCoordinate h = bounds().height()-k_separatorThickness;
-    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness, h);
-    /* We try to align the text so that the equal is vertically centered in the
-     * cell. This makes the title cell and the definition cell baselines be
-     * approximately at the same level for basic sequences definitions (un = 1,
-     * un=1/2, ...). */
-    float verticalAlignment = 0.5f + 20.0f/((float)h); // 20.0f is a magic value
-    m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment);
+    m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment());
   }
-  m_titleTextView.setFrame(textFrame);
+  m_titleTextView.setFrame(subviewFrame());
+}
+
+float SequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
+  assert(m_orientation == Orientation::VerticalIndicator);
+  Layout l = layout();
+  return ((float)(expressionBaseline - l.baseline()))/((float)rowHeight-l.layoutSize().height());
 }
 
 }

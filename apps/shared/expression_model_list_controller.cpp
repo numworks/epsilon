@@ -45,6 +45,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (isAddEmptyRow(selectedRow())) {
       addEmptyModel();
+      selectableTableView()->reloadCellAtLocation(selectedColumn(), selectedRow());
       return true;
     }
     ExpressionModel * model = modelStore()->modelAtIndex(modelIndexForRow(selectedRow()));
@@ -55,10 +56,12 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     ExpressionModel * model = modelStore()->modelAtIndex(modelIndexForRow(selectedRow()));
     if (model->shouldBeClearedBeforeRemove()) {
       reinitExpression(model);
+      selectableTableView()->reloadCellAtLocation(selectedColumn(), selectedRow());
     } else {
       if (removeModelRow(model)) {
         int newSelectedRow = selectedRow() >= numberOfExpressionRows() ? numberOfExpressionRows()-1 : selectedRow();
         selectCellAtLocation(selectedColumn(), newSelectedRow);
+        selectableTableView()->reloadCellAtLocation(selectedColumn(), selectedRow());
         selectableTableView()->reloadData();
       }
     }
@@ -83,7 +86,6 @@ void ExpressionModelListController::reinitExpression(ExpressionModel * model) {
   model->setContent("");
   selectableTableView()->reloadData();
 }
-
 
 void ExpressionModelListController::editExpression(ExpressionModel * model, Ion::Events::Event event) {
   char * initialText = nullptr;

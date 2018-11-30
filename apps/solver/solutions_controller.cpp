@@ -165,9 +165,9 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
           break;
         default:
           /* The system has one variable but might have many solutions: the cell
-           * text is variableX, with X the row index. For instance, x0, x1,...*/
+           * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
           int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Poincare::SymbolAbstract::k_maxNameSize);
-          bufferSymbol[length++] = j+'0';
+          bufferSymbol[length++] = j+'1';
           bufferSymbol[length] = 0;
           break;
       }

@@ -29,6 +29,10 @@ TermSumController * GraphController::termSumController() {
   return &m_termSumController;
 }
 
+int GraphController::numberOfCurves() const {
+  return m_sequenceStore->numberOfModels();
+}
+
 BannerView * GraphController::bannerView() {
   return &m_bannerView;
 }

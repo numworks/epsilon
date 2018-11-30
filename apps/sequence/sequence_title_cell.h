@@ -26,6 +26,7 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
+  float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const override;
   EvenOddExpressionCell m_titleTextView;
 };
 

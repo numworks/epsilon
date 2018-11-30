@@ -71,14 +71,10 @@ void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
   }
 }
 
-float TextFieldFunctionTitleCell::verticalAlignment() const {
+float TextFieldFunctionTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
+  assert(m_orientation == Orientation::VerticalIndicator);
   KDCoordinate glyphHeight = font()->glyphSize().height();
-  return max(
-      0.0f,
-      min(
-        1.0f,
-        m_baseline < 0 ? 0.5f : ((float)(m_baseline - glyphHeight/2))/((float)subviewFrame().height()+1-glyphHeight)));
-
+  return ((float)(expressionBaseline - glyphHeight/2))/((float)rowHeight+1-glyphHeight);
 }
 
 }

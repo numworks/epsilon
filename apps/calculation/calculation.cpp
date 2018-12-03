@@ -141,7 +141,10 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
     return false;
   }
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
-    return true;
+    /* If the exact and approximate results' texts are equal and their layouts
+     * too, do not display the exact result. If, because of the number of
+     * significant digits, the two layouts are not equal, we display both. */
+    return exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
   }
   if (strcmp(m_exactOutputText, Undefined::Name()) == 0) {
     return true;

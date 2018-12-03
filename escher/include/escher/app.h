@@ -39,7 +39,6 @@ public:
 #if EPSILON_GETOPT
     virtual void setOpt(const char * name, char * value) {}
 #endif
-  private:
     /* tidy clean all dynamically-allocated data */
     virtual void tidy();
   };

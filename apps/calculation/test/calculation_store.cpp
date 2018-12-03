@@ -102,5 +102,12 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   lastCalculation = store.calculationAtIndex(1);
   quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
   quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
+
+  store.deleteAll();
+  store.push("28^7", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+
   store.deleteAll();
 }

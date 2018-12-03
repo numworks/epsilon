@@ -252,6 +252,17 @@ void AppsContainer::run() {
   } else {
     // Exception
     if (activeApp() != nullptr) {
+      /* The app models can reference layouts or expressions that have been
+       * destroyed from the pool. To avoid using them before packing the app
+       * (in App::willBecomeInactive for instance), we tidy them early on. */
+      activeApp()->snapshot()->tidy();
+      /* When an app encoutered an exception due to a full pool, the next time
+       * the user enters the app, the same exception could happen again which
+       * would prevent from reopening the app. To avoid being stuck outside the
+       * app causing the issue, we reset its snapshot when leaving it due to
+       * exception. For instance, the calculation app can encounter an
+       * exception when displaying too many huge layouts, if we don't clean the
+       * history here, we will be stuck outside the calculation app. */
       activeApp()->snapshot()->reset();
     }
     switchTo(appSnapshotAtIndex(0));

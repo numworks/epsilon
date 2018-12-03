@@ -1,6 +1,7 @@
 #include "dfu_interface.h"
 #include <string.h>
 #include <ion/src/device/flash.h>
+#include <ion/src/device/external_flash.h>
 
 namespace Ion {
 namespace USB {
@@ -173,7 +174,7 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
 
   if (transferBufferLength == 1) {
     // Mass erase
-    m_erasePage = Flash::Device::NumberOfSectors;
+    m_erasePage = Flash::Device::NumberOfSectors + ExternalFlash::Device::NumberOfSectors;
     return;
   }
 
@@ -185,9 +186,11 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
     + (transferBuffer[3] << 16)
     + (transferBuffer[4] << 24);
 
-  m_erasePage = Flash::Device::SectorAtAddress(eraseAddress);
-
-  if (m_erasePage < 0) {
+  if (eraseAddress >= k_flashStartAddress && eraseAddress <= k_flashEndAddress) {
+    m_erasePage = Flash::Device::SectorAtAddress(eraseAddress);
+  } else if (eraseAddress >= k_externalFlashStartAddress && eraseAddress <= k_externalFlashEndAddress) {
+    m_erasePage = Flash::Device::NumberOfSectors + ExternalFlash::Device::SectorAtAddress(eraseAddress - k_externalFlashStartAddress);
+  } else {
     // Unrecognized sector
     m_state = State::dfuERROR;
     m_status = Status::errTARGET;
@@ -201,10 +204,13 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  if (m_erasePage == Ion::Flash::Device::NumberOfSectors) {
+  if (m_erasePage == Flash::Device::NumberOfSectors + ExternalFlash::Device::NumberOfSectors) {
     Flash::Device::MassErase();
-  } else {
+    ExternalFlash::Device::MassErase();
+  } else if (m_erasePage < Flash::Device::NumberOfSectors) {
     Flash::Device::EraseSector(m_erasePage);
+  } else {
+    ExternalFlash::Device::EraseSector(m_erasePage - Flash::Device::NumberOfSectors);
   }
 
   /* Put an out of range value in m_erasePage to indicate that no erase is
@@ -222,6 +228,8 @@ void DFUInterface::writeOnMemory() {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
+  } else if (m_writeAddress >= k_externalFlashStartAddress && m_writeAddress <= k_externalFlashEndAddress) {
+    ExternalFlash::Device::WriteMemory(m_largeBuffer, reinterpret_cast<uint8_t *>(m_writeAddress) - k_externalFlashStartAddress, m_largeBufferLength);
   } else {
     // Invalid write address
     m_largeBufferLength = 0;

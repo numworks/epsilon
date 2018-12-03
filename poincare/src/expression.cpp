@@ -250,6 +250,8 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
 
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
+  // Reset interrupting flag because some evaluation methods use it
+  sSimplificationHasBeenInterrupted = false;
   return node()->approximate(U(), context, angleUnit);
 }
 

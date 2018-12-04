@@ -136,7 +136,9 @@ void StorageFunctionGraphController::initCursorParameters() {
   m_cursor->moveTo(x, y);
   functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
-  interactiveCurveViewRange()->panToMakePointVisible(x, y, displayTopMarginRatio(), k_cursorRightMarginRatio, displayBottomMarginRatio(), k_cursorLeftMarginRatio);
+  if (interactiveCurveViewRange()->yAuto()) {
+    interactiveCurveViewRange()->panToMakePointVisible(x, y, displayTopMarginRatio(), k_cursorRightMarginRatio, displayBottomMarginRatio(), k_cursorLeftMarginRatio);
+  }
 }
 
 bool StorageFunctionGraphController::moveCursorVertically(int direction) {

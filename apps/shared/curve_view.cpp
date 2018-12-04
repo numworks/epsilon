@@ -580,15 +580,15 @@ View * CurveView::subviewAtIndex(int index) {
     if (m_okView != nullptr) {
       return m_okView;
     } else {
-      if (m_bannerView != nullptr) {
-        return m_bannerView;
+      if (m_cursorView != nullptr) {
+        return m_cursorView;
       }
     }
   }
-  if (index == 1 && m_bannerView != nullptr && m_okView != nullptr) {
-    return m_bannerView;
+  if (index == 1 && m_cursorView != nullptr && m_okView != nullptr) {
+    return m_cursorView;
   }
-  return m_cursorView;
+  return m_bannerView;
 }
 
 }

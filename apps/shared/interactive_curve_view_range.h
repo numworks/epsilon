@@ -5,6 +5,7 @@
 #include "memoized_curve_view_range.h"
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range_delegate.h"
+#include <ion/display.h>
 
 namespace Shared {
 
@@ -42,6 +43,18 @@ public:
   bool isCursorVisible(float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
 protected:
   bool m_yAuto;
+  /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
+   * the screen has size 43.2mm * 57.6mm.
+   * We want:
+   *   2*NormalizedXHalfRange -> 57.6mm
+   *   2*1 -> 10.0mm
+   * So NormalizedXHalfRange = 5.76
+   * We want:
+   *   2*NormalizedYHalfRange -> 43.2mm * 170/240
+   *   2*1 -> 10.0mm
+   * So NormalizedYHalfRange = 3.06 */
+  constexpr static float NormalizedXHalfRange() { return 5.76f; }
+  constexpr static float NormalizedYHalfRange() { return 3.06f; }
   static float clipped(float f, bool isMax);
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
@@ -52,6 +65,9 @@ private:
   void notifyRangeChange();
   CurveViewCursor * m_cursor;
 };
+
+static_assert(Ion::Display::WidthInTenthOfMillimeter == 576, "Use the new screen width to compute Shared::InteractiveCurveViewRange::NormalizedXHalfRange");
+static_assert(Ion::Display::HeightInTenthOfMillimeter == 432, "Use the new screen height to compute Shared::InteractiveCurveViewRange::NormalizedYHalfRange");
 
 typedef void (InteractiveCurveViewRange::*ParameterSetterPointer)(float);
 typedef float (InteractiveCurveViewRange::*ParameterGetterPointer)();

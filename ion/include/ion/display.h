@@ -25,6 +25,8 @@ void waitForVBlank();
 
 constexpr int Width = 320;
 constexpr int Height = 240;
+constexpr int WidthInTenthOfMillimeter = 576;
+constexpr int HeightInTenthOfMillimeter = 432;
 
 }
 }

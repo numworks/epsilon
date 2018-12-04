@@ -115,23 +115,23 @@ void InteractiveCurveViewRange::roundAbscissa() {
 }
 
 void InteractiveCurveViewRange::normalize() {
+  /* We center the ranges on the current range center, and put each axis so that
+   * 1cm = 2 units. */
   float xMin = m_xMin;
   float xMax = m_xMax;
   float yMin = m_yMin;
   float yMax = m_yMax;
   // Set x range
-  float xMargin = 5.3f;
-  float newXMin = clipped((xMin+xMax)/2 - xMargin, false);
-  float newXMax = clipped((xMin+xMax)/2 + xMargin, true);
+  float newXMin = clipped((xMin+xMax)/2 - NormalizedXHalfRange(), false);
+  float newXMax = clipped((xMin+xMax)/2 + NormalizedXHalfRange(), true);
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMax = newXMax;
     MemoizedCurveViewRange::setXMin(newXMin);
   }
   // Set y range
   setYAuto(false);
-  float yMargin = 3.1f;
-  float newYMin = clipped((yMin+yMax)/2 - yMargin, false);
-  float newYMax = clipped((yMin+yMax)/2 + yMargin, true);
+  float newYMin = clipped((yMin+yMax)/2 - NormalizedYHalfRange(), false);
+  float newYMax = clipped((yMin+yMax)/2 + NormalizedYHalfRange(), true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMax = newYMax;
     MemoizedCurveViewRange::setYMin(newYMin);

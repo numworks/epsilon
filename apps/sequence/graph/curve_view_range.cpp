@@ -39,20 +39,20 @@ void CurveViewRange::normalize() {
   float xMax = m_xMax;
   float yMin = m_yMin;
   float yMax = m_yMax;
-  float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
-  float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
+  float newXMin = clipped((xMin+xMax)/2 - NormalizedXHalfRange(), false);
+  float newXMax = clipped((xMin+xMax)/2 + NormalizedXHalfRange(), true);
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMin = newXMin;
     m_xMax = newXMax;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   }
   if (m_xMin < 0.0f) {
-    m_xMin = -k_displayLeftMarginRatio*2.0f*5.3f;
-    m_xMax = m_xMin + 2.0f*5.3f;
+    m_xMin = -k_displayLeftMarginRatio*2.0f*NormalizedXHalfRange();
+    m_xMax = m_xMin + 2.0f*NormalizedXHalfRange();
   }
   m_yAuto = false;
-  float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
-  float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
+  float newYMin = clipped((yMin+yMax)/2 - NormalizedYHalfRange(), false);
+  float newYMax = clipped((yMin+yMax)/2 + NormalizedYHalfRange(), true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMin = newYMin;
     m_yMax = newYMax;

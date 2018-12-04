@@ -119,7 +119,9 @@ void FunctionGraphController::initCursorParameters() {
   m_cursor->moveTo(x, y);
   functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
-  interactiveCurveViewRange()->panToMakePointVisible(x, y, k_displayTopMarginRatio, k_cursorRightMarginRatio, k_displayBottomMarginRatio, k_cursorLeftMarginRatio);
+  if (interactiveCurveViewRange()->yAuto()) {
+    interactiveCurveViewRange()->panToMakePointVisible(x, y, k_displayTopMarginRatio, k_cursorRightMarginRatio, k_displayBottomMarginRatio, k_cursorLeftMarginRatio);
+  }
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {

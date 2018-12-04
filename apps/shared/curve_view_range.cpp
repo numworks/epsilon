@@ -22,17 +22,16 @@ float CurveViewRange::computeGridUnit(Axis axis, float min, float max) {
   int a = 0;
   int b = 0;
   float d = max - min;
-  float maxNumberOfUnits = k_maxNumberOfXGridUnits;
-  float minNumberOfUnits = k_minNumberOfXGridUnits;
-  if (axis == Axis::Y) {
-    maxNumberOfUnits = k_maxNumberOfYGridUnits;
-    minNumberOfUnits = k_minNumberOfYGridUnits;
-  }
-  float units[3] = {k_smallGridUnitMantissa, k_mediumGridUnitMantissa, k_largeGridUnitMantissa};
-  for (int k = 0; k < 3; k++) {
+  float maxNumberOfUnits = (axis == Axis::X) ? k_maxNumberOfXGridUnits : k_maxNumberOfYGridUnits;
+  float minNumberOfUnits = (axis == Axis::X) ? k_minNumberOfXGridUnits : k_minNumberOfYGridUnits;
+  constexpr int unitsCount = 3;
+  float units[unitsCount] = {k_smallGridUnitMantissa, k_mediumGridUnitMantissa, k_largeGridUnitMantissa};
+  for (int k = 0; k < unitsCount; k++) {
     float unit = units[k];
-    if (std::floor(std::log10(d/(unit*maxNumberOfUnits))) != std::floor(std::log10(d/(unit*minNumberOfUnits)))) {
-      b = std::floor(std::log10(d/(unit*minNumberOfUnits)));
+    int b1 = std::floor(std::log10(d/(unit*maxNumberOfUnits)));
+    int b2 = std::floor(std::log10(d/(unit*minNumberOfUnits)));
+    if (b1 != b2) {
+      b = b2;
       a = unit;
     }
   }

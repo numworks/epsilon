@@ -1,6 +1,7 @@
 #include "interactive_curve_view_range.h"
 #include <ion.h>
 #include <cmath>
+#include <float.h>
 #include <stddef.h>
 #include <assert.h>
 #include <poincare/preferences.h>
@@ -174,24 +175,24 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation) {
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
-  if (x < m_xMin + leftMarginRation*xRange && !std::isinf(x) && !std::isnan(x)) {
+  if (x < m_xMin + leftMarginRation*xRange - FLT_EPSILON && !std::isinf(x) && !std::isnan(x)) {
     float newXMin = clipped(x - leftMarginRation*xRange, false);
     m_xMax = clipped(newXMin + xRange, true);
     MemoizedCurveViewRange::setXMin(newXMin);
     m_yAuto = false;
   }
-  if (x > m_xMax - rightMarginRatio*xRange && !std::isinf(x) && !std::isnan(x)) {
+  if (x > m_xMax - rightMarginRatio*xRange + FLT_EPSILON && !std::isinf(x) && !std::isnan(x)) {
     m_xMax = clipped(x + rightMarginRatio*xRange, true);
     MemoizedCurveViewRange::setXMin(clipped(m_xMax - xRange, false));
     m_yAuto = false;
   }
-  if (y < m_yMin + bottomMarginRation*yRange && !std::isinf(y) && !std::isnan(y)) {
+  if (y < m_yMin + bottomMarginRation*yRange - FLT_EPSILON && !std::isinf(y) && !std::isnan(y)) {
     float newYMin = clipped(y - bottomMarginRation*yRange, false);
     m_yMax = clipped(newYMin + yRange, true);
     MemoizedCurveViewRange::setYMin(newYMin);
     m_yAuto = false;
   }
-  if (y > m_yMax - topMarginRatio*yRange && !std::isinf(y) && !std::isnan(y)) {
+  if (y > m_yMax - topMarginRatio*yRange + FLT_EPSILON && !std::isinf(y) && !std::isnan(y)) {
     m_yMax = clipped(y + topMarginRatio*yRange, true);
     MemoizedCurveViewRange::setYMin(clipped(m_yMax - yRange, false));
     m_yAuto = false;

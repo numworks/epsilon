@@ -112,7 +112,7 @@ KDCoordinate CurveView::pixelLength(Axis axis) const {
 
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
   KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
-  return min(axis) + pixels*((max(axis)-min(axis))/pixelLength(axis));
+  return min(axis) + pixels*((float)(max(axis)-min(axis)))/((float)pixelLength(axis));
 }
 
 float CurveView::floatToPixel(Axis axis, float f) const {
@@ -270,7 +270,7 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
   }
   float start = step*((int)(min(axis)/step));
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-  for (float x =start; x < max(axis); x += step) {
+  for (float x = start; x < max(axis); x+= step) {
     /* When |start| >> step, start + step = start. In that case, quit the
      * infinite loop. */
     if (x == x-step || x == x+step) {
@@ -453,7 +453,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   if (std::isinf(pvf)) {
     pvf = pvf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
   }
-  if (pyf - (float)circleDiameter/2.0f < pvf && pvf < pyf + (float)circleDiameter/2.0f) {
+  if (pyf - ((float)circleDiameter)/2.0f < pvf && pvf < pyf + ((float)circleDiameter)/2.0f) {
     // the dots are already joined
     return;
   }

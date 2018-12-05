@@ -493,15 +493,15 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
 
 void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
   // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
+  if (pyf < -stampSize - FLT_EPSILON || pyf > pixelLength(Axis::Vertical)+stampSize + FLT_EPSILON) {
     return;
   }
   /* When converting floats to KDCoordinate, we need to add -1 if the float is
    * negative, otherwise all floats in ]-1.0;1.0[ are converted to 0 and there
    * is a blob for x = 0. Try for instance f(x)=cos(x), the blob is at the
-   * intersection of the curve with the screen. */
-  KDCoordinate px = pxf + (pxf > 0 ? 0 : -1);
-  KDCoordinate py = pyf + (pyf > 0 ? 0 : -1);
+   * intersection of the curve with the left of the screen. */
+  KDCoordinate px = pxf + (pxf >= 0 ? 0 : -1);
+  KDCoordinate py = pyf + (pyf >= 0 ? 0 : -1);
   KDRect stampRect(px-(circleDiameter-2)/2, py-(circleDiameter-2)/2, stampSize, stampSize);
   if (!rect.intersects(stampRect)) {
     return;

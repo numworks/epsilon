@@ -6,11 +6,13 @@
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range_delegate.h"
 #include <ion/display.h>
+#include <float.h>
 
 namespace Shared {
 
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
+  constexpr static float k_minFloat = 1E-4f;
   InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
     m_yAuto(true),
@@ -58,7 +60,6 @@ protected:
   static float clipped(float f, bool isMax);
   InteractiveCurveViewRangeDelegate * m_delegate;
 private:
-  constexpr static float k_minFloat = 1E-8f;
   constexpr static float k_upperMaxFloat = 1E+8f;
   constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
@@ -66,6 +67,7 @@ private:
   CurveViewCursor * m_cursor;
 };
 
+static_assert(InteractiveCurveViewRange::k_minFloat >= FLT_EPSILON, "InteractiveCurveViewRange's minimal float range is lower than float precision, it might draw uglily curves such as cos(x)^2+sin(x)^2");
 static_assert(Ion::Display::WidthInTenthOfMillimeter == 576, "Use the new screen width to compute Shared::InteractiveCurveViewRange::NormalizedXHalfRange");
 static_assert(Ion::Display::HeightInTenthOfMillimeter == 432, "Use the new screen height to compute Shared::InteractiveCurveViewRange::NormalizedYHalfRange");
 

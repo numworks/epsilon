@@ -72,6 +72,7 @@ class Expression : public TreeHandle {
   friend class SignFunction;
   friend class Sine;
   friend class SquareRoot;
+  friend class SquareRootNode;
   friend class Store;
   friend class Subtraction;
   friend class Sum;

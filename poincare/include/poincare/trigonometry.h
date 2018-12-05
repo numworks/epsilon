@@ -13,6 +13,7 @@ public:
     Sine = 1,
   };
   static float characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit);
+  static bool parentIsDirectTrigonometry(const Expression & e);
   static Expression shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   static Expression shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);

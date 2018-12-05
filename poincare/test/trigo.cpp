@@ -511,4 +511,23 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("atan(tan(1808))", "8", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("atan(tan(-180/7))", "-180/7", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("atan(R(3))", "60", Preferences::AngleUnit::Degree);
+
+  // cos(arcsin)
+  assert_parsed_expression_simplify_to("cos(asin(x))", "R(1-x^2)", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(asin(-x))", "R(1-x^2)", Preferences::AngleUnit::Degree);
+  // cos(arctan)
+  assert_parsed_expression_simplify_to("cos(atan(x))", "1/R(1+x^2)", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(atan(-x))", "1/R(1+x^2)", Preferences::AngleUnit::Degree);
+  // sin(arccos)
+  assert_parsed_expression_simplify_to("sin(acos(x))", "R(1-x^2)", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(acos(-x))", "R(1-x^2)", Preferences::AngleUnit::Degree);
+  // sin(arctan)
+  assert_parsed_expression_simplify_to("sin(atan(x))", "x/R(1+x^2)", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(atan(-x))", "-x/R(1+x^2)", Preferences::AngleUnit::Degree);
+  // tan(arccos)
+  assert_parsed_expression_simplify_to("tan(acos(x))", "R(1-x^2)/x", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(acos(-x))", "-R(1-x^2)/x", Preferences::AngleUnit::Degree);
+  // tan(arcsin)
+  assert_parsed_expression_simplify_to("tan(asin(x))", "x/R(1-x^2)", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(asin(-x))", "-x/R(1-x^2)", Preferences::AngleUnit::Degree);
 }

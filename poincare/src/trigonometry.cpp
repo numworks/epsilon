@@ -9,6 +9,8 @@
 #include <poincare/derivative.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
+#include <poincare/power.h>
+#include <poincare/addition.h>
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
@@ -57,6 +59,60 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     Expression result = e.childAtIndex(0).childAtIndex(0);
     e.replaceWithInPlace(result);
     return result;
+  }
+
+  // Step 3. Look for an expression of type "cos(arcsin(x))" or "sin(arccos(x)), return sqrt(1-x^2)
+  if ((e.type() == ExpressionNode::Type::Cosine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine) || (e.type() == ExpressionNode::Type::Sine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcCosine)) {
+    Expression sqrt =
+      Power(
+        Addition(
+          Rational(1),
+          Multiplication(
+            Rational(-1),
+            Power(e.childAtIndex(0).childAtIndex(0), Rational(2))           )
+        ),
+        Rational(1,2)
+      );
+    // reduce x^2
+    sqrt.childAtIndex(0).childAtIndex(1).childAtIndex(1).shallowReduce(context, angleUnit, target);
+    // reduce -1*x^2
+    sqrt.childAtIndex(0).childAtIndex(1).shallowReduce(context, angleUnit, target);
+    // reduce 1-1*x^2
+    sqrt.childAtIndex(0).shallowReduce(context, angleUnit, target);
+    e.replaceWithInPlace(sqrt);
+    // reduce sqrt(1+(-1)*x^2)
+    return sqrt.shallowReduce(context, angleUnit, target);
+  }
+
+  // Step 4. Look for an expression of type "cos(arctan(x))" or "sin(arctan(x))"
+  // cos(arctan(x)) --> 1/sqrt(1+x^2)
+  // sin(arctan(x)) --> x/sqrt(1+x^2)
+  if ((e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine) && e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent) {
+    Expression x = e.childAtIndex(0).childAtIndex(0);
+    // Build 1/sqrt(1+x^2)
+    Expression res =
+      Power(
+        Addition(
+          Rational(1),
+          Power(
+            e.type() == ExpressionNode::Type::Cosine ? x : x.clone(),
+            Rational(2))
+        ),
+        Rational(-1,2)
+      );
+
+    // reduce x^2
+    res.childAtIndex(0).childAtIndex(1).shallowReduce(context, angleUnit, target);
+    // reduce 1+*x^2
+    res.childAtIndex(0).shallowReduce(context, angleUnit, target);
+    if (e.type() == ExpressionNode::Type::Sine) {
+      res = Multiplication(x, res);
+      // reduce (1+x^2)^(-1/2)
+      res.childAtIndex(0).shallowReduce(context, angleUnit, target);
+    }
+    e.replaceWithInPlace(res);
+    // reduce (1+x^2)^(-1/2) or x*(1+x^2)^(-1/2)
+    return res.shallowReduce(context, angleUnit, target);
   }
 
   // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
@@ -155,6 +211,17 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
   return false;
 }
 
+bool Trigonometry::parentIsDirectTrigonometry(const Expression & e) {
+  Expression parent = e.parent();
+  if (parent.isUninitialized()) {
+    return false;
+  }
+  if (parent.type() == ExpressionNode::Type::Cosine || parent.type() == ExpressionNode::Type::Sine || parent.type() == ExpressionNode::Type::Tangent) {
+    return true;
+  }
+  return false;
+}
+
 Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(e.type() == ExpressionNode::Type::ArcCosine || e.type() == ExpressionNode::Type::ArcSine || e.type() == ExpressionNode::Type::ArcTangent);
   ExpressionNode::Type correspondingType = e.type() == ExpressionNode::Type::ArcCosine ? ExpressionNode::Type::Cosine : (e.type() == ExpressionNode::Type::ArcSine ? ExpressionNode::Type::Sine : ExpressionNode::Type::Tangent);
@@ -189,12 +256,19 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     return lookup;
   }
 
+  /* We do not apply some rules if:
+   * - the parent node is a cosine, a sine or a tangent. In this case there is a simplication of
+   *   form f(g(x)) with f cos, sin or tan and g acos, asin or atan.
+   * - the reduction is being BottomUp. In this case, we do not yet have any
+   *   information on the parent which could later be a cosine, a sine or a tangent.
+   */
+  bool letArcFunctionAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsDirectTrigonometry(e);
   /* Step 4. Handle negative arguments: arccos(-x) = Pi-arcos(x),
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) */
-  if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative
+  if (!letArcFunctionAtRoot && (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative
       || (e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational
-        && e.childAtIndex(0).childAtIndex(0).convert<Rational>().isMinusOne()))
+        && e.childAtIndex(0).childAtIndex(0).convert<Rational>().isMinusOne())))
   {
     Expression newArgument;
     if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {

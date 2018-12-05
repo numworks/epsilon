@@ -37,6 +37,10 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     max = min+step;
   }
   range = max - min;
+  if (range < InteractiveCurveViewRange::k_minFloat) {
+    max += InteractiveCurveViewRange::k_minFloat;
+    min -= InteractiveCurveViewRange::k_minFloat;
+  }
   interactiveCurveViewRange->setYMin(addMargin(min, range, true));
   interactiveCurveViewRange->setYMax(addMargin(max, range, false));
   if (std::isinf(interactiveCurveViewRange->xMin())) {

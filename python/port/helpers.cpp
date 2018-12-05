@@ -18,21 +18,22 @@ void micropython_port_vm_hook_loop() {
     return;
   }
 
-  /* Check if the user asked for an interruption from the keyboard */
-  if (micropython_port_should_interrupt()) {
-    mp_keyboard_interrupt();
-  }
-}
-
-bool micropython_port_should_interrupt() {
-  Ion::Keyboard::State scan = Ion::Keyboard::scan();
-  Ion::Keyboard::Key interruptKey = static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
-  return scan.keyDown(interruptKey);
+  // Check if the user asked for an interruption from the keyboard
+  micropython_port_interrupt_if_needed();
 }
 
 void micropython_port_interruptible_msleep(uint32_t delay) {
   uint32_t start = Ion::Timing::millis();
-  while (Ion::Timing::millis() - start < delay && !micropython_port_should_interrupt()) {
+  while (Ion::Timing::millis() - start < delay) {
+    micropython_port_interrupt_if_needed();
     Ion::Timing::msleep(1);
+  }
+}
+
+bool micropython_port_interrupt_if_needed() {
+  Ion::Keyboard::State scan = Ion::Keyboard::scan();
+  Ion::Keyboard::Key interruptKey = static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
+  if (scan.keyDown(interruptKey)) {
+    mp_keyboard_interrupt();
   }
 }

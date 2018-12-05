@@ -10,7 +10,7 @@ class Integer;
 
 namespace PrintFloat {
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
-    // The wors case is -1.234E-328
+    // The worst case is -1.234E-328
     return numberOfSignificantDigits + 8;
   }
   /* This function prints the integer i in the buffer with a '.' at the position

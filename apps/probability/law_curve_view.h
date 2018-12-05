@@ -18,7 +18,7 @@ public:
 protected:
   char * label(Axis axis, int index) const override;
 private:
-  char m_labels[k_maxNumberOfXLabels][k_labelBufferSize];
+  char m_labels[k_maxNumberOfXLabels][k_horizontalLabelBufferSize];
   static float EvaluateAtAbscissa(float abscissa, void * model, void * context);
   Law * m_law;
   Calculation * m_calculation;

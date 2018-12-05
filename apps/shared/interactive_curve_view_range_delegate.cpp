@@ -20,7 +20,7 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     return false;
   }
   if (min == max) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, max) : 1.0f;
+    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, max) : 1.0f;
     min = min - step;
     max = max + step;
   }
@@ -29,11 +29,11 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     max = 1.0f;
   }
   if (min == FLT_MAX) {
-    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, std::fabs(max)) : 1.0f;
+    float step = max != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, std::fabs(max)) : 1.0f;
     min = max-step;
   }
-   if (max == -FLT_MAX) {
-    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, std::fabs(min)) : 1.0f;
+  if (max == -FLT_MAX) {
+    float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, std::fabs(min)) : 1.0f;
     max = min+step;
   }
   range = max - min;

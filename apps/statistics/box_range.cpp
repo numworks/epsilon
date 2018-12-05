@@ -22,7 +22,7 @@ float BoxRange::xMax() {
 }
 
 float BoxRange::xGridUnit() {
-  return computeGridUnit(Axis::X, xMin(), xMax());
+  return computeGridUnit(Axis::X, xMax() - xMin());
 }
 
 }

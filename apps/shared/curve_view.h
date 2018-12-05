@@ -41,14 +41,17 @@ protected:
   constexpr static KDCoordinate k_okVerticalMargin = 23;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
-  /* The labels are bounds by ±1E8 and ±1E-8 which in worse case can be written
-   * in 6 characters.
-   * To avoid overlapping labels, k_labelBufferSize should verify:
-   * k_labelBufferSize =  Ion::Display::Width / ((CurveViewRange::k_maxNumberOfXGridUnits/2)*KDFont::SmallFont->glyphWidth)
-   *                   = 320/((18/2)*7) ~ 5.
-   * We take 6 creating small overlap in worse case but preventing from truncating
-   * labels (ie, "-1E-"). */
-  constexpr static int k_labelBufferSize = 6;
+  /* The labels are bounds by ±1E-4 and ±1E-8 which in worst case can be written
+   * using 6 characters (including the null-terminating char).
+   * To avoid overlapping horizontal labels, k_horizontalLabelBufferSize should
+   * verify:
+   * k_horizontalLabelBufferSize = Ion::Display::Width /
+   * ((CurveViewRange::k_maxNumberOfXGridUnits/2)*KDFont::SmallFont->glyphWidth)
+   *                             = 320/((18/2)*7) ~ 5.
+   * We take 6, which creates a small overlap in worst cases but prevents from
+   * truncating labels (ie, "-1E-"). */
+  constexpr static int k_horizontalLabelBufferSize = 6;
+  constexpr static int k_verticalLabelBufferSize = 14; // '-' + 6 significant digits + '.' + "E-" + 3 digits + null-terminating char
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;

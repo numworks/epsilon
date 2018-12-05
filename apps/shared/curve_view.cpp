@@ -140,8 +140,12 @@ void CurveView::computeLabels(Axis axis) {
     }
     /* Label cannot hold more than k_labelBufferSize characters to prevent them
      * from overprinting one another.*/
-    PrintFloat::convertFloatToText<float>(labelValue, label(axis, index), k_labelBufferSize,
-      Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    PrintFloat::convertFloatToText<float>(
+        labelValue,
+        label(axis, index),
+        axis == Axis::Vertical ? k_verticalLabelBufferSize : k_horizontalLabelBufferSize,
+        axis == Axis::Vertical ? 6 : Constant::ShortNumberOfSignificantDigits,
+        Preferences::PrintFloatMode::Decimal);
   }
 }
 

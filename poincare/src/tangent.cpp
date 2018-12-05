@@ -55,6 +55,8 @@ Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angl
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
     Division d = Division(s, c);
+    s.shallowReduce(context, angleUnit, target);
+    c.shallowReduce(context, angleUnit, target);
     newExpression.replaceWithInPlace(d);
     return d.shallowReduce(context, angleUnit, target);
   }

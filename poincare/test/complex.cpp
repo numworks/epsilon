@@ -58,6 +58,7 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_cartesian_parts("(3+I)/2", "3/2", "1/2");
   assert_expression_has_complex_cartesian_parts("(3+I)/(2+I)", "7/5", "-1/5");
   assert_expression_has_complex_cartesian_parts("(3+I)^(2+I)", "10*cos((-4*atan(3)+ln(2)+ln(5)+2*P)/2)*X^((2*atan(3)-P)/2)", "10*sin((-4*atan(3)+ln(2)+ln(5)+2*P)/2)*X^((2*atan(3)-P)/2)", Radian);
+  assert_expression_has_complex_cartesian_parts("R(1+6I)", "R(2+2*R(37))/2", "R(-2+2*R(37))/2");
   assert_expression_has_complex_cartesian_parts("I!", "undef", "0");
   assert_expression_has_complex_cartesian_parts("3!", "6", "0");
   assert_expression_has_complex_cartesian_parts("x!", "x!", "0");
@@ -103,7 +104,7 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_cartesian_parts("sign(x)", "sign(x)", "0");
   assert_expression_has_complex_cartesian_parts("sin(23)", "sin(23)", "0");
   assert_expression_has_complex_cartesian_parts("sin(23+I)", nullptr, nullptr);
-  assert_expression_has_complex_cartesian_parts("R(1-I)", "(root(2,4)*R(2+R(2)))/2", "-(root(2,4)*R(2-R(2)))/2");
+  assert_expression_has_complex_cartesian_parts("R(1-I)", "R(2+2*R(2))/2", "-R(-2+2*R(2))/2");
   assert_expression_has_complex_cartesian_parts("tan(23)", "tan(23)", "0");
   assert_expression_has_complex_cartesian_parts("tan(23+I)", nullptr, nullptr);
 

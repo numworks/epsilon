@@ -2,7 +2,6 @@
 #define POINCARE_SQUARE_ROOT_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 #include <ion/charset.h>
 
@@ -23,11 +22,13 @@ public:
 #endif
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartFromPolarParts(this, context, angleUnit); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartFromPolarParts(this, context, angleUnit); }
+  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
+  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
   Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
 private:
+  // Complex
+  Expression complexPart(Context & context, Preferences::AngleUnit angleUnit, bool isReal) const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

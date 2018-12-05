@@ -64,7 +64,7 @@ _fun_bc_call \
 _fun_builtin_var_call \
 _main \
 _micropython_port_interruptible_msleep \
-_micropython_port_should_interrupt \
+_micropython_port_interrupt_if_needed \
 _micropython_port_vm_hook_loop \
 _mp_builtin___import__ \
 _mp_builtin_input \

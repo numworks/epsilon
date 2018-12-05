@@ -19,7 +19,7 @@ public:
   virtual float yMax() = 0;
   virtual float xGridUnit() = 0;
   virtual float yGridUnit();
-  float computeGridUnit(Axis axis, float min, float max);
+  float computeGridUnit(Axis axis, float range);
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
 private:

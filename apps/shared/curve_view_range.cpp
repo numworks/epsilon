@@ -18,18 +18,17 @@ float CurveViewRange::yGridUnit() {
   return 0.0f;
 }
 
-float CurveViewRange::computeGridUnit(Axis axis, float min, float max) {
+float CurveViewRange::computeGridUnit(Axis axis, float range) {
   int a = 0;
   int b = 0;
-  float d = max - min;
   float maxNumberOfUnits = (axis == Axis::X) ? k_maxNumberOfXGridUnits : k_maxNumberOfYGridUnits;
   float minNumberOfUnits = (axis == Axis::X) ? k_minNumberOfXGridUnits : k_minNumberOfYGridUnits;
   constexpr int unitsCount = 3;
   float units[unitsCount] = {k_smallGridUnitMantissa, k_mediumGridUnitMantissa, k_largeGridUnitMantissa};
   for (int k = 0; k < unitsCount; k++) {
     float currentA = units[k];
-    int b1 = std::floor(std::log10(d/(currentA*maxNumberOfUnits)));
-    int b2 = std::floor(std::log10(d/(currentA*minNumberOfUnits)));
+    int b1 = std::floor(std::log10(range/(currentA*maxNumberOfUnits)));
+    int b2 = std::floor(std::log10(range/(currentA*minNumberOfUnits)));
     if (b1 != b2) {
       b = b2;
       a = currentA;

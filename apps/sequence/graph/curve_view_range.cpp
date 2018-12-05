@@ -28,7 +28,7 @@ void CurveViewRange::roundAbscissa() {
     m_xMin = -k_displayLeftMarginRatio*(float)Ion::Display::Width;
     m_xMax = m_xMin+(float)Ion::Display::Width;
   }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
@@ -44,7 +44,7 @@ void CurveViewRange::normalize() {
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMin = newXMin;
     m_xMax = newXMax;
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
   }
   if (m_xMin < 0.0f) {
     m_xMin = -k_displayLeftMarginRatio*2.0f*NormalizedXHalfRange();
@@ -56,7 +56,7 @@ void CurveViewRange::normalize() {
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMin = newYMin;
     m_yMax = newYMax;
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+    m_yGridUnit = computeGridUnit(Axis::Y, m_yMax - m_yMin);
   }
 }
 
@@ -67,11 +67,11 @@ void CurveViewRange::setTrigonometric() {
     m_xMin = -k_displayLeftMarginRatio*1200;
     m_xMax = 1200;
   }
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
   m_yAuto = false;
   m_yMin = -1.6f;
   m_yMax = 1.6f;
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
+  m_yGridUnit = computeGridUnit(Axis::Y, m_yMax - m_yMin);
 }
 
 void CurveViewRange::setDefault() {
@@ -80,7 +80,7 @@ void CurveViewRange::setDefault() {
   }
   m_xMax = m_delegate->interestingXRange();
   m_xMin = -k_displayLeftMarginRatio*m_xMax;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+  m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
   setYAuto(true);
 }
 

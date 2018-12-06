@@ -32,3 +32,11 @@ tests += $(addprefix ion/test/,\
   keyboard.cpp\
   storage.cpp\
 )
+
+TEST_EXT_FLASH ?= 0
+ifeq ($(TEST_EXT_FLASH),1)
+SFLAGS += -DTEST_EXT_FLASH=1
+tests += ion/test/external_flash.cpp
+TEST_EXT_FLASH_REPROGRAM ?= 0
+SFLAGS += -DTEST_EXT_FLASH_REPROGRAM=$(TEST_EXT_FLASH_REPROGRAM)
+endif

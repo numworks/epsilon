@@ -98,7 +98,7 @@ private:
   bool m_penDown;
   bool m_visible;
 
-  uint8_t m_speed; // Speed is between 1 and 10
+  uint8_t m_speed; // Speed is between 0 and 10
   KDCoordinate m_penSize;
   KDCoordinate m_mileage;
   bool m_drawn;

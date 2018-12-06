@@ -5,6 +5,7 @@ extern "C" {
 #include <py/mpconfig.h>
 }
 #include <ion.h>
+#include <escher/metric.h>
 #include <kandinsky.h>
 #include <math.h>
 
@@ -71,7 +72,7 @@ private:
    * need to invert some values, hence k_invertedYAxisCoefficient. */
   static constexpr int k_invertedYAxisCoefficient = -1;
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
-  static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - 18) / 2;
+  static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - Metric::TitleBarHeight) / 2;
   static constexpr int k_numberOfIcons = 8;
   static constexpr uint8_t k_defaultSpeed = 3;
   static constexpr uint8_t k_maxSpeed = 10;

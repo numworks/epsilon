@@ -1,5 +1,7 @@
 #include "modturtle.h"
 
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_reset_obj, modturtle_reset);
+
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(modturtle_forward_obj, modturtle_forward);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(modturtle_backward_obj, modturtle_backward);
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(modturtle_right_obj, modturtle_right);
@@ -27,6 +29,9 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle___init___obj, modturtle___init__);
 STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_turtle) },
   { MP_ROM_QSTR(MP_QSTR___init__), (mp_obj_t)&modturtle___init___obj },
+
+  { MP_ROM_QSTR(MP_QSTR_reset), (mp_obj_t)&modturtle_reset_obj },
+
   { MP_ROM_QSTR(MP_QSTR_forward), (mp_obj_t)&modturtle_forward_obj },
   { MP_ROM_QSTR(MP_QSTR_fd), (mp_obj_t)&modturtle_forward_obj },
   { MP_ROM_QSTR(MP_QSTR_backward), (mp_obj_t)&modturtle_backward_obj },

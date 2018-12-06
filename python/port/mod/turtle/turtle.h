@@ -8,6 +8,16 @@ extern "C" {
 #include <kandinsky.h>
 #include <math.h>
 
+/* We check for keyboard interruptions using micropython_port_vm_hook_loop and
+ * micropython_port_interruptible_msleep, but even if we catch an interruption,
+ * Micropython waits until the end of the top-most C++ function execution to
+ * process the interruption.
+ * This means that if we are executing a very long function, such as
+ * forward(100) with small speed, we cannot interrupt it.
+ * To fix this, all methods that might be long to return should return
+ * immediately if they find an interruption. */
+
+
 class Turtle {
 public:
   constexpr Turtle() :
@@ -72,10 +82,11 @@ private:
 
   const KDColor * icon();
 
-  void draw();
-  void erase();
-  void dot(mp_float_t x, mp_float_t y);
+  // Interruptible methods that return true if they have been interrupted
+  bool draw();
+  bool dot(mp_float_t x, mp_float_t y);
 
+  void erase();
 
   mp_float_t m_x;
   mp_float_t m_y;

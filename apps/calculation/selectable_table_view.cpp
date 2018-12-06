@@ -38,7 +38,7 @@ void CalculationSelectableTableView::scrollToCell(int i, int j) {
   }
 }
 
-void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCell::SubviewType subviewType, int i, int j) {
+void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCellDataSource::SubviewType subviewType, int i, int j) {
   if (dataSource()->rowHeight(j) <= bounds().height()) {
     return;
   }
@@ -51,7 +51,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   /* Main part of the scroll */
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(j+1) - maxContentHeightDisplayableWithoutScrolling();
-  if (subviewType == HistoryViewCell::SubviewType::Input) {
+  if (subviewType == HistoryViewCellDataSource::SubviewType::Input) {
     if (j == 0) {
       contentOffsetY = 0;
     } else {

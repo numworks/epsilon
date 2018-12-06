@@ -73,11 +73,8 @@ void Turtle::setHeading(mp_float_t angle) {
 }
 
 void Turtle::setSpeed(mp_int_t speed) {
-  // Speed is clamped between 0 and 10
-  if (speed < 0) {
+  if (speed < k_minSpeed || speed > k_maxSpeed) {
     m_speed = 0;
-  } else if (speed > 10) {
-    m_speed = 10;
   } else {
     m_speed = speed;
   }
@@ -203,7 +200,7 @@ bool Turtle::draw() {
 
   if (m_mileage > 1000) {
     if (m_speed > 0) {
-      if (micropython_port_interruptible_msleep(8 * (8 - m_speed))) {
+      if (micropython_port_interruptible_msleep(k_maxSpeed * (k_maxSpeed - m_speed))) {
         return true;
       }
       m_mileage -= 1000;

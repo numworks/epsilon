@@ -25,7 +25,7 @@ public:
   Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
   Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
   Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
-  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
+  //Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
 private:
   // Complex
   Expression complexPart(Context & context, Preferences::AngleUnit angleUnit, bool isReal) const;

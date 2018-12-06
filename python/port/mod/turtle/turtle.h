@@ -67,6 +67,9 @@ public:
 private:
   static constexpr mp_float_t k_headingOffset = M_PI_2;
   static constexpr mp_float_t k_headingScale = M_PI / 180;
+  /* The Y axis is oriented upwards in Turtle and downwards in Kandinsky, so we
+   * need to invert some values, hence k_invertedYAxisCoefficient. */
+  static constexpr int k_invertedYAxisCoefficient = -1;
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
   static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - 18) / 2;
   static constexpr int k_numberOfIcons = 8;

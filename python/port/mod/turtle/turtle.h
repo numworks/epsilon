@@ -27,7 +27,7 @@ public:
     m_color(KDColorBlack),
     m_penDown(true),
     m_visible(true),
-    m_speed(6),
+    m_speed(k_defaultSpeed),
     m_penSize(5),
     m_mileage(0),
     m_drawn(false),
@@ -70,6 +70,9 @@ private:
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
   static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - 18) / 2;
   static constexpr int k_numberOfIcons = 8;
+  static constexpr float k_minSpeed = 0.5f;
+  static constexpr float k_defaultSpeed = 3.0f;
+  static constexpr float k_maxSpeed = 10.0f;
 
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }

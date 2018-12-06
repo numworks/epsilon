@@ -8,17 +8,29 @@
 
 namespace Calculation {
 
-class HistoryViewCell : public ::EvenOddCell, public Responder {
+class HistoryViewCell;
+
+class HistoryViewCellDataSource {
 public:
   enum class SubviewType {
     Input,
     Output
   };
+  HistoryViewCellDataSource();
+  void setSelectedSubviewType(HistoryViewCellDataSource::SubviewType subviewType, HistoryViewCell * cell = nullptr);
+  SubviewType selectedSubviewType() { return m_selectedSubviewType; }
+private:
+  SubviewType m_selectedSubviewType;
+};
+
+class HistoryViewCell : public ::EvenOddCell, public Responder {
+public:
   HistoryViewCell(Responder * parentResponder = nullptr);
   void reloadCell() override;
   void reloadScroll();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
+  void setDataSource(HistoryViewCellDataSource * dataSource) { m_dataSource = dataSource; }
   Responder * responder() override {
     return this;
   }
@@ -31,8 +43,6 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static KDCoordinate k_digitVerticalMargin = 5;
-  SubviewType selectedSubviewType();
-  void setSelectedSubviewType(HistoryViewCell::SubviewType subviewType);
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
@@ -42,7 +52,7 @@ private:
   Poincare::Layout m_rightOutputLayout;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
-  SubviewType m_selectedSubviewType;
+  HistoryViewCellDataSource * m_dataSource;
 };
 
 }

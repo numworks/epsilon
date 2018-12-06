@@ -27,14 +27,14 @@ Expression SquareRootNode::complexNorm(Context & context, Preferences::AngleUnit
   return SquareRoot::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
-Expression SquareRootNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
+/*Expression SquareRootNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression th = childAtIndex(0)->complexArgument(context, angleUnit);
   if (th.isUninitialized()) {
     return Expression();
   }
   // TH = th/2
   return Division(th, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-}
+}*/
 
 Expression SquareRootNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
   // real: (1/2)*sqrt(2*(sqrt(x^2+y^2)+x))

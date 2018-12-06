@@ -25,7 +25,7 @@ void Turtle::forward(mp_float_t length) {
 
 void Turtle::left(mp_float_t angle) {
   setHeading(
-    ((m_heading - k_headingOffset) + (angle * k_headingScale)) / k_headingScale
+     k_invertedYAxisCoefficient * ((m_heading - k_headingOffset) + k_invertedYAxisCoefficient * (angle * k_headingScale)) / k_headingScale
   );
 }
 
@@ -59,13 +59,13 @@ void Turtle::goTo(mp_float_t x, mp_float_t y) {
 }
 
 mp_float_t Turtle::heading() const {
-  return (m_heading - k_headingOffset) / k_headingScale;
+  return k_invertedYAxisCoefficient * (m_heading - k_headingOffset) / k_headingScale;
 }
 
 void Turtle::setHeading(mp_float_t angle) {
   micropython_port_vm_hook_loop();
 
-  m_heading = angle * k_headingScale + k_headingOffset;
+  m_heading = k_invertedYAxisCoefficient * angle * k_headingScale + k_headingOffset;
 
   Ion::Display::waitForVBlank();
   erase();
@@ -110,7 +110,7 @@ void Turtle::setVisible(bool visible) {
 // Private functions
 
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
-  return KDPoint(round(x + k_xOffset), round(y + k_yOffset));
+  return KDPoint(round(x + k_xOffset), round(k_invertedYAxisCoefficient * y + k_yOffset));
 }
 
 bool Turtle::hasUnderneathPixelBuffer() {
@@ -174,7 +174,7 @@ const KDColor * Turtle::icon() {
     );
   }
 
-  int frame = ((m_heading / (2*M_PI)) * k_numberOfIcons + 0.5);
+  int frame = (m_heading / (2*M_PI)) * k_numberOfIcons + 0.5;
   if (frame < 0) {
     frame = k_numberOfIcons - ((-frame) % k_numberOfIcons) - 1;
   } else {

@@ -64,6 +64,7 @@ public:
 
   // MicroPython::ExecutionEnvironment
   void displaySandbox() override;
+  void resetSandbox() override;
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
 

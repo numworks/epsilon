@@ -12,6 +12,7 @@ class SandboxController : public ViewController {
 public:
   SandboxController(Responder * parentResponder);
   StackViewController * stackViewController();
+  void reset();
 
   // ViewController
   View * view() override { return &m_solidColorView; }
@@ -20,6 +21,7 @@ public:
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 
 private:
+  void redrawWindow();
   SolidColorView m_solidColorView;
 };
 }

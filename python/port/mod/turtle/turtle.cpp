@@ -7,6 +7,7 @@ extern "C" {
 #include "turtle_icon.h"
 
 static constexpr KDSize k_iconSize = KDSize(9, 9);
+constexpr KDColor Turtle::k_defaultColor;
 
 template <typename T> static inline T * allocate(size_t count) {
   /* We forward dynamic allocations to the Python GC so we don't have to bother
@@ -14,6 +15,25 @@ template <typename T> static inline T * allocate(size_t count) {
    * allocated areas need to be added to MicroPython's GC roots, otherwise those
    * buffers will be wiped out by the GC too early. */
   return static_cast<T*>(m_malloc(sizeof(T) * count));
+}
+
+void Turtle::reset() {
+  // Erase the drawing
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->resetSandbox();
+
+  // Reset turtle values
+  m_x = 0;
+  m_y = 0;
+  m_heading = k_headingOffset;
+  m_color = k_defaultColor;
+  m_penDown = true;
+  m_visible = true;
+  m_speed = k_defaultSpeed;
+  m_penSize = k_defaultPenSize;
+  m_mileage = 0;
+
+  // Draw the turtle
+  draw();
 }
 
 void Turtle::forward(mp_float_t length) {

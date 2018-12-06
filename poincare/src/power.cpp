@@ -82,14 +82,19 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
-  std::complex<T> result = std::pow(c, d);
+  std::complex<T> result;
   if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() >= 0.0) {
     /* pow: (R+, R) -> R+
-     * However, std::pow(2.0, 1000) = (INFINITY, NAN). Openbsd pow of a
-     * positive real and another real has a undefined imaginary when the real
-     * result is infinity. To avoid this, we force the imaginary part of
-     * pow(R+,R) to 0.0. */
-    result.imag(0.0);
+     * For pow on (R+,R) we rather use std::pow(double, double) because:
+     * - pow on complexes is not as precise as pow on double: for instance,
+     *   pow(complex<double>(2.0,0.0), complex<double>(3.0,0.0) = complex(7.9999999999999982,0.0)
+     *   and pow(2.0,3.0) = 8.0
+     * - Using complex pow, std::pow(2.0, 1000) = (INFINITY, NAN).
+     *   Openbsd pow of a positive real and another real has a undefined
+     *   imaginary when the real result is infinity. */
+    result = std::complex<T>(std::pow(c.real(), d.real()));
+  } else {
+    result = std::pow(c, d);
   }
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.

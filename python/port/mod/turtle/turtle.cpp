@@ -73,7 +73,7 @@ void Turtle::setHeading(mp_float_t angle) {
 }
 
 void Turtle::setSpeed(mp_int_t speed) {
-  if (speed < k_minSpeed || speed > k_maxSpeed) {
+  if (speed < 0 || speed > k_maxSpeed) {
     m_speed = 0;
   } else {
     m_speed = speed;

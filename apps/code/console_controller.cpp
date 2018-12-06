@@ -304,6 +304,13 @@ void ConsoleController::displaySandbox() {
   stackViewController()->push(&m_sandboxController);
 }
 
+void ConsoleController::resetSandbox() {
+  if (!m_sandboxIsDisplayed) {
+    return;
+  }
+  m_sandboxController.reset();
+}
+
 /* printText is called by the Python machine.
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {

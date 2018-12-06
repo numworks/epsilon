@@ -13,8 +13,13 @@ StackViewController * SandboxController::stackViewController() {
   return static_cast<StackViewController *>(parentResponder());
 }
 
+void SandboxController::reset() {
+  m_solidColorView.reload();
+  redrawWindow();
+}
+
 void SandboxController::viewWillAppear() {
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->redrawWindow();
+  redrawWindow();
 }
 
 bool SandboxController::handleEvent(Ion::Events::Event event) {
@@ -26,6 +31,10 @@ bool SandboxController::handleEvent(Ion::Events::Event event) {
     stackViewController()->pop();
   }
   return true;
+}
+
+void SandboxController::redrawWindow() {
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->redrawWindow();
 }
 
 }

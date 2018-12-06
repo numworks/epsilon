@@ -27,6 +27,9 @@ Q(set_pixel)
 // Turtle QSTRs
 
 Q(turtle)
+
+Q(reset)
+
 Q(forward)
 Q(fd)
 Q(backward)
@@ -63,7 +66,6 @@ Q(ht)
 Q(isvisible)
 
 Q(pencolor)
-Q(reset)
 
 // utime QSTRs
 Q(time)

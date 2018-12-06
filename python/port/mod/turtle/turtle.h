@@ -25,11 +25,11 @@ public:
     m_x(0),
     m_y(0),
     m_heading(k_headingOffset),
-    m_color(KDColorBlack),
+    m_color(k_defaultColor),
     m_penDown(true),
     m_visible(true),
     m_speed(k_defaultSpeed),
-    m_penSize(1),
+    m_penSize(k_defaultPenSize),
     m_mileage(0),
     m_drawn(false),
     m_underneathPixelBuffer(nullptr),
@@ -38,6 +38,8 @@ public:
     m_iconsPixels(nullptr)
   {
   }
+
+  void reset();
 
   void forward(mp_float_t length);
   void backward(mp_float_t length) { forward(-length); }
@@ -76,6 +78,9 @@ private:
   static constexpr int k_numberOfIcons = 8;
   static constexpr uint8_t k_defaultSpeed = 3;
   static constexpr uint8_t k_maxSpeed = 10;
+  static constexpr KDColor k_defaultColor = KDColorBlack;
+  static constexpr uint8_t k_defaultPenSize = 1;
+
 
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }

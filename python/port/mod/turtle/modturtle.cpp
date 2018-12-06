@@ -19,6 +19,11 @@ mp_obj_t modturtle___init__() {
   return mp_const_none;
 }
 
+mp_obj_t modturtle_reset() {
+  sTurtle.reset();
+  return mp_const_none;
+}
+
 mp_obj_t modturtle_forward(mp_obj_t px) {
   sTurtle.forward(mp_obj_get_float(px));
   return mp_const_none;

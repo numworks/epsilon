@@ -6,6 +6,10 @@ SolidColorView::SolidColorView(KDColor color) :
 {
 }
 
+void SolidColorView::reload() {
+  markRectAsDirty(bounds());
+}
+
 void SolidColorView::setColor(KDColor color) {
   if (m_color != color) {
     m_color = color;

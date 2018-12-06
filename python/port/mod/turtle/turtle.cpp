@@ -43,8 +43,12 @@ void Turtle::goTo(mp_float_t x, mp_float_t y) {
         Ion::Display::waitForVBlank();
       }
       erase();
-      dot(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress));
-      draw();
+      if (dot(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress))
+          || draw())
+      {
+        // Keyboard interruption. Return now to let MicroPython process it.
+        return;
+      }
     }
   }
 
@@ -184,7 +188,7 @@ const KDColor * Turtle::icon() {
   return &m_iconsPixels[offset];
 }
 
-void Turtle::draw() {
+bool Turtle::draw() {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
   const KDColor * i = icon();
@@ -199,24 +203,18 @@ void Turtle::draw() {
 
   if (m_mileage > 1000) {
     if (m_speed > 0) {
-      micropython_port_interruptible_msleep(8 * (8 - m_speed));
+      if (micropython_port_interruptible_msleep(8 * (8 - m_speed))) {
+        return true;
+      }
       m_mileage -= 1000;
     } else {
       m_mileage = 0;
     }
   }
+  return false;
 }
 
-void Turtle::erase() {
-  if (!m_drawn || m_underneathPixelBuffer == nullptr) {
-    return;
-  }
-  KDContext * ctx = KDIonContext::sharedContext();
-  ctx->fillRectWithPixels(iconRect(), m_underneathPixelBuffer, nullptr);
-  m_drawn = false;
-}
-
-void Turtle::dot(mp_float_t x, mp_float_t y) {
+bool Turtle::dot(mp_float_t x, mp_float_t y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
   if (m_penDown && hasDotBuffers()) {
@@ -232,8 +230,17 @@ void Turtle::dot(mp_float_t x, mp_float_t y) {
     m_mileage += sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
   }
 
-  micropython_port_vm_hook_loop();
-
   m_x = x;
   m_y = y;
+
+  return micropython_port_vm_hook_loop();
+}
+
+void Turtle::erase() {
+  if (!m_drawn || m_underneathPixelBuffer == nullptr) {
+    return;
+  }
+  KDContext * ctx = KDIonContext::sharedContext();
+  ctx->fillRectWithPixels(iconRect(), m_underneathPixelBuffer, nullptr);
+  m_drawn = false;
 }

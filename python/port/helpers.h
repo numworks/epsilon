@@ -8,8 +8,9 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
-void micropython_port_vm_hook_loop();
-void micropython_port_interruptible_msleep(uint32_t delay);
+// These methods return true if they have been interrupted
+bool micropython_port_vm_hook_loop();
+bool micropython_port_interruptible_msleep(uint32_t delay);
 bool micropython_port_interrupt_if_needed();
 
 #ifdef __cplusplus

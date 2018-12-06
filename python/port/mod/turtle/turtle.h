@@ -70,9 +70,8 @@ private:
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
   static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - 18) / 2;
   static constexpr int k_numberOfIcons = 8;
-  static constexpr float k_minSpeed = 0.5f;
-  static constexpr float k_defaultSpeed = 3.0f;
-  static constexpr float k_maxSpeed = 10.0f;
+  static constexpr uint8_t k_defaultSpeed = 3;
+  static constexpr uint8_t k_maxSpeed = 10;
 
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }

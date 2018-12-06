@@ -39,7 +39,7 @@ void Turtle::goTo(mp_float_t x, mp_float_t y) {
     for (int i = 0; i < length; i++) {
       mp_float_t progress = i / length;
 
-      if (m_speed > 0) {
+      if (m_speed > 0 && m_speed < k_maxSpeed) {
         Ion::Display::waitForVBlank();
       }
       erase();
@@ -199,14 +199,10 @@ bool Turtle::draw() {
   }
 
   if (m_mileage > 1000) {
-    if (m_speed > 0) {
-      if (micropython_port_interruptible_msleep(k_maxSpeed * (k_maxSpeed - m_speed))) {
-        return true;
-      }
-      m_mileage -= 1000;
-    } else {
-      m_mileage = 0;
+    if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : k_maxSpeed * (k_maxSpeed - m_speed)))) {
+      return true;
     }
+    m_mileage -= 1000;
   }
   return false;
 }
@@ -223,9 +219,7 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
     ctx->blendRectWithMask(rect, m_color, m_dotMask, m_dotWorkingPixelBuffer);
   }
 
-  if (m_speed > 0) {
-    m_mileage += sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
-  }
+  m_mileage += sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
 
   m_x = x;
   m_y = y;

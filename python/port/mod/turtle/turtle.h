@@ -28,7 +28,7 @@ public:
     m_penDown(true),
     m_visible(true),
     m_speed(k_defaultSpeed),
-    m_penSize(5),
+    m_penSize(1),
     m_mileage(0),
     m_drawn(false),
     m_underneathPixelBuffer(nullptr),

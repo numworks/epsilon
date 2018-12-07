@@ -44,6 +44,11 @@ mp_obj_t modturtle_left(mp_obj_t angle) {
   return mp_const_none;
 }
 
+mp_obj_t modturtle_circle(mp_obj_t radius, mp_obj_t angle) {
+  sTurtle.circle(mp_obj_get_int(radius), mp_obj_get_float(angle));
+  return mp_const_none;
+}
+
 mp_obj_t modturtle_goto(size_t n_args, const mp_obj_t *args) {
   mp_float_t x = 0;
   mp_float_t y = 0;

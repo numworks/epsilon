@@ -41,11 +41,12 @@ public:
 
   void reset();
 
-  void forward(mp_float_t length);
+  bool forward(mp_float_t length);
   void backward(mp_float_t length) { forward(-length); }
   void right(mp_float_t angle) { left(-angle); }
   void left(mp_float_t angle);
-  void goTo(mp_float_t x, mp_float_t y);
+  void circle(mp_int_t radius, mp_float_t angle);
+  bool goTo(mp_float_t x, mp_float_t y);
 
   mp_float_t heading() const;
   void setHeading(mp_float_t angle);
@@ -81,7 +82,7 @@ private:
   static constexpr KDColor k_defaultColor = KDColorBlack;
   static constexpr uint8_t k_defaultPenSize = 1;
 
-
+  void setHeadingPrivate(mp_float_t angle);
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }
 

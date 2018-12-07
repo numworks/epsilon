@@ -69,12 +69,12 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_cartesian_parts("I", "0", "1");
 
   assert_expression_has_complex_cartesian_parts("abs(-3)", "3", "0");
-  assert_expression_has_complex_cartesian_parts("abs(-3+I)", "abs(-3+I)", "0");
+  assert_expression_has_complex_cartesian_parts("abs(-3+I)", "R(10)", "0");
   assert_expression_has_complex_cartesian_parts("atan(2)", "atan(2)", "0");
   assert_expression_has_complex_cartesian_parts("atan(2+I)", nullptr, nullptr);
   assert_expression_has_complex_cartesian_parts("binomial(10, 4)", "210", "0");
   assert_expression_has_complex_cartesian_parts("ceil(-1.3)", "-1", "0");
-  assert_expression_has_complex_cartesian_parts("arg(-2)", "arg(-2)", "0");
+  assert_expression_has_complex_cartesian_parts("arg(-2)", "P", "0");
   // TODO: confidence is not simplified yet
   //assert_expression_has_complex_cartesian_parts("confidence(-2,-3)", "confidence(-2)", "0");
   assert_expression_has_complex_cartesian_parts("conj(-2)", "-2", "0");
@@ -87,7 +87,7 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_cartesian_parts("floor(x)", "floor(x)", "0");
   assert_expression_has_complex_cartesian_parts("frac(x)", "frac(x)", "0");
   assert_expression_has_complex_cartesian_parts("gcd(x,y)", "gcd(x,y)", "0");
-  assert_expression_has_complex_cartesian_parts("im(x)", "im(x)", "0");
+  assert_expression_has_complex_cartesian_parts("im(1+I)", "1", "0");
   assert_expression_has_complex_cartesian_parts("int(x^2, x, 1, 2)", "int(x^2,x,1,2)", "0");
   assert_expression_has_complex_cartesian_parts("lcm(x,y)", "lcm(x,y)", "0");
   // TODO: dim is not simplified yet
@@ -101,7 +101,7 @@ QUIZ_CASE(poincare_complex_parts) {
   //assert_expression_has_complex_cartesian_parts("prediction(-2,-3)", "prediction(-2)", "0");
   assert_expression_has_complex_cartesian_parts("randint(2,4)", "randint(2,4)", "0");
   assert_expression_has_complex_cartesian_parts("random()", "random()", "0");
-  assert_expression_has_complex_cartesian_parts("re(x)", "re(x)", "0");
+  assert_expression_has_complex_cartesian_parts("re(x)", "x", "0");
   assert_expression_has_complex_cartesian_parts("round(x,y)", "round(x,y)", "0");
   assert_expression_has_complex_cartesian_parts("sign(x)", "sign(x)", "0");
   assert_expression_has_complex_cartesian_parts("sin(23)", "sin(23)", "0");
@@ -148,5 +148,5 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_polar_parts("P", "P", "0");
   assert_expression_has_complex_polar_parts("I", "1", "P/2");
   assert_expression_has_complex_polar_parts("abs(-3)", "3", "0");
-  assert_expression_has_complex_polar_parts("abs(-3+I)", "abs(-3+I)", "0");
+  assert_expression_has_complex_polar_parts("abs(-3+I)", "R(10)", "0");
 }

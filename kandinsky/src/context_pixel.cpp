@@ -19,5 +19,16 @@ KDColor KDContext::getPixel(KDPoint p) {
 
 void KDContext::getPixels(KDRect r, KDColor * pixels) {
   KDRect rect = r.translatedBy(m_origin);
-  pullRect(rect, pixels);
+  if (m_clippingRect.containsRect(rect)) {
+    pullRect(rect, pixels);
+    return;
+  }
+  int i = 0;
+  KDCoordinate yMax = r.y()+r.height();
+  KDCoordinate xMax = r.x()+r.width();
+  for (int y = r.y(); y < yMax; y++) {
+    for (int x = r.x(); x < xMax; x++) {
+      pixels[i++] = getPixel(KDPoint(x, y));
+    }
+  }
 }

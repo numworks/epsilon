@@ -20,10 +20,10 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 }
 
 Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ImaginaryPart(this).shallowReduce(context, angleUnit);
+  return ImaginaryPart(this).shallowReduce(context, angleUnit, target);
 }
 
-Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -40,6 +40,11 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
     Expression result = Rational(0);
     replaceWithInPlace(result);
     return result;
+  }
+  Expression im = c.imaginaryPart(context, angleUnit);
+  if (!im.isUninitialized()) {
+    replaceWithInPlace(im);
+    return im.deepReduce(context, angleUnit, target);
   }
   return *this;
 }

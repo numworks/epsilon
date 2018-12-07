@@ -238,6 +238,8 @@ QUIZ_CASE(poincare_function_evaluate) {
 QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("abs(P)", "P");
   assert_parsed_expression_simplify_to("abs(-P)", "P");
+  assert_parsed_expression_simplify_to("abs(1+I)", "R(2)");
+  assert_parsed_expression_simplify_to("arg(1+I)", "P/4");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
@@ -257,9 +259,11 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
+  assert_parsed_expression_simplify_to("im(1+5*I)", "5");
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
   assert_parsed_expression_simplify_to("R(4)", "2");
+  assert_parsed_expression_simplify_to("re(1+5*I)", "1");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
   assert_parsed_expression_simplify_to("root(4,P)", "4^(1/P)");
   assert_parsed_expression_simplify_to("root(27,3)", "3");

@@ -55,7 +55,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
   explicit AbsoluteValue(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {
     replaceChildAtIndexInPlace(0, child);

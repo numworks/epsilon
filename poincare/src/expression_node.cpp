@@ -109,7 +109,7 @@ Expression ExpressionNode::complexArgument(Context & context, Preferences::Angle
           Multiplication(
             SignFunction::Builder(b).shallowReduce(context, angleUnit),
             Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-          ),
+          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
           arcTangent
         ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
     } else {

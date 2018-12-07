@@ -22,7 +22,7 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ComplexArgument(this).shallowReduce(context, angleUnit);
+  return ComplexArgument(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T>
@@ -30,19 +30,24 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>(std::arg(c));
 }
 
-Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
   Expression c = childAtIndex(0);
+#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
+  Expression arg = c.complexArgument(context, angleUnit);
+  if (!arg.isUninitialized()) {
+    replaceWithInPlace(arg);
+    return arg.deepReduce(context, angleUnit, target);
+  }
   return *this;
 }
 

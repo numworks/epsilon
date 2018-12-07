@@ -47,7 +47,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
   explicit ComplexArgument(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ComplexArgumentNode>()) {
     replaceChildAtIndexInPlace(0, child);

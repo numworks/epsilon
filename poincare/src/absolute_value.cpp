@@ -3,6 +3,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/absolute_value_layout.h>
+#include <poincare/multiplication.h>
 #include <assert.h>
 #include <cmath>
 
@@ -25,7 +26,7 @@ int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return AbsoluteValue(this).shallowReduce(context, angleUnit);
+  return AbsoluteValue(this).shallowReduce(context, angleUnit, target);
 }
 
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
@@ -33,12 +34,11 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Pre
   return *this;
 }
 
-Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefined()) {
     return e;
   }
-  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #if 0
   if (c->type() == Type::Matrix) {
@@ -46,14 +46,11 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
   }
 #endif
 #endif
-  if (c.sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
-    replaceWithInPlace(c);
-    return c;
-  }
-  if (c.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-    Expression result = c.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
-    replaceWithInPlace(result);
-    return result;
+  Expression c = childAtIndex(0);
+  Expression norm = c.complexNorm(context, angleUnit);
+  if (!norm.isUninitialized()) {
+    replaceWithInPlace(norm);
+    return norm.deepReduce(context, angleUnit, target);
   }
   return *this;
 }

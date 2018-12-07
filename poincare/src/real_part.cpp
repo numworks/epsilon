@@ -20,10 +20,10 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return RealPart(this).shallowReduce(context, angleUnit);
+  return RealPart(this).shallowReduce(context, angleUnit, target);
 }
 
-Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -39,6 +39,11 @@ Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (c.type() == ExpressionNode::Type::Rational) {
     replaceWithInPlace(c);
     return c;
+  }
+  Expression re = c.realPart(context, angleUnit);
+  if (!re.isUninitialized()) {
+    replaceWithInPlace(re);
+    return re.deepReduce(context, angleUnit, target);
   }
   return *this;
 }

@@ -6,7 +6,12 @@ extern "C" {
 #include "../../port.h"
 #include "turtle_icon.h"
 
-static constexpr KDSize k_iconSize = KDSize(9, 9);
+// TODO add icon in the names
+static constexpr KDCoordinate k_turtleSize = 15;
+static constexpr KDCoordinate k_turtleBodySize = 5;
+static constexpr KDCoordinate k_turtleHeadSize = 3;
+static constexpr KDCoordinate k_turtlePawSize = 2;
+
 constexpr KDColor Turtle::k_defaultColor;
 
 template <typename T> static inline T * allocate(size_t count) {
@@ -165,7 +170,7 @@ bool Turtle::hasUnderneathPixelBuffer() {
   if (m_underneathPixelBuffer != nullptr) {
     return true;
   }
-  m_underneathPixelBuffer = allocate<KDColor>(k_iconSize.width() * k_iconSize.height());
+  m_underneathPixelBuffer = allocate<KDColor>(k_turtleSize * k_turtleSize);
   return (m_underneathPixelBuffer != nullptr);
 }
 
@@ -203,46 +208,55 @@ bool Turtle::hasDotBuffers() {
 }
 
 KDRect Turtle::iconRect() const {
-  KDPoint iconOffset = KDPoint(-k_iconSize.width()/2 + 1, -k_iconSize.height()/2 + 1);
-  return KDRect(position().translatedBy(iconOffset), k_iconSize);
-}
-
-const KDColor * Turtle::icon() {
-  if (m_iconsPixels == nullptr) {
-    m_iconsPixels = allocate<KDColor>(k_iconSize.width() * k_iconSize.height() * k_numberOfIcons);
-    if (m_iconsPixels == nullptr) {
-      return nullptr;
-    }
-
-    Ion::decompress(
-      ImageStore::TurtleIcon->compressedPixelData(),
-      reinterpret_cast<uint8_t *>(m_iconsPixels),
-      ImageStore::TurtleIcon->compressedPixelDataSize(),
-      sizeof(KDColor) * k_iconSize.width() * k_iconSize.height() * k_numberOfIcons
-    );
-  }
-
-  int frame = (m_heading / (2*M_PI)) * k_numberOfIcons + 0.5;
-  if (frame < 0) {
-    frame = k_numberOfIcons - ((-frame) % k_numberOfIcons) - 1;
-  } else {
-    frame = frame % k_numberOfIcons;
-  }
-  int offset = frame * k_iconSize.width() * k_iconSize.height();
-
-  return &m_iconsPixels[offset];
+  KDPoint iconOffset = KDPoint(-k_turtleSize/2, -k_turtleSize/2);
+  return KDRect(position().translatedBy(iconOffset), k_turtleSize, k_turtleSize);
 }
 
 bool Turtle::draw() {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
-  const KDColor * i = icon();
-
-  if (m_visible && i && hasUnderneathPixelBuffer()) {
+  if (m_visible && hasUnderneathPixelBuffer()) {
     KDContext * ctx = KDIonContext::sharedContext();
-    KDRect rect = iconRect();
-    ctx->getPixels(rect, m_underneathPixelBuffer);
-    ctx->fillRectWithPixels(rect, i, nullptr);
+    // Get the pixels underneath the turtle
+    ctx->getPixels(iconRect(), m_underneathPixelBuffer);
+
+    // Draw the body
+    KDRect drawingRect = KDRect(
+        position().translatedBy(KDPoint(-k_turtleBodySize/2, -k_turtleBodySize/2)),
+        k_turtleBodySize,
+        k_turtleBodySize); // TODO make special method with enum class Paw Head Body Whole
+    ctx->fillRect(drawingRect, m_color);
+
+    KDCoordinate membersOffsetLength = 6;
+
+    // Draw the head
+    KDCoordinate headOffsetX = membersOffsetLength * sin(m_heading);
+    KDCoordinate headOffsetY = -membersOffsetLength * cos(m_heading);
+    KDPoint headOffset(headOffsetX, headOffsetY);
+    drawingRect = KDRect(
+        position().translatedBy(headOffset).translatedBy(KDPoint(-k_turtleHeadSize/2, -k_turtleHeadSize/2)),
+        k_turtleHeadSize,
+        k_turtleHeadSize); // TODO make special method with enum class Paw Head Body Whole
+    ctx->fillRect(drawingRect, m_color);
+
+    // Draw the paws
+    membersOffsetLength = 5;
+    constexpr int numberOfPaws = 4;
+    constexpr float angles[numberOfPaws] = {M_PI_2/2, M_PI_2+M_PI_2/2, M_PI+M_PI_2/2, M_PI+M_PI_2+M_PI_2/2};
+    constexpr float anglesEven[numberOfPaws] = {M_PI_2/2, M_PI_2+M_PI_2/2, M_PI+M_PI_2/2, M_PI+M_PI_2+M_PI_2/2};
+    for (int i = 0; i < numberOfPaws; i++) {
+      float pawX = membersOffsetLength * sin(m_heading+angles[i]);
+      float pawY = -membersOffsetLength * cos(m_heading+angles[i]);
+      KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);
+      KDCoordinate pawOffsetY = ((int)pawY) - (pawY < 0 ? 1 : 0);
+      KDPoint pawOffset(pawOffsetX, pawOffsetY);
+      drawingRect = KDRect(
+          position().translatedBy(pawOffset), // The paw is too small to need to offset it
+          k_turtlePawSize,
+          k_turtlePawSize); // TODO make special method with enum class Paw Head Body Whole
+      ctx->fillRect(drawingRect, m_color);
+    }
+
     m_drawn = true;
   }
 

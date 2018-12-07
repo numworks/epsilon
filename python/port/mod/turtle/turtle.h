@@ -34,8 +34,7 @@ public:
     m_drawn(false),
     m_underneathPixelBuffer(nullptr),
     m_dotMask(nullptr),
-    m_dotWorkingPixelBuffer(nullptr),
-    m_iconsPixels(nullptr)
+    m_dotWorkingPixelBuffer(nullptr)
   {
   }
 
@@ -76,7 +75,6 @@ private:
   static constexpr int k_invertedYAxisCoefficient = -1;
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
   static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - Metric::TitleBarHeight) / 2;
-  static constexpr int k_numberOfIcons = 8;
   static constexpr uint8_t k_defaultSpeed = 3;
   static constexpr uint8_t k_maxSpeed = 10;
   static constexpr KDColor k_defaultColor = KDColorBlack;
@@ -92,16 +90,18 @@ private:
 
   KDRect iconRect() const;
 
-  const KDColor * icon();
-
   // Interruptible methods that return true if they have been interrupted
   bool draw();
   bool dot(mp_float_t x, mp_float_t y);
 
   void erase();
 
+  /* The frame's center is the center of the screen, the x axis goes to the
+   * right and the y axis goes upwards. */
   mp_float_t m_x;
   mp_float_t m_y;
+  /* The heading is the angle in radians between the direction of the turtle and
+   * the X axis, in the trigonometric direction. */
   mp_float_t m_heading;
 
   KDColor m_color;
@@ -116,7 +116,6 @@ private:
   KDColor * m_underneathPixelBuffer;
   uint8_t * m_dotMask;
   KDColor * m_dotWorkingPixelBuffer;
-  KDColor * m_iconsPixels;
 };
 
 #endif

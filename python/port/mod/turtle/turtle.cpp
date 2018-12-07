@@ -36,8 +36,8 @@ void Turtle::reset() {
   draw();
 }
 
-void Turtle::forward(mp_float_t length) {
-  goTo(
+bool Turtle::forward(mp_float_t length) {
+  return goTo(
     m_x + length * sin(m_heading),
     m_y + length * cos(m_heading)
   );
@@ -49,7 +49,30 @@ void Turtle::left(mp_float_t angle) {
   );
 }
 
-void Turtle::goTo(mp_float_t x, mp_float_t y) {
+void Turtle::circle(mp_int_t radius, mp_float_t angle) {
+  mp_float_t oldHeading = heading();
+  mp_float_t length = (angle*k_headingScale)*radius;
+  if (length > 1) {
+    int i = 1;
+    while(i <= length) {
+      mp_float_t progress = i / length;
+      if (m_speed > 0 && m_speed < k_maxSpeed) {
+        Ion::Display::waitForVBlank();
+      }
+      // Move the turtle forward
+      if (forward(1)) {
+        // Keyboard interruption. Return now to let MicroPython process it.
+        return;
+      }
+      setHeadingPrivate(oldHeading+angle*progress);
+      i++;
+    }
+    forward(length-(i-1));
+    setHeading(oldHeading+angle);
+  }
+}
+
+bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t oldx = m_x;
   mp_float_t oldy = m_y;
   mp_float_t length = sqrt((x - oldx) * (x - oldx) + (y - oldy) * (y - oldy));
@@ -67,7 +90,7 @@ void Turtle::goTo(mp_float_t x, mp_float_t y) {
           || draw())
       {
         // Keyboard interruption. Return now to let MicroPython process it.
-        return;
+        return true;
       }
     }
   }
@@ -76,6 +99,7 @@ void Turtle::goTo(mp_float_t x, mp_float_t y) {
   erase();
   dot(x, y);
   draw();
+  return false;
 }
 
 mp_float_t Turtle::heading() const {
@@ -85,7 +109,7 @@ mp_float_t Turtle::heading() const {
 void Turtle::setHeading(mp_float_t angle) {
   micropython_port_vm_hook_loop();
 
-  m_heading = k_invertedYAxisCoefficient * angle * k_headingScale + k_headingOffset;
+  setHeadingPrivate(angle);
 
   Ion::Display::waitForVBlank();
   erase();
@@ -128,6 +152,10 @@ void Turtle::setVisible(bool visible) {
 }
 
 // Private functions
+
+void Turtle::setHeadingPrivate(mp_float_t angle) {
+  m_heading = k_invertedYAxisCoefficient * angle * k_headingScale + k_headingOffset;
+}
 
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
   return KDPoint(round(x + k_xOffset), round(k_invertedYAxisCoefficient * y + k_yOffset));

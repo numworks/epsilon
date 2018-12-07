@@ -22,7 +22,14 @@ Calculation::Calculation() :
 
 bool Calculation::operator==(const Calculation& c) {
   return strcmp(m_inputText, c.m_inputText) == 0
-      && strcmp(m_approximateOutputText, c.m_approximateOutputText) == 0;
+      && strcmp(m_approximateOutputText, c.m_approximateOutputText) == 0
+      /* Some calculations can make appear trigonometric functions in their
+       * exact output. Their argument will be different with the angle unit
+       * preferences but both input and approximate output will be the same.
+       * For example, i^(sqrt(3)) = cos(sqrt(3)*pi/2)+i*sin(sqrt(3)*pi/2) if
+       * angle unit is radian and i^(sqrt(3)) = cos(sqrt(3)*90+i*sin(sqrt(3)*90)
+       * in degree. */
+      && strcmp(m_exactOutputText, c.m_exactOutputText) == 0;
 }
 
 void Calculation::reset() {

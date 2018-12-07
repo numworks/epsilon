@@ -80,6 +80,17 @@ Expression ExpressionNode::imaginaryPart(Context & context, Preferences::AngleUn
 }
 
 Expression ExpressionNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression e(this);
+  Sign s = sign(&context, angleUnit);
+  // Case 1: the expression is positive real
+  if (s == ExpressionNode::Sign::Positive) {
+    return e.clone();
+  }
+  // Case 2: the argument is negative real
+  if (s == ExpressionNode::Sign::Negative) {
+    return e.clone().setSign(ExpressionNode::Sign::Positive, &context, angleUnit, ReductionTarget::BottomUpComputation);
+  }
+  // Case 3: the argument is complex or of unknown approximation
   Expression a = realPart(context, angleUnit);
   Expression b = imaginaryPart(context, angleUnit);
   if (!a.isUninitialized() && !b.isUninitialized()) {

@@ -106,7 +106,7 @@ private:
   KDRect iconRect() const;
 
   // Interruptible methods that return true if they have been interrupted
-  bool draw();
+  bool draw(bool force);
   bool dot(mp_float_t x, mp_float_t y);
 
   void drawPaw(PawType type, PawPosition position);

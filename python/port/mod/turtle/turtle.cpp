@@ -6,11 +6,10 @@ extern "C" {
 #include "../../port.h"
 #include "turtle_icon.h"
 
-// TODO add icon in the names
-static constexpr KDCoordinate k_turtleSize = 15;
-static constexpr KDCoordinate k_turtleBodySize = 5;
-static constexpr KDCoordinate k_turtleHeadSize = 3;
-static constexpr KDCoordinate k_turtlePawSize = 2;
+static constexpr KDCoordinate k_iconSize = 15;
+static constexpr KDCoordinate k_iconBodySize = 5;
+static constexpr KDCoordinate k_iconHeadSize = 3;
+static constexpr KDCoordinate k_iconPawSize = 2;
 
 constexpr KDColor Turtle::k_defaultColor;
 
@@ -170,7 +169,7 @@ bool Turtle::hasUnderneathPixelBuffer() {
   if (m_underneathPixelBuffer != nullptr) {
     return true;
   }
-  m_underneathPixelBuffer = allocate<KDColor>(k_turtleSize * k_turtleSize);
+  m_underneathPixelBuffer = allocate<KDColor>(k_iconSize * k_iconSize);
   return (m_underneathPixelBuffer != nullptr);
 }
 
@@ -208,8 +207,8 @@ bool Turtle::hasDotBuffers() {
 }
 
 KDRect Turtle::iconRect() const {
-  KDPoint iconOffset = KDPoint(-k_turtleSize/2, -k_turtleSize/2);
-  return KDRect(position().translatedBy(iconOffset), k_turtleSize, k_turtleSize);
+  KDPoint iconOffset = KDPoint(-k_iconSize/2, -k_iconSize/2);
+  return KDRect(position().translatedBy(iconOffset), k_iconSize, k_iconSize);
 }
 
 bool Turtle::draw() {
@@ -217,46 +216,68 @@ bool Turtle::draw() {
 
   if (m_visible && hasUnderneathPixelBuffer()) {
     KDContext * ctx = KDIonContext::sharedContext();
+
     // Get the pixels underneath the turtle
     ctx->getPixels(iconRect(), m_underneathPixelBuffer);
 
     // Draw the body
     KDRect drawingRect = KDRect(
-        position().translatedBy(KDPoint(-k_turtleBodySize/2, -k_turtleBodySize/2)),
-        k_turtleBodySize,
-        k_turtleBodySize); // TODO make special method with enum class Paw Head Body Whole
+        position().translatedBy(KDPoint(-k_iconBodySize/2, -k_iconBodySize/2)),
+        k_iconBodySize,
+        k_iconBodySize);
     ctx->fillRect(drawingRect, m_color);
 
-    KDCoordinate membersOffsetLength = 6;
-
     // Draw the head
-    KDCoordinate headOffsetX = membersOffsetLength * sin(m_heading);
-    KDCoordinate headOffsetY = -membersOffsetLength * cos(m_heading);
+    KDCoordinate headOffsetLength = 6;
+    KDCoordinate headOffsetX = headOffsetLength * sin(m_heading);
+    KDCoordinate headOffsetY = -headOffsetLength * cos(m_heading);
     KDPoint headOffset(headOffsetX, headOffsetY);
     drawingRect = KDRect(
-        position().translatedBy(headOffset).translatedBy(KDPoint(-k_turtleHeadSize/2, -k_turtleHeadSize/2)),
-        k_turtleHeadSize,
-        k_turtleHeadSize); // TODO make special method with enum class Paw Head Body Whole
+        position().translatedBy(headOffset).translatedBy(KDPoint(-k_iconHeadSize/2, -k_iconHeadSize/2)),
+        k_iconHeadSize,
+        k_iconHeadSize);
     ctx->fillRect(drawingRect, m_color);
 
     // Draw the paws
-    membersOffsetLength = 5;
-    constexpr int numberOfPaws = 4;
-    constexpr float angles[numberOfPaws] = {M_PI_2/2, M_PI_2+M_PI_2/2, M_PI+M_PI_2/2, M_PI+M_PI_2+M_PI_2/2};
-    constexpr float anglesEven[numberOfPaws] = {M_PI_2/2, M_PI_2+M_PI_2/2, M_PI+M_PI_2/2, M_PI+M_PI_2+M_PI_2/2};
-    for (int i = 0; i < numberOfPaws; i++) {
-      float pawX = membersOffsetLength * sin(m_heading+angles[i]);
-      float pawY = -membersOffsetLength * cos(m_heading+angles[i]);
-      KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);
-      KDCoordinate pawOffsetY = ((int)pawY) - (pawY < 0 ? 1 : 0);
-      KDPoint pawOffset(pawOffsetX, pawOffsetY);
-      drawingRect = KDRect(
-          position().translatedBy(pawOffset), // The paw is too small to need to offset it
-          k_turtlePawSize,
-          k_turtlePawSize); // TODO make special method with enum class Paw Head Body Whole
-      ctx->fillRect(drawingRect, m_color);
-    }
 
+    static int j = 0;
+    int mod = 12;
+    j = (j+1)%mod;
+
+    /*  Our turtle walk:
+     *
+     *    .  .     .  .     .  .     .      .
+     *   ====      ====      ====      ====
+     *   ==== O    ==== O    ==== O    ==== O
+     *   ====      ====      ====      ====
+     *  °  °     °      °     °  °     °  °
+     * */
+
+    if (j < mod/4) {
+      // First walking position
+      drawPaw(PawType::FrontRight, PawPosition::HalfBackwards);
+      drawPaw(PawType::BackRight, PawPosition::HalfBackwards);
+      drawPaw(PawType::FrontLeft, PawPosition::HalfForward);
+      drawPaw(PawType::BackLeft, PawPosition::HalfForward);
+    } else if (j < mod/2) {
+      // Second walking position
+      drawPaw(PawType::FrontRight, PawPosition::Forward);
+      drawPaw(PawType::BackRight, PawPosition::Backwards);
+      drawPaw(PawType::FrontLeft, PawPosition::Normal);
+      drawPaw(PawType::BackLeft, PawPosition::Normal);
+    } else if (j < 3*mod/4) {
+      // Third walking position
+      drawPaw(PawType::FrontRight, PawPosition::HalfForward);
+      drawPaw(PawType::BackRight, PawPosition::HalfForward);
+      drawPaw(PawType::FrontLeft, PawPosition::HalfBackwards);
+      drawPaw(PawType::BackLeft, PawPosition::HalfBackwards);
+    } else {
+      // Fourth walking position
+      drawPaw(PawType::FrontRight, PawPosition::Normal);
+      drawPaw(PawType::BackRight, PawPosition::Normal);
+      drawPaw(PawType::FrontLeft, PawPosition::Forward);
+      drawPaw(PawType::BackLeft, PawPosition::Backwards);
+    }
     m_drawn = true;
   }
 
@@ -287,6 +308,30 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
   m_y = y;
 
   return micropython_port_vm_hook_loop();
+}
+
+void Turtle::drawPaw(PawType type, PawPosition pos) {
+  assert(!m_drawn && m_underneathPixelBuffer != nullptr);
+
+  KDCoordinate pawOffset = 5;
+  constexpr float crawlOffset = 0.6f;
+  constexpr float angles[] = {M_PI_2/2, M_PI_2+M_PI_2/2, -M_PI_2-M_PI_2/2, -M_PI_2/2};
+
+  // Compute the paw offset from the turtle center
+  float currentAngle = angles[(int) type];
+  float crawlDelta = (((int)pos) - 2.0f) * crawlOffset;
+  float pawX = pawOffset * sin(m_heading+currentAngle) + crawlDelta * sin(m_heading);
+  float pawY = - pawOffset * cos(m_heading+currentAngle) - crawlDelta * cos(m_heading);
+  KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);
+  KDCoordinate pawOffsetY = ((int)pawY) - (pawY < 0 ? 1 : 0);
+  KDPoint offset(pawOffsetX, pawOffsetY);
+
+  // Draw the paw
+  KDRect drawingRect = KDRect(
+      position().translatedBy(offset), // The paw is too small to need to offset it from its center
+      k_iconPawSize,
+      k_iconPawSize);
+  KDIonContext::sharedContext()->fillRect(drawingRect, m_color);
 }
 
 void Turtle::erase() {

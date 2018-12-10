@@ -99,7 +99,7 @@ Expression ExpressionNode::complexArgument(Context & context, Preferences::Angle
   Expression b = imaginaryPart(context, angleUnit);
   if (!a.isUninitialized() && !b.isUninitialized()) {
     if (b.type() != Type::Rational || !static_cast<Rational &>(b).isZero()) {
-      // arctan(a/b) or (180/Pi)*arctan(a/b)
+      // arctan(a/b) or (Pi/180)*arctan(a/b)
       Expression arcTangent = ArcTangent::Builder(Division(a, b.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
       if (angleUnit == Preferences::AngleUnit::Degree) {
         arcTangent = arcTangent.degreeToRadian(context, angleUnit, ReductionTarget::BottomUpComputation);

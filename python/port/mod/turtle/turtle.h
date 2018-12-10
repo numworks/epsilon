@@ -80,6 +80,21 @@ private:
   static constexpr KDColor k_defaultColor = KDColorBlack;
   static constexpr uint8_t k_defaultPenSize = 1;
 
+  enum class PawType : uint8_t {
+    FrontRight = 0,
+    BackRight = 1,
+    FrontLeft = 2,
+    BackLeft = 3
+  };
+
+  enum class PawPosition : int {
+    Backwards = 0,
+    HalfBackwards = 1,
+    Normal = 2,
+    HalfForward = 3,
+    Forward = 4
+  };
+
   void setHeadingPrivate(mp_float_t angle);
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }
@@ -94,6 +109,7 @@ private:
   bool draw();
   bool dot(mp_float_t x, mp_float_t y);
 
+  void drawPaw(PawType type, PawPosition position);
   void erase();
 
   /* The frame's center is the center of the screen, the x axis goes to the
@@ -101,7 +117,7 @@ private:
   mp_float_t m_x;
   mp_float_t m_y;
   /* The heading is the angle in radians between the direction of the turtle and
-   * the X axis, in the trigonometric direction. */
+   * the X axis, in the counterclockwise direction. */
   mp_float_t m_heading;
 
   KDColor m_color;

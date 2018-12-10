@@ -8,6 +8,7 @@ SuspendTimer::SuspendTimer(AppsContainer * container) :
 }
 
 bool SuspendTimer::fire() {
+  m_container->dispatchEvent(Ion::Events::OnOff);
   m_container->suspend();
   return false;
 }

@@ -44,7 +44,7 @@ public:
   void backward(mp_float_t length) { forward(-length); }
   void right(mp_float_t angle) { left(-angle); }
   void left(mp_float_t angle);
-  void circle(mp_int_t radius, mp_float_t angle);
+  void circle(mp_int_t radius, mp_float_t angle = 360);
   bool goTo(mp_float_t x, mp_float_t y);
 
   mp_float_t heading() const;

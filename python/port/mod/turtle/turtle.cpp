@@ -55,7 +55,7 @@ void Turtle::left(mp_float_t angle) {
 
 void Turtle::circle(mp_int_t radius, mp_float_t angle) {
   mp_float_t oldHeading = heading();
-  mp_float_t length = (angle*k_headingScale)*radius;
+  mp_float_t length = ((angle > 0 ? 1 : -1) * angle * k_headingScale) * radius;
   if (length > 1) {
     int i = 1;
     while(i <= length) {

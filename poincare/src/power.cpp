@@ -98,12 +98,9 @@ Expression PowerNode::complexPolarPart(Context & context, Preferences::AngleUnit
             Power(r, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
             Power(
               Constant(Ion::Charset::Exponential),
-              Opposite(
-                Multiplication(th, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-              ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+              Multiplication(Rational(-1), th, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
             ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
           ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-    //return Power(Constant(Ion::Charset::Exponential), Subtraction(Multiplication(c, NaperianLogarithm::Builder(r)), Multiplication(d, th)));
   } else {
     // TH = d*ln(r)+c*th
     return Addition(

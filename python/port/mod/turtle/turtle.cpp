@@ -60,9 +60,6 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
     int i = 1;
     while(i <= length) {
       mp_float_t progress = i / length;
-      if (m_speed > 0 && m_speed < k_maxSpeed) {
-        Ion::Display::waitForVBlank();
-      }
       // Move the turtle forward
       if (forward(1)) {
         // Keyboard interruption. Return now to let MicroPython process it.
@@ -85,10 +82,6 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
     // Tweening function
     for (int i = 0; i < length; i++) {
       mp_float_t progress = i / length;
-
-      if (m_speed > 0 && m_speed < k_maxSpeed) {
-        Ion::Display::waitForVBlank();
-      }
       erase();
       if (dot(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress))
           || draw(false))
@@ -99,7 +92,6 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
     }
   }
 
-  Ion::Display::waitForVBlank();
   erase();
   dot(x, y);
   draw(true);
@@ -112,10 +104,7 @@ mp_float_t Turtle::heading() const {
 
 void Turtle::setHeading(mp_float_t angle) {
   micropython_port_vm_hook_loop();
-
   setHeadingPrivate(angle);
-
-  Ion::Display::waitForVBlank();
   erase();
   draw(true);
 }

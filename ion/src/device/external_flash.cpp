@@ -64,7 +64,8 @@ public:
 };
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
-static constexpr int ClockFrequencyDivisor = 256;
+static constexpr int ClockFrequencyDivisor = 2;
+static constexpr int ChipSelectHighTime = (ClockFrequencyDivisor == 1) ? 3 : (ClockFrequencyDivisor == 2) ? 2 : 1;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
@@ -170,21 +171,25 @@ void init() {
 
 void initGPIO() {
   for(const GPIOPin & g : QSPIPins) {
+    g.group().OSPEEDR()->setOutputSpeed(g.pin(), GPIO::OSPEEDR::OutputSpeed::High);
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
     g.group().AFR()->setAlternateFunction(g.pin(), (g.pin() == 6 ? GPIO::AFR::AlternateFunction::AF10 : GPIO::AFR::AlternateFunction::AF9));
   }
 }
 
 void initQSPI() {
-  // Enable QUADSPI AHB3 peripheral clocks
+  // Enable QUADSPI AHB3 peripheral clock
   RCC.AHB3ENR()->setQSPIEN(true);
   // Configure controller for target device
-  QUADSPI.DCR()->setFSIZE(NumberOfAddressBitsInChip - 1);
-
-  QUADSPI.DCR()->setCSHT(7); // Highest value. TODO: make it optimal
-  QUADSPI.CR()->setPRESCALER(ClockFrequencyDivisor - 1); // Highest value. TODO: make it optimal
-
-  QUADSPI.CR()->setEN(true);
+  class QUADSPI::DCR dcr(0);
+  dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
+  dcr.setCSHT(ChipSelectHighTime - 1);
+  dcr.setCKMODE(true);
+  QUADSPI.DCR()->set(dcr);
+  class QUADSPI::CR cr(0);
+  cr.setPRESCALER(ClockFrequencyDivisor - 1);
+  cr.setEN(true);
+  QUADSPI.CR()->set(cr);
 }
 
 void initChip() {

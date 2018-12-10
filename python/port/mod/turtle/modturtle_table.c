@@ -36,6 +36,7 @@ STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_forward), (mp_obj_t)&modturtle_forward_obj },
   { MP_ROM_QSTR(MP_QSTR_fd), (mp_obj_t)&modturtle_forward_obj },
   { MP_ROM_QSTR(MP_QSTR_backward), (mp_obj_t)&modturtle_backward_obj },
+  { MP_ROM_QSTR(MP_QSTR_back), (mp_obj_t)&modturtle_backward_obj },
   { MP_ROM_QSTR(MP_QSTR_bk), (mp_obj_t)&modturtle_backward_obj },
   { MP_ROM_QSTR(MP_QSTR_right), (mp_obj_t)&modturtle_right_obj },
   { MP_ROM_QSTR(MP_QSTR_rt), (mp_obj_t)&modturtle_right_obj },

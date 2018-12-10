@@ -37,7 +37,7 @@ void Turtle::reset() {
   m_mileage = 0;
 
   // Draw the turtle
-  draw();
+  draw(true);
 }
 
 bool Turtle::forward(mp_float_t length) {
@@ -91,7 +91,7 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
       }
       erase();
       if (dot(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress))
-          || draw())
+          || draw(false))
       {
         // Keyboard interruption. Return now to let MicroPython process it.
         return true;
@@ -102,7 +102,7 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   Ion::Display::waitForVBlank();
   erase();
   dot(x, y);
-  draw();
+  draw(true);
   return false;
 }
 
@@ -117,7 +117,7 @@ void Turtle::setHeading(mp_float_t angle) {
 
   Ion::Display::waitForVBlank();
   erase();
-  draw();
+  draw(true);
 }
 
 void Turtle::setSpeed(mp_int_t speed) {
@@ -149,7 +149,7 @@ void Turtle::setPenSize(KDCoordinate penSize) {
 void Turtle::setVisible(bool visible) {
   m_visible = visible;
   if (m_visible) {
-    draw();
+    draw(true);
   } else {
     erase();
   }
@@ -211,10 +211,10 @@ KDRect Turtle::iconRect() const {
   return KDRect(position().translatedBy(iconOffset), k_iconSize, k_iconSize);
 }
 
-bool Turtle::draw() {
+bool Turtle::draw(bool force) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
-  if (m_visible && hasUnderneathPixelBuffer()) {
+  if ((m_speed > 0 || force) && m_visible && hasUnderneathPixelBuffer()) {
     KDContext * ctx = KDIonContext::sharedContext();
 
     // Get the pixels underneath the turtle

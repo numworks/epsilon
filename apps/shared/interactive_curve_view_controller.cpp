@@ -178,15 +178,25 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     }
     bool isNextCurve = false;
     /* Choosing the closest vertical curve is quite complex because we need to
-     * take care of curves that have the same values at the current x. When
-     * moving up, if several curves have the same value, we choose the curve
-     * of higher index. When going down, we select the curve of lower index. */
+     * take care of curves that have the same value at the current x.
+     * When moving up, if several curves have the same value y1, we choose the
+     * curve:
+     * - Of index lower than the current curve index if the current curve has
+     *   the value y1 at the current x.
+     * - Of highest index possible.
+     * When moving down, if several curves have the same value y1, we choose the
+     * curve:
+     * - Of index higher than the current curve index if the current curve has
+     *   the value y1 at the current x.
+     * - Of lowest index possible. */
     if (goingUp) {
       if (newY > y && newY < nextY) {
         isNextCurve = true;
       } else if (newY == nextY) {
         assert(i > nextCurveIndex);
-        isNextCurve = true;
+        if (newY != y || currentCurveIndex < 0 || i < currentCurveIndex) {
+          isNextCurve = true;
+        }
       } else if (newY == y && i < currentCurveIndex) {
         isNextCurve = true;
       }

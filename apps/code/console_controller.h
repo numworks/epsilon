@@ -26,7 +26,6 @@ public:
 
   bool loadPythonEnvironment();
   void unloadPythonEnvironment();
-  bool pythonEnvironmentIsLoaded();
 
   void setAutoImport(bool autoImport) { m_autoImportScripts = autoImport; }
   void autoImport();

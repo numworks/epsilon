@@ -201,6 +201,16 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 
 /* Complex */
 
+bool Expression::isPureReal(Context & context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<float> approx = approximateToEvaluation<float>(context, angleUnit);
+  if (approx.type() == EvaluationNode<float>::Type::Complex) {
+    Complex<float> approxComplex = static_cast<Complex<float>&>(approx);
+    return approxComplex.imag() == 0.0f;
+  }
+  // TODO: matrix are not reduced yet so isPureReal is dummy if the approximation is a matrix
+  return true;
+}
+
 ComplexCartesian Expression::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   return node()->complexCartesian(context, angleUnit);
 }
@@ -392,6 +402,9 @@ bool isMinusOne(const Expression e) {
 
 Expression Expression::simplifyForComplexFormat(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
   sSimplificationHasBeenInterrupted = false;
+  if (isPureReal(context, angleUnit)) {
+    return simplify(context, angleUnit);
+  }
   // We deepReduce before extracting the real and imaginary part to develop expression of type (a+b*i)^3 for example
   Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
   if (sSimplificationHasBeenInterrupted) {

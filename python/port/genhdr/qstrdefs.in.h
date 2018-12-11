@@ -28,23 +28,21 @@ Q(set_pixel)
 
 Q(turtle)
 
-Q(reset)
-
 Q(forward)
 Q(fd)
 Q(backward)
-Q(back)
 Q(bk)
+Q(back)
 Q(right)
 Q(rt)
 Q(left)
 Q(lt)
-Q(circle)
 Q(goto)
 Q(setpos)
 Q(setposition)
 Q(setheading)
 Q(seth)
+Q(circle)
 Q(speed)
 
 Q(position)
@@ -57,17 +55,19 @@ Q(down)
 Q(penup)
 Q(pu)
 Q(up)
-Q(isdown)
 Q(pensize)
 Q(width)
+Q(isdown)
+
+Q(pencolor)
+
+Q(reset)
 
 Q(showturtle)
 Q(st)
 Q(hideturtle)
 Q(ht)
 Q(isvisible)
-
-Q(pencolor)
 
 // utime QSTRs
 Q(time)

@@ -166,6 +166,7 @@ public:
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Complex */
+  bool isPureReal(Context & context, Preferences::AngleUnit angleUnit) const;
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
   ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
 

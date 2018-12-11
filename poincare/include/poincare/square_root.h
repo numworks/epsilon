@@ -3,6 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
+#include <poincare/multiplication.h>
 #include <ion/charset.h>
 
 namespace Poincare {
@@ -22,13 +23,16 @@ public:
 #endif
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
-  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
-  //Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
+  /* If we use the formula arg(sqrt(a)) = arg(a)/2, we are likely to end up
+   * with half arcTangent. To avoid that, we compute the argument(sqrt(a))
+   * from the real and imaginary part of sqrt(a).
+   * TODO: What about norm(sqrt(a))? */
+  //ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
+
 private:
-  // Complex
-  Expression complexPart(Context & context, Preferences::AngleUnit angleUnit, bool isReal) const;
+  //Complex
+  static Multiplication complexCartesianHelper(Expression e, Context & context, Preferences::AngleUnit angleUnit);
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

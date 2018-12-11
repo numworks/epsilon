@@ -81,36 +81,35 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 
 // Private
 
-Expression PowerNode::complexPolarPart(Context & context, Preferences::AngleUnit angleUnit, bool norm) const {
+ComplexPolar PowerNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
   Power p(this);
-  // Power(r*e^(i*th), c+id)
-  Expression r = p.childAtIndex(0).complexNorm(context, angleUnit);
-  Expression th = p.childAtIndex(0).complexArgument(context, angleUnit);
-  Expression c = p.childAtIndex(1).realPart(context, angleUnit);
-  Expression d = p.childAtIndex(1).imaginaryPart(context, angleUnit);
-  if (r.isUninitialized() || th.isUninitialized() || c.isUninitialized() || d.isUninitialized()) {
-    return Expression();
+  ComplexPolar polarChild0 = p.childAtIndex(0).complexPolar(context, angleUnit);
+  ComplexCartesian cartesianChild1 = p.childAtIndex(1).complexCartesian(context, angleUnit);
+  if (polarChild0.isUninitialized() || cartesianChild1.isUninitialized()) {
+    return ComplexPolar();
   }
-  if (norm) {
-    // R = e^(c*ln(r)-th*d)
-    // R = r^c*e^(-th*d)
-    return Multiplication(
-            Power(r, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+  // Power(r*e^(i*th), c+id)
+  Expression r = polarChild0.norm();
+  Expression th = polarChild0.arg();
+  Expression c = cartesianChild1.real();
+  Expression d = cartesianChild1.imag();
+  // R = r^c*e^(-th*d)
+  Expression norm = Multiplication(
+            Power(r.clone(), c.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
             Power(
               Constant(Ion::Charset::Exponential),
-              Multiplication(Rational(-1), th, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+              Multiplication(Rational(-1), th.clone(), d.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
             ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
           ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  } else {
-    // TH = d*ln(r)+c*th
-    return Addition(
+  // TH = d*ln(r)+c*th
+  Expression argument = Addition(
             Multiplication(th, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
             Multiplication(
               d,
               NaperianLogarithm::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
             ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
           ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  }
+  return ComplexPolar::Builder(norm, argument);
 }
 
 template<typename T>

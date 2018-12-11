@@ -26,12 +26,12 @@ public:
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, true); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, false); }
-  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override;
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
   /* If we use the formula arg(a*b) = arg(a)+arg(b), we are likely to end up
    * with additions of arcTangent. To avoid that, we compute the argument(a*b)
-   * from the real and imaginary part of a*b. */
+   * from the real and imaginary part of a*b.
+   * TODO: What about norm(a*b)? */
+  //ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
   //Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
@@ -42,9 +42,6 @@ public:
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
 
 private:
-  // Complex
-  Expression complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const;
-
   // Property
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 

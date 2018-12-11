@@ -199,6 +199,16 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   return !isMultivariablePolynomial;
 }
 
+/* Complex */
+
+ComplexCartesian Expression::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
+  return node()->complexCartesian(context, angleUnit);
+}
+
+ComplexPolar Expression::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
+  return node()->complexPolar(context, angleUnit);
+}
+
 // Private
 
 void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -388,11 +398,18 @@ Expression Expression::simplifyForComplexFormat(Context & context, Preferences::
   if (sSimplificationHasBeenInterrupted) {
     return Expression();
   }
-  Expression ra = complexFormat == Preferences::ComplexFormat::Cartesian ? e.realPart(context, angleUnit) : e.complexNorm(context, angleUnit);
-  Expression tb = complexFormat == Preferences::ComplexFormat::Cartesian ? e.imaginaryPart(context, angleUnit) : e.complexArgument(context, angleUnit);
-  if (ra.isUninitialized() || tb.isUninitialized()) {
+  Expression complexParts = complexFormat == Preferences::ComplexFormat::Cartesian ? static_cast<Expression>(e.complexCartesian(context, angleUnit)) : static_cast<Expression>(e.complexPolar(context, angleUnit));
+  if (complexParts.isUninitialized()) {
     return e;
   }
+  // Depending on the complexFormat required:
+  // - ra is the real part or the norm
+  // - tb is the imaginary part or the argument
+  assert(complexParts.type() == ExpressionNode::Type::ComplexCartesian || complexParts.type() == ExpressionNode::Type::ComplexPolar);
+  assert(complexParts.numberOfChildren() == 2);
+  Expression ra = complexParts.childAtIndex(0);
+  Expression tb = complexParts.childAtIndex(1);
+  assert(!ra.isUninitialized() && !tb.isUninitialized());
   ra = ra.simplify(context, angleUnit);
   tb = tb.simplify(context, angleUnit);
   if (ra.isUninitialized() || tb.isUninitialized()) {

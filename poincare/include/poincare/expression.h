@@ -166,10 +166,8 @@ public:
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Complex */
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const { return node()->realPart(context, angleUnit); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const { return node()->imaginaryPart(context, angleUnit); }
-  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const { return node()->complexNorm(context, angleUnit); }
-  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const { return node()->complexArgument(context, angleUnit); }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
+  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

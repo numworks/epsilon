@@ -24,12 +24,8 @@ public:
   Type type() const override { return Type::ArcTangent; }
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override {
-    return ComplexHelper::realPartOfComplexFunction(this, context, angleUnit);
-  }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override {
-    return ComplexHelper::imaginaryPartOfComplexFunction(this, context, angleUnit);
-  }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianComplexFunction(this, context, angleUnit); }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

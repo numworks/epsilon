@@ -43,10 +43,12 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Expression arg = c.complexArgument(context, angleUnit);
-  if (!arg.isUninitialized()) {
-    replaceWithInPlace(arg);
-    return arg.deepReduce(context, angleUnit, target);
+  ComplexPolar polar = c.complexPolar(context, angleUnit);
+  if (!polar.isUninitialized()) {
+    Expression a = polar.arg();
+    replaceWithInPlace(a);
+    // We have to deepReduce because the complexPolar function returns an Expression reduced only BottomUp
+    return a.deepReduce(context, angleUnit, target);
   }
   return *this;
 }

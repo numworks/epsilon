@@ -81,8 +81,21 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 
 // Private
 
+ComplexCartesian PowerNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
+  Power p(this);
+  Expression e = p.equivalentExpressionUsingStandardExpression();
+  if (!e.isUninitialized()) {
+    return e.complexCartesian(context, angleUnit);
+  }
+  return ComplexHelper::complexCartesianFromComplexPolar(this, context, angleUnit);
+}
+
 ComplexPolar PowerNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
   Power p(this);
+  Expression e = p.equivalentExpressionUsingStandardExpression();
+  if (!e.isUninitialized()) {
+    return e.complexPolar(context, angleUnit);
+  }
   ComplexPolar polarChild0 = p.childAtIndex(0).complexPolar(context, angleUnit);
   ComplexCartesian cartesianChild1 = p.childAtIndex(1).complexCartesian(context, angleUnit);
   if (polarChild0.isUninitialized() || cartesianChild1.isUninitialized()) {
@@ -1024,6 +1037,21 @@ bool Power::isNthRootOfUnity() const {
     return true;
   }
   return false;
+}
+
+Expression Power::equivalentExpressionUsingStandardExpression() const {
+  if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+    if (childAtIndex(1).convert<Rational>().isMinusOne()) {
+      return Division(Rational(1), childAtIndex(0).clone());
+    }
+    if (childAtIndex(1).convert<Rational>().isHalf()) {
+      return SquareRoot::Builder(childAtIndex(0).clone());
+    }
+    if (childAtIndex(1).convert<Rational>().isMinusHalf()) {
+      return Division(Rational(1), SquareRoot::Builder(childAtIndex(0).clone()));
+    }
+  }
+  return Expression();
 }
 
 Expression Power::CreateComplexExponent(const Expression & r) {

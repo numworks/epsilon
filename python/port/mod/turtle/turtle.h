@@ -79,7 +79,7 @@ private:
   static constexpr int k_invertedYAxisCoefficient = -1;
   static constexpr KDCoordinate k_xOffset = Ion::Display::Width / 2;
   static constexpr KDCoordinate k_yOffset = (Ion::Display::Height - Metric::TitleBarHeight) / 2;
-  static constexpr uint8_t k_defaultSpeed = 3;
+  static constexpr uint8_t k_defaultSpeed = 8;
   static constexpr uint8_t k_maxSpeed = 10;
   static constexpr KDColor k_defaultColor = KDColorBlack;
   static constexpr uint8_t k_defaultPenSize = 1;

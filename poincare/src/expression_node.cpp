@@ -2,6 +2,9 @@
 #include <poincare/expression.h>
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/complex_helper.h>
+#include <poincare/complex_polar.h>
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -71,70 +74,12 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
   return range;
 }
 
-Expression ExpressionNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression();
+ComplexCartesian ExpressionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
+  return ComplexCartesian();
 }
 
-Expression ExpressionNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression();
-}
-
-Expression ExpressionNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e(this);
-  Sign s = sign(&context, angleUnit);
-  // Case 1: the expression is positive real
-  if (s == ExpressionNode::Sign::Positive) {
-    return e.clone();
-  }
-  // Case 2: the argument is negative real
-  if (s == ExpressionNode::Sign::Negative) {
-    return e.clone().setSign(ExpressionNode::Sign::Positive, &context, angleUnit, ReductionTarget::BottomUpComputation);
-  }
-  // Case 3: the argument is complex or of unknown approximation
-  Expression a = realPart(context, angleUnit);
-  Expression b = imaginaryPart(context, angleUnit);
-  if (!a.isUninitialized() && !b.isUninitialized()) {
-    // sqrt(a^2+b^2)
-    return SquareRoot::Builder(
-        Addition(
-          Power(a, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-          Power(b, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  }
-  return Expression();
-}
-
-Expression ExpressionNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression a = realPart(context, angleUnit);
-  Expression b = imaginaryPart(context, angleUnit);
-  if (!a.isUninitialized() && !b.isUninitialized()) {
-    if (b.type() != Type::Rational || !static_cast<Rational &>(b).isZero()) {
-      // arctan(a/b) or (Pi/180)*arctan(a/b)
-      Expression arcTangent = ArcTangent::Builder(Division(a, b.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-      if (angleUnit == Preferences::AngleUnit::Degree) {
-        arcTangent = arcTangent.degreeToRadian(context, angleUnit, ReductionTarget::BottomUpComputation);
-      }
-      // sign(b) * Pi/2 - arctan(a/b)
-      return Subtraction(
-          Multiplication(
-            SignFunction::Builder(b).shallowReduce(context, angleUnit),
-            Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-          arcTangent
-        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-    } else {
-      // (1-sign(a))*Pi/2
-      return Multiplication(
-               Subtraction(
-                 Rational(1),
-                 SignFunction::Builder(a).shallowReduce(context, angleUnit)
-               ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-               Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-    }
-  }
-  return Expression();
+ComplexPolar ExpressionNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
+  return ComplexHelper::complexPolarFromComplexCartesian(this, context, angleUnit);
 }
 
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) {

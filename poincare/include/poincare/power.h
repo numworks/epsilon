@@ -22,10 +22,8 @@ public:
 #endif
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartFromPolarParts(this, context, angleUnit); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartFromPolarParts(this, context, angleUnit); }
-  Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPolarPart(context, angleUnit, true); }
-  Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPolarPart(context, angleUnit, false); }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianFromComplexPolar(this, context, angleUnit); }
+  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Properties
   Type type() const override { return Type::Power; }
@@ -40,8 +38,6 @@ public:
 private:
   constexpr static int k_maxApproximatePowerMatrix = 1000;
 
-  // Complex
-  Expression complexPolarPart(Context & context, Preferences::AngleUnit angleUnit, bool norm) const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 

@@ -1,5 +1,7 @@
 #include <poincare/opposite.h>
+#include <poincare/addition.h>
 #include <poincare/char_layout.h>
+#include <poincare/constant.h>
 #include <poincare/horizontal_layout.h>
 #include <cmath>
 #include <poincare/layout_helper.h>
@@ -27,12 +29,26 @@ ExpressionNode::Sign OppositeNode::sign(Context * context, Preferences::AngleUni
   return ExpressionNode::sign(context,angleUnit);
 }
 
-Expression OppositeNode::complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
-  Expression a = real ? childAtIndex(0)->realPart(context, angleUnit) : childAtIndex(0)->imaginaryPart(context, angleUnit);
-  if (a.isUninitialized()) {
-    return Expression();
+ComplexCartesian OppositeNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
+  ComplexCartesian childCartesian = childAtIndex(0)->complexCartesian(context, angleUnit);
+  if (childCartesian.isUninitialized()) {
+    return ComplexCartesian();
   }
-  return Opposite(a).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
+  return ComplexCartesian::Builder(
+      Multiplication(Rational(-1), childCartesian.real()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+      Multiplication(Rational(-1), childCartesian.imag()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+    );
+}
+
+ComplexPolar OppositeNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
+  ComplexPolar childPolar = childAtIndex(0)->complexPolar(context, angleUnit);
+  if (childPolar.isUninitialized()) {
+    return ComplexPolar();
+  }
+  return ComplexPolar::Builder(
+      childPolar.norm(),
+      Addition(childPolar.arg(), Constant(Ion::Charset::SmallPi)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+    );
 }
 
 /* Layout */

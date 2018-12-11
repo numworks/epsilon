@@ -21,8 +21,7 @@ public:
 #endif
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::realPartOfComplexFunction(this, context, angleUnit); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::imaginaryPartOfComplexFunction(this, context, angleUnit); }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianComplexFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::Cosine; }

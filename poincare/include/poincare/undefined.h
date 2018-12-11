@@ -17,8 +17,7 @@ public:
 #endif
 
   // Complex
-  using ExpressionNode::realPart;
-  using ExpressionNode::imaginaryPart;
+  using ExpressionNode::complexCartesian;
 
   // Properties
   Type type() const override { return Type::Undefined; }

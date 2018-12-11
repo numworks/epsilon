@@ -47,10 +47,12 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
 #endif
 #endif
   Expression c = childAtIndex(0);
-  Expression norm = c.complexNorm(context, angleUnit);
-  if (!norm.isUninitialized()) {
-    replaceWithInPlace(norm);
-    return norm.deepReduce(context, angleUnit, target);
+  ComplexPolar polar = c.complexPolar(context, angleUnit);
+  if (!polar.isUninitialized()) {
+    Expression n = polar.norm();
+    replaceWithInPlace(n);
+    // We have to deepReduce because the complexPolar function returns an Expression reduced only BottomUp
+    return n.deepReduce(context, angleUnit, target);
   }
   return *this;
 }

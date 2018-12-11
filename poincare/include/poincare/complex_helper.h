@@ -2,29 +2,21 @@
 #define POINCARE_COMPLEX_HELPER_H
 
 #include <poincare/expression.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/complex_polar.h>
 
 namespace Poincare {
 
 class ComplexHelper {
 public:
-  static Expression realPartOfComplexFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit) {
-    return cartesianPartOfComplexFunction(e, context, angleUnit, true);
-  }
-  static Expression imaginaryPartOfComplexFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit) {
-    return cartesianPartOfComplexFunction(e, context, angleUnit, false);
-  }
-  static Expression realPartRealFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit) {
-    return Expression(e).clone().deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
-  }
-  static Expression imaginaryPartRealFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit);
+  static ComplexCartesian complexCartesianComplexFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit);
+  static ComplexCartesian complexCartesianRealFunction(const ExpressionNode * e, Context & context, Preferences::AngleUnit angleUnit);
   // static Expression realPartMatrix(const Expression e, Context & context, Preferences::AngleUnit angleUnit);
-
-  static Expression realPartFromPolarParts(const ExpressionNode * node, Context & context, Preferences::AngleUnit angleUnit) { return complexCartesianPartFromPolarParts(node, context, angleUnit, true); }
-  static Expression imaginaryPartFromPolarParts(const ExpressionNode * node, Context & context, Preferences::AngleUnit angleUnit) { return complexCartesianPartFromPolarParts(node, context, angleUnit, false); }
-
+  static ComplexCartesian complexCartesianFromComplexPolar(const ExpressionNode * node, Context & context, Preferences::AngleUnit angleUnit);
+  static ComplexPolar complexPolarFromComplexCartesian(const ExpressionNode * node, Context & context, Preferences::AngleUnit angleUnit);
+  static Expression complexSquareNormComplexCartesian(Expression real, Expression imag, Context & context, Preferences::AngleUnit angleUnit);
 private:
- static Expression cartesianPartOfComplexFunction(const ExpressionNode * node, Context & context, Preferences::AngleUnit angleUnit, bool real);
-  static Expression complexCartesianPartFromPolarParts(const ExpressionNode * node, Context & context, Preferences::AngleUnit angleUnit, bool isReal);
+  static Expression complexCartesianFromComplexPolarHelper(Expression norm, Expression trigo, Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

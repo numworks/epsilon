@@ -25,8 +25,7 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, true); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexPart(context, angleUnit, false); }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c - d); }
@@ -46,9 +45,6 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
 private:
-  // Complex
-  Expression complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const;
-
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);

@@ -41,9 +41,11 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
     replaceWithInPlace(result);
     return result;
   }
-  Expression im = c.imaginaryPart(context, angleUnit);
-  if (!im.isUninitialized()) {
+  ComplexCartesian cartesian = c.complexCartesian(context, angleUnit);
+  if (!cartesian.isUninitialized()) {
+    Expression im = cartesian.imag();
     replaceWithInPlace(im);
+    // We have to deepReduce because the complexCartesian function returns an Expression reduced only BottomUp
     return im.deepReduce(context, angleUnit, target);
   }
   return *this;

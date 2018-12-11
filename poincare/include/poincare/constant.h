@@ -18,8 +18,7 @@ public:
 #endif
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override;
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override;
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Expression Properties
   Type type() const override { return Type::Constant; }

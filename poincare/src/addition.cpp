@@ -29,18 +29,26 @@ int AdditionNode::getPolynomialCoefficients(Context & context, const char * symb
 
 // Private
 
-Expression AdditionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
+ComplexCartesian AdditionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e(this);
-  Addition result;
+  Addition real;
+  Addition imag;
   int nbOfChildren = e.numberOfChildren();
   for (int i = 0; i < nbOfChildren; i++) {
-   Expression part = real ? e.childAtIndex(i).realPart(context, angleUnit) : e.childAtIndex(i).imaginaryPart(context, angleUnit);
-    if (part.isUninitialized()) {
-      return Expression();
+    ComplexCartesian cartesianParts = e.childAtIndex(i).complexCartesian(context, angleUnit);
+    if (cartesianParts.isUninitialized()) {
+      return ComplexCartesian();
     }
-    result.addChildAtIndexInPlace(part, result.numberOfChildren(), result.numberOfChildren());
+    Expression a = cartesianParts.real();
+    Expression b = cartesianParts.imag();
+    assert(!a.isUninitialized() && !b.isUninitialized());
+    real.addChildAtIndexInPlace(a, real.numberOfChildren(), real.numberOfChildren());
+    imag.addChildAtIndexInPlace(b, imag.numberOfChildren(), imag.numberOfChildren());
   }
-  return result.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
+  return ComplexCartesian::Builder(
+    real.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+    imag.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+  );
 }
 
 // Layout

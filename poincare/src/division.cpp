@@ -46,7 +46,38 @@ Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit
   return Division(this).shallowReduce(context, angleUnit, target);
 }
 
-Expression DivisionNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+ComplexCartesian DivisionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
+  Division e(this);
+  ComplexCartesian cartesianChild0 = e.childAtIndex(0).complexCartesian(context, angleUnit);
+  ComplexCartesian cartesianChild1 = e.childAtIndex(1).complexCartesian(context, angleUnit);
+  if (cartesianChild0.isUninitialized() || cartesianChild1.isUninitialized()) {
+    return ComplexCartesian();
+  }
+  Expression a = cartesianChild0.real();
+  Expression b = cartesianChild0.imag();
+  Expression c = cartesianChild1.real();
+  Expression d = cartesianChild1.imag();
+  assert(!a.isUninitialized() && !b.isUninitialized() && !c.isUninitialized() && !d.isUninitialized());
+  Expression denominator = ComplexHelper::complexSquareNormComplexCartesian(c.clone(), d.clone(), context, angleUnit);
+  return ComplexCartesian::Builder(
+      Division(
+        Addition(
+          Multiplication(a.clone(), c.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+          Multiplication(b.clone(), d.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+        denominator.clone()
+      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+      Division(
+        Subtraction(
+          Multiplication(b, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+          Multiplication(a, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+        denominator
+      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+    );
+}
+
+/*ComplexPolar DivisionNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
   Division d(this);
   Expression r0 = d.childAtIndex(0).complexNorm(context, angleUnit);
   Expression r1 = d.childAtIndex(1).complexNorm(context, angleUnit);
@@ -54,44 +85,7 @@ Expression DivisionNode::complexNorm(Context & context, Preferences::AngleUnit a
     return Expression();
   }
   return Division(r0,r1).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-}
-
-Expression DivisionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
-  Division e(this);
-  Expression a = e.childAtIndex(0).realPart(context, angleUnit);
-  Expression b = e.childAtIndex(0).imaginaryPart(context, angleUnit);
-  Expression c = e.childAtIndex(1).realPart(context, angleUnit);
-  Expression d = e.childAtIndex(1).imaginaryPart(context, angleUnit);
-  if (a.isUninitialized() || b.isUninitialized() || c.isUninitialized() || d.isUninitialized()) {
-    return Expression();
-  }
-  Expression denominator =
-    Addition(
-      Power(
-        c.clone(),
-        Rational(2)
-      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-      Power(
-        d.clone(),
-        Rational(2)
-      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-    ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  if (real) {
-    return Division(
-            Addition(
-              Multiplication(a, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-              Multiplication(b, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-            denominator
-          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  }
-  return Division(
-          Subtraction(
-            Multiplication(b, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-            Multiplication(a, d).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation), 
-          denominator).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-}
+}*/
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
   return Complex<T>(c/d);

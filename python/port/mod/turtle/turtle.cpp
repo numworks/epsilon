@@ -293,7 +293,7 @@ bool Turtle::draw(bool force) {
   }
 
   if (m_mileage > 1000) {
-    if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : k_maxSpeed * (k_maxSpeed - m_speed)))) {
+    if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : 3 * (k_maxSpeed - m_speed)))) {
       return true;
     }
     m_mileage -= 1000;

@@ -45,7 +45,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 }
 
 bool ConsoleController::loadPythonEnvironment() {
-  if(pythonEnvironmentIsLoaded()) {
+  if (m_pythonDelegate->isPythonUser(this)) {
     return true;
   }
   emptyOutputAccumulationBuffer();
@@ -60,14 +60,10 @@ bool ConsoleController::loadPythonEnvironment() {
 }
 
 void ConsoleController::unloadPythonEnvironment() {
-  if (pythonEnvironmentIsLoaded()) {
+  if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
     m_pythonDelegate->deinitPython();
   }
-}
-
-bool ConsoleController::pythonEnvironmentIsLoaded() {
-  return m_pythonDelegate->isPythonUser(this);
 }
 
 void ConsoleController::autoImport() {

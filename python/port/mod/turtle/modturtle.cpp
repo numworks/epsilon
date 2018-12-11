@@ -120,8 +120,39 @@ mp_obj_t modturtle_isdown() {
   return sTurtle.isPenDown() ? mp_const_true : mp_const_false;
 }
 
-mp_obj_t modturtle_color(mp_obj_t r, mp_obj_t g, mp_obj_t b) {
-  sTurtle.setColor(KDColor::RGB888(mp_obj_get_int(r), mp_obj_get_int(g), mp_obj_get_int(b)));
+mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
+  if (n_args == 0) {
+    // pencolor()
+    KDColor c = sTurtle.color();
+    mp_obj_t mp_col[3];
+    mp_col[0] = mp_obj_new_int_from_uint(c.red());
+    mp_col[1] = mp_obj_new_int_from_uint(c.green());
+    mp_col[2] = mp_obj_new_int_from_uint(c.blue());
+    return mp_obj_new_tuple(3, mp_col);
+  }
+  if (n_args == 1) {
+    if (MP_OBJ_IS_STR(args[0])) {
+      // pencolor("blue")
+      size_t l;
+      sTurtle.setColor(mp_obj_str_get_data(args[0], &l));
+    } else {
+      // pencolor((r, g, b))
+      mp_obj_t * rgb;
+      mp_obj_get_array_fixed_n(args[0], 3, &rgb);
+      sTurtle.setColor(
+          KDColor::RGB888(
+            mp_obj_get_int(rgb[0]),
+            mp_obj_get_int(rgb[1]),
+            mp_obj_get_int(rgb[2])));
+    }
+  } else if (n_args == 3) {
+    // pencolor(r, g, b)
+    sTurtle.setColor(
+        KDColor::RGB888(
+          mp_obj_get_int(args[0]),
+          mp_obj_get_int(args[1]),
+          mp_obj_get_int(args[2])));
+  }
   return mp_const_none;
 }
 

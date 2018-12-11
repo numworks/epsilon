@@ -1,4 +1,5 @@
 #include "turtle.h"
+#include <escher/palette.h>
 extern "C" {
 #include <py/misc.h>
 }
@@ -141,6 +142,32 @@ void Turtle::setVisible(bool visible) {
     draw(true);
   } else {
     erase();
+  }
+}
+
+void Turtle::setColor(const char * color) {
+  if (strcmp("blue", color) == 0) {
+    m_color = KDColorBlue;
+  } else if (strcmp("red", color) == 0) {
+    m_color = KDColorRed;
+  } else if (strcmp("green", color) == 0) {
+    m_color = Palette::Green;
+  } else if (strcmp("yellow", color) == 0) {
+    m_color = KDColorYellow;
+  } else if (strcmp("brown", color) == 0) {
+    m_color = Palette::Brown;
+  } else if (strcmp("black", color) == 0) {
+    m_color = KDColorBlack;
+  } else if (strcmp("white", color) == 0) {
+    m_color = KDColorWhite;
+  } else if (strcmp("pink", color) == 0) {
+    m_color = Palette::Pink;
+  } else if (strcmp("orange", color) == 0) {
+    m_color = Palette::Orange;
+  } else if (strcmp("purple", color) == 0) {
+    m_color = Palette::Purple;
+  } else if (strcmp("grey", color) == 0) {
+    m_color = Palette::GreyDark;
   }
 }
 

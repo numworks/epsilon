@@ -63,10 +63,14 @@ public:
   bool isVisible() const { return m_visible; }
   void setVisible(bool visible);
 
+  KDColor color() const { return m_color; }
   void setColor(KDColor c) {
     m_color = c;
   }
-
+  void setColor(uint8_t r, uint8_t g, uint8_t b) {
+    m_color = KDColor::RGB888(r, g, b);
+  }
+  void setColor(const char * color);
 private:
   static constexpr mp_float_t k_headingOffset = M_PI_2;
   static constexpr mp_float_t k_headingScale = M_PI / 180;

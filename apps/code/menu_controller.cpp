@@ -147,7 +147,7 @@ void MenuController::openConsoleWithScript(Script script) {
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }
 
-void MenuController::scriptContentEditionDidFinish(){
+void MenuController::scriptContentEditionDidFinish() {
   reloadConsole();
 }
 

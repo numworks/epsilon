@@ -31,21 +31,25 @@ ExpressionNode::Sign MultiplicationNode::sign(Context * context, Preferences::An
   return (Sign)sign;
 }
 
-Expression MultiplicationNode::complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool realPart) const {
+ComplexCartesian MultiplicationNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Multiplication m(this);
   int nbChildren = m.numberOfChildren();
   assert(nbChildren > 0);
-  Expression real = m.childAtIndex(0).realPart(context, angleUnit);
-  Expression imag = m.childAtIndex(0).imaginaryPart(context, angleUnit);
+  ComplexCartesian cartesian = m.childAtIndex(0).complexCartesian(context, angleUnit);
+  if (cartesian.isUninitialized()) {
+    return ComplexCartesian();
+  }
+  Expression real = cartesian.real();
+  Expression imag = cartesian.imag();
+  assert(!real.isUninitialized() && !imag.isUninitialized());
   for (int i = 1; i < nbChildren; i++) {
-    if (real.isUninitialized() || imag.isUninitialized()) {
-      return Expression();
+    ComplexCartesian childCartesian = m.childAtIndex(i).complexCartesian(context, angleUnit);
+    if (childCartesian.isUninitialized()) {
+      return ComplexCartesian();
     }
-    Expression childReal = m.childAtIndex(i).realPart(context, angleUnit);
-    Expression childImag = m.childAtIndex(i).imaginaryPart(context, angleUnit);
-    if (childReal.isUninitialized() || childImag.isUninitialized()) {
-      return Expression();
-    }
+    Expression childReal = childCartesian.real();
+    Expression childImag = childCartesian.imag();
+    assert(!real.isUninitialized() && !imag.isUninitialized());
     Expression newReal =
       Subtraction(
         Multiplication(real.clone(), childReal.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
@@ -59,10 +63,10 @@ Expression MultiplicationNode::complexCartesianPart(Context & context, Preferenc
     real = newReal;
     imag = newImag;
   }
-  return realPart ? real : imag;
+  return ComplexCartesian::Builder(real, imag);
 }
 
-Expression MultiplicationNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
+/*Expression MultiplicationNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
   Multiplication m(this);
   Multiplication norm;
   for (int i = 0; i < m.numberOfChildren(); i++) {
@@ -75,7 +79,7 @@ Expression MultiplicationNode::complexNorm(Context & context, Preferences::Angle
   return norm.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
 }
 
-/*Expression MultiplicationNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression MultiplicationNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
   Multiplication m(this);
   Addition arg;
   for (int i = 0; i < m.numberOfChildren(); i++) {

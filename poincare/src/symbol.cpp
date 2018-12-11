@@ -77,22 +77,14 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
   return 0.0f;
 }
 
-Expression SymbolNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+ComplexCartesian SymbolNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Symbol s(this);
-  Expression e = SymbolAbstract::Expand(s, context, false);
-  if (e.isUninitialized()) {
-    return s.clone();
-  }
-  return e.realPart(context, angleUnit);
+  return SymbolAbstract::complexCartesian(s, context, angleUnit);
 }
 
-Expression SymbolNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
-  Symbol s(this);
-  Expression e = SymbolAbstract::Expand(s, context, false);
-  if (e.isUninitialized()) {
-    return Rational(0);
-  }
-  return e.imaginaryPart(context, angleUnit);
+ComplexPolar SymbolNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
+  Symbol f(this);
+  return SymbolAbstract::complexPolar(f, context, angleUnit);
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

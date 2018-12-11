@@ -1,4 +1,7 @@
 #include <poincare/symbol_abstract.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/complex_polar.h>
+#include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/expression.h>
 #include <poincare/helpers.h>
@@ -75,6 +78,23 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
     e = e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
   }
   return e;
+}
+
+ComplexCartesian SymbolAbstract::complexCartesian(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit) {
+  Expression e = SymbolAbstract::Expand(symbol, context, true);
+  if (e.isUninitialized()) {
+    return ComplexCartesian::Builder(symbol.clone(), Rational(0));
+  }
+  return e.complexCartesian(context, angleUnit);
+}
+
+ComplexPolar SymbolAbstract::complexPolar(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit) {
+  Expression e = SymbolAbstract::Expand(symbol, context, true);
+  if (e.isUninitialized()) {
+    // sqrt(f(x)^2)*exp((1-sign(f(x))*Pi/2)
+    return ComplexHelper::complexPolarFromComplexCartesian(symbol.node(), context, angleUnit);
+  }
+  return e.complexPolar(context, angleUnit);
 }
 
 /* TreePool uses adresses and sizes that are multiples of 4 in order to make

@@ -2,6 +2,8 @@
 #define POINCARE_PARENTHESIS_H
 
 #include <poincare/expression.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/complex_polar.h>
 
 namespace Poincare {
 
@@ -22,8 +24,8 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Complex
-  Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->realPart(context, angleUnit); }
-  Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->imaginaryPart(context, angleUnit); }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->complexCartesian(context, angleUnit); }
+  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->complexPolar(context, angleUnit); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

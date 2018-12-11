@@ -40,9 +40,11 @@ Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(c);
     return c;
   }
-  Expression re = c.realPart(context, angleUnit);
-  if (!re.isUninitialized()) {
+  ComplexCartesian cartesian = c.complexCartesian(context, angleUnit);
+  if (!cartesian.isUninitialized()) {
+    Expression re = cartesian.real();
     replaceWithInPlace(re);
+    // We have to deepReduce because the complexCartesian function returns an Expression reduced only BottomUp
     return re.deepReduce(context, angleUnit, target);
   }
   return *this;

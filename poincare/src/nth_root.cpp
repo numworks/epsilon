@@ -18,40 +18,35 @@ constexpr Expression::FunctionHelper NthRoot::s_functionHelper;
 
 int NthRootNode::numberOfChildren() const { return NthRoot::s_functionHelper.numberOfChildren(); }
 
-Expression NthRootNode::complexPolarPart(Context & context, Preferences::AngleUnit angleUnit, bool isNorm) const {
+ComplexPolar NthRootNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
   NthRoot e(this);
-  // NthRoot(r*e^(i*th), c+id)
-  Expression r = e.childAtIndex(0).complexNorm(context, angleUnit);
-  Expression th = e.childAtIndex(0).complexArgument(context, angleUnit);
-  Expression c = e.childAtIndex(1).realPart(context, angleUnit);
-  Expression d = e.childAtIndex(1).imaginaryPart(context, angleUnit);
-  if (r.isUninitialized() || th.isUninitialized() || c.isUninitialized() || d.isUninitialized()) {
-    return Expression();
+  ComplexPolar polarChild0 = e.childAtIndex(0).complexPolar(context, angleUnit);
+  ComplexCartesian cartesianChild1 = e.childAtIndex(0).complexCartesian(context, angleUnit);
+  if (polarChild0.isUninitialized() || cartesianChild1.isUninitialized()) {
+    return ComplexPolar();
   }
-  Expression denominator = 
-    Addition(
-      Power(c.clone(), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-      Power(d.clone(), Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-    ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  if (isNorm) {
-    // R = e^((c*ln(r)+th*d)/(c^2+d^2))
-    // R = r^(c/(c^2+d^2))*e^(th*d/(c^2+d^2))
-    return Multiplication(
+  // NthRoot(r*e^(i*th), c+id)
+  Expression r = polarChild0.norm();
+  Expression th = polarChild0.arg();
+  Expression c = cartesianChild1.real();
+  Expression d = cartesianChild1.imag();
+  assert(!r.isUninitialized() && !th.isUninitialized() && !c.isUninitialized() && !d.isUninitialized());
+  Expression denominator = ComplexHelper::complexSquareNormComplexCartesian(c.clone(), d.clone(), context, angleUnit);
+  // R = r^(c/(c^2+d^2))*e^(th*d/(c^2+d^2))
+  Expression norm = Multiplication(
             Power(
-              r,
-              Division(c, denominator.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+              r.clone(),
+              Division(c.clone(), denominator.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
             ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
             Power(
               Constant(Ion::Charset::Exponential),
               Division(
-                Multiplication(d, th).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-                denominator)
+                Multiplication(d.clone(), th.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+                denominator.clone())
               ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
             ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-    //return Power(Constant(Ion::Charset::Exponential), Division(Addition(Multiplication(c, NaperianLogarithm::Builder(r)), Multiplication(d, th)), denominator));
-  } else {
-    // TH = (th*c-d*ln(r))/(c^2+d^2)
-    return Division(
+  // TH = (th*c-d*ln(r))/(c^2+d^2)
+  Expression argument = Division(
             Subtraction(
               Multiplication(th, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
               Multiplication(
@@ -61,7 +56,7 @@ Expression NthRootNode::complexPolarPart(Context & context, Preferences::AngleUn
             ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
             denominator
           ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  }
+  return ComplexPolar::Builder(norm, argument);
 }
 
 Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

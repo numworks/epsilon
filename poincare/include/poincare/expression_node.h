@@ -14,6 +14,8 @@ namespace Poincare {
 
 class SymbolAbstract;
 class Symbol;
+class ComplexCartesian;
+class ComplexPolar;
 
 class ExpressionNode : public TreeNode {
   friend class AdditionNode;
@@ -46,6 +48,8 @@ public:
     BinomialCoefficient,
     Ceiling,
     ComplexArgument,
+    ComplexCartesian,
+    ComplexPolar,
     Conjugate,
     Derivative,
     Determinant,
@@ -116,10 +120,16 @@ public:
   bool isOfType(Type * types, int length) const;
 
   /* Complex */
-  virtual Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const;
-  virtual Expression imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const;
-  virtual Expression complexNorm(Context & context, Preferences::AngleUnit angleUnit) const;
-  virtual Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const;
+  /* TODO: we could turn i in ComplexCartesian(0,1) in the shallowReduce applied
+   * to i. In this case, we would handle ComplexCartesian as a number and
+   * implement all computations (+, *, ^) in Number ?? We would have to handle
+   * ComplexCartesian in all Node::shallowReduce... We would then turn
+   * ComplexCartesian into something readable in the
+   * ComplexCartesian::shallowBeautify. This would enable us to do only one
+   * scan of the tree in ParseAndSimplifyForComplexFormat instead of Simplifying
+   * and then extracting ComplexCartesian. */
+  virtual ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
+  virtual ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Simplification */
   /* SimplificationOrder returns:

@@ -16,18 +16,11 @@ ExpressionNode::Sign ConstantNode::sign(Context * context, Preferences::AngleUni
   return Sign::Unknown;
 }
 
-Expression ConstantNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+ComplexCartesian ConstantNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   if (isIComplex()) {
-    return Rational(0);
+    return ComplexCartesian::Builder(Rational(0), Rational(1));
   }
-  return Constant(this).clone();
-}
-
-Expression ConstantNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (isIComplex()) {
-    return Rational(1);
-  }
-  return Rational(0);
+  return ComplexCartesian::Builder(Constant(this).clone(), Rational(0));
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

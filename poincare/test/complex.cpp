@@ -8,39 +8,31 @@ using namespace Poincare;
 
 void assert_expression_has_complex_cartesian_parts(const char * expression, const char * real, const char * imag, Preferences::AngleUnit angleUnit = Degree) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression);
-  Expression r =  e.realPart(context, angleUnit);
-  if (r.isUninitialized()) {
+  Expression e = parse_expression(expression).simplify(context, angleUnit);
+  ComplexCartesian cartesian = e.complexCartesian(context, angleUnit);
+  if (cartesian.isUninitialized()) {
     assert(real == nullptr);
-  } else {
-    r = r.simplify(context, angleUnit);
-    assert_parsed_expression_serialize_to(r, real);
-  }
-  Expression i = e.imaginaryPart(context, angleUnit);
-  if (i.isUninitialized()) {
     assert(imag == nullptr);
   } else {
-    i = i.simplify(context, angleUnit);
-    assert_parsed_expression_serialize_to(i, imag);
+    cartesian.real().simplify(context, angleUnit);
+    cartesian.imag().simplify(context, angleUnit);
+    assert_parsed_expression_serialize_to(cartesian.real(), real);
+    assert_parsed_expression_serialize_to(cartesian.imag(), imag);
   }
 }
 
 void assert_expression_has_complex_polar_parts(const char * expression, const char * norm, const char * arg, Preferences::AngleUnit angleUnit = Degree) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression);
-  Expression n =  e.complexNorm(context, angleUnit);
-  if (n.isUninitialized()) {
+  Expression e = parse_expression(expression).simplify(context, angleUnit);
+  ComplexPolar polar = e.complexPolar(context, angleUnit);
+  if (polar.isUninitialized()) {
     assert(norm == nullptr);
-  } else {
-    n = n.simplify(context, angleUnit);
-    assert_parsed_expression_serialize_to(n, norm);
-  }
-  Expression a = e.complexArgument(context, angleUnit);
-  if (a.isUninitialized()) {
     assert(arg == nullptr);
   } else {
-    a = a.simplify(context, angleUnit);
-    assert_parsed_expression_serialize_to(a, arg);
+    polar.norm().simplify(context, angleUnit);
+    polar.arg().simplify(context, angleUnit);
+    assert_parsed_expression_serialize_to(polar.norm(), norm);
+    assert_parsed_expression_serialize_to(polar.arg(), arg);
   }
 }
 

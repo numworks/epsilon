@@ -1,5 +1,9 @@
 #include <poincare/conjugate.h>
 #include <poincare/conjugate_layout.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/complex_polar.h>
+#include <poincare/multiplication.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/opposite.h>
@@ -12,16 +16,26 @@ constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
 
 int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
 
-Expression ConjugateNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
-  return childAtIndex(0)->realPart(context, angleUnit);
+ComplexCartesian ConjugateNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
+  ComplexCartesian childCartesian = childAtIndex(0)->complexCartesian(context, angleUnit);
+  if (childCartesian.isUninitialized()) {
+    return ComplexCartesian();
+  }
+  return ComplexCartesian::Builder(
+    childCartesian.real(),
+    Multiplication(Rational(-1), childCartesian.imag()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+    );
 }
 
-Expression ConjugateNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e = childAtIndex(0)->imaginaryPart(context, angleUnit);
-  if (!e.isUninitialized()) {
-    return Opposite(e).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
+ComplexPolar ConjugateNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
+  ComplexPolar childPolar = childAtIndex(0)->complexPolar(context, angleUnit);
+  if (childPolar.isUninitialized()) {
+    return ComplexPolar();
   }
-  return Expression();
+  return ComplexPolar::Builder(
+    childPolar.norm(),
+    Multiplication(Rational(-1), childPolar.arg()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+    );
 }
 
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

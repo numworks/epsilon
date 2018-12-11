@@ -9,22 +9,14 @@
 
 namespace Poincare {
 
-Expression FunctionNode::realPart(Context & context, Preferences::AngleUnit angleUnit) const {
+ComplexCartesian FunctionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, context, true);
-  if (e.isUninitialized()) {
-    return f.clone();
-  }
-  return e.realPart(context, angleUnit);
+  return SymbolAbstract::complexCartesian(f, context, angleUnit);
 }
 
-Expression FunctionNode::imaginaryPart(Context & context, Preferences::AngleUnit angleUnit) const {
+ComplexPolar FunctionNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
   Function f(this);
-  Expression e = SymbolAbstract::Expand(f, context, false);
-  if (e.isUninitialized()) {
-    return Rational(0);
-  }
-  return e.imaginaryPart(context, angleUnit);
+  return SymbolAbstract::complexPolar(f, context, angleUnit);
 }
 
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

@@ -23,14 +23,17 @@ int SubtractionNode::polynomialDegree(Context & context, const char * symbolName
 
 // Private
 
-Expression SubtractionNode::complexPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
+ComplexCartesian SubtractionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Subtraction e(this);
-  Expression a0 = real ? e.childAtIndex(0).realPart(context, angleUnit) : e.childAtIndex(0).imaginaryPart(context, angleUnit);
-  Expression a1 = real ? e.childAtIndex(1).realPart(context, angleUnit) : e.childAtIndex(1).imaginaryPart(context, angleUnit);
-  if (a0.isUninitialized() || a1.isUninitialized()) {
-    return Expression();
+  ComplexCartesian cartesian0 = e.childAtIndex(0).complexCartesian(context, angleUnit);
+  ComplexCartesian cartesian1 = e.childAtIndex(1).complexCartesian(context, angleUnit);
+  if (cartesian0.isUninitialized() || cartesian1.isUninitialized()) {
+    return ComplexCartesian();
   }
-  return Subtraction(a0, a1).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
+  return ComplexCartesian::Builder(
+    Subtraction(cartesian0.real(), cartesian1.real()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
+    Subtraction(cartesian0.imag(), cartesian1.imag()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
+  );
 }
 
 bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {

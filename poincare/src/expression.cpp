@@ -392,15 +392,14 @@ bool isMinusOne(const Expression e) {
 
 Expression Expression::simplifyForComplexFormat(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
   sSimplificationHasBeenInterrupted = false;
-  // We simplify before extracting the real and imaginary part to develop expression of type (a+b*i)^3 for example
-  // We could have deepReduce the expression but we want to keep division which are easier to extract complex parts from
-  Expression e = simplify(context, angleUnit);
+  // We deepReduce before extracting the real and imaginary part to develop expression of type (a+b*i)^3 for example
+  Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
   if (sSimplificationHasBeenInterrupted) {
     return Expression();
   }
   Expression complexParts = complexFormat == Preferences::ComplexFormat::Cartesian ? static_cast<Expression>(e.complexCartesian(context, angleUnit)) : static_cast<Expression>(e.complexPolar(context, angleUnit));
   if (complexParts.isUninitialized()) {
-    return e;
+    return e.simplify(context, angleUnit);
   }
   // Depending on the complexFormat required:
   // - ra is the real part or the norm
@@ -413,7 +412,7 @@ Expression Expression::simplifyForComplexFormat(Context & context, Preferences::
   ra = ra.simplify(context, angleUnit);
   tb = tb.simplify(context, angleUnit);
   if (ra.isUninitialized() || tb.isUninitialized()) {
-    return e;
+    return e.simplify(context, angleUnit);
   }
   e = CreateComplexExpression(ra, tb, complexFormat,
       ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined,

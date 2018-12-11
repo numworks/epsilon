@@ -8,7 +8,7 @@ using namespace Poincare;
 
 void assert_expression_has_complex_cartesian_parts(const char * expression, const char * real, const char * imag, Preferences::AngleUnit angleUnit = Degree) {
   Shared::GlobalContext context;
-  Expression e = parse_expression(expression).simplify(context, angleUnit);
+  Expression e = parse_expression(expression).reduce(context, angleUnit);
   ComplexCartesian cartesian = e.complexCartesian(context, angleUnit);
   if (cartesian.isUninitialized()) {
     assert(real == nullptr);

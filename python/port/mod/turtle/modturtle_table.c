@@ -19,7 +19,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_penup_obj, modturtle_penup);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_isdown_obj, modturtle_isdown);
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_pensize_obj, 0, 1, modturtle_pensize);
 
-STATIC MP_DEFINE_CONST_FUN_OBJ_3(modturtle_color_obj, modturtle_color);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(modturtle_pencolor_obj, 0, 3, modturtle_pencolor);
 
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_showturtle_obj, modturtle_showturtle);
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(modturtle_hideturtle_obj, modturtle_hideturtle);
@@ -64,7 +64,8 @@ STATIC const mp_rom_map_elem_t modturtle_module_globals_table[] = {
   { MP_ROM_QSTR(MP_QSTR_pensize), (mp_obj_t)&modturtle_pensize_obj },
   { MP_ROM_QSTR(MP_QSTR_width), (mp_obj_t)&modturtle_pensize_obj },
 
-  { MP_ROM_QSTR(MP_QSTR_pencolor), (mp_obj_t)&modturtle_color_obj },
+  { MP_ROM_QSTR(MP_QSTR_color), (mp_obj_t)&modturtle_pencolor_obj },
+  { MP_ROM_QSTR(MP_QSTR_pencolor), (mp_obj_t)&modturtle_pencolor_obj },
 
   { MP_ROM_QSTR(MP_QSTR_showturtle), (mp_obj_t)&modturtle_showturtle_obj },
   { MP_ROM_QSTR(MP_QSTR_st), (mp_obj_t)&modturtle_showturtle_obj },

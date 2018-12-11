@@ -22,7 +22,7 @@ public:
 #endif
 
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianFromComplexPolar(this, context, angleUnit); }
+  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
   ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Properties
@@ -89,6 +89,7 @@ private:
   Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
+  Expression equivalentExpressionUsingStandardExpression() const;
   static Expression CreateComplexExponent(const Expression & r); // Returns e^(i*pi*r)
   static bool TermIsARationalSquareRootOrRational(const Expression& e);
   static const Rational RadicandInExpression(const Expression & e);

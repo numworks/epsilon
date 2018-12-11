@@ -83,7 +83,7 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
   std::complex<T> result;
-  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() >= 0.0) {
+  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() > 0.0) {
     /* pow: (R+, R) -> R+
      * For pow on (R+,R) we rather use std::pow(double, double) because:
      * - pow on complexes is not as precise as pow on double: for instance,
@@ -91,7 +91,9 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) 
      *   and pow(2.0,3.0) = 8.0
      * - Using complex pow, std::pow(2.0, 1000) = (INFINITY, NAN).
      *   Openbsd pow of a positive real and another real has a undefined
-     *   imaginary when the real result is infinity. */
+     *   imaginary when the real result is infinity.
+     * However, we exclude c == 0 because std:pow(0.0, 0.0) = 1.0 and we would
+     * rather have 0^0 = undef. */
     result = std::complex<T>(std::pow(c.real(), d.real()));
   } else {
     result = std::pow(c, d);

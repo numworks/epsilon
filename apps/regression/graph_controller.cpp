@@ -291,8 +291,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // Find the closest dot
   int closestDotSeries = -1;
-  double selectedDotY = *m_selectedDotIndex == -1 ? (direction > 0 ? -DBL_MAX : DBL_MAX) : y;
-  int dotSelected = m_store->closestVerticalDot(direction, x, selectedDotY, *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries, context);
+  int dotSelected = m_store->closestVerticalDot(direction, x, y, *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries, context);
 
   // Choose between selecting the regression or the dot
   bool validRegression = closestRegressionSeries > -1;
@@ -316,7 +315,7 @@ bool GraphController::moveCursorVertically(int direction) {
       double dotDistanceY = (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) ?
         std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
         std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
-      if (regressionDistanceY <= dotDistanceY) {
+      if (regressionDistanceY < dotDistanceY) {
         validDot = false;
       } else {
         validRegression = false;

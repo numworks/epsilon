@@ -91,12 +91,12 @@ private:
     BackLeft = 3
   };
 
-  enum class PawPosition : int {
-    Backwards = 0,
-    HalfBackwards = 1,
-    Normal = 2,
-    HalfForward = 3,
-    Forward = 4
+  enum class PawPosition : int8_t {
+    Backwards = -1,
+    HalfBackwards = -2,
+    Normal = 0,
+    HalfForward = 1,
+    Forward = 2
   };
 
   class NameColorPair {

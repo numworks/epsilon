@@ -330,7 +330,7 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
 
   // Compute the paw offset from the turtle center
   float currentAngle = angles[(int) type];
-  float crawlDelta = (((int)pos) - 2.0f) * crawlOffset;
+  float crawlDelta = ((float)((int)pos)) * crawlOffset;
   float pawX = pawOffset * sin(m_heading+currentAngle) + crawlDelta * sin(m_heading);
   float pawY = - pawOffset * cos(m_heading+currentAngle) - crawlDelta * cos(m_heading);
   KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);

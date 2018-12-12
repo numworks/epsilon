@@ -34,6 +34,10 @@ public:
   // ExpressionNode
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
+  // Property
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
+
   // TreeNode
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

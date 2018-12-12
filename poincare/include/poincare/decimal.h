@@ -48,7 +48,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Decimal; }
-  Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override { return m_negative ? Sign::Negative : Sign::Positive; }
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation

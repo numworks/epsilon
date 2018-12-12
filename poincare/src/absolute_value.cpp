@@ -46,11 +46,11 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
   }
 #endif
 #endif
-  if (c.sign() == ExpressionNode::Sign::Positive) {
+  if (c.sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
     replaceWithInPlace(c);
     return c;
   }
-  if (c.sign() == ExpressionNode::Sign::Negative) {
+  if (c.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
     Expression result = c.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
     replaceWithInPlace(result);
     return result;

@@ -16,7 +16,7 @@ void assert_parsed_expression_sign(const char * expression, Poincare::Expression
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, Degree);
-  quiz_assert(e.sign() == sign);
+  quiz_assert(e.sign(&globalContext, Degree) == sign);
 }
 
 QUIZ_CASE(poincare_sign) {
@@ -25,6 +25,7 @@ QUIZ_CASE(poincare_sign) {
   assert_parsed_expression_sign("-2.345E-23", Negative);
   assert_parsed_expression_sign("2*(-3)*abs(-32)", Negative);
   assert_parsed_expression_sign("2*(-3)*abs(-32)*cos(3)", Unknown);
+  assert_parsed_expression_sign("x", Unknown);
   assert_parsed_expression_sign("2^(-abs(3))", Positive);
   assert_parsed_expression_sign("(-2)^4", Positive);
   assert_parsed_expression_sign("(-2)^3", Negative);

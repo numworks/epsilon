@@ -22,7 +22,7 @@ Expression FactorialNode::setSign(Sign s, Context * context, Preferences::AngleU
 // Layout
 
 bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {

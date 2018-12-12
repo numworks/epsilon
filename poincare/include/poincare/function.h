@@ -21,7 +21,6 @@ public:
 
   // Properties
   Type type() const override { return Type::Function; }
-  Sign sign() const override { return Sign::Unknown; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;

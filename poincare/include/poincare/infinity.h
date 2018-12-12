@@ -24,7 +24,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Infinity; }
-  Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override { return m_negative ? Sign::Negative : Sign::Positive; }
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {

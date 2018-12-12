@@ -141,4 +141,22 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_expression_has_complex_polar_parts("I", "1", "P/2");
   assert_expression_has_complex_polar_parts("abs(-3)", "3", "0");
   assert_expression_has_complex_polar_parts("abs(-3+I)", "R(10)", "0");
+  assert_expression_has_complex_polar_parts("conj(2*X^(I*cos(2)))", "2", "-cos(2)");
+  assert_expression_has_complex_polar_parts("-2*X^(I*cos(2))", "2", "cos(2)+P");
+
+  // User defined variable
+  assert_expression_has_complex_polar_parts("a", "R(a^2)", "(P-sign(a)*P)/2");
+  // a = 2+i
+  assert_simplify("2+I>a");
+  assert_expression_has_complex_polar_parts("a", "R(5", "(-2*atan(2)+P)/2");
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  // User defined function
+  assert_expression_has_complex_polar_parts("f(3)", "R(f(3)^2)", "(P-sign(f(3))*P)/2");
+  // f: x -> x+1
+  assert_simplify("x+1+I>f(x)");
+  assert_expression_has_complex_polar_parts("f(3)", "R(17)", "(-2*atan(4)+P)/2");
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
 }

@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-ExpressionNode::Sign ConstantNode::sign() const {
+ExpressionNode::Sign ConstantNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
   if (isPi() || isExponential()) {
     return Sign::Positive;
   }

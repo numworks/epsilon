@@ -14,7 +14,7 @@ int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) 
 }
 
 Expression UndefinedNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
-  return Undefined();
+  return Undefined(this);
 }
 
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

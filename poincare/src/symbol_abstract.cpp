@@ -26,6 +26,23 @@ void SymbolAbstractNode::initToMatchSize(size_t goalSize) {
   assert(size() == goalSize);
 }
 
+ExpressionNode::Sign SymbolAbstractNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+  SymbolAbstract s(this);
+  Expression e = SymbolAbstract::Expand(s, *context, false);
+  if (e.isUninitialized()) {
+    return Sign::Unknown;
+  }
+  return e.sign(context, angleUnit);
+}
+
+Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+  SymbolAbstract sa(this);
+  Expression e = SymbolAbstract::Expand(sa, *context, true);
+  assert(!e.isUninitialized());
+  sa.replaceWithInPlace(e);
+  return e.setSign(s, context, angleUnit);
+}
+
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   assert(type() == e->type());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());

@@ -17,13 +17,16 @@
 
 namespace Poincare {
 
-ExpressionNode::Sign MultiplicationNode::sign() const {
+ExpressionNode::Sign MultiplicationNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
   if (numberOfChildren() == 0) {
     return Sign::Unknown;
   }
   int sign = 1;
   for (ExpressionNode * c : children()) {
-    sign *= (int)(c->sign());
+    sign *= (int)(c->sign(context, angleUnit));
+  }
+  if (sign == 0) {
+    return ExpressionNode::sign(context, angleUnit);
   }
   return (Sign)sign;
 }
@@ -125,7 +128,7 @@ Expression MultiplicationNode::setSign(Sign s, Context * context, Preferences::A
 }
 
 bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
-  if ((static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative)
+  if ((static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative)
         || static_cast<const ExpressionNode *>(child)->type() == ExpressionNode::Type::Opposite)
   {
     if (child == childAtIndex(0)) {
@@ -179,7 +182,7 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
 Expression Multiplication::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).sign() == ExpressionNode::Sign::Negative) {
+    if (childAtIndex(i).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
       replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit));
     }
   }
@@ -199,7 +202,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
 
   // Step 1: Turn -n*A into -(n*A)
   Expression child0 = childAtIndex(0);
-  if (child0.isNumber() && child0.sign() == ExpressionNode::Sign::Negative) {
+  if (child0.isNumber() && child0.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
     if (child0.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(child0).isMinusOne()) {
       removeChildAtIndexInPlace(0);
     } else {
@@ -639,7 +642,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
         Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
-        if (sub.sign() == ExpressionNode::Sign::Negative) { // index[0] < index[1]
+        if (sub.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) { // index[0] < index[1]
           sub = Opposite(sub);
           if (factor.type() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
@@ -648,7 +651,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
           }
           sub.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
           mergeInChildByFactorizingBase(i, factor, context, angleUnit, ExpressionNode::ReductionTarget::User);
-        } else if (sub.sign() == ExpressionNode::Sign::Unknown) {
+        } else if (sub.sign(&context, angleUnit) == ExpressionNode::Sign::Unknown) {
           mergeInChildByFactorizingBase(i, factor, context, angleUnit, ExpressionNode::ReductionTarget::User);
         }
         return;
@@ -759,7 +762,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
   }
   int i = 0;
   while (i < numberOfChildren()) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::Power && childAtIndex(i).childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::Power && childAtIndex(i).childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
      Expression e = childAtIndex(i);
      e.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
      removeChildAtIndexInPlace(i);

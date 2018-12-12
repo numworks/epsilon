@@ -12,8 +12,8 @@ constexpr Expression::FunctionHelper SignFunction::s_functionHelper;
 
 int SignFunctionNode::numberOfChildren() const { return SignFunction::s_functionHelper.numberOfChildren(); }
 
-ExpressionNode::Sign SignFunctionNode::sign() const {
-  return childAtIndex(0)->sign();
+ExpressionNode::Sign SignFunctionNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+  return childAtIndex(0)->sign(context, angleUnit);
 }
 
 Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
@@ -59,8 +59,8 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit
   }
 #endif
   Rational one(1);
-  if (childAtIndex(0).sign() != ExpressionNode::Sign::Unknown) {
-    if (childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
+  if (childAtIndex(0).sign(&context, angleUnit) != ExpressionNode::Sign::Unknown) {
+    if (childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
       one = Rational(-1);
     }
   } else {

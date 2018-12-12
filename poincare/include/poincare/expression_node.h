@@ -102,7 +102,7 @@ public:
     Unknown = 0,
     Positive = 1
   };
-  virtual Sign sign() const { return Sign::Unknown; }
+  virtual Sign sign(Context * context, Preferences::AngleUnit angleUnit) const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol);

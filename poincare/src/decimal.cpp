@@ -82,7 +82,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
     double approx1 = other->templatedApproximate<double>();
     return (approx0 == approx1 ? 0 : (approx0 < approx1 ? -1 : 1));
   }
-  return ((int)sign())*unsignedComparison;
+  return ((int)Number(this).sign())*unsignedComparison;
 }
 
 Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {

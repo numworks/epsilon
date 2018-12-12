@@ -65,6 +65,7 @@ class Expression : public TreeHandle {
   friend class Parenthesis;
   friend class PermuteCoefficient;
   friend class Power;
+  friend class PowerNode;
   friend class PredictionInterval;
   friend class Product;
   friend class RealPart;
@@ -77,6 +78,7 @@ class Expression : public TreeHandle {
   friend class Subtraction;
   friend class Sum;
   friend class Symbol;
+  friend class SymbolAbstractNode;
   friend class Tangent;
   friend class Trigonometry;
 
@@ -116,7 +118,7 @@ public:
 
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
-  ExpressionNode::Sign sign() const { return node()->sign(); }
+  ExpressionNode::Sign sign(Context * context, Preferences::AngleUnit angleUnit) const { return node()->sign(context, angleUnit); }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;

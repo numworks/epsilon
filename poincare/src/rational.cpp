@@ -124,10 +124,10 @@ template<typename T> T RationalNode::templatedApproximate() const {
 // Comparison
 
 int RationalNode::NaturalOrder(const RationalNode * i, const RationalNode * j) {
-  if (i->sign() == Sign::Negative && j->sign() == Sign::Positive) {
+  if (Number(i).sign() == Sign::Negative && Number(j).sign() == Sign::Positive) {
     return -1;
   }
-  if (i->sign() == Sign::Positive && j->sign() == Sign::Negative) {
+  if (Number(i).sign() == Sign::Positive && Number(j).sign() == Sign::Negative) {
     return 1;
   }
   Integer i1 = Integer::Multiplication(i->signedNumerator(), j->denominator());
@@ -247,7 +247,7 @@ Expression Rational::shallowReduce(Context & context, Preferences::AngleUnit ang
   // Turn into Infinite if the numerator is too big.
   if (unsignedIntegerNumerator().isInfinity()) {
     assert(false);
-    return Infinity(sign() == ExpressionNode::Sign::Negative);
+    return Infinity(sign(&context, angleUnit) == ExpressionNode::Sign::Negative);
   }
   // Turn into 0 if the denominator is too big.
   if (integerDenominator().isInfinity()) {

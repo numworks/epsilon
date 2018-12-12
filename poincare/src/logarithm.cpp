@@ -120,7 +120,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
   }
 #endif
 #endif
-  if (c.sign() == ExpressionNode::Sign::Negative || childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+  if (c.sign(&context, angleUnit) == ExpressionNode::Sign::Negative || childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
     return *this;
   }
   Expression f = simpleShallowReduce(context, angleUnit);
@@ -136,7 +136,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
    */
   bool letLogAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsAPowerOfSameBase();
   // log(x^y, b)->y*log(x, b) if x>0
-  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign() == ExpressionNode::Sign::Positive) {
+  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
     Power p = static_cast<Power &>(c);
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
@@ -152,7 +152,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     Addition a = Addition();
     for (int i = 0; i < c.numberOfChildren()-1; i++) {
       Expression factor = c.childAtIndex(i);
-      if (factor.sign() == ExpressionNode::Sign::Positive) {
+      if (factor.sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
         Expression newLog = clone();
         static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);

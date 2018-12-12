@@ -17,14 +17,14 @@ int OppositeNode::polynomialDegree(Context & context, const char * symbolName) c
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-ExpressionNode::Sign OppositeNode::sign() const {
-  if (childAtIndex(0)->sign() == Sign::Positive) {
+ExpressionNode::Sign OppositeNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Positive) {
     return Sign::Negative;
   }
-  if (childAtIndex(0)->sign() == Sign::Negative) {
+  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Negative) {
     return Sign::Positive;
   }
-  return Sign::Unknown;
+  return ExpressionNode::sign(context,angleUnit);
 }
 
 Expression OppositeNode::complexCartesianPart(Context & context, Preferences::AngleUnit angleUnit, bool real) const {
@@ -38,7 +38,7 @@ Expression OppositeNode::complexCartesianPart(Context & context, Preferences::An
 /* Layout */
 
 bool OppositeNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};

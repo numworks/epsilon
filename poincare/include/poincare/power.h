@@ -29,7 +29,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Power; }
-  Sign sign() const override;
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   int polynomialDegree(Context & context, const char * symbolName) const override;

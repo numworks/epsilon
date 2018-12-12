@@ -201,17 +201,12 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
   // Step 1: Turn -n*A into -(n*A)
-  Expression child0 = childAtIndex(0);
-  if (child0.isNumber() && child0.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-    if (child0.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(child0).isMinusOne()) {
-      removeChildAtIndexInPlace(0);
-    } else {
-      child0.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
-    }
-    Expression e = squashUnaryHierarchyInPlace();
+  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  // If one negative numeral factor was made positive, we turn the expression in an Opposite
+  if (!noNegativeNumeral.isUninitialized()) {
     Opposite o = Opposite();
-    e.replaceWithInPlace(o);
-    o.replaceChildAtIndexInPlace(0, e);
+    noNegativeNumeral.replaceWithInPlace(o);
+    o.replaceChildAtIndexInPlace(0, noNegativeNumeral);
     return o;
   }
 
@@ -749,6 +744,8 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
 }
 
 Expression Multiplication::mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) {
+  /* mergeNegativePower groups all factors that are power of form a^(-b) together
+   * for instance, a^(-1)*b^(-c)*c = c*(a*b^c)^(-1) */
   Multiplication m;
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !childAtIndex(0).convert<Rational>().integerDenominator().isOne()) {
@@ -761,16 +758,24 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
     }
   }
   int i = 0;
+  // Look for power of form a^(-b)
   while (i < numberOfChildren()) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::Power && childAtIndex(i).childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-     Expression e = childAtIndex(i);
-     e.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
-     removeChildAtIndexInPlace(i);
-     m.addChildAtIndexInPlace(e, m.numberOfChildren(), m.numberOfChildren());
-     e.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
-    } else {
-      i++;
+    if (childAtIndex(i).type() == ExpressionNode::Type::Power) {
+      Expression p = childAtIndex(i);
+      Expression positivePIndex = p.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+      if (!positivePIndex.isUninitialized()) {
+        // Remove a^(-b) from the Multiplication
+        removeChildAtIndexInPlace(i);
+        // Add a^b to m
+        m.addChildAtIndexInPlace(p, m.numberOfChildren(), m.numberOfChildren());
+        if (p.childAtIndex(1).isRationalOne()) {
+          p.replaceWithInPlace(p.childAtIndex(0));
+        }
+        // We do not increment i because we removed one child from the Multiplication
+        continue;
+      }
     }
+    i++;
   }
   if (m.numberOfChildren() == 0) {
     return *this;

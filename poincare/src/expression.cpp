@@ -248,6 +248,28 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
   return *this;
 }
 
+Expression Expression::makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit) {
+  // The expression is a negative number
+  if (isNumber() && sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+    return setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+  }
+  // The expression is a multiplication whose numeral factor is negative
+  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+    Multiplication m = convert<Multiplication>();
+    if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && m.childAtIndex(0).convert<Rational>().isMinusOne()) {
+      // The negative numeral factor is -1, we just remove it
+      m.removeChildAtIndexInPlace(0);
+      // The multiplication can have only one child after removing -1
+      return m.squashUnaryHierarchyInPlace();
+    } else {
+      // Otherwise, we make it positive
+      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+    }
+    return m;
+  }
+  return Expression();
+}
+
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
   // Reset interrupting flag because some evaluation methods use it
@@ -379,7 +401,7 @@ Expression Expression::simplifyForComplexFormat(Context & context, Preferences::
   e = CreateComplexExpression(ra, tb, complexFormat,
       ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined,
       isZero(ra), isOne(ra), isZero(tb), isOne(tb), isMinusOne(tb),
-      tb.type() == ExpressionNode::Type::Opposite || (tb.type() == ExpressionNode::Type::Rational && tb.sign(&context, angleUnit) == ExpressionNode::Sign::Negative),
+      tb.type() == ExpressionNode::Type::Opposite,
       [](Expression e) {
         if (e.type() == ExpressionNode::Type::Opposite) {
           return e.childAtIndex(0);

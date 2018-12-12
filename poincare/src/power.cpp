@@ -710,16 +710,19 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
 }
 
 Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  // X^-y -> 1/(X->shallowBeautify)^y
-  if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-    Expression p = denominator(context, angleUnit);
+  // Step 1: X^-y -> 1/(X->shallowBeautify)^y
+  Expression p = denominator(context, angleUnit);
+  // If the denominator is initialized, the index of the power is of form -y
+  if (!p.isUninitialized()) {
     Division d = Division(Rational(1), p);
     p.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
     replaceWithInPlace(d);
     return d.shallowBeautify(context, angleUnit);
   }
+  // Step 2: Turn a^(1/n) into root(a, n)
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne()) {
     Integer index = childAtIndex(1).convert<Rational>().integerDenominator();
+    // Special case: a^(1/2) --> sqrt(a)
     if (index.isEqualTo(Integer(2))) {
       Expression result = SquareRoot::Builder(childAtIndex(0));
       replaceWithInPlace(result);
@@ -730,7 +733,7 @@ Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angl
     return result;
   }
 
-  // +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
+  // Step 3: +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication)
   {
@@ -744,12 +747,17 @@ Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angl
 
 // Simplification
 Expression Power::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-    Expression positivePowerClone = Power(childAtIndex(0).clone(), childAtIndex(1).clone().setSign(ExpressionNode::Sign::Positive, &context, angleUnit));
-    if (positivePowerClone.childAtIndex(1).type() == ExpressionNode::Type::Rational && positivePowerClone.childAtIndex(1).convert<Rational>().isOne()) {
-      return positivePowerClone.childAtIndex(0);
+  // Clone the power
+  Expression clone = Power(childAtIndex(0).clone(), childAtIndex(1).clone());
+  // If the power is of form x^(-y), denominator should be x^y
+  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  if (!positiveIndex.isUninitialized()) {
+    // if y was -1, clone is now x^1, denominator is then only x
+    // we cannot shallowReduce the clone as it is not attached to its parent yet
+    if (positiveIndex.isRationalOne()) {
+      return clone.childAtIndex(0);
     }
-    return positivePowerClone;
+    return clone;
   }
   return Expression();
 }

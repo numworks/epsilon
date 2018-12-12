@@ -116,11 +116,14 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   }
 
   // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
-  if (e.childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-    e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit).shallowReduce(context, angleUnit, target);
+  Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  if (!positiveArg.isUninitialized()) {
+    // The argument was of form cos(-a)
     if (e.type() == ExpressionNode::Type::Cosine) {
+      // cos(-a) = cos(a)
       return e.shallowReduce(context, angleUnit, target);
     } else {
+      // sin(-a) = -sin(a) or tan(-a) = -tan(a)
       Multiplication m(Rational(-1));
       e.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(e, 1, 1);
@@ -263,36 +266,30 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    *   information on the parent which could later be a cosine, a sine or a tangent.
    */
   bool letArcFunctionAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsDirectTrigonometry(e);
-  /* Step 4. Handle negative arguments: arccos(-x) = Pi-arcos(x),
-   * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) */
-  if (!letArcFunctionAtRoot && (e.childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative
-      || (e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
-        && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational
-        && e.childAtIndex(0).childAtIndex(0).convert<Rational>().isMinusOne())))
-  {
-    Expression newArgument;
-    if (e.childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-      newArgument = e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
-    } else {
-      newArgument = e.childAtIndex(0);
-      static_cast<Multiplication&>(newArgument).removeChildAtIndexInPlace(0);
-    }
-    newArgument = newArgument.shallowReduce(context, angleUnit, target);
-    if (e.type() == ExpressionNode::Type::ArcCosine) {
-      // Do the reduction after the if case, or it might change the result!
-      Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
-      Subtraction s;
-      e.replaceWithInPlace(s);
-      s.replaceChildAtIndexInPlace(0, pi);
-      s.replaceChildAtIndexInPlace(1, e);
-      e.shallowReduce(context, angleUnit, target);
-      return s.shallowReduce(context, angleUnit, target);
-    } else {
-      Multiplication m(Rational(-1));
-      e.replaceWithInPlace(m);
-      m.addChildAtIndexInPlace(e, 1, 1);
-      e.shallowReduce(context, angleUnit, target);
-      return m.shallowReduce(context, angleUnit, target);
+  /* Step 4. Handle opposite argument: arccos(-x) = Pi-arcos(x),
+   * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
+   */
+  if (!letArcFunctionAtRoot) {
+    Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+    if (!positiveArg.isUninitialized()) {
+      // The argument was made positive
+      // acos(-x) = pi-acos(x)
+      if (e.type() == ExpressionNode::Type::ArcCosine) {
+        Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
+        Subtraction s;
+        e.replaceWithInPlace(s);
+        s.replaceChildAtIndexInPlace(0, pi);
+        s.replaceChildAtIndexInPlace(1, e);
+        e.shallowReduce(context, angleUnit, target);
+        return s.shallowReduce(context, angleUnit, target);
+      } else {
+        // asin(-x) = -asin(x) or atan(-x) = -atan(x)
+        Multiplication m(Rational(-1));
+        e.replaceWithInPlace(m);
+        m.addChildAtIndexInPlace(e, 1, 1);
+        e.shallowReduce(context, angleUnit, target);
+        return m.shallowReduce(context, angleUnit, target);
+      }
     }
   }
 

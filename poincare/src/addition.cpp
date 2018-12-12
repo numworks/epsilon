@@ -115,23 +115,14 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
    * since we may remove some during the process. */
 
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression childI = childAtIndex(i);
-    if (childI.type() != ExpressionNode::Type::Multiplication
-        || !childI.childAtIndex(0).isNumber()
-        || childI.childAtIndex(0).sign(&context, angleUnit) != ExpressionNode::Sign::Negative)
+    // Try to make the child i positive if any negative numeral factor is found
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+    if (subtractant.isUninitialized())
     {
-      // Ignore terms which are not like "(-r)*a"
+      // if subtractant is not initialized, it means the child i had no negative numeral factor
+      // we ignore terms which are not like "(-r)*a"
       continue;
     }
-
-    Multiplication m = static_cast<Multiplication&>(childI);
-
-    if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && m.childAtIndex(0).convert<Rational>().isMinusOne()) {
-      m.removeChildAtIndexInPlace(0);
-    } else {
-      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
-    }
-    Expression subtractant = m.squashUnaryHierarchyInPlace();
 
     if (i == 0) {
       Opposite o = Opposite(subtractant);

@@ -269,6 +269,12 @@ protected:
   Expression defaultReplaceReplaceableSymbols(Context & context);
 
   /* Simplification */
+  /* makePositiveAnyNegativeNumeralFactor looks for:
+   * - a negative numeral
+   * - a multiplication who has one numeral child whose is negative
+   * and turns the negative factor into a positive one
+   */
+  Expression makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit);
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) { return node()->shallowReduce(context, angleUnit, target); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }

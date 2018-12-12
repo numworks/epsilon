@@ -46,7 +46,7 @@ Expression AdditionNode::complexPart(Context & context, Preferences::AngleUnit a
 // Layout
 bool AdditionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (((static_cast<const ExpressionNode *>(child)->isNumber()
-          && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative)
+          && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative)
         || static_cast<const ExpressionNode *>(child)->type() == Type::Opposite)
       && child != childAtIndex(0))
   {
@@ -118,7 +118,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
     Expression childI = childAtIndex(i);
     if (childI.type() != ExpressionNode::Type::Multiplication
         || !childI.childAtIndex(0).isNumber()
-        || childI.childAtIndex(0).sign() != ExpressionNode::Sign::Negative)
+        || childI.childAtIndex(0).sign(&context, angleUnit) != ExpressionNode::Sign::Negative)
     {
       // Ignore terms which are not like "(-r)*a"
       continue;

@@ -36,7 +36,7 @@ public:
 
   // Expression subclassing
   Type type() const override { return Type::Rational; }
-  Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override { return m_negative ? Sign::Negative : Sign::Positive; }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

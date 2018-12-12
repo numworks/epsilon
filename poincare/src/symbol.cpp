@@ -15,7 +15,7 @@ namespace Poincare {
 
 constexpr char Symbol::k_ans[];
 
-/*ExpressionNode::Sign SymbolNode::sign() const {
+/*ExpressionNode::Sign SymbolNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
   TODO: Maybe, we will want to know that from a context given in parameter:
   if (context.expressionForSymbol(this, false) != nullptr) {
     return context.expressionForSymbol(this, false)->sign(context);

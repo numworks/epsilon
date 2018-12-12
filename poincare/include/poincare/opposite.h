@@ -25,7 +25,7 @@ public:
   // Properties
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Sign sign() const override;
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
 
   // Complex
   Expression realPart(Context & context, Preferences::AngleUnit angleUnit) const override { return complexCartesianPart(context, angleUnit, true); }

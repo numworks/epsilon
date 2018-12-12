@@ -26,14 +26,14 @@
 namespace Poincare {
 
 // Properties
-ExpressionNode::Sign PowerNode::sign() const {
+ExpressionNode::Sign PowerNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
   if (Expression::shouldStopProcessing()) {
     return Sign::Unknown;
   }
-  if (childAtIndex(0)->sign() == Sign::Positive && childAtIndex(1)->sign() != Sign::Unknown) {
+  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Positive && childAtIndex(1)->sign(context, angleUnit) != Sign::Unknown) {
     return Sign::Positive;
   }
-  if (childAtIndex(0)->sign() == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
     if (r->denominator().isOne()) {
       assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isInfinity());
@@ -62,7 +62,7 @@ int PowerNode::polynomialDegree(Context & context, const char * symbolName) cons
   }
   if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
-    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
+    if (!r->denominator().isOne() || Number(r).sign() == Sign::Negative) {
       return -1;
     }
     Integer numeratorInt = r->signedNumerator();
@@ -163,7 +163,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 // Serialize
 
 bool PowerNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
@@ -257,10 +257,12 @@ Power::Power(Expression base, Expression exponent) : Expression(TreePool::shared
 
 Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
-  assert(childAtIndex(0).sign() == ExpressionNode::Sign::Negative);
-  Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit), childAtIndex(1));
-  replaceWithInPlace(result);
-  return result;
+  if (childAtIndex(0).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
+    Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit), childAtIndex(1));
+    replaceWithInPlace(result);
+    return result;
+  }
+  return *this;
 }
 
 int Power::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
@@ -395,12 +397,12 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Rational a = childAtIndex(0).convert<Rational>();
     // 0^x
     if (a.isZero()) {
-      if (childAtIndex(1).sign() == ExpressionNode::Sign::Positive) {
+      if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
         Expression result = Rational(0);
         replaceWithInPlace(result);
         return result;
       }
-      if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+      if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
         Expression result = Undefined();
         replaceWithInPlace(result);
         return result;
@@ -437,13 +439,13 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   // (±inf)^x
   if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
     Expression result;
-    if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+    if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
       // --> 0 if x < 0
       result = Rational(0);
-    } else if (childAtIndex(1).sign() == ExpressionNode::Sign::Positive) {
+    } else if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
       // --> (±inf) if x > 0
       result = Infinity(false);
-      if (childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
+      if (childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
         // (-inf)^x --> (-1)^x*inf
         Power p(Rational(-1), childAtIndex(1));
         result = Multiplication(p, result);
@@ -515,7 +517,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
     if (childAtIndex(1).numberOfChildren() == 2 && childAtIndex(0).isIdenticalTo(childAtIndex(1).childAtIndex(1))) {
       // y > 0
-      if (childAtIndex(1).childAtIndex(0).sign() == ExpressionNode::Sign::Positive) {
+      if (childAtIndex(1).childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
         Expression result = childAtIndex(1).childAtIndex(0);
         replaceWithInPlace(result);
         return result;
@@ -535,7 +537,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
     // Check if a > 0 or c is Integer
-    if (p.childAtIndex(0).sign() == ExpressionNode::Sign::Positive
+    if (p.childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Positive
         || (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne()))
     {
@@ -552,7 +554,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     // (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
     for (int i = 0; i < m.numberOfChildren(); i++) {
       // a is signed and a != -1
-      if (m.childAtIndex(i).sign() != ExpressionNode::Sign::Unknown
+      if (m.childAtIndex(i).sign(&context, angleUnit) != ExpressionNode::Sign::Unknown
           && (m.childAtIndex(i).type() != ExpressionNode::Type::Rational
             || !m.childAtIndex(i).convert<Rational>().isMinusOne()))
       {
@@ -561,7 +563,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         Expression factor = m.childAtIndex(i);
 
         // (sign(a)*b*...)^r
-        if (factor.sign() == ExpressionNode::Sign::Negative) {
+        if (factor.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
           m.replaceChildAtIndexInPlace(i, Rational(-1));
           factor = factor.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
         } else {
@@ -695,7 +697,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       a->addOperand(m);
       m->shallowReduce(context, angleUnit, target);
     }
-    if (nr->sign() == Sign::Negative) {
+    if (nr->sign(&context, angleUnit) == Sign::Negative) {
       nr->replaceWith(new Rational(-1), true);
       childAtIndex(0)->replaceWith(a, true)->shallowReduce(context, angleUnit, target);
       return shallowReduce(context, angleUnit, target);
@@ -709,7 +711,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
 
 Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
-  if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+  if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
     Expression p = denominator(context, angleUnit);
     Division d = Division(Rational(1), p);
     p.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
@@ -742,7 +744,7 @@ Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angl
 
 // Simplification
 Expression Power::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+  if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
     Expression positivePowerClone = Power(childAtIndex(0).clone(), childAtIndex(1).clone().setSign(ExpressionNode::Sign::Positive, &context, angleUnit));
     if (positivePowerClone.childAtIndex(1).type() == ExpressionNode::Type::Rational && positivePowerClone.childAtIndex(1).convert<Rational>().isOne()) {
       return positivePowerClone.childAtIndex(0);

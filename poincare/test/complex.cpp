@@ -93,9 +93,9 @@ QUIZ_CASE(poincare_complex_parts) {
   // TODO: dim is not simplified yet
   //assert_expression_has_complex_cartesian_parts("dim(x)", "dim(x)", "0");
 
-  assert_expression_has_complex_cartesian_parts("root(2,I)", "cos(-ln(2))", "sin(-ln(2))", Radian);
-  assert_expression_has_complex_cartesian_parts("root(2,I+1)", "R(2)*cos(-(90*ln(2))/P)", "R(2)*sin(-(90*ln(2))/P)");
-  assert_expression_has_complex_cartesian_parts("root(2,I+1)", "R(2)*cos(-ln(2)/2)", "R(2)*sin(-ln(2)/2)", Radian);
+  assert_expression_has_complex_cartesian_parts("root(2,I)", "cos(ln(2))", "-sin(ln(2))", Radian);
+  assert_expression_has_complex_cartesian_parts("root(2,I+1)", "R(2)*cos((90*ln(2))/P)", "-R(2)*sin((90*ln(2))/P)");
+  assert_expression_has_complex_cartesian_parts("root(2,I+1)", "R(2)*cos(ln(2)/2)", "-R(2)*sin(ln(2)/2)", Radian);
   assert_expression_has_complex_cartesian_parts("permute(10, 4)", "5040", "0");
   // TODO: prediction is not simplified yet
   //assert_expression_has_complex_cartesian_parts("prediction(-2,-3)", "prediction(-2)", "0");

@@ -37,7 +37,7 @@ bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (child == childAtIndex(0)) {
     return false;
   }
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};

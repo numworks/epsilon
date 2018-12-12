@@ -21,7 +21,7 @@ public:
 
   // Properties
   Type type() const override { return Type::AbsoluteValue; }
-  Sign sign() const override { return Sign::Positive; }
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override { return Sign::Positive; }
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   // Complex

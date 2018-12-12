@@ -23,7 +23,7 @@ public:
 
   // Expression Properties
   Type type() const override { return Type::Constant; }
-  Sign sign() const override;
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -21,7 +21,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Multiplication; }
-  Sign sign() const override;
+  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 

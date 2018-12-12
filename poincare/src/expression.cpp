@@ -379,7 +379,7 @@ Expression Expression::simplifyForComplexFormat(Context & context, Preferences::
   e = CreateComplexExpression(ra, tb, complexFormat,
       ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined,
       isZero(ra), isOne(ra), isZero(tb), isOne(tb), isMinusOne(tb),
-      tb.type() == ExpressionNode::Type::Opposite || (tb.type() == ExpressionNode::Type::Rational && tb.sign() == ExpressionNode::Sign::Negative),
+      tb.type() == ExpressionNode::Type::Opposite || (tb.type() == ExpressionNode::Type::Rational && tb.sign(&context, angleUnit) == ExpressionNode::Sign::Negative),
       [](Expression e) {
         if (e.type() == ExpressionNode::Type::Opposite) {
           return e.childAtIndex(0);

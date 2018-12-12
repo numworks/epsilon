@@ -19,7 +19,7 @@ double NumberNode::doubleApproximation() const {
     case Type::Undefined:
       return NAN;
     case Type::Infinity:
-      return sign() == Sign::Negative ? -INFINITY : INFINITY;
+      return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;
     case Type::Float:
       if (size() == sizeof(FloatNode<float>)) {
         return static_cast<const FloatNode<float> *>(this)->value();

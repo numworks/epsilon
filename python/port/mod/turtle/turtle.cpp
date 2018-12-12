@@ -5,7 +5,6 @@ extern "C" {
 }
 #include "../../helpers.h"
 #include "../../port.h"
-#include "turtle_icon.h"
 
 static constexpr KDCoordinate k_iconSize = 15;
 static constexpr KDCoordinate k_iconBodySize = 5;

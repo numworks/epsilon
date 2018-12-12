@@ -165,9 +165,6 @@ ifeq ($(PLATFORM),emscripten)
 $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
 
-# Icon dependency
-python/port/mod/turtle/turtle.cpp: python/port/mod/turtle/turtle_icon.o
-
 # QSTR generation
 
 generated_headers += $(addprefix python/port/genhdr/, qstrdefs.generated.h)
@@ -182,6 +179,4 @@ $(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
 
 # List all objects needed
 
-objs += $(extmod_objs) $(py_objs) $(port_objs) python/port/mod/turtle/turtle_icon.o
-
-app_images += python/port/mod/turtle/turtle_icon.png
+objs += $(extmod_objs) $(py_objs) $(port_objs)

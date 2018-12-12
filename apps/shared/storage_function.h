@@ -42,7 +42,14 @@ protected:
   class FunctionRecordData {
   public:
     FunctionRecordData(KDColor color) : m_color(color), m_active(true) {}
-    KDColor color() const { return m_color; }
+    KDColor color() const {
+      /* Record::value() is a pointer to an address inside
+       * Ion::Storage::sharedStorage(), and it might be unaligned. In the method
+       * recordData(), we cast Record::value() to the type FunctionRecordData.
+       * We must thus do some convolutions to read KDColor, which is a uint16_t
+       * and might produce an alignment error on the emscripten platform. */
+      return KDColor::RGB16(Ion::StorageHelper::unalignedShort(reinterpret_cast<char *>(const_cast<KDColor *>(&m_color))));
+    }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
   private:

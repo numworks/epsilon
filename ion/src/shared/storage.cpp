@@ -349,28 +349,8 @@ void Storage::destroyRecord(Record record) {
   }
 }
 
-static inline uint16_t unalignedShort(char * address) {
-#if __EMSCRIPTEN__
-  uint8_t f1 = *(address);
-  uint8_t f2 = *(address+1);
-  uint16_t f = (uint16_t)f1 + (((uint16_t)f2)<<8);
-  return f;
-#else
-  return *(uint16_t *)address;
-#endif
-}
-
-static inline void writeUnalignedShort(uint16_t value, char * address) {
-#if __EMSCRIPTEN__
-  *((uint8_t *)address) = (uint8_t)(value & ((1 << 8) - 1));
-  *((uint8_t *)address+1) = (uint8_t)(value >> 8);
-#else
-  *((uint16_t *)address) = value;
-#endif
-}
-
 Storage::record_size_t Storage::sizeOfRecordStarting(char * start) const {
-  return unalignedShort(start);
+  return StorageHelper::unalignedShort(start);
 }
 
 const char * Storage::fullNameOfRecordStarting(char * start) const {
@@ -386,7 +366,7 @@ const void * Storage::valueOfRecordStarting(char * start) const {
 }
 
 size_t Storage::overrideSizeAtPosition(char * position, record_size_t size) {
-  writeUnalignedShort(size, position);
+  StorageHelper::writeUnalignedShort(size, position);
   return sizeof(record_size_t);
 }
 
@@ -494,9 +474,9 @@ bool Storage::slideBuffer(char * position, int delta) {
 
 Storage::RecordIterator & Storage::RecordIterator::operator++() {
   assert(m_recordStart);
-  record_size_t size = unalignedShort(m_recordStart);
+  record_size_t size = StorageHelper::unalignedShort(m_recordStart);
   char * nextRecord = m_recordStart+size;
-  record_size_t newRecordSize = unalignedShort(nextRecord);
+  record_size_t newRecordSize = StorageHelper::unalignedShort(nextRecord);
   m_recordStart = (newRecordSize == 0 ? nullptr : nextRecord);
   return *this;
 }

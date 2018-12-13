@@ -7,41 +7,6 @@
 
 namespace Probability {
 
-NormalLaw::NormalLaw() :
-  TwoParameterLaw(0.0f, 1.0f)
-{
-}
-
-I18n::Message NormalLaw::title() {
-  return I18n::Message::NormalLaw;
-}
-
-Law::Type NormalLaw::type() const {
-  return Type::Normal;
-}
-
-bool NormalLaw::isContinuous() const {
-  return true;
-}
-
-I18n::Message NormalLaw::parameterNameAtIndex(int index) {
-  assert(index >= 0 && index < 2);
-  if (index == 0) {
-    return I18n::Message::Mu;
-  } else {
-    return I18n::Message::Sigma;
-  }
-}
-
-I18n::Message NormalLaw::parameterDefinitionAtIndex(int index) {
-  assert(index >= 0 && index < 2);
-  if (index == 0) {
-    return I18n::Message::MeanDefinition;
-  } else {
-    return I18n::Message::DeviationDefinition;
-  }
-}
-
 float NormalLaw::xMin() {
   if (m_parameter2 == 0.0f) {
     return m_parameter1 - 1.0f;
@@ -67,6 +32,22 @@ float NormalLaw::yMax() {
     result = 1.0f;
   }
   return result*(1.0f+ k_displayTopMarginRatio);
+}
+
+I18n::Message NormalLaw::parameterNameAtIndex(int index) {
+  if (index == 0) {
+    return I18n::Message::Mu;
+  }
+  assert(index == 1);
+  return I18n::Message::Sigma;
+}
+
+I18n::Message NormalLaw::parameterDefinitionAtIndex(int index) {
+  if (index == 0) {
+    return I18n::Message::MeanDefinition;
+  }
+  assert(index == 1);
+  return I18n::Message::DeviationDefinition;
 }
 
 float NormalLaw::evaluateAtAbscissa(float x) const {

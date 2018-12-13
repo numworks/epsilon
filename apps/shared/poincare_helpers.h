@@ -41,10 +41,6 @@ inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Contex
   return Poincare::Expression::ParseAndSimplify(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
-inline Poincare::Expression ParseAndSimplifyForComplexFormat(const char * text, Poincare::Context & context) {
-  return Poincare::Expression::ParseAndSimplifyForComplexFormat(text, context, Poincare::Preferences::sharedPreferences()->angleUnit(), Poincare::Preferences::sharedPreferences()->complexFormat());
-}
-
 inline void Simplify(Poincare::Expression * e, Poincare::Context & context) {
   *e = e->simplify(context, Poincare::Preferences::sharedPreferences()->angleUnit());
 }

@@ -51,14 +51,11 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
     tb = std::arg(*this);
   }
   return Expression::CreateComplexExpression(
-      Number::DecimalNumber<T>(ra),
-      Number::DecimalNumber<T>(tb),
+      Number::DecimalNumber<T>(std::fabs(ra)),
+      Number::DecimalNumber<T>(std::fabs(tb)),
       complexFormat,
       (std::isnan(this->real()) || std::isnan(this->imag())),
-      ra == 0.0, ra == 1.0, tb == 0.0, tb == 1.0, tb == -1.0, tb < 0.0,
-      [](Expression e) {
-        assert(e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Rational || e.type() == ExpressionNode::Type::Float || e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Infinity);
-        return Expression(static_cast<Number &>(e).setSign(ExpressionNode::Sign::Positive)); }
+      ra == 0.0, ra == 1.0, tb == 0.0, tb == 1.0, tb == -1.0, ra < 0.0, tb < 0.0
     );
 }
 

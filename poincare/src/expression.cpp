@@ -499,7 +499,7 @@ U Expression::epsilon() {
 
 /* Builder */
 
-Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isMinusOneTb, bool isNegativeTb, TransformExpression inverse) {
+Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isMinusOneTb, bool isNegativeRa, bool isNegativeTb) {
   if (undefined) {
     return Undefined();
   }
@@ -509,13 +509,15 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       Expression real;
       Expression imag;
       if (!isZeroRa || isZeroTb) {
-        real = ra;
+        if (isNegativeRa) {
+          real = Opposite(ra);
+        } else {
+          real = ra;
+        }
       }
       if (!isZeroTb) {
         if (isOneTb || isMinusOneTb) {
           imag = Constant(Ion::Charset::IComplex);
-        } else if (isNegativeTb) {
-          imag = Multiplication(inverse(tb), Constant(Ion::Charset::IComplex));
         } else {
           imag = Multiplication(tb , Constant(Ion::Charset::IComplex));
         }
@@ -540,6 +542,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       Expression norm;
       Expression exp;
       if (!isOneRa || isZeroTb) {
+        assert(!isNegativeRa); // norm cannot be negative
         norm = ra;
       }
       if (!isZeroRa && !isZeroTb) {
@@ -549,7 +552,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         } else if (isMinusOneTb) {
           arg = Opposite(Constant(Ion::Charset::IComplex));
         } else if (isNegativeTb) {
-          arg = Opposite(Multiplication(inverse(tb), Constant(Ion::Charset::IComplex)));
+          arg = Opposite(Multiplication(tb, Constant(Ion::Charset::IComplex)));
         } else {
           arg = Multiplication(tb, Constant(Ion::Charset::IComplex));
         }

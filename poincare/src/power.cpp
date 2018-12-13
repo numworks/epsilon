@@ -388,53 +388,6 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     return *this;
   }
 
-  /* Step 1: we now bubble up ComplexCartesian, we handle different case */
-
-  ComplexCartesian complexBase;
-  ComplexCartesian complexIndex;
-  ComplexCartesian result;
-  // First, (x+iy)^q with q special values
-  // TODO: explain here why?
-  if (base.type() == ExpressionNode::Type::ComplexCartesian) {
-    complexBase = static_cast<ComplexCartesian &>(base);
-    Integer ten(10);
-    if (index.type() == ExpressionNode::Type::Rational) {
-      Rational r = static_cast<Rational &>(index);
-      if (r.isMinusOne()) {
-        // (x+iy)^(-1)
-        result = complexBase.inverse(context, angleUnit, target);
-      } else if (r.isHalf()) {
-        // (x+iy)^(1/2)
-        result = complexBase.squareRoot(context, angleUnit, target);
-      } else if (r.isMinusHalf()) {
-        // (x+iy)^(-1/2)
-        result = complexBase.squareRoot(context, angleUnit, target).inverse(context, angleUnit, target);
-      } else if (r.integerDenominator().isOne() && r.unsignedIntegerNumerator().isLowerThan(ten)) {
-        if (r.sign() == ExpressionNode::Sign::Positive) {
-          // (x+iy)^n, n integer positive n < 10
-          result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, angleUnit, target);
-        } else {
-          // (x+iy)^(-n), n integer positive n < 10
-          result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, angleUnit, target).inverse(context, angleUnit, target);
-        }
-      }
-      if (!result.isUninitialized()) {
-        replaceWithInPlace(result);
-        return result.shallowReduce(context, angleUnit);
-      }
-    }
-  }
-  // All other cases where one child at least is a ComplexCartesian
-  if ((base.isReal(context, angleUnit) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
-      (base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context, angleUnit)) ||
-      (base.type() == ExpressionNode::Type::ComplexCartesian && index.type() == ExpressionNode::Type::ComplexCartesian)) {
-    complexBase = base.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational(0));
-    complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational(0));
-    result = complexBase.power(complexIndex, context, angleUnit, target);
-    replaceWithInPlace(result);
-    return result.shallowReduce(context, angleUnit);
-  }
-
   /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
    * - we can assert after this step that there is no division by 0:
    *   for instance, 0^(-2)->undefined
@@ -488,6 +441,53 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       replaceWithInPlace(result);
       return result;
     }
+  }
+
+  /* Step 1: we now bubble up ComplexCartesian, we handle different case */
+
+  ComplexCartesian complexBase;
+  ComplexCartesian complexIndex;
+  ComplexCartesian result;
+  // First, (x+iy)^q with q special values
+  // TODO: explain here why?
+  if (base.type() == ExpressionNode::Type::ComplexCartesian) {
+    complexBase = static_cast<ComplexCartesian &>(base);
+    Integer ten(10);
+    if (index.type() == ExpressionNode::Type::Rational) {
+      Rational r = static_cast<Rational &>(index);
+      if (r.isMinusOne()) {
+        // (x+iy)^(-1)
+        result = complexBase.inverse(context, angleUnit, target);
+      } else if (r.isHalf()) {
+        // (x+iy)^(1/2)
+        result = complexBase.squareRoot(context, angleUnit, target);
+      } else if (r.isMinusHalf()) {
+        // (x+iy)^(-1/2)
+        result = complexBase.squareRoot(context, angleUnit, target).inverse(context, angleUnit, target);
+      } else if (r.integerDenominator().isOne() && r.unsignedIntegerNumerator().isLowerThan(ten)) {
+        if (r.sign() == ExpressionNode::Sign::Positive) {
+          // (x+iy)^n, n integer positive n < 10
+          result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, angleUnit, target);
+        } else {
+          // (x+iy)^(-n), n integer positive n < 10
+          result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, angleUnit, target).inverse(context, angleUnit, target);
+        }
+      }
+      if (!result.isUninitialized()) {
+        replaceWithInPlace(result);
+        return result.shallowReduce(context, angleUnit);
+      }
+    }
+  }
+  // All other cases where one child at least is a ComplexCartesian
+  if ((base.isReal(context, angleUnit) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
+      (base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context, angleUnit)) ||
+      (base.type() == ExpressionNode::Type::ComplexCartesian && index.type() == ExpressionNode::Type::ComplexCartesian)) {
+    complexBase = base.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational(0));
+    complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational(0));
+    result = complexBase.power(complexIndex, context, angleUnit, target);
+    replaceWithInPlace(result);
+    return result.shallowReduce(context, angleUnit);
   }
 
   /* Step 2: We look for square root and sum of square roots (two terms maximum

@@ -45,24 +45,24 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     return false;
   }
   Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double x = m_xPrediction ?
+  double unknown = m_xPrediction ?
     m_store->yValueForXValue(series, f, globContext) :
     m_store->xValueForYValue(series, f, globContext);
 
   // Forbidden value
-  if (std::fabs(x) > k_maxDisplayableFloat) {
+  if (std::fabs(unknown) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
 
-  if (std::isnan(x)) {
+  if (std::isnan(unknown)) {
     if (!m_xPrediction) {
-      x = m_cursor->x();
-      double yForCurrentX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
-      if (std::fabs(yForCurrentX - f) < DBL_EPSILON) {
+      double x = m_cursor->x();
+      unknown = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
+      if (std::fabs(unknown - f) < DBL_EPSILON) {
         // If the computed value is NaN and the current abscissa is solution
         m_graphController->selectRegressionCurve();
-        m_cursor->moveTo(x, yForCurrentX);
+        m_cursor->moveTo(x, unknown);
         return true;
       }
     }
@@ -72,16 +72,16 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
   }
   m_graphController->selectRegressionCurve();
   if (m_xPrediction) {
-    m_cursor->moveTo(f, x);
+    m_cursor->moveTo(f, unknown);
   } else {
-    double y = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
+    double yFromX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), unknown);
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
      * because of computation precision. y2 migth thus be invalid. */
-    if (std::fabs(y) > k_maxDisplayableFloat || std::isnan(y)) {
+    if (std::fabs(yFromX) > k_maxDisplayableFloat || std::isnan(yFromX)) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_cursor->moveTo(x, y);
+    m_cursor->moveTo(unknown, yFromX);
   }
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());

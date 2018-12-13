@@ -182,8 +182,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
-  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) { return ParseAndProcess(text, context, angleUnit, Preferences::ComplexFormat::Cartesian, false); }
-  static Expression ParseAndSimplifyForComplexFormat(const char * text, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) { return ParseAndProcess(text, context, angleUnit, complexFormat, true); }
+  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
@@ -284,8 +283,6 @@ private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
   /* Simplification */
-  static Expression ParseAndProcess(const char * text, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat, bool complexSimplify);
-  Expression simplifyForComplexFormat(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
     return node()->deepReduceChildren(context, angleUnit, target);

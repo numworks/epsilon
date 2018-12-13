@@ -46,8 +46,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
 char * GraphView::label(Axis axis, int index) const {
   if (axis == Axis::Vertical) {
+    assert(index < k_maxNumberOfXLabels);
     return (char *)m_yLabels[index];
   }
+  assert(index < k_maxNumberOfYLabels);
   return (char *)m_xLabels[index];
 }
 

@@ -1,6 +1,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
+#include <poincare/binomial_coefficient.h>
 #include <poincare/cosine.h>
 #include <poincare/constant.h>
 #include <poincare/division.h>
@@ -173,7 +174,38 @@ ComplexCartesian ComplexCartesian::squareRoot(Context & context, Preferences::An
 
 
 ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  return ComplexCartesian();
+  Expression a = real();
+  Expression b = imag();
+  assert(n > 0);
+  // (a+ib) = a^n+i*b*a^(n-1)+(-1)*b^2*a^(n-2)+(-i)*b^3*a^(n-3)+b^3*a^(n-4)+...
+  // Real part: A = a^n+(-1)*b^2*a^(n-2)+...
+  // Imaginary part: B = b*a^(n-1)
+  Addition A;
+  Addition B;
+  for (int i = 0; i <= n; i++) {
+    BinomialCoefficient binom = BinomialCoefficient::Builder(Rational(n), Rational(i));
+    Expression aclone = i == n ? a : a.clone();
+    Expression bclone = i == n ? b : b.clone();
+    Power apow(aclone, Rational(n-i));
+    Power bpow(bclone, Rational(i));
+    Multiplication m(binom, apow, bpow);
+    binom.shallowReduce(context, angleUnit);
+    apow.shallowReduce(context, angleUnit, target);
+    bpow.shallowReduce(context, angleUnit, target);
+    if (i/2%2 == 1) {
+      m.addChildAtIndexInPlace(Rational(-1), 0, m.numberOfChildren());
+    }
+    if (i%2 == 0) {
+      A.addChildAtIndexInPlace(m, A.numberOfChildren(), A.numberOfChildren());
+    } else {
+      B.addChildAtIndexInPlace(m, B.numberOfChildren(), B.numberOfChildren());
+    }
+    m.shallowReduce(context, angleUnit, target);
+  }
+  ComplexCartesian result = ComplexCartesian::Builder(A, B);
+  A.shallowReduce(context, angleUnit, target);
+  B.shallowReduce(context, angleUnit, target);
+  return result;
 }
 
 ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

@@ -51,7 +51,7 @@ ComplexCartesian ComplexHelper::complexCartesianFromComplexPolar(const Expressio
   Expression r = polar.norm();
   Expression th = polar.arg();
   assert(!r.isUninitialized() && !th.isUninitialized());
-  Expression argument = angleUnit == Preferences::AngleUnit::Radian ? th : th.radianToDegree(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
+  Expression argument = th;
   return ComplexCartesian::Builder(
       complexCartesianFromComplexPolarHelper(r.clone(), Cosine::Builder(argument.clone()), context, angleUnit),
       complexCartesianFromComplexPolarHelper(r, Sine::Builder(argument), context, angleUnit)
@@ -93,9 +93,6 @@ ComplexPolar ComplexHelper::complexPolarFromComplexCartesian(const ExpressionNod
     // if b != 0, argument = sign(b) * Pi/2 - arctan(a/b)
     // First, compute arctan(a/b) or (Pi/180)*arctan(a/b)
     Expression arcTangent = ArcTangent::Builder(Division(a, b.clone()).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation)).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
-    if (angleUnit == Preferences::AngleUnit::Degree) {
-      arcTangent = arcTangent.degreeToRadian(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
-    }
     // Then, compute sign(b) * Pi/2 - arctan(a/b)
     argument = Subtraction(
         Multiplication(

@@ -23,6 +23,7 @@ public:
 
 // Complex
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

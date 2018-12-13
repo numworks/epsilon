@@ -26,6 +26,7 @@ public:
 
   // Complex
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {

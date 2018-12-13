@@ -48,7 +48,6 @@ public:
     BinomialCoefficient,
     Ceiling,
     ComplexArgument,
-    ComplexCartesian,
     ComplexPolar,
     Conjugate,
     Derivative,
@@ -87,6 +86,8 @@ public:
     Sum,
     Symbol,
     Constant,
+
+    ComplexCartesian,
 
     Matrix,
     ConfidenceInterval,
@@ -128,6 +129,7 @@ public:
    * ComplexCartesian::shallowBeautify. This would enable us to do only one
    * scan of the tree in ParseAndSimplifyForComplexFormat instead of Simplifying
    * and then extracting ComplexCartesian. */
+  virtual bool isReal(Context & context, Preferences::AngleUnit angleUnit) const { return false; }
   virtual ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
   virtual ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
 

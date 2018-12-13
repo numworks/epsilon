@@ -79,7 +79,13 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-// Private
+bool PowerNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+  ExpressionNode * base = childAtIndex(0);
+  if (base->isReal(context, angleUnit) && base->sign(&context, angleUnit) == Sign::Positive && childAtIndex(1)->isReal(context, angleUnit)) {
+    return true;
+  }
+  return false;
+}
 
 ComplexCartesian PowerNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Power p(this);
@@ -124,6 +130,8 @@ ComplexPolar PowerNode::complexPolar(Context & context, Preferences::AngleUnit a
           ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
   return ComplexPolar::Builder(norm, argument);
 }
+
+// Private
 
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
@@ -359,22 +367,76 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
 #endif
 #endif
 
-  /* Step 0: if both children are true complexes, the result is undefined. We
-   * can assert that evaluations are Complex, as matrix are not simplified */
-
-  Evaluation<float> c0Approximated = childAtIndex(0).node()->approximate(1.0f, context, angleUnit);
+  // TODO: do we need this?
+  /*Evaluation<float> c0Approximated = childAtIndex(0).node()->approximate(1.0f, context, angleUnit);
   Evaluation<float> c1Approximated = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
   Complex<float> c0 = static_cast<Complex<float>&>(c0Approximated);
   Complex<float> c1 = static_cast<Complex<float>&>(c1Approximated);
   bool bothChildrenComplexes = c0.imag() != 0 && c1.imag() != 0 && !std::isnan(c0.imag()) && !std::isnan(c1.imag());
-  bool nonComplexNegativeChild0 = c0.imag() == 0 && c0.real() < 0;
   bool nonNullChild0 = !std::isnan(c0.real()) && !std::isnan(c0.imag()) && (c0.real() > Expression::epsilon<float>() || c0.imag() > Expression::epsilon<float>());
   if (bothChildrenComplexes) {
     return *this;
+  }*/
+
+  /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
+
+  Expression power = *this;
+  Expression base = childAtIndex(0);
+  Expression index = childAtIndex(1);
+  /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
+  if (!base.isReal(context, angleUnit) && !index.isReal(context, angleUnit)) {
+    return *this;
+  }
+
+  /* Step 1: we now bubble up ComplexCartesian, we handle different case */
+
+  ComplexCartesian complexBase;
+  ComplexCartesian complexIndex;
+  ComplexCartesian result;
+  // First, (x+iy)^q with q special values
+  // TODO: explain here why?
+  if (base.type() == ExpressionNode::Type::ComplexCartesian) {
+    complexBase = static_cast<ComplexCartesian &>(base);
+    Integer ten(10);
+    if (index.type() == ExpressionNode::Type::Rational) {
+      Rational r = static_cast<Rational &>(index);
+      if (r.isMinusOne()) {
+        // (x+iy)^(-1)
+        result = complexBase.inverse(context, angleUnit, target);
+      } else if (r.isHalf()) {
+        // (x+iy)^(1/2)
+        result = complexBase.squareRoot(context, angleUnit, target);
+      } else if (r.isMinusHalf()) {
+        // (x+iy)^(-1/2)
+        result = complexBase.squareRoot(context, angleUnit, target).inverse(context, angleUnit, target);
+      } else if (r.integerDenominator().isOne() && r.unsignedIntegerNumerator().isLowerThan(ten)) {
+        if (r.sign() == ExpressionNode::Sign::Positive) {
+          // (x+iy)^n, n integer positive n < 10
+          result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, angleUnit, target);
+        } else {
+          // (x+iy)^(-n), n integer positive n < 10
+          result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, angleUnit, target).inverse(context, angleUnit, target);
+        }
+      }
+      if (!result.isUninitialized()) {
+        replaceWithInPlace(result);
+        return result.shallowReduce(context, angleUnit);
+      }
+    }
+  }
+  // All other cases where one child at least is a ComplexCartesian
+  if ((base.isReal(context, angleUnit) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
+      (base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context, angleUnit)) ||
+      (base.type() == ExpressionNode::Type::ComplexCartesian && index.type() == ExpressionNode::Type::ComplexCartesian)) {
+    complexBase = base.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational(0));
+    complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational(0));
+    result = complexBase.power(complexIndex, context, angleUnit, target);
+    replaceWithInPlace(result);
+    return result.shallowReduce(context, angleUnit);
   }
 
   /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
-   * - we can assert this step that there is no division by 0:
+   * - we can assert after this step that there is no division by 0:
    *   for instance, 0^(-2)->undefined
    * - we save computational time by early escaping for these cases. */
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
@@ -388,7 +450,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         return result;
       }
       // x^0
-      if (target == ExpressionNode::ReductionTarget::User || nonNullChild0) {
+      if (target == ExpressionNode::ReductionTarget::User || childAtIndex(0).isNumber()) {
         /* Warning: if the ReductionTarget is User, in all other cases but 0^0,
          * we replace x^0 by one. This is almost always true except when x = 0.
          * However, not substituting x^0 by one would prevent from simplifying
@@ -437,7 +499,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
-  if (target == ExpressionNode::ReductionTarget::User && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+  /*if (target == ExpressionNode::ReductionTarget::User && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     const Rational b = childAtIndex(1).convert<Rational>();
     // i^(p/q)
     if (childAtIndex(0).type() == ExpressionNode::Type::Constant && childAtIndex(0).convert<Constant>().isIComplex()) {
@@ -446,7 +508,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       replaceWithInPlace(result);
       return result.shallowReduce(context, angleUnit, target);
     }
-  }
+  }*/
 
   // (±inf)^x
   if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
@@ -508,7 +570,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
   // e^(i*Pi*r) with r rational
-  if (!letPowerAtRoot && isNthRootOfUnity()) {
+  /*if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression m = childAtIndex(1);
     Expression i = m.childAtIndex(m.numberOfChildren()-1);
     static_cast<Multiplication &>(m).removeChildAtIndexInPlace(m.numberOfChildren()-1);
@@ -525,7 +587,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     complexPart.shallowReduce(context, angleUnit, target);
     replaceWithInPlace(a);
     return a.shallowReduce(context, angleUnit, target);
-  }
+  }*/
   // x^log(y,x)->y if y > 0
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
     if (childAtIndex(1).numberOfChildren() == 2 && childAtIndex(0).isIdenticalTo(childAtIndex(1).childAtIndex(1))) {

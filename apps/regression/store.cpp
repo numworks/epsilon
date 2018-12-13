@@ -63,7 +63,8 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
             || (currentY < y && direction < 0)
-            || (currentY == y && (currentDot < 0 || ((direction < 0) == (series > currentSeries)))))
+            || (currentY == y
+              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (series > currentSeries)))))
           && (nextX != currentX // Edge case: if 2 dots have the same abscissa but different ordinates
             || ((currentY <= nextY) == (direction > 0))))
       {

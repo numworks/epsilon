@@ -428,6 +428,9 @@ U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angle
 template<typename U>
 U Expression::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
   Expression exp = ParseAndSimplify(text, context, angleUnit);
+  if (exp.isUninitialized()) {
+    return NAN;
+  }
   return exp.approximateToScalar<U>(context, angleUnit);
 }
 

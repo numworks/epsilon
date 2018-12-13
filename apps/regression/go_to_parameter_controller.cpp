@@ -75,6 +75,12 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     m_cursor->moveTo(f, x);
   } else {
     double y = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
+    /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
+     * because of computation precision. y2 migth thus be invalid. */
+    if (std::fabs(y) > k_maxDisplayableFloat || std::isnan(y)) {
+      app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
+    }
     m_cursor->moveTo(x, y);
   }
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());

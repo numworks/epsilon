@@ -28,6 +28,10 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, bool canBeIn
   }
 }
 
+bool NAryExpressionNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+  return NAryExpression(this).allChildrenAreReal(context, angleUnit) == 1;
+}
+
 Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
   NAryExpression reference = NAryExpression(this);
   if (reference.numberOfChildren() == 1) {
@@ -74,6 +78,24 @@ int NAryExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e,
     return 1;
   }
   return 0;
+}
+
+int NAryExpression::allChildrenAreReal(Context & context, Preferences::AngleUnit angleUnit) const {
+  int i = 0;
+  /* The addition children are assumed to be sorted. ComplexCartesian children
+   * are supposed to be the last ones before matrices. We just test children
+   * to be real until we reach the first ComplexCartesian. */
+  while (i < numberOfChildren()) {
+    Expression c = childAtIndex(i);
+    if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+      return 0;
+    }
+    if (!c.isReal(context, angleUnit)) {
+      return -1;
+    }
+    i++;
+  }
+  return 1;
 }
 
 }

@@ -29,6 +29,7 @@ class Expression : public TreeHandle {
   template<typename T>
   friend class ComplexNode;
   friend class ComplexArgument;
+  friend class ComplexCartesian;
   friend class ComplexHelper;
   friend class ConfidenceInterval;
   friend class Conjugate;
@@ -166,6 +167,7 @@ public:
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Complex */
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const { return node()->isReal(context, angleUnit); }
   bool isPureReal(Context & context, Preferences::AngleUnit angleUnit) const;
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
   ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
@@ -186,8 +188,8 @@ public:
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
-  Expression radianToDegree(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression degreeToRadian(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression radianToDegree();
+  Expression degreeToRadian();
 
   /* Approximation Helper */
   template<typename U> static U epsilon();

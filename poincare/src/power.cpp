@@ -492,19 +492,20 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
   if (!letPowerAtRoot
-      && nonComplexNegativeChild0
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isHalf())
   {
-    Expression m0 = Multiplication(Rational(-1), childAtIndex(0));
-    replaceChildAtIndexInPlace(0, m0);
-    m0.shallowReduce(context, angleUnit, target);
-    Multiplication m1 = Multiplication();
-    replaceWithInPlace(m1);
-    m1.addChildAtIndexInPlace(Constant(Ion::Charset::IComplex), 0, 0);
-    m1.addChildAtIndexInPlace(*this, 1, 1);
-    shallowReduce(context, angleUnit, target);
-    return m1.shallowReduce(context, angleUnit, target);
+    Expression m0 = childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+    if (!m0.isUninitialized()) {
+      replaceChildAtIndexInPlace(0, m0);
+      //m0.shallowReduce(context, angleUnit, target);
+      Multiplication m1 = Multiplication();
+      replaceWithInPlace(m1);
+      m1.addChildAtIndexInPlace(Constant(Ion::Charset::IComplex), 0, 0);
+      m1.addChildAtIndexInPlace(*this, 1, 1);
+      shallowReduce(context, angleUnit, target);
+      return m1.shallowReduce(context, angleUnit, target);
+    }
   }
   // e^(i*Pi*r) with r rational
   if (!letPowerAtRoot && isNthRootOfUnity()) {

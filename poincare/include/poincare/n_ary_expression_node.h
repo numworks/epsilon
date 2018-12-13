@@ -18,6 +18,9 @@ public:
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
+  // Complex
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
+
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 
@@ -48,6 +51,11 @@ public:
   Expression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }
+  /* allChildrenAreReal returns:
+   * - 1 if all children are real
+   * - 0 if all non real children are ComplexCartesian
+   * - -1 if some chidren are non-real and non ComplexCartesian */
+  int allChildrenAreReal(Context & context, Preferences::AngleUnit angleUnit) const;
 protected:
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
 };

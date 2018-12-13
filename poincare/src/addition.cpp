@@ -266,8 +266,43 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
 
   // Step 5: Let's remove the addition altogether if it has a single child
   Expression result = squashUnaryHierarchyInPlace();
+  if (result != *this) {
+    return result;
+  }
 
-  /* Step 6: Let's put everything under a common denominator.
+  /* Step 6: Let's bubble up the complex operator if possible
+   * 3 cases:
+   * - All children are real, we do nothing (allChildrenAreReal == 1)
+   * - One of the child is non-real and not a ComplexCartesian: it means a
+   *   complex expression could not be resolved as a ComplexCartesian, we cannot
+   *   do anything about it now (allChildrenAreReal == -1)
+   * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
+   *   We can bubble up ComplexCartesian nodes. */
+  if (allChildrenAreReal(context, angleUnit) == 0) {
+    Addition imag;
+    Addition real = *this;
+    i = numberOfChildren() - 1;
+    while (i >= 0) {
+      Expression c = childAtIndex(i);
+      if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+        real.replaceChildAtIndexInPlace(i, c.childAtIndex(0));
+        imag.addChildAtIndexInPlace(c.childAtIndex(1), imag.numberOfChildren(), imag.numberOfChildren());
+      } else {
+        // the Addition is sorted so ComplexCartesian nodes are the last ones
+        break;
+      }
+      i--;
+    }
+    ComplexCartesian newComplexCartesian = ComplexCartesian::Builder();
+    replaceWithInPlace(newComplexCartesian);
+    newComplexCartesian.replaceChildAtIndexInPlace(0, real);
+    newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
+    real.shallowReduce(context, angleUnit, target);
+    imag.shallowReduce(context, angleUnit, target);
+    return newComplexCartesian.shallowReduce(context, angleUnit);
+  }
+
+  /* Step 7: Let's put everything under a common denominator.
    * This step is done only for ReductionTarget::User if the parent expression
    * is not an addition. */
   Expression p = result.parent();

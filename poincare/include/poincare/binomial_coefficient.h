@@ -21,6 +21,7 @@ public:
 
   // Complex
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
   // Properties
   Type type() const override{ return Type::BinomialCoefficient; }

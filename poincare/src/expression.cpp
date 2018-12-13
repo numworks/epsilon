@@ -420,12 +420,14 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
   return e;
 }
 
-Expression Expression::radianToDegree(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  return Multiplication(*this, Division(Rational(180), Constant(Ion::Charset::SmallPi)).shallowReduce(context, angleUnit, target)).shallowReduce(context, angleUnit, target);
+Expression Expression::radianToDegree() {
+  // e*180/Pi
+  return Multiplication(*this, Rational(180), Power(Constant(Ion::Charset::SmallPi), Rational(-1)));
 }
 
-Expression Expression::degreeToRadian(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  return Multiplication(*this, Division(Constant(Ion::Charset::SmallPi), Rational(180)).shallowReduce(context, angleUnit, target)).shallowReduce(context, angleUnit, target);
+Expression Expression::degreeToRadian() {
+  // e*Pi/180
+  return Multiplication(*this, Power(Rational(180), Rational(-1)), Constant(Ion::Charset::SmallPi));
 }
 
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit) {

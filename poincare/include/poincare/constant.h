@@ -18,6 +18,7 @@ public:
 #endif
 
   // Complex
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Expression Properties
@@ -36,6 +37,9 @@ public:
   bool isPi() const { return isConstantChar(Ion::Charset::SmallPi); }
   bool isExponential() const { return isConstantChar(Ion::Charset::Exponential); }
   bool isIComplex() const { return isConstantChar(Ion::Charset::IComplex); }
+
+  // Simplification
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -53,6 +57,9 @@ public:
   bool isPi() const { return node()->isPi(); }
   bool isExponential() const { return node()->isExponential(); }
   bool isIComplex() const { return node()->isIComplex(); }
+
+  // Simplification
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }

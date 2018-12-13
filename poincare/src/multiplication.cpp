@@ -522,8 +522,49 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     }
   }
 
-  // Step 8: Let's remove the multiplication altogether if it has one child
+  // Step 7: Let's remove the multiplication altogether if it has one child
   Expression result = squashUnaryHierarchyInPlace();
+  if (result != *this) {
+    return result;
+  }
+
+  /* Step 8: Let's bubble up the complex operator if possible
+   * 3 cases:
+   * - All children are real, we do nothing (allChildrenAreReal == 1)
+   * - One of the child is non-real and not a ComplexCartesian: it means a
+   *   complex expression could not be resolved as a ComplexCartesian, we cannot
+   *   do anything about it now (allChildrenAreReal == -1)
+   * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
+   *   We can bubble up ComplexCartesian nodes. */
+  if (allChildrenAreReal(context, angleUnit) == 0) {
+    int nbChildren = numberOfChildren();
+    int i = nbChildren-1;
+    assert(childAtIndex(i).type() == ExpressionNode::Type::ComplexCartesian);
+    ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
+    removeChildAtIndexInPlace(i);
+    i--;
+    while (i >= 0) {
+      Expression e = childAtIndex(i);
+      if (e.type() != ExpressionNode::Type::ComplexCartesian) {
+        // the Multiplication is sorted so ComplexCartesian nodes are the last ones
+        break;
+      }
+      child = child.multiply(static_cast<ComplexCartesian &>(e), context, angleUnit, target);
+      removeChildAtIndexInPlace(i);
+      i--;
+    }
+    Multiplication real = *this;
+    Multiplication imag = clone().convert<Multiplication>();
+    real.addChildAtIndexInPlace(child.real(), real.numberOfChildren(), real.numberOfChildren());
+    imag.addChildAtIndexInPlace(child.imag(), real.numberOfChildren(), real.numberOfChildren());
+    ComplexCartesian newComplexCartesian = ComplexCartesian::Builder();
+    replaceWithInPlace(newComplexCartesian);
+    newComplexCartesian.replaceChildAtIndexInPlace(0, real);
+    newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
+    real.shallowReduce(context, angleUnit, target);
+    imag.shallowReduce(context, angleUnit, target);
+    return newComplexCartesian.shallowReduce(context, angleUnit);
+  }
 
   return result;
 }

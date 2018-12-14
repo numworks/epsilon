@@ -80,6 +80,7 @@ protected:
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);
+  static bool isReal(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit);
   static ComplexCartesian complexCartesian(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit);
   static ComplexPolar complexPolar(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit);
   static size_t AlignedNodeSize(size_t nameLength, size_t nodeSize);

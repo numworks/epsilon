@@ -77,6 +77,11 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
   return 0.0f;
 }
 
+bool SymbolNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+  Symbol s(this);
+  return SymbolAbstract::isReal(s, context, angleUnit);
+}
+
 ComplexCartesian SymbolNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
   Symbol s(this);
   return SymbolAbstract::complexCartesian(s, context, angleUnit);

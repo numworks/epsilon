@@ -18,6 +18,7 @@ public:
   }
 #endif
 
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->isReal(context, angleUnit); }
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
   ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
@@ -46,7 +47,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilder);;
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
   explicit Conjugate(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {
     replaceChildAtIndexInPlace(0, child);

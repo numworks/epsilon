@@ -25,14 +25,24 @@ Expression ArcCosineNode::shallowReduce(Context & context, Preferences::AngleUni
 
 template<typename T>
 Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  std::complex<T> result = std::acos(c);
-  /* acos has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
-   * this cut. We followed the convention chosen by the lib c++ of llvm on
-   * ]-inf+0i, -1+0i[ (warning: acos takes the other side of the cut values on
-   * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
-   * acos(-x) = Pi - acos(x) and tan(arccos(x)) = sqrt(1-x^2)/x. */
-  if (c.imag() == 0 && c.real() > 1) {
-    result.imag(-result.imag()); // other side of the cut
+  std::complex<T> result;
+  if (c.imag() == 0 && std::fabs(c.real()) <= 1.0) {
+    /* acos: [-1;1] -> R
+     * In these cases we rather use std::acos(double) because acos on complexes
+     * is not as precise as pow on double in std library. For instance,
+     * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
+     * - acos(0.03) = 1.54079 */
+    result = std::acos(c.real());
+  } else {
+    result = std::acos(c);
+    /* acos has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
+     * this cut. We followed the convention chosen by the lib c++ of llvm on
+     * ]-inf+0i, -1+0i[ (warning: acos takes the other side of the cut values on
+     * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
+     * acos(-x) = Pi - acos(x) and tan(arccos(x)) = sqrt(1-x^2)/x. */
+    if (c.imag() == 0 && c.real() > 1) {
+      result.imag(-result.imag()); // other side of the cut
+    }
   }
   result = Trigonometry::RoundToMeaningfulDigits(result, c);
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));

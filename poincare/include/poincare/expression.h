@@ -177,15 +177,15 @@ public:
    * same structures and all their nodes have same types and values (ie,
    * sqrt(pi^2) is NOT identical to pi). */
   bool isIdenticalTo(const Expression e) const;
-  bool isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context);
+  bool isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
-  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
+  static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
+  Expression simplify(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
   Expression radianToDegree();
@@ -301,6 +301,9 @@ private:
   int defaultGetPolynomialCoefficients(Context & context, const char * symbol, Expression expression[]) const;
 
   /* Builder */
+  static bool isZero(const Expression e);
+  static bool isOne(const Expression e);
+  static bool isMinusOne(const Expression e);
   static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
 
   /* Expression roots/extrema solver*/

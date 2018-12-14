@@ -182,7 +182,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
         char buffer[Shared::ExpressionModel::k_expressionBufferSize];
-        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->angleUnit(), preferences->complexFormat(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
       }
     }
   }

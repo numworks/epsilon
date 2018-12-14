@@ -343,7 +343,7 @@ bool Expression::isIdenticalTo(const Expression e) const {
   return ExpressionNode::SimplificationOrder(node(), e.node(), true) == 0;
 }
 
-bool Expression::isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context) {
+bool Expression::isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context) {
   approximation.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
   /* Warning: we cannot use directly the the approximate expression but we have
    * to re-serialize it because the number of stored significative
@@ -351,7 +351,7 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, char 
    * identical. (For example, 0.000025 might be displayed "0.00003" and stored
    * as Decimal(0.000025) and isEqualToItsApproximationLayout should return
    * false) */
-  Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, angleUnit);
+  Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, angleUnit, complexFormat);
   bool equal = isIdenticalTo(approximateOutput);
   return equal;
 }
@@ -366,12 +366,12 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
   Expression exp = Parse(text);
   if (exp.isUninitialized()) {
     return Undefined();
   }
-  exp = exp.simplify(context, angleUnit);
+  exp = exp.simplify(context, angleUnit, complexFormat);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
@@ -380,11 +380,31 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
   return exp;
 }
 
-Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit) {
+void makePositive(Expression * e, bool * isNegative) {
+  if (e->type() == ExpressionNode::Type::Opposite) {
+    *isNegative = true;
+    *e = e->childAtIndex(0);
+  }
+}
+
+Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
   sSimplificationHasBeenInterrupted = false;
   Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
   if (!sSimplificationHasBeenInterrupted) {
-    e = e.deepBeautify(context, angleUnit);
+    if (e.type() == ExpressionNode::Type::ComplexCartesian) {
+      ComplexCartesian ecomplex = static_cast<ComplexCartesian &>(e);
+      Expression ra = complexFormat == Preferences::ComplexFormat::Cartesian ? ecomplex.real() : ecomplex.clone().convert<ComplexCartesian>().norm(context, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+      Expression tb = complexFormat == Preferences::ComplexFormat::Cartesian ? ecomplex.imag() : ecomplex.argument(context, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+      ra = ra.deepBeautify(context, angleUnit);
+      tb = tb.deepBeautify(context, angleUnit);
+      bool raIsNegative = false;
+      bool tbIsNegative = false;
+      makePositive(&ra, &raIsNegative);
+      makePositive(&tb, &tbIsNegative);
+      e = CreateComplexExpression(ra, tb, complexFormat, ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined, isZero(ra), isOne(ra), isZero(tb), isOne(tb), raIsNegative, tbIsNegative);
+    } else {
+      e = e.deepBeautify(context, angleUnit);
+    }
   }
   return sSimplificationHasBeenInterrupted ? Expression() : e;
 }
@@ -500,6 +520,16 @@ U Expression::epsilon() {
 }
 
 /* Builder */
+
+bool Expression::isZero(const Expression e) {
+  return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isZero();
+}
+bool Expression::isOne(const Expression e) {
+  return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isOne();
+}
+bool Expression::isMinusOne(const Expression e) {
+  return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isMinusOne();
+}
 
 Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb) {
   if (undefined) {

@@ -83,9 +83,10 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
   std::complex<T> result;
-  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() > 0.0) {
-    /* pow: (R+, R) -> R+
-     * For pow on (R+,R) we rather use std::pow(double, double) because:
+  if (c.imag() == 0.0 && d.imag() == 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
+    /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
+     * pow: (R-, N) -> R+ ((-2)^3 = -8)
+     * In these cases we rather use std::pow(double, double) because:
      * - pow on complexes is not as precise as pow on double: for instance,
      *   pow(complex<double>(2.0,0.0), complex<double>(3.0,0.0) = complex(7.9999999999999982,0.0)
      *   and pow(2.0,3.0) = 8.0

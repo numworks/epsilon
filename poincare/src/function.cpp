@@ -14,6 +14,11 @@ ComplexCartesian FunctionNode::complexCartesian(Context & context, Preferences::
   return SymbolAbstract::complexCartesian(f, context, angleUnit);
 }
 
+bool FunctionNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+  Function f(this);
+  return SymbolAbstract::isReal(f, context, angleUnit);
+}
+
 ComplexPolar FunctionNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
   Function f(this);
   return SymbolAbstract::complexPolar(f, context, angleUnit);

@@ -39,7 +39,7 @@ Expression StorageExpressionModel::expressionReduced(Poincare::Context * context
   if (m_expression.isUninitialized()) {
     assert(!isNull());
     Ion::Storage::Record::Data recordData = value();
-    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData)).reduce(*context, Preferences::AngleUnit::Degree, true);
+    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData)).reduce(*context, Preferences::sharedPreferences()->angleUnit(), true);
   }
   return m_expression;
 }

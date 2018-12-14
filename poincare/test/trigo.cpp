@@ -93,6 +93,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
    */
   // On [-1, 1]
   assert_parsed_expression_evaluates_to<double>("acos(0.5)", "1.0471975511966", Radian);
+  assert_parsed_expression_evaluates_to<double>("acos(0.03)", "1.5407918249714", Radian);
   assert_parsed_expression_evaluates_to<double>("acos(0.5)", "60", Degree);
   // On [1, inf[
   assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
@@ -124,6 +125,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
    */
   // On [-1, 1]
   assert_parsed_expression_evaluates_to<double>("asin(0.5)", "0.5235987755983", Radian);
+  assert_parsed_expression_evaluates_to<double>("asin(0.03)", "3.0004501823477E-2", Radian);
   assert_parsed_expression_evaluates_to<double>("asin(0.5)", "30", Degree);
   // On [1, inf[
   assert_parsed_expression_evaluates_to<double>("asin(2)", "1.5707963267949-1.3169578969248*I", Radian);
@@ -153,6 +155,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
    */
   // On R
   assert_parsed_expression_evaluates_to<double>("atan(2)", "1.1071487177941", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(0.01)", "9.9996666866652E-3", Radian);
   assert_parsed_expression_evaluates_to<double>("atan(2)", "63.434948822922", Degree);
   assert_parsed_expression_evaluates_to<float>("atan(0.5)", "0.4636476", Radian);
   // Symmetry: odd

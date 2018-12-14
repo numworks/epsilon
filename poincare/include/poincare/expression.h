@@ -301,7 +301,7 @@ private:
   int defaultGetPolynomialCoefficients(Context & context, const char * symbol, Expression expression[]) const;
 
   /* Builder */
-  static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isMinusOneTb, bool isNegativeRa, bool isNegativeTb);
+  static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

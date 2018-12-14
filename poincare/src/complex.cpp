@@ -55,7 +55,7 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
       Number::DecimalNumber<T>(std::fabs(tb)),
       complexFormat,
       (std::isnan(this->real()) || std::isnan(this->imag())),
-      ra == 0.0, ra == 1.0, tb == 0.0, tb == 1.0, tb == -1.0, ra < 0.0, tb < 0.0
+      ra == 0.0, std::fabs(ra) == 1.0, tb == 0.0, std::fabs(tb) == 1.0, ra < 0.0, tb < 0.0
     );
 }
 

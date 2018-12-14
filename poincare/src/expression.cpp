@@ -427,7 +427,7 @@ Expression Expression::radianToDegree() {
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return Multiplication(*this, Power(Rational(180), Rational(-1)), Constant(Ion::Charset::SmallPi));
+  return Multiplication(*this, Rational(1, 180), Constant(Ion::Charset::SmallPi));
 }
 
 Expression Expression::reduce(Context & context, Preferences::AngleUnit angleUnit) {

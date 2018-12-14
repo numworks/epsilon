@@ -384,7 +384,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
   /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
-  if (!base.isReal(context, angleUnit) && !index.isReal(context, angleUnit)) {
+  if (!base.isReal(context, angleUnit) && base.type() != ExpressionNode::Type::ComplexCartesian && !index.isReal(context, angleUnit) && index.type() != ExpressionNode::Type::ComplexCartesian) {
     return *this;
   }
 

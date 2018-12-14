@@ -177,6 +177,26 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
+  assert(!b.isRationalZero());
+
+  // Special case: a == 0 (otherwise, we are going to introduce undefined expressions - a^0 = NAN)
+  // (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
+  if (a.isRationalZero()) {
+    ComplexCartesian result;
+    Expression bpow = Power(b, Rational(n));
+    if (n/2%2 == 1) {
+      Expression temp = Multiplication(Rational(-1), bpow);
+      bpow.shallowReduce(context, angleUnit, target);
+      bpow = temp;
+    }
+    if (n%2 == 0) {
+      result = ComplexCartesian(bpow, Rational(0));
+    } else {
+      result = ComplexCartesian(Rational(0), bpow);
+    }
+    bpow.shallowReduce(context, angleUnit, target);
+    return result;
+  }
   // (a+ib) = a^n+i*b*a^(n-1)+(-1)*b^2*a^(n-2)+(-i)*b^3*a^(n-3)+b^3*a^(n-4)+...
   // Real part: A = a^n+(-1)*b^2*a^(n-2)+...
   // Imaginary part: B = b*a^(n-1)

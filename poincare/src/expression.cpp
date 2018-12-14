@@ -501,7 +501,7 @@ U Expression::epsilon() {
 
 /* Builder */
 
-Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isMinusOneTb, bool isNegativeRa, bool isNegativeTb) {
+Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb) {
   if (undefined) {
     return Undefined();
   }
@@ -518,7 +518,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         }
       }
       if (!isZeroTb) {
-        if (isOneTb || isMinusOneTb) {
+        if (isOneTb) {
           imag = Constant(Ion::Charset::IComplex);
         } else {
           imag = Multiplication(tb , Constant(Ion::Charset::IComplex));
@@ -551,12 +551,11 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         Expression arg;
         if (isOneTb) {
           arg = Constant(Ion::Charset::IComplex);
-        } else if (isMinusOneTb) {
-          arg = Opposite(Constant(Ion::Charset::IComplex));
-        } else if (isNegativeTb) {
-          arg = Opposite(Multiplication(tb, Constant(Ion::Charset::IComplex)));
         } else {
           arg = Multiplication(tb, Constant(Ion::Charset::IComplex));
+        }
+        if (isNegativeTb) {
+          arg = Opposite(arg);
         }
         exp = Power(Constant(Ion::Charset::Exponential), arg);
       }

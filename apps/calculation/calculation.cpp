@@ -174,11 +174,11 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
   char buffer[bufferSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  Expression exactOutputExpression = Expression::ParseAndSimplify(m_exactOutputText, *context, preferences->angleUnit());
+  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context);
   if (exactOutputExpression.isUninitialized()) {
     exactOutputExpression = Undefined();
   }
-  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, preferences->angleUnit(), preferences->complexFormat(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

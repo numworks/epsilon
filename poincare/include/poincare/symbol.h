@@ -27,6 +27,7 @@ public:
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Complex
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
   ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
   ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 

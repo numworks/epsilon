@@ -80,6 +80,14 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
   return e;
 }
 
+bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit) {
+  Expression e = SymbolAbstract::Expand(symbol, context, false);
+  if (e.isUninitialized()) {
+    return true;
+  }
+  return e.isReal(context, angleUnit);
+}
+
 ComplexCartesian SymbolAbstract::complexCartesian(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = SymbolAbstract::Expand(symbol, context, true);
   if (e.isUninitialized()) {

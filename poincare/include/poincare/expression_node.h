@@ -102,6 +102,11 @@ public:
   virtual Type type() const = 0;
 
   /* Properties */
+  enum class ReductionTarget {
+    BottomUpComputation = 0,
+    TopDownComputation = 1,
+    User
+  };
   enum class Sign {
     Negative = -1,
     Unknown = 0,
@@ -111,7 +116,7 @@ public:
   virtual bool isNumber() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol);
-  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context & context);
@@ -163,11 +168,6 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  enum class ReductionTarget {
-    BottomUpComputation = 0,
-    TopDownComputation = 1,
-    User
-  };
   /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

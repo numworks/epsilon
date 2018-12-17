@@ -14,7 +14,7 @@ namespace Poincare {
 
 // Property
 
-Expression FactorialNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression FactorialNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   assert(s == Sign::Positive);
   return Factorial(this);
 }

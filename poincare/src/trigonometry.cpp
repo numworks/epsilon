@@ -116,7 +116,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   }
 
   // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
-  Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
   if (!positiveArg.isUninitialized()) {
     // The argument was of form cos(-a)
     if (e.type() == ExpressionNode::Type::Cosine) {
@@ -270,7 +270,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
    */
   if (!letArcFunctionAtRoot) {
-    Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+    Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
     if (!positiveArg.isUninitialized()) {
       // The argument was made positive
       // acos(-x) = pi-acos(x)

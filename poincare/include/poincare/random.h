@@ -24,7 +24,7 @@ public:
   // Properties
   Type type() const override { return Type::Random; }
   Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

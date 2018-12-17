@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression InfinityNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression InfinityNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Infinity(this).setSign(s, context, angleUnit);
 }
 

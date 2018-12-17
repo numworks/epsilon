@@ -56,7 +56,7 @@ size_t DecimalNode::size() const {
   return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
-Expression DecimalNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression DecimalNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Decimal(this).setSign(s);
 }
 

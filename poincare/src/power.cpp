@@ -47,8 +47,8 @@ ExpressionNode::Sign PowerNode::sign(Context * context, Preferences::AngleUnit a
   return Sign::Unknown;
 }
 
-Expression PowerNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
-  return Power(this).setSign(s, context, angleUnit);
+Expression PowerNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Power(this).setSign(s, context, angleUnit, target);
 }
 
 int PowerNode::polynomialDegree(Context & context, const char * symbolName) const {
@@ -238,10 +238,10 @@ Power::Power(Expression base, Expression exponent) : Expression(TreePool::shared
   replaceChildAtIndexInPlace(1, exponent);
 }
 
-Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(s == ExpressionNode::Sign::Positive);
   if (childAtIndex(0).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
-    Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit), childAtIndex(1));
+    Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit, target), childAtIndex(1));
     replaceWithInPlace(result);
     return result;
   }
@@ -513,7 +513,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isHalf())
   {
-    Expression m0 = childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+    Expression m0 = childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
     if (!m0.isUninitialized()) {
       replaceChildAtIndexInPlace(0, m0);
       //m0.shallowReduce(context, angleUnit, target);
@@ -596,7 +596,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         // (sign(a)*b*...)^r
         if (factor.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
           m.replaceChildAtIndexInPlace(i, Rational(-1));
-          factor = factor.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+          factor = factor.setSign(ExpressionNode::Sign::Positive, &context, angleUnit, target);
         } else {
           m.removeChildAtIndexInPlace(i);
         }
@@ -781,7 +781,7 @@ Expression Power::denominator(Context & context, Preferences::AngleUnit angleUni
   // Clone the power
   Expression clone = Power(childAtIndex(0).clone(), childAtIndex(1).clone());
   // If the power is of form x^(-y), denominator should be x^y
-  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  Expression positiveIndex = clone.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
   if (!positiveIndex.isUninitialized()) {
     // if y was -1, clone is now x^1, denominator is then only x
     // we cannot shallowReduce the clone as it is not attached to its parent yet
@@ -855,7 +855,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   if (numberOfPrimeFactors < 0) {
     /* We could not break i in prime factors (it might take either too many
      * factors or too much time). */
-    Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, &context, angleUnit);
+    Expression rClone = r.clone().setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive, &context, angleUnit, target);
     return Power(Rational(i), rClone);
   }
 

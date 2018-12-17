@@ -248,10 +248,10 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
   return *this;
 }
 
-Expression Expression::makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Expression::makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // The expression is a negative number
   if (isNumber() && sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
-    return setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+    return setSign(ExpressionNode::Sign::Positive, &context, angleUnit, target);
   }
   // The expression is a multiplication whose numeral factor is negative
   if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
@@ -263,7 +263,7 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(Context & context, P
       return m.squashUnaryHierarchyInPlace();
     } else {
       // Otherwise, we make it positive
-      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, &context, angleUnit, target);
     }
     return m;
   }
@@ -460,8 +460,8 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
   return e;
 }
 
-Expression Expression::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
-  return node()->setSign(s, context, angleUnit);
+Expression Expression::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  return node()->setSign(s, context, angleUnit, target);
 }
 
 /* Evaluation */

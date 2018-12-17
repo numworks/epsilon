@@ -66,8 +66,8 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
-Expression MultiplicationNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
-  return Multiplication(this).setSign(s, context, angleUnit);
+Expression MultiplicationNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Multiplication(this).setSign(s, context, angleUnit, target);
 }
 
 bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
@@ -122,14 +122,14 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
   }
 }
 
-Expression Multiplication::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
-      replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit));
+      replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit, target));
     }
   }
-  return shallowReduce(*context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);
+  return shallowReduce(*context, angleUnit, target);
 }
 
 Expression Multiplication::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -144,7 +144,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
   // Step 1: Turn -n*A into -(n*A)
-  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
   // If one negative numeral factor was made positive, we turn the expression in an Opposite
   if (!noNegativeNumeral.isUninitialized()) {
     Opposite o = Opposite();
@@ -749,7 +749,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
   while (i < numberOfChildren()) {
     if (childAtIndex(i).type() == ExpressionNode::Type::Power) {
       Expression p = childAtIndex(i);
-      Expression positivePIndex = p.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+      Expression positivePIndex = p.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
       if (!positivePIndex.isUninitialized()) {
         // Remove a^(-b) from the Multiplication
         removeChildAtIndexInPlace(i);

@@ -64,6 +64,17 @@ Expression ComplexCartesian::squareNorm(Context & context, Preferences::AngleUni
 }
 
 Expression ComplexCartesian::norm(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  if (imag().isRationalZero()) {
+    Expression a = real();
+    ExpressionNode::Sign s = a.sign(&context, angleUnit);
+    if (s == ExpressionNode::Sign::Positive) {
+      // Case 1: the expression is positive real
+      return a;;
+    } else if (s == ExpressionNode::Sign::Negative) {
+      // Case 2: the argument is negative real
+      return a.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+    }
+  }
   Expression n2 = squareNorm(context, angleUnit, target);
   Expression n =  SquareRoot::Builder(n2);
   n2.shallowReduce(context, angleUnit, target);

@@ -36,7 +36,7 @@ public:
 
   // Property
   Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // TreeNode
 #if POINCARE_TREE_LOG

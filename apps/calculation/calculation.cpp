@@ -48,9 +48,10 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
      * to keep Ans symbol in the calculation store. */
     PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
   }
-  Expression exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
+  Expression exactOutput;
+  Expression approximateOutput;
+  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
-  Expression approximateOutput = PoincareHelpers::Approximate<double>(exactOutput, *context);
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
@@ -178,7 +179,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (exactOutputExpression.isUninitialized()) {
     exactOutputExpression = Undefined();
   }
-  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, preferences->angleUnit(), preferences->complexFormat(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

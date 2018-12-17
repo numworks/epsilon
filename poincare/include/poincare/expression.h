@@ -271,12 +271,12 @@ protected:
    * - a multiplication who has one numeral child whose is negative
    * and turns the negative factor into a positive one
    */
-  Expression makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit);
+  Expression makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) { return node()->shallowReduce(context, angleUnit, target); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;

@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper Random::s_functionHelper;
 
 int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
-Expression RandomNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression RandomNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Random(this).setSign(s, context, angleUnit);
 }
 

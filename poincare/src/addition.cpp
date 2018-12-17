@@ -101,7 +101,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
 
   for (int i = 0; i < numberOfChildren(); i++) {
     // Try to make the child i positive if any negative numeral factor is found
-    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
     if (subtractant.isUninitialized())
     {
       // if subtractant is not initialized, it means the child i had no negative numeral factor

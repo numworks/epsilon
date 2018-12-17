@@ -38,8 +38,8 @@ Expression ComplexCartesian::shallowReduce(Context & context, Preferences::Angle
 Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   Expression a = real();
   Expression b = imag();
-  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(context, angleUnit);
-  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,
@@ -72,7 +72,7 @@ Expression ComplexCartesian::norm(Context & context, Preferences::AngleUnit angl
       return a;;
     } else if (s == ExpressionNode::Sign::Negative) {
       // Case 2: the argument is negative real
-      return a.setSign(ExpressionNode::Sign::Positive, &context, angleUnit);
+      return a.setSign(ExpressionNode::Sign::Positive, &context, angleUnit, target);
     }
   }
   Expression n2 = squareNorm(context, angleUnit, target);

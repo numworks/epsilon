@@ -17,7 +17,7 @@ ExpressionNode::Sign SignFunctionNode::sign(Context * context, Preferences::Angl
   return childAtIndex(0)->sign(context, angleUnit);
 }
 
-Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   SignFunction sign(this);
   Rational r(s == ExpressionNode::Sign::Positive ? 1 : -1);
   sign.replaceWithInPlace(r);
@@ -73,7 +73,7 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit
     // c has no sign (c is complex or NAN)
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // sign(-x) = sign(x)
-      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
       if (oppChild.isUninitialized()) {
         return *this;
       } else {

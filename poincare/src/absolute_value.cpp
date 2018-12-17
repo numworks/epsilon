@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
 
 int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
-Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
 }
 
@@ -68,7 +68,7 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
     return childNorm.shallowReduce(context, angleUnit, target);
   }
   // abs(-x) = abs(x)
-  c.makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+  c.makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
   return *this;
 }
 

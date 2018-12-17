@@ -4,7 +4,7 @@
 namespace Poincare {
 
 template<typename T>
-Expression FloatNode<T>::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression FloatNode<T>::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   assert(s != Sign::Unknown);
   Sign currentSign = m_value < 0 ? Sign::Negative : Sign::Positive;
   Expression thisExpr = Number(this);

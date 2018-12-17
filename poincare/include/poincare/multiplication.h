@@ -34,7 +34,7 @@ public:
 
 private:
   // Property
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;
@@ -80,7 +80,7 @@ public:
 
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Expression
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;

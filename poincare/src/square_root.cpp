@@ -62,7 +62,7 @@ ComplexCartesian SquareRootNode::complexCartesian(Context & context, Preferences
   // a = sqrt(x^2+y^2)+x
   Multiplication real = complexCartesianHelper(Addition(norm.clone(), x.clone()), context, angleUnit);
   Multiplication imag = complexCartesianHelper(Subtraction(norm, x), context, angleUnit);
-  imag.addChildAtIndexInPlace(SignFunction::Builder(y).shallowReduce(context, angleUnit), imag.numberOfChildren(), imag.numberOfChildren());
+  imag.addChildAtIndexInPlace(SignFunction::Builder(y).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation), imag.numberOfChildren(), imag.numberOfChildren());
   return ComplexCartesian::Builder(
       real.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
       imag.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)

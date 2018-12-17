@@ -50,6 +50,7 @@ public:
   mp_float_t heading() const;
   void setHeading(mp_float_t angle);
 
+  uint8_t speed() const { return m_speed; }
   void setSpeed(mp_int_t speed);
 
   mp_float_t x() const { return m_x; }

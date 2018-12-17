@@ -478,7 +478,9 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   if (allChildrenAreReal(context, angleUnit) == 0) {
     int nbChildren = numberOfChildren();
     int i = nbChildren-1;
+    // Children are sorted so ComplexCartesian nodes are at the end
     assert(childAtIndex(i).type() == ExpressionNode::Type::ComplexCartesian);
+    // First, we merge all ComplexCartesian children into one
     ComplexCartesian child = childAtIndex(i).convert<ComplexCartesian>();
     removeChildAtIndexInPlace(i);
     i--;
@@ -492,6 +494,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       removeChildAtIndexInPlace(i);
       i--;
     }
+    // The real children are both factors of the real and the imaginary multiplication
     Multiplication real = *this;
     Multiplication imag = clone().convert<Multiplication>();
     real.addChildAtIndexInPlace(child.real(), real.numberOfChildren(), real.numberOfChildren());

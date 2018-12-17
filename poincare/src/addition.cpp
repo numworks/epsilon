@@ -256,8 +256,9 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
    *   We can bubble up ComplexCartesian nodes. */
   if (allChildrenAreReal(context, angleUnit) == 0) {
-    Addition imag;
-    Addition real = *this;
+    /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
+    Addition imag; // we store all imaginary parts in 'imag'
+    Addition real = *this; // we store all real parts in 'real'
     i = numberOfChildren() - 1;
     while (i >= 0) {
       Expression c = childAtIndex(i);

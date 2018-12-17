@@ -82,8 +82,11 @@ mp_obj_t modturtle_setheading(mp_obj_t angle) {
   return mp_const_none;
 }
 
-mp_obj_t modturtle_speed(mp_obj_t speed) {
-  sTurtle.setSpeed(mp_obj_get_int(speed));
+mp_obj_t modturtle_speed(size_t n_args, const mp_obj_t *args) {
+  if (n_args == 0) {
+    return MP_OBJ_NEW_SMALL_INT(sTurtle.speed());
+  }
+  sTurtle.setSpeed(mp_obj_get_int(args[0]));
   return mp_const_none;
 }
 

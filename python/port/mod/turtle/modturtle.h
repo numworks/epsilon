@@ -12,7 +12,7 @@ mp_obj_t modturtle_left(mp_obj_t deg);
 mp_obj_t modturtle_circle(size_t n_args, const mp_obj_t *args);
 mp_obj_t modturtle_goto(size_t n_args, const mp_obj_t *args);
 mp_obj_t modturtle_setheading(mp_obj_t deg);
-mp_obj_t modturtle_speed(mp_obj_t speed);
+mp_obj_t modturtle_speed(size_t n_args, const mp_obj_t *args);
 
 mp_obj_t modturtle_position();
 mp_obj_t modturtle_heading();

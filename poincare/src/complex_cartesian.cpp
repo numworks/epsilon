@@ -94,7 +94,7 @@ Expression ComplexCartesian::argument(Context & context, Preferences::AngleUnit 
     return sub;
   } else {
     // if b == 0, argument = (1-sign(a))*Pi/2
-    Expression signa = SignFunction::Builder(a).shallowReduce(context, angleUnit);
+    Expression signa = SignFunction::Builder(a).shallowReduce(context, angleUnit, target);
     Subtraction sub(Rational(1), signa);
     signa.shallowReduce(context, angleUnit, target);
     Multiplication mul(Rational(1,2), Constant(Ion::Charset::SmallPi), sub);

@@ -72,6 +72,9 @@ public:
     m_color = KDColor::RGB888(r, g, b);
   }
   void setColor(const char * color);
+
+  void viewDidDisappear();
+
 private:
   static constexpr mp_float_t k_headingOffset = M_PI_2;
   static constexpr mp_float_t k_headingScale = M_PI / 180;

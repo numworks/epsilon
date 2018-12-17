@@ -32,7 +32,7 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 Expression SignFunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return SignFunction(this).shallowReduce(context, angleUnit);
+  return SignFunction(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T>
@@ -46,7 +46,7 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
   return Complex<T>(1.0);
 }
 
-Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -59,16 +59,30 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit
   }
 #endif
   Rational one(1);
-  if (childAtIndex(0).sign(&context, angleUnit) != ExpressionNode::Sign::Unknown) {
-    if (childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+  Expression child = childAtIndex(0);
+  ExpressionNode::Sign s = child.sign(&context, angleUnit);
+  if (s != ExpressionNode::Sign::Unknown) {
+    if (s == ExpressionNode::Sign::Negative) {
       one = Rational(-1);
     }
   } else {
-    Evaluation<float> childApproximated = childAtIndex(0).node()->approximate(1.0f, context, angleUnit);
+    Evaluation<float> childApproximated = child.node()->approximate(1.0f, context, angleUnit);
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
+    // c has no sign (c is complex or NAN)
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
-      return *this;
+      // sign(-x) = sign(x)
+      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, angleUnit);
+      if (oppChild.isUninitialized()) {
+        return *this;
+      } else {
+        Expression sign = *this;
+        Multiplication m(Rational(-1));
+        replaceWithInPlace(m);
+        m.addChildAtIndexInPlace(sign, 1, 1);
+        sign.shallowReduce(context, angleUnit, target);
+        return m.shallowReduce(context, angleUnit, target);
+      }
     }
     if (c.real() < 0) {
       one = Rational(-1);

@@ -96,7 +96,7 @@ ComplexPolar ComplexHelper::complexPolarFromComplexCartesian(const ExpressionNod
     // Then, compute sign(b) * Pi/2 - arctan(a/b)
     argument = Subtraction(
         Multiplication(
-          SignFunction::Builder(b).shallowReduce(context, angleUnit),
+          SignFunction::Builder(b).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation),
           Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation)
         ).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation),
         arcTangent
@@ -106,7 +106,7 @@ ComplexPolar ComplexHelper::complexPolarFromComplexCartesian(const ExpressionNod
     argument = Multiplication(
         Subtraction(
           Rational(1),
-          SignFunction::Builder(a).shallowReduce(context, angleUnit)
+          SignFunction::Builder(a).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation)
         ).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation),
         Division(Constant(Ion::Charset::SmallPi), Rational(2)).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation)
       ).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation);

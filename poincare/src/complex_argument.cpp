@@ -2,6 +2,8 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/rational.h>
+#include <poincare/constant.h>
 extern "C" {
 #include <assert.h>
 }
@@ -43,12 +45,28 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  ComplexPolar polar = c.complexPolar(context, angleUnit);
-  if (!polar.isUninitialized()) {
-    Expression a = polar.arg();
-    replaceWithInPlace(a);
-    // We have to deepReduce because the complexPolar function returns an Expression reduced only BottomUp
-    return a.deepReduce(context, angleUnit, target);
+  if (c.isReal(context, angleUnit)) {
+    float app = c.approximateToScalar<float>(context, angleUnit);
+    if (std::isnan(app)) {
+      ComplexCartesian complexChild = ComplexCartesian::Builder(c, Rational(0));
+      Expression arg = complexChild.argument(context, angleUnit, target);
+      replaceWithInPlace(arg);
+      return arg.shallowReduce(context, angleUnit, target);
+    } else if (app >= 0) {
+      Expression result = Rational(0);
+      replaceWithInPlace(result);
+      return result;
+    }
+    assert(app < 0);
+    Expression result = Constant(Ion::Charset::SmallPi);
+    replaceWithInPlace(result);
+    return result;
+  }
+  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
+    Expression childArg = complexChild.argument(context, angleUnit, target);
+    replaceWithInPlace(childArg);
+    return childArg.shallowReduce(context, angleUnit, target);
   }
   return *this;
 }

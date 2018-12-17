@@ -81,7 +81,14 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
 
 bool PowerNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
   ExpressionNode * base = childAtIndex(0);
-  if (base->isReal(context, angleUnit) && base->sign(&context, angleUnit) == Sign::Positive && childAtIndex(1)->isReal(context, angleUnit)) {
+  ExpressionNode * index = childAtIndex(1);
+  // Both base and index are real and:
+  // - either base > 0
+  // - or index is an integer
+  if (base->isReal(context, angleUnit) &&
+      index->isReal(context, angleUnit) &&
+      (base->sign(&context, angleUnit) == Sign::Positive ||
+       (index->type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(index)->denominator().isOne()))) {
     return true;
   }
   return false;

@@ -46,15 +46,15 @@ Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::
 }
 
 Expression ConstantNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Constant(this).shallowReduce(context, angleUnit);
+  return Constant(this).shallowReduce(context, angleUnit, target);
 }
 
 Constant::Constant(char name) : SymbolAbstract(TreePool::sharedPool()->createTreeNode<ConstantNode>(SymbolAbstract::AlignedNodeSize(1, sizeof(ConstantNode)))) {
   node()->setName(&name, 1);
 }
 
-Expression Constant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  if (isIComplex()) {
+Expression Constant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  if (target == ExpressionNode::ReductionTarget::User && isIComplex()) {
     ComplexCartesian c = ComplexCartesian::Builder(Rational(0), Rational(1));
     replaceWithInPlace(c);
     return c;

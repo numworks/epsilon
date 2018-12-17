@@ -54,10 +54,12 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
       replaceWithInPlace(arg);
       return arg.shallowReduce(context, angleUnit, target);
     } else if (app >= 0) {
+      // arg(x) = 0 if x > 0
       Expression result = Rational(0);
       replaceWithInPlace(result);
       return result;
     }
+    // arg(x) = Pi if x < 0
     assert(app < 0);
     Expression result = Constant(Ion::Charset::SmallPi);
     replaceWithInPlace(result);

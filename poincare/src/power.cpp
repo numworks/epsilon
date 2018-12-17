@@ -330,19 +330,6 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
 #endif
 #endif
 
-  // TODO: do we need this?
-  /*Evaluation<float> c0Approximated = childAtIndex(0).node()->approximate(1.0f, context, angleUnit);
-  Evaluation<float> c1Approximated = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
-  Complex<float> c0 = static_cast<Complex<float>&>(c0Approximated);
-  Complex<float> c1 = static_cast<Complex<float>&>(c1Approximated);
-  bool bothChildrenComplexes = c0.imag() != 0 && c1.imag() != 0 && !std::isnan(c0.imag()) && !std::isnan(c1.imag());
-  bool nonNullChild0 = !std::isnan(c0.real()) && !std::isnan(c0.imag()) && (c0.real() > Expression::epsilon<float>() || c0.imag() > Expression::epsilon<float>());
-  if (bothChildrenComplexes) {
-    return *this;
-  }*/
-
-  /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
-
   Expression power = *this;
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
@@ -406,13 +393,17 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
-  /* Step 1: we now bubble up ComplexCartesian, we handle different case */
+  /* Step 1: we now bubble up ComplexCartesian, we handle different cases:
+   * At least, one child is a ComplexCartesian and the other is either a
+   * ComplexCartesian or real. */
 
   ComplexCartesian complexBase;
   ComplexCartesian complexIndex;
   ComplexCartesian result;
-  // First, (x+iy)^q with q special values
-  // TODO: explain here why?
+  /* First, (x+iy)^q with q special values
+   * For q = -1, 1/2, -1/2, n with n integer < 10, we avoid introducing arctangent
+   * by using the formula (r*e^(i*th))^(a+ib) = r^a*e(-th*b)*e^(b*ln(r)+th*a).
+   * Instead, we rather use the cartesian form of the base and the index. */
   if (base.type() == ExpressionNode::Type::ComplexCartesian) {
     complexBase = static_cast<ComplexCartesian &>(base);
     Integer ten(10);

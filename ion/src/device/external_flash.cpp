@@ -64,6 +64,7 @@ public:
 };
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
+static constexpr int ClockFrequencyDivisor = 256;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
@@ -111,7 +112,7 @@ static void set_as_memory_mapped() {
    *
    * It goes low, only if the low-power timeout counter is enabled.
    * (Flash memories tend to consume more when nCS is held low.) */
-  constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? 8 : 4;
+  constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? 8 : (ClockFrequencyDivisor > 1) ? 4 : 6;
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
@@ -181,7 +182,7 @@ void initQSPI() {
   QUADSPI.DCR()->setFSIZE(NumberOfAddressBitsInChip - 1);
 
   QUADSPI.DCR()->setCSHT(7); // Highest value. TODO: make it optimal
-  QUADSPI.CR()->setPRESCALER(255); // Highest value. TODO: make it optimal
+  QUADSPI.CR()->setPRESCALER(ClockFrequencyDivisor - 1); // Highest value. TODO: make it optimal
 
   QUADSPI.CR()->setEN(true);
 }

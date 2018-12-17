@@ -176,8 +176,8 @@ const ToolboxMessageTree modulesChildren[modulesChildrenCount] = {
   ToolboxMessageTree(I18n::Message::MathModule, I18n::Message::Default, I18n::Message::Default, MathModuleChildren, MathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::CmathModule, I18n::Message::Default, I18n::Message::Default, CMathModuleChildren, CMathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::RandomModule, I18n::Message::Default, I18n::Message::Default, RandomModuleChildren, RandomModuleChildrenCount),
-  ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount),
-  ToolboxMessageTree(I18n::Message::TurtleModule, I18n::Message::Default, I18n::Message::Default, TurtleModuleChildren, TurtleModuleChildrenCount)};
+  ToolboxMessageTree(I18n::Message::TurtleModule, I18n::Message::Default, I18n::Message::Default, TurtleModuleChildren, TurtleModuleChildrenCount),
+  ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount)};
 
 const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandPound, I18n::Message::PythonPound, I18n::Message::PythonCommandPound),

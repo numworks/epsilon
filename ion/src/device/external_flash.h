@@ -60,6 +60,7 @@ enum class Command : uint8_t {
   // Erase the whole chip or a 64-Kbyte block as being "1"
   ChipErase = 0xC7,
   Erase64KbyteBlock = 0xD8,
+  SetReadParameters = 0xC0
 };
 
 constexpr static uint32_t QSPIBaseAddress = 0x90000000;

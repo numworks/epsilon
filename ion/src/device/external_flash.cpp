@@ -199,6 +199,18 @@ void initChip() {
     wait(QUADSPI::CCR::OperatingMode::Single);
     send_command(Command::EnableQPI, QUADSPI::CCR::OperatingMode::Single);
     wait();
+    if (ClockFrequencyDivisor == 1) {
+      class ReadParameters : Register8 {
+      public:
+        /* Parameters sent along with SetReadParameters instruction in order
+         * to configure the number of dummy cycles for the QPI Read instructions. */
+        using Register8::Register8;
+        REGS_BOOL_FIELD_W(P5, 1);
+      };
+      ReadParameters readParameters(0);
+      readParameters.setP5(true);
+      send_write_command(Command::SetReadParameters, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&readParameters), sizeof(readParameters));
+    }
   }
   set_as_memory_mapped();
 }

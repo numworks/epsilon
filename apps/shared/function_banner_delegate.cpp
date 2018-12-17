@@ -10,7 +10,6 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   constexpr size_t bufferSize = k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = "                  ";
-  int spaceLength = strlen(space);
   const char * legend = "0=";
   int legendLength = strlen(legend);
   int numberOfChar = 0;

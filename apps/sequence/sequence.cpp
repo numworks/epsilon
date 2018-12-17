@@ -96,21 +96,21 @@ void Sequence::setInitialRank(int rank) {
 
 Poincare::Expression Sequence::firstInitialConditionExpression(Context * context) const {
   if (m_firstInitialConditionExpression.isUninitialized()) {
-    m_firstInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_firstInitialConditionText, *context);
+    m_firstInitialConditionExpression = PoincareHelpers::ParseAndReduce(m_firstInitialConditionText, *context);
   }
   return m_firstInitialConditionExpression;
 }
 
 Poincare::Expression Sequence::secondInitialConditionExpression(Context * context) const {
   if (m_secondInitialConditionExpression.isUninitialized()) {
-    m_secondInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_secondInitialConditionText, *context);
+    m_secondInitialConditionExpression = PoincareHelpers::ParseAndReduce(m_secondInitialConditionText, *context);
   }
   return m_secondInitialConditionExpression;
 }
 
 Poincare::Layout Sequence::firstInitialConditionLayout() {
   if (m_firstInitialConditionLayout.isUninitialized()) {
-    Expression nonSimplifedExpression = Expression::parse(m_firstInitialConditionText);
+    Expression nonSimplifedExpression = Expression::Parse(m_firstInitialConditionText);
     if (!nonSimplifedExpression.isUninitialized()) {
       m_firstInitialConditionLayout = PoincareHelpers::CreateLayout(nonSimplifedExpression);
     }
@@ -120,7 +120,7 @@ Poincare::Layout Sequence::firstInitialConditionLayout() {
 
 Poincare::Layout Sequence::secondInitialConditionLayout() {
   if (m_secondInitialConditionLayout.isUninitialized()) {
-    Expression nonSimplifedExpression = Expression::parse(m_secondInitialConditionText);
+    Expression nonSimplifedExpression = Expression::Parse(m_secondInitialConditionText);
     if (!nonSimplifedExpression.isUninitialized()) {
       m_secondInitialConditionLayout = PoincareHelpers::CreateLayout(nonSimplifedExpression);
     }
@@ -138,10 +138,6 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
   strlcpy(m_secondInitialConditionText, c, sizeof(m_secondInitialConditionText));
   m_secondInitialConditionExpression = Expression();
   m_secondInitialConditionLayout = Layout();
-}
-
-char Sequence::symbol() const {
-  return 'n';
 }
 
 int Sequence::numberOfElements() {
@@ -257,10 +253,10 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
   T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
   T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
-  Poincare::Symbol vnSymbol(Symbol::SpecialSymbols::vn);
-  Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
-  Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
-  Poincare::Symbol un1Symbol(Symbol::SpecialSymbols::un1);
+  Poincare::Symbol vnSymbol("v(n)", 4);
+  Poincare::Symbol vn1Symbol("v(n+1)", 6);
+  Poincare::Symbol unSymbol("u(n)", 4);
+  Poincare::Symbol un1Symbol("u(n+1)", 6);
   Preferences * preferences = Poincare::Preferences::sharedPreferences();
   switch (m_type) {
     case Type::Explicit:

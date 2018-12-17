@@ -1,4 +1,5 @@
 #include <poincare/init.h>
+#include <poincare/expression.h>
 #include <poincare/integer.h>
 #include <poincare/tree_pool.h>
 
@@ -13,6 +14,9 @@ void Init() {
 void Tidy() {
   // Clean Integer
   Integer::TidyIntegerBuffer();
+
+  // Clean Expression (reset the SymbolReplacementsLock)
+  Expression::Tidy();
 }
 
 }

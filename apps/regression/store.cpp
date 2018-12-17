@@ -43,76 +43,35 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
   }
 }
 
-int Store::closestVerticalRegression(int direction, double x, double y, int currentRegressionSeries, Poincare::Context * globalContext) {
-  int regressionSeries = -1;
-  float closestDistance = INFINITY;
-  /* The conditions to test on all the regressions are in this order:
-   * - the current regression is not the current regression
-   * - the next regression point should be within the window abscissa bounds
-   * - it is the closest one in abscissa to x
-   * - it is above y if direction > 0 and below otherwise */
-  for (int series = 0; series < k_numberOfSeries; series ++) {
-    if (!seriesIsEmpty(series) && series != currentRegressionSeries) {
-      double regressionY = yValueForXValue(series, x, globalContext);
-      if ((m_yMin <= regressionY && regressionY <= m_yMax)
-          && (std::fabs(regressionY - y) < closestDistance)
-          && (regressionY - y > 0) == (direction > 0)) {
-        closestDistance = std::fabs(regressionY - y);
-        regressionSeries = series;
-      }
-    }
-  }
-  return regressionSeries;
-}
-
 /* Dots */
 
 int Store::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int selectedDot = -1;
-  /* The conditions to test on all dots are in this order:
-   * - if the currentDot is valid, the next series should not be the current series
-   * - the next dot should not be the current dot
-   * - the next dot should be within the window abscissa bounds
-   * - the next dot is the closest one in abscissa to x
-   * - the next dot is above the regression curve if direction == 1 and below
-   * otherwise
-   * - the next dot is above/under y
-   * - if the current dot is valid, do not select a dot of the same series */
-  for (int series = 0; series < k_numberOfSeries; series ++) {
-    if (!seriesIsEmpty(series) && (currentDot < 0 || currentSeries != series)) {
-      for (int index = 0; index < numberOfPairsOfSeries(series); index++) {
-        if ((currentSeries != series) || (index != currentDot)) {
-          double currentDataX = m_data[series][0][index];
-          double currentDataY = m_data[series][1][index];
-          if ((m_xMin <= currentDataX && currentDataX <= m_xMax) &&
-              (std::fabs(currentDataX - x) <= std::fabs(nextX - x)) &&
-              ((currentDataY - yValueForXValue(currentSeries, currentDataX, globalContext) >= 0) == (direction > 0)) &&
-              ((currentDataY > y) == (direction > 0))) {
-            // Handle edge case: if 2 dots have the same abscissa but different ordinates
-            if (nextX != currentDataX || ((nextY - currentDataY >= 0) == (direction > 0))) {
-              nextX = currentDataX;
-              nextY = currentDataY;
-              selectedDot = index;
-              *nextSeries = series;
-            }
-          }
-        }
-      }
-      // Compare with the mean dot
-      if ((currentSeries != series) || (numberOfPairsOfSeries(series) != currentDot)) {
-        double meanX = meanOfColumn(series, 0);
-        double meanY = meanOfColumn(series, 1);
-        if (m_xMin <= meanX && meanX <= m_xMax &&
-            (std::fabs(meanX - x) <= std::fabs(nextX - x)) &&
-            ((meanY - yValueForXValue(currentSeries, meanX, globalContext) >= 0) == (direction > 0)) &&
-            ((meanY > y) == (direction > 0))) {
-          if (nextX != meanX || ((nextY - meanY >= 0) == (direction > 0))) {
-            selectedDot = numberOfPairsOfSeries(series);
-            *nextSeries = series;
-          }
-        }
+  for (int series = 0; series < k_numberOfSeries; series++) {
+    if (seriesIsEmpty(series) || (currentDot >= 0 && currentSeries == series)) {
+      /* If the currentDot is valid, the next series should not be the current
+       * series */
+      continue;
+    }
+    int numberOfPoints = numberOfPairsOfSeries(series);
+    for (int i = 0; i <= numberOfPoints; i++) {
+      double currentX = i < numberOfPoints ? m_data[series][0][i] : meanOfColumn(series, 0);
+      double currentY = i < numberOfPoints ? m_data[series][1][i] : meanOfColumn(series, 1);
+      if (m_xMin <= currentX && currentX <= m_xMax // The next dot is within the window abscissa bounds
+          && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
+          && ((currentY > y && direction > 0) // The next dot is above/under y
+            || (currentY < y && direction < 0)
+            || (currentY == y
+              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (series > currentSeries)))))
+          && (nextX != currentX // Edge case: if 2 dots have the same abscissa but different ordinates
+            || ((currentY <= nextY) == (direction > 0))))
+      {
+        nextX = currentX;
+        nextY = currentY;
+        selectedDot = i;
+        *nextSeries = series;
       }
     }
   }

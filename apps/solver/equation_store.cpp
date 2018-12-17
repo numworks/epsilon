@@ -80,7 +80,7 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
-  assert(m_variables[0] != 0 && m_variables[1] == 0);
+  assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
@@ -100,17 +100,20 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   tidySolution();
 
   /* 0- Get unknown variables */
-  m_variables[0] = 0;
+  m_variables[0][0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
     const Expression e = definedModelAtIndex(i)->standardForm(context);
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
     }
-    numberOfVariables = definedModelAtIndex(i)->standardForm(context).getVariables(Symbol::isVariableSymbol, m_variables);
-    if (numberOfVariables < 0) {
+    numberOfVariables = e.getVariables(*context, [](const char * symbol) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize);
+    if (numberOfVariables == -1) {
       return Error::TooManyVariables;
     }
+    /* The equation has been parsed so there should be no
+     * Error::VariableNameTooLong*/
+    assert(numberOfVariables >= 0);
   }
 
   /* 1- Linear System? */
@@ -121,7 +124,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context, preferences->angleUnit());
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], *context, preferences->angleUnit());
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -150,9 +153,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   } else {
     /* 2- Polynomial & Monovariable? */
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
-    char x = m_variables[0];
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(x, polynomialCoefficients, *context, preferences->angleUnit());
+    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, *context, preferences->angleUnit());
     if (degree == 2) {
       /* Polynomial degree <= 2*/
       m_type = Type::PolynomialMonovariable;
@@ -174,8 +176,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
       char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      m_exactSolutionExactLayouts[i].serialize(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionApproximateLayouts[i].serialize(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionExactLayouts[i].serializeForParsing(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionApproximateLayouts[i].serializeForParsing(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
       m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
@@ -189,7 +191,9 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
 
 EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression constants[k_maxNumberOfEquations], Context * context) {
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  int n = strlen(m_variables); // n unknown variables
+  // n unknown variables
+  int n = 0;
+  while (m_variables[n][0] != 0) { n++; }
   int m = numberOfDefinedModels(); // m equations
   /* Create the matrix (A | b) for the equation Ax=b */
   Matrix Ab;
@@ -246,9 +250,9 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     m_numberOfSolutions = 1;
   } else {
     // x0 = (-b-sqrt(delta))/(2a)
-    exactSolutions[0] = Division(Subtraction(Opposite(coefficients[1].clone()), SquareRoot(delta.clone())), Multiplication(Rational(2), coefficients[2].clone()));
+    exactSolutions[0] = Division(Subtraction(Opposite(coefficients[1].clone()), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2].clone()));
     // x1 = (-b+sqrt(delta))/(2a)
-    exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot(delta.clone())), Multiplication(Rational(2), coefficients[2]));
+    exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2]));
     m_numberOfSolutions = 2;
   }
   exactSolutions[m_numberOfSolutions] = delta;
@@ -303,7 +307,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
       // C = Root((delta1+sqrt(-27a^2*delta))/2, 3)
       Expression * mult11Operands[3] = {new Rational(-27), new Power(a->clone(), new Rational(2), false), (*delta)->clone()};
       Expression * c = new Power(new Division(new Addition(delta1, new SquareRoot(new Multiplication(mult11Operands, 3, false), false), false), new Rational(2), false), new Rational(1,3), false);
-      Expression * unary3roots[2] = {new Addition(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Symbol(Ion::Charset::IComplex), false), new Rational(2), false), false), new Subtraction(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Symbol(Ion::Charset::IComplex), false), new Rational(2), false), false)};
+      Expression * unary3roots[2] = {new Addition(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Constant(Ion::Charset::IComplex), false), new Rational(2), false), false), new Subtraction(new Rational(-1,2), new Division(new Multiplication(new SquareRoot(new Rational(3), false), new Constant(Ion::Charset::IComplex), false), new Rational(2), false), false)};
       // x_k = -1/(3a)*(b+C*z+delta0/(zC)) with z = unary cube root
       for (int k = 0; k < 3; k++) {
         Expression * ccopy = c;

@@ -14,6 +14,7 @@ static inline size_t min(size_t a, size_t b) {
 
 TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
   TextInput(parentResponder, contentView),
+  InputEventHandler(nullptr),
   m_delegate(nullptr)
 {
 }
@@ -50,8 +51,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
-  } else if (Responder::handleEvent(event)) {
-    // The only event Responder handles is 'Toolbox' displaying.
+  } else if (handleBoxEvent(app(), event)) {
     return true;
   } else if (event == Ion::Events::Left) {
     return setCursorLocation(cursorLocation()-1);

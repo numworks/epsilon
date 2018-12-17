@@ -30,6 +30,7 @@ public:
   int exponent() const { return m_exponent; }
 
   // TreeNode
+  void initToMatchSize(size_t size) override;
   size_t size() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -61,7 +62,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Serialization
@@ -85,7 +86,7 @@ class Decimal final : public Number {
 friend class Number;
 friend class DecimalNode;
 public:
-  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength);
+  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentIsNegative = false);
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
   Decimal(DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);

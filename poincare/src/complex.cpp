@@ -14,7 +14,7 @@ extern "C" {
 #include <poincare/addition.h>
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
-#include <poincare/symbol.h>
+#include <poincare/constant.h>
 #include <ion.h>
 #include <cmath>
 
@@ -53,11 +53,11 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
       }
       if (this->imag() != 0) {
         if (this->imag() == 1.0 || this->imag() == -1) {
-          imag = Symbol(Ion::Charset::IComplex);
+          imag = Constant(Ion::Charset::IComplex);
         } else if (this->imag() > 0) {
-          imag = Multiplication(Number::DecimalNumber(this->imag()), Symbol(Ion::Charset::IComplex));
+          imag = Multiplication(Number::DecimalNumber(this->imag()), Constant(Ion::Charset::IComplex));
         } else {
-          imag = Multiplication(Number::DecimalNumber(-this->imag()), Symbol(Ion::Charset::IComplex));
+          imag = Multiplication(Number::DecimalNumber(-this->imag()), Constant(Ion::Charset::IComplex));
         }
       }
       if (imag.isUninitialized()) {
@@ -86,15 +86,15 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
   if (r != 0 && th != 0) {
     Expression arg;
     if (th == 1.0) {
-      arg = Symbol(Ion::Charset::IComplex);
+      arg = Constant(Ion::Charset::IComplex);
     } else if (th == -1.0) {
-      arg = Opposite(Symbol(Ion::Charset::IComplex));
+      arg = Opposite(Constant(Ion::Charset::IComplex));
     } else if (th > 0) {
-      arg = Multiplication(Number::DecimalNumber(th), Symbol(Ion::Charset::IComplex));
+      arg = Multiplication(Number::DecimalNumber(th), Constant(Ion::Charset::IComplex));
     } else {
-      arg = Opposite(Multiplication(Number::DecimalNumber(-th), Symbol(Ion::Charset::IComplex)));
+      arg = Opposite(Multiplication(Number::DecimalNumber(-th), Constant(Ion::Charset::IComplex)));
     }
-    exp = Power(Symbol(Ion::Charset::Exponential), arg);
+    exp = Power(Constant(Ion::Charset::Exponential), arg);
   }
   if (exp.isUninitialized()) {
     return norm;

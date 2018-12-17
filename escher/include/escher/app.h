@@ -34,11 +34,11 @@ public:
     void pack(App * app);
     /* reset all instances to their initial values */
     virtual void reset();
+    virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
     virtual Descriptor * descriptor() = 0;
 #if EPSILON_GETOPT
     virtual void setOpt(const char * name, char * value) {}
 #endif
-  private:
     /* tidy clean all dynamically-allocated data */
     virtual void tidy();
   };
@@ -53,7 +53,7 @@ public:
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
-  void displayWarning(I18n::Message warningMessage, bool specialExitKeys = false);
+  void displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message) 0, bool specialExitKeys = false);
   const Container * container() const;
   uint8_t m_magic; // Poor man's RTTI
 

@@ -37,6 +37,7 @@ public:
   KDCoordinate baseline();
   //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override { assert(false); return 0; }
 
   // Tree
   LayoutNode * parent() const override { return static_cast<LayoutNode *>(TreeNode::parent()); }

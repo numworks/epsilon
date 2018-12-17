@@ -8,9 +8,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_parse_symbol) {
-  assert_parsed_expression_type("P", ExpressionNode::Type::Symbol);
-  assert_parsed_expression_type("X", ExpressionNode::Type::Symbol);
-  assert_parsed_expression_type("I", ExpressionNode::Type::Symbol);
+  assert_parsed_expression_type("P", ExpressionNode::Type::Constant);
+  assert_parsed_expression_type("X", ExpressionNode::Type::Constant);
+  assert_parsed_expression_type("I", ExpressionNode::Type::Constant);
   assert_parsed_expression_type("1.2E3", ExpressionNode::Type::Decimal);
   assert_parsed_expression_type("ans", ExpressionNode::Type::Symbol);
 }

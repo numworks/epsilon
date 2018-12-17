@@ -10,45 +10,25 @@
 
 namespace Code {
 
-/* ContentViewController */
-
-VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore) :
-  ViewController(parentResponder),
-  m_scriptNodesCount(0),
+VariableBoxController::VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore) :
+  NestedMenuController(nullptr, I18n::Message::FunctionsAndVariables),
   m_pythonDelegate(pythonDelegate),
-  m_scriptStore(scriptStore),
-  m_selectableTableView(this)
+  m_scriptNodesCount(0),
+  m_scriptStore(scriptStore)
 {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setShowsIndicators(false);
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setScriptStore(scriptStore);
   }
 }
 
-void VariableBoxController::ContentViewController::setTextInputCaller(TextInput * textInput) {
-  m_textInputCaller = textInput;
+bool VariableBoxController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    return true;
+  }
+  return NestedMenuController::handleEvent(event);
 }
 
-void VariableBoxController::ContentViewController::reloadData() {
-  m_selectableTableView.reloadData();
-}
-
-void VariableBoxController::ContentViewController::addFunctionAtIndex(const char * functionName, int scriptIndex) {
-  m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
-  m_scriptNodesCount++;
-}
-
-void VariableBoxController::ContentViewController::addVariableAtIndex(const char * variableName, int scriptIndex) {
-  m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
-  m_scriptNodesCount++;
-}
-
-const char * VariableBoxController::ContentViewController::title() {
-  return  I18n::translate(I18n::Message::FunctionsAndVariables);
-}
-
-void VariableBoxController::ContentViewController::didEnterResponderChain(Responder * previousFirstResponder) {
+void VariableBoxController::didEnterResponderChain(Responder * previousFirstResponder) {
   /* This Code::VariableBoxController should always be called from an
    * environment where Python has already been inited. This way, we do not
    * deinit Python when leaving the VariableBoxController, so we do not lose the
@@ -57,7 +37,7 @@ void VariableBoxController::ContentViewController::didEnterResponderChain(Respon
 }
 
 static bool shouldAddObject(const char * name, int maxLength) {
-  if (strlen(name)+1 > maxLength) {
+  if (strlen(name)+1 > (size_t)maxLength) {
     return false;
   }
   assert(name != nullptr);
@@ -67,7 +47,28 @@ static bool shouldAddObject(const char * name, int maxLength) {
   return true;
 }
 
-void VariableBoxController::ContentViewController::viewWillAppear() {
+int VariableBoxController::numberOfRows() {
+  assert(m_scriptNodesCount <= k_maxScriptNodesCount);
+  return m_scriptNodesCount;
+}
+
+int VariableBoxController::reusableCellCount(int type) {
+  assert(type == 0);
+  return k_maxNumberOfDisplayedRows;
+}
+
+void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  assert(index < m_scriptNodesCount);
+  assert(m_scriptNodesCount <= k_maxScriptNodesCount);
+  ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
+  myCell->setScriptNode(&m_scriptNodes[index]);
+}
+
+int VariableBoxController::typeAtLocation(int i, int j) {
+  return 0;
+}
+
+void VariableBoxController::loadFunctionsAndVariables() {
   m_scriptNodesCount = 0;
   m_scriptStore->scanScriptsForFunctionsAndVariables(
     this,
@@ -75,102 +76,54 @@ void VariableBoxController::ContentViewController::viewWillAppear() {
       if (!shouldAddObject(functionName, k_maxScriptObjectNameSize)) {
         return;
       }
-      VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
+      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
       cvc->addFunctionAtIndex(functionName, scriptIndex);},
     [](void * context, const char * variableName, int scriptIndex) {
       if (!shouldAddObject(variableName, k_maxScriptObjectNameSize)) {
         return;
       }
-      VariableBoxController::ContentViewController * cvc = static_cast<VariableBoxController::ContentViewController *>(context);
+      VariableBoxController * cvc = static_cast<VariableBoxController *>(context);
       cvc->addVariableAtIndex(variableName, scriptIndex);});
 }
 
-void VariableBoxController::ContentViewController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
-  for (int i = 0; i < k_maxScriptNodesCount; i++) {
-    m_scriptNodes[i] = ScriptNode();
-  }
-  ViewController::viewDidDisappear();
-}
-
-void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
-  m_selectableTableView.scrollToCell(0,0);
-  selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
-}
-
-bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
-    app()->dismissModalViewController();
-    return true;
-  }
-  if (event == Ion::Events::Left) {
-    return true;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (m_selectableTableView.selectedRow() < 0 || m_selectableTableView.selectedRow() >= m_scriptNodesCount) {
-      return false;
-    }
-    ScriptNode selectedScriptNode = m_scriptNodes[m_selectableTableView.selectedRow()];
-    insertTextInCaller(selectedScriptNode.name());
-    if (selectedScriptNode.type() == ScriptNode::Type::Function) {
-      insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
-    }
-    m_selectableTableView.deselectTable();
-    app()->dismissModalViewController();
-    return true;
-  }
-  return false;
-}
-
-int VariableBoxController::ContentViewController::numberOfRows() {
-  return m_scriptNodesCount < k_maxScriptNodesCount ? m_scriptNodesCount : k_maxScriptNodesCount;
-}
-
-HighlightCell * VariableBoxController::ContentViewController::reusableCell(int index) {
+HighlightCell * VariableBoxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-int VariableBoxController::ContentViewController::reusableCellCount() {
-  return k_maxNumberOfDisplayedRows;
+bool VariableBoxController::selectLeaf(int rowIndex) {
+  assert(rowIndex >= 0 && rowIndex < m_scriptNodesCount);
+  assert(m_scriptNodesCount <= k_maxScriptNodesCount);
+  m_selectableTableView.deselectTable();
+  ScriptNode selectedScriptNode = m_scriptNodes[rowIndex];
+  insertTextInCaller(selectedScriptNode.name());
+  if (selectedScriptNode.type() == ScriptNode::Type::Function) {
+    insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
+  }
+  app()->dismissModalViewController();
+  return true;
 }
 
-void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
-  myCell->setScriptNode(&m_scriptNodes[index]);
-}
-
-void VariableBoxController::ContentViewController::insertTextInCaller(const char * text) {
+void VariableBoxController::insertTextInCaller(const char * text) {
   int commandBufferMaxSize = strlen(text)+1;
   char commandBuffer[k_maxScriptObjectNameSize];
   assert(commandBufferMaxSize <= k_maxScriptObjectNameSize);
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer, commandBufferMaxSize, true);
-  m_textInputCaller->handleEventWithText(commandBuffer);
+  sender()->handleEventWithText(commandBuffer);
 }
 
-VariableBoxController::VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore) :
-  StackViewController(nullptr, &m_contentViewController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
-  m_contentViewController(this, pythonDelegate, scriptStore)
-{
+void VariableBoxController::addFunctionAtIndex(const char * functionName, int scriptIndex) {
+  if (m_scriptNodesCount < k_maxScriptNodesCount) {
+    m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
+    m_scriptNodesCount++;
+  }
 }
 
-void VariableBoxController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_contentViewController);
-}
-
-void VariableBoxController::setTextInputCaller(TextInput * textInput) {
-  m_contentViewController.setTextInputCaller(textInput);
-}
-
-void VariableBoxController::viewWillAppear() {
-  StackViewController::viewWillAppear();
-  m_contentViewController.reloadData();
-}
-
-void VariableBoxController::viewDidDisappear() {
-  StackViewController::viewDidDisappear();
+void VariableBoxController::addVariableAtIndex(const char * variableName, int scriptIndex) {
+  if (m_scriptNodesCount < k_maxScriptNodesCount) {
+    m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
+    m_scriptNodesCount++;
+  }
 }
 
 }

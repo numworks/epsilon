@@ -1,32 +1,35 @@
 #ifndef ESCHER_TEXT_FIELD_H
 #define ESCHER_TEXT_FIELD_H
 
+#include <escher/editable_field.h>
 #include <escher/text_input.h>
 #include <escher/text_field_delegate.h>
 #include <string.h>
 
-class TextField : public TextInput {
+class TextField : public TextInput, public EditableField {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
     float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
-  void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
+  void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
-  bool isEditing() const;
+  bool isEditing() const override;
   size_t draftTextLength() const;
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
+  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  char XNTChar(char defaultXNTChar) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }
   void scrollToCursor() override;
-  bool textFieldShouldFinishEditing(Ion::Events::Event event) { return m_delegate->textFieldShouldFinishEditing(this, event); }
+  bool shouldFinishEditing(Ion::Events::Event event) override { return m_delegate->textFieldShouldFinishEditing(this, event); }
+  const KDFont * font() const { return m_contentView.font(); }
 protected:
   class ContentView : public TextInput::ContentView {
   public:
@@ -53,6 +56,8 @@ protected:
     KDSize minimalSizeForOptimalDisplay() const override;
     bool removeChar() override;
     bool removeEndOfLine() override;
+    void willModifyTextBuffer();
+    void didModifyTextBuffer();
     /* In some app (ie Calculation), text fields record expression results whose
      * lengths can reach 70 (ie
      * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).
@@ -76,9 +81,8 @@ protected:
   ContentView m_contentView;
 private:
   bool privateHandleEvent(Ion::Events::Event event);
-  TextInputDelegate * delegate() override {
-    return m_delegate;
-  }
+  bool privateHandleMoveEvent(Ion::Events::Event event);
+  virtual void removeWholeText();
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

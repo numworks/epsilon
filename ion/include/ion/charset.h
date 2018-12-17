@@ -27,7 +27,9 @@ enum Charset : char {
   MiddleDot = (char)149,
   AlmostEqual = (char)150,
   Degree = (char)151,
-  Empty = (char)152 // This char is used to be parsed into EmptyExpression.
+  Empty = (char)152, // This char is used to be parsed into EmptyExpression
+  LeftSuperscript = (char)153, // This char is used to parse Power
+  RightSuperscript = (char)154 // This char is used to parse Power
 };
 
 }

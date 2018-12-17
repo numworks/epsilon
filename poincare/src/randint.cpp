@@ -2,6 +2,8 @@
 #include <poincare/complex.h>
 #include <poincare/random.h>
 #include <ion.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 extern "C" {
 #include <assert.h>
@@ -10,8 +12,16 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Randint::s_functionHelper;
+
+int RandintNode::numberOfChildren() const { return Randint::s_functionHelper.numberOfChildren(); }
+
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
+}
+
+int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
 template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
@@ -26,7 +36,5 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);
   return Complex<T>(result);
 }
-
-Randint::Randint() : Expression(TreePool::sharedPool()->createTreeNode<RandintNode>()) {}
 
 }

@@ -6,12 +6,12 @@
 
 namespace Code {
 
-ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, TextFieldDelegate * delegate) :
+ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   HighlightCell(),
   Responder(parentResponder),
   m_textBuffer{0},
   m_promptView(ConsoleController::k_font, nullptr, 0, 0.5),
-  m_textField(this, m_textBuffer, m_textBuffer, TextField::maxBufferSize(), delegate, false, ConsoleController::k_font)
+  m_textField(this, m_textBuffer, m_textBuffer, TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, false, ConsoleController::k_font)
 {
 }
 

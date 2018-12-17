@@ -17,7 +17,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
         MenuController * menu = (MenuController *)context;
         menu->consoleController()->setAutoImport(true);
         menu->stackViewController()->push(menu->consoleController());
-        return;
+        return true;
         }, this), KDFont::LargeFont),
   m_selectableTableView(this, this, this, this),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
@@ -30,10 +30,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
-    m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);
-    m_scriptCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
-    m_scriptCells[i].editableTextCell()->textField()->setAlignment(0.0f, 0.5f);
-    m_scriptCells[i].editableTextCell()->setMargins(0, 0, 0, Metric::HistoryHorizontalMargin);
+    m_scriptCells[i].textField()->setDelegates(nullptr, this);
   }
 }
 
@@ -49,9 +46,9 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
   int selectedRow = m_selectableTableView.selectedRow();
   int selectedColumn = m_selectableTableView.selectedColumn();
   if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
-    TextField * tf = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell())->editableTextCell()->textField();
+    TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
     if (tf->isEditing()) {
-      tf->setEditing(false);
+      tf->setEditing(false, false);
       textFieldDidAbortEditing(tf);
     }
   }
@@ -124,13 +121,11 @@ void MenuController::renameSelectedScript() {
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
-  EvenOddEditableTextCell * myCell = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell());
+  ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
   app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
-  const char * previousText = myCell->editableTextCell()->textField()->text();
-  myCell->editableTextCell()->textField()->setEditing(true);
-  myCell->editableTextCell()->textField()->setText(previousText);
-  myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension));
+  myCell->textField()->setEditing(true, false);
+  myCell->textField()->setCursorLocation(strlen(myCell->textField()->text()));
 }
 
 void MenuController::deleteScript(Script script) {
@@ -152,7 +147,7 @@ void MenuController::openConsoleWithScript(Script script) {
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }
 
-void MenuController::scriptContentEditionDidFinish(){
+void MenuController::scriptContentEditionDidFinish() {
   reloadConsole();
 }
 
@@ -272,8 +267,7 @@ int MenuController::typeAtLocation(int i, int j) {
 
 void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index < m_scriptStore->numberOfScripts());
-  EditableTextCell * editableTextCell = static_cast<EvenOddEditableTextCell *>(cell)->editableTextCell();
-  editableTextCell->textField()->setText(m_scriptStore->scriptAtIndex(index).name());
+  (static_cast<ScriptNameCell *>(cell))->textField()->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
 void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
@@ -292,7 +286,11 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     return true;
   }
   if (event == Ion::Events::Clear && textField->isEditing()) {
-    textField->setText(ScriptStore::k_scriptExtension);
+    constexpr size_t k_bufferSize = 4;
+    char buffer[k_bufferSize] = {'.', 0, 0, 0};
+    assert(k_bufferSize >= 1 + strlen(ScriptStore::k_scriptExtension) + 1);
+    strlcpy(&buffer[1], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension) + 1);
+    textField->setText(buffer);
     textField->setCursorLocation(0);
     return true;
   }
@@ -301,13 +299,25 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
-  char numberedDefaultName[k_defaultScriptNameMaxSize];
-  if (strlen(text) <= strlen(ScriptStore::k_scriptExtension)) {
-    // The user entered an empty name. Use a numbered default script name.
-    numberedDefaultScriptName(numberedDefaultName);
-    newName = const_cast<const char *>(numberedDefaultName);
-  } else {
+  static constexpr int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
+
+  char numberedDefaultName[bufferSize];
+  if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
     newName = text;
+  } else {
+    // The user entered an empty name. Use a numbered default script name.
+    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    int defaultNameLength = strlen(numberedDefaultName);
+    numberedDefaultName[defaultNameLength++] = '.';
+    strlcpy(&numberedDefaultName[defaultNameLength], ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
+    /* If there are already scripts named script1.py, script2.py,... until
+     * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
+     * default name and let the user modify it. */
+    if (!foundDefaultName) {
+      textField->setText(numberedDefaultName);
+      textField->setCursorLocation(defaultNameLength);
+    }
+    newName = const_cast<const char *>(numberedDefaultName);
   }
   Script::ErrorStatus error = Script::nameCompliant(newName) ? m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(newName) : Script::ErrorStatus::NonCompliantName;
   if (error == Script::ErrorStatus::None) {
@@ -336,28 +346,35 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 }
 
 bool MenuController::textFieldDidAbortEditing(TextField * textField) {
-  if (strlen(textField->text()) <= strlen(ScriptStore::k_scriptExtension)) {
+  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+  const char * scriptName = script.fullName();
+  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
-    char numberedDefaultName[k_defaultScriptNameMaxSize];
-    numberedDefaultScriptName(numberedDefaultName);
-    Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(numberedDefaultName);
-    if (error != Script::ErrorStatus::None) {
-      assert(false);
-      /* Because we use the numbered default name, the name should not be
-       * already taken. Plus, the script could be added only if the storage has
-       * enough available space to add a script named 'script99.py' */
+    char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
+    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    if (!foundDefaultName) {
+      // If we did not find a default name, delete the script
+      deleteScript(script);
+      return true;
     }
+    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
+    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
+    /* Because we use the numbered default name, the name should not be
+     * already taken. Plus, the script could be added only if the storage has
+     * enough available space to add a script named 'script99.py' */
+    (void) error; // Silence the "variable unused" warning if assertions are not enabled
     assert(error == Script::ErrorStatus::None);
     updateAddScriptRowDisplay();
   }
+  textField->setText(scriptName);
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   app()->setFirstResponder(&m_selectableTableView);
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 
-bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) {
-  int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
+bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
+  int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing() && textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength) {
     textField->setCursorLocation(textField->draftTextLength() - scriptExtensionLength);
   }
@@ -386,43 +403,6 @@ void MenuController::editScriptAtIndex(int scriptIndex) {
   Script script = m_scriptStore->scriptAtIndex(scriptIndex);
   m_editorController.setScript(script);
   stackViewController()->push(&m_editorController);
-}
-
-void MenuController::numberedDefaultScriptName(char * buffer) {
-  bool foundNewScriptNumber = false;
-  int currentScriptNumber = 1;
-  char newName[k_defaultScriptNameMaxSize];
-  memcpy(newName, ScriptStore::k_defaultScriptName, strlen(ScriptStore::k_defaultScriptName)+1);
-  // We will only name scripts from script1.py to script99.py.
-  while (!foundNewScriptNumber && currentScriptNumber < 100) {
-    // Change the number in the script name.
-    intToText(currentScriptNumber, &newName[strlen(ScriptStore::k_defaultScriptName)-strlen(ScriptStore::k_scriptExtension)]);
-    memcpy(&newName[strlen(newName)], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension)+1);
-    if (m_scriptStore->scriptNamed(const_cast<const char *>(newName)).isNull()) {
-      foundNewScriptNumber = true;
-    }
-    currentScriptNumber++;
-  }
-  if (foundNewScriptNumber) {
-    memcpy(buffer, newName, strlen(newName)+1);
-    return;
-  }
-  memcpy(buffer, ScriptStore::k_defaultScriptName, strlen(ScriptStore::k_defaultScriptName)+1);
-}
-
-void MenuController::intToText(int i, char * buffer) {
-  // We only support integers from 0 to 99
-  // buffer should have the space for three chars.
-  assert(i>=0);
-  assert(i<100);
-  if (i/10 == 0) {
-    buffer[0] = i+'0';
-    buffer[1] = 0;
-    return;
-  }
-  buffer[0] = i/10+'0';
-  buffer[1] = i-10*(i/10)+'0';
-  buffer[2] = 0;
 }
 
 void MenuController::updateAddScriptRowDisplay() {

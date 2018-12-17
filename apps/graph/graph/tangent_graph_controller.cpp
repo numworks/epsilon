@@ -12,7 +12,7 @@ TangentGraphController::TangentGraphController(Responder * parentResponder, Grap
   m_graphView(graphView),
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),
-  m_function(nullptr)
+  m_record()
 {
 }
 
@@ -29,37 +29,38 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->reload();
 }
 
-void TangentGraphController::setFunction(CartesianFunction * function) {
-  m_graphView->selectFunction(function);
-  m_function = function;
+void TangentGraphController::setRecord(Ion::Storage::Record record) {
+  m_graphView->selectRecord(record);
+  m_record = record;
 }
 
 void TangentGraphController::reloadBannerView() {
   m_bannerView->setNumberOfSubviews(6);
-  if (m_function == nullptr) {
+  if (m_record.isNull()) {
     return;
   }
-  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_function, 'x');
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_function, myApp);
+  App * myApp = static_cast<App *>(app());
+  StorageFunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, myApp->functionStore(), StorageCartesianFunctionStore::Symbol());
+  GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, myApp);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
-  double y = m_function->approximateDerivative(m_cursor->x(), myApp->localContext());
+  ExpiringPointer<StorageCartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  double y = function->approximateDerivative(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 4);
 
   legend = "b=";
   legendLength = strlcpy(buffer, legend, bufferSize);
-  y = -y*m_cursor->x()+m_function->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+  y = -y*m_cursor->x()+function->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 5);
 }
 
 bool TangentGraphController::moveCursorHorizontally(int direction) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_function, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  App * myApp = static_cast<App *>(app());
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
 bool TangentGraphController::handleEnter() {

@@ -51,6 +51,7 @@ objs += $(addprefix poincare/src/,\
   complex_argument.o\
   confidence_interval.o\
   conjugate.o\
+  constant.o\
   cosine.o\
   decimal.o\
   derivative.o\
@@ -62,15 +63,13 @@ objs += $(addprefix poincare/src/,\
   equal.o\
   evaluation.o\
   expression.o\
-  expression_lexer.o\
   expression_node.o\
-  expression_parser.o\
   factor.o\
   factorial.o\
   float.o\
   floor.o\
   frac_part.o\
-  global_context.o\
+  function.o\
   great_common_divisor.o\
   hyperbolic_arc_cosine.o\
   hyperbolic_arc_sine.o\
@@ -119,6 +118,7 @@ objs += $(addprefix poincare/src/,\
   subtraction.o\
   sum.o\
   symbol.o\
+  symbol_abstract.o\
   tangent.o\
   tree_handle.o\
   tree_node.o\
@@ -126,6 +126,11 @@ objs += $(addprefix poincare/src/,\
   trigonometry.o\
   undefined.o\
   variable_context.o\
+)
+
+objs += $(addprefix poincare/src/parsing/,\
+  parser.o\
+  tokenizer.o\
 )
 
 tests += $(addprefix poincare/test/,\
@@ -145,6 +150,7 @@ tests += $(addprefix poincare/test/,\
   function.cpp\
   helper.cpp\
   helpers.cpp\
+  infinity.cpp\
   integer.cpp\
   layouts.cpp\
   logarithm.cpp\
@@ -162,10 +168,12 @@ tests += $(addprefix poincare/test/,\
   subtraction.cpp\
   symbol.cpp\
   trigo.cpp\
+  user_variable.cpp\
   vertical_offset_layout.cpp\
 )
 
 test_objs += $(addprefix poincare/test/, tree/helpers.o)
+test_objs += $(addprefix apps/shared/, global_context.o)
 
 #  simplify_utils.cpp\
 
@@ -178,25 +186,3 @@ endif
 ifdef POINCARE_TREE_LOG
 SFLAGS += -DPOINCARE_TREE_LOG=1
 endif
-
-# Even though flex and bison will generate both implementation and headers at
-# once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may
-# call bison or flex twice.
-
-lexer_files = $(addprefix poincare/src/, expression_lexer.cpp expression_lexer.hpp)
-poincare/src/expression_lexer.hpp: poincare/src/expression_lexer.cpp
-poincare/src/expression_lexer.cpp: poincare/src/expression_lexer.l
-	@echo "FLEX    $(lexer_files)"
-	$(Q) flex -P poincare_expression_yy --header-file=poincare/src/expression_lexer.hpp -o poincare/src/expression_lexer.cpp $<
-
-poincare/src/expression_lexer.o: CXXFLAGS += -Wno-deprecated-register -Wno-unused-value -Wno-unused-function
-
-parser_files = $(addprefix poincare/src/, expression_parser.cpp expression_parser.hpp)
-poincare/src/expression_parser.hpp: poincare/src/expression_parser.cpp
-poincare/src/expression_parser.cpp: poincare/src/expression_parser.y
-	@echo "BISON   $(parser_files)"
-	$(Q) bison -d -p poincare_expression_yy -o poincare/src/expression_parser.cpp $<
-
-poincare/src/expression.cpp: $(lexer_files) $(parser_files)
-
-products += $(lexer_files) $(parser_files)

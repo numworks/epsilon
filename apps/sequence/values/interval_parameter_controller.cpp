@@ -5,8 +5,8 @@ using namespace Shared;
 
 namespace Sequence {
 
-IntervalParameterController::IntervalParameterController(Responder * parentResponder, Interval * interval) :
-  Shared::IntervalParameterController(parentResponder, interval)
+IntervalParameterController::IntervalParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval) :
+  Shared::IntervalParameterController(parentResponder, inputEventHandlerDelegate, interval)
 {
 }
 

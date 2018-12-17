@@ -20,7 +20,9 @@ public:
   // Properties
   Type type() const override { return Type::HyperbolicArcCosine; }
 private:
-  const char * name() const override { return "acosh"; }
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   //Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -33,10 +35,13 @@ private:
 
 class HyperbolicArcCosine final : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicArcCosine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcCosineNode>()) {}
   HyperbolicArcCosine(const HyperbolicArcCosineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  explicit HyperbolicArcCosine(Expression operand) : HyperbolicArcCosine() {
-    replaceChildAtIndexInPlace(0, operand);
+  static HyperbolicArcCosine Builder(Expression child) { return HyperbolicArcCosine(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acosh", 1, &UntypedBuilder);
+private:
+  explicit HyperbolicArcCosine(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcCosineNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
 };
 

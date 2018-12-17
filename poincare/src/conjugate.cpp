@@ -7,15 +7,19 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
+
+int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
+
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
-Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Conjugate(this).shallowReduce(context, angleUnit);
 }
 
@@ -23,8 +27,6 @@ template<typename T>
 Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return Complex<T>(std::conj(c));
 }
-
-Conjugate::Conjugate() : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {}
 
 Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {

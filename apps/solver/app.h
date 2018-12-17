@@ -33,7 +33,7 @@ public:
   ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   ViewController * intervalController() { return &m_intervalController; }
   void willBecomeInactive() override;
-  const char * XNT() override;
+  char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   SolutionsController m_solutionsController;

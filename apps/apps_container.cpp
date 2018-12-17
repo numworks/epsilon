@@ -57,7 +57,7 @@ AppsContainer::AppsContainer() :
   m_window(),
   m_emptyBatteryWindow(),
   m_globalContext(),
-  m_variableBoxController(&m_globalContext),
+  m_variableBoxController(),
   m_examPopUpController(this),
 #if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
   m_promptController(sPromptMessages, sPromptColors, 8),
@@ -73,7 +73,20 @@ AppsContainer::AppsContainer() :
   m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+#if __EMSCRIPTEN__
+  /* AppsContainer::poincareCircuitBreaker uses Ion::Keyboard::scan(), which
+   * calls emscripten_sleep. If we set the poincare circuit breaker, we would
+   * need to whitelist all the methods that might be in the call stack when
+   * poincareCircuitBreaker is run. This means either whitelisting all Epsilon
+   * (which makes bigger files to download and slower execution), or
+   * whitelisting all the symbols (that's a big amount of symbols to find and
+   * quite painy to maintain).
+   * We just remove the circuit breaker for now.
+   * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
+#else
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
+#endif
+  Ion::Storage::sharedStorage()->setDelegate(this);
 }
 
 bool AppsContainer::poincareCircuitBreaker() {
@@ -94,6 +107,9 @@ App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
 }
 
 void AppsContainer::reset() {
+  // Empty storage (delete functions, variables, python scripts)
+  Ion::Storage::sharedStorage()->destroyAllRecords();
+  // Empty clipboard
   Clipboard::sharedClipboard()->reset();
   for (int i = 0; i < numberOfApps(); i++) {
     appSnapshotAtIndex(i)->reset();
@@ -213,28 +229,45 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   refreshPreferences();
-#if EPSILON_ONBOARDING_APP
-  switchTo(onBoardingAppSnapshot());
-#else
-  if (numberOfApps() == 2) {
-    switchTo(appSnapshotAtIndex(1));
-  } else {
-    switchTo(appSnapshotAtIndex(0));
-  }
-#endif
 
   /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
    * called. During a longjump, the stack pointer is set to this stored stack
    * pointer value, so the method where we call setjump must remain in the call
    * tree for the jump to work. */
   Poincare::ExceptionCheckpoint ecp;
-  if (!ExceptionRun(ecp)) {
+
+  if (ExceptionRun(ecp)) {
+    /* Normal execution. The exception checkpoint must be created before
+     * switching to the first app, because the first app might create nodes on
+     * the pool. */
+#if EPSILON_ONBOARDING_APP
+    switchTo(onBoardingAppSnapshot());
+#else
+    if (numberOfApps() == 2) {
+      switchTo(appSnapshotAtIndex(1));
+    } else {
+      switchTo(appSnapshotAtIndex(0));
+    }
+#endif
+  } else {
+    // Exception
     if (activeApp() != nullptr) {
+      /* The app models can reference layouts or expressions that have been
+       * destroyed from the pool. To avoid using them before packing the app
+       * (in App::willBecomeInactive for instance), we tidy them early on. */
+      activeApp()->snapshot()->tidy();
+      /* When an app encoutered an exception due to a full pool, the next time
+       * the user enters the app, the same exception could happen again which
+       * would prevent from reopening the app. To avoid being stuck outside the
+       * app causing the issue, we reset its snapshot when leaving it due to
+       * exception. For instance, the calculation app can encounter an
+       * exception when displaying too many huge layouts, if we don't clean the
+       * history here, we will be stuck outside the calculation app. */
       activeApp()->snapshot()->reset();
     }
     switchTo(appSnapshotAtIndex(0));
     Poincare::Tidy();
-    activeApp()->displayWarning(I18n::Message::AppMemoryFull, true);
+    activeApp()->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
   }
   Container::run();
   switchTo(nullptr);
@@ -290,6 +323,18 @@ void AppsContainer::redrawWindow() {
 void AppsContainer::examDeactivatingPopUpIsDismissed() {
   if (Ion::USB::isPlugged()) {
     Ion::USB::enable();
+  }
+}
+
+void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {
+  if (activeApp()) {
+    activeApp()->snapshot()->storageDidChangeForRecord(record);
+  }
+}
+
+void AppsContainer::storageIsFull() {
+  if (activeApp()) {
+    activeApp()->displayWarning(I18n::Message::StorageMemoryFull1, I18n::Message::StorageMemoryFull2, true);
   }
 }
 

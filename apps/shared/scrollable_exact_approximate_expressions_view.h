@@ -7,21 +7,21 @@ namespace Shared {
 
 class ScrollableExactApproximateExpressionsView : public ScrollableView, public ScrollViewDataSource {
 public:
-  enum class SubviewType {
-    ExactOutput,
-    ApproximativeOutput
+  enum class SubviewPosition {
+    Left,
+    Right
   };
   ScrollableExactApproximateExpressionsView(Responder * parentResponder);
   ::EvenOddCell * evenOddCell() {
     return &m_contentCell;
   }
-  void setLayouts(Poincare::Layout approximatelayout, Poincare::Layout exactLayout);
+  void setLayouts(Poincare::Layout rightlayout, Poincare::Layout leftLayout);
   void setEqualMessage(I18n::Message equalSignMessage);
-  SubviewType selectedSubviewType() {
-    return m_contentCell.selectedSubviewType();
+  SubviewPosition selectedSubviewPosition() {
+    return m_contentCell.selectedSubviewPosition();
   }
-  void setSelectedSubviewType(SubviewType subviewType) {
-    m_contentCell.setSelectedSubviewType(subviewType);
+  void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
+    m_contentCell.setSelectedSubviewPosition(subviewPosition);
   }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -37,29 +37,29 @@ private:
     void setHighlighted(bool highlight) override;
     void reloadCell() override;
     KDSize minimalSizeForOptimalDisplay() const override;
-    ExpressionView * approximateExpressionView() {
-      return &m_approximateExpressionView;
+    ExpressionView * rightExpressionView() {
+      return &m_rightExpressionView;
     }
-    ExpressionView * exactExpressionView() {
-      return &m_exactExpressionView;
+    ExpressionView * leftExpressionView() {
+      return &m_leftExpressionView;
     }
     MessageTextView * approximateSign() {
       return &m_approximateSign;
     }
-    SubviewType selectedSubviewType() {
-      return m_selectedSubviewType;
+    SubviewPosition selectedSubviewPosition() {
+      return m_selectedSubviewPosition;
     }
-    void setSelectedSubviewType(SubviewType subviewType);
+    void setSelectedSubviewPosition(SubviewPosition subviewPosition);
     void layoutSubviews() override;
     int numberOfSubviews() const override;
     Poincare::Layout layout() const override;
   private:
     View * subviewAtIndex(int index) override;
     constexpr static KDCoordinate k_digitHorizontalMargin = 10;
-    ExpressionView m_approximateExpressionView;
+    ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;
-    ExpressionView m_exactExpressionView;
-    SubviewType m_selectedSubviewType;
+    ExpressionView m_leftExpressionView;
+    SubviewPosition m_selectedSubviewPosition;
 };
   ContentCell m_contentCell;
 };

@@ -35,7 +35,7 @@ public:
   };
   InputViewController * inputViewController() override;
   SequenceContext * localContext() override;
-  const char * XNT() override;
+  char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   SequenceContext m_sequenceContext;

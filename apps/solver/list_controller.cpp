@@ -1,5 +1,6 @@
 #include "list_controller.h"
 #include "app.h"
+#include <poincare/char_layout.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -15,6 +16,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     list->resolveEquations();
+    return true;
   }, this), KDFont::LargeFont, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
@@ -119,8 +121,15 @@ bool textRepresentsAnEquality(const char * text) {
   return false;
 }
 
+bool layoutRepresentsAnEquality(Poincare::Layout l) {
+  Poincare::Layout match = l.recursivelyMatches(
+      [](Poincare::Layout layout) {
+      return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '='; });
+  return !match.isUninitialized();
+}
+
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
+  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!textRepresentsAnEquality(textField->text())) {
       textField->handleEvent(Ion::Events::ShiftRight);
       textField->handleEventWithText("=0");
@@ -137,14 +146,11 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
-    char buffer[TextField::maxBufferSize()];
-    layoutField->serialize(buffer, TextField::maxBufferSize());
-    if (!textRepresentsAnEquality(buffer)) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
+    if (!layoutRepresentsAnEquality(layoutField->layout())) {
       layoutField->handleEvent(Ion::Events::ShiftRight);
       layoutField->handleEventWithText("=0");
-      layoutField->serialize(buffer, TextField::maxBufferSize());
-      if (!textRepresentsAnEquality(buffer)) {
+      if (!layoutRepresentsAnEquality(layoutField->layout())) {
         app()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }

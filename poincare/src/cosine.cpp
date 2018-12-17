@@ -1,10 +1,15 @@
 #include <poincare/cosine.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
 namespace Poincare {
+
+constexpr Expression::FunctionHelper Cosine::s_functionHelper;
+
+int CosineNode::numberOfChildren() const { return Cosine::s_functionHelper.numberOfChildren(); }
 
 float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
@@ -18,16 +23,18 @@ Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::An
 }
 
 Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
-Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Cosine(this).shallowReduce(context, angleUnit);
+int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
-Cosine::Cosine() : Expression(TreePool::sharedPool()->createTreeNode<CosineNode>()) {}
+Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Cosine(this).shallowReduce(context, angleUnit, target);
+}
 
-Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -40,7 +47,7 @@ Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angle
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
+  return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit, target);
 }
 
 }

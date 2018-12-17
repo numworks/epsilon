@@ -1,5 +1,5 @@
 #include <poincare/tree_handle.h>
-#include <poincare/ghost_reference.h>
+#include <poincare/ghost.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif
@@ -69,7 +69,7 @@ void TreeHandle::replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChi
 }
 
 void TreeHandle::replaceChildWithGhostInPlace(TreeHandle t) {
-  GhostReference ghost;
+  Ghost ghost;
   return replaceChildInPlace(t, ghost);
 }
 

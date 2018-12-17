@@ -8,6 +8,9 @@ SuspendTimer::SuspendTimer(AppsContainer * container) :
 }
 
 bool SuspendTimer::fire() {
-  m_container->suspend();
+  /* We could just call m_container->suspend(), but we want to notify all
+   * responders in the responder chain that the calculator will be switched off,
+   * so we use an event to switch off the calculator. */
+  m_container->dispatchEvent(Ion::Events::OnOff);
   return false;
 }

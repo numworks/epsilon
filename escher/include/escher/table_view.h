@@ -12,6 +12,10 @@ public:
 
   void setHorizontalCellOverlap(KDCoordinate o) { m_contentView.setHorizontalCellOverlap(o); }
   void setVerticalCellOverlap(KDCoordinate o) { m_contentView.setVerticalCellOverlap(o); }
+  int firstDisplayedRowIndex() const { return m_contentView.rowsScrollingOffset(); }
+  int firstDisplayedColumnIndex() const { return m_contentView.columnsScrollingOffset(); }
+  int numberOfDisplayableRows() const { return m_contentView.numberOfDisplayableRows(); }
+  int numberOfDisplayableColumns() const { return m_contentView.numberOfDisplayableColumns(); }
 
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
@@ -36,6 +40,10 @@ protected:
     HighlightCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
     TableViewDataSource * dataSource();
+    int rowsScrollingOffset() const;
+    int columnsScrollingOffset() const;
+    int numberOfDisplayableRows() const;
+    int numberOfDisplayableColumns() const;
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;
@@ -57,10 +65,6 @@ protected:
     int absoluteRowNumberFromSubviewIndex(int index) const;
     int numberOfFullyDisplayableRows() const;
     int numberOfFullyDisplayableColumns() const;
-    int numberOfDisplayableRows() const;
-    int numberOfDisplayableColumns() const;
-    int rowsScrollingOffset() const;
-    int columnsScrollingOffset() const;
     int typeOfSubviewAtIndex(int index) const;
     /* This method transform a index (of subview for instance) into an index
      * refering to the set of cells of type "type". */

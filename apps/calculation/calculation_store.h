@@ -7,7 +7,7 @@ namespace Calculation {
 
 class CalculationStore {
 public:
-  CalculationStore();
+  CalculationStore() : m_startIndex(0) {}
   Calculation * calculationAtIndex(int i);
   Calculation * push(const char * text, Poincare::Context * context);
   void deleteCalculationAtIndex(int i);

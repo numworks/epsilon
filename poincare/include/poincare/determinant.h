@@ -1,7 +1,6 @@
 #ifndef POINCARE_DETERMINANT_H
 #define POINCARE_DETERMINANT_H
 
-#include <poincare/serialization_helper.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -11,7 +10,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(DeterminantNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Determinant";
@@ -23,12 +22,9 @@ private:
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Serialization */
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "det"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -38,13 +34,16 @@ private:
 
 class Determinant final : public Expression {
 public:
-  Determinant();
   Determinant(const DeterminantNode * n) : Expression(n) {}
-  explicit Determinant(Expression operand) : Determinant() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static Determinant Builder(Expression child) { return Determinant(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  explicit Determinant(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<DeterminantNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

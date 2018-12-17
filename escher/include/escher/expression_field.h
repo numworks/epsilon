@@ -9,7 +9,7 @@
 
 class ExpressionField : public Responder, public View {
 public:
-  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
@@ -24,7 +24,7 @@ public:
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
 
   /* View */
   int numberOfSubviews() const override { return 1; }

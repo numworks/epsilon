@@ -1,10 +1,11 @@
 #include <poincare/parenthesis.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-int ParenthesisNode::polynomialDegree(char symbolName) const {
-  return childAtIndex(0)->polynomialDegree(symbolName);
+int ParenthesisNode::polynomialDegree(Context & context, const char * symbolName) const {
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
 Layout ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -15,7 +16,7 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-Expression ParenthesisNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ParenthesisNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Parenthesis(this).shallowReduce(context, angleUnit);
 }
 

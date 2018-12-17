@@ -1,37 +1,54 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper ArcTangent::s_functionHelper;
+
+int ArcTangentNode::numberOfChildren() const { return ArcTangent::s_functionHelper.numberOfChildren(); }
+
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.name());
+}
+
+int ArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.name());
 }
 
 template<typename T>
 Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  std::complex<T> result = std::atan(c);
-  /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
-   * on this cut. We followed the convention chosen by the lib c++ of llvm on
-   * ]-i+0, -i*inf+0[ (warning: atan takes the other side of the cut values on
-   * ]-i+0, -i*inf+0[) and choose the values on ]-inf*i, -i[ to comply with
-   * atan(-x) = -atan(x) and sin(arctan(x)) = x/sqrt(1+x^2). */
-  if (c.real() == 0 && c.imag() < -1) {
-    result.real(-result.real()); // other side of the cut
+  std::complex<T> result;
+  if (c.imag() == 0 && std::fabs(c.real()) <= 1.0) {
+    /* atan: R -> R
+     * In these cases we rather use std::atan(double) because atan on complexes
+     * is not as precise as atan on double in std library. For instance,
+     * - atan(complex<double>(0.01,0.0) = complex(9.9996666866652E-3,5.5511151231258E-17)
+     * - atan(0.03) = 9.9996666866652E-3 */
+    result = std::atan(c.real());
+  } else {
+    result = std::atan(c);
+    /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
+     * on this cut. We followed the convention chosen by the lib c++ of llvm on
+     * ]-i+0, -i*inf+0[ (warning: atan takes the other side of the cut values on
+     * ]-i+0, -i*inf+0[) and choose the values on ]-inf*i, -i[ to comply with
+     * atan(-x) = -atan(x) and sin(arctan(x)) = x/sqrt(1+x^2). */
+    if (c.real() == 0 && c.imag() < -1) {
+      result.real(-result.real()); // other side of the cut
+    }
   }
   result = Trigonometry::RoundToMeaningfulDigits(result, c);
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ArcTangent(this).shallowReduce(context, angleUnit);
+Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ArcTangent(this).shallowReduce(context, angleUnit, target);
 }
 
-ArcTangent::ArcTangent() : Expression(TreePool::sharedPool()->createTreeNode<ArcTangentNode>()) {}
-
-Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -43,7 +60,7 @@ Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit a
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit);
+  return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit, target);
 }
 
 }

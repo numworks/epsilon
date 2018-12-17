@@ -27,6 +27,20 @@ void RationalNode::setDigits(const native_uint_t * numeratorDigits, uint8_t nume
   }
 }
 
+void RationalNode::initToMatchSize(size_t goalSize) {
+  assert(goalSize != sizeof(RationalNode));
+  int digitsSize = goalSize - sizeof(RationalNode);
+  assert(digitsSize%sizeof(native_uint_t) == 0);
+  /* We are initing the Rational to match a specific size. The built rational
+   * is dummy. However, we cannot assign to m_numberOfDigitsNumerator (or
+   * m_numberOfDigitsDenominator) values that are aboce k_maxNumberOfDigits.
+   * To prevent that, we evenly separe digits between numerator and denominator. */
+  size_t numberOfDigits = digitsSize/sizeof(native_uint_t);
+  m_numberOfDigitsNumerator = numberOfDigits/2;
+  m_numberOfDigitsDenominator = numberOfDigits-m_numberOfDigitsNumerator;
+  assert(size() == goalSize);
+}
+
 Integer RationalNode::signedNumerator() const {
   return Integer::BuildInteger((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative);
 }
@@ -41,7 +55,7 @@ Integer RationalNode::denominator() const {
 
 // Tree Node
 
-static inline size_t RationalSize(uint8_t numeratorNumberOfDigits, uint8_t denominatorNumberOfDigits) {
+static size_t RationalSize(uint8_t numeratorNumberOfDigits, uint8_t denominatorNumberOfDigits) {
   uint8_t realNumeratorSize = numeratorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : numeratorNumberOfDigits;
   uint8_t realDenominatorSize = denominatorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : denominatorNumberOfDigits;
   return sizeof(RationalNode) + sizeof(native_uint_t)*(realNumeratorSize + realDenominatorSize);
@@ -129,7 +143,7 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 
 // Simplification
 
-Expression RationalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression RationalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Rational(this).shallowReduce(context, angleUnit);
 }
 

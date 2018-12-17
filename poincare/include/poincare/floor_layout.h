@@ -2,6 +2,7 @@
 #define POINCARE_FLOOR_LAYOUT_NODE_H
 
 #include <poincare/bracket_pair_layout.h>
+#include <poincare/floor.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 
@@ -11,7 +12,7 @@ class FloorLayoutNode final : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "floor");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.name());
   }
 
   // TreeNode

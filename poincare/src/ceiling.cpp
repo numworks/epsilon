@@ -1,4 +1,5 @@
 #include <poincare/ceiling.h>
+#include <poincare/constant.h>
 #include <poincare/ceiling_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -10,12 +11,16 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Ceiling::s_functionHelper;
+
+int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
+
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return CeilingLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.name());
 }
 
 template<typename T>
@@ -26,11 +31,9 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Ceiling(this).shallowReduce(context, angleUnit);
 }
-
-Ceiling::Ceiling() : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {}
 
 Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
@@ -45,13 +48,13 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.type() == ExpressionNode::Type::Symbol) {
-    Symbol s = static_cast<Symbol&>(c);
+  if (c.type() == ExpressionNode::Type::Constant) {
+    Constant s = static_cast<Constant&>(c);
     Expression result;
-    if (s.name() == Ion::Charset::SmallPi) {
+    if (s.isPi()) {
       result = Rational(4);
     }
-    if (s.name() == Ion::Charset::Exponential) {
+    if (s.isExponential()) {
       result = Rational(3);
     }
     if (!result.isUninitialized()) {

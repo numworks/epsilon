@@ -9,14 +9,15 @@ using namespace Shared;
 
 namespace Sequence {
 
-ListParameterController::ListParameterController(ListController * listController, SequenceStore * sequenceStore) :
+ListParameterController::ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * listController, SequenceStore * sequenceStore) :
   Shared::ListParameterController(listController, sequenceStore, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
-  m_initialRankCell(&m_selectableTableView, this, m_draftTextBuffer, I18n::Message::FirstTermIndex),
+  m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer, I18n::Message::FirstTermIndex),
   m_typeParameterController(this, sequenceStore, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin),
   m_sequence(nullptr)
 {
+  static_cast<ExpressionView *>(m_typeCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 const char * ListParameterController::title() {
@@ -112,7 +113,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
       return;
     }
     char buffer[Sequence::k_initialRankNumberOfDigits+1];
-    Integer(m_sequence->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
+    Poincare::Integer(m_sequence->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
     myCell->setAccessoryText(buffer);
   }
 }
@@ -158,7 +159,9 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
   if (previousSelectedCellY == 1) {
 #endif
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
+    if (myCell) {
+      myCell->setEditing(false);
+    }
     app()->setFirstResponder(&m_selectableTableView);
   }
 #if FUNCTION_COLOR_CHOICE

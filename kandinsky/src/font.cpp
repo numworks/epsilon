@@ -33,6 +33,15 @@ void KDFont::fetchGreyscaleGlyphForChar(char c, uint8_t * greyscaleBuffer) const
 }
 
 void KDFont::fetchGlyphForChar(char c, const KDFont::RenderPalette * renderPalette, KDColor * pixelBuffer) const {
+  int pixelCount = m_glyphSize.width() * m_glyphSize.height() - 1;
+  int charIndex = signedCharAsIndex(c);
+  if (charIndex < 0 || charIndex >= k_numberOfGlyphs) {
+    // There is no data for this glyph
+    for (int i = 0; i < pixelCount; i++) {
+      pixelBuffer[i] = KDColorBlack;
+    }
+    return;
+  }
   /* Since a greyscale value is smaller than a color value (see assertion), we
    * can store the temporary greyscale values in the output pixel buffer.
    * What's great is that now, if we fill the pixel buffer right-to-left with
@@ -44,7 +53,7 @@ void KDFont::fetchGlyphForChar(char c, const KDFont::RenderPalette * renderPalet
   fetchGreyscaleGlyphForChar(c, greyscaleBuffer);
 
   uint8_t mask = (0xFF >> (8-k_bitsPerPixel));
-  int pixelIndex = m_glyphSize.width() * m_glyphSize.height() - 1; // Let's start at the final pixel
+  int pixelIndex = pixelCount; // Let's start at the final pixel
   int greyscaleByteIndex = pixelIndex * k_bitsPerPixel / 8;
   while (pixelIndex >= 0) {
     assert(greyscaleByteIndex == pixelIndex * k_bitsPerPixel / 8);

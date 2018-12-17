@@ -1,120 +1,84 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/expression.h>
+#include <poincare/symbol_abstract.h>
 
 namespace Poincare {
 
-class SymbolNode final : public ExpressionNode {
-  friend class Store;
+class SymbolNode final : public SymbolAbstractNode {
 public:
-  SymbolNode() : m_name(0) {}
-
-
-  void setName(const char name) { m_name = name; }
-  char name() const { return m_name; }
+  const char * name() const override { return m_name; }
 
   // TreeNode
-  size_t size() const override { return sizeof(SymbolNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Symbol";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
-    stream << " name=\"" << m_name << "\"";
-  }
 #endif
 
   // Expression Properties
   Type type() const override { return Type::Symbol; }
-  Sign sign() const override;
-  Expression replaceSymbolWithExpression(char symbol, Expression & expression) override;
-  int polynomialDegree(char symbolName) const override;
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
-  int getVariables(isVariableTest isVariable, char * variables) const override;
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
+  int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
-  /* Comparison */
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-
-/* Layout */
+  /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  bool hasAnExactRepresentation(Context & context) const;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReplaceReplaceableSymbols(Context & context) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 
 private:
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  char m_name[0]; // MUST be the last member variable
 
-  char m_name;
+  size_t nodeSize() const override { return sizeof(SymbolNode); }
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Symbol final : public Expression {
+class Symbol final : public SymbolAbstract {
   friend class Expression;
   friend class Store;
+  friend class SymbolNode;
 public:
+  static constexpr int k_ansLength = 3;
+  static constexpr char k_ans[k_ansLength+1] = "ans";
+  static constexpr char k_unknownXReadableChar = 'x';
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
      * characters but events as 'end of text', 'backspace'... */
-    Ans = 1,
-    un = 2,
-    un1 = 3,
-    un2 = 4,
-    vn = 5,
-    vn1 = 6,
-    vn2 = 7,
-    M0 = 8,
-    M1 = 9,
-    M2,
-    M3,
-    M4,
-    M5,
-    M6,
-    M7,
-    M8,
-    M9 = 17,
-    V1,
-    N1,
-    V2,
-    N2,
-    V3,
-    N3 = 23,
-    X1 = 24,
-    Y1,
-    X2,
-    Y2,
-    X3,
-    Y3 = 29
+    UnknownX = 1,
   };
-  Symbol(const char name = 0) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
-    node()->setName(name);
+  Symbol(const char * name, int length);
+  Symbol(char name);
+  Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
+  static Symbol Ans() { return Symbol(k_ans, k_ansLength); }
+  static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
+    // create an expression only if it is not in the context or defined as a symbol
+    Symbol s(name, length);
+    if (SymbolAbstract::ValidInContext(s, context)) {
+      return s;
+    }
+    return Expression();
   }
-  Symbol(const SymbolNode * node) : Expression(node) {}
-
   // Symbol properties
-  static const char * textForSpecialSymbols(char name);
-  static SpecialSymbols matrixSymbol(char index);
-  static bool isMatrixSymbol(char c);
-  static bool isScalarSymbol(char c);
-  static bool isVariableSymbol(char c);
-  static bool isSeriesSymbol(char c);
-  static bool isRegressionSymbol(char c);
-  static bool isApproximate(char c, Context & context);
+  bool isSystemSymbol() const { return name()[0] == SpecialSymbols::UnknownX && name()[1] == 0; }
+  static bool isSeriesSymbol(const char * c);
+  static bool isRegressionSymbol(const char * c);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-  Expression replaceSymbolWithExpression(char symbol, Expression & expression);
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
-
-  // Symbol
-  char name() const { return node()->name(); }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
+  Expression shallowReplaceReplaceableSymbols(Context & context);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

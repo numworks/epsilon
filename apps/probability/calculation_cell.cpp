@@ -5,9 +5,9 @@
 
 namespace Probability {
 
-CalculationCell::CalculationCell(Responder * parentResponder, char * draftTextBuffer, TextFieldDelegate * textFieldDelegate) :
+CalculationCell::CalculationCell(Responder * parentResponder, char * draftTextBuffer, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   m_text(KDFont::LargeFont, I18n::Message::Default, 0.5f, 0.5f),
-  m_calculation(parentResponder, textFieldDelegate, draftTextBuffer),
+  m_calculation(parentResponder, inputEventHandlerDelegate, textFieldDelegate, draftTextBuffer),
   m_isResponder(true)
 {
 }

@@ -1,9 +1,9 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -11,16 +11,22 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper ConfidenceInterval::s_functionHelper;
+
+constexpr Expression::FunctionHelper SimplePredictionInterval::s_functionHelper;
+
+int ConfidenceIntervalNode::numberOfChildren() const { return ConfidenceInterval::s_functionHelper.numberOfChildren(); }
+
 Layout ConfidenceIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
 int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ConfidenceInterval(this).shallowReduce(context, angleUnit);
+Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ConfidenceInterval(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T>
@@ -38,9 +44,15 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>(operands, 1, 2);
 }
 
-ConfidenceInterval::ConfidenceInterval() : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {}
+Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(SimplePredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
+}
 
-Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
+}
+
+Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -82,7 +94,7 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.reduceChildren(context, angleUnit);
+  matrix.deepReduceChildren(context, angleUnit, target);
   return matrix;
 }
 

@@ -12,7 +12,7 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),
   m_cursor(cursor),
-  m_function(nullptr),
+  m_record(),
   m_defaultBannerView(KDFont::SmallFont, defaultMessage, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_isActive(false)
 {
@@ -23,7 +23,7 @@ View * CalculationGraphController::view() {
 }
 
 void CalculationGraphController::viewWillAppear() {
-  assert(m_function != nullptr);
+  assert(!m_record.isNull());
   Expression::Coordinate2D pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
   if (std::isnan(pointOfInterest.abscissa)) {
     m_isActive = false;
@@ -56,14 +56,14 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void CalculationGraphController::setFunction(CartesianFunction * function) {
-  m_graphView->selectFunction(function);
-  m_function = function;
+void CalculationGraphController::setRecord(Ion::Storage::Record record) {
+  m_graphView->selectRecord(record);
+  m_record = record;
 }
 
 void CalculationGraphController::reloadBannerView() {
   m_bannerView->setNumberOfSubviews(2);
-  reloadBannerViewForCursorOnFunction(m_cursor, m_function, 'x');
+  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), StorageCartesianFunctionStore::Symbol());
 }
 
 bool CalculationGraphController::moveCursor(int direction) {
@@ -77,11 +77,16 @@ bool CalculationGraphController::moveCursor(int direction) {
 }
 
 Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  App * myApp = static_cast<App *>(app());
   double step = m_graphRange->xGridUnit()/10.0;
   step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
   return computeNewPointOfInterest(start, step, max, myApp->localContext());
+}
+
+StorageCartesianFunctionStore * CalculationGraphController::functionStore() const {
+  App * a = static_cast<App *>(app());
+  return a->functionStore();
 }
 
 }

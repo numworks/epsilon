@@ -50,10 +50,11 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     ExamPopUpController * controller = (ExamPopUpController *)context;
     Container * container = (Container *)controller->app()->container();
     container->activeApp()->dismissModalViewController();
+    return true;
   }, parentResponder), KDFont::SmallFont),
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
-    GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Desactivate;
+    GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Deactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
     AppsContainer * container = (AppsContainer *)controller->app()->container();
     if (controller->isActivatingExamMode()) {
@@ -65,6 +66,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     }
     container->refreshPreferences();
     container->activeApp()->dismissModalViewController();
+    return true;
   }, parentResponder), KDFont::SmallFont),
   m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
   m_messageTextView1(KDFont::SmallFont, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),

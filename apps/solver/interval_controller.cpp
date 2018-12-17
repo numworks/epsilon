@@ -41,7 +41,7 @@ void IntervalController::ContentView::layoutSubviews() {
 
 /* IntervalController Controller */
 
-IntervalController::IntervalController(Responder * parentResponder, EquationStore * equationStore) :
+IntervalController::IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore) :
   FloatParameterController(parentResponder),
   m_contentView(&m_selectableTableView),
   m_intervalCell{},
@@ -51,7 +51,7 @@ IntervalController::IntervalController(Responder * parentResponder, EquationStor
   m_okButton.setMessage(I18n::Message::ResolveEquation);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i].setParentResponder(&m_selectableTableView);
-    m_intervalCell[i].textField()->setDelegate(this);
+    m_intervalCell[i].textField()->setDelegates(inputEventHandlerDelegate, this);
     m_intervalCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }

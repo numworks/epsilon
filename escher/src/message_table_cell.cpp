@@ -21,7 +21,6 @@ void MessageTableCell::setHighlighted(bool highlight) {
 void MessageTableCell::setMessage(I18n::Message text) {
   m_messageTextView.setMessage(text);
   layoutSubviews();
-  markRectAsDirty(bounds());
 }
 
 void MessageTableCell::setTextColor(KDColor color) {

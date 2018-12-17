@@ -13,7 +13,6 @@ public:
   virtual bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) { return false; }
   virtual bool layoutFieldDidAbortEditing(LayoutField * layoutField) { return false; }
   virtual void layoutFieldDidChangeSize(LayoutField * layoutField) {}
-  virtual Toolbox * toolboxForLayoutField(LayoutField * layoutField) = 0;
 };
 
 #endif

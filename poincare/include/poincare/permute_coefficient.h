@@ -1,8 +1,6 @@
 #ifndef POINCARE_PERMUTE_COEFFICIENT_H
 #define POINCARE_PERMUTE_COEFFICIENT_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
 
@@ -13,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(PermuteCoefficientNode); }
-  int numberOfChildren() const override { return 2; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "PermuteCoefficient";
@@ -27,12 +25,9 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "permute"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -41,16 +36,18 @@ private:
 
 class PermuteCoefficient final : public Expression {
 public:
-  PermuteCoefficient();
   PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}
-  PermuteCoefficient(Expression child1, Expression child2) : PermuteCoefficient() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
+  static PermuteCoefficient Builder(Expression child0, Expression child1) { return PermuteCoefficient(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 private:
+  PermuteCoefficient(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<PermuteCoefficientNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
   constexpr static int k_maxNValue = 100;
 };
 

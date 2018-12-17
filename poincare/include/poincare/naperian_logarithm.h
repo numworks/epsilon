@@ -3,8 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -12,7 +10,7 @@ class NaperianLogarithmNode final : public ExpressionNode  {
 public:
   // TreeNode
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "NaperianLogarithm";
@@ -24,15 +22,10 @@ public:
 
 private:
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  static const char * name() { return "ln"; }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
     /* ln has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -50,12 +43,16 @@ private:
 
 class NaperianLogarithm final : public Expression {
 public:
-  NaperianLogarithm();
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
-  explicit NaperianLogarithm(Expression operand) : NaperianLogarithm() {
-    replaceChildAtIndexInPlace(0, operand);
+  static NaperianLogarithm Builder(Expression child) { return NaperianLogarithm(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, &UntypedBuilder);
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+private:
+  explicit NaperianLogarithm(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

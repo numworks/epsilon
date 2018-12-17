@@ -6,6 +6,7 @@
 #include "../sequence_store.h"
 #include "../../shared/function_expression_cell.h"
 #include "../../shared/function_list_controller.h"
+#include "../../shared/input_event_handler_delegate.h"
 #include "../../shared/layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
@@ -14,25 +15,25 @@
 
 namespace Sequence {
 
-class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::FunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
   int numberOfExpressionRows() override;
   KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override;
-  Toolbox * toolboxForLayoutField(LayoutField * layoutField) override;
+  Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
   void selectPreviousNewSequenceCell();
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
-  Toolbox * toolboxForSender(Responder * sender);
+  Toolbox * toolboxForSender(InputEventHandler * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
+  Shared::InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() override;
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
-  HighlightCell * titleCells(int index) override;
+  Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;

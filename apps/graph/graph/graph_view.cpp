@@ -5,9 +5,9 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphView::GraphView(CartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
+GraphView::GraphView(StorageCartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
-  FunctionGraphView(graphRange, cursor, bannerView, cursorView),
+  StorageFunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),
   m_tangent(false)
 {
@@ -18,31 +18,32 @@ void GraphView::reload() {
     KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height()-m_bannerView->bounds().height()));
     markRectAsDirty(dirtyZone);
   }
-  return FunctionGraphView::reload();
+  return StorageFunctionGraphView::reload();
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  FunctionGraphView::drawRect(ctx, rect);
+  StorageFunctionGraphView::drawRect(ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
-    CartesianFunction * f = m_functionStore->activeFunctionAtIndex(i);
+    Ion::Storage::Record record = m_functionStore->activeRecordAtIndex(i);
+    ExpiringPointer<StorageCartesianFunction> f = m_functionStore->modelForRecord(record);;
 
     /* Draw function (color the area under curve of the selected function) */
-    if (f == m_selectedFunction) {
+    if (record == m_selectedRecord) {
       drawCurve(ctx, rect, [](float t, void * model, void * context) {
-        CartesianFunction * f = (CartesianFunction *)model;
+        StorageCartesianFunction * f = (StorageCartesianFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
         return f->evaluateAtAbscissa(t, c);
-      }, f, context(), f->color(), true, m_highlightedStart, m_highlightedEnd);
+      }, f.operator->(), context(), f->color(), true, m_highlightedStart, m_highlightedEnd);
     } else {
       drawCurve(ctx, rect, [](float t, void * model, void * context) {
-        CartesianFunction * f = (CartesianFunction *)model;
+        StorageCartesianFunction * f = (StorageCartesianFunction *)model;
         Poincare::Context * c = (Poincare::Context *)context;
         return f->evaluateAtAbscissa(t, c);
-      }, f, context(), f->color());
+      }, f.operator->(), context(), f->color());
     }
 
     /* Draw tangent */
-    if (m_tangent && f == m_selectedFunction) {
+    if (m_tangent && record == m_selectedRecord) {
       float tangentParameter[2];
       tangentParameter[0] = f->approximateDerivative(m_curveViewCursor->x(), context());
       tangentParameter[1] = -tangentParameter[0]*m_curveViewCursor->x()+f->evaluateAtAbscissa(m_curveViewCursor->x(), context());

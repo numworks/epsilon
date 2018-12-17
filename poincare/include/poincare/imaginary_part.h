@@ -11,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ImaginaryPartNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "ImaginaryPart";
@@ -23,9 +23,9 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;  const char * name() const { return "im"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
     return Complex<T>(std::imag(c));
@@ -40,13 +40,16 @@ private:
 
 class ImaginaryPart final : public Expression {
 public:
-  ImaginaryPart();
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
-  explicit ImaginaryPart(Expression operand) : ImaginaryPart() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static ImaginaryPart Builder(Expression child) { return ImaginaryPart(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  explicit ImaginaryPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ImaginaryPartNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

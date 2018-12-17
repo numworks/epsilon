@@ -2,7 +2,6 @@
 #define POINCARE_PREDICTION_INTERVAL_H
 
 #include <poincare/expression.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -19,9 +18,6 @@ public:
 #endif
 
   // ExpressionNode
-
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
 
   // Properties
   Type type() const override { return Type::PredictionInterval; }

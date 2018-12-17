@@ -19,7 +19,6 @@ public:
 
   // Complex
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Expression Properties
   Type type() const override { return Type::Constant; }

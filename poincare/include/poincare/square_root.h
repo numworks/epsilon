@@ -22,17 +22,7 @@ public:
   }
 #endif
 
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  /* If we use the formula arg(sqrt(a)) = arg(a)/2, we are likely to end up
-   * with half arcTangent. To avoid that, we compute the argument(sqrt(a))
-   * from the real and imaginary part of sqrt(a).
-   * TODO: What about norm(sqrt(a))? */
-  //ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
-
 private:
-  //Complex
-  static Multiplication complexCartesianHelper(Expression e, Context & context, Preferences::AngleUnit angleUnit);
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

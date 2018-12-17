@@ -50,7 +50,6 @@ objs += $(addprefix poincare/src/,\
   complex.o\
   complex_argument.o\
   complex_cartesian.o\
-  complex_helper.o\
   confidence_interval.o\
   conjugate.o\
   constant.o\

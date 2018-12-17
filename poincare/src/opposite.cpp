@@ -29,28 +29,6 @@ ExpressionNode::Sign OppositeNode::sign(Context * context, Preferences::AngleUni
   return ExpressionNode::sign(context,angleUnit);
 }
 
-ComplexCartesian OppositeNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  ComplexCartesian childCartesian = childAtIndex(0)->complexCartesian(context, angleUnit);
-  if (childCartesian.isUninitialized()) {
-    return ComplexCartesian();
-  }
-  return ComplexCartesian::Builder(
-      Multiplication(Rational(-1), childCartesian.real()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-      Multiplication(Rational(-1), childCartesian.imag()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-    );
-}
-
-ComplexPolar OppositeNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
-  ComplexPolar childPolar = childAtIndex(0)->complexPolar(context, angleUnit);
-  if (childPolar.isUninitialized()) {
-    return ComplexPolar();
-  }
-  return ComplexPolar::Builder(
-      childPolar.norm(),
-      Addition(childPolar.arg(), Constant(Ion::Charset::SmallPi)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-    );
-}
-
 /* Layout */
 
 bool OppositeNode::childNeedsParenthesis(const TreeNode * child) const {

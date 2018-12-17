@@ -3,7 +3,6 @@
 
 #include <poincare/integer.h>
 #include <poincare/number.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 

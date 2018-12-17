@@ -2,7 +2,6 @@
 #define POINCARE_DIVISION_REMAINDER_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -23,7 +22,6 @@ public:
   Type type() const override { return Type::DivisionRemainder; }
 
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
 private:

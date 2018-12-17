@@ -19,8 +19,6 @@ public:
 #endif
 
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->isReal(context, angleUnit); }
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Properties
   Type type() const override { return Type::Conjugate; }

@@ -22,14 +22,6 @@ public:
   }
 #endif
 
-  /* Property */
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  /* If we use the formula arg(a/b) = arg(a)-arg(b), we are likely to end up
-   * with subtractions of arcTangent. To avoid that, we compute the argument(a/b)
-   * from the real and imaginary part of a/b.
-   * TODO: What about norm(a/b)? */
-  //ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
-
   // Properties
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context & context, const char * symbolName) const override;

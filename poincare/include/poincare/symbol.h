@@ -28,8 +28,6 @@ public:
 
   // Complex
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

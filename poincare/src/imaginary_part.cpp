@@ -36,17 +36,16 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.type() == ExpressionNode::Type::Rational) {
+  if (c.isReal(context, angleUnit)) {
     Expression result = Rational(0);
     replaceWithInPlace(result);
     return result;
   }
-  ComplexCartesian cartesian = c.complexCartesian(context, angleUnit);
-  if (!cartesian.isUninitialized()) {
-    Expression im = cartesian.imag();
-    replaceWithInPlace(im);
-    // We have to deepReduce because the complexCartesian function returns an Expression reduced only BottomUp
-    return im.deepReduce(context, angleUnit, target);
+  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
+    Expression i = complexChild.imag();
+    replaceWithInPlace(i);
+    return i.shallowReduce(context, angleUnit, target);
   }
   return *this;
 }

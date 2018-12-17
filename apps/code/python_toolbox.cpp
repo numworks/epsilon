@@ -13,7 +13,7 @@ static constexpr int MathModuleChildrenCount = 43;
 static constexpr int KandinskyModuleChildrenCount = 7;
 static constexpr int CMathModuleChildrenCount = 13;
 static constexpr int RandomModuleChildrenCount = 10;
-static constexpr int TurtleModuleChildrenCount = 14;
+static constexpr int TurtleModuleChildrenCount = 30;
 
 static constexpr int conditionsChildrenCount = 9;
 static constexpr int forLoopChildrenCount = 4;
@@ -146,16 +146,31 @@ const ToolboxMessageTree TurtleModuleChildren[TurtleModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandTurtleFunction, I18n::Message::PythonTurtleFunction, I18n::Message::PythonCommandTurtleFunctionWithoutArg),
   ToolboxMessageTree(I18n::Message::PythonTurtleCommandForward, I18n::Message::PythonTurtleForward, I18n::Message::PythonTurtleCommandForward),
   ToolboxMessageTree(I18n::Message::PythonTurtleCommandBackward, I18n::Message::PythonTurtleBackward, I18n::Message::PythonTurtleCommandBackward),
-  ToolboxMessageTree(I18n::Message::PythonTurtleCommandLeft, I18n::Message::PythonTurtleLeft, I18n::Message::PythonTurtleCommandLeft),
   ToolboxMessageTree(I18n::Message::PythonTurtleCommandRight, I18n::Message::PythonTurtleRight, I18n::Message::PythonTurtleCommandRight),
-  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPosition, I18n::Message::PythonTurtlePosition, I18n::Message::PythonTurtleCommandPosition),
-  ToolboxMessageTree(I18n::Message::PythonTurtleCommandSetposition, I18n::Message::PythonTurtleSetposition, I18n::Message::PythonTurtleCommandSetposition),
-  ToolboxMessageTree(I18n::Message::PythonTurtleCommandHeading, I18n::Message::PythonTurtleHeading, I18n::Message::PythonTurtleCommandHeading),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandLeft, I18n::Message::PythonTurtleLeft, I18n::Message::PythonTurtleCommandLeft),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandGoto, I18n::Message::PythonTurtleGoto, I18n::Message::PythonTurtleCommandGoto),
   ToolboxMessageTree(I18n::Message::PythonTurtleCommandSetheading, I18n::Message::PythonTurtleSetheading, I18n::Message::PythonTurtleCommandSetheading),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandCircle, I18n::Message::PythonTurtleCircle, I18n::Message::PythonTurtleCommandCircle),
   ToolboxMessageTree(I18n::Message::PythonTurtleCommandSpeed, I18n::Message::PythonTurtleSpeed, I18n::Message::PythonTurtleCommandSpeed),
-  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPencolor, I18n::Message::PythonTurtlePencolor, I18n::Message::PythonTurtleCommandPencolor),
-  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPensize, I18n::Message::PythonTurtlePensize, I18n::Message::PythonTurtleCommandPensize)};
-
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPosition, I18n::Message::PythonTurtlePosition, I18n::Message::PythonTurtleCommandPosition),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandHeading, I18n::Message::PythonTurtleHeading, I18n::Message::PythonTurtleCommandHeading),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPendown, I18n::Message::PythonTurtlePendown, I18n::Message::PythonTurtleCommandPendown),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPenup, I18n::Message::PythonTurtlePenup, I18n::Message::PythonTurtleCommandPenup),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPensize, I18n::Message::PythonTurtlePensize, I18n::Message::PythonTurtleCommandPensize),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandIsdown, I18n::Message::PythonTurtleIsdown, I18n::Message::PythonTurtleCommandIsdown),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandReset, I18n::Message::PythonTurtleReset, I18n::Message::PythonTurtleCommandReset),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandColor, I18n::Message::PythonTurtleColor, I18n::Message::PythonTurtleCommandColorWithoutArg),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandBlue, I18n::Message::PythonTurtleBlue, I18n::Message::PythonTurtleCommandBlue),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandRed, I18n::Message::PythonTurtleRed, I18n::Message::PythonTurtleCommandRed),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandGreen, I18n::Message::PythonTurtleGreen, I18n::Message::PythonTurtleCommandGreen),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandYellow, I18n::Message::PythonTurtleYellow, I18n::Message::PythonTurtleCommandYellow),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandBrown, I18n::Message::PythonTurtleBrown, I18n::Message::PythonTurtleCommandBrown),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandBlack, I18n::Message::PythonTurtleBlack, I18n::Message::PythonTurtleCommandBlack),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandWhite, I18n::Message::PythonTurtleWhite, I18n::Message::PythonTurtleCommandWhite),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPink, I18n::Message::PythonTurtlePink, I18n::Message::PythonTurtleCommandPink),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandOrange, I18n::Message::PythonTurtleOrange, I18n::Message::PythonTurtleCommandOrange),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandPurple, I18n::Message::PythonTurtlePurple, I18n::Message::PythonTurtleCommandPurple),
+  ToolboxMessageTree(I18n::Message::PythonTurtleCommandGrey, I18n::Message::PythonTurtleGrey, I18n::Message::PythonTurtleCommandGrey)};
 
 const ToolboxMessageTree modulesChildren[modulesChildrenCount] = {
   ToolboxMessageTree(I18n::Message::MathModule, I18n::Message::Default, I18n::Message::Default, MathModuleChildren, MathModuleChildrenCount),

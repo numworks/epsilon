@@ -37,10 +37,6 @@ inline T ApproximateToScalar(const char * text, Poincare::Context & context) {
   return Poincare::Expression::approximateToScalar<T>(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
-inline Poincare::Expression ParseAndReduce(const char * text, Poincare::Context & context) {
-  return Poincare::Expression::ParseAndReduce(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
-}
-
 inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Context & context) {
   return Poincare::Expression::ParseAndSimplify(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
 }

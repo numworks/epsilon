@@ -553,7 +553,9 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
   // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
+  // WARNING: this rule true only if a real (ex: (-1*i)^(1/2) != i*i^(1/2)
   if (!letPowerAtRoot
+      && childAtIndex(0).isReal(context, angleUnit)
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isHalf())
   {

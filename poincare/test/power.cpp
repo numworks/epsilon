@@ -52,6 +52,7 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("(12^4*x)^(0.5)", "144*R(x)");
   assert_parsed_expression_simplify_to("R(32)", "4*R(2)");
   assert_parsed_expression_simplify_to("R(-1)", "I");
+  assert_parsed_expression_simplify_to("R(-1*R(-1))", "R(2)/2-R(2)/2*I");
   assert_parsed_expression_simplify_to("R(3^2)", "3");
   assert_parsed_expression_simplify_to("2^(2+P)", "4*2^P");
   assert_parsed_expression_simplify_to("R(5513219850886344455940081)", "2348024669991");

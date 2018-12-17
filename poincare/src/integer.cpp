@@ -323,7 +323,7 @@ T Integer::approximate() const {
   */
 
   if (isInfinity()) {
-    return INFINITY;
+    return m_negative ? -INFINITY : INFINITY;
   }
 
   native_uint_t lastDigit = m_numberOfDigits > 0 ? digit(m_numberOfDigits-1) : 0;

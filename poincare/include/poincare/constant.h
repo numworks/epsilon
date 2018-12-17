@@ -58,7 +58,7 @@ public:
   bool isIComplex() const { return node()->isIComplex(); }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }

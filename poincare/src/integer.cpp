@@ -334,7 +334,7 @@ T Integer::approximate() const {
   /* Escape case if the exponent is too big to be stored */
   assert(m_numberOfDigits > 0);
   if (((int)m_numberOfDigits-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
-    return INFINITY;
+    return  m_negative ? -INFINITY : INFINITY;
   }
   exponent += (m_numberOfDigits-1)*32;
   exponent += numberOfBitsInLastDigit-1;

@@ -1,6 +1,7 @@
 #ifndef POINCARE_CEILING_LAYOUT_NODE_H
 #define POINCARE_CEILING_LAYOUT_NODE_H
 
+#include <poincare/ceiling.h>
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -12,7 +13,7 @@ public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
 
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "ceil");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.name());
   }
 
   // TreeNode

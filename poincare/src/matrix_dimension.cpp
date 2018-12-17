@@ -7,16 +7,20 @@
 
 namespace Poincare {
 
-Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
+
+int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
+
+Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return MatrixDimension(this).shallowReduce(context, angleUnit);
 }
 
 Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(MatrixDimension(this), floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
 }
 
 int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixDimension::s_functionHelper.name());
 }
 
 template<typename T>
@@ -32,8 +36,6 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
   }
   return MatrixComplex<T>(operands, 1, 2);
 }
-
-MatrixDimension::MatrixDimension() : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {}
 
 Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {

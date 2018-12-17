@@ -12,6 +12,7 @@
 #include <escher/clipboard.h>
 #include <escher/container.h>
 #include <escher/expression_field.h>
+#include <escher/editable_field.h>
 #include <escher/editable_text_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
@@ -22,11 +23,13 @@
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/expression_table_cell.h>
 #include <escher/expression_table_cell_with_pointer.h>
+#include <escher/expression_table_cell_with_expression.h>
 #include <escher/expression_view.h>
 #include <escher/gauge_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
+#include <escher/input_event_handler.h>
 #include <escher/input_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/i18n.h>
@@ -68,7 +71,6 @@
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 #include <escher/text_input.h>
-#include <escher/text_input_delegate.h>
 #include <escher/text_input_helpers.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>

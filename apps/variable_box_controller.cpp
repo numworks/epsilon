@@ -1,127 +1,89 @@
 #include "variable_box_controller.h"
+#include "shared/global_context.h"
 #include "shared/poincare_helpers.h"
+#include "shared/storage_function.h"
+#include "shared/storage_cartesian_function.h"
+#include "graph/storage_cartesian_function_store.h"
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/layout_helper.h>
 
 using namespace Poincare;
 using namespace Shared;
+using namespace Ion;
 
-/* ContentViewController */
-
-VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, GlobalContext * context) :
-  ViewController(parentResponder),
-  m_context(context),
-  m_sender(nullptr),
-  m_firstSelectedRow(0),
-  m_previousSelectedRow(0),
+VariableBoxController::VariableBoxController() :
+  NestedMenuController(nullptr, I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
-  m_selectableTableView(this)
+  m_lockPageDelete(Page::RootMenu),
+  m_firstMemoizedLayoutIndex(0)
 {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setShowsIndicators(false);
 }
 
-View * VariableBoxController::ContentViewController::view() {
-  return &m_selectableTableView;
+void VariableBoxController::viewWillAppear() {
+  assert(m_currentPage == Page::RootMenu);
+  NestedMenuController::viewWillAppear();
 }
 
-const char * VariableBoxController::ContentViewController::title() {
-  return I18n::translate(I18n::Message::Variables);
-}
-void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
-  m_selectableTableView.scrollToCell(0,0);
-  selectCellAtLocation(0, m_firstSelectedRow);
-  app()->setFirstResponder(&m_selectableTableView);
-}
-
-bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Event event) {
-#if MATRIX_VARIABLES
-  if (event == Ion::Events::Back && m_currentPage == Page::RootMenu) {
-#else
-  if (event == Ion::Events::Back && m_currentPage == Page::Scalar) {
-#endif
-    m_firstSelectedRow = 0;
-    app()->dismissModalViewController();
-    return true;
+void VariableBoxController::viewDidDisappear() {
+  if (isDisplayingEmptyController()) {
+    pop();
   }
-  if (event == Ion::Events::Back || event == Ion::Events::Left) {
-    m_firstSelectedRow = m_previousSelectedRow;
-#if MATRIX_VARIABLES
+
+  NestedMenuController::viewDidDisappear();
+
+  /* NestedMenuController::viewDidDisappear might need cell heights, which would
+   * use the VariableBoxController cell heights memoization. We thus reset the
+   * VariableBoxController layouts only after calling the parent's
+   * viewDidDisappear. */
+
+  // Tidy the layouts displayed in the VariableBoxController to clean TreePool
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_leafCells[i].setLayout(Layout());
+    m_leafCells[i].setAccessoryLayout(Layout());
+  }
+  /* We reset the page when view disappears rather than when it appears because
+   * subview layout is done before viewWillAppear. If the page at that point is
+   * wrong, the memoized layouts are going be filled with wrong layouts. */
+  setPage(Page::RootMenu);
+}
+
+bool VariableBoxController::handleEvent(Ion::Events::Event event) {
+  /* We do not want to handle backspace event if:
+   * - On the root menu page
+   *   The deletion on the current page is locked
+   * - The empty controller is displayed
+   */
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage && !isDisplayingEmptyController()) {
+    int rowIndex = selectedRow();
     m_selectableTableView.deselectTable();
-    m_currentPage = Page::RootMenu;
-#endif
-    app()->setFirstResponder(this);
-    return true;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && m_currentPage == Page::RootMenu)) {
-  if (m_currentPage == Page::RootMenu) {
-      m_previousSelectedRow = selectedRow();
-      m_firstSelectedRow = 0;
-      m_selectableTableView.deselectTable();
-      m_currentPage = pageAtIndex(m_previousSelectedRow);
-      app()->setFirstResponder(this);
-      return true;
-    }
-    m_firstSelectedRow = 0;
-    char label[3];
-    putLabelAtIndexInBuffer(selectedRow(), label);
-    const char * editedText = label;
-    m_sender->handleEventWithText(editedText);
-#if MATRIX_VARIABLES
-    m_selectableTableView.deselectTable();
-    m_currentPage = Page::RootMenu;
-#endif
-    app()->dismissModalViewController();
-    return true;
-  }
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
-    if (m_currentPage == Page::Scalar) {
-      const Symbol symbol('A'+selectedRow());
-      m_context->setExpressionForSymbolName(Expression(), symbol, *m_context);
-    }
-    if (m_currentPage == Page::Matrix) {
-      const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow());
-      m_context->setExpressionForSymbolName(Expression(), symbol, *m_context);
-      m_matrixLayouts[selectedRow()] = Layout();
-    }
+    Storage::Record record = recordAtIndex(rowIndex);
+    record.destroy();
+    int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
+    selectCellAtLocation(selectedColumn(), newSelectedRow);
     m_selectableTableView.reloadData();
+    displayEmptyController();
     return true;
   }
-  return false;
+  return NestedMenuController::handleEvent(event);
 }
 
-int VariableBoxController::ContentViewController::numberOfRows() {
+int VariableBoxController::numberOfRows() {
   switch (m_currentPage) {
     case Page::RootMenu:
       return k_numberOfMenuRows;
-    case Page::Scalar:
-      return GlobalContext::k_maxNumberOfScalarExpressions;
-#if LIST_VARIABLES
-    case Page::List:
-      return GlobalContext::k_maxNumberOfListExpressions;
-#endif
-    case Page::Matrix:
-      return GlobalContext::k_maxNumberOfMatrixExpressions;
+    case Page::Expression:
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(GlobalContext::expExtension);
+    case Page::Function:
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(GlobalContext::funcExtension);
     default:
       return 0;
   }
 }
 
-HighlightCell * VariableBoxController::ContentViewController::reusableCell(int index, int type) {
-  assert(type < 2);
-  assert(index >= 0);
-  if (type == 0) {
-    assert(index < k_maxNumberOfDisplayedRows);
-    return &m_leafCells[index];
-  }
-  assert(index < k_numberOfMenuRows);
-  return &m_nodeCells[index];
-}
-
-int VariableBoxController::ContentViewController::reusableCellCount(int type) {
+int VariableBoxController::reusableCellCount(int type) {
   assert(type < 2);
   if (type == 0) {
     return k_maxNumberOfDisplayedRows;
@@ -129,172 +91,177 @@ int VariableBoxController::ContentViewController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
     MessageTableCell * myCell = (MessageTableCell *)cell;
     myCell->setMessage(label);
+    myCell->reloadCell();
     return;
   }
-  VariableBoxLeafCell * myCell = (VariableBoxLeafCell *)cell;
-  char label[3];
-  putLabelAtIndexInBuffer(index, label);
-  myCell->setLabel(label);
-  if (m_currentPage == Page::Scalar) {
-    myCell->displayExpression(false);
-    const Expression evaluation = expressionForIndex(index);
-    char buffer[PrintFloat::k_maxComplexBufferLength];
-    PoincareHelpers::Serialize(evaluation, buffer, PrintFloat::k_maxComplexBufferLength, Constant::ShortNumberOfSignificantDigits);
-    myCell->setSubtitle(buffer);
-    return;
-  }
-  assert(m_currentPage == Page::Matrix);
-  myCell->displayExpression(true);
-  /* TODO: implement list contexts */
-  // TODO: handle matrix and scalar!
-  Layout layoutR = matrixLayoutAtIndex(index);
-  myCell->setLayout(layoutR);
-  if (layoutR.isUninitialized()) {
-    myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
+  ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
+  Storage::Record record = recordAtIndex(index);
+  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  char symbolName[Shared::StorageFunction::k_maxNameWithArgumentSize];
+  size_t symbolLength = 0;
+  if (m_currentPage == Page::Expression) {
+    symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else {
-    char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
-    MatrixLayout matrixLayout = static_cast<MatrixLayout &>(layoutR);
-    int numberOfChars = PrintFloat::convertFloatToText<float>(matrixLayout.numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
-    buffer[numberOfChars++] = 'x';
-    PrintFloat::convertFloatToText<float>(matrixLayout.numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
-    myCell->setSubtitle(buffer);
+    assert(m_currentPage == Page::Function);
+    StorageCartesianFunction f(record);
+    symbolLength = f.nameWithArgument(
+        symbolName,
+        Shared::StorageFunction::k_maxNameWithArgumentSize,
+        Graph::StorageCartesianFunctionStore::Symbol());
   }
+  Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
+  myCell->setLayout(symbolLayout);
+  myCell->setAccessoryLayout(expressionLayoutForRecord(record, index));
+  myCell->reloadCell();
 }
 
-KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {
-  if (m_currentPage == Page::RootMenu || m_currentPage == Page::Scalar) {
-    return Metric::ToolboxRowHeight;
+KDCoordinate VariableBoxController::rowHeight(int index) {
+  if (m_currentPage != Page::RootMenu) {
+    Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
+    if (!layoutR.isUninitialized()) {
+      return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
+    }
   }
-  Layout layoutR = matrixLayoutAtIndex(index);
-  if (!layoutR.isUninitialized()) {
-    return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
-  }
-  return Metric::ToolboxRowHeight;
+  return NestedMenuController::rowHeight(index);
 }
 
-int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
+int VariableBoxController::typeAtLocation(int i, int j) {
   if (m_currentPage == Page::RootMenu) {
     return 1;
   }
   return 0;
 }
 
-void VariableBoxController::ContentViewController::reloadData() {
-  m_selectableTableView.reloadData();
+ExpressionTableCellWithExpression * VariableBoxController::leafCellAtIndex(int index) {
+  assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
+  return &m_leafCells[index];
 }
 
-void VariableBoxController::ContentViewController::resetPage() {
-#if MATRIX_VARIABLES
-  m_currentPage = Page::RootMenu;
-#else
-  m_currentPage = Page::Scalar;
-#endif
+MessageTableCellWithChevron * VariableBoxController::nodeCellAtIndex(int index) {
+  assert(index >= 0 && index < k_numberOfMenuRows);
+  return &m_nodeCells[index];
 }
 
-void VariableBoxController::ContentViewController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
-  // Tidy the memoized layouts to clean TreePool
-  for (int i = 0; i < GlobalContext::k_maxNumberOfMatrixExpressions; i++) {
-    m_matrixLayouts[i] = Layout();
-  }
-  // Tidy the layouts used to display the VariableBoxController to clean TreePool
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setLayout(Layout());
-  }
-  ViewController::viewDidDisappear();
-}
-
-VariableBoxController::ContentViewController::Page VariableBoxController::ContentViewController::pageAtIndex(int index) {
-#if LIST_VARIABLES
-  Page pages[3] = {Page::Scalar, Page::List, Page::Matrix};
-#else
-  Page pages[2] = {Page::Scalar, Page::Matrix};
-#endif
+VariableBoxController::Page VariableBoxController::pageAtIndex(int index) {
+  Page pages[2] = {Page::Expression, Page::Function};
   return pages[index];
 }
 
-void VariableBoxController::ContentViewController::putLabelAtIndexInBuffer(int index, char * buffer) {
-  if (m_currentPage == Page::Scalar) {
-    buffer[0] = 'A' + index;
-    buffer[1] = 0;
-  }
-#if LIST_VARIABLES
-  if (m_currentPage == Page::List) {
-    buffer[0] = 'L';
-    buffer[1] = '0' + index;
-    buffer[2] = 0;
-  }
-#endif
-  if (m_currentPage == Page::Matrix) {
-    buffer[0] = 'M';
-    buffer[1] = '0' + index;
-    buffer[2] = 0;
-  }
+void VariableBoxController::setPage(Page page) {
+  m_currentPage = page;
+  resetMemoization();
 }
 
-I18n::Message VariableBoxController::ContentViewController::nodeLabelAtIndex(int index) {
+bool VariableBoxController::selectSubMenu(int selectedRow) {
+  m_selectableTableView.deselectTable();
+  setPage(pageAtIndex(selectedRow));
+  bool selectSubMenu = NestedMenuController::selectSubMenu(selectedRow);
+  if (displayEmptyController()) {
+    return true;
+  }
+  return selectSubMenu;
+}
+
+bool VariableBoxController::returnToPreviousMenu() {
+  if (isDisplayingEmptyController()) {
+    pop();
+  } else {
+    m_selectableTableView.deselectTable();
+  }
+  setPage(Page::RootMenu);
+  return NestedMenuController::returnToPreviousMenu();
+}
+
+bool VariableBoxController::selectLeaf(int selectedRow) {
+  if (isDisplayingEmptyController()) {
+    /* We do not want to handle OK/EXE events in that case. */
+    return false;
+  }
+
+  // Deselect the table
+  assert(selectedRow >= 0 && selectedRow < numberOfRows());
+  m_selectableTableView.deselectTable();
+
+  // Get the name text to insert
+  Storage::Record record = recordAtIndex(selectedRow);
+  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > 0);
+  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  constexpr size_t nameToHandleMaxSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
+  char nameToHandle[nameToHandleMaxSize];
+  size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
+
+  if (m_currentPage == Page::Function) {
+    // Add parentheses to a function name
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength++] = '(';
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength++] = Ion::Charset::Empty;
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength++] = ')';
+    assert(nameLength < nameToHandleMaxSize);
+    nameToHandle[nameLength] = 0;
+  }
+
+  // Handle the text
+  sender()->handleEventWithText(nameToHandle);
+  app()->dismissModalViewController();
+  return true;
+}
+
+I18n::Message VariableBoxController::nodeLabelAtIndex(int index) {
   assert(m_currentPage == Page::RootMenu);
-#if LIST_VARIABLES
-  I18n::Message labels[3] = {I18n::Message::Number, I18n::Message::List, I18n::Message::Matrix};
-#else
-  I18n::Message labels[2] = {I18n::Message::Number, I18n::Message::Matrix};
-#endif
+  I18n::Message labels[2] = {I18n::Message::Expressions, I18n::Message::Functions};
   return labels[index];
 }
 
-const Expression VariableBoxController::ContentViewController::expressionForIndex(int index) {
-  if (m_currentPage == Page::Scalar) {
-    const Symbol symbol = Symbol('A'+index);
-    return m_context->expressionForSymbol(symbol);
-  }
-  if (m_currentPage == Page::Matrix) {
-    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionForSymbol(symbol);
-  }
-#if LIST_VARIABLES
-  if (m_currentPage == Page::List) {
-    return Expression();
-  }
-#endif
-  return Expression();
-}
-
-Layout VariableBoxController::ContentViewController::matrixLayoutAtIndex(int index) {
-  assert(m_currentPage == Page::Matrix);
-  if (m_matrixLayouts[index].isUninitialized()) {
-    const Expression evaluation = expressionForIndex(index);
-    if (!evaluation.isUninitialized()) {
-      m_matrixLayouts[index] = evaluation.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
+  assert(m_currentPage != Page::RootMenu);
+  if (index >= m_firstMemoizedLayoutIndex+k_maxNumberOfDisplayedRows || index < m_firstMemoizedLayoutIndex) {
+    // Change range of layout memoization
+    int deltaIndex = index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows ? index - k_maxNumberOfDisplayedRows + 1 - m_firstMemoizedLayoutIndex : index - m_firstMemoizedLayoutIndex;
+    for (int i = 0; i < k_maxNumberOfDisplayedRows-1; i++) {
+      int j = deltaIndex + i;
+      m_layouts[i] = j >= 0 && j < k_maxNumberOfDisplayedRows ? m_layouts[j] : Layout();
     }
+    m_firstMemoizedLayoutIndex += deltaIndex;
   }
-  return m_matrixLayouts[index];
+  assert(index-m_firstMemoizedLayoutIndex < k_maxNumberOfDisplayedRows);
+  if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
+    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
+  }
+  return m_layouts[index-m_firstMemoizedLayoutIndex];
 }
 
-VariableBoxController::VariableBoxController(GlobalContext * context) :
-  StackViewController(nullptr, &m_contentViewController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
-  m_contentViewController(this, context)
-{
+const char * VariableBoxController::extension() const {
+  assert(m_currentPage != Page::RootMenu);
+  return m_currentPage == Page::Function ? GlobalContext::funcExtension : GlobalContext::expExtension;
 }
 
-void VariableBoxController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_contentViewController);
+Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
+  assert(m_currentPage != Page::RootMenu);
+  assert(!Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex).isNull());
+  return Storage::sharedStorage()->recordWithExtensionAtIndex(extension(), rowIndex);
 }
 
-void VariableBoxController::setSender(Responder * sender) {
-  m_contentViewController.setSender(sender);
+bool VariableBoxController::displayEmptyController() {
+  assert(!isDisplayingEmptyController());
+    /* If the content is empty, we push above an empty controller. */
+  if (numberOfRows() == 0) {
+    m_emptyViewController.setType((VariableBoxEmptyController::Type)m_currentPage);
+    push(&m_emptyViewController);
+    return true;
+  }
+  return false;
 }
 
-void VariableBoxController::viewWillAppear() {
-  StackViewController::viewWillAppear();
-  m_contentViewController.resetPage();
-  m_contentViewController.reloadData();
-}
-
-void VariableBoxController::viewDidDisappear() {
-  StackViewController::viewDidDisappear();
+void VariableBoxController::resetMemoization() {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+    m_layouts[i] = Layout();
+  }
+  m_firstMemoizedLayoutIndex = 0;
 }

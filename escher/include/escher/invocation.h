@@ -3,9 +3,9 @@
 
 class Invocation {
 public:
-  typedef void (*Action)(void * context, void * sender);
+  typedef bool (*Action)(void * context, void * sender);
   Invocation(Action a, void * c);
-  void perform(void * sender);
+  bool perform(void * sender);
 private:
   Action m_action;
   void * m_context;

@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "console_controller.h"
 #include "editor_controller.h"
+#include "script_name_cell.h"
 #include "script_parameter_controller.h"
 #include "script_store.h"
 
@@ -52,8 +53,7 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
-  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override { return nullptr; }
+  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
 
   /* ButtonRowDelegate */
   int numberOfButtons(ButtonRowController::Position position) const override { return 1; }
@@ -69,33 +69,13 @@ private:
   static constexpr int ScriptCellType = 1;
   static constexpr int ScriptParameterCellType = 2;
   static constexpr int EmptyCellType = 3;
-  static constexpr int k_defaultScriptNameMaxSize = 9 + 2 + 1;
-  // k_defaultScriptNameMaxSize is the length of a name between script1.py and
-  // script99.py.
-  // 9 = strlen("script.py")
-  // 2 = maxLength of integers between 1 and 99.
-  // 1 = length of null terminating char.
   void addScript();
   void configureScript();
   void editScriptAtIndex(int scriptIndex);
   void numberedDefaultScriptName(char * buffer);
-  void intToText(int i, char * buffer);
   void updateAddScriptRowDisplay();
   ScriptStore * m_scriptStore;
-  class EvenOddEditableTextCell : public ::EvenOddEditableTextCell {
-  public:
-    Responder * responder() override {
-      if (editableTextCell()->textField()->isEditing()) {
-        return this;
-      }
-      return nullptr;
-    }
-  };
-  EvenOddEditableTextCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
-  /* In the initializer list of the MenuController constructor, we initialize
-   * m_scriptCells by copying k_maxNumberOfDisplayableScriptCells times the
-   * constructor of an EvenOddEditableTextCell. */
-  char m_draftTextBuffer[TextField::maxBufferSize()];
+  ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddMessageTextCell m_addNewScriptCell;
   EvenOddCell m_emptyCell;

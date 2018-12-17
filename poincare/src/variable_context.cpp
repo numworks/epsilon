@@ -6,41 +6,38 @@
 
 namespace Poincare {
 
-template<typename T>
-VariableContext<T>::VariableContext(char name, Context * parentContext) :
+VariableContext::VariableContext(const char * name, Context * parentContext) :
   m_name(name),
-  m_value(Float<T>(NAN)),
+  m_value(),
   m_parentContext(parentContext)
 {
 }
 
 template<typename T>
-void VariableContext<T>::setApproximationForVariable(T value) {
+void VariableContext::setApproximationForVariable(T value) {
   m_value = Float<T>(value);
 }
 
-template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
-  if (symbol.name() == m_name) {
+void VariableContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
+  if (strcmp(symbol.name(), m_name) == 0) {
     if (expression.isUninitialized()) {
       return;
     }
-    m_value = Float<T>(expression.approximateToScalar<T>(context, Preferences::sharedPreferences()->angleUnit()));
+    m_value = expression.clone();
   } else {
-    m_parentContext->setExpressionForSymbolName(expression, symbol, context);
+    m_parentContext->setExpressionForSymbol(expression, symbol, context);
   }
 }
 
-template<typename T>
-const Expression VariableContext<T>::expressionForSymbol(const Symbol & symbol) {
-  if (symbol.name() == m_name) {
-    return m_value;
+const Expression VariableContext::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
+  if (strcmp(symbol.name(), m_name) == 0) {
+    return clone ? m_value.clone() : m_value;
   } else {
-    return m_parentContext->expressionForSymbol(symbol);
+    return m_parentContext->expressionForSymbol(symbol, clone);
   }
 }
 
-template class Poincare::VariableContext<float>;
-template class Poincare::VariableContext<double>;
+template void VariableContext::setApproximationForVariable(float);
+template void VariableContext::setApproximationForVariable(double);
 
 }

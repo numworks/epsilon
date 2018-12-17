@@ -17,7 +17,7 @@ void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfColumns(newNumberOfChildren);
 }
 
-int MatrixNode::polynomialDegree(char symbolName) const {
+int MatrixNode::polynomialDegree(Context & context, const char * symbolName) const {
   return -1;
 }
 
@@ -160,8 +160,9 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 }
 
 Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication determinant) {
+  Expression::resetInterruption();
   // The matrix children have to be reduced to be able to spot 0
-  reduceChildren(context, angleUnit);
+  deepReduceChildren(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
 
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -197,7 +198,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h*n+j, newOpHJ);
-        newOpHJ = newOpHJ.shallowReduce(context, angleUnit);
+        newOpHJ = newOpHJ.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
       }
       replaceChildInPlace(divisor, Rational(1));
 
@@ -209,8 +210,8 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
           Expression opIJ = matrixChild(i, j);
           Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
-          newOpIJ.childAtIndex(1).shallowReduce(context, angleUnit);
-          newOpIJ = newOpIJ.shallowReduce(context, angleUnit);
+          newOpIJ.childAtIndex(1).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+          newOpIJ = newOpIJ.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
         }
         replaceChildAtIndexInPlace(i*n+k, Rational(0));
       }

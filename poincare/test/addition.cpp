@@ -1,8 +1,8 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/rational.h>
 #include <poincare/addition.h>
+#include <apps/shared/global_context.h>
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"
@@ -11,12 +11,12 @@
 using namespace Poincare;
 
 static inline void assert_approximation_equals(const Expression i, float f) {
-  Poincare::GlobalContext c;
+  Shared::GlobalContext c;
   quiz_assert(i.approximateToScalar<float>(c, Preferences::AngleUnit::Degree) == f);
 }
 
 static inline void assert_parsed_expression_is_equal_to(const char * exp, Expression e) {
-  Expression result = Expression::parse(exp);
+  Expression result = Expression::Parse(exp);
   quiz_assert(!result.isUninitialized());
   quiz_assert(result.isIdenticalTo(e));
 }
@@ -61,8 +61,9 @@ QUIZ_CASE(poincare_addition_evaluate) {
 }
 
 QUIZ_CASE(poincare_addition_simplify) {
+  assert_parsed_expression_simplify_to("1+x", "1+x");
   assert_parsed_expression_simplify_to("1/2+1/3+1/4+1/5+1/6+1/7", "223/140");
-  assert_parsed_expression_simplify_to("1+x+4-i-2x", "(5-i)-x");
+  assert_parsed_expression_simplify_to("1+x+4-i-2x", "5-i-x");
   assert_parsed_expression_simplify_to("2+1", "3");
   assert_parsed_expression_simplify_to("1+2", "3");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6+7", "28");
@@ -75,7 +76,7 @@ QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("-A", "-A");
   assert_parsed_expression_simplify_to("A-A", "0");
   assert_parsed_expression_simplify_to("-5P+3P", "-2*P");
-  assert_parsed_expression_simplify_to("1-3+A-5+2A-4A", "(-7)-A");
+  assert_parsed_expression_simplify_to("1-3+A-5+2A-4A", "-7-A");
   assert_parsed_expression_simplify_to("A+B-A-B", "0");
   assert_parsed_expression_simplify_to("A+B+(-1)*A+(-1)*B", "0");
   assert_parsed_expression_simplify_to("2+13cos(2)-23cos(2)", "2-10*cos(2)");

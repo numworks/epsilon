@@ -46,6 +46,7 @@ HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtLocation(0, index) == 2) {
     static_cast<ExpressionTableCell *>(cell)->setLayout(m_addedCellLayout[index]);
+    cell->reloadCell();
     return;
   }
   MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
@@ -96,7 +97,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
 bool SequenceToolbox::selectAddedCell(int selectedRow){
   constexpr int bufferSize = 10;
   char buffer[bufferSize];
-  m_addedCellLayout[selectedRow].serialize(buffer, bufferSize);
+  m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize);
   sender()->handleEventWithText(buffer);
   app()->dismissModalViewController();
   return true;

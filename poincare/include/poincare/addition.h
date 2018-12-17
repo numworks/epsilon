@@ -2,10 +2,8 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/layout_helper.h>
 #include <poincare/n_ary_expression_node.h>
 #include <poincare/rational.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -26,8 +24,8 @@ public:
 
   // Properties
   Type type() const override { return Type::Addition; }
-  int polynomialDegree(char symbolName) const override;
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Evaluation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c+d); }
@@ -41,13 +39,10 @@ private:
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  static const char * name() { return "+"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Evaluation */
@@ -66,7 +61,7 @@ class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
   Addition();
-  Addition(Expression e1) : Addition() {
+  explicit Addition(Expression e1) : Addition() {
     addChildAtIndexInPlace(e1, 0, 0);
   }
   Addition(Expression e1, Expression e2) : Addition() {
@@ -79,9 +74,9 @@ public:
     }
   }
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 private:
   static const Number NumeralFactor(const Expression & e);
   static inline int NumberOfNonNumeralFactors(const Expression & e);
@@ -89,7 +84,7 @@ private:
 
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2);
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
-  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };
 

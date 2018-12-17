@@ -7,14 +7,14 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
+HistogramParameterController::HistogramParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
   FloatParameterController(parentResponder),
   m_cells{},
   m_store(store)
 {
   for (int i = 0; i < k_numberOfCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
-    m_cells[i].textField()->setDelegate(this);
+    m_cells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
     m_cells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }

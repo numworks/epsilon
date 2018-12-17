@@ -15,6 +15,7 @@ HistoryController::HistoryController(Responder * parentResponder, CalculationSto
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableTableView);
+    m_calculationHistory[i].setDataSource(this);
   }
 }
 
@@ -45,27 +46,28 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.selectedCell();
-    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    SubviewType subviewType = selectedSubviewType();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_selectableTableView.deselectTable();
     app()->setFirstResponder(editController);
     Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-    if (subviewType == HistoryViewCell::SubviewType::Input) {
+    if (subviewType == SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
-      ScrollableExactApproximateExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == ScrollableExactApproximateExpressionsView::SubviewType::ExactOutput) {
-        editController->insertTextBody(calculation->exactOutputText());
-      } else {
+      ScrollableExactApproximateExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
+      if (outputSubviewPosition == ScrollableExactApproximateExpressionsView::SubviewPosition::Right
+          && !calculation->shouldOnlyDisplayExactOutput())
+      {
         editController->insertTextBody(calculation->approximateOutputText());
+      } else {
+        editController->insertTextBody(calculation->exactOutputText());
       }
     }
     return true;
   }
   if (event == Ion::Events::Backspace) {
     int focusRow = selectedRow();
-    HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.selectedCell();
-    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
+    SubviewType subviewType = selectedSubviewType();
     m_selectableTableView.deselectTable();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_calculationStore->deleteCalculationAtIndex(focusRow);
@@ -79,7 +81,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     } else {
       m_selectableTableView.selectCellAtLocation(0, 0);
     }
-    if (subviewType == HistoryViewCell::SubviewType::Input) {
+    if (subviewType == SubviewType::Input) {
       tableViewDidChangeSelection(&m_selectableTableView, 0, selectedRow());
     } else {
       tableViewDidChangeSelection(&m_selectableTableView, 0, -1);
@@ -104,16 +106,16 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (previousSelectedCellY == -1) {
+    setSelectedSubviewType(SubviewType::Output);
+  } else if (selectedRow() < previousSelectedCellY) {
+    setSelectedSubviewType(SubviewType::Output);
+  } else if (selectedRow() > previousSelectedCellY) {
+    setSelectedSubviewType(SubviewType::Input);
+  }
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   if (selectedCell == nullptr) {
     return;
-  }
-  if (previousSelectedCellY == -1) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
-  } else if (selectedRow() < previousSelectedCellY) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Output);
-  } else if (selectedRow() > previousSelectedCellY) {
-    selectedCell->setSelectedSubviewType(HistoryViewCell::SubviewType::Input);
   }
   app()->setFirstResponder(selectedCell);
   selectedCell->reloadCell();

@@ -67,7 +67,7 @@ void ParametersController::ContentView::layoutSubviews() {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Responder * parentResponder, Law * law, CalculationController * calculationController) :
+ParametersController::ParametersController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, CalculationController * calculationController) :
   FloatParameterController(parentResponder),
   m_contentView(this, &m_selectableTableView),
   m_menuListCell{},
@@ -78,7 +78,7 @@ ParametersController::ParametersController(Responder * parentResponder, Law * la
   m_okButton.setMessage(I18n::Message::Next);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_menuListCell[i].setParentResponder(&m_selectableTableView);
-    m_menuListCell[i].textField()->setDelegate(this);
+    m_menuListCell[i].textField()->setDelegates(inputEventHandlerDelegate, this);
     m_menuListCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }

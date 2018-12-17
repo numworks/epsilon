@@ -53,10 +53,10 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
   return result;
 }
 
-HorizontalLayout LayoutHelper::String(const char * buffer, int bufferSize, const KDFont * font) {
-  assert(bufferSize > 0);
+HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
+  assert(bufferLen > 0);
   HorizontalLayout resultLayout;
-  for (int i = 0; i < bufferSize; i++) {
+  for (int i = 0; i < bufferLen; i++) {
     resultLayout.addChildAtIndex(CharLayout(buffer[i], font), i, i, nullptr);
   }
   return resultLayout;

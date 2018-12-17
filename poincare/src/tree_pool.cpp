@@ -23,6 +23,12 @@ void TreePool::freeIdentifier(int identifier) {
 template <typename T>
 T * TreePool::createTreeNode(size_t size) {
   T * node = new(alloc(size)) T();
+  if (size != sizeof(T)) {
+    /* If the node does not have a standard size, it should init itself so that
+     * T::size gives the right result, otherwise TreeNode::next() does not work
+     * and addGhostChildrenAndRename might not work. */
+    node->initToMatchSize(size);
+  }
   addGhostChildrenAndRename(node);
   return node;
 }
@@ -33,7 +39,7 @@ void TreePool::move(TreeNode * destination, TreeNode * source, int realNumberOfS
 }
 
 void TreePool::moveChildren(TreeNode * destination, TreeNode * sourceParent) {
-  size_t moveSize = sourceParent->deepSize(-1) - sourceParent->size();
+  size_t moveSize = sourceParent->deepSize(-1) - Helpers::AlignedSize(sourceParent->size(), ByteAlignment);
   moveNodes(destination, sourceParent->next(), moveSize);
 }
 
@@ -88,7 +94,7 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
 
 #if POINCARE_TREE_LOG
 void TreePool::flatLog(std::ostream & stream) {
-  size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(m_buffer);
+  size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(buffer());
   stream << "<TreePool format=\"flat\" size=\"" << size << "\">";
   for (TreeNode * node : allNodes()) {
     node->log(stream, false);
@@ -98,7 +104,7 @@ void TreePool::flatLog(std::ostream & stream) {
 }
 
 void TreePool::treeLog(std::ostream & stream) {
-  stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-m_buffer) << "\">";
+  stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-buffer()) << "\">";
   for (TreeNode * node : roots()) {
     node->log(stream, true);
   }
@@ -120,7 +126,8 @@ int TreePool::numberOfNodes() const {
 }
 
 void * TreePool::alloc(size_t size) {
-  if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {
+  size = Helpers::AlignedSize(size, ByteAlignment);
+  if (m_cursor >= buffer() + BufferSize || m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
   void * result = m_cursor;
@@ -129,8 +136,9 @@ void * TreePool::alloc(size_t size) {
 }
 
 void TreePool::dealloc(TreeNode * node, size_t size) {
+  size = Helpers::AlignedSize(size, ByteAlignment);
   char * ptr = reinterpret_cast<char *>(node);
-  assert(ptr >= m_buffer && ptr < m_cursor);
+  assert(ptr >= buffer() && ptr < m_cursor);
 
   // Step 1 - Compact the pool
   memmove(
@@ -215,6 +223,7 @@ template PowerNode * Poincare::TreePool::createTreeNode<PowerNode>(size_t size);
 template ComplexArgumentNode * Poincare::TreePool::createTreeNode<ComplexArgumentNode>(size_t size);
 template ConfidenceIntervalNode * Poincare::TreePool::createTreeNode<ConfidenceIntervalNode>(size_t size);
 template ConjugateNode * Poincare::TreePool::createTreeNode<ConjugateNode>(size_t size);
+template ConstantNode * Poincare::TreePool::createTreeNode<ConstantNode>(size_t size);
 template CosineNode * Poincare::TreePool::createTreeNode<CosineNode>(size_t size);
 template DecimalNode * Poincare::TreePool::createTreeNode<DecimalNode>(size_t size);
 template DerivativeNode * Poincare::TreePool::createTreeNode<DerivativeNode>(size_t size);
@@ -223,6 +232,7 @@ template DivisionNode * Poincare::TreePool::createTreeNode<DivisionNode>(size_t 
 template DivisionQuotientNode * Poincare::TreePool::createTreeNode<DivisionQuotientNode>(size_t size);
 template DivisionRemainderNode * Poincare::TreePool::createTreeNode<DivisionRemainderNode>(size_t size);
 template EmptyExpressionNode * Poincare::TreePool::createTreeNode<EmptyExpressionNode>(size_t size);
+template FunctionNode * Poincare::TreePool::createTreeNode<FunctionNode>(size_t size);
 template HyperbolicArcCosineNode * Poincare::TreePool::createTreeNode<HyperbolicArcCosineNode>(size_t size);
 template HyperbolicArcSineNode * Poincare::TreePool::createTreeNode<HyperbolicArcSineNode>(size_t size);
 template HyperbolicArcTangentNode * Poincare::TreePool::createTreeNode<HyperbolicArcTangentNode>(size_t size);

@@ -11,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(FracPartNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "FracPart";
@@ -24,9 +24,8 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  const char * name() const { return "frac"; }
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -39,13 +38,16 @@ private:
 
 class FracPart final : public Expression {
 public:
-  FracPart();
   FracPart(const FracPartNode * n) : Expression(n) {}
-  explicit FracPart(Expression operand) : FracPart() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static FracPart Builder(Expression child) { return FracPart(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  explicit FracPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

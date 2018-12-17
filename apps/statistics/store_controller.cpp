@@ -12,8 +12,8 @@ using namespace Shared;
 
 namespace Statistics {
 
-StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
-  Shared::StoreController(parentResponder, store, header),
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header) :
+  Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_titleCells{},
   m_store(store),
   m_statisticsContext(m_store),

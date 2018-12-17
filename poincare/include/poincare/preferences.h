@@ -28,16 +28,16 @@ public:
   };
   Preferences();
   static Preferences * sharedPreferences();
-  AngleUnit angleUnit() const;
-  void setAngleUnit(AngleUnit angleUnit);
-  PrintFloatMode displayMode() const;
-  void setDisplayMode(PrintFloatMode mode);
-  EditionMode editionMode() const;
-  void setEditionMode(EditionMode editionMode);
-  ComplexFormat complexFormat() const;
-  void setComplexFormat(Preferences::ComplexFormat complexFormat);
-  char numberOfSignificantDigits() const;
-  void setNumberOfSignificantDigits(char numberOfSignificantDigits);
+  AngleUnit angleUnit() const { return m_angleUnit; }
+  void setAngleUnit(AngleUnit angleUnit) { m_angleUnit = angleUnit; }
+  PrintFloatMode displayMode() const { return m_displayMode; }
+  void setDisplayMode(PrintFloatMode mode) { m_displayMode = mode; }
+  EditionMode editionMode() const { return m_editionMode; }
+  void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
+  ComplexFormat complexFormat() const { return m_complexFormat; }
+  void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
+  char numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
+  void setNumberOfSignificantDigits(char numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;

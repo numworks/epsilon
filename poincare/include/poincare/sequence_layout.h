@@ -23,15 +23,15 @@ public:
   char XNTChar() const override { return 'n'; }
 
   // TreeNode
-  int numberOfChildren() const override { return 3; }
+  int numberOfChildren() const override { return 4; }
 
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
   constexpr static const KDFont * k_font = KDFont::LargeFont;
-  constexpr static char k_nEquals[] = {'n', '=', 0};
+  constexpr static char k_equal[] = {'=', 0};
 
-  KDSize lowerBoundSizeWithNEquals();
+  KDSize lowerBoundSizeWithVariableEquals();
 
   // LayoutNode
   KDSize computeSize() override;
@@ -40,9 +40,13 @@ protected:
 
   int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   LayoutNode * argumentLayout() { return childAtIndex(0); }
-  LayoutNode * lowerBoundLayout() { return childAtIndex(1); }
-  LayoutNode * upperBoundLayout() { return childAtIndex(2); }
+  LayoutNode * variableLayout() { return childAtIndex(1); }
+  LayoutNode * lowerBoundLayout() { return childAtIndex(2); }
+  LayoutNode * upperBoundLayout() { return childAtIndex(3); }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+private:
+  KDCoordinate completeLowerBoundX();
+  KDCoordinate subscriptBaseline();
 };
 
 }

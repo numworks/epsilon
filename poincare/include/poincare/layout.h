@@ -36,9 +36,12 @@ public:
   void invalidAllSizesPositionsAndBaselines() { return node()->invalidAllSizesPositionsAndBaselines(); }
 
   // Serialization
-  int serialize(char * buffer, int bufferSize) const { return node()->serialize(buffer, bufferSize); }
+  int serializeForParsing(char * buffer, int bufferSize) const { return node()->serialize(buffer, bufferSize); }
+  int serializeParsedExpression(char * buffer, int bufferSize) const;
 
   // Layout properties
+  typedef bool (*LayoutTest)(const Layout l);
+  Layout recursivelyMatches(LayoutTest test) const;
   bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
   bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }
   bool isHorizontal() const { return const_cast<Layout *>(this)->node()->isHorizontal(); }
@@ -63,7 +66,7 @@ public:
   LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree
-  Layout childAtIndex(int i);
+  Layout childAtIndex(int i) const;
   Layout root() const {
     assert(!isUninitialized());
     return Layout(node()->root());

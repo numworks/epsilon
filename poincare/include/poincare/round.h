@@ -1,10 +1,8 @@
 #ifndef POINCARE_ROUND_H
 #define POINCARE_ROUND_H
 
-#include <poincare/layout_helper.h>
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -13,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(RoundNode); }
-  int numberOfChildren() const override { return 2; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Round";
@@ -25,12 +23,9 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "round"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -39,14 +34,17 @@ private:
 
 class Round final : public Expression {
 public:
-  Round();
   Round(const RoundNode * n) : Expression(n) {}
-  Round(Expression operand0, Expression operand1) : Round() {
-    replaceChildAtIndexInPlace(0, operand0);
-    replaceChildAtIndexInPlace(1, operand1);
-  }
+  static Round Builder(Expression child0, Expression child1) { return Round(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  Round(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
 };
 
 }

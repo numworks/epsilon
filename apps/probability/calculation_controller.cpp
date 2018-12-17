@@ -53,7 +53,7 @@ void CalculationController::ContentView::layoutSubviews() {
   m_lawCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
 }
 
-CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
+CalculationController::CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
   m_contentView(&m_selectableTableView, law, calculation),
   m_selectableTableView(this),
@@ -72,7 +72,7 @@ CalculationController::CalculationController(Responder * parentResponder, Law * 
 
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(&m_selectableTableView);
-    m_calculationCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_calculationCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_calculationCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
@@ -187,8 +187,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 }
 
-bool CalculationController::textFieldDidHandleEvent(::TextField * textField, bool returnValue, bool textHasChanged) {
-  if (returnValue && textHasChanged) {
+bool CalculationController::textFieldDidHandleEvent(::TextField * textField, bool returnValue, bool textSizeDidChange) {
+  if (returnValue && textSizeDidChange) {
     /* We do not reload the responder because the first responder might be the
      * toolbox (or the variable  box) and reloading the responder would corrupt
      * the first responder. */
@@ -273,14 +273,23 @@ TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {
+    if (currentChar >= k_maxNumberOfTitleCharacters) {
+      break;
+    }
     m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters);
+    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters - currentChar);
     currentChar += 3;
+    if (currentChar >= k_maxNumberOfTitleCharacters) {
+      break;
+    }
     const size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
     char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, bufferSize - currentChar);
+    strlcpy(m_titleBuffer+currentChar, buffer, k_maxNumberOfTitleCharacters - currentChar);
     currentChar += strlen(buffer);
+    if (currentChar >= k_maxNumberOfTitleCharacters) {
+      break;
+    }
     m_titleBuffer[currentChar++] = ' ';
   }
   m_titleBuffer[currentChar-1] = 0;

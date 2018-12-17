@@ -7,16 +7,16 @@ using namespace Shared;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CartesianFunctionStore * functionStore) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_selectableTableView(this),
-  m_function(nullptr),
+  m_record(),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_integralGraphController(nullptr, graphView, range, cursor),
+  m_integralGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_intersectionGraphController(nullptr, graphView, bannerView, range, cursor, functionStore)
+  m_intersectionGraphController(nullptr, graphView, bannerView, range, cursor)
 {
 }
 
@@ -38,27 +38,27 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     ViewController * controller = nullptr;
     switch(selectedRow()) {
       case 0:
-        m_intersectionGraphController.setFunction(m_function);
+        m_intersectionGraphController.setRecord(m_record);
         controller = &m_intersectionGraphController;
         break;
       case 1:
-        m_maximumGraphController.setFunction(m_function);
+        m_maximumGraphController.setRecord(m_record);
         controller = &m_maximumGraphController;
         break;
       case 2:
-        m_minimumGraphController.setFunction(m_function);
+        m_minimumGraphController.setRecord(m_record);
         controller = &m_minimumGraphController;
         break;
       case 3:
-        m_rootGraphController.setFunction(m_function);
+        m_rootGraphController.setRecord(m_record);
         controller = &m_rootGraphController;
         break;
       case 4:
-        m_tangentGraphController.setFunction(m_function);
+        m_tangentGraphController.setRecord(m_record);
         controller = &m_tangentGraphController;
         break;
       case 5:
-        m_integralGraphController.setFunction(m_function);
+        m_integralGraphController.setRecord(m_record);
         controller = &m_integralGraphController;
         break;
       default:
@@ -103,8 +103,8 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   myCell->setMessage(titles[index]);
 }
 
-void CalculationParameterController::setFunction(CartesianFunction * function) {
-  m_function = function;
+void CalculationParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
 }
 
 }

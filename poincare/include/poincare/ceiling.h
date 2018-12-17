@@ -11,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(CeilingNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Ceiling";
@@ -24,9 +24,8 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  const char * name() const { return "ceil"; }
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -39,13 +38,16 @@ private:
 
 class Ceiling final : public Expression {
 public:
-  Ceiling();
   Ceiling(const CeilingNode * n) : Expression(n) {}
-  explicit Ceiling(Expression operand) : Ceiling() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static Ceiling Builder(Expression child) { return Ceiling(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  explicit Ceiling(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

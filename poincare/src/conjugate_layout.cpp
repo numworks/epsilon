@@ -1,3 +1,4 @@
+#include <poincare/conjugate.h>
 #include <poincare/conjugate_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -51,7 +52,7 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
 }
 
 int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
 KDSize ConjugateLayoutNode::computeSize() {

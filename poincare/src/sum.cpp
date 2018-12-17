@@ -1,7 +1,8 @@
 #include <poincare/sum.h>
 #include <poincare/addition.h>
 #include <poincare/sum_layout.h>
-
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -10,9 +11,14 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Sum::s_functionHelper;
 
-Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout subscriptLayout, Layout superscriptLayout) const {
-  return SumLayout(argumentLayout, subscriptLayout, superscriptLayout);
+Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
+  return SumLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+}
+
+int SumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::s_functionHelper.name());
 }
 
 template<typename T>
@@ -34,7 +40,5 @@ Evaluation<T> SumNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluat
   MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
   return AdditionNode::computeOnMatrices<T>(m, n);
 }
-
-Sum::Sum() : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {}
 
 }

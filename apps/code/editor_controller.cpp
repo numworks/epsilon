@@ -1,10 +1,11 @@
 #include "editor_controller.h"
 #include "menu_controller.h"
 #include "script_parameter_controller.h"
-#include "variable_box_controller.h"
-#include <apps/code/app.h>
+#include "app.h"
 #include <escher/metric.h>
 #include <ion.h>
+
+using namespace Shared;
 
 namespace Code {
 
@@ -14,7 +15,7 @@ EditorController::EditorController(MenuController * menuController, App * python
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {
-  m_editorView.setTextAreaDelegate(this);
+  m_editorView.setTextAreaDelegates(this, this);
 }
 
 void EditorController::setScript(Script script) {
@@ -30,18 +31,12 @@ void EditorController::setScript(Script script) {
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {
-    size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
-    Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
-    if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
-      assert(false); // This should not happen as we set the text area according to the available space in the Kallax
-    } else {
-      stackController()->pop();
-    }
+    saveScript();
+    stackController()->pop();
     return event != Ion::Events::Home;
   }
   return false;
 }
-
 
 void EditorController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_editorView);
@@ -57,6 +52,11 @@ void EditorController::viewDidDisappear() {
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
+  if (event == Ion::Events::Var) {
+    // We save script before displaying the Variable box to add new functions or variables
+    saveScript();
+    return false;
+  }
   if (static_cast<App *>(textArea->app())->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
@@ -127,13 +127,26 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
   return false;
 }
 
-Toolbox * EditorController::toolboxForTextInput(TextInput * textInput) {
-  Code::App * codeApp = static_cast<Code::App *>(app());
-  return codeApp->pythonToolbox();
+VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  VariableBoxController * varBox = static_cast<App *>(app())->variableBoxController();
+  varBox->loadFunctionsAndVariables();
+  return varBox;
+}
+
+InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() {
+  return static_cast<App *>(app());
 }
 
 StackViewController * EditorController::stackController() {
   return static_cast<StackViewController *>(parentResponder());
+}
+
+void EditorController::saveScript() {
+  size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
+  Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
+  if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
+    assert(false); // This should not happen as we set the text area according to the available space in the Kallax
+  }
 }
 
 }

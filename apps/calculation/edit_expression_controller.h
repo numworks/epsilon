@@ -15,11 +15,10 @@ class HistoryController;
 /* TODO: implement a split view */
 class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
+  EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore);
   View * view() override;
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event event) override;
   void insertTextBody(const char * text);
 
   /* TextFieldDelegate */
@@ -36,7 +35,7 @@ public:
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
     TableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }
@@ -51,12 +50,13 @@ private:
     ExpressionField m_expressionField;
   };
   void reloadView();
-  bool inputViewDidReceiveEvent(Ion::Events::Event event);
+  bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  char m_cacheBuffer[Calculation::k_printedExpressionSize];
+  static constexpr int k_cacheBufferSize = Constant::MaxSerializedExpressionSize;
+  char m_cacheBuffer[k_cacheBufferSize];
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
   ContentView m_contentView;

@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-int UndefinedNode::polynomialDegree(char symbolName) const {
+int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) const {
   return -1;
 }
 
@@ -18,16 +18,15 @@ Expression UndefinedNode::setSign(Sign s, Context & context, Preferences::AngleU
 }
 
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  char buffer[6];
-  int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 6, numberOfSignificantDigits, floatDisplayMode);
-  return LayoutHelper::String(buffer, numberOfChars);
+  return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
 }
 
 int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
-  return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
+  strlcpy(buffer, Undefined::Name(), bufferSize);
+  return min(Undefined::NameSize(), bufferSize) - 1;
 }
 
 template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {

@@ -45,12 +45,12 @@ void App::Snapshot::tidy() {
 App::App(Container * container, Snapshot * snapshot) :
   ExpressionFieldDelegateApp(container, snapshot, &m_inputViewController),
   m_solutionsController(&m_alternateEmptyViewController, snapshot->equationStore()),
-  m_intervalController(nullptr, snapshot->equationStore()),
+  m_intervalController(nullptr, this, snapshot->equationStore()),
   m_alternateEmptyViewController(nullptr, &m_solutionsController, &m_solutionsController),
   m_listController(&m_listFooter, snapshot->equationStore(), &m_listFooter),
   m_listFooter(&m_stackViewController, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_stackViewController(&m_inputViewController, &m_listFooter),
-  m_inputViewController(&m_modalViewController, &m_stackViewController, &m_listController, &m_listController)
+  m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
 {
 }
 
@@ -64,8 +64,8 @@ void App::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
-const char * App::XNT() {
-  return "x";
+char App::XNT() {
+  return 'x';
 }
 
 }

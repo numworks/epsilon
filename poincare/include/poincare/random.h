@@ -3,8 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -13,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(RandomNode); }
-  int numberOfChildren() const override { return 0; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Random";
@@ -27,10 +25,7 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "random"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>();
@@ -44,11 +39,14 @@ private:
 class Random final : public Expression {
 friend class RandomNode;
 public:
-  Random();
   Random(const RandomNode * n) : Expression(n) {}
+  static Random Builder() { return Random(); }
+  static Expression UntypedBuilder(Expression children) { return Builder(); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template<typename T> static T random();
 private:
+  Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 };
 

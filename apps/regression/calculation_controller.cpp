@@ -1,5 +1,4 @@
 #include "calculation_controller.h"
-#include "../constant.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/char_layout.h>
@@ -82,11 +81,18 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
     }
   }
   if (t->selectedColumn() > 0 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
+    // If we are on a double text cell, we have to choose which subcell to select
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
+    // Default selected subcell is the left one
     bool firstSubCellSelected = true;
     if (previousSelectedCellX > 0 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
+      // If we come from another double text cell, we have to update subselection
       EvenOddDoubleBufferTextCellWithSeparator * myPreviousCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-      firstSubCellSelected = myPreviousCell->firstTextSelected();
+      /* If the selection stays in the same column, we copy the subselection
+       * from previous cell. Otherwise, the selection has jumped to another
+       * column, we thus subselect the other subcell. */
+       assert(myPreviousCell);
+      firstSubCellSelected = t->selectedColumn() == previousSelectedCellX ? myPreviousCell->firstTextSelected() : !myPreviousCell->firstTextSelected();
     }
     myCell->selectFirstText(firstSubCellSelected);
   }
@@ -240,7 +246,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
 KDCoordinate CalculationController::columnWidth(int i) {
   if (i == 0) {
-    return k_smallCalculationCellWidth;
+    return k_titleCalculationCellWidth;
   }
   Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthNonEmptySeries(i-1));
   if (currentType == Model::Type::Quartic) {
@@ -249,7 +255,7 @@ KDCoordinate CalculationController::columnWidth(int i) {
   if (currentType == Model::Type::Cubic) {
     return k_cubicCalculationCellWidth;
   }
-  return k_smallCalculationCellWidth;
+  return k_minCalculationCellWidth;
 }
 
 KDCoordinate CalculationController::rowHeight(int j) {

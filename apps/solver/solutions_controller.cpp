@@ -7,6 +7,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -147,27 +148,33 @@ int SolutionsController::numberOfColumns() {
 
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
+    // Name of the variable or discriminant
     if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
+      // Discriminant
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
       deltaCell->setLayout(m_delta2Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
       symbolCell->setFont(KDFont::LargeFont);
-      char bufferSymbol[10]; // hold at maximum Delta = b^2-4ac
+      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+1]; // Hold at maximum Delta = b^2-4ac or the variable name + a digit
       switch (m_equationStore->type()) {
         case EquationStore::Type::LinearSystem:
-          bufferSymbol[0] = m_equationStore->variableAtIndex(j);
-          bufferSymbol[1] = 0;
+          /* The system has more than one variable: the cell text is the
+           * variable name */
+          strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j), Poincare::SymbolAbstract::k_maxNameSize);
           break;
         default:
-          bufferSymbol[0] = m_equationStore->variableAtIndex(0);
-          bufferSymbol[1] = j+'0';
-          bufferSymbol[2] = 0;
+          /* The system has one variable but might have many solutions: the cell
+           * text is variableX, with X the row index. For instance, x0, x1,...*/
+          int length = strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0), Poincare::SymbolAbstract::k_maxNameSize);
+          bufferSymbol[length++] = j+'0';
+          bufferSymbol[length] = 0;
           break;
       }
       symbolCell->setText(bufferSymbol);
     }
   } else {
+    // Value of the variable or discriminant
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
       char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

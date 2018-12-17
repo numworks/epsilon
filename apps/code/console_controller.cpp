@@ -28,7 +28,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_rowHeight(k_font->glyphSize().height()),
   m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, this, this),
-  m_editCell(this, this),
+  m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
   m_sandboxController(this),
   m_inputRunLoopActive(false)
@@ -45,25 +45,25 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
 }
 
 bool ConsoleController::loadPythonEnvironment() {
-  if(pythonEnvironmentIsLoaded()) {
+  if (m_pythonDelegate->isPythonUser(this)) {
     return true;
   }
   emptyOutputAccumulationBuffer();
   m_pythonDelegate->initPythonWithUser(this);
   MicroPython::registerScriptProvider(m_scriptStore);
   m_importScriptsWhenViewAppears = m_autoImportScripts;
+  /* We load functions and variables names in the variable box before running
+   * any other python code to avoid failling to load functions and variables
+   * due to memory exhaustion. */
+  static_cast<App *>(app())->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
 void ConsoleController::unloadPythonEnvironment() {
-  if (pythonEnvironmentIsLoaded()) {
+  if (!m_pythonDelegate->isPythonUser(nullptr)) {
     m_consoleStore.startNewSession();
     m_pythonDelegate->deinitPython();
   }
-}
-
-bool ConsoleController::pythonEnvironmentIsLoaded() {
-  return m_pythonDelegate->isPythonUser(this);
 }
 
 void ConsoleController::autoImport() {
@@ -121,19 +121,7 @@ void ConsoleController::didBecomeFirstResponder() {
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up && inputRunLoopActive()) {
-    askInputRunLoopTermination();
-    // We need to return true here because we want to actually exit from the
-    // input run loop, which requires ending a dispatchEvent cycle.
-    return true;
-  }
-  if (event == Ion::Events::Up) {
-    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
-      m_editCell.setEditing(false);
-      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
-      return true;
-    }
-  } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
       m_editCell.setEditing(true);
@@ -231,7 +219,9 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
     if (previousSelectedCellY > -1 && previousSelectedCellY < m_consoleStore.numberOfLines()) {
       // Reset the scroll of the previous cell
       ConsoleLineCell * previousCell = (ConsoleLineCell *)(t->cellAtLocation(previousSelectedCellX, previousSelectedCellY));
-      previousCell->reloadCell();
+      if (previousCell) {
+        previousCell->reloadCell();
+      }
     }
     ConsoleLineCell * selectedCell = (ConsoleLineCell *)(t->selectedCell());
     selectedCell->reloadCell();
@@ -245,9 +235,17 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Var) {
-    if (!textField->isEditing()) {
-      textField->setEditing(true);
+  if (event == Ion::Events::Up && inputRunLoopActive()) {
+    askInputRunLoopTermination();
+    // We need to return true here because we want to actually exit from the
+    // input run loop, which requires ending a dispatchEvent cycle.
+    return true;
+  }
+  if (event == Ion::Events::Up) {
+    if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
+      m_editCell.setEditing(false);
+      m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines()-1);
+      return true;
     }
   }
   return static_cast<App *>(textField->app())->textInputDidReceiveEvent(textField, event);
@@ -289,11 +287,6 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 #endif
   }
   return true;
-}
-
-Toolbox * ConsoleController::toolboxForTextInput(TextInput * textInput) {
-  Code::App * codeApp = static_cast<Code::App *>(app());
-  return codeApp->pythonToolbox();
 }
 
 void ConsoleController::displaySandbox() {
@@ -338,15 +331,25 @@ void ConsoleController::printText(const char * text, size_t length) {
 
 void ConsoleController::autoImportScript(Script script, bool force) {
   if (script.importationStatus() || force) {
-    // Create the command "from scriptName import *".
-    assert(strlen(k_importCommand1) + strlen(script.name()) - strlen(ScriptStore::k_scriptExtension) + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
+    // Step 1 - Create the command "from scriptName import *".
+
+    assert(strlen(k_importCommand1) + strlen(script.fullName()) - strlen(ScriptStore::k_scriptExtension) - 1 + strlen(k_importCommand2) + 1 <= k_maxImportCommandSize);
     char command[k_maxImportCommandSize];
+
+    // Copy "from "
     size_t currentChar = strlcpy(command, k_importCommand1, k_maxImportCommandSize);
-    const char * scriptName = script.name();
-    currentChar += strlcpy(command+currentChar, scriptName, k_maxImportCommandSize - currentChar);
-    // Remove the name extension ".py"
-    currentChar -= strlen(ScriptStore::k_scriptExtension);
-    currentChar += strlcpy(command+currentChar, k_importCommand2, k_maxImportCommandSize - currentChar);
+    const char * scriptName = script.fullName();
+
+    /* Copy the script name without the extension ".py". The '.' is overwritten
+     * by the null terminating char. */
+    int copySizeWithNullTerminatingZero = min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
+    currentChar += copySizeWithNullTerminatingZero-1;
+
+    // Copy " import *"
+    strlcpy(command+currentChar, k_importCommand2, k_maxImportCommandSize - currentChar);
+
+    // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
   if (force) {

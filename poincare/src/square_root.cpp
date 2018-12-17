@@ -1,5 +1,7 @@
 #include <poincare/square_root.h>
 #include <poincare/power.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/nth_root_layout.h>
 #include <assert.h>
@@ -8,13 +10,16 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper SquareRoot::s_functionHelper;
+
+int SquareRootNode::numberOfChildren() const { return SquareRoot::s_functionHelper.numberOfChildren(); }
+
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name());
 }
 
 template<typename T>
@@ -29,14 +34,11 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
-Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return SquareRoot(this).shallowReduce(context, angleUnit);
+Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return SquareRoot(this).shallowReduce(context, angleUnit, target);
 }
 
-
-SquareRoot::SquareRoot() : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {}
-
-Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -50,7 +52,7 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit a
 #endif
   Power p = Power(childAtIndex(0), Rational(1, 2));
   replaceWithInPlace(p);
-  return p.shallowReduce(context, angleUnit);
+  return p.shallowReduce(context, angleUnit, target);
 }
 
 }

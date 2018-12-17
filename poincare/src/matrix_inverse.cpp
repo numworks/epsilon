@@ -10,16 +10,20 @@
 
 namespace Poincare {
 
-Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixInverse(this).shallowReduce(context, angleUnit);
+constexpr Expression::FunctionHelper MatrixInverse::s_functionHelper;
+
+int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::s_functionHelper.numberOfChildren(); }
+
+Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return MatrixInverse(this).shallowReduce(context, angleUnit, target);
 }
 
 Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.name());
 }
 
 int MatrixInverseNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.name());
 }
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
@@ -38,9 +42,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
   return inverse;
 }
 
-MatrixInverse::MatrixInverse() : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {}
-
-Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -51,7 +53,7 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUni
 #if MATRIX_EXACT_REDUCING
 #if 0
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return Power(c, Rational(-1).shallowReduce(context, angleUnit);
+    return Power(c, Rational(-1).shallowReduce(context, angleUnit, target);
   }
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix mat = static_cast<Matrix&>(c);
@@ -65,7 +67,7 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUni
   if (c.type() != ExpressionNode::Type::Matrix) {
     Expression result = Power(c, Rational(-1));
     replaceWithInPlace(result);
-    result = result.shallowReduce(context, angleUnit);
+    result = result.shallowReduce(context, angleUnit, target);
     return result;
   }
   return *this;

@@ -89,12 +89,12 @@ QUIZ_CASE(poincare_rational_simplify) {
   assert_parsed_expression_simplify_to(buffer, buffer);
   // 1/OverflowedIntegerString()
   strlcpy(buffer+2, BigOverflowedIntegerString(), 400-2);
-  assert_parsed_expression_simplify_to(buffer, "1/inf");
+  assert_parsed_expression_simplify_to(buffer, "0");
   // MaxIntegerString()
   assert_parsed_expression_simplify_to(MaxIntegerString(), MaxIntegerString());
   // OverflowedIntegerString()
-  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), "inf");
-  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), "inf");
+  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), Infinity::Name());
+  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(), Infinity::Name());
   // -OverflowedIntegerString()
   buffer[0] = '-';
   strlcpy(buffer+1, BigOverflowedIntegerString(), 400-1);
@@ -120,7 +120,7 @@ QUIZ_CASE(poincare_rational_simplify) {
   assert_parsed_expression_simplify_to("56^56", "79164324866862966607842406018063254671922245312646690223362402918484170424104310169552592050323456");
   assert_parsed_expression_simplify_to("999^999", "999^999");
   assert_parsed_expression_simplify_to("999^-999", "1/999^999");
-  assert_parsed_expression_simplify_to("0^0", "undef");
+  assert_parsed_expression_simplify_to("0^0", Undefined::Name());
   assert_parsed_expression_simplify_to("x^0", "1");
   assert_parsed_expression_simplify_to("P^0", "1");
   assert_parsed_expression_simplify_to("A^0", "1");
@@ -143,5 +143,5 @@ QUIZ_CASE(poincare_rational_serialize) {
   Integer one(1);
   Integer overflow = Integer::Overflow(false);
   assert_parsed_expression_serialize_to(Rational(one, overflow), "1/inf");
-  assert_parsed_expression_serialize_to(Rational(overflow), "inf");
+  assert_parsed_expression_serialize_to(Rational(overflow), Infinity::Name());
 }

@@ -13,7 +13,7 @@ namespace Probability {
 
 class CalculationController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
-  CalculationController(Responder * parentResponder, Law * law, Calculation * calculation);
+  CalculationController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Law * law, Calculation * calculation);
   /* Responder */
   void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
@@ -37,7 +37,7 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 
   /* TextField delegate */
-  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) override;
+  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 

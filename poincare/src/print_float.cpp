@@ -1,7 +1,9 @@
 #include <poincare/print_float.h>
-#include <poincare/preferences.h>
 #include <poincare/ieee754.h>
+#include <poincare/infinity.h>
 #include <poincare/integer.h>
+#include <poincare/preferences.h>
+#include <poincare/undefined.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -10,8 +12,6 @@ extern "C" {
 #include <limits.h>
 }
 #include <cmath>
-#include <ion.h>
-#include <stdio.h>
 
 namespace Poincare {
 
@@ -67,26 +67,19 @@ template <class T>
 int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   if (std::isinf(f)) {
+    assert(Infinity::NameSize()+1 < PrintFloat::k_maxFloatBufferLength);
     int currentChar = 0;
     if (f < 0) {
       buffer[currentChar++] = '-';
     }
-    buffer[currentChar++] = 'i';
-    buffer[currentChar++] = 'n';
-    buffer[currentChar++] = 'f';
-    buffer[currentChar] = 0;
-    return currentChar;
+    strlcpy(&buffer[currentChar], Infinity::Name(), PrintFloat::k_maxFloatBufferLength-1);
+    return currentChar + Infinity::NameSize() - 1;
   }
 
-  if (std::isinf(f) || std::isnan(f)) {
-    int currentChar = 0;
-    buffer[currentChar++] = 'u';
-    buffer[currentChar++] = 'n';
-    buffer[currentChar++] = 'd';
-    buffer[currentChar++] = 'e';
-    buffer[currentChar++] = 'f';
-    buffer[currentChar] = 0;
-    return currentChar;
+  if (std::isnan(f)) {
+    assert(Undefined::NameSize() < PrintFloat::k_maxFloatBufferLength);
+    strlcpy(buffer, Undefined::Name(), PrintFloat::k_maxFloatBufferLength);
+    return Undefined::NameSize() - 1;
   }
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);

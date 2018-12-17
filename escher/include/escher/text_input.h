@@ -5,13 +5,11 @@
 #include <string.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
-#include <escher/text_input_delegate.h>
 
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
   TextInput(Responder * parentResponder, View * contentView);
   void setFont(const KDFont * font) { contentView()->setFont(font); }
-  Toolbox * toolbox() override;
   const char * text() const { return nonEditableContentView()->text(); }
   bool removeChar();
   size_t cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
@@ -22,6 +20,7 @@ protected:
   public:
     ContentView(const KDFont * font);
     void setFont(const KDFont * font);
+    const KDFont * font() const { return m_font; }
     size_t cursorLocation() const { return m_cursorIndex; }
     void setCursorLocation(int cursorLocation);
     virtual const char * text() const = 0;
@@ -47,13 +46,14 @@ protected:
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity) and false is returned. */
   bool insertTextAtLocation(const char * textBuffer, int location);
-  virtual bool removeEndOfLine();
+  bool removeEndOfLine();
   ContentView * contentView() {
     return const_cast<ContentView *>(nonEditableContentView());
   }
   virtual const ContentView * nonEditableContentView() const = 0;
 private:
-  virtual TextInputDelegate * delegate() = 0;
+  virtual void willSetCursorLocation(int * location) {}
+  virtual bool privateRemoveEndOfLine();
 };
 
 #endif

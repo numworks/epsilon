@@ -68,6 +68,14 @@ void LayoutField::ContentView::layoutCursorSubview() {
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
 }
 
+char LayoutField::XNTChar(char defaultXNTChar) {
+  char xnt = m_contentView.cursor()->layoutReference().XNTChar();
+  if (xnt != Ion::Charset::Empty) {
+    return xnt;
+  }
+  return defaultXNTChar;
+}
+
 void LayoutField::reload(KDSize previousSize) {
   layout().invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();
@@ -109,9 +117,11 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     m_contentView.cursor()->addEmptyMatrixLayout();
   } else {
-    Expression resultExpression = Expression::parse(text);
+    Expression resultExpression = Expression::Parse(text);
     if (resultExpression.isUninitialized()) {
+      KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
       m_contentView.cursor()->insertText(text);
+      reload(previousLayoutSize);
     } else {
       Layout resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
       if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
@@ -119,19 +129,15 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
       }
       // Find the pointed layout.
       Layout pointedLayout;
-      if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
-        /* Special case: if the text is "random()", the cursor should not be set
-         * inside the parentheses. */
-        pointedLayout = resultLayout;
-      } else if (resultLayout.isHorizontal()) {
-        /* If the layout is horizontal, pick the first open parenthesis. For now,
-         * all horizontal layouts in MathToolbox have parentheses. */
-        for (int i = 0; i < resultLayout.numberOfChildren(); i++) {
-          Layout l = resultLayout.childAtIndex(i);
-          if (l.isLeftParenthesis()) {
-            pointedLayout = l;
-            break;
-          }
+      if (!forceCursorRightOfText) {
+        if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
+          /* Special case: if the text is "random()", the cursor should not be set
+           * inside the parentheses. */
+          pointedLayout = resultLayout;
+        } else if (resultLayout.isHorizontal()) {
+          pointedLayout = resultLayout.recursivelyMatches(
+              [](Poincare::Layout layout) {
+              return layout.isLeftParenthesis() || layout.isEmpty();});
         }
       }
       /* Insert the layout. If pointedLayout is uninitialized, the cursor will
@@ -175,9 +181,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
-  if (Responder::handleEvent(event)) {
-    /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the LayoutField is forced into editing mode. */
+  if (handleBoxEvent(app(), event)) {
     if (!isEditing()) {
       setEditing(true);
     }
@@ -188,7 +192,15 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       // Reinit layout for next use
       clearLayout();
+    } else {
+      setEditing(true);
     }
+    return true;
+  }
+  /* if move event was not caught neither by privateHandleMoveEvent nor by
+   * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
+   * event up. */
+  if ((event == Ion::Events::Up || event == Ion::Events::Down || event == Ion::Events::Left || event == Ion::Events::Right) && isEditing()) {
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {

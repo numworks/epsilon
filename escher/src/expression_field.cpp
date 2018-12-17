@@ -2,11 +2,11 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 
-ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, textFieldDelegate, false, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
-  m_layoutField(parentResponder, layoutFieldDelegate),
+  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, inputEventHandlerDelegate, textFieldDelegate, false, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate),
   m_textBuffer(textBuffer),
   m_textBufferLength(textBufferLength)
 {
@@ -37,7 +37,7 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_layoutField.serialize(m_textBuffer, m_textBufferLength);
+    m_layoutField.layout().serializeParsedExpression(m_textBuffer, m_textBufferLength);
   }
   return m_textBuffer;
 }

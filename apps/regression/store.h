@@ -35,9 +35,7 @@ public:
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
     return regressionModel((int)m_regressionTypes[series]);
   }
-  /* Return the series index of the closest regression at abscissa x, above
-   * ordinate y if direction > 0, below otherwise */
-  int closestVerticalRegression(int direction, double x, double y, int currentRegressionSeries, Poincare::Context * globalContext);
+
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if
    * direction > 0, below otherwise */

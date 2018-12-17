@@ -22,8 +22,8 @@ public:
   // Properties
   Type type() const override { return Type::Multiplication; }
   Sign sign() const override;
-  int polynomialDegree(char symbolName) const override;
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c*d); }
@@ -44,7 +44,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
 
@@ -81,18 +81,18 @@ public:
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Expression
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   // Simplification
-  Expression privateShallowReduce(Context& context, Preferences::AngleUnit angleUnit, bool expand, bool canBeInterrupted);
+  Expression privateShallowReduce(Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool expand, bool canBeInterrupted);
   void mergeMultiplicationChildrenInPlace();
-  void factorizeBase(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
-  void mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::AngleUnit angleUnit);
-  void factorizeExponent(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
-  Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit);
+  void factorizeBase(int i, int j, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  void mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  void factorizeExponent(int i, int j, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   void addMissingFactors(Expression factor, Context & context, Preferences::AngleUnit angleUnit);
   void factorizeSineAndCosine(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);

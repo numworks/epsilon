@@ -7,7 +7,7 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   ViewController(parentResponder),
   m_pageTitle(title),
   m_executeScript(I18n::Message::ExecuteScript),
-  m_renameScript(I18n::Message::RenameScript),
+  m_renameScript(I18n::Message::Rename),
   m_autoImportScript(I18n::Message::AutoImportScript),
   m_deleteScript(I18n::Message::DeleteScript),
   m_selectableTableView(this),

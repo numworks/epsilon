@@ -1,6 +1,7 @@
 #include <poincare/determinant.h>
 #include <poincare/matrix.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 }
@@ -8,8 +9,16 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Determinant::s_functionHelper;
+
+int DeterminantNode::numberOfChildren() const { return Determinant::s_functionHelper.numberOfChildren(); }
+
 Layout DeterminantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.name());
+}
+
+int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.name());
 }
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
@@ -19,11 +28,9 @@ Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preference
   return Complex<T>(input.determinant());
 }
 
-Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Determinant(this).shallowReduce(context, angleUnit);
 }
-
-Determinant::Determinant() : Expression(TreePool::sharedPool()->createTreeNode<DeterminantNode>()) {}
 
 Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
@@ -42,7 +49,7 @@ Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit 
 #endif
 #endif
   // det(A) = A if A is not a matrix
-  if (!c0.recursivelyMatches(Expression::IsMatrix, context)) {
+  if (!c0.recursivelyMatches(Expression::IsMatrix, context, true)) {
     replaceWithInPlace(c0);
     return c0;
   }

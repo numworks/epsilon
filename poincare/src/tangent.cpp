@@ -2,6 +2,7 @@
 #include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/sine.h>
 #include <poincare/trigonometry.h>
@@ -9,12 +10,20 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Tangent::s_functionHelper;
+
+int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
+
 float TangentNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
 
 Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
+}
+
+int TangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.name());
 }
 
 template<typename T>
@@ -24,13 +33,11 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
-Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Tangent(this).shallowReduce(context, angleUnit);
+Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Tangent(this).shallowReduce(context, angleUnit, target);
 }
 
-Tangent::Tangent() : Expression(TreePool::sharedPool()->createTreeNode<TangentNode>()) {}
-
-Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -43,13 +50,13 @@ Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
+  Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit, target);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
-    Sine s = Sine(newExpression.childAtIndex(0).clone());
-    Cosine c = Cosine(newExpression.childAtIndex(0));
+    Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
+    Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
     Division d = Division(s, c);
     newExpression.replaceWithInPlace(d);
-    return d.shallowReduce(context, angleUnit);
+    return d.shallowReduce(context, angleUnit, target);
   }
   return newExpression;
 }

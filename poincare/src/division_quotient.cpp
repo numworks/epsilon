@@ -8,15 +8,19 @@
 
 namespace Poincare {
 
-Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
+
+int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
+
+Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return DivisionQuotient(this).shallowReduce(context, angleUnit);
 }
 
 Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits, DivisionQuotient::s_functionHelper.name());
 }
 int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionQuotient::s_functionHelper.name());
 }
 
 template<typename T>
@@ -30,8 +34,6 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
   }
   return Complex<T>(std::floor(f1/f2));
 }
-
-DivisionQuotient::DivisionQuotient() : Expression(TreePool::sharedPool()->createTreeNode<DivisionQuotientNode>()) {}
 
 Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {

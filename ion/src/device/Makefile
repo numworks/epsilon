@@ -6,6 +6,7 @@ ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((secti
 
 objs += $(addprefix ion/src/shared/, \
   console_line.o \
+  crc32_padded.o\
   events_modifier.o \
 )
 

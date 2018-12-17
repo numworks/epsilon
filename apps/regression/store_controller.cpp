@@ -10,8 +10,8 @@ using namespace Shared;
 
 namespace Regression {
 
-StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
-  Shared::StoreController(parentResponder, store, header),
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, ButtonRowController * header) :
+  Shared::StoreController(parentResponder, inputEventHandlerDelegate, store, header),
   m_titleCells{},
   m_regressionContext(store),
   m_storeParameterController(this, store, this)

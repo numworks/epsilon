@@ -6,15 +6,15 @@ using namespace Shared;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
+ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
+  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
   m_sequenceStore(sequenceStore),
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
-  m_intervalParameterController(this, m_interval)
+  m_intervalParameterController(this, inputEventHandlerDelegate, m_interval)
 {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
     m_sequenceTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);

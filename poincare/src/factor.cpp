@@ -4,7 +4,8 @@
 #include <poincare/power.h>
 #include <poincare/division.h>
 #include <poincare/opposite.h>
-
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <stdlib.h>
 #include <assert.h>
@@ -13,11 +14,17 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Factor::s_functionHelper;
+
+int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
+
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Factor::Factor() : Expression(TreePool::sharedPool()->createTreeNode<FactorNode>()) {}
+int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
+}
 
 Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Factor(this).shallowBeautify(context, angleUnit);

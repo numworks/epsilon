@@ -3,6 +3,7 @@
 
 #include "equation.h"
 #include "../shared/expression_model_store.h"
+#include <poincare/symbol_abstract.h>
 #include <stdint.h>
 
 namespace Solver {
@@ -19,7 +20,7 @@ public:
     EquationUndefined = -1,
     TooManyVariables = -2,
     NonLinearSystem = -3,
-    RequireApproximateSolution = -4
+    RequireApproximateSolution = -4,
   };
   /* EquationStore */
   EquationStore();
@@ -32,8 +33,8 @@ public:
   Type type() const {
     return m_type;
   }
-  char variableAtIndex(size_t i) {
-    assert(i < strlen(m_variables));
+  const char * variableAtIndex(size_t i) {
+    assert(i < Poincare::Expression::k_maxNumberOfVariables && m_variables[i][0] != 0);
     return m_variables[i];
   }
   int numberOfSolutions() const {
@@ -84,7 +85,7 @@ private:
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
-  char m_variables[Poincare::Expression::k_maxNumberOfVariables+1];
+  char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   int m_numberOfSolutions;
   Poincare::Layout m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::Layout m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];

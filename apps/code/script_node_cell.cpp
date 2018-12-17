@@ -28,7 +28,7 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
   if (m_scriptNode->type() == ScriptNode::Type::Function) {
     ctx->drawString(ScriptNodeCell::k_parentheses, KDPoint(nameSize.width(), Metric::TableCellLabelTopMargin), k_font, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
   }
-  ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).name(), KDPoint(0, Metric::TableCellLabelTopMargin + nameSize.height() + k_verticalMargin), k_font, Palette::GreyDark, isHighlighted()? Palette::Select : KDColorWhite);
+  ctx->drawString(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName(), KDPoint(0, Metric::TableCellLabelTopMargin + nameSize.height() + k_verticalMargin), k_font, Palette::GreyDark, isHighlighted()? Palette::Select : KDColorWhite);
 }
 
 KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
@@ -36,7 +36,7 @@ KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
     return KDSizeZero;
   }
   KDSize size1 = k_font->stringSize(m_scriptNode->name());
-  KDSize size2 = k_font->stringSize(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).name());
+  KDSize size2 = k_font->stringSize(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).fullName());
   KDSize size3 = KDSizeZero;
   if (m_scriptNode->type() == ScriptNode::Type::Function) {
     size3 = k_font->stringSize(ScriptNodeCell::k_parentheses);

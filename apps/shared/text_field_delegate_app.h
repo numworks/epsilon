@@ -3,25 +3,28 @@
 
 #include <poincare/context.h>
 #include <escher.h>
+#include "input_event_handler_delegate_app.h"
 #include "../i18n.h"
 
 class AppsContainer;
 
 namespace Shared {
 
-class TextFieldDelegateApp : public ::App, public TextFieldDelegate {
+class TextFieldDelegateApp : public InputEventHandlerDelegateApp, public TextFieldDelegate {
 public:
   virtual ~TextFieldDelegateApp() = default;
   virtual Poincare::Context * localContext();
-  AppsContainer * container();
-  virtual const char * XNT();
+  virtual char XNT();
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  bool isAcceptableText(const char * text);
 protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
-private:
-  const char * privateXNT(TextField * textField);
+  bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
+  bool isFinishingEvent(Ion::Events::Event event);
+  virtual bool isAcceptableExpression(const Poincare::Expression expression);
+  virtual bool storeExpressionAllowed() const { return false; }
+  static bool ExpressionCanBeSerialized(const Poincare::Expression expression, bool replaceAns, Poincare::Expression ansExpression);
 };
 
 }

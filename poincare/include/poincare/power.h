@@ -4,7 +4,6 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -27,8 +26,8 @@ public:
   Sign sign() const override;
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
-  int polynomialDegree(char symbolName) const override;
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
 
@@ -40,13 +39,10 @@ private:
 
   // Serialize
   bool childNeedsParenthesis(const TreeNode * child) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  static const char * name() { return "^"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplify
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
@@ -70,8 +66,8 @@ public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
@@ -81,11 +77,11 @@ private:
   // Simplification
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
-  Expression simplifyPowerPower(Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplifyPowerMultiplication(Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplifyRationalRationalPower(Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplifyPowerPower(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression simplifyPowerMultiplication(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression simplifyRationalRationalPower(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
-  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
+  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;

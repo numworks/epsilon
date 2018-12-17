@@ -23,12 +23,13 @@ private:
 
 class SumLayout final : public Layout {
 public:
-  SumLayout(Layout argument, Layout lowerB, Layout upperB) :
+  SumLayout(Layout argument, Layout variable, Layout lowerB, Layout upperB) :
     Layout(TreePool::sharedPool()->createTreeNode<SumLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, argument);
-    replaceChildAtIndexInPlace(1, lowerB);
-    replaceChildAtIndexInPlace(2, upperB);
+    replaceChildAtIndexInPlace(1, variable);
+    replaceChildAtIndexInPlace(2, lowerB);
+    replaceChildAtIndexInPlace(3, upperB);
   }
 };
 

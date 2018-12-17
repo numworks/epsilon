@@ -8,8 +8,7 @@ class Clipboard {
 public:
   static Clipboard * sharedClipboard();
   void store(const char * storedText);
-  void store(Poincare::Layout layoutR);
-  const char * storedText();
+  const char * storedText() const { return m_textBuffer; }
   void reset();
 private:
   char m_textBuffer[TextField::maxBufferSize()];

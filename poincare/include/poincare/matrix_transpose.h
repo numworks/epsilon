@@ -10,7 +10,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixTransposeNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "MatrixTranspose";
@@ -23,9 +23,8 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  const char * name() const { return "transpose"; }
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -34,12 +33,16 @@ private:
 
 class MatrixTranspose final : public Expression {
 public:
-  MatrixTranspose();
   MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
-  explicit MatrixTranspose(Expression operand) : MatrixTranspose() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static MatrixTranspose Builder(Expression child) { return MatrixTranspose(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, &UntypedBuilder);
+
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  explicit MatrixTranspose(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixTransposeNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

@@ -96,9 +96,9 @@ void App::dismissModalViewController() {
   m_modalViewController.dismissModalViewController();
 }
 
-void App::displayWarning(I18n::Message warningMessage, bool specialExitKeys) {
-  m_warningController.setLabel(warningMessage, specialExitKeys);
-  m_modalViewController.displayModalViewController(&m_warningController, 0.5f, 0.5f);
+void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2, bool specialExitKeys) {
+  m_warningController.setLabel(warningMessage1, warningMessage2, specialExitKeys);
+  displayModalViewController(&m_warningController, 0.5f, 0.5f);
 }
 
 const Container * App::container() const {

@@ -22,15 +22,17 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    CalculationStore * calculationStore();
+    CalculationStore * calculationStore() { return &m_calculationStore; }
   private:
     void tidy() override;
     CalculationStore m_calculationStore;
   };
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
-  bool textInputIsCorrect(const char * text);
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
-  const char * XNT() override;
+  // TextFieldDelegateApp
+  bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool storeExpressionAllowed() const override { return true; }
+  char XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   HistoryController m_historyController;

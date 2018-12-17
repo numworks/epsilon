@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/approximation_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -25,7 +24,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Division; }
-  int polynomialDegree(char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Approximation
   virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -44,12 +43,10 @@ public:
   // Layout
   bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
 private:
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
@@ -68,7 +65,8 @@ public:
     replaceChildAtIndexInPlace(1, denominator);
   }
   Division(const DivisionNode * n) : Expression(n) {}
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };
 
 }

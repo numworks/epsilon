@@ -3,8 +3,7 @@ app_headers += apps/graph/app.h
 
 app_objs += $(addprefix apps/graph/,\
   app.o\
-  cartesian_function.o\
-  cartesian_function_store.o\
+  storage_cartesian_function_store.o\
   graph/banner_view.o\
   graph/calculation_graph_controller.o\
   graph/calculation_parameter_controller.o\
@@ -15,12 +14,14 @@ app_objs += $(addprefix apps/graph/,\
   graph/graph_view.o\
   graph/integral_graph_controller.o\
   graph/intersection_graph_controller.o\
-  graph/tangent_graph_controller.o\
   graph/root_graph_controller.o\
-  list/list_controller.o\
-  values/derivative_parameter_controller.o\
-  values/function_parameter_controller.o\
-  values/values_controller.o\
+  graph/tangent_graph_controller.o\
+  list/list_parameter_controller.o\
+  list/storage_list_controller.o\
+  list/text_field_function_title_cell.o\
+  values/storage_derivative_parameter_controller.o\
+  values/storage_function_parameter_controller.o\
+  values/storage_values_controller.o\
 )
 
 i18n_files += $(addprefix apps/graph/,\

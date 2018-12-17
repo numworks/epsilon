@@ -7,24 +7,24 @@ class GlobalPreferences {
 public:
   enum class ExamMode {
     Activate,
-    Desactivate
+    Deactivate
   };
   static GlobalPreferences * sharedGlobalPreferences();
-  I18n::Language language() const;
-  void setLanguage(I18n::Language language);
-  ExamMode examMode() const;
-  void setExamMode(ExamMode examMode);
+  I18n::Language language() const { return m_language; }
+  void setLanguage(I18n::Language language) { m_language = language; }
+  ExamMode examMode() const { return m_examMode; }
+  void setExamMode(ExamMode examMode) { m_examMode = examMode; }
 #ifdef EPSILON_BOOT_PROMPT
   bool showPopUp() const { return m_showPopUp; }
-  void setShowPopUp(bool showPopUp);
+  void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
 #endif
-  int brightnessLevel() const;
+  int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
   constexpr static int NumberOfBrightnessStates = 5;
 private:
   GlobalPreferences() :
     m_language(I18n::Language::EN),
-    m_examMode(ExamMode::Desactivate),
+    m_examMode(ExamMode::Deactivate),
 #ifdef EPSILON_BOOT_PROMPT
     m_showPopUp(true),
 #endif

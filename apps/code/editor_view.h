@@ -1,7 +1,7 @@
 #ifndef CODE_EDITOR_VIEW_H
 #define CODE_EDITOR_VIEW_H
 
-#include <escher/view.h>
+#include <escher.h>
 #include "python_text_area.h"
 
 namespace Code {
@@ -9,8 +9,8 @@ namespace Code {
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
   EditorView(Responder * parentResponder, App * pythonDelegate);
-  void setTextAreaDelegate(TextAreaDelegate * delegate) {
-    m_textArea.setDelegate(delegate);
+  void setTextAreaDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) {
+    m_textArea.setDelegates(inputEventHandlerDelegate, delegate);
   }
   const char * text() const { return m_textArea.text(); }
   void setText(char * textBuffer, size_t textBufferSize) {

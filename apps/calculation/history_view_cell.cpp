@@ -7,15 +7,28 @@
 
 namespace Calculation {
 
+/* HistoryViewCellDataSource */
+
+HistoryViewCellDataSource::HistoryViewCellDataSource() :
+  m_selectedSubviewType(HistoryViewCellDataSource::SubviewType::Output) {}
+
+void HistoryViewCellDataSource::setSelectedSubviewType(HistoryViewCellDataSource::SubviewType subviewType, HistoryViewCell * cell) {
+  m_selectedSubviewType = subviewType;
+  if (cell) {
+    cell->setHighlighted(cell->isHighlighted());
+  }
+}
+
+/* HistoryViewCell */
+
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculation(),
   m_inputLayout(),
-  m_exactOutputLayout(),
-  m_approximateOutputLayout(),
+  m_leftOutputLayout(),
+  m_rightOutputLayout(),
   m_inputView(this),
-  m_scrollableOutputView(this),
-  m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
+  m_scrollableOutputView(this)
 {
 }
 
@@ -30,11 +43,12 @@ void HistoryViewCell::setEven(bool even) {
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
+  assert(m_dataSource);
   m_highlighted = highlight;
   m_inputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   if (isHighlighted()) {
-    if (m_selectedSubviewType == SubviewType::Input) {
+    if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
       m_inputView.setBackgroundColor(Palette::Select);
     } else {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
@@ -44,7 +58,8 @@ void HistoryViewCell::setHighlighted(bool highlight) {
 }
 
 Poincare::Layout HistoryViewCell::layout() const {
-  if (m_selectedSubviewType == SubviewType::Input) {
+  assert(m_dataSource);
+  if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
     return m_inputLayout;
   } else {
     return m_scrollableOutputView.layout();
@@ -105,43 +120,43 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  if (!m_exactOutputLayout.isUninitialized()) {
-    m_exactOutputLayout = Poincare::Layout();
+  if (!m_leftOutputLayout.isUninitialized()) {
+    m_leftOutputLayout = Poincare::Layout();
   }
-  if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
-    m_exactOutputLayout = calculation->createExactOutputLayout(calculationApp->localContext());
+  if (!m_rightOutputLayout.isUninitialized()) {
+    m_rightOutputLayout = Poincare::Layout();
   }
-  m_approximateOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
-  m_scrollableOutputView.setLayouts(m_approximateOutputLayout, m_exactOutputLayout);
+  if (calculation->shouldOnlyDisplayExactOutput()) {
+    m_rightOutputLayout = calculation->createExactOutputLayout();
+  } else {
+    m_rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
+    if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
+      m_leftOutputLayout = calculation->createExactOutputLayout();
+    }
+  }
+  m_scrollableOutputView.setLayouts(m_rightOutputLayout, m_leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {
-  if (m_selectedSubviewType == SubviewType::Input) {
+  assert(m_dataSource);
+  if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
     app()->setFirstResponder(&m_inputView);
   } else {
     app()->setFirstResponder(&m_scrollableOutputView);
   }
 }
 
-HistoryViewCell::SubviewType HistoryViewCell::selectedSubviewType() {
-  return m_selectedSubviewType;
-}
-
-void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subviewType) {
-  m_selectedSubviewType = subviewType;
-  setHighlighted(isHighlighted());
-}
-
 bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::Down && m_selectedSubviewType == SubviewType::Input) ||
-    (event == Ion::Events::Up && m_selectedSubviewType == SubviewType::Output)) {
-    SubviewType otherSubviewType = m_selectedSubviewType == SubviewType::Input ? SubviewType::Output : SubviewType::Input;
+  assert(m_dataSource);
+  if ((event == Ion::Events::Down && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) ||
+    (event == Ion::Events::Up && m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Output)) {
+    HistoryViewCellDataSource::SubviewType otherSubviewType = m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input ? HistoryViewCellDataSource::SubviewType::Output : HistoryViewCellDataSource::SubviewType::Input;
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
     tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
     HistoryViewCell * selectedCell = (HistoryViewCell *)(tableView->selectedCell());
-    selectedCell->setSelectedSubviewType(otherSubviewType);
+    m_dataSource->setSelectedSubviewType(otherSubviewType, selectedCell);
     app()->setFirstResponder(selectedCell);
     return true;
   }

@@ -3,8 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/approximation_helper.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -12,7 +10,7 @@ class AbsoluteValueNode final : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(AbsoluteValueNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "AbsoluteValue";
@@ -37,24 +35,25 @@ public:
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "abs");
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 };
 
 class AbsoluteValue final : public Expression {
 friend class AbsoluteValueNode;
 public:
-  AbsoluteValue();
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  explicit AbsoluteValue(Expression operand) : AbsoluteValue() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static AbsoluteValue Builder(Expression child) { return AbsoluteValue(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilder);
+
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 private:
+  explicit AbsoluteValue(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 };
 

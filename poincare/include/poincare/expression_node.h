@@ -12,6 +12,8 @@ namespace Poincare {
 /* Methods preceded by '*!*' interfere with the expression pool, which can make
  * 'this' outdated. They should only be called in a wrapper on Expression. */
 
+class SymbolAbstract;
+
 class ExpressionNode : public TreeNode {
   friend class AdditionNode;
   friend class DivisionNode;
@@ -51,6 +53,7 @@ public:
     Factor,
     Floor,
     FracPart,
+    Function,
     GreatCommonDivisor,
     HyperbolicArcCosine,
     HyperbolicArcSine,
@@ -77,6 +80,7 @@ public:
     Subtraction,
     Sum,
     Symbol,
+    Constant,
 
     Matrix,
     ConfidenceInterval,
@@ -98,19 +102,15 @@ public:
   };
   virtual Sign sign() const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
-  /*!*/ virtual Expression replaceSymbolWithExpression(char symbol, Expression & expression);
+  /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
-  virtual int polynomialDegree(char symbolName) const;
-  /*!*/ virtual int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
-  typedef bool (*isVariableTest)(char c);
-  virtual int getVariables(isVariableTest isVariable, char * variables) const;
+  virtual int polynomialDegree(Context & context, const char * symbolName) const;
+  /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
+  /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context & context);
+  typedef bool (*isVariableTest)(const char * c);
+  virtual int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
   virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
-
-  // Useful to avoid parsing incorrect expressions as cos(2,3,4)
-  virtual bool hasValidNumberOfOperands(int nbChildren) const { return numberOfChildren() == nbChildren; }
-
-  /* Comparison */
 
   /* Simplification */
   /* SimplificationOrder returns:
@@ -144,7 +144,13 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  enum class ReductionTarget {
+    BottomUpComputation = 0,
+    TopDownComputation = 1,
+    User
+  };
+  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;

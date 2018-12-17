@@ -10,7 +10,7 @@ namespace Calculation {
 
 class App;
 
-class HistoryController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
+class HistoryController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public HistoryViewCellDataSource {
 public:
   HistoryController(Responder * parentResponder, CalculationStore * calculationStore);
   View * view() override { return &m_selectableTableView; }

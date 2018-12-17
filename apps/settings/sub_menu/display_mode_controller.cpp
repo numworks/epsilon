@@ -10,9 +10,9 @@ using namespace Shared;
 
 namespace Settings {
 
-DisplayModeController::DisplayModeController(Responder * parentResponder) :
+DisplayModeController::DisplayModeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   PreferencesController(parentResponder),
-  m_editableCell(&m_selectableTableView, this, m_draftTextBuffer)
+  m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer)
 {
   m_editableCell.messageTableCellWithEditableText()->setMessage(I18n::Message::SignificantFigures);
   m_editableCell.messageTableCellWithEditableText()->setMessageFont(KDFont::LargeFont);

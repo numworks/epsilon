@@ -5,18 +5,36 @@
 
 class ToolboxMessageTree : public MessageTree {
 public:
-  constexpr ToolboxMessageTree(I18n::Message label = (I18n::Message)0, I18n::Message text = (I18n::Message)0, I18n::Message insertedText = (I18n::Message)0, const ToolboxMessageTree * children = nullptr, int numberOfChildren = 0, bool stripInsertedText = true) :
+  constexpr static ToolboxMessageTree Leaf(I18n::Message label, I18n::Message text = (I18n::Message)0, bool stripInsertedText = true, I18n::Message insertedText = (I18n::Message)0) {
+    return ToolboxMessageTree(
+        label,
+        text,
+        (insertedText == (I18n::Message)0) ? label : insertedText,
+        nullptr,
+        0,
+        stripInsertedText);
+  };
+  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree * children, int numberOfChildren) {
+    return ToolboxMessageTree(
+        label,
+        (I18n::Message)0,
+        (I18n::Message)0,
+        children,
+        numberOfChildren,
+        true);
+  }
+  const MessageTree * children(int index) const override { return &m_children[index]; }
+  I18n::Message text() const { return m_text; }
+  I18n::Message insertedText() const { return m_insertedText; }
+  bool stripInsertedText() const { return m_stripInsertedText; }
+private:
+  constexpr ToolboxMessageTree(I18n::Message label, I18n::Message text, I18n::Message insertedText, const ToolboxMessageTree * children, int numberOfChildren, bool stripInsertedText) :
     MessageTree(label, numberOfChildren),
     m_children(children),
     m_text(text),
     m_insertedText(insertedText),
     m_stripInsertedText(stripInsertedText)
   {}
-  const MessageTree * children(int index) const override { return &m_children[index]; }
-  I18n::Message text() const { return m_text; }
-  I18n::Message insertedText() const { return m_insertedText; }
-  bool stripInsertedText() const { return m_stripInsertedText; }
-private:
   const ToolboxMessageTree * m_children;
   I18n::Message m_text;
   I18n::Message m_insertedText;

@@ -24,11 +24,6 @@ extern "C" {
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
 
-MicroPython::ExecutionEnvironment::ExecutionEnvironment() :
-  m_sandboxIsDisplayed(false)
-{
-}
-
 MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentExecutionEnvironment() {
   return sCurrentExecutionEnvironment;
 }
@@ -88,6 +83,13 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
 
 void MicroPython::ExecutionEnvironment::interrupt() {
   mp_keyboard_interrupt();
+}
+
+void MicroPython::ExecutionEnvironment::setSandboxIsDisplayed(bool display) {
+  if (m_sandboxIsDisplayed && !display) {
+    modturtle_view_did_disappear();
+  }
+  m_sandboxIsDisplayed = display;
 }
 
 extern "C" {

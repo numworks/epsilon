@@ -2,6 +2,7 @@
 
 mp_obj_t modturtle___init__();
 void modturtle_gc_collect();
+void modturtle_view_did_disappear();
 
 mp_obj_t modturtle_reset();
 

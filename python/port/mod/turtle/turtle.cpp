@@ -166,6 +166,10 @@ void Turtle::setColor(const char * color) {
   }
 }
 
+void Turtle::viewDidDisappear() {
+  m_drawn = false;
+}
+
 // Private functions
 
 void Turtle::setHeadingPrivate(mp_float_t angle) {
@@ -225,7 +229,7 @@ KDRect Turtle::iconRect() const {
 bool Turtle::draw(bool force) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
-  if ((m_speed > 0 || force) && m_visible && hasUnderneathPixelBuffer()) {
+  if ((m_speed > 0 || force) && m_visible && !m_drawn && hasUnderneathPixelBuffer()) {
     KDContext * ctx = KDIonContext::sharedContext();
 
     // Get the pixels underneath the turtle
@@ -322,8 +326,8 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
 }
 
 void Turtle::drawPaw(PawType type, PawPosition pos) {
-  assert(!m_drawn && m_underneathPixelBuffer != nullptr);
-
+  assert(!m_drawn);
+  assert(m_underneathPixelBuffer != nullptr);
   KDCoordinate pawOffset = 5;
   constexpr float crawlOffset = 0.6f;
   constexpr float angles[] = {M_PI_2/2, M_PI_2+M_PI_2/2, -M_PI_2-M_PI_2/2, -M_PI_2/2};

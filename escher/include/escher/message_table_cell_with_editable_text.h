@@ -7,7 +7,7 @@
 
 class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
-  MessageTableCellWithEditableText(Responder * parentResponder = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, char * draftTextBuffer = nullptr, I18n::Message message = (I18n::Message)0);
+  MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, char * draftTextBuffer = nullptr, I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   TextField * textField() { return &m_textField; }
   const char * editedText() const;

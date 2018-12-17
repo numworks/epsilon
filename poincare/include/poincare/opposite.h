@@ -24,7 +24,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Opposite; }
-  int polynomialDegree(char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
   Sign sign() const override;
 
   // Approximation
@@ -41,18 +41,18 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 };
 
 class Opposite final : public Expression {
 public:
   Opposite();
   Opposite(const OppositeNode * n) : Expression(n) {}
-  explicit Opposite(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
-    replaceChildAtIndexInPlace(0, operand);
+  explicit Opposite(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };
 
 }

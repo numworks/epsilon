@@ -21,10 +21,12 @@ objs += $(addprefix escher/src/,\
   even_odd_message_text_cell.o\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
+  expression_table_cell_with_expression.o\
   expression_view.o\
   highlight_cell.o\
   gauge_view.o\
   image_view.o\
+  input_event_handler.o\
   invocation.o\
   input_view_controller.o\
   key_view.o\
@@ -43,6 +45,7 @@ objs += $(addprefix escher/src/,\
   message_text_view.o\
   message_tree.o\
   modal_view_controller.o\
+  nested_menu_controller.o\
   palette.o\
   pointer_text_view.o\
   responder.o\

@@ -1,7 +1,6 @@
 #ifndef REGRESSION_GRAPH_CONTROLLER_H
 #define REGRESSION_GRAPH_CONTROLLER_H
 
-#include <escher.h>
 #include "banner_view.h"
 #include "store.h"
 #include "graph_options_controller.h"
@@ -17,7 +16,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
+  GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
@@ -28,28 +27,34 @@ private:
   constexpr static int k_maxLegendLength = 16;
   constexpr static int k_maxNumberOfCharacters = 50;
   constexpr static float k_viewHeight = 174.0f;
+
   Poincare::Context * globalContext();
-  Shared::CurveView * curveView() override;
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
-  bool handleEnter() override;
-  void reloadBannerView() override;
-  void initRangeParameters() override;
-  void initCursorParameters() override;
-  bool moveCursorHorizontally(int direction) override;
-  bool moveCursorVertically(int direction) override;
-  uint32_t modelVersion() override;
-  uint32_t rangeVersion() override;
-  bool isCursorVisible() override;
-
-  // InteractiveCurveViewController
-  float displayTopMarginRatio() override;
-  float displayBottomMarginRatio() override;
-
   float cursorTopMarginRatio() { return 0.07f; } // (cursorHeight/2) / graphViewHeight
   float cursorBottomMarginRatio();
   float estimatedBannerHeight() const;
 
+  // SimpleInteractiveCurveViewController
+  void reloadBannerView() override;
+  bool moveCursorHorizontally(int direction) override;
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
+  Shared::CurveView * curveView() override;
+  bool handleEnter() override;
+
+  // InteractiveCurveViewController
+  void initRangeParameters() override;
+  void initCursorParameters() override;
+  bool moveCursorVertically(int direction) override;
+  uint32_t modelVersion() override;
+  uint32_t rangeVersion() override;
+  bool isCursorVisible() override;
+  bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
+  double yValue(int curveIndex, double x, Poincare::Context * context) const override;
+  bool suitableYValue(double y) const override;
+  int numberOfCurves() const override;
+
   // InteractiveCurveViewRangeDelegate
+  float displayTopMarginRatio() override;
+  float displayBottomMarginRatio() override;
   Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 
   Shared::CursorView m_crossCursorView;

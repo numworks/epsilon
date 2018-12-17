@@ -1,4 +1,5 @@
 #include "expression_field.h"
+#include <poincare/symbol.h>
 
 namespace Calculation {
 
@@ -7,7 +8,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Ans) {
-    handleEventWithText("ans");
+    handleEventWithText(Poincare::Symbol::k_ans);
     return true;
   }
   if (isEditing() && isEmpty() &&
@@ -17,7 +18,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Square ||
        event == Ion::Events::Division ||
        event == Ion::Events::Sto)) {
-    handleEventWithText("ans");
+    handleEventWithText(Poincare::Symbol::k_ans);
   }
   return(::ExpressionField::handleEvent(event));
 }

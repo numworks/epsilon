@@ -5,8 +5,6 @@
 #include <poincare/integer.h>
 #include <poincare/addition.h>
 #include <poincare/complex.h>
-#include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -15,7 +13,7 @@ class LogarithmNode final : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
-  int numberOfChildren() const override { assert(T == 1 || T == 2); return T; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Logarithm";
@@ -27,11 +25,9 @@ public:
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::AngleUnit angleUnit) {
@@ -47,24 +43,37 @@ public:
 
 class Logarithm final : public Expression {
 public:
-  Logarithm(const LogarithmNode<1> * n) : Expression(n) {}
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  explicit Logarithm(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
-    replaceChildAtIndexInPlace(0, operand);
-  }
-  Logarithm(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
+  static Logarithm Builder(Expression child0, Expression child1) { return Logarithm(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
+  Logarithm(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
   Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
-  Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
+  Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   bool parentIsAPowerOfSameBase() const;
+};
+
+class CommonLogarithm : public Expression {
+public:
+  CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
+  static CommonLogarithm Builder(Expression child) { return CommonLogarithm(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, &UntypedBuilder);
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+private:
+  explicit CommonLogarithm(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

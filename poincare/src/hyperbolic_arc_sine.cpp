@@ -1,8 +1,19 @@
 #include <poincare/hyperbolic_arc_sine.h>
 #include <poincare/complex.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 
 namespace Poincare {
+
+constexpr Expression::FunctionHelper HyperbolicArcSine::s_functionHelper;
+
+Layout HyperbolicArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.name());
+}
+int HyperbolicArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.name());
+}
 
 template<typename T>
 Complex<T> HyperbolicArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
@@ -20,6 +31,5 @@ Complex<T> HyperbolicArcSineNode::computeOnComplex(const std::complex<T> c, Pref
 
 template Complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcSineNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
-
 
 }

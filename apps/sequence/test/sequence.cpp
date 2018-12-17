@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <string.h>
 #include <assert.h>
 #include <cmath>
@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Sequence {
 
 void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, const char * definitionU, const char * conditionU1 = nullptr, const char * conditionU2 = nullptr, Sequence::Type typeV = Sequence::Type::Explicit, const char * definitionV = nullptr, const char * conditionV1 = nullptr, const char * conditionV2 = nullptr) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   SequenceStore store;
   SequenceContext sequenceContext(&globalContext, &store);
 

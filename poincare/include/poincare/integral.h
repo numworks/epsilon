@@ -2,6 +2,7 @@
 #define POINCARE_INTEGRAL_H
 
 #include <poincare/expression.h>
+#include <poincare/symbol.h>
 
 namespace Poincare {
 
@@ -10,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralNode); }
-  int numberOfChildren() const override { return 3; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Integral";
@@ -19,13 +20,13 @@ public:
 
   // ExpressionNode
   Type type() const override { return Type::Integral; }
-  int polynomialDegree(char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -48,16 +49,27 @@ private:
 
 class Integral final : public Expression {
 public:
-  Integral();
   Integral(const IntegralNode * n) : Expression(n) {}
-  Integral(Expression child1, Expression child2, Expression child3) : Integral() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-    replaceChildAtIndexInPlace(2, child3);
+  static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return Integral(child0, child1, child2, child3); }
+  static Expression UntypedBuilder(Expression children) {
+    if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+      // Second parameter must be a Symbol.
+      return Expression();
+    }
+    return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
   }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  Integral(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {
+    assert(child1.type() == ExpressionNode::Type::Symbol);
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+    replaceChildAtIndexInPlace(2, child2);
+    replaceChildAtIndexInPlace(3, child3);
+  }
 };
 
 }

@@ -9,7 +9,8 @@ namespace Poincare {
 
 class CharLayoutNode final : public LayoutNode {
 public:
-  CharLayoutNode(char c = Ion::Charset::Empty, const KDFont * font = KDFont::LargeFont) :
+  static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
+  CharLayoutNode(char c = Ion::Charset::Empty, const KDFont * font = k_defaultFont) :
     LayoutNode(),
     m_char(c),
     m_font(font)
@@ -27,6 +28,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isChar() const override { return true; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool canBeOmittedMultiplicationRightFactor() const override;
 
   // TreeNode
   size_t size() const override { return sizeof(CharLayoutNode); }

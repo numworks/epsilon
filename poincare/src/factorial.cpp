@@ -1,4 +1,5 @@
 #include <poincare/factorial.h>
+#include <poincare/constant.h>
 #include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/rational.h>
@@ -20,13 +21,13 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 7);
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
 }
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Factorial(this).shallowReduce(context, angleUnit);
 }
 
@@ -110,13 +111,11 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
     replaceWithInPlace(fact);
     return fact;
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
-    Symbol s = childAtIndex(0).convert<Symbol>();
-    if (s.name() == Ion::Charset::SmallPi || s.name() == Ion::Charset::Exponential) {
-      Expression result = Undefined();
-      replaceWithInPlace(result);
-      return result;
-    }
+  if (childAtIndex(0).type() == ExpressionNode::Type::Constant) {
+    // e! = undef, i! = undef, pi! = undef
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

@@ -2,6 +2,7 @@
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/infinity.h>
+#include <poincare/undefined.h>
 #include <poincare/layout_helper.h>
 #include <poincare/ieee754.h>
 #include <assert.h>
@@ -39,8 +40,20 @@ Integer DecimalNode::unsignedMantissa() const {
   return Integer::BuildInteger((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, false);
 }
 
+void DecimalNode::initToMatchSize(size_t goalSize) {
+  assert(goalSize != sizeof(DecimalNode));
+  int mantissaSize = goalSize - sizeof(DecimalNode);
+  assert(mantissaSize%sizeof(native_uint_t) == 0);
+  m_numberOfDigitsInMantissa = mantissaSize/sizeof(native_uint_t);
+  assert(size() == goalSize);
+}
+
+static size_t DecimalSize(uint8_t numberOfDigitsInMantissa) {
+  return sizeof(DecimalNode)+ sizeof(native_uint_t)*numberOfDigitsInMantissa;
+}
+
 size_t DecimalNode::size() const {
-  return sizeof(DecimalNode)+ sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
+  return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
 Expression DecimalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
@@ -72,7 +85,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   return ((int)sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Decimal(this).shallowReduce(context, angleUnit);
 }
 
@@ -127,11 +140,16 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
-  assert(strcmp(tempBuffer, "inf") != 0 && strcmp(tempBuffer, "-inf") != 0);
-  if (strcmp(tempBuffer, "undef") == 0) {
+
+  // Assert that m is not +/-inf
+  assert(strcmp(tempBuffer, Infinity::Name()) != 0);
+  assert(!(tempBuffer[0] == '-' && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
+
+  if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     return currentChar;
   }
+
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
@@ -208,8 +226,7 @@ template<typename T> T DecimalNode::templatedApproximate() const {
   return f*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1));
 }
 
-int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength) {
-  bool exponentNegative = false;
+int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
   if (exponentLength > 0 && exponent[0] == '-') {
     exponent++;
     exponentNegative = true;
@@ -312,7 +329,7 @@ Decimal::Decimal(T f) : Number() {
 /* We do not get rid of the useless 0s ending the mantissa here because we want
  * to keep them if they were entered by the user. */
 Decimal::Decimal(Integer m, int e) :
-  Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e) {}
+  Decimal(DecimalSize(m.numberOfDigits()), m, e) {}
 
 
 Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {

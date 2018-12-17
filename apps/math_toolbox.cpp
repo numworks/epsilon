@@ -12,10 +12,10 @@ using namespace Poincare;
 
 
 const ToolboxMessageTree calculChildren[4] = {
-  ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber),
-  ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral),
-  ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum),
-  ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product)
+  ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::SumCommandWithArg, I18n::Message::Sum, false, I18n::Message::SumCommand),
+  ToolboxMessageTree::Leaf(I18n::Message::ProductCommandWithArg, I18n::Message::Product, false, I18n::Message::ProductCommand)
 };
 
 const ToolboxMessageTree complexChildren[5] = {
@@ -113,22 +113,25 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::
 #endif
 
 MathToolbox::MathToolbox() :
-  Toolbox(nullptr, I18n::translate(rootModel()->label()))
+  Toolbox(nullptr, rootModel()->label())
 {
 }
 
-bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
-  ToolboxMessageTree * messageTree = selectedMessageTree;
+bool MathToolbox::selectLeaf(int selectedRow) {
+  ToolboxMessageTree * messageTree = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   m_selectableTableView.deselectTable();
 
-  // Translate the message and remove the arguments
+  // Translate the message
   const char * text = I18n::translate(messageTree->insertedText());
-  int maxTextToInsertLength = strlen(text) + 1;
-  assert(maxTextToInsertLength <= k_maxMessageSize);
-  char textToInsert[k_maxMessageSize];
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
-
-  sender()->handleEventWithText(textToInsert);
+  char textToInsert[k_maxMessageSize]; // Has to be in the same scope as handleEventWithText
+  if (messageTree->label() == messageTree->insertedText()) {
+  //  Remove the arguments if we kept one message for both inserted and displayed message
+    int maxTextToInsertLength = strlen(text) + 1;
+    assert(maxTextToInsertLength <= k_maxMessageSize);
+    Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+    text = textToInsert;
+  }
+  sender()->handleEventWithText(text);
   app()->dismissModalViewController();
   return true;
 }

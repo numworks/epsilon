@@ -1,6 +1,8 @@
 #include <poincare/product.h>
 #include <poincare/multiplication.h>
 #include <poincare/product_layout.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -9,8 +11,14 @@ extern "C" {
 
 namespace Poincare {
 
-Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout subscriptLayout, Layout superscriptLayout) const {
-  return ProductLayout(argumentLayout, subscriptLayout, superscriptLayout);
+constexpr Expression::FunctionHelper Product::s_functionHelper;
+
+Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
+  return ProductLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+}
+
+int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::s_functionHelper.name());
 }
 
 template<typename T>
@@ -32,7 +40,5 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
   return MultiplicationNode::computeOnMatrices<T>(m, n);
 }
-
-Product::Product() : Expression(TreePool::sharedPool()->createTreeNode<ProductNode>()) {}
 
 }

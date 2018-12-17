@@ -57,12 +57,13 @@ size_t TextField::ContentView::editedTextLength() const {
 
 void TextField::ContentView::setText(const char * text) {
   reloadRectFromCursorPosition(0);
-  if (m_isEditing) {
-    strlcpy(m_draftTextBuffer, text, m_textBufferSize);
-    int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);
+  size_t textRealLength = strlen(text);
+  int textLength = textRealLength >= m_textBufferSize ? m_textBufferSize-1 : textRealLength;
+  // Copy the text
+  strlcpy(m_isEditing ? m_draftTextBuffer : m_textBuffer, text, m_textBufferSize);
+  // Update the draft text length and cursor location
+  if (m_isEditing || m_textBuffer == m_draftTextBuffer) {
     m_currentDraftTextLength = textLength;
-  } else {
-    strlcpy(m_textBuffer, text, m_textBufferSize);
   }
   reloadRectFromCursorPosition(0);
 }
@@ -80,6 +81,7 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
   if (reinitDrafBuffer) {
     reinitDraftTextBuffer();
   }
+  m_currentDraftTextLength = strlen(m_draftTextBuffer);
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   layoutSubviews();
@@ -158,6 +160,19 @@ bool TextField::ContentView::removeEndOfLine() {
   return true;
 }
 
+void TextField::ContentView::willModifyTextBuffer() {
+  /* This method should be called when the buffer is modified outside the
+   * content view, for instance from the textfield directly. */
+  reloadRectFromCursorPosition(0);
+}
+
+void TextField::ContentView::didModifyTextBuffer() {
+  /* This method should be called when the buffer is modified outside the
+   * content view, for instance from the textfield directly. */
+  m_currentDraftTextLength = strlen(m_draftTextBuffer);
+  layoutSubviews();
+}
+
 void TextField::ContentView::layoutSubviews() {
   if (!m_isEditing) {
     m_cursorView.setFrame(KDRectZero);
@@ -176,9 +191,10 @@ KDRect TextField::ContentView::characterFrameAtIndex(size_t index) const {
 /* TextField */
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
-    size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, const KDFont * font,
+    size_t textBufferSize, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, bool hasTwoBuffers, const KDFont * font,
     float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TextInput(parentResponder, &m_contentView),
+  EditableField(inputEventHandlerDelegate),
   m_contentView(textBuffer, draftTextBuffer, textBufferSize, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)
@@ -210,9 +226,9 @@ size_t TextField::draftTextLength() const {
 void TextField::setText(const char * text) {
   reloadScroll();
   m_contentView.setText(text);
-  if (isEditing()) {
-    setCursorLocation(draftTextLength());
-  }
+  /* Set the cursor location here and not in ContentView::setText so that
+   * TextInput::willSetCursorLocation is called. */
+  setCursorLocation(strlen(text));
 }
 
 void TextField::setAlignment(float horizontalAlignment, float verticalAlignment) {
@@ -227,31 +243,26 @@ void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
 }
 
 bool TextField::privateHandleEvent(Ion::Events::Event event) {
-  if (Responder::handleEvent(event)) {
-    /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the text field is forced into editing mode. */
+  // Handle Toolbox or Var event
+  if (handleBoxEvent(app(), event)) {
     if (!isEditing()) {
       setEditing(true);
     }
     return true;
   }
-  if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
-    return setCursorLocation(cursorLocation()-1);
-  }
-  if (event == Ion::Events::ShiftLeft && isEditing()) {
-    return setCursorLocation(0);
-  }
-  if (event == Ion::Events::Right && isEditing() && cursorLocation() < draftTextLength()) {
-    return setCursorLocation(cursorLocation()+1);
-  }
-  if (event == Ion::Events::ShiftRight && isEditing()) {
-    return setCursorLocation(draftTextLength());
-  }
-  if (isEditing() && textFieldShouldFinishEditing(event)) {
+  if (isEditing() && shouldFinishEditing(event)) {
     char bufferText[ContentView::k_maxBufferSize];
-    strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
-    strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
     int cursorLoc = cursorLocation();
+    if (m_hasTwoBuffers) {
+      strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
+      strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
+    }
+    /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
+     * text for instance), the text field will call willResignFirstResponder.
+     * This will call textFieldDidAbortEditing if the textfield is still editing,
+     * which we do not want, as we are not really aborting edition, just
+     * displaying a pop-up before returning to edition.
+     * We thus set editing to false. */
     setEditing(false, m_hasTwoBuffers);
     if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
       /* We allow overscroll to avoid calling layoutSubviews twice because the
@@ -259,28 +270,33 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
       reloadScroll(true);
       return true;
     }
-    /* if the text was refused (textInputDidFinishEditing returned false, we
-     * reset the textfield in the same state as before */
-    char bufferDraft[ContentView::k_maxBufferSize];
-    strlcpy(bufferDraft, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
-    setText(bufferText);
-    setEditing(true);
-    setText(bufferDraft);
-    setCursorLocation(cursorLoc);
+    setEditing(true, false);
+    if (m_hasTwoBuffers) {
+      /* if the text was refused (textInputDidFinishEditing returned false, we
+       * reset the textfield in the same state as before */
+      setText(m_contentView.textBuffer());
+      strlcpy(m_contentView.textBuffer(), bufferText, ContentView::k_maxBufferSize);
+      setCursorLocation(cursorLoc);
+    }
+    return true;
+  }
+  /* if move event was not caught before nor by textFieldShouldFinishEditing,
+   * we handle it here to avoid bubbling the event up. */
+  if ((event == Ion::Events::Up || event == Ion::Events::Down || event == Ion::Events::Left || event == Ion::Events::Right) && isEditing()) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
     return removeChar();
   }
   if (event == Ion::Events::Back && isEditing()) {
-    setEditing(false);
-    reloadScroll();
+    setEditing(false, m_hasTwoBuffers);
     m_delegate->textFieldDidAbortEditing(this);
+    reloadScroll(true);
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
     if (!removeEndOfLine()) {
-      setEditing(true, true);
+      removeWholeText();
     }
     return true;
   }
@@ -300,22 +316,71 @@ KDSize TextField::minimalSizeForOptimalDisplay() const {
   return m_contentView.minimalSizeForOptimalDisplay();
 }
 
+char TextField::XNTChar(char defaultXNTChar) {
+  static constexpr struct { const char *name; char xnt; } sFunctions[] = {
+    { "diff", 'x' }, { "int", 'x' },
+    { "product", 'n' }, { "sum", 'n' }
+  };
+  // Let's assume everything before the cursor is nested correctly, which is reasonable if the expression is being entered left-to-right.
+  const char * text = this->text();
+  size_t location = cursorLocation();
+  unsigned level = 0;
+  while (location >= 1) {
+    location--;
+    switch (text[location]) {
+      case '(':
+        // Check if we are skipping to the next matching '('.
+        if (level) {
+          level--;
+          break;
+        }
+        // Skip over whitespace.
+        while (location >= 1 && text[location-1] == ' ') {
+          location--;
+        }
+        // We found the next innermost function we are currently in.
+        for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
+          const char * name = sFunctions[i].name;
+          size_t length = strlen(name);
+          if (location >= length && memcmp(&text[location-length], name, length) == 0) {
+            return sFunctions[i].xnt;
+          }
+        }
+        break;
+      case ',':
+        // Commas encountered while skipping to the next matching '(' should be ignored.
+        if (level) {
+          break;
+        }
+        // FALLTHROUGH
+      case ')':
+        // Skip to the next matching '('.
+        level++;
+        break;
+    }
+  }
+  // Fallback to the default
+  return defaultXNTChar;
+}
+
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
-  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
+  size_t previousTextLength = strlen(text());
+  bool didHandleEvent = false;
+  if (privateHandleMoveEvent(event)) {
+    didHandleEvent = true;
+  } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
-  }
-  if (event.hasText()) {
+  } else if (event.hasText()) {
     return handleEventWithText(event.text());
-  }
-  if (event == Ion::Events::Paste) {
+  } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
-  }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
+  } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     return handleEventWithText(m_contentView.textBuffer());
   }
-  size_t previousTextLength = strlen(text());
-  bool didHandleEvent = privateHandleEvent(event);
+  if (!didHandleEvent) {
+    didHandleEvent = privateHandleEvent(event);
+  }
   return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
@@ -326,55 +391,62 @@ void TextField::scrollToCursor() {
   return TextInput::scrollToCursor();
 }
 
+bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left && isEditing() && cursorLocation() > 0) {
+    return setCursorLocation(cursorLocation()-1);
+  }
+  if (event == Ion::Events::ShiftLeft && isEditing()) {
+    return setCursorLocation(0);
+  }
+  if (event == Ion::Events::Right && isEditing() && cursorLocation() < draftTextLength()) {
+    return setCursorLocation(cursorLocation()+1);
+  }
+  if (event == Ion::Events::ShiftRight && isEditing()) {
+    return setCursorLocation(draftTextLength());
+  }
+  return false;
+}
+
 bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
   size_t previousTextLength = strlen(text());
-
-  size_t eventTextSize = min(strlen(eventText) + 1, TextField::maxBufferSize());
-  char buffer[TextField::maxBufferSize()];
-  size_t bufferIndex = 0;
-
-  /* DIRTY
-   * We use the notation "_{}" to indicate a subscript layout. In a text field,
-   * such a subscript should be written using parentheses. For instance: "u_{n}"
-   * should be inserted as "u(n)".
-   * We thus remove underscores and changes brackets into parentheses. */
-  bool specialUnderScore = false;
-  for (size_t i = bufferIndex; i < eventTextSize; i++) {
-    if (eventText[i] == '_') {
-      specialUnderScore = ((i < eventTextSize - 1) && (eventText[i+1] == '{')) ? true : false;
-      if (!specialUnderScore) {
-         buffer[bufferIndex++] = '_';
-      }
-    } else if (eventText[i] == '{' && specialUnderScore) {
-      buffer[bufferIndex++] = '(';
-    } else if (eventText[i] == '}' && specialUnderScore) {
-      buffer[bufferIndex++] = ')';
-      specialUnderScore = false;
-    } else {
-      buffer[bufferIndex++] = eventText[i];
-    }
-  }
-
-  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(buffer);
-
-  int newBufferIndex = 0;
-  // Remove EmptyChars
-  for (size_t i = newBufferIndex; i < bufferIndex; i++) {
-    if (buffer[i] != Ion::Charset::Empty) {
-      buffer[newBufferIndex++] = buffer[i];
-    }
-  }
+  size_t eventTextLength = strlen(eventText);
 
   if (!isEditing()) {
     setEditing(true);
   }
+
+  if (eventTextLength == 0) {
+    setCursorLocation(0);
+    return m_delegate->textFieldDidHandleEvent(this, true, previousTextLength != 0);
+  }
+
+  size_t eventTextSize = min(eventTextLength + 1, TextField::maxBufferSize());
+  char buffer[TextField::maxBufferSize()];
+
+  int newBufferIndex = 0;
+  // Remove EmptyChars
+  for (size_t i = 0; i < eventTextSize; i++) {
+    if (eventText[i] != Ion::Charset::Empty) {
+      buffer[newBufferIndex++] = eventText[i];
+    }
+  }
+
   int nextCursorLocation = draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {
     /* The cursor position depends on the text as we sometimes want to position
      * the cursor at the end of the text and sometimes after the first
      * parenthesis. */
-    nextCursorLocation = cursorLocation() + (forceCursorRightOfText? strlen(buffer) : cursorIndexInCommand);
+    nextCursorLocation = cursorLocation();
+    if (forceCursorRightOfText) {
+      nextCursorLocation+= strlen(buffer);
+    } else {
+      nextCursorLocation+= TextInputHelpers::CursorIndexInCommand(eventText);
+    }
   }
   setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
+}
+
+void TextField::removeWholeText() {
+  setEditing(true, true);
 }

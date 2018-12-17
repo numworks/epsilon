@@ -3,7 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -12,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientNode); }
-  int numberOfChildren() const override { return 2; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "BinomialCoefficient";
@@ -29,7 +28,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -38,16 +37,18 @@ private:
 
 class BinomialCoefficient final : public Expression {
 public:
-  BinomialCoefficient();
   BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
-  BinomialCoefficient(Expression child1, Expression child2) : BinomialCoefficient() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
+  static BinomialCoefficient Builder(Expression child0, Expression child1) { return BinomialCoefficient(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 private:
+  BinomialCoefficient(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<BinomialCoefficientNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
   constexpr static int k_maxNValue = 300;
 };
 

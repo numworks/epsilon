@@ -1,4 +1,5 @@
 #include "cache_context.h"
+#include "sequence_store.h"
 #include <cmath>
 
 using namespace Poincare;
@@ -7,19 +8,23 @@ namespace Sequence {
 
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
-  VariableContext<T>('n', parentContext),
+  VariableContext("n", parentContext),
   m_values{{NAN, NAN},
     {NAN, NAN}}
 {
 }
 
 template<typename T>
-const Expression CacheContext<T>::expressionForSymbol(const Symbol & symbol) {
-  if (symbol.name() == Symbol::SpecialSymbols::un || symbol.name() == Symbol::SpecialSymbols::un1 ||
-      symbol.name() == Symbol::SpecialSymbols::vn || symbol.name() == Symbol::SpecialSymbols::vn1) {
-    return Float<T>(m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)]);
+const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & symbol, bool clone) {
+  // [u|v](n(+1)?)
+  if (symbol.type() == ExpressionNode::Type::Symbol
+    && (symbol.name()[0] ==  SequenceStore::k_sequenceNames[0][0] || symbol.name()[0] ==  SequenceStore::k_sequenceNames[1][0])
+    && (strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0))
+  {
+    Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
+    return Float<T>(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
   }
-  return VariableContext<T>::expressionForSymbol(symbol);
+  return VariableContext::expressionForSymbol(symbol, clone);
 }
 
 template<typename T>
@@ -29,34 +34,22 @@ void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol & symbol
 
 template<typename T>
 int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
-  switch (symbol.name()) {
-    case Symbol::SpecialSymbols::un:
-      return 0;
-    case Symbol::SpecialSymbols::un1:
-      return 0;
-    case Symbol::SpecialSymbols::vn:
-      return 1;
-    case Symbol::SpecialSymbols::vn1:
-      return 1;
-    default:
-      return 0;
+  assert(strlen(symbol.name()) == 4 || strlen(symbol.name()) == 6); //  [u|v](n(+1)?)
+  if (symbol.name()[0] == SequenceStore::k_sequenceNames[0][0]) { // u
+    return 0;
   }
+  // v
+  return 1;
 }
 
 template<typename T>
 int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
-  switch (symbol.name()) {
-    case Symbol::SpecialSymbols::un:
-      return 0;
-    case Symbol::SpecialSymbols::un1:
-      return 1;
-    case Symbol::SpecialSymbols::vn:
-      return 0;
-    case Symbol::SpecialSymbols::vn1:
-      return 1;
-    default:
-      return 0;
+  assert(strlen(symbol.name()) == 4 || strlen(symbol.name()) == 6); // u(n) or u(n+1)
+  if (symbol.name()[3] == ')') { // .(n)
+    return 0;
   }
+  // .(n+1)
+  return 1;
 }
 
 template class CacheContext<float>;

@@ -10,7 +10,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ConfidenceIntervalNode); }
-  int numberOfChildren() const override { return 2; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "ConfidenceInterval";
@@ -21,14 +21,13 @@ public:
 
   // Properties
   Type type() const override { return Type::ConfidenceInterval; }
-  int polynomialDegree(char symbolName) const override { return -1; }
+  int polynomialDegree(Context & context, const char * symbolName) const override { return -1; }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  virtual const char * name() const { return "confidence"; }
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -38,31 +37,38 @@ private:
 class SimplePredictionIntervalNode final : public ConfidenceIntervalNode {
 public:
 private:
-  const char * name() const override { return "prediction"; }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 };
 
 class ConfidenceInterval : public Expression {
+  friend class SimplePredictionInterval;
 public:
-  ConfidenceInterval();
   ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
-  ConfidenceInterval(Expression child1, Expression child2) : ConfidenceInterval() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
-  }
+  static ConfidenceInterval Builder(Expression child0, Expression child1) { return ConfidenceInterval(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("confidence", 2, &UntypedBuilder);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
+  ConfidenceInterval(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
+  }
   constexpr static int k_maxNValue = 300;
 };
 
 class SimplePredictionInterval final : public ConfidenceInterval {
 public:
-  SimplePredictionInterval() : ConfidenceInterval(static_cast<SimplePredictionIntervalNode *>(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>())) {}
   SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}
-  SimplePredictionInterval(Expression child1, Expression child2) : SimplePredictionInterval() {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
+  static SimplePredictionInterval Builder(Expression child0, Expression child1) { return SimplePredictionInterval(child0, child1); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction", 2, &UntypedBuilder);
+private:
+  SimplePredictionInterval(Expression child0, Expression child1) : ConfidenceInterval(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
   }
 };
 

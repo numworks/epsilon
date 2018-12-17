@@ -18,7 +18,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Undefined; }
-  int polynomialDegree(char symbolName) const override;
+  int polynomialDegree(Context & context, const char * symbolName) const override;
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation
@@ -39,6 +39,12 @@ private:
 class Undefined final : public Number {
 public:
   Undefined() : Number(TreePool::sharedPool()->createTreeNode<UndefinedNode>()) {}
+  static const char * Name() {
+    return "undef";
+  }
+  static int NameSize() {
+    return 6;
+  }
 };
 
 }

@@ -4,6 +4,7 @@
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 #include <assert.h>
 #include <string.h>
@@ -11,11 +12,11 @@
 
 namespace Poincare {
 
-int DivisionNode::polynomialDegree(char symbolName) const {
-  if (childAtIndex(1)->polynomialDegree(symbolName) != 0) {
+int DivisionNode::polynomialDegree(Context & context, const char * symbolName) const {
+  if (childAtIndex(1)->polynomialDegree(context, symbolName) != 0) {
     return -1;
   }
-  return childAtIndex(0)->polynomialDegree(symbolName);
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
 bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {
@@ -35,8 +36,12 @@ Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return FractionLayout(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Division(this).shallowReduce(context, angleUnit);
+int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
+}
+
+Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Division(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
@@ -62,7 +67,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 Division::Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
 
-Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -71,9 +76,9 @@ Expression Division::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
   Expression p = Power(childAtIndex(1), Rational(-1));
   Multiplication m = Multiplication(childAtIndex(0), p);
-  p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
+  p.shallowReduce(context, angleUnit, target); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
   replaceWithInPlace(m);
-  return m.shallowReduce(context, angleUnit);
+  return m.shallowReduce(context, angleUnit, target);
 }
 
 }

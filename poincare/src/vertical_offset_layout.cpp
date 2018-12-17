@@ -174,20 +174,15 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
     return numberOfChar;
   }
   assert(m_type == Type::Superscript);
-  // If the layout is a superscript, write "^(indice)"
-  int numberOfChar = SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
+  /* If the layout is a superscript, write:
+   * "Ion::Charset::LeftSuperscript indice Ion::Charset::RightSuperscript" */
+  int numberOfChar = SerializationHelper::Char(buffer, bufferSize, Ion::Charset::LeftSuperscript);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, Ion::Charset::RightSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  // Add a multiplication if omitted.
-  int indexInParent = -1;
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    indexInParent = parentNode->indexOfChild(this);
-  }
-  if (indexInParent >= 0 && indexInParent < (parentNode->numberOfChildren() - 1) && parentNode->isHorizontal() && parentNode->childAtIndex(indexInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
-    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-  }
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

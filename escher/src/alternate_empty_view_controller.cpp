@@ -1,12 +1,10 @@
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/app.h>
-#include <escher/palette.h>
 #include <assert.h>
 
 /* ContentView */
 
 AlternateEmptyViewController::ContentView::ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
-  m_message(KDFont::SmallFont, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_mainViewController(mainViewController),
   m_delegate(delegate)
 {
@@ -19,15 +17,14 @@ int AlternateEmptyViewController::ContentView::numberOfSubviews() const {
 View * AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   if (m_delegate->isEmpty()) {
-    m_message.setMessage(m_delegate->emptyMessage());
-    return &m_message;
+    return m_delegate->emptyView();
   }
   return m_mainViewController->view();
 }
 
 void AlternateEmptyViewController::ContentView::layoutSubviews() {
   if (alternateEmptyViewDelegate()->isEmpty()) {
-    m_message.setFrame(bounds());
+    m_delegate->emptyView()->setFrame(bounds());
   } else {
     m_mainViewController->view()->setFrame(bounds());
   }

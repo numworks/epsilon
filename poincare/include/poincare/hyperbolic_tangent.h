@@ -20,7 +20,9 @@ public:
   // Properties
   Type type() const override { return Type::HyperbolicTangent; }
 private:
-  const char * name() const override { return "tanh"; }
+  // Layout
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   //Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -33,10 +35,13 @@ private:
 
 class HyperbolicTangent final : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicTangent() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicTangentNode>()) {}
   HyperbolicTangent(const HyperbolicTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
-  explicit HyperbolicTangent(Expression operand) : HyperbolicTangent() {
-    replaceChildAtIndexInPlace(0, operand);
+  static HyperbolicTangent Builder(Expression child) { return HyperbolicTangent(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tanh", 1, &UntypedBuilder);
+private:
+  explicit HyperbolicTangent(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicTangentNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
 };
 

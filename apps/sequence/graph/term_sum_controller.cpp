@@ -17,8 +17,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
-TermSumController::TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
-  SumGraphController(parentResponder, graphView, graphRange, cursor, Ion::Charset::CapitalSigma)
+TermSumController::TermSumController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
+  SumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, Ion::Charset::CapitalSigma)
 {
 }
 

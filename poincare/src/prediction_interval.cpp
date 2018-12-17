@@ -5,6 +5,8 @@
 #include <poincare/power.h>
 #include <poincare/undefined.h>
 #include <poincare/division.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 }
@@ -12,12 +14,21 @@ extern "C" {
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper PredictionInterval::s_functionHelper;
+
+int PredictionIntervalNode::numberOfChildren() const { return PredictionInterval::s_functionHelper.numberOfChildren(); }
+
 Layout PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, PredictionInterval::s_functionHelper.name());
 }
 
-Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return PredictionInterval(this).shallowReduce(context, angleUnit);
+int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PredictionInterval::s_functionHelper.name());
+}
+
+
+Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return PredictionInterval(this).shallowReduce(context, angleUnit, target);
 }
 
 template<typename T>
@@ -35,9 +46,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>(operands, 1, 2);
 }
 
-PredictionInterval::PredictionInterval() : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {}
-
-Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -93,7 +102,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.reduceChildren(context, angleUnit);
+  matrix.deepReduceChildren(context, angleUnit, target);
   return matrix;
 }
 

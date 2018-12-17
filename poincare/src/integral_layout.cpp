@@ -24,17 +24,25 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
 };
 
 void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (cursor->position() == LayoutCursor::Position::Left
-      && (cursor->layoutNode() == upperBoundLayout()
-        || cursor->layoutNode() == lowerBoundLayout()))
+  if (cursor->layoutNode() == upperBoundLayout()
+      || cursor->layoutNode() == lowerBoundLayout())
   {
+    assert(cursor->position() == LayoutCursor::Position::Left);
     // Case: Left the upper or lower bound. Go Left of the integral.
     cursor->setLayoutNode(this);
     return;
   }
- if (cursor->layoutNode() == integrandLayout()
-     && cursor->position() == LayoutCursor::Position::Left)
+  if (cursor->layoutNode() == differentialLayout())
   {
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    // Case: Left of the variable differential. Go Right of the integrand
+    cursor->setLayoutNode(integrandLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  if (cursor->layoutNode() == integrandLayout())
+  {
+    assert(cursor->position() == LayoutCursor::Position::Left);
     // Case: Left the integrand. Go Right of the lower bound.
     cursor->setLayoutNode(lowerBoundLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
@@ -42,12 +50,12 @@ void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   }
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right of the integral. Go to the integrand.
-    cursor->setLayoutNode(integrandLayout());
+    // Case: Right of the integral. Go to the differential.
+    cursor->setLayoutNode(differentialLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
   }
-  // Case: Left of the brackets. Ask the parent.
+  // Case: Left of the integral. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
   LayoutNode * parentNode = parent();
   if (parentNode != nullptr) {
@@ -56,19 +64,27 @@ void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
 }
 
 void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (cursor->position() == LayoutCursor::Position::Right &&
-      (cursor->layoutNode() == upperBoundLayout()
-       || cursor->layoutNode() == lowerBoundLayout()))
+  if (cursor->layoutNode() == upperBoundLayout()
+      || cursor->layoutNode() == lowerBoundLayout())
   {
+    assert(cursor->position() == LayoutCursor::Position::Right);
     // Case: Right the upper or lower bound. Go Left of the integrand.
     cursor->setLayoutNode(integrandLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
-  if (cursor->layoutNode() == integrandLayout()
-     && cursor->position() == LayoutCursor::Position::Right)
+  if (cursor->layoutNode() == integrandLayout())
   {
-    // Case: Right the integrand. Go Right.
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    // Case: Right the differential. Go Right.
+    cursor->setLayoutNode(this);
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  if (cursor->layoutNode() == differentialLayout())
+  {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    // Case: Right the differential. Go Right.
     cursor->setLayoutNode(this);
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -149,25 +165,18 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     return bufferSize-1;
   }
 
-  // Write the argument
-  numberOfChar += const_cast<IntegralLayoutNode *>(this)->integrandLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  LayoutNode * argLayouts[] = {const_cast<IntegralLayoutNode *>(this)->integrandLayout(), const_cast<IntegralLayoutNode *>(this)->differentialLayout(), const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout(), const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()};
+  for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
+    if (i != 0) {
+      // Write the comma
+      buffer[numberOfChar++] = ',';
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    }
 
-  // Write the comma
-  buffer[numberOfChar++] = ',';
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the lower bound
-  numberOfChar += const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the comma
-  buffer[numberOfChar++] = ',';
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  // Write the upper bound
-  numberOfChar += const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    // Write the argument
+    numberOfChar += argLayouts[i]->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  }
 
   // Write the closing parenthesis
   buffer[numberOfChar++] = ')';
@@ -176,34 +185,38 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 KDSize IntegralLayoutNode::computeSize() {
-  KDSize dxSize = k_font->stringSize("dx");
+  KDSize dSize = k_font->stringSize("d");
   KDSize integrandSize = integrandLayout()->layoutSize();
+  KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+dxSize.width();
-  KDCoordinate height = upperBoundSize.height()+ 2*k_integrandHeigthMargin+max(integrandSize.height(), dxSize.height())+lowerBoundSize.height();
+  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
+  KDCoordinate baseline = computeBaseline();
+  KDCoordinate height = baseline + k_integrandHeigthMargin+max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline())+lowerBoundSize.height();
   return KDSize(width, height);
 }
 
 KDCoordinate IntegralLayoutNode::computeBaseline() {
-  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
+  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + max(integrandLayout()->baseline(), differentialLayout()->baseline());
 }
 
 KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
-  KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   if (child == lowerBoundLayout()) {
     x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;
-    y = upperBoundSize.height()+2*k_integrandHeigthMargin+integrandSize.height();
+    y = computeSize().height()-lowerBoundSize.height();
   } else if (child == upperBoundLayout()) {
     x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;;
     y = 0;
   } else if (child == integrandLayout()) {
     x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
-    y = upperBoundSize.height()+k_integrandHeigthMargin;
+    y = computeBaseline()-integrandLayout()->baseline();
+  } else if (child == differentialLayout()) {
+    x = computeSize().width() - k_differentialWidthMargin - differentialLayout()->layoutSize().width();
+    y = computeBaseline()-differentialLayout()->baseline();
   } else {
     assert(false);
   }
@@ -212,7 +225,10 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
 
 void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = integrandLayout()->layoutSize();
+  KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+  KDCoordinate centralArgumentHeight =  max(integrandLayout()->baseline(), differentialLayout()->baseline()) + max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline());
+
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
 
   // Render the integral symbol
@@ -220,15 +236,15 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
     k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(topSymbolFrame, expressionColor, (const uint8_t *)topSymbolPixel, (KDColor *)workingBuffer);
   KDRect bottomSymbolFrame(p.x(),
-    p.y() + upperBoundSize.height() + 2*k_integrandHeigthMargin + integrandSize.height() + k_boundHeightMargin - k_symbolHeight,
+    p.y() + upperBoundSize.height() + 2*k_integrandHeigthMargin + centralArgumentHeight + k_boundHeightMargin - k_symbolHeight,
     k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(bottomSymbolFrame, expressionColor, (const uint8_t *)bottomSymbolPixel, (KDColor *)workingBuffer);
   ctx->fillRect(KDRect(p.x() + k_symbolWidth, p.y() + upperBoundSize.height() - k_boundHeightMargin, k_lineThickness,
-    2*k_boundHeightMargin+2*k_integrandHeigthMargin+integrandSize.height()), expressionColor);
+    2*k_boundHeightMargin+2*k_integrandHeigthMargin+centralArgumentHeight), expressionColor);
 
-  // Render "dx"
-  KDPoint dxPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width(), integrandLayout()->baseline() - k_font->glyphSize().height()/2));
-  ctx->drawString("dx", dxPosition, k_font, expressionColor, backgroundColor);
+  // Render "d"
+  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width() + k_differentialWidthMargin, integrandLayout()->baseline() - k_font->glyphSize().height()/2));
+  ctx->drawString("d", dPosition, k_font, expressionColor, backgroundColor);
 }
 
 }

@@ -1,33 +1,37 @@
 #include "interactive_curve_view_controller.h"
 #include "text_field_delegate_app.h"
 #include <cmath>
+#include <float.h>
 #include <assert.h>
 
 using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
   SimpleInteractiveCurveViewController(parentResponder, interactiveRange, curveView, cursor),
   ButtonRowDelegate(header, nullptr),
   m_modelVersion(modelVersion),
   m_rangeVersion(rangeVersion),
-  m_rangeParameterController(this, interactiveRange),
+  m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
+    return true;
   }, this), KDFont::SmallFont),
   m_zoomButton(this, I18n::Message::Zoom, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->zoomParameterController());
+    return true;
   }, this), KDFont::SmallFont),
   m_defaultInitialisationButton(this, I18n::Message::Initialization, Invocation([](void * context, void * sender) {
     InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->initialisationParameterController());
+    return true;
   }, this), KDFont::SmallFont)
 {
 }
@@ -156,6 +160,61 @@ Responder * InteractiveCurveViewController::tabController() const{
 
 StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
+int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
+  double x = m_cursor->x();
+  double y = m_cursor->y();
+  double nextY = goingUp ? DBL_MAX : -DBL_MAX;
+  int nextCurveIndex = -1;
+  int curvesCount = numberOfCurves();
+  for (int i = 0; i < curvesCount; i++) {
+    if (!closestCurveIndexIsSuitable(i, currentCurveIndex)) {
+      continue;
+    }
+    double newY = yValue(i, x, context);
+    if (!suitableYValue(newY)) {
+      continue;
+    }
+    bool isNextCurve = false;
+    /* Choosing the closest vertical curve is quite complex because we need to
+     * take care of curves that have the same value at the current x.
+     * When moving up, if several curves have the same value y1, we choose the
+     * curve:
+     * - Of index lower than the current curve index if the current curve has
+     *   the value y1 at the current x.
+     * - Of highest index possible.
+     * When moving down, if several curves have the same value y1, we choose the
+     * curve:
+     * - Of index higher than the current curve index if the current curve has
+     *   the value y1 at the current x.
+     * - Of lowest index possible. */
+    if (goingUp) {
+      if (newY > y && newY < nextY) {
+        isNextCurve = true;
+      } else if (newY == nextY) {
+        assert(i > nextCurveIndex);
+        if (newY != y || currentCurveIndex < 0 || i < currentCurveIndex) {
+          isNextCurve = true;
+        }
+      } else if (newY == y && i < currentCurveIndex) {
+        isNextCurve = true;
+      }
+    } else {
+      if (newY < y && newY > nextY) {
+        isNextCurve = true;
+      } else if (newY == nextY) {
+        assert(i > nextCurveIndex);
+      } else if (newY == y && i > currentCurveIndex) {
+        isNextCurve = true;
+      }
+    }
+    if (isNextCurve) {
+      nextY = newY;
+      nextCurveIndex = i;
+    }
+  }
+  return nextCurveIndex;
 }
 
 }

@@ -9,9 +9,9 @@
 
 namespace Shared {
 
-class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDefaultDelegate {
 public:
-  InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
+  InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isMin) override;
@@ -44,6 +44,14 @@ protected:
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
   virtual bool isCursorVisible() = 0;
+
+  // Closest vertical curve helper
+  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
+  virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const { assert(false); return false; }
+  virtual double yValue(int curveIndex, double x, Poincare::Context * context) const { assert(false); return 0; }
+  virtual bool suitableYValue(double y) const { return true; }
+  virtual int numberOfCurves() const { assert(false); return 0; }
+
   OkView m_okView;
 private:
   uint32_t * m_modelVersion;

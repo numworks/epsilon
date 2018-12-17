@@ -8,14 +8,14 @@
 
 namespace Solver {
 
-class SolutionsController : public ViewController, public AlternateEmptyViewDelegate, public SelectableTableViewDataSource, public TableViewDataSource {
+class SolutionsController : public ViewController, public AlternateEmptyViewDefaultDelegate, public SelectableTableViewDataSource, public TableViewDataSource {
 public:
   SolutionsController(Responder * parentResponder, EquationStore * equationStore);
   /* ViewController */
   const char * title() override;
   View * view() override;
   void viewWillAppear() override;
-  /* AlternateEmptyViewDelegate */
+  /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override;
   virtual I18n::Message emptyMessage() override;
   virtual Responder * defaultController() override;

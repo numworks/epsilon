@@ -11,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ConjugateNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Conjugate";
@@ -25,7 +25,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -38,15 +38,17 @@ private:
 
 class Conjugate final : public Expression {
 public:
-  Conjugate();
   Conjugate(const ConjugateNode * n) : Expression(n) {}
-  explicit Conjugate(Expression operand) : Conjugate() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static Conjugate Builder(Expression child) { return Conjugate(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilder);;
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+private:
+  explicit Conjugate(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
-
 
 }
 

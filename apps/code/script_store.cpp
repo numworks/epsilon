@@ -10,7 +10,11 @@ extern "C" {
 namespace Code {
 
 constexpr char ScriptStore::k_scriptExtension[];
-constexpr char ScriptStore::k_defaultScriptName[];
+
+
+bool ScriptStore::ScriptNameIsFree(const char * baseName) {
+  return Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_scriptExtension).isNull();
+}
 
 ScriptStore::ScriptStore()
 {
@@ -28,7 +32,7 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit);
+  return Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit;
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
@@ -124,7 +128,7 @@ const char * ScriptStore::contentOfScript(const char * name) {
 Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
   size_t valueSize = strlen(scriptTemplate->content())+1+1;// scriptcontent size + 1 char for the importation status
   assert(Script::nameCompliant(scriptTemplate->name()));
-  Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecord(scriptTemplate->name(), scriptTemplate->value(), valueSize);
+  Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecordWithFullName(scriptTemplate->name(), scriptTemplate->value(), valueSize);
   assert(err != Script::ErrorStatus::NonCompliantName);
   return err;
 }

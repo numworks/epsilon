@@ -12,11 +12,11 @@ static inline int max(int x, int y) { return (x>y ? x : y); }
 
 namespace Shared {
 
-StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate) :
+StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   View(),
   Responder(parentResponder),
   m_dataView(store, this, dataSource, selectionDataSource),
-  m_formulaInputView(this, textFieldDelegate),
+  m_formulaInputView(this, inputEventHandlerDelegate, textFieldDelegate),
   m_displayFormulaInputView(false)
 {
   m_dataView.setBackgroundColor(Palette::WallScreenDark);
@@ -26,6 +26,9 @@ StoreController::ContentView::ContentView(DoublePairStore * store, Responder * p
 
 void StoreController::ContentView::displayFormulaInput(bool display) {
   if (m_displayFormulaInputView != display) {
+    if (display) {
+      m_formulaInputView.textField()->setText("");
+    }
     m_displayFormulaInputView = display;
     layoutSubviews();
     markRectAsDirty(bounds());
@@ -52,16 +55,16 @@ KDRect StoreController::ContentView::formulaFrame() const {
   return KDRect(0, bounds().height() - k_formulaInputHeight, bounds().width(), m_displayFormulaInputView ? k_formulaInputHeight : 0);
 }
 
-StoreController::StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
   m_store(store),
-  m_contentView(m_store, this, this, this, this)
+  m_contentView(m_store, this, this, this, inputEventHandlerDelegate, this)
 {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(m_contentView.dataView());
-    m_editableCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
     m_editableCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
@@ -81,7 +84,7 @@ bool StoreController::textFieldShouldFinishEditing(TextField * textField, Ion::E
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (textField == m_contentView.formulaInputView()->textField()) {
     // Handle formula input
-    Expression expression = Expression::parse(textField->text());
+    Expression expression = Expression::Parse(textField->text());
     if (expression.isUninitialized()) {
       app()->displayWarning(I18n::Message::SyntaxError);
       return false;
@@ -191,7 +194,7 @@ const char * StoreController::title() {
 }
 
 bool StoreController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up && !static_cast<ContentView *>(view())->formulaInputView()->textField()->isEditing()) {
+  if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
     app()->setFirstResponder(tabController());
@@ -264,13 +267,17 @@ int StoreController::maxNumberOfElements() const {
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series
-  char variables[Expression::k_maxNumberOfVariables];
-  variables[0] = 0;
-  formula.getVariables(isVariable, variables);
+  constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
+  char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
+  variables[0][0] = 0;
+  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
+  int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
+  (void) nbOfVariables; // Remove compilation warning of nused variable
+  assert(nbOfVariables >= 0);
   int numberOfValuesToCompute = -1;
   int index = 0;
-  while (variables[index] != 0) {
-    const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
+  while (variables[index][0] != 0) {
+    const char * seriesName = variables[index];
     assert(strlen(seriesName) == 2);
     int series = (int)(seriesName[1] - '0') - 1;
     assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);

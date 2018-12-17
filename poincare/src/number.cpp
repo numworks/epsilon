@@ -35,28 +35,10 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-Number Number::ParseDigits(const char * digits, size_t length) {
-  assert(digits[0] != '-');
-  const char * integral = digits;
-  size_t integralLength = length;
-  const char * fractional = strchr(digits, '.');
-  size_t fractionalLength = 0;
-  if (fractional) {
-    integralLength = fractional - integral;
-    fractional++;
-    fractionalLength = length - integralLength - 1;
-  }
-  const char * exponent = strchr(digits, Ion::Charset::Exponent);
-  size_t exponentLength = 0;
-  if (exponent) {
-    integralLength = fractional ? integralLength : exponent - integral;
-    fractionalLength = fractional ? exponent - fractional : 0;
-    exponent++;
-    exponentLength = length - integralLength - fractionalLength - (fractional ? 2 : 1);
-  }
+Number Number::ParseNumber(const char * integralPart, size_t integralLength, const char * decimalPart, size_t decimalLenght, bool exponentIsNegative, const char * exponentPart, size_t exponentLength) {
   // Integer
-  if (exponentLength == 0 && fractionalLength == 0) {
-    Integer i(integral, integralLength, false);
+  if (exponentLength == 0 && decimalLenght == 0) {
+    Integer i(integralPart, integralLength, false);
     if (!i.isInfinity()) {
       return Rational(i);
     }
@@ -64,10 +46,9 @@ Number Number::ParseDigits(const char * digits, size_t length) {
   int exp;
   // Avoid overflowing int
   if (exponentLength < Decimal::k_maxExponentLength) {
-    exp = Decimal::Exponent(integral, integralLength, fractional, fractionalLength, exponent, exponentLength);
+    exp = Decimal::Exponent(integralPart, integralLength, decimalPart, decimalLenght, exponentPart, exponentLength, exponentIsNegative);
   } else {
-    assert(exponent);
-    exp = exponent[0] == '-' ? -1 : 1;
+    exp = exponentIsNegative ? -1 : 1;
   }
   // Avoid Decimal with exponent > k_maxExponentLength
   if (exponentLength >= Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
@@ -77,7 +58,7 @@ Number Number::ParseDigits(const char * digits, size_t length) {
       return Infinity(false);
     }
   }
-  return Decimal(integral, integralLength, fractional, fractionalLength, exp);
+  return Decimal(integralPart, integralLength, decimalPart, decimalLenght, exp);
 }
 
 template <typename T>

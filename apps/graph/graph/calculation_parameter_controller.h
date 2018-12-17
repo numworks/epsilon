@@ -2,7 +2,7 @@
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../cartesian_function.h"
+#include "../storage_cartesian_function_store.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
 #include "integral_graph_controller.h"
@@ -16,7 +16,7 @@ namespace Graph {
 
 class CalculationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor, CartesianFunctionStore * functionStore);
+  CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -26,12 +26,12 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setFunction(CartesianFunction * function);
+  void setRecord(Ion::Storage::Record record);
 private:
   constexpr static int k_totalNumberOfCells = 6;
   MessageTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
-  CartesianFunction * m_function;
+  Ion::Storage::Record m_record;
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
   MinimumGraphController m_minimumGraphController;

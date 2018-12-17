@@ -1,10 +1,11 @@
 #include <poincare/expression_node.h>
-#include <poincare/undefined.h>
 #include <poincare/expression.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
 
 namespace Poincare {
 
-Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression & expression) {
+Expression ExpressionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
@@ -13,25 +14,29 @@ Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::Angle
   return Expression();
 }
 
-int ExpressionNode::polynomialDegree(char symbolName) const {
+int ExpressionNode::polynomialDegree(Context & context, const char * symbolName) const {
   for (ExpressionNode * c : children()) {
-    if (c->polynomialDegree(symbolName) != 0) {
+    if (c->polynomialDegree(context, symbolName) != 0) {
       return -1;
     }
   }
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  return Expression(this).defaultGetPolynomialCoefficients(symbolName, coefficients);
+int ExpressionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+  return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int ExpressionNode::getVariables(isVariableTest isVariable, char * variables) const {
+Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context & context) {
+  return Expression(this).defaultReplaceReplaceableSymbols(context);
+}
+
+int ExpressionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
  int numberOfVariables = 0;
   for (ExpressionNode * c : children()) {
-   int n = c->getVariables(isVariable, variables);
+   int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
    if (n < 0) {
-     return -1;
+     return n;
    }
    numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
  }
@@ -90,7 +95,11 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+void ExpressionNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression(this).defaultDeepReduceChildren(context, angleUnit, target);
+}
+
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Expression(this).defaultShallowReduce(context, angleUnit);
 }
 

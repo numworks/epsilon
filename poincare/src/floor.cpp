@@ -1,4 +1,5 @@
 #include <poincare/floor.h>
+#include <poincare/constant.h>
 #include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -10,12 +11,16 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper Floor::s_functionHelper;
+
+int FloorNode::numberOfChildren() const { return Floor::s_functionHelper.numberOfChildren(); }
+
 Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.name());
 }
 
 template<typename T>
@@ -26,11 +31,9 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Ang
   return Complex<T>(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Floor(this).shallowReduce(context, angleUnit);
 }
-
-Floor::Floor() : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {}
 
 Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
@@ -45,13 +48,13 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.type() == ExpressionNode::Type::Symbol) {
-    Symbol s = static_cast<Symbol &>(c);
+  if (c.type() == ExpressionNode::Type::Constant) {
+    Constant s = static_cast<Constant &>(c);
     Expression result;
-    if (s.name() == Ion::Charset::SmallPi) {
+    if (s.isPi()) {
       result = Rational(3);
     }
-    if (s.name() == Ion::Charset::Exponential) {
+    if (s.isExponential()) {
       result = Rational(2);
     }
     if (!result.isUninitialized()) {

@@ -40,7 +40,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("cos(2*I)", "3.7621956910836", Radian);
   assert_parsed_expression_evaluates_to<double>("cos(2*I)", "1.0006092967033", Degree);
   // On C
-  assert_parsed_expression_evaluates_to<float>("cos(I-4)", "(-1.008625)-0.8893952*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("cos(I-4)", "-1.008625-0.8893952*I", Radian);
   assert_parsed_expression_evaluates_to<float>("cos(I-4)", "0.997716+0.00121754*I", Degree, Cartesian, 6);
 
   /* sin: R  ->  R (oscillator)
@@ -62,7 +62,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("sin(-3*I)", "-0.05238381*I", Degree);
   // On: C
   assert_parsed_expression_evaluates_to<float>("sin(I-4)", "1.16781-0.768163*I", Radian, Cartesian, 6);
-  assert_parsed_expression_evaluates_to<float>("sin(I-4)", "(-0.0697671)+0.0174117*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("sin(I-4)", "-0.0697671+0.0174117*I", Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("sin(1.234567890123456E-15)", "1.23457E-15", Radian, Cartesian, 6);
 
   /* tan: R  ->  R (tangent-style)
@@ -72,8 +72,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("tan(2)", "-2.1850398632615", Radian);
   assert_parsed_expression_evaluates_to<double>("tan(2)", "3.4920769491748E-2", Degree);
   // Tangent-style
-  assert_parsed_expression_evaluates_to<float>("tan(P/2)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<double>("tan(3*P/2)", "undef", Radian);
+  assert_parsed_expression_evaluates_to<float>("tan(P/2)", Undefined::Name(), Radian);
+  assert_parsed_expression_evaluates_to<double>("tan(3*P/2)", Undefined::Name(), Radian);
   assert_parsed_expression_evaluates_to<float>("tan(3*P)", "0", Radian);
   assert_parsed_expression_evaluates_to<float>("tan(-540)", "0", Degree);
   // On R*i
@@ -83,8 +83,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("tan(2*I)", "9.6402758007582E-1*I", Radian);
   assert_parsed_expression_evaluates_to<float>("tan(2*I)", "0.03489241*I", Degree);
   // On C
-  assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.273553)+1.00281*I", Radian, Cartesian, 6);
-  assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.0699054)+0.0175368*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("tan(I-4)", "-0.273553+1.00281*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("tan(I-4)", "-0.0699054+0.0175368*I", Degree, Cartesian, 6);
 
   /* acos: [-1,1]    ->  R
    *       ]-inf,-1[ -> Pi+R*i (odd imaginary)
@@ -93,6 +93,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
    */
   // On [-1, 1]
   assert_parsed_expression_evaluates_to<double>("acos(0.5)", "1.0471975511966", Radian);
+  assert_parsed_expression_evaluates_to<double>("acos(0.03)", "1.5407918249714", Radian);
   assert_parsed_expression_evaluates_to<double>("acos(0.5)", "60", Degree);
   // On [1, inf[
   assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
@@ -124,23 +125,24 @@ QUIZ_CASE(poincare_trigo_evaluate) {
    */
   // On [-1, 1]
   assert_parsed_expression_evaluates_to<double>("asin(0.5)", "0.5235987755983", Radian);
+  assert_parsed_expression_evaluates_to<double>("asin(0.03)", "3.0004501823477E-2", Radian);
   assert_parsed_expression_evaluates_to<double>("asin(0.5)", "30", Degree);
   // On [1, inf[
   assert_parsed_expression_evaluates_to<double>("asin(2)", "1.5707963267949-1.3169578969248*I", Radian);
   assert_parsed_expression_evaluates_to<double>("asin(2)", "90-75.456129290217*I", Degree);
   // Symmetry: odd
-  assert_parsed_expression_evaluates_to<double>("asin(-2)", "(-1.5707963267949)+1.3169578969248*I", Radian);
-  assert_parsed_expression_evaluates_to<double>("asin(-2)", "(-90)+75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("asin(-2)", "-1.5707963267949+1.3169578969248*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("asin(-2)", "-90+75.456129290217*I", Degree);
   // On ]-inf, -1[
-  assert_parsed_expression_evaluates_to<float>("asin(-32)", "(-1.571)+4.159*I", Radian, Cartesian, 4);
-  assert_parsed_expression_evaluates_to<float>("asin(-32)", "(-90)+238*I", Degree, Cartesian, 3);
+  assert_parsed_expression_evaluates_to<float>("asin(-32)", "-1.571+4.159*I", Radian, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<float>("asin(-32)", "-90+238*I", Degree, Cartesian, 3);
   // On R*i
   assert_parsed_expression_evaluates_to<double>("asin(3*I)", "1.8184464592321*I", Radian);
   // Symmetry: odd
   assert_parsed_expression_evaluates_to<double>("asin(-3*I)", "-1.8184464592321*I", Radian);
   // On C
-  assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-1.3186)+2.0966*I", Radian, Cartesian, 5);
-  assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-75.551)+120.13*I", Degree, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("asin(I-4)", "-1.3186+2.0966*I", Radian, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("asin(I-4)", "-75.551+120.13*I", Degree, Cartesian, 5);
   // Key values
   assert_parsed_expression_evaluates_to<double>("asin(0)", "0", Degree);
   assert_parsed_expression_evaluates_to<float>("asin(-1)", "-90", Degree);
@@ -153,6 +155,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
    */
   // On R
   assert_parsed_expression_evaluates_to<double>("atan(2)", "1.1071487177941", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(0.01)", "9.9996666866652E-3", Radian);
   assert_parsed_expression_evaluates_to<double>("atan(2)", "63.434948822922", Degree);
   assert_parsed_expression_evaluates_to<float>("atan(0.5)", "0.4636476", Radian);
   // Symmetry: odd
@@ -165,13 +168,13 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("atan(26*I)", "1.5707963267949+3.8480520568064E-2*I", Radian);
   assert_parsed_expression_evaluates_to<double>("atan(26*I)", "90+2.2047714220164*I", Degree);
   // Symmetry: odd
-  assert_parsed_expression_evaluates_to<double>("atan(-26*I)", "(-1.5707963267949)-3.8480520568064E-2*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(-26*I)", "-1.5707963267949-3.8480520568064E-2*I", Radian);
   // On ]-inf*i, -i[
-  assert_parsed_expression_evaluates_to<float>("atan(-3.4*I)", "(-1.570796)-0.3030679*I", Radian);
-  assert_parsed_expression_evaluates_to<float>("atan(-3.4*I)", "(-90)-17.3645*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("atan(-3.4*I)", "-1.570796-0.3030679*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("atan(-3.4*I)", "-90-17.3645*I", Degree, Cartesian, 6);
   // On C
-  assert_parsed_expression_evaluates_to<float>("atan(I-4)", "(-1.338973)+0.05578589*I", Radian);
-  assert_parsed_expression_evaluates_to<float>("atan(I-4)", "(-76.7175)+3.1963*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("atan(I-4)", "-1.338973+0.05578589*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("atan(I-4)", "-76.7175+3.1963*I", Degree, Cartesian, 6);
   // Key values
   assert_parsed_expression_evaluates_to<float>("atan(0)", "0", Degree);
   assert_parsed_expression_evaluates_to<double>("atan(-I)", "-inf*I", Radian);
@@ -214,8 +217,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("sinh(8*P*I/2)", "0", Radian);
   assert_parsed_expression_evaluates_to<float>("sinh(9*P*I/2)", "I", Radian);
   // On C
-  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "(-14.7448)+22.9791*I", Radian, Cartesian, 6);
-  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "(-14.7448)+22.9791*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "-14.7448+22.9791*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "-14.7448+22.9791*I", Degree, Cartesian, 6);
 
   /* tanh: R         -> R (odd)
    *       R*i       -> R*i (tangent-style)
@@ -228,14 +231,14 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("tanh(43*I)", "-1.4983873388552*I", Radian);
   // Tangent-style
   // FIXME: this depends on the libm implementation and does not work on travis/appveyor servers
-  /*assert_parsed_expression_evaluates_to<float>("tanh(P*I/2)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(5*P*I/2)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(7*P*I/2)", "undef", Radian);
+  /*assert_parsed_expression_evaluates_to<float>("tanh(P*I/2)", Undefined::Name(), Radian);
+  assert_parsed_expression_evaluates_to<float>("tanh(5*P*I/2)", Undefined::Name(), Radian);
+  assert_parsed_expression_evaluates_to<float>("tanh(7*P*I/2)", Undefined::Name(), Radian);
   assert_parsed_expression_evaluates_to<float>("tanh(8*P*I/2)", "0", Radian);
-  assert_parsed_expression_evaluates_to<float>("tanh(9*P*I/2)", "undef", Radian);*/
+  assert_parsed_expression_evaluates_to<float>("tanh(9*P*I/2)", Undefined::Name(), Radian);*/
   // On C
-  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.00028)+0.000610241*I", Radian, Cartesian, 6);
-  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.00028)+0.000610241*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "-1.00028+0.000610241*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "-1.00028+0.000610241*I", Degree, Cartesian, 6);
 
   /* acosh: [-1,1]       ->  R*i
    *        ]-inf,-1[    -> Pi*i+R (even on real)
@@ -284,14 +287,14 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("asinh(-0.2*I)", "-2.0135792079033E-1*I", Radian);
   assert_parsed_expression_evaluates_to<float>("asinh(-0.2*I)", "-0.2013579*I", Degree);
   // On ]-inf*i, -i[
-  assert_parsed_expression_evaluates_to<double>("asinh(-22*I)", "(-3.7836727043295)-1.5707963267949*I", Radian);
-  assert_parsed_expression_evaluates_to<float>("asinh(-22*I)", "(-3.784)-1.571*I", Degree, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<double>("asinh(-22*I)", "-3.7836727043295-1.5707963267949*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("asinh(-22*I)", "-3.784-1.571*I", Degree, Cartesian, 4);
   // On ]i, inf*i[, Symmetry: odd
   assert_parsed_expression_evaluates_to<double>("asinh(22*I)", "3.7836727043295+1.5707963267949*I", Radian);
   assert_parsed_expression_evaluates_to<float>("asinh(22*I)", "3.784+1.571*I", Degree, Cartesian, 4);
   // On C
-  assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Radian, Cartesian, 4);
-  assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Degree, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "-2.123+0.2383*I", Radian, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "-2.123+0.2383*I", Degree, Cartesian, 4);
 
   /* atanh: [-1,1]       -> R (odd)
    *        ]-inf,-1[    -> Pi/2*i+R (odd)
@@ -308,8 +311,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("atanh(4)", "0.255412811883-1.5707963267949*I", Radian);
   assert_parsed_expression_evaluates_to<float>("atanh(4)", "0.2554128-1.570796*I", Degree);
   // On ]-inf,-1[, Symmetry: odd
-  assert_parsed_expression_evaluates_to<double>("atanh(-4)", "(-0.255412811883)+1.5707963267949*I", Radian);
-  assert_parsed_expression_evaluates_to<float>("atanh(-4)", "(-0.2554128)+1.570796*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("atanh(-4)", "-0.255412811883+1.5707963267949*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("atanh(-4)", "-0.2554128+1.570796*I", Degree);
   // On R*i
   assert_parsed_expression_evaluates_to<double>("atanh(4*I)", "1.325817663668*I", Radian);
   assert_parsed_expression_evaluates_to<float>("atanh(4*I)", "1.325818*I", Radian);
@@ -317,8 +320,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("atanh(-4*I)", "-1.325817663668*I", Radian);
   assert_parsed_expression_evaluates_to<float>("atanh(-4*I)", "-1.325818*I", Radian);
   // On C
-  assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Radian, Cartesian, 6);
-  assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "-0.238878+1.50862*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "-0.238878+1.50862*I", Degree, Cartesian, 6);
 
   // WARNING: evaluate on branch cut can be multivalued
   assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
@@ -390,13 +393,13 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("sin(P*340000)", "0");
   assert_parsed_expression_simplify_to("sin(P*340001)", "0");
   assert_parsed_expression_simplify_to("sin(-P*340001)", "0");
-  assert_parsed_expression_simplify_to("sin(P/12)", "((-R(2))+R(6))/4");
+  assert_parsed_expression_simplify_to("sin(P/12)", "(-R(2)+R(6))/4");
   assert_parsed_expression_simplify_to("sin(-P/12)", "(R(2)-R(6))/4");
   assert_parsed_expression_simplify_to("sin(-P*R(2))", "-sin(R(2)*P)");
   assert_parsed_expression_simplify_to("sin(1311P/6)", "1");
   assert_parsed_expression_simplify_to("sin(-P17/8)", "-R(2-R(2))/2");
   assert_parsed_expression_simplify_to("sin(41P/6)", "1/2");
-  assert_parsed_expression_simplify_to("sin(-3P/10)", "((-1)-R(5))/4");
+  assert_parsed_expression_simplify_to("sin(-3P/10)", "(-1-R(5))/4");
   assert_parsed_expression_simplify_to("sin(P/4+1000P)", "R(2)/2");
   assert_parsed_expression_simplify_to("sin(-P/3)", "-R(3)/2");
   assert_parsed_expression_simplify_to("sin(17P/5)", "-(R(2)*R(5+R(5)))/4");
@@ -408,7 +411,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("sin(61200000)", "0", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(61200180)", "0", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(-61200180)", "0", Preferences::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("sin(15)", "((-R(2))+R(6))/4", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(15)", "(-R(2)+R(6))/4", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(-15)", "(R(2)-R(6))/4", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(-180*R(2))", "-sin(180*R(2))", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(39330)", "1", Preferences::AngleUnit::Degree);
@@ -427,9 +430,9 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(P*340001)", "0");
   assert_parsed_expression_simplify_to("tan(-P*340001)", "0");
   assert_parsed_expression_simplify_to("tan(P/12)", "2-R(3)");
-  assert_parsed_expression_simplify_to("tan(-P/12)", "(-2)+R(3)");
+  assert_parsed_expression_simplify_to("tan(-P/12)", "-2+R(3)");
   assert_parsed_expression_simplify_to("tan(-P*R(2))", "-tan(R(2)*P)");
-  assert_parsed_expression_simplify_to("tan(1311P/6)", "undef");
+  assert_parsed_expression_simplify_to("tan(1311P/6)", Undefined::Name());
   assert_parsed_expression_simplify_to("tan(-P17/8)", "1-R(2)");
   assert_parsed_expression_simplify_to("tan(41P/6)", "-R(3)/3");
   assert_parsed_expression_simplify_to("tan(P/4+1000P)", "1");
@@ -443,9 +446,9 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(61200180)", "0", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-61200180)", "0", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(15)", "2-R(3)", Preferences::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("tan(-15)", "(-2)+R(3)", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(-15)", "-2+R(3)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-180*R(2))", "-tan(180*R(2))", Preferences::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("tan(39330)", "undef", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("tan(39330)", Undefined::Name(), Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-382.5)", "1-R(2)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(1230)", "-R(3)/3", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(180045)", "1", Preferences::AngleUnit::Degree);
@@ -453,14 +456,14 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
   // -- acos
   assert_parsed_expression_simplify_to("acos(-1/2)", "(2*P)/3");
-  assert_parsed_expression_simplify_to("acos(-1.2)", "(-acos(6/5))+P");
+  assert_parsed_expression_simplify_to("acos(-1.2)", "-acos(6/5)+P");
   assert_parsed_expression_simplify_to("acos(cos(2/3))", "2/3");
   assert_parsed_expression_simplify_to("acos(cos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
   assert_parsed_expression_simplify_to("acos(cos(12))", "acos(cos(12))");
   assert_parsed_expression_simplify_to("acos(cos(4P/7))", "(4*P)/7");
-  assert_parsed_expression_simplify_to("acos(-cos(2))", "(-2)+P");
+  assert_parsed_expression_simplify_to("acos(-cos(2))", "-2+P");
   assert_parsed_expression_simplify_to("acos(-1/2)", "120", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(-1.2)", "180-acos(6/5)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(cos(2/3))", "2/3", Preferences::AngleUnit::Degree);

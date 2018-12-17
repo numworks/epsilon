@@ -19,10 +19,10 @@ public:
 
   // ExpressionNode
   Type type() const override { return Type::Equal; }
-  int polynomialDegree(char symbolName) const override { return -1; }
+  int polynomialDegree(Context & context, const char * symbolName) const override { return -1; }
 private:
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -35,9 +35,9 @@ private:
 class Equal final : public Expression {
 public:
   Equal(const EqualNode * n) : Expression(n) {}
-  Equal(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<EqualNode>()) {
-    replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(1, child2);
+  Equal(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<EqualNode>()) {
+    replaceChildAtIndexInPlace(0, child0);
+    replaceChildAtIndexInPlace(1, child1);
   }
 
   // For the equation A = B, create the reduced expression A-B

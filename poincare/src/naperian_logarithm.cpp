@@ -1,17 +1,28 @@
 #include <poincare/naperian_logarithm.h>
-#include <poincare/symbol.h>
+#include <poincare/constant.h>
 #include <poincare/logarithm.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
-Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return NaperianLogarithm(this).shallowReduce(context, angleUnit);
+constexpr Expression::FunctionHelper NaperianLogarithm::s_functionHelper;
+
+int NaperianLogarithmNode::numberOfChildren() const { return NaperianLogarithm::s_functionHelper.numberOfChildren(); }
+
+Layout NaperianLogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
+}
+int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 
-NaperianLogarithm::NaperianLogarithm() : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {}
+Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return NaperianLogarithm(this).shallowReduce(context, angleUnit, target);
+}
 
-Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefined()) {
@@ -23,9 +34,9 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Logarithm l = Logarithm(childAtIndex(0), Symbol(Ion::Charset::Exponential));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant(Ion::Charset::Exponential));
   replaceWithInPlace(l);
-  return l.shallowReduce(context, angleUnit);
+  return l.shallowReduce(context, angleUnit, target);
 }
 
 }

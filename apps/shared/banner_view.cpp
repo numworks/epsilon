@@ -4,6 +4,10 @@
 
 namespace Shared {
 
+KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
+  return KDFont::SmallFont->glyphSize().height()*linesCount;
+}
+
 void BannerView::setLegendAtIndex(char * text, int index) {
   /* The layout of the banner's subviews depends on their content.
    * Indeed, we're using a "centered text" algorithm to layout the subviews.
@@ -22,7 +26,7 @@ void BannerView::setMessageAtIndex(I18n::Message text, int index) {
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, KDFont::SmallFont->glyphSize().height()*numberOfLines());
+  return KDSize(0, HeightGivenNumberOfLines(numberOfLines()));
 }
 
 int BannerView::numberOfSubviews() const {

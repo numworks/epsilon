@@ -13,8 +13,8 @@ extern "C" {
 
 namespace Poincare {
 
-int OppositeNode::polynomialDegree(char symbolName) const {
-  return childAtIndex(0)->polynomialDegree(symbolName);
+int OppositeNode::polynomialDegree(Context & context, const char * symbolName) const {
+  return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
 ExpressionNode::Sign OppositeNode::sign() const {
@@ -60,15 +60,15 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Opposite(this).shallowReduce(context, angleUnit);
+Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Opposite(this).shallowReduce(context, angleUnit, target);
 }
 
 /* Simplification */
 
 Opposite::Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
 
-Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefined()) {
     return result;
@@ -78,7 +78,7 @@ Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit ang
 #endif
   result = Multiplication(Rational(-1), child);
   replaceWithInPlace(result);
-  return result.shallowReduce(context, angleUnit);
+  return result.shallowReduce(context, angleUnit, target);
 }
 
 }

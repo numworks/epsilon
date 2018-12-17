@@ -30,10 +30,6 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(container, this);
 }
 
-void App::Snapshot::reset() {
-  m_scriptStore.deleteAllScripts();
-}
-
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;
@@ -76,7 +72,7 @@ void App::Snapshot::setOpt(const char * name, char * value) {
 #endif
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
+  Shared::InputEventHandlerDelegateApp(container, snapshot, &m_codeStackViewController),
   m_pythonHeap{},
   m_pythonUser(nullptr),
   m_consoleController(nullptr, this, snapshot->scriptStore()
@@ -109,15 +105,18 @@ bool App::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool App::textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event) {
+Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
+  return &m_toolbox;
+}
+
+VariableBoxController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+  return &m_variableBoxController;
+}
+
+bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {
     textInput->handleEventWithText(pythonText);
-    return true;
-  }
-  if (event == Ion::Events::Var) {
-    m_variableBoxController.setTextInputCaller(textInput);
-    displayModalViewController(&m_variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
   return false;

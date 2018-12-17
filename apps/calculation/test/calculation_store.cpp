@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <poincare/global_context.h>
+#include <apps/shared/global_context.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
@@ -14,7 +14,7 @@ void assert_store_is(CalculationStore * store, const char * result[10]) {
 }
 
 QUIZ_CASE(calculation_store) {
-  GlobalContext globalContext;
+  Shared::GlobalContext globalContext;
   CalculationStore store;
   quiz_assert(CalculationStore::k_maxNumberOfCalculations == 10);
   for (int i = 0; i < CalculationStore::k_maxNumberOfCalculations; i++) {
@@ -48,6 +48,12 @@ QUIZ_CASE(calculation_store) {
   assert_store_is(&store, result3);
 
   store.deleteAll();
+}
+
+QUIZ_CASE(calculation_display_exact_approximate) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
+
   store.push("1+3/4", &globalContext);
   store.push("ans+2/3", &globalContext);
   ::Calculation::Calculation * lastCalculation = store.calculationAtIndex(1);
@@ -58,4 +64,50 @@ QUIZ_CASE(calculation_store) {
   lastCalculation = store.calculationAtIndex(2);
   quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
+
+  store.deleteAll();
+  store.push("1/2", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(&globalContext) == ::Calculation::Calculation::EqualSign::Equal);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+
+  store.deleteAll();
+  store.push("1/3", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(&globalContext) == ::Calculation::Calculation::EqualSign::Approximation);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+
+  store.deleteAll();
+  store.push("1/0", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
+  quiz_assert(strcmp(lastCalculation->approximateOutputText(),"undef") == 0);
+
+  store.deleteAll();
+  store.push("2x-x", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
+  quiz_assert(strcmp(lastCalculation->exactOutputText(),"x") == 0);
+
+  store.deleteAll();
+  store.push("[[1,2,3]]", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
+
+  store.deleteAll();
+  store.push("[[1,x,3]]", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
+
+  store.deleteAll();
+  store.push("28^7", &globalContext);
+  lastCalculation = store.calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+
+  store.deleteAll();
 }

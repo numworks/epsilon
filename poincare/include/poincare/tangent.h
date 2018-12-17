@@ -3,7 +3,6 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -12,7 +11,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(TangentNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Tangent";
@@ -26,13 +25,10 @@ public:
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "tan"; }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
@@ -46,13 +42,16 @@ private:
 
 class Tangent final : public Expression {
 public:
-  Tangent();
   Tangent(const TangentNode * n) : Expression(n) {}
-  explicit Tangent(Expression operand) : Tangent() {
-    replaceChildAtIndexInPlace(0, operand);
-  }
+  static Tangent Builder(Expression child) { return Tangent(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+private:
+  explicit Tangent(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<TangentNode>()) {
+    replaceChildAtIndexInPlace(0, child);
+  }
 };
 
 }

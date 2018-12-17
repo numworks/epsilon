@@ -65,6 +65,13 @@ bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft
   return true;
 }
 
+bool CharLayoutNode::canBeOmittedMultiplicationRightFactor() const {
+  if (m_char == '!') {
+    return false;
+  }
+  return LayoutNode::canBeOmittedMultiplicationRightFactor();
+}
+
 // Sizing and positioning
 KDSize CharLayoutNode::computeSize() {
   return m_font->glyphSize();

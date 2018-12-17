@@ -9,6 +9,7 @@ objs += $(addprefix ion/src/shared/, \
   console_line.o \
   console_stdio.o \
   crc32.o \
+  crc32_padded.o \
   events.o \
   power.o \
   random.o \

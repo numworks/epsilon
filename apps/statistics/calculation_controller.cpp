@@ -1,5 +1,4 @@
 #include "calculation_controller.h"
-#include "../constant.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include <assert.h>
@@ -34,7 +33,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell.setHide(true);
 }
 
-// AlternateEmptyViewDelegate
+// AlternateEmptyViewDefaultDelegate
 
 bool CalculationController::isEmpty() const {
   return m_store->isEmpty();

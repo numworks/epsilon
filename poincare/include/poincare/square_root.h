@@ -3,7 +3,7 @@
 
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
+#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -14,7 +14,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(SquareRootNode); }
-  int numberOfChildren() const override { return 1; }
+  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "SquareRoot";
@@ -27,7 +27,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -40,15 +40,19 @@ private:
 
 class SquareRoot final : public Expression {
 public:
-  SquareRoot();
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
-  explicit SquareRoot(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
-    replaceChildAtIndexInPlace(0, operand);
+  static SquareRoot Builder(Expression child) { return SquareRoot(child); }
+  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+  static_assert('\x91' == Ion::Charset::Root, "Charset error");
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilder);
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+private:
+  explicit SquareRoot(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
+    replaceChildAtIndexInPlace(0, child);
   }
-
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  static const char k_name[2];
 };
-
 
 }
 

@@ -13,6 +13,7 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
 #include <poincare/context.h>
+#include <poincare/constant.h>
 #include <poincare/cosine.h>
 #include <poincare/ceiling.h>
 #include <poincare/decimal.h>
@@ -29,7 +30,7 @@
 #include <poincare/float.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>
-#include <poincare/global_context.h>
+#include <poincare/function.h>
 #include <poincare/great_common_divisor.h>
 #include <poincare/hyperbolic_arc_cosine.h>
 #include <poincare/hyperbolic_arc_sine.h>

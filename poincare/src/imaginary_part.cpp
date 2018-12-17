@@ -7,19 +7,21 @@
 
 namespace Poincare {
 
+constexpr Expression::FunctionHelper ImaginaryPart::s_functionHelper;
+
+int ImaginaryPartNode::numberOfChildren() const { return ImaginaryPart::s_functionHelper.numberOfChildren(); }
+
 Layout ImaginaryPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
 int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return ImaginaryPart(this).shallowReduce(context, angleUnit);
 }
-
-ImaginaryPart::ImaginaryPart() : Expression(TreePool::sharedPool()->createTreeNode<ImaginaryPartNode>()) {}
 
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {

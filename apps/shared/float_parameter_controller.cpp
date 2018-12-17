@@ -16,6 +16,7 @@ FloatParameterController::FloatParameterController(Responder * parentResponder) 
   m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation([](void * context, void * sender) {
       FloatParameterController * parameterController = (FloatParameterController *) context;
       parameterController->buttonAction();
+      return true;
     }, this))
 {
 }

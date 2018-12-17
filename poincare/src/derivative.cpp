@@ -1,5 +1,7 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -8,18 +10,31 @@
 
 namespace Poincare {
 
-int DerivativeNode::polynomialDegree(char symbolName) const {
-  if (childAtIndex(0)->polynomialDegree(symbolName) == 0
-      && childAtIndex(1)->polynomialDegree(symbolName) == 0)
+constexpr Expression::FunctionHelper Derivative::s_functionHelper;
+
+int DerivativeNode::numberOfChildren() const { return Derivative::s_functionHelper.numberOfChildren(); }
+
+int DerivativeNode::polynomialDegree(Context & context, const char * symbolName) const {
+  if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
+      && childAtIndex(1)->polynomialDegree(context, symbolName) == 0
+      && childAtIndex(2)->polynomialDegree(context, symbolName) == 0)
   {
     // If no child depends on the symbol, the polynomial degree is 0.
     return 0;
   }
   // If one of the children depends on the symbol, we do not know the degree.
-  return ExpressionNode::polynomialDegree(symbolName);
+  return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
+}
+
+int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
+}
+
+Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Derivative(this).shallowReduce(context, angleUnit);
 }
 
@@ -27,18 +42,18 @@ template<typename T>
 Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  Evaluation<T> xInput = childAtIndex(1)->approximate(T(), context, angleUnit);
-  T x = xInput.toScalar();
-  T functionValue = Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x, context, angleUnit);
+  Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  T evaluationArgument = evaluationArgumentInput.toScalar();
+  T functionValue = approximateWithArgument(evaluationArgument, context, angleUnit);
   // No complex/matrix version of Derivative
-  if (std::isnan(x) || std::isnan(functionValue)) {
+  if (std::isnan(evaluationArgument) || std::isnan(functionValue)) {
     return Complex<T>::Undefined();
   }
 
   T error, result;
   T h = k_minInitialRate;
   do {
-    result = riddersApproximation(context, angleUnit, x, h, &error);
+    result = riddersApproximation(context, angleUnit, evaluationArgument, h, &error);
     h /= 10.0;
   } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= epsilon);
 
@@ -54,9 +69,15 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
 }
 
 template<typename T>
+T DerivativeNode::approximateWithArgument(T x, Context & context, Preferences::AngleUnit angleUnit) const {
+  assert(childAtIndex(1)->type() == Type::Symbol);
+  return Expression(childAtIndex(0)).approximateWithValueForSymbol(static_cast<SymbolNode *>(childAtIndex(1))->name(), x, context, angleUnit);
+}
+
+template<typename T>
 T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context & context, Preferences::AngleUnit angleUnit) const {
-  T expressionPlus = Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x+h, context, angleUnit);
-  T expressionMinus = Expression(childAtIndex(0)).approximateWithValueForSymbol('x', x-h, context, angleUnit);
+  T expressionPlus = approximateWithArgument(x+h, context, angleUnit);
+  T expressionMinus = approximateWithArgument(x-h, context, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
@@ -111,8 +132,6 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
   return ans;
 }
 
-Derivative::Derivative() : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {}
-
 Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
@@ -121,7 +140,7 @@ Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit a
     }
   }
 #if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || || childAtIndex(1).type() == ExpressionNode::Type::Matrix || childAtIndex(2).type() == ExpressionNode::Type::Matrix) {
     return Undefined();
   }
 #endif
@@ -130,4 +149,3 @@ Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit a
 }
 
 }
-

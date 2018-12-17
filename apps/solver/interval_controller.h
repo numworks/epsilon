@@ -9,7 +9,7 @@ namespace Solver {
 
 class IntervalController : public Shared::FloatParameterController {
 public:
-  IntervalController(Responder * parentResponder, EquationStore * equationStore);
+  IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore);
   const char * title() override;
   View * view() override { return &m_contentView; }
   int numberOfRows() override;

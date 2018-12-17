@@ -6,11 +6,6 @@ using namespace Poincare;
 
 namespace Calculation {
 
-CalculationStore::CalculationStore() :
-  m_startIndex(0)
-{
-}
-
 Calculation * CalculationStore::push(const char * text, Context * context) {
   Calculation * result = &m_calculations[m_startIndex];
   result->setContent(text, context, ansExpression(context));
@@ -101,13 +96,13 @@ Expression CalculationStore::ansExpression(Context * context) {
    * To avoid turning 'ans->A' in '2->A->A' (or 2->A=A) which cannot be parsed),
    * ans is replaced by the approximation output in when any Store or Equal
    * expression appears.*/
-  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput(context).recursivelyMatches([](const Expression e, Context & context) {
+  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput().recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
           return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
-        }, *context);
+        }, *context, false);
   if (lastCalculation->input().isApproximate(*context) || exactOuptutInvolvesStoreEqual) {
     return lastCalculation->approximateOutput(context);
   }
-  return lastCalculation->exactOutput(context);
+  return lastCalculation->exactOutput();
 }
 
 }

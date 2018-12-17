@@ -27,7 +27,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
@@ -48,8 +48,8 @@ class Factorial final : public Expression {
 public:
   Factorial();
   Factorial(const FactorialNode * n) : Expression(n) {}
-  explicit Factorial(Expression operand) : Factorial() {
-    replaceChildAtIndexInPlace(0, operand);
+  explicit Factorial(Expression child) : Factorial() {
+    replaceChildAtIndexInPlace(0, child);
   }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

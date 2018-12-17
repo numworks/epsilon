@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Code {
 
-static constexpr int catalogChildrenCount = 124;
+static constexpr int catalogChildrenCount = 125;
 static constexpr int MathModuleChildrenCount = 43;
 static constexpr int KandinskyModuleChildrenCount = 7;
 static constexpr int CMathModuleChildrenCount = 13;
@@ -227,6 +227,7 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandConstantE, I18n::Message::PythonConstantE, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandErf, I18n::Message::PythonErf),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandErfc, I18n::Message::PythonErfc),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandEval, I18n::Message::PythonEval),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExp, I18n::Message::PythonExp),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExpm1, I18n::Message::PythonExpm1),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFabs, I18n::Message::PythonFabs),
@@ -332,7 +333,7 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::
 
 
 PythonToolbox::PythonToolbox() :
-  Toolbox(nullptr, I18n::translate(rootModel()->label()))
+  Toolbox(nullptr, rootModel()->label())
 {
 }
 
@@ -364,9 +365,9 @@ KDCoordinate PythonToolbox::rowHeight(int j) {
   return Toolbox::rowHeight(j);
 }
 
-bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
+bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
-  ToolboxMessageTree * node = selectedMessageTree;
+  ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
   if (node->stripInsertedText()) {
     int strippedEditedTextMaxLength = strlen(editedText)+1;

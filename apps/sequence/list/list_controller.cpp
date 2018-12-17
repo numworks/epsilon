@@ -9,12 +9,12 @@ using namespace Poincare;
 
 namespace Sequence {
 
-ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
+ListController::ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{},
   m_expressionCells{},
-  m_parameterController(this, sequenceStore),
+  m_parameterController(inputEventHandlerDelegate, this, sequenceStore),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
   m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()
@@ -28,12 +28,8 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
+Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
   return toolboxForSender(textInput);
-}
-
-Toolbox * ListController::toolboxForLayoutField(LayoutField * layoutField) {
-  return toolboxForSender(layoutField);
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {
@@ -41,6 +37,10 @@ TextFieldDelegateApp * ListController::textFieldDelegateApp() {
 }
 
 ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
+  return (App *)app();
+}
+
+InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
   return (App *)app();
 }
 
@@ -88,7 +88,7 @@ void ListController::selectPreviousNewSequenceCell() {
   }
 }
 
-Toolbox * ListController::toolboxForSender(Responder * sender) {
+Toolbox * ListController::toolboxForSender(InputEventHandler * sender) {
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
@@ -131,8 +131,10 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
         mySequence->setContent(textBody);
+        return true; //TODO should return result of mySequence->setContent
         },
         [](void * context, void * sender){
+        return true;
       });
       break;
   case 1:
@@ -142,8 +144,10 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       InputViewController * myInputViewController = (InputViewController *)sender;
       const char * textBody = myInputViewController->textBody();
       mySequence->setFirstInitialConditionContent(textBody);
+      return true; //TODO should return result of mySequence->setFirstInitialConditionContent
       },
       [](void * context, void * sender){
+      return true;
     });
     break;
   default:
@@ -153,8 +157,10 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       InputViewController * myInputViewController = (InputViewController *)sender;
       const char * textBody = myInputViewController->textBody();
       mySequence->setSecondInitialConditionContent(textBody);
+      return true; //TODO should return the result of mySequence->setSecondInitialConditionContent
       },
       [](void * context, void * sender){
+      return true;
     });
   }
 }
@@ -174,7 +180,7 @@ int ListController::maxNumberOfRows() {
   return k_maxNumberOfRows;
 }
 
-HighlightCell * ListController::titleCells(int index) {
+FunctionTitleCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_sequenceTitleCells[index];
 }

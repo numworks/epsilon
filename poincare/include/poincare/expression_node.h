@@ -130,8 +130,6 @@ public:
    * scan of the tree in ParseAndSimplifyForComplexFormat instead of Simplifying
    * and then extracting ComplexCartesian. */
   virtual bool isReal(Context & context, Preferences::AngleUnit angleUnit) const { return false; }
-  virtual ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
-  virtual ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Simplification */
   /* SimplificationOrder returns:

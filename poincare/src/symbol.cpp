@@ -82,16 +82,6 @@ bool SymbolNode::isReal(Context & context, Preferences::AngleUnit angleUnit) con
   return SymbolAbstract::isReal(s, context, angleUnit);
 }
 
-ComplexCartesian SymbolNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  Symbol s(this);
-  return SymbolAbstract::complexCartesian(s, context, angleUnit);
-}
-
-ComplexPolar SymbolNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
-  Symbol f(this);
-  return SymbolAbstract::complexPolar(f, context, angleUnit);
-}
-
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
     assert(m_name[1] == 0);

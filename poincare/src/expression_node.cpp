@@ -3,8 +3,6 @@
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/complex_cartesian.h>
-#include <poincare/complex_helper.h>
-#include <poincare/complex_polar.h>
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -72,14 +70,6 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
     }
   }
   return range;
-}
-
-ComplexCartesian ExpressionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  return ComplexCartesian();
-}
-
-ComplexPolar ExpressionNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
-  return ComplexHelper::complexPolarFromComplexCartesian(this, context, angleUnit);
 }
 
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) {

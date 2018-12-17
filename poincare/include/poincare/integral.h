@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -25,7 +24,6 @@ public:
   Expression replaceUnknown(const Symbol & symbol) override;
 
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
 private:

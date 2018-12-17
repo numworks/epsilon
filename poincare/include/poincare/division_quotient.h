@@ -2,7 +2,6 @@
 #define POINCARE_DIVISION_QUOTIENT_H
 
 #include <poincare/expression.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -22,7 +21,6 @@ public:
   Type type() const override { return Type::DivisionQuotient; }
 
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
 private:

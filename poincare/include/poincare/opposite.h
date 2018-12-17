@@ -27,10 +27,6 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
   Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
 
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
-
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit, compute<float>);

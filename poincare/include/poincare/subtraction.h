@@ -24,9 +24,6 @@ public:
   Type type() const override { return Type::Subtraction; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c - d); }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {

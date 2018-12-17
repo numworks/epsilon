@@ -94,50 +94,6 @@ bool PowerNode::isReal(Context & context, Preferences::AngleUnit angleUnit) cons
   return false;
 }
 
-ComplexCartesian PowerNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  Power p(this);
-  Expression e = p.equivalentExpressionUsingStandardExpression();
-  if (!e.isUninitialized()) {
-    return e.complexCartesian(context, angleUnit);
-  }
-  return ComplexHelper::complexCartesianFromComplexPolar(this, context, angleUnit);
-}
-
-ComplexPolar PowerNode::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
-  Power p(this);
-  Expression e = p.equivalentExpressionUsingStandardExpression();
-  if (!e.isUninitialized()) {
-    return e.complexPolar(context, angleUnit);
-  }
-  ComplexPolar polarChild0 = p.childAtIndex(0).complexPolar(context, angleUnit);
-  ComplexCartesian cartesianChild1 = p.childAtIndex(1).complexCartesian(context, angleUnit);
-  if (polarChild0.isUninitialized() || cartesianChild1.isUninitialized()) {
-    return ComplexPolar();
-  }
-  // Power(r*e^(i*th), c+id)
-  Expression r = polarChild0.norm();
-  Expression th = polarChild0.arg();
-  Expression c = cartesianChild1.real();
-  Expression d = cartesianChild1.imag();
-  // R = r^c*e^(-th*d)
-  Expression norm = Multiplication(
-            Power(r.clone(), c.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-            Power(
-              Constant(Ion::Charset::Exponential),
-              Multiplication(Rational(-1), th.clone(), d.clone()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  // TH = d*ln(r)+c*th
-  Expression argument = Addition(
-            Multiplication(th, c).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-            Multiplication(
-              d,
-              NaperianLogarithm::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-            ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-          ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  return ComplexPolar::Builder(norm, argument);
-}
-
 // Private
 
 template<typename T>

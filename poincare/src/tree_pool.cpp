@@ -222,7 +222,6 @@ template OppositeNode * Poincare::TreePool::createTreeNode<OppositeNode>(size_t 
 template PowerNode * Poincare::TreePool::createTreeNode<PowerNode>(size_t size);
 template ComplexArgumentNode * Poincare::TreePool::createTreeNode<ComplexArgumentNode>(size_t size);
 template ComplexCartesianNode * Poincare::TreePool::createTreeNode<ComplexCartesianNode>(size_t size);
-template ComplexPolarNode * Poincare::TreePool::createTreeNode<ComplexPolarNode>(size_t size);
 template ConfidenceIntervalNode * Poincare::TreePool::createTreeNode<ConfidenceIntervalNode>(size_t size);
 template ConjugateNode * Poincare::TreePool::createTreeNode<ConjugateNode>(size_t size);
 template ConstantNode * Poincare::TreePool::createTreeNode<ConstantNode>(size_t size);

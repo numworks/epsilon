@@ -2,6 +2,7 @@
 #include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
 #include <ion.h>
 #include <cmath>
@@ -18,13 +19,6 @@ ExpressionNode::Sign ConstantNode::sign(Context * context, Preferences::AngleUni
 
 bool ConstantNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
   return !isIComplex();
-}
-
-ComplexCartesian ConstantNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (isIComplex()) {
-    return ComplexCartesian::Builder(Rational(0), Rational(1));
-  }
-  return ComplexCartesian::Builder(Constant(this).clone(), Rational(0));
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

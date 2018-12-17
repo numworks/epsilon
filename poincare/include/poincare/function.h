@@ -29,8 +29,6 @@ public:
 
   // Complex
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
 private:
   char m_name[0]; // MUST be the last member variable

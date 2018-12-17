@@ -199,26 +199,6 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
   return !isMultivariablePolynomial;
 }
 
-/* Complex */
-
-bool Expression::isPureReal(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<float> approx = approximateToEvaluation<float>(context, angleUnit);
-  if (approx.type() == EvaluationNode<float>::Type::Complex) {
-    Complex<float> approxComplex = static_cast<Complex<float>&>(approx);
-    return approxComplex.imag() == 0.0f;
-  }
-  // TODO: matrix are not reduced yet so isPureReal is dummy if the approximation is a matrix
-  return true;
-}
-
-ComplexCartesian Expression::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  return node()->complexCartesian(context, angleUnit);
-}
-
-ComplexPolar Expression::complexPolar(Context & context, Preferences::AngleUnit angleUnit) const {
-  return node()->complexPolar(context, angleUnit);
-}
-
 // Private
 
 void Expression::defaultDeepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

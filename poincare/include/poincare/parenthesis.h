@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/complex_cartesian.h>
-#include <poincare/complex_polar.h>
 
 namespace Poincare {
 
@@ -22,10 +21,6 @@ public:
   // Properties
   Type type() const override { return Type::Parenthesis; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->complexCartesian(context, angleUnit); }
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->complexPolar(context, angleUnit); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

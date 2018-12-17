@@ -11,6 +11,10 @@ void modturtle_gc_collect() {
   gc_collect_root((void **)&sTurtle, sizeof(Turtle));
 }
 
+void modturtle_view_did_disappear() {
+  sTurtle.viewDidDisappear();
+}
+
 mp_obj_t modturtle___init__() {
   sTurtle = Turtle();
   /* Note: we don't even bother writing a destructor for Turtle because this

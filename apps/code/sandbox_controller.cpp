@@ -3,10 +3,12 @@
 
 namespace Code {
 
-SandboxController::SandboxController(Responder * parentResponder) :
+SandboxController::SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment) :
   ViewController(parentResponder),
-  m_solidColorView(KDColorWhite)
+  m_solidColorView(KDColorWhite),
+  m_executionEnvironment(executionEnvironment)
 {
+  assert(executionEnvironment != nullptr);
 }
 
 StackViewController * SandboxController::stackViewController() {
@@ -19,7 +21,14 @@ void SandboxController::reset() {
 }
 
 void SandboxController::viewWillAppear() {
+  assert(m_executionEnvironment != nullptr);
+  m_executionEnvironment->setSandboxIsDisplayed(true);
   redrawWindow();
+}
+
+void SandboxController::viewDidDisappear() {
+  assert(m_executionEnvironment != nullptr);
+  m_executionEnvironment->setSandboxIsDisplayed(false);
 }
 
 bool SandboxController::handleEvent(Ion::Events::Event event) {

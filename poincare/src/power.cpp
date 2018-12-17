@@ -243,7 +243,7 @@ Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences
   if (childAtIndex(0).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
     Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit, target), childAtIndex(1));
     replaceWithInPlace(result);
-    return result;
+    return result.shallowReduce(*context, angleUnit, target);
   }
   return *this;
 }

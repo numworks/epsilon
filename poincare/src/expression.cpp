@@ -402,10 +402,10 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
   *simplifiedExpression = Expression();
   if (!sSimplificationHasBeenInterrupted) {
-    /* Case 1: the reduced expression is ComplexCartesian, we can take
-     * into account the complex format to display a+i*b or r*e^(i*th) */
-    if (e.type() == ExpressionNode::Type::ComplexCartesian) {
-      ComplexCartesian ecomplex = static_cast<ComplexCartesian &>(e);
+    /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
+     * take into account the complex format to display a+i*b or r*e^(i*th) */
+    if (e.type() == ExpressionNode::Type::ComplexCartesian || e.isReal(context, angleUnit)) {
+      ComplexCartesian ecomplex = e.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(e) : ComplexCartesian::Builder(e, Rational(0));
       if (approximateExpression) {
         /* Step 2: Approximation
          * We compute the approximate expression from the Cartesian form to avoid

@@ -23,19 +23,6 @@ int SubtractionNode::polynomialDegree(Context & context, const char * symbolName
 
 // Private
 
-ComplexCartesian SubtractionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  Subtraction e(this);
-  ComplexCartesian cartesian0 = e.childAtIndex(0).complexCartesian(context, angleUnit);
-  ComplexCartesian cartesian1 = e.childAtIndex(1).complexCartesian(context, angleUnit);
-  if (cartesian0.isUninitialized() || cartesian1.isUninitialized()) {
-    return ComplexCartesian();
-  }
-  return ComplexCartesian::Builder(
-    Subtraction(cartesian0.real(), cartesian1.real()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-    Subtraction(cartesian0.imag(), cartesian1.imag()).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-  );
-}
-
 bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (child == childAtIndex(0)) {
     return false;

@@ -168,9 +168,6 @@ public:
 
   /* Complex */
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const { return node()->isReal(context, angleUnit); }
-  bool isPureReal(Context & context, Preferences::AngleUnit angleUnit) const;
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const;
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

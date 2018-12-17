@@ -2,7 +2,6 @@
 #define POINCARE_MATRIX_DIMENSION_H
 
 #include <poincare/expression.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -20,9 +19,6 @@ public:
 
   // Properties
   Type type() const override { return Type::MatrixDimension; }
-
-// Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
 
 private:
   // Layout

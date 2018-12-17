@@ -2,7 +2,6 @@
 #define POINCARE_COSINE_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/complex_helper.h>
 #include <poincare/expression.h>
 #include <poincare/trigonometry.h>
 
@@ -21,7 +20,6 @@ public:
 #endif
 
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianComplexFunction(this, context, angleUnit); }
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->isReal(context, angleUnit); }
 
   // Properties

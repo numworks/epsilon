@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/evaluation.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -24,9 +23,7 @@ public:
   // Properties
   Type type() const override{ return Type::PermuteCoefficient; }
 
-
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
 private:

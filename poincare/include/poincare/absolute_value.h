@@ -4,7 +4,6 @@
 #include <poincare/expression.h>
 #include <poincare/rational.h>
 #include <poincare/approximation_helper.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -25,7 +24,6 @@ public:
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit) override;
 
   // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianRealFunction(this, context, angleUnit); }
   bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
 
   // Approximation

@@ -2,7 +2,6 @@
 #define POINCARE_NTH_ROOT_H
 
 #include <poincare/expression.h>
-#include <poincare/complex_helper.h>
 
 namespace Poincare {
 
@@ -19,10 +18,6 @@ public:
     stream << "NthRoot";
   }
 #endif
-
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override { return ComplexHelper::complexCartesianFromComplexPolar(this, context, angleUnit); }
-  ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
 
 private:
   // Layout

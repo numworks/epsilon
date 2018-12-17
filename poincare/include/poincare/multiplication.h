@@ -25,15 +25,6 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
-  // Complex
-  ComplexCartesian complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const override;
-  /* If we use the formula arg(a*b) = arg(a)+arg(b), we are likely to end up
-   * with additions of arcTangent. To avoid that, we compute the argument(a*b)
-   * from the real and imaginary part of a*b.
-   * TODO: What about norm(a*b)? */
-  //ComplexPolar complexPolar(Context & context, Preferences::AngleUnit angleUnit) const override;
-  //Expression complexArgument(Context & context, Preferences::AngleUnit angleUnit) const override;
-
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c*d); }
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {

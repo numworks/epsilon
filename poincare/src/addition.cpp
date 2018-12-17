@@ -1,4 +1,5 @@
 #include <poincare/addition.h>
+#include <poincare/complex_cartesian.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
@@ -25,30 +26,6 @@ int AdditionNode::polynomialDegree(Context & context, const char * symbolName) c
 
 int AdditionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   return Addition(this).getPolynomialCoefficients(context, symbolName, coefficients);
-}
-
-// Private
-
-ComplexCartesian AdditionNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e(this);
-  Addition real;
-  Addition imag;
-  int nbOfChildren = e.numberOfChildren();
-  for (int i = 0; i < nbOfChildren; i++) {
-    ComplexCartesian cartesianParts = e.childAtIndex(i).complexCartesian(context, angleUnit);
-    if (cartesianParts.isUninitialized()) {
-      return ComplexCartesian();
-    }
-    Expression a = cartesianParts.real();
-    Expression b = cartesianParts.imag();
-    assert(!a.isUninitialized() && !b.isUninitialized());
-    real.addChildAtIndexInPlace(a, real.numberOfChildren(), real.numberOfChildren());
-    imag.addChildAtIndexInPlace(b, imag.numberOfChildren(), imag.numberOfChildren());
-  }
-  return ComplexCartesian::Builder(
-    real.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-    imag.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-  );
 }
 
 // Layout

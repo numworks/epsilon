@@ -1,4 +1,5 @@
 #include <poincare/sign_function.h>
+#include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>

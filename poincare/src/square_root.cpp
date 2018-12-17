@@ -18,57 +18,6 @@ constexpr Expression::FunctionHelper SquareRoot::s_functionHelper;
 
 int SquareRootNode::numberOfChildren() const { return SquareRoot::s_functionHelper.numberOfChildren(); }
 
-/*Expression SquareRootNode::complexNorm(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression r = childAtIndex(0)->complexNorm(context, angleUnit);
-  if (r.isUninitialized()) {
-    return Expression();
-  }
-  // R = sqrt(r)
-  return SquareRoot::Builder(r).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-}*/
-
-/*Expression SquareRootNode::complexArgument(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression th = childAtIndex(0)->complexArgument(context, angleUnit);
-  if (th.isUninitialized()) {
-    return Expression();
-  }
-  // TH = th/2
-  return Division(th, Rational(2)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-}*/
-
-Multiplication SquareRootNode::complexCartesianHelper(Expression e, Context & context, Preferences::AngleUnit angleUnit) {
-  return Multiplication(
-      Rational(1,2),
-      SquareRoot::Builder(
-        Multiplication(
-          Rational(2),
-          e.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-        ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-      ).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-    );
-}
-ComplexCartesian SquareRootNode::complexCartesian(Context & context, Preferences::AngleUnit angleUnit) const {
-  // real: (1/2)*sqrt(2*(sqrt(x^2+y^2)+x))
-  // imag: (1/2)*sqrt(2*(sqrt(x^2+y^2)-x)*sign(y))
-  SquareRoot e(this);
-  ComplexCartesian cartesian = e.childAtIndex(0).complexCartesian(context, angleUnit);
-  if (cartesian.isUninitialized()) {
-    return ComplexCartesian();
-  }
-  Expression x = cartesian.real();
-  Expression y = cartesian.imag();
-  assert(!x.isUninitialized() && !y.isUninitialized());
-  Expression norm = SquareRoot::Builder(ComplexHelper::complexSquareNormComplexCartesian(x.clone(), y.clone(), context, angleUnit)).shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation);
-  // a = sqrt(x^2+y^2)+x
-  Multiplication real = complexCartesianHelper(Addition(norm.clone(), x.clone()), context, angleUnit);
-  Multiplication imag = complexCartesianHelper(Subtraction(norm, x), context, angleUnit);
-  imag.addChildAtIndexInPlace(SignFunction::Builder(y).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::BottomUpComputation), imag.numberOfChildren(), imag.numberOfChildren());
-  return ComplexCartesian::Builder(
-      real.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation),
-      imag.shallowReduce(context, angleUnit, ReductionTarget::BottomUpComputation)
-    );
-}
-
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

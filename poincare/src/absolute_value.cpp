@@ -3,6 +3,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/absolute_value_layout.h>
+#include <poincare/complex_cartesian.h>
 #include <poincare/multiplication.h>
 #include <assert.h>
 #include <cmath>

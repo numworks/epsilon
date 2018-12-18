@@ -453,16 +453,16 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
-  /*if (target == ExpressionNode::ReductionTarget::User && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     const Rational b = childAtIndex(1).convert<Rational>();
     // i^(p/q)
     if (childAtIndex(0).type() == ExpressionNode::Type::Constant && childAtIndex(0).convert<Constant>().isIComplex()) {
       Number r = Number::Multiplication(b, Rational(1, 2));
-      Expression result = CreateComplexExponent(r);
+      Expression result = CreateComplexExponent(r, context, angleUnit, target);
       replaceWithInPlace(result);
       return result.shallowReduce(context, angleUnit, target);
     }
-  }*/
+  }
 
   // (±inf)^x
   if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
@@ -519,14 +519,17 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       //m0.shallowReduce(context, angleUnit, target);
       Multiplication m1 = Multiplication();
       replaceWithInPlace(m1);
-      m1.addChildAtIndexInPlace(Constant(Ion::Charset::IComplex), 0, 0);
+      // Multiply m1 by i complex
+      Constant i(Ion::Charset::IComplex);
+      m1.addChildAtIndexInPlace(i, 0, 0);
+      i.shallowReduce(context, angleUnit, target);
       m1.addChildAtIndexInPlace(*this, 1, 1);
       shallowReduce(context, angleUnit, target);
       return m1.shallowReduce(context, angleUnit, target);
     }
   }
   // e^(i*Pi*r) with r rational
-  /*if (!letPowerAtRoot && isNthRootOfUnity()) {
+  if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression m = childAtIndex(1);
     Expression i = m.childAtIndex(m.numberOfChildren()-1);
     static_cast<Multiplication &>(m).removeChildAtIndexInPlace(m.numberOfChildren()-1);
@@ -543,7 +546,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     complexPart.shallowReduce(context, angleUnit, target);
     replaceWithInPlace(a);
     return a.shallowReduce(context, angleUnit, target);
-  }*/
+  }
   // x^log(y,x)->y if y > 0
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
     if (childAtIndex(1).numberOfChildren() == 2 && childAtIndex(0).isIdenticalTo(childAtIndex(1).childAtIndex(1))) {
@@ -887,7 +890,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     m.addChildAtIndexInPlace(p, 1, 1);
   }
   if (i.isNegative()) {
-    Expression exp = CreateComplexExponent(r);
+    Expression exp = CreateComplexExponent(r, context, angleUnit, target);
     m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
     exp.shallowReduce(context, angleUnit, target);
   }
@@ -1073,14 +1076,16 @@ Expression Power::equivalentExpressionUsingStandardExpression() const {
   return Expression();
 }
 
-Expression Power::CreateComplexExponent(const Expression & r) {
+Expression Power::CreateComplexExponent(const Expression & r, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // Returns e^(i*pi*r)
   const Constant exp = Constant(Ion::Charset::Exponential);
-  const Constant iComplex = Constant(Ion::Charset::IComplex);
+  Constant iComplex = Constant(Ion::Charset::IComplex);
   const Constant pi = Constant(Ion::Charset::SmallPi);
   Multiplication mExp = Multiplication(iComplex, pi, r.clone());
-  mExp.sortChildrenInPlace(PowerNode::SimplificationOrder, false);
-  return Power(exp, mExp);
+  iComplex.shallowReduce(context, angleUnit, target);
+  Power p(exp, mExp);
+  mExp.shallowReduce(context, angleUnit, target);
+  return p;
 #if 0
   const Constant iComplex = Constant(Ion::Charset::IComplex);
   const Constant pi = Constant(Ion::Charset::SmallPi);

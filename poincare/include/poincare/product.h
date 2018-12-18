@@ -16,6 +16,8 @@ public:
 #endif
 
   Type type() const override { return Type::Product; }
+  Expression replaceUnknown(const Symbol & symbol) override;
+
 private:
   float emptySequenceValue() const override { return 1.0f; }
   Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;

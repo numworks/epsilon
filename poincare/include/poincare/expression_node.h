@@ -126,14 +126,6 @@ public:
   bool isOfType(Type * types, int length) const;
 
   /* Complex */
-  /* TODO: we could turn i in ComplexCartesian(0,1) in the shallowReduce applied
-   * to i. In this case, we would handle ComplexCartesian as a number and
-   * implement all computations (+, *, ^) in Number ?? We would have to handle
-   * ComplexCartesian in all Node::shallowReduce... We would then turn
-   * ComplexCartesian into something readable in the
-   * ComplexCartesian::shallowBeautify. This would enable us to do only one
-   * scan of the tree in ParseAndSimplifyForComplexFormat instead of Simplifying
-   * and then extracting ComplexCartesian. */
   virtual bool isReal(Context & context, Preferences::AngleUnit angleUnit) const { return false; }
 
   /* Simplification */

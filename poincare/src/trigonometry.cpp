@@ -5,6 +5,7 @@
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
+#include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/derivative.h>
 #include <poincare/decimal.h>
@@ -252,7 +253,22 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     }
   }
 
-  // Step 3. Try finding an easy standard calculation reduction
+  // Step 3. Look for an expression of type "arctan(1/X), return sign(x)*Pi/2-arctan(x)
+  if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
+    Expression x = e.childAtIndex(0).childAtIndex(0);
+    Expression sign = SignFunction::Builder(x.clone());
+    Multiplication m0(Rational(1,2), sign, Constant(Ion::Charset::SmallPi));
+    sign.shallowReduce(context, angleUnit, target);
+    e.replaceChildAtIndexInPlace(0, x);
+    Addition a(m0);
+    e.replaceWithInPlace(a);
+    Multiplication m1(Rational(-1), e);
+    e.shallowReduce(context, angleUnit, target);
+    a.addChildAtIndexInPlace(m1, 1, 1);
+    return a.shallowReduce(context, angleUnit, target);
+  }
+
+  // Step 4. Try finding an easy standard calculation reduction
   Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
@@ -266,7 +282,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    *   information on the parent which could later be a cosine, a sine or a tangent.
    */
   bool letArcFunctionAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsDirectTrigonometry(e);
-  /* Step 4. Handle opposite argument: arccos(-x) = Pi-arcos(x),
+  /* Step 5. Handle opposite argument: arccos(-x) = Pi-arcos(x),
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
    */
   if (!letArcFunctionAtRoot) {

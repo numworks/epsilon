@@ -511,6 +511,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("atan(tan(1808))", "8", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("atan(tan(-180/7))", "-180/7", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("atan(R(3))", "60", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("atan(1/x)", "(-2*atan(x)+sign(x)*P)/2", Preferences::AngleUnit::Degree);
 
   // cos(arcsin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "R(1-x^2)", Preferences::AngleUnit::Degree);

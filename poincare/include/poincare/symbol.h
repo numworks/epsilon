@@ -20,6 +20,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
+  Expression replaceUnknown(const Symbol & symbol) override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
@@ -77,6 +78,7 @@ public:
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool replaceSymbols = true);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
+  Expression replaceUnknown(const Symbol & symbol);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReplaceReplaceableSymbols(Context & context);
 private:

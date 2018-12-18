@@ -279,6 +279,18 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
+Expression Expression::replaceUnknown(const Symbol & symbol) {
+  return node()->replaceUnknown(symbol);
+}
+
+Expression Expression::defaultReplaceUnknown(const Symbol & symbol) {
+  int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    childAtIndex(i).replaceUnknown(symbol);
+  }
+  return *this;
+}
+
 /* Comparison */
 
 bool Expression::isIdenticalTo(const Expression e) const {

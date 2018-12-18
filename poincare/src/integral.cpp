@@ -1,6 +1,7 @@
 #include <poincare/integral.h>
 #include <poincare/complex.h>
 #include <poincare/integral_layout.h>
+#include <poincare/parametered_expression_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -24,6 +25,10 @@ int IntegralNode::polynomialDegree(Context & context, const char * symbolName) c
     return 0;
   }
   return ExpressionNode::polynomialDegree(context, symbolName);
+}
+
+Expression IntegralNode::replaceUnknown(const Symbol & symbol) {
+  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Integral(this), symbol);
 }
 
 Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

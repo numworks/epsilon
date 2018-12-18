@@ -9,6 +9,10 @@ Expression ExpressionNode::replaceSymbolWithExpression(const SymbolAbstract & sy
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
+Expression ExpressionNode::replaceUnknown(const Symbol & symbol) {
+  return Expression(this).defaultReplaceUnknown(symbol);
+}
+
 Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(false);
   return Expression();

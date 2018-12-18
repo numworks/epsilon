@@ -393,6 +393,15 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
+  /* We do not apply some rules to a^b if:
+   * - the parent node is a logarithm of same base a. In this case there is a
+   *  simplication of form ln(e^(3^(1/2))->3^(1/2).
+   * - the reduction is being BottomUpComputation. In this case, we do not yet have any
+   *   information on the parent which could later be a logarithm of the same
+   *   base.
+   */
+  bool letPowerAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsALogarithmOfSameBase();
+
   /* Step 1: we now bubble up ComplexCartesian, we handle different cases:
    * At least, one child is a ComplexCartesian and the other is either a
    * ComplexCartesian or real. */
@@ -404,7 +413,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
    * For q = -1, 1/2, -1/2, n with n integer < 10, we avoid introducing arctangent
    * by using the formula (r*e^(i*th))^(a+ib) = r^a*e(-th*b)*e^(b*ln(r)+th*a).
    * Instead, we rather use the cartesian form of the base and the index. */
-  if (base.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian) {
     complexBase = static_cast<ComplexCartesian &>(base);
     Integer ten(10);
     if (index.type() == ExpressionNode::Type::Rational) {
@@ -434,9 +443,9 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
   // All other cases where one child at least is a ComplexCartesian
-  if ((base.isReal(context, angleUnit) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
-      (base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context, angleUnit)) ||
-      (base.type() == ExpressionNode::Type::ComplexCartesian && index.type() == ExpressionNode::Type::ComplexCartesian)) {
+  if ((!letPowerAtRoot && base.isReal(context, angleUnit) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
+      (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context, angleUnit)) ||
+      (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian && index.type() == ExpressionNode::Type::ComplexCartesian)) {
     complexBase = base.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational(0));
     complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational(0));
     result = complexBase.power(complexIndex, context, angleUnit, target);
@@ -486,14 +495,6 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
-  /* We do not apply some rules to a^b if:
-   * - the parent node is a logarithm of same base a. In this case there is a
-   *  simplication of form ln(e^(3^(1/2))->3^(1/2).
-   * - the reduction is being BottomUpComputation. In this case, we do not yet have any
-   *   information on the parent which could later be a logarithm of the same
-   *   base.
-   */
-  bool letPowerAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsALogarithmOfSameBase();
   if (!letPowerAtRoot && childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational a = childAtIndex(0).convert<Rational>();
     // p^q with p, q rationals

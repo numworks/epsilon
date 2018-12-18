@@ -97,6 +97,7 @@ objs += $(addprefix poincare/src/,\
   nth_root.o\
   number.o\
   opposite.o\
+  parametered_expression_helper.o\
   parenthesis.o\
   permute_coefficient.o\
   power.o\

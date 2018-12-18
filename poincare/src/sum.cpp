@@ -2,6 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/sum_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/parametered_expression_helper.h>
 #include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
@@ -12,6 +13,10 @@ extern "C" {
 namespace Poincare {
 
 constexpr Expression::FunctionHelper Sum::s_functionHelper;
+
+Expression SumNode::replaceUnknown(const Symbol & symbol) {
+  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Sum(this), symbol);
+}
 
 Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
   return SumLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);

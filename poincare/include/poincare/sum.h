@@ -16,6 +16,8 @@ public:
 #endif
 
   Type type() const override { return Type::Sum; }
+  Expression replaceUnknown(const Symbol & symbol) override;
+
 private:
   float emptySequenceValue() const override { return 0.0f; }
   Layout createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;

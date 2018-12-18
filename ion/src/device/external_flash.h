@@ -53,6 +53,7 @@ enum class Command : uint8_t {
   WriteEnable = 0x06,
   ReadData = 0x03,
   FastRead = 0x0B,
+  FastReadQuadIO = 0xEB,
   // Program previously erased memory areas as being "0"
   PageProgram = 0x02,
   QuadPageProgram = 0x33,

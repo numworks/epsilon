@@ -34,8 +34,8 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferen
   assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
   std::complex<T> a = static_cast<Complex<T> &>(realEvaluation).stdComplex();
   std::complex<T> b = static_cast<Complex<T> &>(imagEvalution).stdComplex();
-  assert(a.imag() == 0.0);
-  assert(b.imag() == 0.0);
+  assert(a.imag() == 0.0 || std::isnan(a.imag()));
+  assert(b.imag() == 0.0 || std::isnan(b.imag()));
   return Complex<T>(a.real(), b.real());
 }
 

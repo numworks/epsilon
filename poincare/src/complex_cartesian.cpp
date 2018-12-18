@@ -280,7 +280,7 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & con
   Expression c = other.real();
   Expression d = other.imag();
   // R = r^c*e^(-th*d)
-  Expression rpowc = Power(rclone, c);
+  Expression rpowc = Power(rclone, c.clone());
   rclone.shallowReduce(context, angleUnit, target);
   Expression thmuld = Multiplication(Rational(-1), thclone, d.clone());
   thclone.shallowReduce(context, angleUnit, target);

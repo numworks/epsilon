@@ -126,11 +126,25 @@ static void set_as_memory_mapped() {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
-    Command::FastRead,
+    Command::FastReadQuadIO,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
-    0, 0,
-    FastReadDummyCycles,
+    0xA0, 1,
+    2, //FIXME
     nullptr, 0
+  );
+}
+
+static void unset_memory_mapped_mode() {
+  /* Reset Continuous Read Mode Bits before issuing normal instructions. */
+  uint8_t dummyData;
+  send_command_full(
+    QUADSPI::CCR::FunctionalMode::IndirectRead,
+    DefaultOperatingMode,
+    Command::FastReadQuadIO,
+    0,
+    ~(0xA0), 1,
+    2, //FIXME
+    &dummyData, 1
   );
 }
 
@@ -155,6 +169,11 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
   }
   ccr.setIMODE(operatingMode);
   ccr.setINSTRUCTION(static_cast<uint8_t>(c));
+  if (functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
+    ccr.setSIOO(true);
+    /* If the SIOO bit is set, the instruction is sent only for the first command following a write to QUADSPI_CCR.
+     * Subsequent command sequences skip the instruction phase, until there is a write to QUADSPI_CCR. */
+  }
   QUADSPI.CCR()->set(ccr);
   if (address != reinterpret_cast<uint8_t *>(FlashAddressSpaceSize)) {
     QUADSPI.AR()->set(reinterpret_cast<uint32_t>(address));
@@ -246,6 +265,7 @@ int SectorAtAddress(uint32_t address) {
 }
 
 void MassErase() {
+  unset_memory_mapped_mode();
   send_command(Command::WriteEnable);
   wait();
   send_command(Command::ChipErase);
@@ -255,6 +275,7 @@ void MassErase() {
 
 void EraseSector(int i) {
   assert(i >= 0 && i < NumberOfSectors);
+  unset_memory_mapped_mode();
   send_command(Command::WriteEnable);
   wait();
   send_write_command(Command::Erase64KbyteBlock, reinterpret_cast<uint8_t *>(i << NumberOfAddressBitsIn64KbyteBlock), nullptr, 0);
@@ -263,6 +284,7 @@ void EraseSector(int i) {
 }
 
 void WriteMemory(uint8_t * source, uint8_t * destination, size_t length) {
+  unset_memory_mapped_mode();
   /* Each 256-byte page of the external flash memory (contained in a previously erased area)
    * may be programmed in burst mode with a single Page Program instruction.
    * However, when the end of a page is reached, the addressing wraps to the beginning.

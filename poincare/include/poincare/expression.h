@@ -167,7 +167,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
-  static Expression ParseAndReduce(const char * text, Context & context, Preferences::AngleUnit);
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);

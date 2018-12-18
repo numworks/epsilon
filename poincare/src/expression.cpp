@@ -312,14 +312,6 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndReduce(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
-  Expression exp = Parse(text);
-  if (exp.isUninitialized()) {
-    return Undefined();
-  }
-  return exp.reduce(context, angleUnit);
-}
-
 Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
   Expression exp = Parse(text);
   if (exp.isUninitialized()) {
@@ -423,7 +415,7 @@ U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angle
 
 template<typename U>
 U Expression::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
-  Expression exp = ParseAndReduce(text, context, angleUnit);
+  Expression exp = ParseAndSimplify(text, context, angleUnit);
   return exp.approximateToScalar<U>(context, angleUnit);
 }
 

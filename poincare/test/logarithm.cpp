@@ -43,7 +43,7 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(R(3),R(3))", "1");
   assert_parsed_expression_simplify_to("log(1/R(2))", "-log(2)/2");
   assert_parsed_expression_simplify_to("log(-I)", "log(-I)");
-  assert_parsed_expression_simplify_to("ln(X^(IP/7))", "(P*I)/7");
+  assert_parsed_expression_simplify_to("ln(X^(IP/7))", "P/7*I");
   assert_parsed_expression_simplify_to("log(10^24)", "24");
   assert_parsed_expression_simplify_to("log((23P)^4,23P)", "4");
   assert_parsed_expression_simplify_to("log(10^(2+P))", "2+P");

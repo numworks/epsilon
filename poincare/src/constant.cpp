@@ -62,4 +62,6 @@ Expression Constant::shallowReduce(Context & context, Preferences::AngleUnit ang
   return *this;
 }
 
+template Evaluation<float> ConstantNode::templatedApproximate<float>(Context& context, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> ConstantNode::templatedApproximate<double>(Context& context, Preferences::AngleUnit angleUnit) const;
 }

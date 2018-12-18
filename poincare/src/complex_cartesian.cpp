@@ -65,9 +65,38 @@ Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::Ang
   return e;
 }
 
+void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  if (e.type() == searchedType) {
+    *factor = Rational(1);
+    *argument = e.childAtIndex(0);
+    return;
+  }
+  if (e.type() == ExpressionNode::Type::Multiplication) {
+    for (int i = 0; i < e.numberOfChildren(); i++) {
+      if (e.childAtIndex(i).type() == searchedType) {
+        *argument = e.childAtIndex(i).childAtIndex(0);
+        *factor = e.clone();
+        static_cast<Multiplication *>(factor)->removeChildAtIndexInPlace(i);
+        *factor = factor->shallowReduce(context, angleUnit, target);
+        Expression positiveFactor = factor->makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
+        *factor = positiveFactor.isUninitialized() ? *factor : positiveFactor;
+        return;
+      }
+    }
+  }
+}
+
 Expression ComplexCartesian::squareNorm(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression a = real();
   Expression b = imag();
+  Expression aFactor, bFactor, aArgument, bArgument;
+  factorAndArgumentOfFunction(a, ExpressionNode::Type::Cosine, &aFactor, &aArgument, context, angleUnit, target);
+  factorAndArgumentOfFunction(b, ExpressionNode::Type::Sine, &bFactor, &bArgument, context, angleUnit, target);
+  if (!aFactor.isUninitialized() && !aArgument.isUninitialized() && !bFactor.isUninitialized() && !bArgument.isUninitialized() && aFactor.isIdenticalTo(bFactor) && aArgument.isIdenticalTo(bArgument)) {
+    Power result(aFactor, Rational(2));
+    aFactor.shallowReduce(context, angleUnit, target);
+    return result;
+  }
   Expression a2 = Power(a, Rational(2));
   Expression b2 = Power(b, Rational(2));
   Addition add(a2, b2);

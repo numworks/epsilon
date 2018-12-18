@@ -67,14 +67,17 @@ static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR
 static constexpr int ClockFrequencyDivisor = 2;
 static constexpr int ChipSelectHighTime = (ClockFrequencyDivisor == 1) ? 3 : (ClockFrequencyDivisor == 2) ? 2 : 1;
 
-static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
+static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
 static inline void send_command(Command c, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     operatingMode,
     c,
-    reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), 0, nullptr, 0
+    reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
+    0, 0,
+    0,
+    nullptr, 0
   );
 }
 
@@ -83,7 +86,10 @@ static inline void send_write_command(Command c, uint8_t * address, uint8_t * da
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     operatingMode,
     c,
-    address, 0, data, dataLength
+    address,
+    0, 0,
+    0,
+    data, dataLength
   );
 }
 
@@ -92,7 +98,10 @@ static inline void send_read_command(Command c, uint8_t * address, uint8_t * dat
     QUADSPI::CCR::FunctionalMode::IndirectRead,
     operatingMode,
     c,
-    address, 0, data, dataLength
+    address,
+    0, 0,
+    0,
+    data, dataLength
   );
 }
 
@@ -118,11 +127,14 @@ static void set_as_memory_mapped() {
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
     Command::FastRead,
-    reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), FastReadDummyCycles, nullptr, 0
+    reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
+    0, 0,
+    FastReadDummyCycles,
+    nullptr, 0
   );
 }
 
-void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
+void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
@@ -132,6 +144,11 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
     QUADSPI.DLR()->set((dataLength > 0) ? dataLength-1 : 0);
   }
   ccr.setDCYC(dummyCycles);
+  if (numberOfAltBytes > 0) {
+    ccr.setABMODE(operatingMode);
+    ccr.setABSIZE(static_cast<QUADSPI::CCR::Size>(numberOfAltBytes - 1));
+    QUADSPI.ABR()->set(altBytes);
+  }
   if (address != reinterpret_cast<uint8_t *>(FlashAddressSpaceSize) || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     ccr.setADMODE(operatingMode);
     ccr.setADSIZE(QUADSPI::CCR::Size::ThreeBytes);

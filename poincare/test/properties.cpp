@@ -15,12 +15,12 @@ void assert_parsed_expression_sign(const char * expression, Poincare::Expression
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  e = e.simplify(globalContext, Degree);
+  e = e.reduce(globalContext, Degree);
   quiz_assert(e.sign(&globalContext, Degree) == sign);
 }
 
 QUIZ_CASE(poincare_sign) {
-  assert_parsed_expression_sign("abs(-cos(2))", Positive);
+  assert_parsed_expression_sign("abs(-cos(2)+I)", Positive);
   assert_parsed_expression_sign("2.345E-23", Positive);
   assert_parsed_expression_sign("-2.345E-23", Negative);
   assert_parsed_expression_sign("2*(-3)*abs(-32)", Negative);
@@ -62,7 +62,7 @@ QUIZ_CASE(poincare_polynomial_degree) {
 void assert_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   Shared::GlobalContext globalContext;
   quiz_assert(!e.isUninitialized());
-  e = e.simplify(globalContext, angleUnit);
+  e = e.reduce(globalContext, angleUnit);
   if (std::isnan(range)) {
     quiz_assert(std::isnan(e.characteristicXRange(globalContext, angleUnit)));
   } else {

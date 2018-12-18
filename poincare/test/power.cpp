@@ -29,6 +29,12 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<double>("X^(I*P)", "-1");
   assert_parsed_expression_evaluates_to<float>("X^(I*P+2)", "-7.38906", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("X^(I*P+2)", "-7.3890560989307");
+  assert_parsed_expression_evaluates_to<float>("(-1)^(1/3)", "0.5+0.8660254*I");
+  assert_parsed_expression_evaluates_to<double>("(-1)^(1/3)", "0.5+8.6602540378444E-1*I");
+  assert_parsed_expression_evaluates_to<float>("X^(I*P/3)", "0.5+0.8660254*I");
+  assert_parsed_expression_evaluates_to<double>("X^(I*P/3)", "0.5+8.6602540378444E-1*I");
+  assert_parsed_expression_evaluates_to<float>("I^(2/3)", "0.5+0.8660254*I");
+  assert_parsed_expression_evaluates_to<double>("I^(2/3)", "0.5+8.6602540378444E-1*I");
 }
 
 QUIZ_CASE(poincare_power_simplify) {
@@ -64,7 +70,6 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("R(x*144*P^2)", "12*R(x)*P");
   assert_parsed_expression_simplify_to("R(x*144*P)", "12*R(x)*R(P)");
   assert_parsed_expression_simplify_to("(-1)*(2+(-4*R(2)))", "-2+4*R(2)");
-  assert_parsed_expression_simplify_to("R(2-4*R(2))", "R(-2+4*R(2))*I");
   assert_parsed_expression_simplify_to("x^(1/2)", "R(x)");
   assert_parsed_expression_simplify_to("x^(-1/2)", "1/R(x)");
   assert_parsed_expression_simplify_to("x^(1/7)", "root(x,7)");
@@ -94,4 +99,7 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("(P+R(2)+R(3)+x)^(-3)", "1/(11*R(2)+9*R(3)+15*x+6*R(6)*x+3*R(2)*x^2+3*R(3)*x^2+x^3+15*P+6*R(6)*P+6*R(2)*x*P+6*R(3)*x*P+3*x^2*P+3*R(2)*P^2+3*R(3)*P^2+3*x*P^2+P^3)");
   assert_parsed_expression_simplify_to("1.0066666666667^60", "(10066666666667/10000000000000)^60");
   assert_parsed_expression_simplify_to("2^(6+P+x)", "64*2^(x+P)");
+  assert_parsed_expression_simplify_to("I^(2/3)", "1/2+R(3)/2*I");
+  assert_parsed_expression_simplify_to("X^(I*P/3)", "1/2+R(3)/2*I");
+  assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+R(3)/2*I");
 }

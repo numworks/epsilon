@@ -40,13 +40,13 @@ QUIZ_CASE(poincare_simplify_mix) {
   // Complex
   assert_parsed_expression_simplify_to("I", "I");
   assert_parsed_expression_simplify_to("R(-33)", "R(33)*I");
-  assert_parsed_expression_simplify_to("I^(3/5)", "(R(2)*R(5-R(5))+I+R(5)*I)/4");
+  assert_parsed_expression_simplify_to("I^(3/5)", "(R(2)*R(5-R(5)))/4+(1+R(5))/4*I");
   assert_parsed_expression_simplify_to("IIII", "1");
-  assert_parsed_expression_simplify_to("R(-I)", "R(-I)");
+  assert_parsed_expression_simplify_to("R(-I)", "R(2)/2-R(2)/2*I");
   assert_parsed_expression_simplify_to("A*cos(9)IIln(2)", "-cos(9)*ln(2)*A");
-  assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "(R(2)-R(2)*I)/32");
-  assert_parsed_expression_simplify_to("root(5^((-I)3^9),I)", "1/(1/5^(19683*I))^I");
-  assert_parsed_expression_simplify_to("I^I", "I^I");
+  assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "R(2)/32-R(2)/32*I");
+  assert_parsed_expression_simplify_to("root(5^((-I)3^9),I)", "1/X^atan(tan(19683*ln(5)))");
+  assert_parsed_expression_simplify_to("I^I", "1/X^(P/2)");
 
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)*log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)

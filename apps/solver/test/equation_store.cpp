@@ -105,7 +105,7 @@ QUIZ_CASE(equation_solve) {
 
   // 3x^2-4x+4=2
   const char * equations8[] = {"3*x^2-4x+4=2", 0};
-  const char * solutions8[] = {"(2-R(2)*I)/(3)","(2+R(2)*I)/(3)", "-8"};
+  const char * solutions8[] = {"(2)/(3)-(R(2))/(3)*I","(2)/(3)+(R(2))/(3)*I", "-8"};
   assert_equation_system_exact_solve_to(equations8, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions8, 2);
 
   // 2*x^2-4*x+4=3

@@ -106,7 +106,7 @@ void assert_parsed_expression_is(const char * expression, Poincare::Expression r
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
-  Expression result = e.clone().simplify(globalContext, Radian);
+  Expression result = e.clone().reduce(globalContext, Radian);
   if (result.isUninitialized()) {
     result = e;
   }
@@ -150,12 +150,12 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
   assert_parsed_expression_process_to(expression, approximation, angleUnit, complexFormat, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
-        Expression result = e.clone().simplify(context, angleUnit);
-        if (result.isUninitialized()) {
-          result = e;
-        }
-        return result.approximate<T>(context, angleUnit, complexFormat);
-      }, numberOfDigits);
+      Expression result = e.clone().simplify(context, angleUnit);
+      if (result.isUninitialized()) {
+        result = e;
+      }
+      return result.approximate<T>(context, angleUnit, complexFormat);
+    }, numberOfDigits);
 }
 
 template<typename T>
@@ -165,16 +165,18 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Expression expr
   quiz_assert(std::fabs(result - approximation) < 10.0*Expression::epsilon<T>());
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Preferences::AngleUnit angleUnit) {
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "--------- Simplification ---------" << endl;
 #endif
-  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
-      Expression result = e.clone().simplify(context, angleUnit);
-      if (result.isUninitialized()) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, complexFormat, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
+      Expression copy = e.clone();
+      copy.simplifyAndApproximate(&copy, nullptr, context, angleUnit, complexFormat);
+      if (copy.isUninitialized()) {
         return e;
       }
-      return result;});
+      return copy;
+    });
 }
 
 void assert_parsed_expression_serialize_to(Expression expression, const char * serializedExpression, Preferences::PrintFloatMode mode, int numberOfSignifiantDigits) {

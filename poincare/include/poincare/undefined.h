@@ -17,7 +17,7 @@ public:
 #endif
 
   // Complex
-  using ExpressionNode::isReal;
+  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return false; }
 
   // Properties
   Type type() const override { return Type::Undefined; }

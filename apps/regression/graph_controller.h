@@ -23,6 +23,11 @@ public:
   void viewWillAppear() override;
   void selectRegressionCurve();
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
+
+  // moveCursorHorizontally and Vertically are public to be used in tests
+  bool moveCursorHorizontally(int direction) override;
+  bool moveCursorVertically(int direction) override;
+
 private:
   constexpr static int k_maxLegendLength = 16;
   constexpr static int k_maxNumberOfCharacters = 50;
@@ -35,7 +40,6 @@ private:
 
   // SimpleInteractiveCurveViewController
   void reloadBannerView() override;
-  bool moveCursorHorizontally(int direction) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   Shared::CurveView * curveView() override;
   bool handleEnter() override;
@@ -43,7 +47,6 @@ private:
   // InteractiveCurveViewController
   void initRangeParameters() override;
   void initCursorParameters() override;
-  bool moveCursorVertically(int direction) override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;

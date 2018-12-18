@@ -12,6 +12,7 @@
 #include <poincare/division.h>
 #include <poincare/square_root.h>
 #include <poincare/power.h>
+#include <poincare/undefined.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -243,8 +244,10 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction(Power(coefficients[1].clone(), Rational(2)), Multiplication(Rational(4), coefficients[0].clone(), coefficients[2].clone()));
-  exactSolutions[m_numberOfSolutions] = delta;
-  PoincareHelpers::SimplifyAndApproximate(&delta, &exactSolutionsApproximations[m_numberOfSolutions], *context);
+  PoincareHelpers::Simplify(&delta, *context);
+  if (delta.isUninitialized()) {
+    delta = Poincare::Undefined();
+  }
   if (delta.isRationalZero()) {
     // if delta = 0, x0=x1= -b/(2a)
     exactSolutions[0] = Division(Opposite(coefficients[1]), Multiplication(Rational(2), coefficients[2]));
@@ -256,7 +259,8 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2]));
     m_numberOfSolutions = 2;
   }
-  for (int i = 0; i < m_numberOfSolutions; i++) {
+  exactSolutions[m_numberOfSolutions] = delta;
+  for (int i = 0; i <= m_numberOfSolutions; i++) {
     PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context);
   }
   return Error::NoError;

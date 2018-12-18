@@ -76,7 +76,7 @@ public:
   class AR : public Register32 { // Address register
   };
 
-  class ABR : Register32 { // Alternate bytes register
+  class ABR : public Register32 { // Alternate bytes register
   };
 
   class DR : public Register8 { // Data register

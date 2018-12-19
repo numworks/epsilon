@@ -4,6 +4,7 @@
 namespace Shared {
 
 static inline int max(int x, int y) { return x > y ? x : y; }
+static inline int min(int x, int y) { return x < y ? x : y; }
 
 StorageFunctionListController::StorageFunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   StorageExpressionModelListController(parentResponder, text),
@@ -79,6 +80,42 @@ int StorageFunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX)
       return 2;
     }
   }
+}
+
+int StorageFunctionListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  if (offsetY == 0) {
+    return 0;
+  }
+
+  /* We use memoization to speed up this method: if offsetY is "around" the
+   * memoized cumulatedHeightForIndex, we can compute its value easily by
+   * adding/substracting memoized row heights. */
+
+  int currentSelectedRow = selectedRow();
+  int rowsCount = numberOfRows();
+  if (rowsCount <= 1 || currentSelectedRow < 1) {
+    return TableViewDataSource::indexFromCumulatedHeight(offsetY);
+  }
+
+  KDCoordinate currentCumulatedHeight = cumulatedHeightFromIndex(currentSelectedRow);
+  if (offsetY > currentCumulatedHeight) {
+    int iMax = min(k_memoizedCellHeightsCount/2 + 1, rowsCount - currentSelectedRow);
+    for (int i = 0; i < iMax; i++) {
+      currentCumulatedHeight+= rowHeight(currentSelectedRow + i);
+      if (offsetY <= currentCumulatedHeight) {
+        return currentSelectedRow + i;
+      }
+    }
+  } else {
+    int iMax = min(k_memoizedCellHeightsCount/2, currentSelectedRow);
+    for (int i = 1; i <= iMax; i++) {
+      currentCumulatedHeight-= rowHeight(currentSelectedRow-i);
+      if (offsetY > currentCumulatedHeight) {
+        return currentSelectedRow - i;
+      }
+    }
+  }
+  return TableViewDataSource::indexFromCumulatedHeight(offsetY);
 }
 
 int StorageFunctionListController::typeAtLocation(int i, int j) {

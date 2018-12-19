@@ -59,8 +59,8 @@ bool Expression::shouldStopProcessing() {
   return false;
 }
 
-void Expression::resetInterruption() {
-  sSimplificationHasBeenInterrupted = false;
+void Expression::setInterruption(bool interrupt) {
+  sSimplificationHasBeenInterrupted = interrupt;
 }
 
 /* Hierarchy */
@@ -399,7 +399,11 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   assert(simplifiedExpression);
   sSimplificationHasBeenInterrupted = false;
   // Step 1: we reduce the expression
-  Expression e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  Expression e = clone().deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  if (sSimplificationHasBeenInterrupted) {
+    sSimplificationHasBeenInterrupted = false;
+    e = deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+  }
   *simplifiedExpression = Expression();
   if (!sSimplificationHasBeenInterrupted) {
     /* Case 1: the reduced expression is ComplexCartesian or pure real, we can

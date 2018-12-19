@@ -111,7 +111,7 @@ public:
   typedef bool (*CircuitBreaker)();
   static void setCircuitBreaker(CircuitBreaker cb);
   static bool shouldStopProcessing();
-  static void resetInterruption();
+  static void setInterruption(bool interrupt);
 
   /* Hierarchy */
   Expression childAtIndex(int i) const;

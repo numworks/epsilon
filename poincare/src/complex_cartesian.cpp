@@ -13,6 +13,7 @@
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
+#include <poincare/undefined.h>
 #include <assert.h>
 #include <cmath>
 
@@ -175,7 +176,7 @@ ComplexCartesian ComplexCartesian::inverse(Context & context, Preferences::Angle
   ComplexCartesian result(A,B);
   A.shallowReduce(context, angleUnit, target);
   B.shallowReduce(context, angleUnit, target);
-  return result;
+  return result.interruptComputationIfManyNodes();
 }
 
 Multiplication ComplexCartesian::squareRootHelper(Expression e, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -211,7 +212,7 @@ ComplexCartesian ComplexCartesian::squareRoot(Context & context, Preferences::An
   ComplexCartesian result = ComplexCartesian::Builder(A, B);
   A.shallowReduce(context, angleUnit, target);
   B.shallowReduce(context, angleUnit, target);
-  return result;
+  return result.interruptComputationIfManyNodes();
 }
 
 
@@ -244,6 +245,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
   // Imaginary part: B = b*a^(n-1)
   Addition A;
   Addition B;
+  ComplexCartesian result = ComplexCartesian::Builder(A, B);
   for (int i = 0; i <= n; i++) {
     BinomialCoefficient binom = BinomialCoefficient::Builder(Rational(n), Rational(i));
     Expression aclone = i == n ? a : a.clone();
@@ -263,8 +265,11 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
       B.addChildAtIndexInPlace(m, B.numberOfChildren(), B.numberOfChildren());
     }
     m.shallowReduce(context, angleUnit, target);
+    result = result.interruptComputationIfManyNodes();
+    if (result.real().isUndefined()) {
+      return result;
+    }
   }
-  ComplexCartesian result = ComplexCartesian::Builder(A, B);
   A.shallowReduce(context, angleUnit, target);
   B.shallowReduce(context, angleUnit, target);
   return result;
@@ -291,7 +296,7 @@ ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, Context & 
   ComplexCartesian result = ComplexCartesian::Builder(A, B);
   A.shallowReduce(context, angleUnit, target);
   B.shallowReduce(context, angleUnit, target);
-  return result;
+  return result.interruptComputationIfManyNodes();
 }
 
 Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -347,7 +352,15 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & con
   ComplexCartesian result = ComplexCartesian::Builder(normcosarg, normsinarg);
   normcosarg.shallowReduce(context, angleUnit, target);
   normsinarg.shallowReduce(context, angleUnit, target);
-  return result;
+  return result.interruptComputationIfManyNodes();
+}
+
+ComplexCartesian ComplexCartesian::interruptComputationIfManyNodes() {
+  if (numberOfDescendants(true) > k_maxNumberOfNodesBeforeInterrupting) {
+    Expression::setInterruption(true);
+    return ComplexCartesian(Undefined(), Undefined());
+  }
+  return *this;
 }
 
 }

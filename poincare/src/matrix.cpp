@@ -160,7 +160,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 }
 
 Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication determinant) {
-  Expression::resetInterruption();
+  Expression::setInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
 

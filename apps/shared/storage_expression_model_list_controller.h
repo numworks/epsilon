@@ -37,12 +37,26 @@ protected:
   EvenOddMessageTextCell m_addNewModel;
 protected:
   // Memoization
-  static constexpr int k_memoizedCellHeightsCount = 5;
+  static constexpr int k_memoizedCellHeightsCount = 7;
+  /* We use memoization to speed up indexFromHeight(offset) in the children
+   * classes: if offset is "around" the memoized cumulatedHeightForIndex, we can
+   * compute its value easily by adding/substracting memoized row heights. We
+   * thus need to memoize 3 cells (see under for explanation on the 3) above the
+   * selected one, and 3 under, which gives 7 cells.
+   * 3 is the maximal number of non selected visible rows if the selected cell
+   * is completely [on top/at the bottom] of the screen. To compute this value:
+   * (ScreenHeight - Metric::TitleBarHeight - Metric::TabHeight - ButtonRowHeight
+   * - currentSelectedRowHeight) / Metric::StoreRowHeight
+   *   =  (240-18-27-20-50)/50 = 2.5 */
+  static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount % 2 == 1, "StorageExpressionModelListController::k_memoizedCellHeightsCount should be odd.");
+  /* We memoize values for indexes around the selectedRow index.
+   * k_memoizedCellHeightsCount needs to be odd to compute things such as:
+   * constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
+   * if (j < selectedRow - halfMemoizationCount
+   *   || j > selectedRow + halfMemoizationCount) { ... } */
 private:
   // Memoization
   static constexpr int k_resetedMemoizedValue = -1;
-  static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount == 5, "Wrong array size in initialization of StorageExpressionModelListController::m_memoizedCellHeight.");
-  static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount % 2 == 1, "StorageExpressionModelListController::k_memoizedCellHeightsCount should be odd to be able to compute the middle element.");
   void resetMemoization();
   virtual KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) = 0;
   KDCoordinate m_memoizedCellHeight[k_memoizedCellHeightsCount];

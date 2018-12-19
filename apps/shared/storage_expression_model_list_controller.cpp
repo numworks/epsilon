@@ -8,10 +8,9 @@ namespace Shared {
 
 StorageExpressionModelListController::StorageExpressionModelListController(Responder * parentResponder, I18n::Message text) :
   ViewController(parentResponder),
-  m_addNewModel(),
-  m_memoizedCellHeight {k_resetedMemoizedValue, k_resetedMemoizedValue, k_resetedMemoizedValue, k_resetedMemoizedValue, k_resetedMemoizedValue},
-  m_cumulatedHeightForSelectedIndex(k_resetedMemoizedValue)
+  m_addNewModel()
 {
+  resetMemoization();
   m_addNewModel.setMessage(text);
 }
 

@@ -82,20 +82,17 @@ int NAryExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e,
 
 int NAryExpression::allChildrenAreReal(Context & context, Preferences::AngleUnit angleUnit) const {
   int i = 0;
-  /* The addition children are assumed to be sorted. ComplexCartesian children
-   * are supposed to be the last ones before matrices. We just test children
-   * to be real until we reach the first ComplexCartesian. */
+  int result = 1;
   while (i < numberOfChildren()) {
     Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::ComplexCartesian) {
-      return 0;
-    }
-    if (!c.isReal(context, angleUnit)) {
+      result *= 0;
+    } else if (!c.isReal(context, angleUnit)) {
       return -1;
     }
     i++;
   }
-  return 1;
+  return result;
 }
 
 }

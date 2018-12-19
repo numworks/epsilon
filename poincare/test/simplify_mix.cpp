@@ -47,6 +47,8 @@ QUIZ_CASE(poincare_simplify_mix) {
   assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "R(2)/32-R(2)/32*I");
   assert_parsed_expression_simplify_to("root(5^((-I)3^9),I)", "1/X^atan(tan(19683*ln(5)))");
   assert_parsed_expression_simplify_to("I^I", "1/X^(P/2)");
+  assert_parsed_expression_simplify_to("I/(1+I*R(x))", "I/(1+R(x)*I)");
+  assert_parsed_expression_simplify_to("x+I/(1+I*R(x))", "(x+I+x^(3/2)*I)/(1+R(x)*I)");
 
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)*log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)

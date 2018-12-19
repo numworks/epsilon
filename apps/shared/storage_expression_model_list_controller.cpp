@@ -9,8 +9,8 @@ namespace Shared {
 StorageExpressionModelListController::StorageExpressionModelListController(Responder * parentResponder, I18n::Message text) :
   ViewController(parentResponder),
   m_addNewModel(),
-  m_memoizedCellHeight {-1, -1, -1, -1, -1},
-  m_cumulatedHeightForSelectedIndex(-1)
+  m_memoizedCellHeight {k_resetedMemoizedValue, k_resetedMemoizedValue, k_resetedMemoizedValue, k_resetedMemoizedValue, k_resetedMemoizedValue},
+  m_cumulatedHeightForSelectedIndex(k_resetedMemoizedValue)
 {
   m_addNewModel.setMessage(text);
 }
@@ -20,7 +20,7 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
   int currentSelectedRow = selectedRow();
 
   // The previously selected cell's height might have changed.
-  m_memoizedCellHeight[currentSelectedMemoizedIndex] = -1;
+  m_memoizedCellHeight[currentSelectedMemoizedIndex] = k_resetedMemoizedValue;
 
   // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
   if (currentSelectedRow == previousSelectedRow + 1) {
@@ -29,7 +29,7 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
     for (int i = 0; i < k_memoizedCellHeightsCount - 1; i++) {
       m_memoizedCellHeight[i] = m_memoizedCellHeight[i+1];
     }
-    m_memoizedCellHeight[k_memoizedCellHeightsCount-1] = -1;
+    m_memoizedCellHeight[k_memoizedCellHeightsCount-1] = k_resetedMemoizedValue;
     // Update m_cumulatedHeightForSelectedIndex
     if (previousSelectedRow >= 0) {
       m_cumulatedHeightForSelectedIndex+= memoizedRowHeight(previousSelectedRow);
@@ -43,7 +43,7 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
     for (int i = k_memoizedCellHeightsCount - 1; i > 0; i--) {
       m_memoizedCellHeight[i] = m_memoizedCellHeight[i-1];
     }
-    m_memoizedCellHeight[0] = -1;
+    m_memoizedCellHeight[0] = k_resetedMemoizedValue;
     // Update m_cumulatedHeightForSelectedIndex
     if (currentSelectedRow >= 0) {
       m_cumulatedHeightForSelectedIndex-= memoizedRowHeight(currentSelectedRow);
@@ -63,7 +63,7 @@ KDCoordinate StorageExpressionModelListController::memoizedRowHeight(int j) {
   constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
   if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
     int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
-    if (m_memoizedCellHeight[memoizedIndex] < 0) {
+    if (m_memoizedCellHeight[memoizedIndex] == k_resetedMemoizedValue) {
       m_memoizedCellHeight[memoizedIndex] = expressionRowHeight(j);
     }
     return m_memoizedCellHeight[memoizedIndex];
@@ -83,7 +83,7 @@ KDCoordinate StorageExpressionModelListController::memoizedCumulatedHeightFromIn
     return notMemoizedCumulatedHeightFromIndex(j);
   }
   // Recompute the memoized cumulatedHeight if needed
-  if (m_cumulatedHeightForSelectedIndex < 0) {
+  if (m_cumulatedHeightForSelectedIndex == k_resetedMemoizedValue) {
     m_cumulatedHeightForSelectedIndex = notMemoizedCumulatedHeightFromIndex(currentSelectedRow);
   }
   /* Compute the wanted cumulated height by adding/removing memoized cell
@@ -226,9 +226,9 @@ bool StorageExpressionModelListController::isAddEmptyRow(int j) {
 }
 
 void StorageExpressionModelListController::resetMemoization() {
-  m_cumulatedHeightForSelectedIndex = -1;
+  m_cumulatedHeightForSelectedIndex = k_resetedMemoizedValue;
   for (int i = 0; i < k_memoizedCellHeightsCount; i++) {
-    m_memoizedCellHeight[i] = -1;
+    m_memoizedCellHeight[i] = k_resetedMemoizedValue;
   }
 }
 

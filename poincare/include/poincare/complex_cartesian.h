@@ -59,11 +59,13 @@ public:
   ComplexCartesian multiply(ComplexCartesian & other, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   ComplexCartesian power(ComplexCartesian & other, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
+  static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
   ComplexCartesian(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<ComplexCartesianNode>()) {
     replaceChildAtIndexInPlace(0, child0);
     replaceChildAtIndexInPlace(1, child1);
   }
   void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  ComplexCartesian interruptComputationIfManyNodes();
   static Multiplication squareRootHelper(Expression e, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   static Expression powerHelper(Expression norm, Expression trigo, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

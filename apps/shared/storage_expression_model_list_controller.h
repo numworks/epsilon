@@ -39,9 +39,10 @@ private:
   // Memoization
   static constexpr int k_memoizedCellHeightsCount = 5;
   static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount == 5, "Wrong array size in initialization of StorageExpressionModelListController::m_memoizedCellHeight.");
-static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount % 2 == 1, "StorageExpressionModelListController::k_memoizedCellHeightsCount should be odd to be able to compute the middle element.");
+  static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount % 2 == 1, "StorageExpressionModelListController::k_memoizedCellHeightsCount should be odd to be able to compute the middle element.");
   void resetMemoization();
   virtual KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) = 0;
+  static constexpr int k_resetedMemoizedValue = -1;
   KDCoordinate m_memoizedCellHeight[k_memoizedCellHeightsCount];
   KDCoordinate m_cumulatedHeightForSelectedIndex;
 };

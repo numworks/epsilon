@@ -26,6 +26,7 @@ public:
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

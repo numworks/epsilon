@@ -43,12 +43,12 @@ T ComplexNode<T>::toScalar() const {
 template<typename T>
 Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   T ra, tb;
-  if (complexFormat == Preferences::ComplexFormat::Cartesian) {
-    ra = this->real();
-    tb = this->imag();
-  } else {
+  if (complexFormat == Preferences::ComplexFormat::Polar) {
     ra = std::abs(*this);
     tb = std::arg(*this);
+  } else {
+    ra = this->real();
+    tb = this->imag();
   }
   return Expression::CreateComplexExpression(
       Number::DecimalNumber<T>(std::fabs(ra)),

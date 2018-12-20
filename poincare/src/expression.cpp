@@ -426,8 +426,8 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
         *approximateExpression = ecomplexClone.approximate<double>(context, angleUnit, complexFormat);
       }
       // Step 3: create the simplied expression with the required complex format
-      Expression ra = complexFormat == Preferences::ComplexFormat::Cartesian ? ecomplex.real() : ecomplex.clone().convert<ComplexCartesian>().norm(context, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
-      Expression tb = complexFormat == Preferences::ComplexFormat::Cartesian ? ecomplex.imag() : ecomplex.argument(context, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+      Expression ra = complexFormat == Preferences::ComplexFormat::Polar ? ecomplex.clone().convert<ComplexCartesian>().norm(context, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User) : ecomplex.real();
+      Expression tb = complexFormat == Preferences::ComplexFormat::Polar ? ecomplex.argument(context, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User) : ecomplex.imag();
       ra = ra.deepBeautify(context, angleUnit);
       tb = tb.deepBeautify(context, angleUnit);
       bool raIsNegative = false;
@@ -573,6 +573,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
     return Undefined();
   }
   switch (complexFormat) {
+    case Preferences::ComplexFormat::Real:
     case Preferences::ComplexFormat::Cartesian:
     {
       Expression real;

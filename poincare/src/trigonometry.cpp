@@ -41,10 +41,50 @@ float Trigonometry::characteristicXRange(const Expression & e, Context & context
   return 2.0f*pi/std::fabs(a);
 }
 
+bool Trigonometry::isDirectTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent;
+}
+
+bool Trigonometry::isInverseTrigonometryFunction(const Expression & e) {
+  return e.type() == ExpressionNode::Type::ArcCosine || e.type() == ExpressionNode::Type::ArcSine || e.type() == ExpressionNode::Type::ArcTangent;
+}
+
+bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction) {
+  if (!isDirectTrigonometryFunction(directFunction)) {
+    return false;
+  }
+  ExpressionNode::Type correspondingType;
+  switch (directFunction.type()) {
+    case ExpressionNode::Type::Cosine:
+      correspondingType = ExpressionNode::Type::ArcCosine;
+      break;
+    case ExpressionNode::Type::Sine:
+      correspondingType = ExpressionNode::Type::ArcSine;
+      break;
+    default:
+      assert(directFunction.type() == ExpressionNode::Type::Tangent);
+      correspondingType = ExpressionNode::Type::ArcTangent;
+      break;
+  }
+  return inverseFunction.type() == correspondingType;
+}
+
+bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
+  // We look for (cos^-1 * sin)
+  assert(ExpressionNode::Type::Power < ExpressionNode::Type::Sine);
+  if (e.type() == ExpressionNode::Type::Multiplication
+      && e.childAtIndex(1).type() == ExpressionNode::Type::Sine
+      && e.childAtIndex(0).type() == ExpressionNode::Type::Power
+      && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Cosine
+      && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational
+      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
+    return true;
+  }
+  return false;
+}
+
 Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  assert(e.type() == ExpressionNode::Type::Sine
-      || e.type() == ExpressionNode::Type::Cosine
-      || e.type() == ExpressionNode::Type::Tangent);
+  assert(isDirectTrigonometryFunction(e));
 
   // Step 1. Try finding an easy standard calculation reduction
   Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit, target);
@@ -54,15 +94,14 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   }
 
   // Step 2. Look for an expression of type "cos(arccos(x))", return x
-  ExpressionNode::Type correspondingType = e.type() == ExpressionNode::Type::Cosine ? ExpressionNode::Type::ArcCosine :
-    (e.type() == ExpressionNode::Type::Sine ? ExpressionNode::Type::ArcSine : ExpressionNode::Type::ArcTangent);
-  if (e.childAtIndex(0).type() == correspondingType) {
+  if (AreInverseFunctions(e, e.childAtIndex(0))) {
     Expression result = e.childAtIndex(0).childAtIndex(0);
     e.replaceWithInPlace(result);
     return result;
   }
 
   // Step 3. Look for an expression of type "cos(arcsin(x))" or "sin(arccos(x)), return sqrt(1-x^2)
+  // These equalities are true on complexes
   if ((e.type() == ExpressionNode::Type::Cosine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine) || (e.type() == ExpressionNode::Type::Sine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcCosine)) {
     Expression sqrt =
       Power(
@@ -70,7 +109,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
           Rational(1),
           Multiplication(
             Rational(-1),
-            Power(e.childAtIndex(0).childAtIndex(0), Rational(2))           )
+            Power(e.childAtIndex(0).childAtIndex(0), Rational(2))
+          )
         ),
         Rational(1,2)
       );
@@ -88,6 +128,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   // Step 4. Look for an expression of type "cos(arctan(x))" or "sin(arctan(x))"
   // cos(arctan(x)) --> 1/sqrt(1+x^2)
   // sin(arctan(x)) --> x/sqrt(1+x^2)
+  // These equalities are true on complexes
   if ((e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine) && e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
     // Build 1/sqrt(1+x^2)
@@ -116,7 +157,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     return res.shallowReduce(context, angleUnit, target);
   }
 
-  // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
+  // Step 5. Look for an expression of type "cos(-a)", return "+/-cos(a)"
   Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
   if (!positiveArg.isUninitialized()) {
     // The argument was of form cos(-a)
@@ -133,7 +174,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     }
   }
 
-  /* Step 4. Look for an expression of type "cos(p/q * Pi)" in radians or
+  /* Step 6. Look for an expression of type "cos(p/q * Pi)" in radians or
    * "cos(p/q)" in degrees, put the argument in [0, Pi/2[ or [0, 90[ and
    * multiply the cos/sin/tan by -1 if needed.
    * We know thanks to Step 3 that p/q > 0. */
@@ -201,38 +242,12 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   return e;
 }
 
-bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
-  // We look for (cos^-1 * sin)
-  assert(ExpressionNode::Type::Power < ExpressionNode::Type::Sine);
-  if (e.type() == ExpressionNode::Type::Multiplication
-      && e.childAtIndex(1).type() == ExpressionNode::Type::Sine
-      && e.childAtIndex(0).type() == ExpressionNode::Type::Power
-      && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Cosine
-      && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
-    return true;
-  }
-  return false;
-}
-
-bool Trigonometry::parentIsDirectTrigonometry(const Expression & e) {
-  Expression parent = e.parent();
-  if (parent.isUninitialized()) {
-    return false;
-  }
-  if (parent.type() == ExpressionNode::Type::Cosine || parent.type() == ExpressionNode::Type::Sine || parent.type() == ExpressionNode::Type::Tangent) {
-    return true;
-  }
-  return false;
-}
-
 Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  assert(e.type() == ExpressionNode::Type::ArcCosine || e.type() == ExpressionNode::Type::ArcSine || e.type() == ExpressionNode::Type::ArcTangent);
-  ExpressionNode::Type correspondingType = e.type() == ExpressionNode::Type::ArcCosine ? ExpressionNode::Type::Cosine : (e.type() == ExpressionNode::Type::ArcSine ? ExpressionNode::Type::Sine : ExpressionNode::Type::Tangent);
+  assert(isInverseTrigonometryFunction(e));
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180;
 
   // Step 1. Look for an expression of type "arccos(cos(x))", return x
-  if (e.childAtIndex(0).type() == correspondingType) {
+  if (AreInverseFunctions(e.childAtIndex(0), e)) {
     float trigoOp = e.childAtIndex(0).childAtIndex(0).approximateToScalar<float>(context, angleUnit);
     if ((e.type() == ExpressionNode::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
         (e.type() == ExpressionNode::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
@@ -281,7 +296,8 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    * - the reduction is being BottomUp. In this case, we do not yet have any
    *   information on the parent which could later be a cosine, a sine or a tangent.
    */
-  bool letArcFunctionAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsDirectTrigonometry(e);
+  Expression p = e.parent();
+  bool letArcFunctionAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || (!p.isUninitialized() && isDirectTrigonometryFunction(p));
   /* Step 5. Handle opposite argument: arccos(-x) = Pi-arcos(x),
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
    */

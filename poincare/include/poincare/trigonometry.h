@@ -13,10 +13,12 @@ public:
     Sine = 1,
   };
   static float characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit);
-  static bool parentIsDirectTrigonometry(const Expression & e);
+  static bool isDirectTrigonometryFunction(const Expression & e);
+  static bool isInverseTrigonometryFunction(const Expression & e);
+  static bool AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction);
+  static bool ExpressionIsEquivalentToTangent(const Expression & e);
   static Expression shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   static Expression shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  static bool ExpressionIsEquivalentToTangent(const Expression & e);
   constexpr static int k_numberOfEntries = 37;
   static Expression table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);

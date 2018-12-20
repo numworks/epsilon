@@ -53,6 +53,13 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
   PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
+  /* Check ComplexFormat: if complex format is real and the input text doesn't
+   * contain any i complex, both approximate and exact result are set to
+   * Undefined if the approximate output is not a pure real.*/
+  if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real && strchr(m_inputText, Ion::Charset::IComplex) == nullptr && strchr(m_approximateOutputText, Ion::Charset::IComplex) != nullptr) {
+    strlcpy(m_exactOutputText, Undefined::Name(), Constant::MaxSerializedExpressionSize);
+    strlcpy(m_approximateOutputText, Undefined::Name(), Constant::MaxSerializedExpressionSize);
+  }
 }
 
 KDCoordinate Calculation::height(Context * context) {

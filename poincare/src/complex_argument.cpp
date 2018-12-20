@@ -46,27 +46,23 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.isReal(context, angleUnit)) {
+  bool real = c.isReal(context, angleUnit);
+  if (real) {
     float app = c.approximateToScalar<float>(context, angleUnit);
-    if (std::isnan(app)) {
-      ComplexCartesian complexChild = ComplexCartesian::Builder(c, Rational(0));
-      Expression arg = complexChild.argument(context, angleUnit, target);
-      replaceWithInPlace(arg);
-      return arg.shallowReduce(context, angleUnit, target);
-    } else if (app >= 0) {
+    if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
       // arg(x) = 0 if x > 0
       Expression result = Rational(0);
       replaceWithInPlace(result);
       return result;
+    } else if (!std::isnan(app) && app <= -Expression::epsilon<float>()) {
+      // arg(x) = Pi if x < 0
+      Expression result = Constant(Ion::Charset::SmallPi);
+      replaceWithInPlace(result);
+      return result;
     }
-    // arg(x) = Pi if x < 0
-    assert(app < 0);
-    Expression result = Constant(Ion::Charset::SmallPi);
-    replaceWithInPlace(result);
-    return result;
   }
-  if (c.type() == ExpressionNode::Type::ComplexCartesian) {
-    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
+  if (real || c.type() == ExpressionNode::Type::ComplexCartesian) {
+    ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational(0)) : static_cast<ComplexCartesian &>(c);
     Expression childArg = complexChild.argument(context, angleUnit, target);
     replaceWithInPlace(childArg);
     return childArg.shallowReduce(context, angleUnit, target);

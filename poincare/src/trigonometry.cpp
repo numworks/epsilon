@@ -268,19 +268,25 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     }
   }
 
-  // Step 3. Look for an expression of type "arctan(1/X), return sign(x)*Pi/2-arctan(x)
+  // Step 3. Look for an expression of type "arctan(1/x), return sign(x)*Pi/2-arctan(x)
   if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
-    Expression sign = SignFunction::Builder(x.clone());
-    Multiplication m0(Rational(1,2), sign, Constant(Ion::Charset::SmallPi));
-    sign.shallowReduce(context, angleUnit, target);
-    e.replaceChildAtIndexInPlace(0, x);
-    Addition a(m0);
-    e.replaceWithInPlace(a);
-    Multiplication m1(Rational(-1), e);
-    e.shallowReduce(context, angleUnit, target);
-    a.addChildAtIndexInPlace(m1, 1, 1);
-    return a.shallowReduce(context, angleUnit, target);
+    /* This equality is not true if x = 0. We apply it under certain conditions:
+     * - the reduction target is the user
+     * - x is numeral (which means that x != 0 otherwise 0^(-1) would have been
+     *   reduced to undef) */
+    if (target == ExpressionNode::ReductionTarget::User || x.isNumber()) {
+      Expression sign = SignFunction::Builder(x.clone());
+      Multiplication m0(Rational(1,2), sign, Constant(Ion::Charset::SmallPi));
+      sign.shallowReduce(context, angleUnit, target);
+      e.replaceChildAtIndexInPlace(0, x);
+      Addition a(m0);
+      e.replaceWithInPlace(a);
+      Multiplication m1(Rational(-1), e);
+      e.shallowReduce(context, angleUnit, target);
+      a.addChildAtIndexInPlace(m1, 1, 1);
+      return a.shallowReduce(context, angleUnit, target);
+    }
   }
 
   // Step 4. Try finding an easy standard calculation reduction

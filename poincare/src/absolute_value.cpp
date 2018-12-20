@@ -50,11 +50,11 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
   Expression c = childAtIndex(0);
   if (c.isReal(context, angleUnit)) {
     float app = c.approximateToScalar<float>(context, angleUnit);
-    if (!std::isnan(app) && app >= 0) {
+    if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
       // abs(a) = a with a > 0
       replaceWithInPlace(c);
       return c;
-    } else if (!std::isnan(app) && app < 0) {
+    } else if (!std::isnan(app) && app <= -Expression::epsilon<float>()) {
       // abs(a) = -a with a < 0
       Multiplication m(Rational(-1), c);
       replaceWithInPlace(m);

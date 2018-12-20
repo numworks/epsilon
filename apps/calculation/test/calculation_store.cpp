@@ -113,3 +113,24 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationDisplay("3+x>f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "3+x", nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
+
+QUIZ_CASE(calculation_complex_format) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
+
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  assertCalculationDisplay("1+I", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+I", &globalContext, &store);
+  assertCalculationDisplay("R(-1)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", nullptr, &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", nullptr, &globalContext, &store);
+
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
+  assertCalculationDisplay("1+I", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+I", &globalContext, &store);
+  assertCalculationDisplay("R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "I", &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
+
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
+  assertCalculationDisplay("1+I", false, false, ::Calculation::Calculation::EqualSign::Approximation, "R(2)*X^(P/4*I)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("R(-1)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "X^(P/2*I)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
+}

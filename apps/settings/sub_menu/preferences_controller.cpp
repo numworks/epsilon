@@ -82,6 +82,10 @@ Layout layoutForPreferences(I18n::Message message) {
     case I18n::Message::EditionLinear:
       return LayoutHelper::String("1+2/3", 5, KDFont::SmallFont);
     // Complex format
+    case I18n::Message::Real:
+    {
+      return CharLayout('x', KDFont::SmallFont);
+    }
     case I18n::Message::Cartesian:
     {
       const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};

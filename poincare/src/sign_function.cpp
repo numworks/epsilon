@@ -72,7 +72,7 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     // c has no sign (c is complex or NAN)
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
-      // sign(-x) = sign(x)
+      // sign(-x) = -sign(x)
       Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
       if (oppChild.isUninitialized()) {
         return *this;
@@ -81,8 +81,9 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit
         Multiplication m(Rational(-1));
         replaceWithInPlace(m);
         m.addChildAtIndexInPlace(sign, 1, 1);
-        sign.shallowReduce(context, angleUnit, target);
-        return m.shallowReduce(context, angleUnit, target);
+        // sign does not need to be shallowReduce because -x = NAN --> x = NAN
+        return m;
+        // m does not need to be shallowReduce, -1*sign cannot be reduce
       }
     }
     if (c.real() < 0) {

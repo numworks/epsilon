@@ -271,7 +271,10 @@ protected:
   /* makePositiveAnyNegativeNumeralFactor looks for:
    * - a negative numeral
    * - a multiplication who has one numeral child whose is negative
-   * and turns the negative factor into a positive one
+   * and turns the negative factor into a positive one.
+   * The given Expression should already be reduced and the return Expression
+   * is reduced (only a numeral factor was potentially made positive, and if it
+   *  was -1, it was removed from the multiplication).
    */
   Expression makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }

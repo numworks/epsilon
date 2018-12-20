@@ -402,7 +402,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
    */
   bool letPowerAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsALogarithmOfSameBase();
 
-  /* Step 1: we now bubble up ComplexCartesian, we handle different cases:
+  /* Step 2: we now bubble up ComplexCartesian, we handle different cases:
    * At least, one child is a ComplexCartesian and the other is either a
    * ComplexCartesian or real. */
 
@@ -453,7 +453,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     return result.shallowReduce(context, angleUnit);
   }
 
-  /* Step 2: We look for square root and sum of square roots (two terms maximum
+  /* Step 3: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */
   if (target == ExpressionNode::ReductionTarget::User) {
     Expression r = removeSquareRootsFromDenominator(context, angleUnit);
@@ -462,6 +462,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
+  /* Step 4: we simplify i^(p/q) = e^(i*Pi*p/2q) */
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     const Rational b = childAtIndex(1).convert<Rational>();
     // i^(p/q)
@@ -473,7 +474,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
-  // (±inf)^x
+  // Step 5: (±inf)^x = 0 or ±inf
   if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
     Expression result;
     if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
@@ -495,6 +496,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
+  // Step 6: p^q with p, q rationals --> a*b^c*exp(i*pi*d) with a, b, c, d rationals
   if (!letPowerAtRoot && childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational a = childAtIndex(0).convert<Rational>();
     // p^q with p, q rationals
@@ -507,7 +509,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       return simplifyRationalRationalPower(context, angleUnit, target);
     }
   }
-  // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
+  // Step 7: (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
   // WARNING: this rule true only if a real (ex: (-1*i)^(1/2) != i*i^(1/2)
   if (!letPowerAtRoot
       && childAtIndex(0).isReal(context, angleUnit)
@@ -517,7 +519,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Expression m0 = childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
     if (!m0.isUninitialized()) {
       replaceChildAtIndexInPlace(0, m0);
-      //m0.shallowReduce(context, angleUnit, target);
+      // m0 doest not need to be shallowReduce as makePositiveAnyNegativeNumeralFactor returns a reduced expression
       Multiplication m1 = Multiplication();
       replaceWithInPlace(m1);
       // Multiply m1 by i complex
@@ -529,7 +531,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       return m1.shallowReduce(context, angleUnit, target);
     }
   }
-  // e^(i*Pi*r) with r rational
+  // Step 8: e^(i*Pi*r) with r rational --> cos(pi*r) + i*sin(pi*r)
   if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression m = childAtIndex(1);
     Expression i = m.childAtIndex(m.numberOfChildren()-1);
@@ -548,7 +550,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     replaceWithInPlace(a);
     return a.shallowReduce(context, angleUnit, target);
   }
-  // x^log(y,x)->y if y > 0
+  // Step 9: x^log(y,x)->y if y > 0
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
     if (childAtIndex(1).numberOfChildren() == 2 && childAtIndex(0).isIdenticalTo(childAtIndex(1).childAtIndex(1))) {
       // y > 0
@@ -568,7 +570,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       return result;
     }
   }
-  // (a^b)^c -> a^(b*c) if a > 0 or c is integer
+  // Step 10: (a^b)^c -> a^(b*c) if a > 0 or c is integer
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
     // Check if a > 0 or c is Integer
@@ -579,14 +581,14 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       return simplifyPowerPower(context, angleUnit, target);
     }
   }
-  // (a*b*c*...)^r ?
+  // Step 11: (a*b*c*...)^r ?
   if (!letPowerAtRoot && childAtIndex(0).type() == ExpressionNode::Type::Multiplication) {
     Multiplication m = childAtIndex(0).convert<Multiplication>();
-    // (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
+    // Case 1: (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
     if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().integerDenominator().isOne()) {
       return simplifyPowerMultiplication(context, angleUnit, target);
     }
-    // (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
+    // Case 2: (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
     for (int i = 0; i < m.numberOfChildren(); i++) {
       // a is signed and a != -1
       if (m.childAtIndex(i).sign(&context, angleUnit) != ExpressionNode::Sign::Unknown
@@ -620,7 +622,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       }
     }
   }
-  // a^(b+c+...) -> Rational(a^b)*a^c with a and b rational and a != 0
+  // Step 12: a^(b+c+...) -> Rational(a^b)*a^c with a and b rational and a != 0
   if (!letPowerAtRoot
       && childAtIndex(0).type() == ExpressionNode::Type::Rational
       && !childAtIndex(0).convert<Rational>().isZero()
@@ -647,7 +649,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
 
-  // (a0+a1+...am)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
+  // Step 13: (a0+a1+...am)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
   if (!letPowerAtRoot
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().integerDenominator().isOne()

@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <apps/shared/global_context.h>
+#include <poincare/test/helper.h>
 #include <string.h>
 #include <assert.h>
 #include "../calculation_store.h"
@@ -13,7 +14,7 @@ void assert_store_is(CalculationStore * store, const char * result[10]) {
   }
 }
 
-QUIZ_CASE(calculation_store) {
+QUIZ_CASE(calculation_store_ring_buffer) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
   quiz_assert(CalculationStore::k_maxNumberOfCalculations == 10);
@@ -50,7 +51,7 @@ QUIZ_CASE(calculation_store) {
   store.deleteAll();
 }
 
-QUIZ_CASE(calculation_display_exact_approximate) {
+QUIZ_CASE(calculation_ans) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
@@ -66,48 +67,49 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   quiz_assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
 
   store.deleteAll();
-  store.push("1/2", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(&globalContext) == ::Calculation::Calculation::EqualSign::Equal);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+}
 
-  store.deleteAll();
-  store.push("1/3", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(&globalContext) == ::Calculation::Calculation::EqualSign::Approximation);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+void assertCalculationDisplay(const char * input, bool displayExactOutput, bool displayApproximateOutput, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
+  char buffer[500];
+  strlcpy(buffer, input, sizeof(buffer));
+  translate_in_special_chars(buffer);
+  store->push(buffer, context);
+  ::Calculation::Calculation * lastCalculation = store->calculationAtIndex(1);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == displayExactOutput);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(context) == displayApproximateOutput);
+  if (sign != ::Calculation::Calculation::EqualSign::Unknown) {
+    quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
+  }
+  if (exactOutput) {
+    strlcpy(buffer, exactOutput, sizeof(buffer));
+    translate_in_special_chars(buffer);
+    quiz_assert(strcmp(lastCalculation->exactOutputText(), buffer) == 0);
+  }
+  if (approximateOutput) {
+    strlcpy(buffer, approximateOutput, sizeof(buffer));
+    translate_in_special_chars(buffer);
+    quiz_assert(strcmp(lastCalculation->approximateOutputText(),buffer) == 0);
+  }
+  store->deleteAll();
+}
 
-  store.deleteAll();
-  store.push("1/0", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
-  quiz_assert(strcmp(lastCalculation->approximateOutputText(),"undef") == 0);
+QUIZ_CASE(calculation_display_exact_approximate) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
 
-  store.deleteAll();
-  store.push("2x-x", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == true);
-  quiz_assert(strcmp(lastCalculation->exactOutputText(),"x") == 0);
-
-  store.deleteAll();
-  store.push("[[1,2,3]]", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
-
-  store.deleteAll();
-  store.push("[[1,x,3]]", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
-
-  store.deleteAll();
-  store.push("28^7", &globalContext);
-  lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == false);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
-
-  store.deleteAll();
+  assertCalculationDisplay("1/2", false, false, ::Calculation::Calculation::EqualSign::Equal, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("1/3", false, false, ::Calculation::Calculation::EqualSign::Approximation, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("1/0", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("2x-x", true, false, ::Calculation::Calculation::EqualSign::Unknown, "x", "undef", &globalContext, &store);
+  assertCalculationDisplay("[[1,2,3]]", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("[[1,x,3]]", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("28^7", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("3+R(2)>a", false, false, ::Calculation::Calculation::EqualSign::Approximation, "3+R(2)", nullptr, &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  assertCalculationDisplay("3+2>a", false, false, ::Calculation::Calculation::EqualSign::Equal, "3+2", "5", &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  assertCalculationDisplay("3>a", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  assertCalculationDisplay("3+x>f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "3+x", nullptr, &globalContext, &store);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }

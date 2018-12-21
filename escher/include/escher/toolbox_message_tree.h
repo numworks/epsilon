@@ -14,13 +14,14 @@ public:
         0,
         stripInsertedText);
   };
-  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree * children, int numberOfChildren) {
+  template <int N>
+  constexpr static ToolboxMessageTree Node(I18n::Message label, const ToolboxMessageTree (&children)[N]) {
     return ToolboxMessageTree(
         label,
         (I18n::Message)0,
         (I18n::Message)0,
         children,
-        numberOfChildren,
+        N,
         true);
   }
   const MessageTree * children(int index) const override { return &m_children[index]; }

@@ -43,6 +43,10 @@ Expression Equation::standardForm(Context * context) const {
   return m_standardForm;
 }
 
+bool Equation::containsIComplex() const {
+  return strchr(text(), Ion::Charset::IComplex) != nullptr;
+}
+
 void Equation::tidyStandardForm() {
   // Free the pool of the m_standardForm
   m_standardForm = Expression();

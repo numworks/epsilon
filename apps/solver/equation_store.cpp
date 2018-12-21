@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include <limits.h>
 
+#include <poincare/constant.h>
 #include <poincare/symbol.h>
 #include <poincare/matrix.h>
 #include <poincare/rational.h>
@@ -170,21 +171,39 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     }
   }
   /* Turn the results in layouts */
-  for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
+  int solutionIndex = 0;
+  int initialNumberOfSolutions = m_numberOfSolutions;
+  // We iterate through the solutions and the potential delta
+  for (int i = 0; i < initialNumberOfSolutions+1; i++) {
     if (!exactSolutions[i].isUninitialized()) {
-      m_exactSolutionExactLayouts[i] = PoincareHelpers::CreateLayout(exactSolutions[i]);
-      m_exactSolutionApproximateLayouts[i] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);
+      /* Discard complex solutions if ComplexFormat is Real and the equation
+       * system was not explicitly complex. */
+      if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real && !isExplictlyComplex() && exactSolutionsApproximations[i].recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Poincare::Constant &>(e).isIComplex(); }, *context, false)) {
+        if (i < initialNumberOfSolutions) {
+          // Discard the solution
+          m_numberOfSolutions--;
+          continue;
+        } else {
+          assert( i == initialNumberOfSolutions);
+          // Delta is not real
+          exactSolutions[i] = Undefined();
+          exactSolutionsApproximations[i] = Undefined();
+        }
+      }
+      m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i]);
+      m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
       char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      m_exactSolutionExactLayouts[i].serializeForParsing(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionApproximateLayouts[i].serializeForParsing(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
+      m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionIdentity[solutionIndex] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
-      if (!m_exactSolutionIdentity[i]) {
+      if (!m_exactSolutionIdentity[solutionIndex]) {
         char buffer[Shared::ExpressionModel::k_expressionBufferSize];
-        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
       }
+      solutionIndex++;
     }
   }
   return error;
@@ -335,6 +354,15 @@ void EquationStore::tidySolution() {
     m_exactSolutionExactLayouts[i] = Layout();
     m_exactSolutionApproximateLayouts[i] = Layout();
   }
+}
+
+bool EquationStore::isExplictlyComplex() {
+  for (int i = 0; i < numberOfDefinedModels(); i++) {
+    if (definedModelAtIndex(i)->containsIComplex()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 }

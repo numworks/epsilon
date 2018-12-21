@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class UndefinedNode final : public NumberNode {
+class UndefinedNode : public NumberNode {
 public:
 
   // TreeNode

@@ -40,6 +40,7 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
     Token::CompareNonNullTerminatedName(name, nameLength, Symbol::k_ans)     == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Infinity::Name())  == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, Undefined::Name()) == 0 ||
+    Token::CompareNonNullTerminatedName(name, nameLength, Unreal::Name()) == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u_")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "v_")              == 0 ||
     Token::CompareNonNullTerminatedName(name, nameLength, "u")               == 0 ||
@@ -376,6 +377,8 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
     leftHandSide = Infinity(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
     leftHandSide = Undefined();
+  } else if (m_currentToken.compareTo(Unreal::Name()) == 0) {
+    leftHandSide = Unreal();
   } else if (m_currentToken.compareTo("u_") == 0 || m_currentToken.compareTo("v_") == 0) { // Special case for sequences (e.g. "u_{n}")
     parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftBrace, Token::RightBrace);
   } else if (m_currentToken.compareTo("u") == 0 || m_currentToken.compareTo("v") == 0) { // Special case for sequences (e.g. "u(n)")

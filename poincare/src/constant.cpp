@@ -4,6 +4,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
+#include <poincare/unreal.h>
 #include <ion.h>
 #include <cmath>
 #include <assert.h>
@@ -54,10 +55,15 @@ Constant::Constant(char name) : SymbolAbstract(TreePool::sharedPool()->createTre
 }
 
 Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  if (target == ExpressionNode::ReductionTarget::User && isIComplex()) {
-    ComplexCartesian c = ComplexCartesian::Builder(Rational(0), Rational(1));
-    replaceWithInPlace(c);
-    return c;
+  Expression result;
+  if (complexFormat == Preferences::ComplexFormat::Real && isIComplex()) {
+    result = Unreal();
+  } else if (target == ExpressionNode::ReductionTarget::User && isIComplex()) {
+    result = ComplexCartesian::Builder(Rational(0), Rational(1));
+  }
+  if (!result.isUninitialized()) {
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

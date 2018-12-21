@@ -120,7 +120,7 @@ public:
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
-  bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined; }
+  bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   bool isRationalOne() const;

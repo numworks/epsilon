@@ -118,7 +118,7 @@ int CurveView::numberOfLabels(Axis axis) const {
   }
   float minA = min(axis);
   float maxA = max(axis);
-  float margin = labelsDisplayMarginRatio(axis) * (maxA - minA);
+  float margin = LabelsMarginRatio(axis) * (maxA - minA);
   float minVisibleInAxis = minA + margin;
   float maxVisibleInAxis = maxA - margin;
   float labelStep = 2.0f * gridUnit(axis);
@@ -659,7 +659,7 @@ float CurveView::labelValueAtIndex(Axis axis, int i) const {
   float minA = min(axis);
   float maxA = max(axis);
   float labelStep = 2.0f * gridUnit(axis);
-  float minVisibleInAxis = minA + labelsDisplayMarginRatio(axis) * (maxA - minA);
+  float minVisibleInAxis = minA + LabelsMarginRatio(axis) * (maxA - minA);
   return labelStep*(std::ceil(minVisibleInAxis/labelStep)+i);
 }
 

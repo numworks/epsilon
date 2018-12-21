@@ -10,9 +10,9 @@ namespace Calculation {
 /* HistoryViewCellDataSource */
 
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
-  m_selectedSubviewType(HistoryViewCellDataSource::SubviewType::Output) {}
+  m_selectedSubviewType(SubviewType::Output) {}
 
-void HistoryViewCellDataSource::setSelectedSubviewType(HistoryViewCellDataSource::SubviewType subviewType, HistoryViewCell * cell) {
+void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, HistoryViewCell * cell) {
   m_selectedSubviewType = subviewType;
   if (cell) {
     cell->setHighlighted(cell->isHighlighted());

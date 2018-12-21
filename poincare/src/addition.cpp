@@ -277,7 +277,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::ComplexFormat
     newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
     real.shallowReduce(context, complexFormat, angleUnit, target);
     imag.shallowReduce(context, complexFormat, angleUnit, target);
-    return newComplexCartesian.shallowReduce(context, complexFormat, angleUnit);
+    return newComplexCartesian.shallowReduce();
   }
 
   /* Step 7: Let's put everything under a common denominator.

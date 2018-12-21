@@ -22,7 +22,7 @@ int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return LeastCommonMultiple(this).shallowReduce(context, complexFormat, angleUnit);
+  return LeastCommonMultiple(this).shallowReduce();
 }
 
 template<typename T>
@@ -53,7 +53,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
   return Complex<T>(product/a);
 }
 
-Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression LeastCommonMultiple::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

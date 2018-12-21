@@ -29,10 +29,10 @@ Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preference
 }
 
 Expression DeterminantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Determinant(this).shallowReduce(context, complexFormat, angleUnit);
+  return Determinant(this).shallowReduce(context);
 }
 
-Expression Determinant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Determinant::shallowReduce(Context & context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

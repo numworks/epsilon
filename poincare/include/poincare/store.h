@@ -55,7 +55,7 @@ public:
   }
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context);
 };
 
 }

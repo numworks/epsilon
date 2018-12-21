@@ -44,7 +44,7 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Integral(this).shallowReduce(context, complexFormat, angleUnit);
+  return Integral(this).shallowReduce();
 }
 
 template<typename T>
@@ -195,7 +195,7 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 }
 #endif
 
-Expression Integral::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Integral::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

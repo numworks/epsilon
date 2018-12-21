@@ -20,7 +20,7 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression FracPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return FracPart(this).shallowReduce(context, complexFormat, angleUnit);
+  return FracPart(this).shallowReduce();
 }
 
 template<typename T>
@@ -31,7 +31,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
   return Complex<T>(c.real()-std::floor(c.real()));
 }
 
-Expression FracPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression FracPart::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

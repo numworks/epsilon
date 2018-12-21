@@ -438,7 +438,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       }
       if (!result.isUninitialized()) {
         replaceWithInPlace(result);
-        return result.shallowReduce(context, complexFormat, angleUnit);
+        return result.shallowReduce();
       }
     }
   }
@@ -450,7 +450,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational(0));
     result = complexBase.power(complexIndex, context, complexFormat, angleUnit, target);
     replaceWithInPlace(result);
-    return result.shallowReduce(context, complexFormat, angleUnit);
+    return result.shallowReduce();
   }
 
   /* Step 3: We look for square root and sum of square roots (two terms maximum

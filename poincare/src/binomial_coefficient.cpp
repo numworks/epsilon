@@ -15,7 +15,7 @@ constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
 Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return BinomialCoefficient(this).shallowReduce(context, complexFormat, angleUnit);
+  return BinomialCoefficient(this).shallowReduce();
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -53,7 +53,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return std::round(result);
 }
 
-Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression BinomialCoefficient::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

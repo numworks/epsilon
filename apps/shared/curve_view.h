@@ -11,6 +11,9 @@ namespace Shared {
 
 class CurveView : public View {
 public:
+  /* We want a 3 characters margin before the first label tick, so that most
+   * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
+  static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
   typedef float (*EvaluateModelWithParameter)(float t, void * model, void * context);
   enum class Axis {
     Horizontal = 0,
@@ -41,17 +44,8 @@ protected:
   constexpr static KDCoordinate k_okVerticalMargin = 23;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
-  /* The labels are bounds by ±1E-4 and ±1E-8 which in worst case can be written
-   * using 6 characters (including the null-terminating char).
-   * To avoid overlapping horizontal labels, k_horizontalLabelBufferSize should
-   * verify:
-   * k_horizontalLabelBufferSize = Ion::Display::Width /
-   * ((CurveViewRange::k_maxNumberOfXGridUnits/2)*KDFont::SmallFont->glyphWidth)
-   *                             = 320/((18/2)*7) ~ 5.
-   * We take 6, which creates a small overlap in worst cases but prevents from
-   * truncating labels (ie, "-1E-"). */
-  constexpr static int k_horizontalLabelBufferSize = 6;
-  constexpr static int k_verticalLabelBufferSize = 14; // '-' + 6 significant digits + '.' + "E-" + 3 digits + null-terminating char
+  constexpr static int k_numberSignificantDigits = 6;
+  constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 3 + 3 + 1; // '-' + 6 significant digits + '.' + "E-" + 3 digits + null-terminating char
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;
@@ -74,6 +68,7 @@ protected:
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
   float min(Axis axis) const;
@@ -99,6 +94,9 @@ private:
   View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
    * cursor views may be nullptr if not needed. */
+  void computeHorizontalExtremaLabels();
+  float labelValueAtIndex(Axis axis, int i) const;
+  float labelsDisplayMarginRatio(Axis axis) const { return axis == Axis::Horizontal ? k_labelsHorizontalMarginRatio : 0.0f; }
   CurveViewRange * m_curveViewRange;
   View * m_cursorView;
   View * m_okView;

@@ -1,15 +1,16 @@
 #include "curve_view.h"
 #include "../constant.h"
+#include <poincare/print_float.h>
 #include <assert.h>
 #include <string.h>
 #include <cmath>
 #include <float.h>
 
-#include <poincare/print_float.h>
-
 using namespace Poincare;
 
 namespace Shared {
+
+static inline int minInt(int x, int y) { return (x<y ? x : y); }
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, View * okView, bool displayBanner) :
@@ -110,6 +111,22 @@ KDCoordinate CurveView::pixelLength(Axis axis) const {
   return (axis == Axis::Horizontal ? m_frame.width() : m_frame.height());
 }
 
+int CurveView::numberOfLabels(Axis axis) const {
+  Axis otherAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
+  if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
+    return 0;
+  }
+  float minA = min(axis);
+  float maxA = max(axis);
+  float margin = labelsDisplayMarginRatio(axis) * (maxA - minA);
+  float minVisibleInAxis = minA + margin;
+  float maxVisibleInAxis = maxA - margin;
+  float labelStep = 2.0f * gridUnit(axis);
+  float minLabel = std::ceil(minVisibleInAxis/labelStep);
+  float maxLabel = std::floor(maxVisibleInAxis/labelStep);
+  return maxLabel - minLabel + 1;
+}
+
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
   KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
   return min(axis) + pixels*((float)(max(axis)-min(axis)))/((float)pixelLength(axis));
@@ -132,31 +149,55 @@ float CurveView::floatToPixel(Axis axis, float f) const {
 
 void CurveView::computeLabels(Axis axis) {
   float step = gridUnit(axis);
-  int labelsCount = numberOfLabels(axis);
-  for (int index = 0; index < labelsCount; index++) {
-    float labelValue = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)))+index*2.0f*step;
+  int axisLabelsCount = numberOfLabels(axis);
+  for (int i = 0; i < axisLabelsCount; i++) {
+    float labelValue = labelValueAtIndex(axis, i);
+    /* Label cannot hold more than k_labelBufferMaxSize characters to prevent
+     * them from overprinting one another.*/
+    int labelMaxSize = k_labelBufferMaxSize;
+    if (axis == Axis::Horizontal) {
+      float pixelsPerLabel = 320.0f/axisLabelsCount - 10; // 10 is a margin between the labels
+      labelMaxSize = minInt(k_labelBufferMaxSize, pixelsPerLabel/k_font->glyphSize().width());
+    }
+
     if (labelValue < step && labelValue > -step) {
+      // Make sure the 0 value is really written 0
       labelValue = 0.0f;
     }
+
     /* Label cannot hold more than k_labelBufferSize characters to prevent them
      * from overprinting one another.*/
+
+    char * labelBuffer = label(axis, i);
     PrintFloat::convertFloatToText<float>(
         labelValue,
-        label(axis, index),
-        axis == Axis::Vertical ? k_verticalLabelBufferSize : k_horizontalLabelBufferSize,
-        axis == Axis::Vertical ? 6 : Constant::ShortNumberOfSignificantDigits,
-        Preferences::PrintFloatMode::Decimal);
+        labelBuffer,
+        labelMaxSize,
+        k_numberSignificantDigits,
+        Preferences::PrintFloatMode::Decimal,
+        axis == Axis::Vertical);
+
+    if (labelBuffer[0] == 0 && axis == Axis::Horizontal) {
+      /* Some labels are too big and may overlap their neighbours. We write the
+       * extrema labels only. */
+      computeHorizontalExtremaLabels();
+      return;
+    }
   }
 }
 
 void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate) const {
+  int labelsCount = numberOfLabels(axis);
+  if (labelsCount < 1) {
+    return;
+  }
   float step = gridUnit(axis);
-  float start = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)));
-  float end = max(axis);
+  float start = labelValueAtIndex(axis, 0);
+  float end = labelValueAtIndex(axis, labelsCount - 1);
   float verticalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Horizontal, 0.0f));
   int i = 0;
-  for (float x = start; x < end; x += 2.0f*step) {
+  for (float x = start; x <= end + step; x += 2.0f*step) {
     /* When |start| >> step, start + step = start. In that case, quit the
      * infinite loop. */
     if (x == x-step || x == x+step) {
@@ -167,7 +208,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
       graduation = KDRect(horizontalCoordinate-(k_labelGraduationLength-2)/2, std::round(floatToPixel(Axis::Vertical, x)), k_labelGraduationLength, 1);
     }
     if (!graduationOnly) {
-      KDSize textSize = KDFont::SmallFont->stringSize(label(axis, i));
+      KDSize textSize = k_font->stringSize(label(axis, i));
       KDPoint origin(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, verticalCoordinate + k_labelMargin);
       if (axis == Axis::Vertical) {
         origin = KDPoint(horizontalCoordinate + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
@@ -175,8 +216,8 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
       if (-step < x && x < step && shiftOrigin) {
         origin = KDPoint(horizontalCoordinate + k_labelMargin, verticalCoordinate + k_labelMargin);
       }
-      if (rect.intersects(KDRect(origin, KDFont::SmallFont->stringSize(label(axis, i))))) {
-        ctx->drawString(label(axis, i), origin, KDFont::SmallFont, KDColorBlack);
+      if (rect.intersects(KDRect(origin, k_font->stringSize(label(axis, i))))) {
+        ctx->drawString(label(axis, i), origin, k_font, KDColorBlack);
       }
     }
     ctx->fillRect(graduation, KDColorBlack);
@@ -432,14 +473,6 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   }
 }
 
-int CurveView::numberOfLabels(Axis axis) const {
-  Axis otherAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
-  if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
-    return 0;
-  }
-  return std::ceil((max(axis) - min(axis))/(2*gridUnit(axis)));
-}
-
 void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
@@ -597,6 +630,37 @@ View * CurveView::subviewAtIndex(int index) {
     return m_cursorView;
   }
   return m_bannerView;
+}
+
+void CurveView::computeHorizontalExtremaLabels() {
+  Axis axis = Axis::Horizontal;
+  int axisLabelsCount = numberOfLabels(axis);
+
+  // All labels but the extrema are empty
+  for (int i = 1; i < axisLabelsCount - 1 ; i++) {
+    label(axis, i)[0] = 0;
+  }
+
+  int minMax[] = {0, axisLabelsCount-1};
+  for (int i : minMax) {
+    // Compute the minimal and maximal label
+    PrintFloat::convertFloatToText<float>(
+        labelValueAtIndex(axis, i),
+        label(axis, i),
+        k_labelBufferMaxSize,
+        k_numberSignificantDigits,
+        Preferences::PrintFloatMode::Decimal,
+        false);
+  }
+}
+
+float CurveView::labelValueAtIndex(Axis axis, int i) const {
+  assert(i >= 0 && i < numberOfLabels(axis));
+  float minA = min(axis);
+  float maxA = max(axis);
+  float labelStep = 2.0f * gridUnit(axis);
+  float minVisibleInAxis = minA + labelsDisplayMarginRatio(axis) * (maxA - minA);
+  return labelStep*(std::ceil(minVisibleInAxis/labelStep)+i);
 }
 
 }

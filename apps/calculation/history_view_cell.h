@@ -17,7 +17,7 @@ public:
     Output
   };
   HistoryViewCellDataSource();
-  void setSelectedSubviewType(HistoryViewCellDataSource::SubviewType subviewType, HistoryViewCell * cell = nullptr);
+  void setSelectedSubviewType(SubviewType subviewType, HistoryViewCell * cell = nullptr);
   SubviewType selectedSubviewType() { return m_selectedSubviewType; }
 private:
   SubviewType m_selectedSubviewType;

@@ -48,7 +48,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 private:
   explicit Floor(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {
     replaceChildAtIndexInPlace(0, child);

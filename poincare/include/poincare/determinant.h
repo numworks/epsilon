@@ -39,7 +39,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context);
 private:
   explicit Determinant(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<DeterminantNode>()) {
     replaceChildAtIndexInPlace(0, child);

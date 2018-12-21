@@ -24,7 +24,7 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return PermuteCoefficient(this).shallowReduce(context, complexFormat, angleUnit);
+  return PermuteCoefficient(this).shallowReduce();
 }
 
 template<typename T>
@@ -49,7 +49,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
   return Complex<T>(std::round(result));
 }
 
-Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression PermuteCoefficient::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

@@ -144,7 +144,7 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 // Simplification
 
 Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Rational(this).shallowReduce(context, complexFormat, angleUnit);
+  return Rational(this).shallowReduce();
 }
 
 Expression RationalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -233,7 +233,7 @@ Rational::Rational(const native_uint_t * i, uint8_t numeratorSize, const native_
   static_cast<RationalNode *>(node())->setDigits(i, numeratorSize, j, denominatorSize, negative);
 }
 
-Expression Rational::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Rational::shallowReduce() {
   // FIXME:
   /* Infinite Rational should not exist as they aren't parsed and are supposed
    * to be turn in Float if they should appear. We assert(false) so far, but

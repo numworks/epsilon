@@ -40,7 +40,7 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 Expression DerivativeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Derivative(this).shallowReduce(context, complexFormat, angleUnit);
+  return Derivative(this).shallowReduce();
 }
 
 template<typename T>
@@ -137,7 +137,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
   return ans;
 }
 
-Expression Derivative::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Derivative::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

@@ -104,7 +104,7 @@ private:
   Decimal(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s);
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 };
 

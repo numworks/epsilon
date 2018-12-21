@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return MatrixTrace(this).shallowReduce(context, complexFormat, angleUnit);
+  return MatrixTrace(this).shallowReduce();
 }
 
 Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -32,7 +32,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
   return result;
 }
 
-Expression MatrixTrace::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression MatrixTrace::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

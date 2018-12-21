@@ -14,8 +14,8 @@ constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
 
 int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
-Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return AbsoluteValue(this).setSign(s, context, angleUnit);
+Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return AbsoluteValue(this).setSign(s, context, complexFormat, angleUnit);
 }
 
 Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -26,17 +26,17 @@ int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::s_functionHelper.name());
 }
 
-Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return AbsoluteValue(this).shallowReduce(context, angleUnit, target);
+Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return AbsoluteValue(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
 }
 
-Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
@@ -58,17 +58,17 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
       // abs(a) = -a with a < 0
       Multiplication m(Rational(-1), c);
       replaceWithInPlace(m);
-      return m.shallowReduce(context, angleUnit, target);
+      return m.shallowReduce(context, complexFormat, angleUnit, target);
     }
   }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
-    Expression childNorm = complexChild.norm(context, angleUnit, target);
+    Expression childNorm = complexChild.norm(context, complexFormat, angleUnit, target);
     replaceWithInPlace(childNorm);
-    return childNorm.shallowReduce(context, angleUnit, target);
+    return childNorm.shallowReduce(context, complexFormat, angleUnit, target);
   }
   // abs(-x) = abs(x)
-  c.makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
+  c.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
   return *this;
 }
 

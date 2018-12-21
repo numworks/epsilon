@@ -15,12 +15,12 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   return;
 }
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Store(this).shallowReduce(context, angleUnit);
+Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Store(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -50,7 +50,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol

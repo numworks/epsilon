@@ -38,13 +38,13 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
-Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return SquareRoot(this).shallowReduce(context, angleUnit, target);
+Expression SquareRootNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return SquareRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -56,7 +56,7 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit a
 #endif
   Power p = Power(childAtIndex(0), Rational(1, 2));
   replaceWithInPlace(p);
-  return p.shallowReduce(context, angleUnit, target);
+  return p.shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 }

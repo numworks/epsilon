@@ -43,8 +43,8 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name());
 }
 
-Expression IntegralNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Integral(this).shallowReduce(context, angleUnit);
+Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Integral(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 template<typename T>
@@ -195,9 +195,9 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 }
 #endif
 
-Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Integral::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }

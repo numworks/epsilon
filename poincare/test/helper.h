@@ -12,6 +12,7 @@ constexpr Poincare::Preferences::AngleUnit Degree = Poincare::Preferences::Angle
 constexpr Poincare::Preferences::AngleUnit Radian = Poincare::Preferences::AngleUnit::Radian;
 constexpr Poincare::Preferences::ComplexFormat Cartesian = Poincare::Preferences::ComplexFormat::Cartesian;
 constexpr Poincare::Preferences::ComplexFormat Polar = Poincare::Preferences::ComplexFormat::Polar;
+constexpr Poincare::Preferences::ComplexFormat Real = Poincare::Preferences::ComplexFormat::Real;
 constexpr Poincare::Preferences::PrintFloatMode DecimalMode = Poincare::Preferences::PrintFloatMode::Decimal;
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode = Poincare::Preferences::PrintFloatMode::Scientific;
 
@@ -22,7 +23,7 @@ Poincare::Expression parse_expression(const char * expression, bool canBeUnparsa
 void assert_expression_not_parsable(const char * expression);
 void assert_parsed_expression_type(const char * expression, Poincare::ExpressionNode::Type type);
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r);
-void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x");
+void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x",  Poincare::Preferences::ComplexFormat complexFormat = Cartesian);
 void assert_simplify(const char * expression);
 
 template<typename T>

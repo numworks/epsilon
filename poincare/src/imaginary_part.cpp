@@ -20,13 +20,13 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ImaginaryPart(this).shallowReduce(context, angleUnit, target);
+Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -46,7 +46,7 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Expression i = complexChild.imag();
     replaceWithInPlace(i);
-    return i.shallowReduce(context, angleUnit, target);
+    return i.shallowReduce(context, complexFormat, angleUnit, target);
   }
   return *this;
 }

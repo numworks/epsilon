@@ -79,7 +79,7 @@ public:
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
-  int rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace = false);
+  int rank(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace = false);
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
 #if MATRIX_EXACT_REDUCING
@@ -88,7 +88,7 @@ public:
   Matrix transpose() const;
   static Matrix createIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
-  Expression inverse(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
@@ -98,7 +98,7 @@ private:
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   /* rowCanonize turns a matrix in its reduced row echelon form. */
-  Matrix rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication());
+  Matrix rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication());
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
 };

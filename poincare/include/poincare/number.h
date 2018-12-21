@@ -47,7 +47,7 @@ public:
   /* Number::sign() or Number::setSign does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
   ExpressionNode::Sign sign() { return Expression::sign(nullptr); }
-  Number setSign(ExpressionNode::Sign s) { return Expression::setSign(s, nullptr, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User).convert<Number>(); }
+  Number setSign(ExpressionNode::Sign s) { return Expression::setSign(s, nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User).convert<Number>(); }
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

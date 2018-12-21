@@ -30,13 +30,13 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
-Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Sine(this).shallowReduce(context, angleUnit, target);
+Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Sine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -47,7 +47,7 @@ Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUn
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit, target);
+  return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
 }
 
 }

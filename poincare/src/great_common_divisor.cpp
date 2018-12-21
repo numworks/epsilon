@@ -20,8 +20,8 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return GreatCommonDivisor(this).shallowReduce(context, angleUnit);
+Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return GreatCommonDivisor(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 template<typename T>
@@ -48,9 +48,9 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
   return Complex<T>(std::round((T)a));
 }
 
-Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }

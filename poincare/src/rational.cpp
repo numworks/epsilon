@@ -98,7 +98,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Expression subclassing
 
-Expression RationalNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression RationalNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Rational(this).setSign(s);
 }
 
@@ -143,16 +143,16 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 
 // Simplification
 
-Expression RationalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Rational(this).shallowReduce(context, angleUnit);
+Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Rational(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
-Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Rational(this).shallowBeautify(context, angleUnit);
+Expression RationalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  return Rational(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
-Expression RationalNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Rational(this).denominator(context, angleUnit);
+Expression RationalNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return Rational(this).denominator(context, complexFormat, angleUnit);
 }
 
 /* Rational  */
@@ -233,7 +233,7 @@ Rational::Rational(const native_uint_t * i, uint8_t numeratorSize, const native_
   static_cast<RationalNode *>(node())->setDigits(i, numeratorSize, j, denominatorSize, negative);
 }
 
-Expression Rational::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Rational::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   // FIXME:
   /* Infinite Rational should not exist as they aren't parsed and are supposed
    * to be turn in Float if they should appear. We assert(false) so far, but
@@ -259,7 +259,7 @@ Expression Rational::shallowReduce(Context & context, Preferences::AngleUnit ang
   return *this;
 }
 
-Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Rational::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
     Opposite o;
@@ -270,7 +270,7 @@ Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit a
   return *this;
 }
 
-Expression Rational::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Rational::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Integer d = integerDenominator();
   if (d.isOne()) {
     return Expression();

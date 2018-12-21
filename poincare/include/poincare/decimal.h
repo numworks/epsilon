@@ -48,7 +48,7 @@ public:
   // Properties
   Type type() const override { return Type::Decimal; }
   Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -62,8 +62,8 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) override;
 
   // Serialization
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
@@ -104,8 +104,8 @@ private:
   Decimal(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s);
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 };
 
 }

@@ -21,7 +21,7 @@ public:
   // Properties
   Type type() const override { return Type::AbsoluteValue; }
   Sign sign(Context * context) const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Complex
   bool isReal(Context & context) const override { return true; }
@@ -42,7 +42,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 };
 
 class AbsoluteValue final : public Expression {
@@ -53,12 +53,12 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
   explicit AbsoluteValue(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 };
 
 }

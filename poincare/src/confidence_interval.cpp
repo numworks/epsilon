@@ -25,8 +25,8 @@ int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ConfidenceInterval(this).shallowReduce(context, angleUnit, target);
+Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ConfidenceInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
@@ -52,9 +52,9 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -94,7 +94,7 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.deepReduceChildren(context, angleUnit, target);
+  matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
   return matrix;
 }
 

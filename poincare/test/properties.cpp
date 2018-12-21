@@ -56,6 +56,7 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("prediction(0.2,10)+1", -1);
   assert_parsed_expression_polynomial_degree("2-x-x^3", 3);
   assert_parsed_expression_polynomial_degree("P*x", 1);
+  assert_parsed_expression_polynomial_degree("R(-1)*x", -1, "x", Real);
   // f: x->x^2+Px+1
   assert_simplify("1+P*x+x^2>f(x)");
   assert_parsed_expression_polynomial_degree("f(x)", 2);
@@ -157,4 +158,8 @@ QUIZ_CASE(poincare_get_polynomial_coefficients) {
   const char * coefficient4[] = {"1", "P", "1", 0}; //x^2+Pi*x+1
   assert_simplify("1+P*x+x^2>f(x)");
   assert_parsed_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
+  const char * coefficient5[] = {"0", "I", 0}; //R(-1)x
+  assert_parsed_expression_has_polynomial_coefficient("R(-1)x", "x", coefficient5);
+  const char * coefficient6[] = {0}; //R(-1)x
+  assert_parsed_expression_has_polynomial_coefficient("R(-1)x", "x", coefficient6, Real);
 }

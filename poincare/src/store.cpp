@@ -47,7 +47,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.approximateToEvaluation<T>(context, angleUnit);
+  return e.node()->approximate(T(), context, angleUnit);
 }
 
 Expression Store::shallowReduce(Context & context) {

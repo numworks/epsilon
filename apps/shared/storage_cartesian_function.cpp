@@ -103,22 +103,26 @@ double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poin
 
 Expression::Coordinate2D StorageCartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expressionReduced(context).nextMinimum(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  Preferences * preferences = Preferences::sharedPreferences();
+  return expressionReduced(context).nextMinimum(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit());
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expressionReduced(context).nextMaximum(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  Preferences * preferences = Preferences::sharedPreferences();
+  return expressionReduced(context).nextMaximum(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit());
 }
 
 double StorageCartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expressionReduced(context).nextRoot(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  Preferences * preferences = Preferences::sharedPreferences();
+  return expressionReduced(context).nextRoot(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit());
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expressionReduced(context).nextIntersection(unknownX, start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), e);
+  Preferences * preferences = Preferences::sharedPreferences();
+  return expressionReduced(context).nextIntersection(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit(), e);
 }
 
 StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {

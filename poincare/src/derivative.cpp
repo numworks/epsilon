@@ -76,7 +76,10 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
 template<typename T>
 T DerivativeNode::approximateWithArgument(T x, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(childAtIndex(1)->type() == Type::Symbol);
-  return Expression(childAtIndex(0)).approximateWithValueForSymbol(static_cast<SymbolNode *>(childAtIndex(1))->name(), x, context, angleUnit);
+  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
+  variableContext.setApproximationForVariable<T>(x);
+  // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounterComplex flag
+  return childAtIndex(0)->approximate(T(), variableContext, angleUnit).toScalar();
 }
 
 template<typename T>

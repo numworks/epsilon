@@ -1,4 +1,5 @@
 #include "storage_function.h"
+#include "poincare_helpers.h"
 #include <poincare/symbol.h>
 #include "poincare/src/parsing/parser.h"
 #include <string.h>
@@ -76,7 +77,7 @@ T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * conte
     return NAN;
   }
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  return expressionReduced(context).approximateWithValueForSymbol(unknownX, x, *context, Preferences::sharedPreferences()->angleUnit());
+  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
 }
 
 StorageFunction::FunctionRecordData * StorageFunction::recordData() const {

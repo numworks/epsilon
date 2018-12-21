@@ -18,11 +18,11 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
+  bool isReal(Context & context) const override;
 
   // Expression Properties
   Type type() const override { return Type::Constant; }
-  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
+  Sign sign(Context * context) const override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -15,14 +15,6 @@ namespace Poincare {
 
 constexpr char Symbol::k_ans[];
 
-/*ExpressionNode::Sign SymbolNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
-  TODO: Maybe, we will want to know that from a context given in parameter:
-  if (context.expressionForSymbol(this, false) != nullptr) {
-    return context.expressionForSymbol(this, false)->sign(context);
-  }
-}
-*/
-
 Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
@@ -77,9 +69,9 @@ float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit
   return 0.0f;
 }
 
-bool SymbolNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+bool SymbolNode::isReal(Context & context) const {
   Symbol s(this);
-  return SymbolAbstract::isReal(s, context, angleUnit);
+  return SymbolAbstract::isReal(s, context);
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

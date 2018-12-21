@@ -17,16 +17,16 @@
 
 namespace Poincare {
 
-ExpressionNode::Sign MultiplicationNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+ExpressionNode::Sign MultiplicationNode::sign(Context * context) const {
   if (numberOfChildren() == 0) {
     return Sign::Unknown;
   }
   int sign = 1;
   for (ExpressionNode * c : children()) {
-    sign *= (int)(c->sign(context, angleUnit));
+    sign *= (int)(c->sign(context));
   }
   if (sign == 0) {
-    return ExpressionNode::sign(context, angleUnit);
+    return ExpressionNode::sign(context);
   }
   return (Sign)sign;
 }
@@ -125,7 +125,7 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
 Expression Multiplication::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
+    if (childAtIndex(i).sign(context) == ExpressionNode::Sign::Negative) {
       replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit, target));
     }
   }
@@ -475,7 +475,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    *   do anything about it now (allChildrenAreReal == -1)
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
    *   We can bubble up ComplexCartesian nodes. */
-  if (allChildrenAreReal(context, angleUnit) == 0) {
+  if (allChildrenAreReal(context) == 0) {
     int nbChildren = numberOfChildren();
     int i = nbChildren-1;
     // Children are sorted so ComplexCartesian nodes are at the end
@@ -624,7 +624,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
         Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
-        if (sub.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) { // index[0] < index[1]
+        if (sub.sign(&context) == ExpressionNode::Sign::Negative) { // index[0] < index[1]
           sub = Opposite(sub);
           if (factor.type() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
@@ -633,7 +633,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
           }
           sub.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
           mergeInChildByFactorizingBase(i, factor, context, angleUnit, ExpressionNode::ReductionTarget::User);
-        } else if (sub.sign(&context, angleUnit) == ExpressionNode::Sign::Unknown) {
+        } else if (sub.sign(&context) == ExpressionNode::Sign::Unknown) {
           mergeInChildByFactorizingBase(i, factor, context, angleUnit, ExpressionNode::ReductionTarget::User);
         }
         return;

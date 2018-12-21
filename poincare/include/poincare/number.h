@@ -23,7 +23,7 @@ public:
   double doubleApproximation() const;
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
+  bool isReal(Context & context) const override { return true; }
 };
 
 class Number : public Expression {
@@ -46,7 +46,7 @@ public:
 
   /* Number::sign() or Number::setSign does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
-  ExpressionNode::Sign sign() { return Expression::sign(nullptr, Preferences::AngleUnit::Degree); }
+  ExpressionNode::Sign sign() { return Expression::sign(nullptr); }
   Number setSign(ExpressionNode::Sign s) { return Expression::setSign(s, nullptr, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User).convert<Number>(); }
 protected:
   Number() : Expression() {}

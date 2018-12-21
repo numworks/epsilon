@@ -22,11 +22,11 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
+  bool isReal(Context & context) const override;
 
   // Properties
   Type type() const override { return Type::Power; }
-  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
+  Sign sign(Context * context) const override;
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   int polynomialDegree(Context & context, const char * symbolName) const override;

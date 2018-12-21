@@ -28,13 +28,13 @@ void SymbolAbstractNode::initToMatchSize(size_t goalSize) {
   assert(size() == goalSize);
 }
 
-ExpressionNode::Sign SymbolAbstractNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
   SymbolAbstract s(this);
   Expression e = SymbolAbstract::Expand(s, *context, false);
   if (e.isUninitialized()) {
     return Sign::Unknown;
   }
-  return e.sign(context, angleUnit);
+  return e.sign(context);
 }
 
 Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
@@ -79,12 +79,12 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
   return e;
 }
 
-bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit) {
+bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context) {
   Expression e = SymbolAbstract::Expand(symbol, context, false);
   if (e.isUninitialized()) {
     return true;
   }
-  return e.isReal(context, angleUnit);
+  return e.isReal(context);
 }
 
 /* TreePool uses adresses and sizes that are multiples of 4 in order to make

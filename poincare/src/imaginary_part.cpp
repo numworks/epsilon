@@ -37,7 +37,7 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.isReal(context, angleUnit)) {
+  if (c.isReal(context)) {
     Expression result = Rational(0);
     replaceWithInPlace(result);
     return result;

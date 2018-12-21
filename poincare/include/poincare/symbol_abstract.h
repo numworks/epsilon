@@ -35,7 +35,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Property
-  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
+  Sign sign(Context * context) const override;
   Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // TreeNode
@@ -80,7 +80,7 @@ protected:
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);
-  static bool isReal(const SymbolAbstract & symbol, Context & context, Preferences::AngleUnit angleUnit);
+  static bool isReal(const SymbolAbstract & symbol, Context & context);
   static size_t AlignedNodeSize(size_t nameLength, size_t nodeSize);
 };
 

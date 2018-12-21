@@ -17,7 +17,7 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return false; }
+  bool isReal(Context & context) const override { return false; }
 
   // Properties
   Type type() const override { return Type::Undefined; }

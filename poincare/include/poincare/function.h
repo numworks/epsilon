@@ -28,7 +28,7 @@ public:
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
+  bool isReal(Context & context) const override;
 
 private:
   char m_name[0]; // MUST be the last member variable

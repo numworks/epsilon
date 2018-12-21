@@ -37,7 +37,7 @@ Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit ang
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (c.isReal(context, angleUnit)) {
+  if (c.isReal(context)) {
     replaceWithInPlace(c);
     return c;
   }

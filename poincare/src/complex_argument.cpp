@@ -46,7 +46,7 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  bool real = c.isReal(context, angleUnit);
+  bool real = c.isReal(context);
   if (real) {
     float app = c.approximateToScalar<float>(context, angleUnit);
     if (!std::isnan(app) && app >= Expression::epsilon<float>()) {

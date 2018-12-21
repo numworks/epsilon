@@ -248,11 +248,11 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context & context) {
 
 Expression Expression::makePositiveAnyNegativeNumeralFactor(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // The expression is a negative number
-  if (isNumber() && sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+  if (isNumber() && sign(&context) == ExpressionNode::Sign::Negative) {
     return setSign(ExpressionNode::Sign::Positive, &context, angleUnit, target);
   }
   // The expression is a multiplication whose numeral factor is negative
-  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(&context) == ExpressionNode::Sign::Negative) {
     Multiplication m = convert<Multiplication>();
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && m.childAtIndex(0).convert<Rational>().isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
@@ -405,7 +405,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   if (!sSimplificationHasBeenInterrupted) {
     /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
      * take into account the complex format to display a+i*b or r*e^(i*th) */
-    if (e.type() == ExpressionNode::Type::ComplexCartesian || e.isReal(context, angleUnit)) {
+    if (e.type() == ExpressionNode::Type::ComplexCartesian || e.isReal(context)) {
       ComplexCartesian ecomplex = e.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(e) : ComplexCartesian::Builder(e, Rational(0));
       if (approximateExpression) {
         /* Step 2: Approximation

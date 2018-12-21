@@ -17,6 +17,7 @@ namespace Poincare {
 double NumberNode::doubleApproximation() const {
   switch (type()) {
     case Type::Undefined:
+    case Type::Unreal:
       return NAN;
     case Type::Infinity:
       return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;

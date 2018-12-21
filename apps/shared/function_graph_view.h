@@ -27,8 +27,8 @@ protected:
   bool m_shouldColorHighlighted;
 private:
   char * label(Axis axis, int index) const override;
-  char m_xLabels[k_maxNumberOfXLabels][k_horizontalLabelBufferSize];
-  char m_yLabels[k_maxNumberOfYLabels][k_verticalLabelBufferSize];
+  char m_xLabels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
+  char m_yLabels[k_maxNumberOfYLabels][k_labelBufferMaxSize];
   Poincare::Context * m_context;
 };
 

@@ -24,7 +24,7 @@ private:
   char * label(Axis axis, int index) const override;
   HistogramController * m_controller;
   Store * m_store;
-  char m_labels[k_maxNumberOfXLabels][k_horizontalLabelBufferSize];
+  char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   static float EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context);
   float m_highlightedBarStart;
   float m_highlightedBarEnd;

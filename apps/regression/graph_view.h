@@ -15,8 +15,8 @@ public:
 private:
   char * label(Axis axis, int index) const override;
   Store * m_store;
-  char m_xLabels[k_maxNumberOfXLabels][k_horizontalLabelBufferSize];
-  char m_yLabels[k_maxNumberOfYLabels][k_verticalLabelBufferSize];
+  char m_xLabels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
+  char m_yLabels[k_maxNumberOfYLabels][k_labelBufferMaxSize];
   Responder * m_controller;
 };
 

@@ -6,6 +6,9 @@ extern "C" {
 #include "../../helpers.h"
 #include "../../port.h"
 
+static inline mp_float_t maxF(mp_float_t x, mp_float_t y) { return x >= y ? x : y;}
+static inline mp_float_t absF(mp_float_t x) { return x >= 0 ? x : -x;}
+
 static constexpr KDCoordinate k_iconSize = 15;
 static constexpr KDCoordinate k_iconBodySize = 5;
 static constexpr KDCoordinate k_iconHeadSize = 3;
@@ -74,11 +77,11 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
 bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t oldx = m_x;
   mp_float_t oldy = m_y;
-  mp_float_t length = sqrt((x - oldx) * (x - oldx) + (y - oldy) * (y - oldy));
+  mp_float_t length = maxF(absF(floor(x) - floor(oldx)), absF(floor(y) - floor(oldy)));
 
   if (length > 1) {
     // Tweening function
-    for (int i = 0; i < length; i++) {
+    for (int i = 1; i < length; i++) {
       mp_float_t progress = i / length;
       erase();
       if (dot(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress))
@@ -175,7 +178,7 @@ void Turtle::setHeadingPrivate(mp_float_t angle) {
 }
 
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
-  return KDPoint(round(x + k_xOffset), round(k_invertedYAxisCoefficient * y + k_yOffset));
+  return KDPoint(floor(x + k_xOffset), floor(k_invertedYAxisCoefficient * y + k_yOffset));
 }
 
 bool Turtle::hasUnderneathPixelBuffer() {

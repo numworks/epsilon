@@ -148,8 +148,6 @@ bool containsVariables(const Expression e, char * variables, int maxVariableSize
 }
 
 bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
-  // Reset interrupting flag because we use deepReduce
-  sSimplificationHasBeenInterrupted = false;
   assert(!recursivelyMatches(IsMatrix, context, true));
   // variables is in fact of type char[k_maxNumberOfVariables][maxVariableSize]
   int index = 0;
@@ -185,7 +183,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     equation = polynomialCoefficients[0];
     index++;
   }
-  constant[0] = Opposite(equation.clone()).deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+  constant[0] = Opposite(equation.clone()).reduce(context, angleUnit);
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
@@ -295,10 +293,9 @@ int Expression::defaultGetPolynomialCoefficients(Context & context, const char *
 
 int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
   // Reset interrupting flag because we use deepReduce
-  sSimplificationHasBeenInterrupted = false;
   int degree = getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
-    coefficients[i] = coefficients[i].deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+    coefficients[i] = coefficients[i].reduce(context, angleUnit);
   }
   return degree;
 }

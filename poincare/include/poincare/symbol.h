@@ -27,7 +27,7 @@ public:
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override;
+  bool isReal(Context & context) const override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

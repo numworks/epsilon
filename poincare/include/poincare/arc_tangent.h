@@ -23,7 +23,7 @@ public:
   Type type() const override { return Type::ArcTangent; }
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return childAtIndex(0)->isReal(context, angleUnit); }
+  bool isReal(Context & context) const override { return childAtIndex(0)->isReal(context); }
 
 private:
   // Layout

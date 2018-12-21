@@ -247,7 +247,7 @@ Expression Rational::shallowReduce(Context & context, Preferences::AngleUnit ang
   // Turn into Infinite if the numerator is too big.
   if (unsignedIntegerNumerator().isInfinity()) {
     assert(false);
-    return Infinity(sign(&context, angleUnit) == ExpressionNode::Sign::Negative);
+    return Infinity(sign(&context) == ExpressionNode::Sign::Negative);
   }
   // Turn into 0 if the denominator is too big.
   if (integerDenominator().isInfinity()) {

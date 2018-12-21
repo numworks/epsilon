@@ -24,7 +24,7 @@ public:
   Expression replaceUnknown(const Symbol & symbol) override;
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
+  bool isReal(Context & context) const override { return true; }
 
 private:
   // Layout

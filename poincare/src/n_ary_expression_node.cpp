@@ -28,8 +28,8 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, bool canBeIn
   }
 }
 
-bool NAryExpressionNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
-  return NAryExpression(this).allChildrenAreReal(context, angleUnit) == 1;
+bool NAryExpressionNode::isReal(Context & context) const {
+  return NAryExpression(this).allChildrenAreReal(context) == 1;
 }
 
 Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
@@ -80,14 +80,14 @@ int NAryExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e,
   return 0;
 }
 
-int NAryExpression::allChildrenAreReal(Context & context, Preferences::AngleUnit angleUnit) const {
+int NAryExpression::allChildrenAreReal(Context & context) const {
   int i = 0;
   int result = 1;
   while (i < numberOfChildren()) {
     Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::ComplexCartesian) {
       result *= 0;
-    } else if (!c.isReal(context, angleUnit)) {
+    } else if (!c.isReal(context)) {
       return -1;
     }
     i++;

@@ -26,14 +26,14 @@
 namespace Poincare {
 
 // Properties
-ExpressionNode::Sign PowerNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+ExpressionNode::Sign PowerNode::sign(Context * context) const {
   if (Expression::shouldStopProcessing()) {
     return Sign::Unknown;
   }
-  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Positive && childAtIndex(1)->sign(context, angleUnit) != Sign::Unknown) {
+  if (childAtIndex(0)->sign(context) == Sign::Positive && childAtIndex(1)->sign(context) != Sign::Unknown) {
     return Sign::Positive;
   }
-  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(0)->sign(context) == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
     if (r->denominator().isOne()) {
       assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isInfinity());
@@ -79,15 +79,15 @@ int PowerNode::getPolynomialCoefficients(Context & context, const char * symbolN
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-bool PowerNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+bool PowerNode::isReal(Context & context) const {
   ExpressionNode * base = childAtIndex(0);
   ExpressionNode * index = childAtIndex(1);
   // Both base and index are real and:
   // - either base > 0
   // - or index is an integer
-  if (base->isReal(context, angleUnit) &&
-      index->isReal(context, angleUnit) &&
-      (base->sign(&context, angleUnit) == Sign::Positive ||
+  if (base->isReal(context) &&
+      index->isReal(context) &&
+      (base->sign(&context) == Sign::Positive ||
        (index->type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(index)->denominator().isOne()))) {
     return true;
   }
@@ -240,7 +240,7 @@ Power::Power(Expression base, Expression exponent) : Expression(TreePool::shared
 
 Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(s == ExpressionNode::Sign::Positive);
-  if (childAtIndex(0).sign(context, angleUnit) == ExpressionNode::Sign::Negative) {
+  if (childAtIndex(0).sign(context) == ExpressionNode::Sign::Negative) {
     Expression result = Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit, target), childAtIndex(1));
     replaceWithInPlace(result);
     return result.shallowReduce(*context, angleUnit, target);
@@ -334,7 +334,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
   /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
-  if (!base.isReal(context, angleUnit) && base.type() != ExpressionNode::Type::ComplexCartesian && !index.isReal(context, angleUnit) && index.type() != ExpressionNode::Type::ComplexCartesian) {
+  if (!base.isReal(context) && base.type() != ExpressionNode::Type::ComplexCartesian && !index.isReal(context) && index.type() != ExpressionNode::Type::ComplexCartesian) {
     return *this;
   }
 
@@ -374,12 +374,12 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Rational a = childAtIndex(0).convert<Rational>();
     // 0^x
     if (a.isZero()) {
-      if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
+      if (childAtIndex(1).sign(&context) == ExpressionNode::Sign::Positive) {
         Expression result = Rational(0);
         replaceWithInPlace(result);
         return result;
       }
-      if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+      if (childAtIndex(1).sign(&context) == ExpressionNode::Sign::Negative) {
         Expression result = Undefined();
         replaceWithInPlace(result);
         return result;
@@ -443,8 +443,8 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     }
   }
   // All other cases where one child at least is a ComplexCartesian
-  if ((!letPowerAtRoot && base.isReal(context, angleUnit) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
-      (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context, angleUnit)) ||
+  if ((!letPowerAtRoot && base.isReal(context) && index.type() == ExpressionNode::Type::ComplexCartesian) ||
+      (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian && index.isReal(context)) ||
       (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian && index.type() == ExpressionNode::Type::ComplexCartesian)) {
     complexBase = base.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational(0));
     complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational(0));
@@ -477,13 +477,13 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   // Step 5: (±inf)^x = 0 or ±inf
   if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
     Expression result;
-    if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+    if (childAtIndex(1).sign(&context) == ExpressionNode::Sign::Negative) {
       // --> 0 if x < 0
       result = Rational(0);
-    } else if (childAtIndex(1).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
+    } else if (childAtIndex(1).sign(&context) == ExpressionNode::Sign::Positive) {
       // --> (±inf) if x > 0
       result = Infinity(false);
-      if (childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+      if (childAtIndex(0).sign(&context) == ExpressionNode::Sign::Negative) {
         // (-inf)^x --> (-1)^x*inf
         Power p(Rational(-1), childAtIndex(1));
         result = Multiplication(p, result);
@@ -512,7 +512,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   // Step 7: (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
   // WARNING: this rule true only if a real (ex: (-1*i)^(1/2) != i*i^(1/2)
   if (!letPowerAtRoot
-      && childAtIndex(0).isReal(context, angleUnit)
+      && childAtIndex(0).isReal(context)
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isHalf())
   {
@@ -554,7 +554,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
     if (childAtIndex(1).numberOfChildren() == 2 && childAtIndex(0).isIdenticalTo(childAtIndex(1).childAtIndex(1))) {
       // y > 0
-      if (childAtIndex(1).childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Positive) {
+      if (childAtIndex(1).childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive) {
         Expression result = childAtIndex(1).childAtIndex(0);
         replaceWithInPlace(result);
         return result;
@@ -574,7 +574,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
     // Check if a > 0 or c is Integer
-    if (p.childAtIndex(0).sign(&context, angleUnit) == ExpressionNode::Sign::Positive
+    if (p.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive
         || (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne()))
     {
@@ -591,7 +591,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     // Case 2: (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
     for (int i = 0; i < m.numberOfChildren(); i++) {
       // a is signed and a != -1
-      if (m.childAtIndex(i).sign(&context, angleUnit) != ExpressionNode::Sign::Unknown
+      if (m.childAtIndex(i).sign(&context) != ExpressionNode::Sign::Unknown
           && (m.childAtIndex(i).type() != ExpressionNode::Type::Rational
             || !m.childAtIndex(i).convert<Rational>().isMinusOne()))
       {
@@ -600,7 +600,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         Expression factor = m.childAtIndex(i);
 
         // (sign(a)*b*...)^r
-        if (factor.sign(&context, angleUnit) == ExpressionNode::Sign::Negative) {
+        if (factor.sign(&context) == ExpressionNode::Sign::Negative) {
           m.replaceChildAtIndexInPlace(i, Rational(-1));
           factor = factor.setSign(ExpressionNode::Sign::Positive, &context, angleUnit, target);
         } else {
@@ -734,7 +734,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       a->addOperand(m);
       m->shallowReduce(context, angleUnit, target);
     }
-    if (nr->sign(&context, angleUnit) == Sign::Negative) {
+    if (nr->sign(&context) == Sign::Negative) {
       nr->replaceWith(new Rational(-1), true);
       childAtIndex(0)->replaceWith(a, true)->shallowReduce(context, angleUnit, target);
       return shallowReduce(context, angleUnit, target);

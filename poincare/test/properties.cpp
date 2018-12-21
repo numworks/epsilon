@@ -16,7 +16,7 @@ void assert_parsed_expression_sign(const char * expression, Poincare::Expression
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
   e = e.reduce(globalContext, Degree);
-  quiz_assert(e.sign(&globalContext, Degree) == sign);
+  quiz_assert(e.sign(&globalContext) == sign);
 }
 
 QUIZ_CASE(poincare_sign) {

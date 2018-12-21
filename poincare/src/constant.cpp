@@ -10,14 +10,14 @@
 
 namespace Poincare {
 
-ExpressionNode::Sign ConstantNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
+ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   if (isPi() || isExponential()) {
     return Sign::Positive;
   }
   return Sign::Unknown;
 }
 
-bool ConstantNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+bool ConstantNode::isReal(Context & context) const {
   return !isIComplex();
 }
 

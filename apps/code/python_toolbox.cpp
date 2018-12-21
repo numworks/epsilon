@@ -8,31 +8,14 @@ extern "C" {
 
 namespace Code {
 
-static constexpr int catalogChildrenCount = 125;
-static constexpr int MathModuleChildrenCount = 43;
-static constexpr int KandinskyModuleChildrenCount = 7;
-static constexpr int CMathModuleChildrenCount = 13;
-static constexpr int RandomModuleChildrenCount = 10;
-static constexpr int TurtleModuleChildrenCount = 30;
-
-static constexpr int conditionsChildrenCount = 9;
-static constexpr int forLoopChildrenCount = 4;
-static constexpr int functionsChildrenCount = 2;
-static constexpr int ifStatementChildrenCount = 5;
-static constexpr int loopsAndTestsChildrenCount = 4;
-static constexpr int menuChildrenCount = 4;
-static constexpr int modulesChildrenCount = 5;
-static constexpr int whileLoopChildrenCount = 1;
-
-
-const ToolboxMessageTree forLoopChildren[forLoopChildrenCount] = {
+const ToolboxMessageTree forLoopChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ForInRange1ArgLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange1ArgLoop),
   ToolboxMessageTree::Leaf(I18n::Message::ForInRange2ArgsLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange2ArgsLoop),
   ToolboxMessageTree::Leaf(I18n::Message::ForInRange3ArgsLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInRange3ArgsLoop),
   ToolboxMessageTree::Leaf(I18n::Message::ForInListLoopWithArg, I18n::Message::Default, false, I18n::Message::ForInListLoop)
 };
 
-const ToolboxMessageTree ifStatementChildren[ifStatementChildrenCount] = {
+const ToolboxMessageTree ifStatementChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::IfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfElseStatement),
   ToolboxMessageTree::Leaf(I18n::Message::IfThenStatementWithArg, I18n::Message::Default, false, I18n::Message::IfThenStatement),
   ToolboxMessageTree::Leaf(I18n::Message::IfElifElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfElifElseStatement),
@@ -40,11 +23,11 @@ const ToolboxMessageTree ifStatementChildren[ifStatementChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::IfOrIfElseStatementWithArg, I18n::Message::Default, false, I18n::Message::IfOrIfElseStatement)
 };
 
-const ToolboxMessageTree whileLoopChildren[whileLoopChildrenCount] = {
+const ToolboxMessageTree whileLoopChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::WhileLoopWithArg, I18n::Message::Default, false, I18n::Message::WhileLoop)
 };
 
-const ToolboxMessageTree conditionsChildren[conditionsChildrenCount] = {
+const ToolboxMessageTree conditionsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::EqualityConditionWithArg, I18n::Message::Default, false, I18n::Message::EqualityCondition),
   ToolboxMessageTree::Leaf(I18n::Message::NonEqualityConditionWithArg, I18n::Message::Default, false, I18n::Message::NonEqualityCondition),
   ToolboxMessageTree::Leaf(I18n::Message::SuperiorStrictConditionWithArg, I18n::Message::Default, false, I18n::Message::SuperiorStrictCondition),
@@ -56,14 +39,14 @@ const ToolboxMessageTree conditionsChildren[conditionsChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::ConditionNot, I18n::Message::Default, false)
 };
 
-const ToolboxMessageTree loopsAndTestsChildren[loopsAndTestsChildrenCount] = {
-  ToolboxMessageTree::Node(I18n::Message::ForLoopMenu, forLoopChildren, forLoopChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::IfStatementMenu, ifStatementChildren, ifStatementChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::WhileLoopMenu, whileLoopChildren, whileLoopChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::ConditionsMenu, conditionsChildren, conditionsChildrenCount)
+const ToolboxMessageTree loopsAndTestsChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::ForLoopMenu, forLoopChildren),
+  ToolboxMessageTree::Node(I18n::Message::IfStatementMenu, ifStatementChildren),
+  ToolboxMessageTree::Node(I18n::Message::WhileLoopMenu, whileLoopChildren),
+  ToolboxMessageTree::Node(I18n::Message::ConditionsMenu, conditionsChildren)
 };
 
-const ToolboxMessageTree MathModuleChildren[MathModuleChildrenCount] = {
+const ToolboxMessageTree MathModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportMath, I18n::Message::PythonImportMath, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromMath, I18n::Message::PythonImportFromMath, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMathFunction, I18n::Message::PythonMathFunction, false, I18n::Message::PythonCommandMathFunctionWithoutArg),
@@ -109,7 +92,7 @@ const ToolboxMessageTree MathModuleChildren[MathModuleChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLgamma, I18n::Message::PythonLgamma)
 };
 
-const ToolboxMessageTree KandinskyModuleChildren[KandinskyModuleChildrenCount] = {
+const ToolboxMessageTree KandinskyModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportKandinsky, I18n::Message::PythonImportKandinsky, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromKandinsky, I18n::Message::PythonImportFromKandinsky, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKandinskyFunction, I18n::Message::PythonKandinskyFunction, false),
@@ -119,7 +102,7 @@ const ToolboxMessageTree KandinskyModuleChildren[KandinskyModuleChildrenCount] =
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString)
 };
 
-const ToolboxMessageTree RandomModuleChildren[RandomModuleChildrenCount] = {
+const ToolboxMessageTree RandomModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportRandom, I18n::Message::PythonImportRandom, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromRandom, I18n::Message::PythonImportFromRandom, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandRandomFunction, I18n::Message::PythonRandomFunction, false, I18n::Message::PythonCommandRandomFunctionWithoutArg),
@@ -132,7 +115,7 @@ const ToolboxMessageTree RandomModuleChildren[RandomModuleChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandUniform, I18n::Message::PythonUniform)
 };
 
-const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
+const ToolboxMessageTree CMathModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportCmath, I18n::Message::PythonImportCmath, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromCmath, I18n::Message::PythonImportFromCmath, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandCmathFunction, I18n::Message::PythonCmathFunction, false, I18n::Message::PythonCommandCmathFunctionWithoutArg),
@@ -148,7 +131,7 @@ const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSinComplex, I18n::Message::PythonSin)
 };
 
-const ToolboxMessageTree TurtleModuleChildren[TurtleModuleChildrenCount] = {
+const ToolboxMessageTree TurtleModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportTurtle, I18n::Message::PythonImportTurtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromTurtle, I18n::Message::PythonImportFromTurtle, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandTurtleFunction, I18n::Message::PythonTurtleFunction, false, I18n::Message::PythonCommandTurtleFunctionWithoutArg),
@@ -181,15 +164,15 @@ const ToolboxMessageTree TurtleModuleChildren[TurtleModuleChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandGrey, I18n::Message::PythonTurtleGrey, false)
 };
 
-const ToolboxMessageTree modulesChildren[modulesChildrenCount] = {
-  ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren, MathModuleChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren, CMathModuleChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::RandomModule, RandomModuleChildren, RandomModuleChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::TurtleModule, TurtleModuleChildren, TurtleModuleChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren, KandinskyModuleChildrenCount)
+const ToolboxMessageTree modulesChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::MathModule, MathModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::CmathModule, CMathModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::RandomModule, RandomModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::TurtleModule, TurtleModuleChildren),
+  ToolboxMessageTree::Node(I18n::Message::KandinskyModule, KandinskyModuleChildren)
 };
 
-const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
+const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPound, I18n::Message::PythonPound, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPercent, I18n::Message::PythonPercent, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommand1J, I18n::Message::Python1J, false),
@@ -317,19 +300,19 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, false, I18n::Message::PythonCommandRealWithoutArg)
 };
 
-const ToolboxMessageTree functionsChildren[functionsChildrenCount] = {
+const ToolboxMessageTree functionsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDefWithArg, I18n::Message::Default, false, I18n::Message::PythonCommandDef),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReturn, I18n::Message::Default)
 };
 
-const ToolboxMessageTree menu[menuChildrenCount] = {
-  ToolboxMessageTree::Node(I18n::Message::LoopsAndTests, loopsAndTestsChildren, loopsAndTestsChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::Modules, modulesChildren, modulesChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::Catalog, catalogChildren, catalogChildrenCount),
-  ToolboxMessageTree::Node(I18n::Message::Functions, functionsChildren, functionsChildrenCount)
+const ToolboxMessageTree menu[] = {
+  ToolboxMessageTree::Node(I18n::Message::LoopsAndTests, loopsAndTestsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Modules, modulesChildren),
+  ToolboxMessageTree::Node(I18n::Message::Catalog, catalogChildren),
+  ToolboxMessageTree::Node(I18n::Message::Functions, functionsChildren)
 };
 
-const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu, menuChildrenCount);
+const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
 
 PythonToolbox::PythonToolbox() :

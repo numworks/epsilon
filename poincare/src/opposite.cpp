@@ -19,14 +19,14 @@ int OppositeNode::polynomialDegree(Context & context, const char * symbolName) c
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-ExpressionNode::Sign OppositeNode::sign(Context * context, Preferences::AngleUnit angleUnit) const {
-  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Positive) {
+ExpressionNode::Sign OppositeNode::sign(Context * context) const {
+  if (childAtIndex(0)->sign(context) == Sign::Positive) {
     return Sign::Negative;
   }
-  if (childAtIndex(0)->sign(context, angleUnit) == Sign::Negative) {
+  if (childAtIndex(0)->sign(context) == Sign::Negative) {
     return Sign::Positive;
   }
-  return ExpressionNode::sign(context,angleUnit);
+  return ExpressionNode::sign(context);
 }
 
 /* Layout */

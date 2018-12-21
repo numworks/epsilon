@@ -48,7 +48,7 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
 #endif
 #endif
   Expression c = childAtIndex(0);
-  if (c.isReal(context, angleUnit)) {
+  if (c.isReal(context)) {
     float app = c.approximateToScalar<float>(context, angleUnit);
     if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
       // abs(a) = a with a > 0

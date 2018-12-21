@@ -20,11 +20,11 @@ public:
 
   // Properties
   Type type() const override { return Type::SignFunction; }
-  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
+  Sign sign(Context * context) const override;
   Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Complex
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const override { return true; }
+  bool isReal(Context & context) const override { return true; }
 
 private:
   // Layout

@@ -119,7 +119,7 @@ public:
 
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
-  ExpressionNode::Sign sign(Context * context, Preferences::AngleUnit angleUnit) const { return node()->sign(context, angleUnit); }
+  ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
@@ -167,7 +167,7 @@ public:
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Complex */
-  bool isReal(Context & context, Preferences::AngleUnit angleUnit) const { return node()->isReal(context, angleUnit); }
+  bool isReal(Context & context) const { return node()->isReal(context); }
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

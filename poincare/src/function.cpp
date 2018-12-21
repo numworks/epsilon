@@ -9,9 +9,9 @@
 
 namespace Poincare {
 
-bool FunctionNode::isReal(Context & context, Preferences::AngleUnit angleUnit) const {
+bool FunctionNode::isReal(Context & context) const {
   Function f(this);
-  return SymbolAbstract::isReal(f, context, angleUnit);
+  return SymbolAbstract::isReal(f, context);
 }
 
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

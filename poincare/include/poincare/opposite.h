@@ -25,7 +25,7 @@ public:
   // Properties
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Sign sign(Context * context, Preferences::AngleUnit angleUnit) const override;
+  Sign sign(Context * context) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {

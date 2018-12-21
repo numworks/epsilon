@@ -109,7 +109,7 @@ Expression ComplexCartesian::squareNorm(Context & context, Preferences::AngleUni
 Expression ComplexCartesian::norm(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   if (imag().isRationalZero()) {
     Expression a = real();
-    ExpressionNode::Sign s = a.sign(&context, angleUnit);
+    ExpressionNode::Sign s = a.sign(&context);
     if (s == ExpressionNode::Sign::Positive) {
       // Case 1: the expression is positive real
       return a;;

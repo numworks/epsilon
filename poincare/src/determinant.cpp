@@ -28,13 +28,13 @@ Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preference
   return Complex<T>(input.determinant());
 }
 
-Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Determinant(this).shallowReduce(context, angleUnit);
+Expression DeterminantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Determinant(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
-Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Determinant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }

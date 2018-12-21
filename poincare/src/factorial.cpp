@@ -14,7 +14,7 @@ namespace Poincare {
 
 // Property
 
-Expression FactorialNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FactorialNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   assert(s == Sign::Positive);
   return Factorial(this);
 }
@@ -34,12 +34,12 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Factorial(this).shallowReduce(context, angleUnit);
+Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Factorial(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
-Expression FactorialNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Factorial(this).shallowBeautify(context, angleUnit);
+Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  return Factorial(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
 template<typename T>
@@ -91,9 +91,9 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 
 Factorial::Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
 
-Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -127,7 +127,7 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
   return *this;
 }
 
-Expression Factorial::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   // +(a,b)! ->(+(a,b))!
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication

@@ -12,8 +12,8 @@ constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
 
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return MatrixTranspose(this).shallowReduce(context, angleUnit);
+Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return MatrixTranspose(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -37,9 +37,9 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
   return transpose;
 }
 
-Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTranspose::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }

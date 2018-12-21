@@ -83,11 +83,11 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
   return false;
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(isDirectTrigonometryFunction(e));
 
   // Step 1. Try finding an easy standard calculation reduction
-  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit, target);
+  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, complexFormat, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
     return lookup;
@@ -115,14 +115,14 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         Rational(1,2)
       );
     // reduce x^2
-    sqrt.childAtIndex(0).childAtIndex(1).childAtIndex(1).shallowReduce(context, angleUnit, target);
+    sqrt.childAtIndex(0).childAtIndex(1).childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, target);
     // reduce -1*x^2
-    sqrt.childAtIndex(0).childAtIndex(1).shallowReduce(context, angleUnit, target);
+    sqrt.childAtIndex(0).childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, target);
     // reduce 1-1*x^2
-    sqrt.childAtIndex(0).shallowReduce(context, angleUnit, target);
+    sqrt.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
     e.replaceWithInPlace(sqrt);
     // reduce sqrt(1+(-1)*x^2)
-    return sqrt.shallowReduce(context, angleUnit, target);
+    return sqrt.shallowReduce(context, complexFormat, angleUnit, target);
   }
 
   // Step 4. Look for an expression of type "cos(arctan(x))" or "sin(arctan(x))"
@@ -144,33 +144,33 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
       );
 
     // reduce x^2
-    res.childAtIndex(0).childAtIndex(1).shallowReduce(context, angleUnit, target);
+    res.childAtIndex(0).childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, target);
     // reduce 1+*x^2
-    res.childAtIndex(0).shallowReduce(context, angleUnit, target);
+    res.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
     if (e.type() == ExpressionNode::Type::Sine) {
       res = Multiplication(x, res);
       // reduce (1+x^2)^(-1/2)
-      res.childAtIndex(0).shallowReduce(context, angleUnit, target);
+      res.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
     }
     e.replaceWithInPlace(res);
     // reduce (1+x^2)^(-1/2) or x*(1+x^2)^(-1/2)
-    return res.shallowReduce(context, angleUnit, target);
+    return res.shallowReduce(context, complexFormat, angleUnit, target);
   }
 
   // Step 5. Look for an expression of type "cos(-a)", return "+/-cos(a)"
-  Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
+  Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
   if (!positiveArg.isUninitialized()) {
     // The argument was of form cos(-a)
     if (e.type() == ExpressionNode::Type::Cosine) {
       // cos(-a) = cos(a)
-      return e.shallowReduce(context, angleUnit, target);
+      return e.shallowReduce(context, complexFormat, angleUnit, target);
     } else {
       // sin(-a) = -sin(a) or tan(-a) = -tan(a)
       Multiplication m(Rational(-1));
       e.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(e, 1, 1);
-      e.shallowReduce(context, angleUnit, target);
-      return m.shallowReduce(context, angleUnit, target);
+      e.shallowReduce(context, complexFormat, angleUnit, target);
+      return m.shallowReduce(context, complexFormat, angleUnit, target);
     }
   }
 
@@ -222,27 +222,27 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
       Expression newR = Rational(div.remainder, rDenominator);
       Expression rationalParent = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0) : e;
       rationalParent.replaceChildAtIndexInPlace(0, newR);
-      newR.shallowReduce(context, angleUnit, target);
+      newR.shallowReduce(context, complexFormat, angleUnit, target);
       if (angleUnit == Preferences::AngleUnit::Radian) {
-        e.childAtIndex(0).shallowReduce(context, angleUnit, target);
+        e.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
       }
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e.type() != ExpressionNode::Type::Tangent) {
         /* Step 4.6. If we subtracted an odd number of Pi in 4.2, we need to
          * multiply the result by -1 (because cos((2k+1)Pi + x) = -cos(x) */
         unaryCoefficient *= -1;
       }
-      Expression simplifiedCosine = e.shallowReduce(context, angleUnit, target); // recursive
+      Expression simplifiedCosine = e.shallowReduce(context, complexFormat, angleUnit, target); // recursive
       Multiplication m = Multiplication(Rational(unaryCoefficient));
       simplifiedCosine.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
-      return m.shallowReduce(context, angleUnit, target);
+      return m.shallowReduce(context, complexFormat, angleUnit, target);
     }
     assert(r.sign() == ExpressionNode::Sign::Positive);
   }
   return e;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(isInverseTrigonometryFunction(e));
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180;
 
@@ -278,19 +278,19 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     if (target == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
       Multiplication m0(Rational(1,2), sign, Constant(Ion::Charset::SmallPi));
-      sign.shallowReduce(context, angleUnit, target);
+      sign.shallowReduce(context, complexFormat, angleUnit, target);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a(m0);
       e.replaceWithInPlace(a);
       Multiplication m1(Rational(-1), e);
-      e.shallowReduce(context, angleUnit, target);
+      e.shallowReduce(context, complexFormat, angleUnit, target);
       a.addChildAtIndexInPlace(m1, 1, 1);
-      return a.shallowReduce(context, angleUnit, target);
+      return a.shallowReduce(context, complexFormat, angleUnit, target);
     }
   }
 
   // Step 4. Try finding an easy standard calculation reduction
-  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, angleUnit, target);
+  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, complexFormat, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
     return lookup;
@@ -308,7 +308,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
    */
   if (!letArcFunctionAtRoot) {
-    Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
+    Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
     if (!positiveArg.isUninitialized()) {
       // The argument was made positive
       // acos(-x) = pi-acos(x)
@@ -318,15 +318,15 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);
         s.replaceChildAtIndexInPlace(1, e);
-        e.shallowReduce(context, angleUnit, target);
-        return s.shallowReduce(context, angleUnit, target);
+        e.shallowReduce(context, complexFormat, angleUnit, target);
+        return s.shallowReduce(context, complexFormat, angleUnit, target);
       } else {
         // asin(-x) = -asin(x) or atan(-x) = -atan(x)
         Multiplication m(Rational(-1));
         e.replaceWithInPlace(m);
         m.addChildAtIndexInPlace(e, 1, 1);
-        e.shallowReduce(context, angleUnit, target);
-        return m.shallowReduce(context, angleUnit, target);
+        e.shallowReduce(context, complexFormat, angleUnit, target);
+        return m.shallowReduce(context, complexFormat, angleUnit, target);
       }
     }
   }
@@ -425,7 +425,7 @@ constexpr Pair cheatTable[Trigonometry::k_numberOfEntries][5] =
  {Pair("180",180.0f),                                              Pair("\x8A",3.141592653589793f),                     Pair("-1",-1.0f),
   Pair("0",0.0f),                                                  Pair("0",0.0f)}};
 
-Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(type == ExpressionNode::Type::Sine
       || type == ExpressionNode::Type::Cosine
       || type == ExpressionNode::Type::Tangent
@@ -461,14 +461,14 @@ Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Co
     // Our given expression approximation matches a table entry, we check that both expressions are identical
     Expression input = Expression::Parse(cheatTable[i][inputIndex].expression);
     assert(!input.isUninitialized());
-    input = input.deepReduce(context, angleUnit, target);
+    input = input.deepReduce(context, complexFormat, angleUnit, target);
     bool rightInput = input.isIdenticalTo(e);
     if (rightInput) {
       Expression output = Expression::Parse(cheatTable[i][outputIndex].expression);
       if (output.isUninitialized()) {
         return Expression();
       }
-      return output.deepReduce(context, angleUnit, target);
+      return output.deepReduce(context, complexFormat, angleUnit, target);
     }
     break;
   }

@@ -31,13 +31,13 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Ang
   return Complex<T>(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Floor(this).shallowReduce(context, angleUnit);
+Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Floor(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
-Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Floor::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }

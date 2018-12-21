@@ -50,12 +50,12 @@ int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Addition(this).shallowReduce(context, angleUnit, target);
+Expression AdditionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Addition(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Addition(this).shallowBeautify(context, angleUnit);
+Expression AdditionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  return Addition(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
 // Addition
@@ -88,7 +88,7 @@ int Addition::getPolynomialCoefficients(Context & context, const char * symbolNa
   return deg;
 }
 
-Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Addition::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   /* Beautifying AdditionNode essentially consists in adding Subtractions if
    * needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
@@ -101,7 +101,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
 
   for (int i = 0; i < numberOfChildren(); i++) {
     // Try to make the child i positive if any negative numeral factor is found
-    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, angleUnit, ExpressionNode::ReductionTarget::User);
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
     if (subtractant.isUninitialized())
     {
       // if subtractant is not initialized, it means the child i had no negative numeral factor
@@ -131,9 +131,9 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
   return result;
 }
 
-Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Addition::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -187,7 +187,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
         resultMatrix->replaceOperand(resultMatrixEntryJ, a, false);
         a->addOperand(currentMatrix->childAtIndex(j));
         a->addOperand(resultMatrixEntryJ);
-        a->shallowReduce(context, angleUnit);
+        a->shallowReduce(context, complexFormat, angleUnit);
       }
       currentMatrix->detachOperands();
       removeOperand(currentMatrix, true);
@@ -199,9 +199,9 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
       Expression * entryI = resultMatrix->childAtIndex(i);
       resultMatrix->replaceOperand(entryI, a, false);
       a->addOperand(entryI);
-      a->shallowReduce(context, angleUnit);
+      a->shallowReduce(context, complexFormat, angleUnit);
     }
-    return replaceWith(resultMatrix, true)->shallowReduce(context, angleUnit);
+    return replaceWith(resultMatrix, true)->shallowReduce(context, complexFormat, angleUnit);
   }
 #endif
 #endif
@@ -221,7 +221,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
       continue;
     }
     if (TermsHaveIdenticalNonNumeralFactors(e1, e2)) {
-      factorizeChildrenAtIndexesInPlace(i, i+1, context, angleUnit, target);
+      factorizeChildrenAtIndexesInPlace(i, i+1, context, complexFormat, angleUnit, target);
       continue;
     }
     i++;
@@ -275,9 +275,9 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(newComplexCartesian);
     newComplexCartesian.replaceChildAtIndexInPlace(0, real);
     newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
-    real.shallowReduce(context, angleUnit, target);
-    imag.shallowReduce(context, angleUnit, target);
-    return newComplexCartesian.shallowReduce(context, angleUnit);
+    real.shallowReduce(context, complexFormat, angleUnit, target);
+    imag.shallowReduce(context, complexFormat, angleUnit, target);
+    return newComplexCartesian.shallowReduce(context, complexFormat, angleUnit);
   }
 
   /* Step 7: Let's put everything under a common denominator.
@@ -286,7 +286,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
   Expression p = result.parent();
   if (target == ExpressionNode::ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
-     result = factorizeOnCommonDenominator(context, angleUnit);
+     result = factorizeOnCommonDenominator(context, complexFormat, angleUnit);
   }
   return result;
 }
@@ -332,16 +332,16 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   }
 }
 
-Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
 
   // Step 1: We want to compute the common denominator, b*d
   Multiplication commonDenominator = Multiplication();
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression currentDenominator = childAtIndex(i).denominator(context, angleUnit);
+    Expression currentDenominator = childAtIndex(i).denominator(context, complexFormat, angleUnit);
     if (!currentDenominator.isUninitialized()) {
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
-      commonDenominator.addMissingFactors(currentDenominator, context, angleUnit);
+      commonDenominator.addMissingFactors(currentDenominator, context, complexFormat, angleUnit);
     }
   }
   if (commonDenominator.numberOfChildren() == 0) {
@@ -355,7 +355,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   for (int i = 0; i < numberOfChildren(); i++) {
     Multiplication m = Multiplication(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
-    m.privateShallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User, true, false);
+    m.privateShallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, true, false);
   }
 
   // Step 3: Add the denominator
@@ -363,18 +363,18 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   Multiplication result = Multiplication(numerator, inverseDenominator);
 
   // Step 4: Simplify the numerator
-  numerator.shallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  numerator.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  inverseDenominator.deepReduce(context, angleUnit, ExpressionNode::ReductionTarget::User);
+  inverseDenominator.deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop). */
   replaceWithInPlace(result);
-  return result.privateShallowReduce(context, angleUnit, ExpressionNode::ReductionTarget::User, false, true);
+  return result.privateShallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, false, true);
 }
 
-void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   /* This function factorizes two children which only differ by a rational
    * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
    * could be merged, and this turned into AdditionNode(5*pi). */
@@ -410,7 +410,7 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context
   }
 
   // Step 5: Reduce the multiplication (in case the new rational factor is zero)
-  m.shallowReduce(context, angleUnit, target);
+  m.shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>);

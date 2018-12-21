@@ -13,8 +13,8 @@ constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
 
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return MatrixTrace(this).shallowReduce(context, angleUnit);
+Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return MatrixTrace(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -32,9 +32,9 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
   return result;
 }
 
-Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTrace::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -52,7 +52,7 @@ Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit 
     for (int i = 0; i < n; i++) {
       a.addChildAtIndexInPlace(m.childAtIndex(i+n*i), i, a.numberOfChildren());
     }
-    return a.shallowReduce(context, angleUnit);
+    return a.shallowReduce(context, complexFormat, angleUnit);
   }
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
     return c;

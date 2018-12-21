@@ -20,8 +20,8 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
 }
 
-Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return DivisionRemainder(this).shallowReduce(context, angleUnit);
+Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return DivisionRemainder(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 template<typename T>
@@ -36,9 +36,9 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
   return Complex<T>(std::round(f1-f2*std::floor(f1/f2)));
 }
 
-Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression DivisionRemainder::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }

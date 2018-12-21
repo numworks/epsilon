@@ -27,7 +27,7 @@ public:
   // Properties
   Type type() const override { return Type::Power; }
   Sign sign(Context * context) const override;
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
@@ -45,11 +45,11 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplify
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
   // Evaluation
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d);
@@ -68,28 +68,28 @@ class Power final : public Expression {
 public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
-  Expression simplifyPowerPower(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression simplifyPowerMultiplication(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression simplifyRationalRationalPower(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression simplifyPowerPower(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression simplifyPowerMultiplication(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression simplifyRationalRationalPower(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
-  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
+  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression removeSquareRootsFromDenominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
   Expression equivalentExpressionUsingStandardExpression() const;
-  static Expression CreateComplexExponent(const Expression & r, Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target); // Returns e^(i*pi*r)
+  static Expression CreateComplexExponent(const Expression & r, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target); // Returns e^(i*pi*r)
   static bool TermIsARationalSquareRootOrRational(const Expression& e);
   static const Rational RadicandInExpression(const Expression & e);
   static const Rational RationalFactorInExpression(const Expression & e);

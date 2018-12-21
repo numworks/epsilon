@@ -116,7 +116,7 @@ public:
   virtual bool isNumber() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol);
-  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context & context);
@@ -160,11 +160,11 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }

@@ -37,12 +37,12 @@ ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
   return e.sign(context);
 }
 
-Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   SymbolAbstract sa(this);
   Expression e = SymbolAbstract::Expand(sa, *context, true);
   assert(!e.isUninitialized());
   sa.replaceWithInPlace(e);
-  return e.setSign(s, context, angleUnit, target);
+  return e.setSign(s, context, complexFormat, angleUnit, target);
 }
 
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {

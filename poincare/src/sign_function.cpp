@@ -17,7 +17,7 @@ ExpressionNode::Sign SignFunctionNode::sign(Context * context) const {
   return childAtIndex(0)->sign(context);
 }
 
-Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   SignFunction sign(this);
   Rational r(s == ExpressionNode::Sign::Positive ? 1 : -1);
   sign.replaceWithInPlace(r);
@@ -32,8 +32,8 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SignFunction::s_functionHelper.name());
 }
 
-Expression SignFunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return SignFunction(this).shallowReduce(context, angleUnit, target);
+Expression SignFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return SignFunction(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
@@ -47,9 +47,9 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
   return Complex<T>(1.0);
 }
 
-Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -73,7 +73,7 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::AngleUnit
     // c has no sign (c is complex or NAN)
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // sign(-x) = -sign(x)
-      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, angleUnit, target);
+      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
       if (oppChild.isUninitialized()) {
         return *this;
       } else {

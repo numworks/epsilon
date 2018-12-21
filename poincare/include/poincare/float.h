@@ -40,7 +40,7 @@ public:
   // Properties
   Type type() const override { return Type::Float; }
   Sign sign(Context * context) const override { return m_value < 0 ? Sign::Negative : Sign::Positive; }
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Layout

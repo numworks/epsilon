@@ -169,4 +169,59 @@ QUIZ_CASE(equation_solve) {
   assert_equation_system_exact_solve_to(equations19,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesBig1Big2, solutions19, 2);
 }
 
+QUIZ_CASE(equation_solve_complex_format) {
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  const char * variablesx[] = {"x", ""};
+  // x+I = 0 --> x = -I
+  const char * equations0[] = {"x+I=0", 0};
+  const char * solutions0[] = {"-I"};
+  assert_equation_system_exact_solve_to(equations0,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0, 1);
+
+  // x+R(-1) = 0 --> pas de solution dans R
+  const char * equations1[] = {"x+R(-1)=0", 0};
+  assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, nullptr, 0);
+
+  // x^2+x+1=0 --> pas de solution dans R
+  const char * equations2[] = {"x^2+x+1=0", 0};
+  const char * delta2[] = {"-3"};
+  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta2, 0);
+
+  // x^2-R(-1)=0 --> pas de solution dans R
+  const char * equations3[] = {"x^2-R(-1)=0", 0};
+  const char * delta3[] = {"undef"};
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta3, 0);
+
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
+  // x+I = 0 --> x = -I
+  assert_equation_system_exact_solve_to(equations0,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0, 1);
+
+  // x+R(-1) = 0 --> x = -I
+  assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0, 1);
+
+  // x^2+x+1=0
+  const char * solutions2[] = {"-(1)/(2)-(R(3))/(2)*I","-(1)/(2)+(R(3))/(2)*I", "-3"};
+  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2, 2);
+
+  // x^2-R(-1)=0
+  const char * solutions3[] = {"-(R(2))/(2)-(R(2))/(2)*I", "(R(2))/(2)+(R(2))/(2)*I","4*I"};
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3, 2);
+
+  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
+  // x+I = 0 --> x = e^(-pi/2*i)
+  const char * solutions0Polar[] = {"X$-(P)/(2)*I#"};
+  assert_equation_system_exact_solve_to(equations0,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0Polar, 1);
+
+  // x+R(-1) = 0 --> x = e^(-pi/2*i)
+  assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0Polar, 1);
+
+  // x^2+x+1=0
+  const char * solutions2Polar[] = {"X$-(2*P)/(3)*I#","X$(2*P)/(3)*I#", "3*X$P*I#"};
+  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2Polar, 2);
+
+  // x^2-R(-1)=0
+  const char * solutions3Polar[] = {"X$-(3*P)/(4)*I#", "X$(P)/(4)*I#", "4*X$(P)/(2)*I#"};
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3Polar, 2);
+
+}
+
 }

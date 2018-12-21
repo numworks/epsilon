@@ -20,8 +20,8 @@ float CurveViewRange::yGridUnit() {
 }
 
 float CurveViewRange::computeGridUnit(Axis axis, float range1) {
-  float range = axis == Axis::Y ? range1 : ((1.0f-2.0f*CurveView::k_labelsHorizontalMarginRatio)*range1);
-  // TODO share the axis enum of curve_view and then call a static method CurveView::marginRatio(Axis)
+  float marginRatio = CurveView::LabelsMarginRatio(axis == Axis::X ? CurveView::Axis::Horizontal : CurveView::Axis::Vertical);
+  float range = range1 * (1.0f-2.0f*marginRatio);
   int a = 0;
   int b = 0;
   float maxNumberOfUnits = (axis == Axis::X) ? k_maxNumberOfXGridUnits : k_maxNumberOfYGridUnits;

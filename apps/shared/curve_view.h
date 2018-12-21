@@ -36,6 +36,7 @@ public:
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
+  static float LabelsMarginRatio(Axis axis) { return axis == Axis::Horizontal ? k_labelsHorizontalMarginRatio : 0.0f; }
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
@@ -96,7 +97,6 @@ private:
    * cursor views may be nullptr if not needed. */
   void computeHorizontalExtremaLabels();
   float labelValueAtIndex(Axis axis, int i) const;
-  float labelsDisplayMarginRatio(Axis axis) const { return axis == Axis::Horizontal ? k_labelsHorizontalMarginRatio : 0.0f; }
   CurveViewRange * m_curveViewRange;
   View * m_cursorView;
   View * m_okView;

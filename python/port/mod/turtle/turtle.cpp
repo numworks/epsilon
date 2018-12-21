@@ -57,8 +57,7 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
   mp_float_t oldHeading = heading();
   mp_float_t length = ((angle > 0 ? 1 : -1) * angle * k_headingScale) * radius;
   if (length > 1) {
-    int i = 1;
-    while(i <= length) {
+    for (int i = 1; i < length; i++) {
       mp_float_t progress = i / length;
       // Move the turtle forward
       if (forward(1)) {
@@ -66,9 +65,8 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
         return;
       }
       setHeadingPrivate(oldHeading+angle*progress);
-      i++;
     }
-    forward(length-(i-1));
+    forward(1);
     setHeading(oldHeading+angle);
   }
 }

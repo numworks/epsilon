@@ -128,6 +128,7 @@ objs += $(addprefix poincare/src/,\
   tree_pool.o\
   trigonometry.o\
   undefined.o\
+  unreal.o\
   variable_context.o\
 )
 

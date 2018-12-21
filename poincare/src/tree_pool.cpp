@@ -216,6 +216,7 @@ template ArcCosineNode * Poincare::TreePool::createTreeNode<ArcCosineNode>(size_
 template ArcSineNode * Poincare::TreePool::createTreeNode<ArcSineNode>(size_t size);
 template ArcTangentNode * Poincare::TreePool::createTreeNode<ArcTangentNode>(size_t size);
 template UndefinedNode * Poincare::TreePool::createTreeNode<UndefinedNode>(size_t size);
+template UnrealNode * Poincare::TreePool::createTreeNode<UnrealNode>(size_t size);
 template BinomialCoefficientNode * Poincare::TreePool::createTreeNode<BinomialCoefficientNode>(size_t size);
 template CeilingNode * Poincare::TreePool::createTreeNode<CeilingNode>(size_t size);
 template OppositeNode * Poincare::TreePool::createTreeNode<OppositeNode>(size_t size);

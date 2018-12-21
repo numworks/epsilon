@@ -163,6 +163,17 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  // f: x->R(-1)
+  assert_simplify("R(-1)*R(-1)>f(x)");
+  // Approximate f(?) with ? = 5
+  // Cartesian
+  assert_parsed_expression_approximates_with_value_for_symbol(Function("f", 1, Symbol(Symbol::SpecialSymbols::UnknownX)), x, 1.0, -1.0);
+    // Real
+  assert_parsed_expression_approximates_with_value_for_symbol(Function("f", 1, Symbol(Symbol::SpecialSymbols::UnknownX)), x, 1.0, (double)NAN, Real);
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_user_variable_properties) {

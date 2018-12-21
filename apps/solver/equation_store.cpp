@@ -78,7 +78,8 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit()));
+  Preferences * preferences = Preferences::sharedPreferences();
+  return !std::isnan(definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context, preferences->complexFormat(), preferences->angleUnit()));
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
@@ -87,8 +88,9 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
+  Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit());
+    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context, preferences->complexFormat(), preferences->angleUnit());
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {

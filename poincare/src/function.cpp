@@ -85,7 +85,7 @@ Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.approximateToEvaluation<T>(context, angleUnit);
+  return e.node()->approximate(T(), context, angleUnit);
 }
 
 Function::Function(const char * name, size_t length) :

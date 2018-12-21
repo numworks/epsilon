@@ -1,4 +1,5 @@
 #include "function.h"
+#include "poincare_helpers.h"
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -41,7 +42,7 @@ void Function::setActive(bool active) {
 
 template<typename T>
 T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  return expression(context).approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
+  return PoincareHelpers::ApproximateWithValueForSymbol(expression(context), symbol(), x, *context);
 }
 
 }

@@ -48,7 +48,7 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
 #endif
   bool real = c.isReal(context);
   if (real) {
-    float app = c.approximateToScalar<float>(context, angleUnit);
+    float app = c.node()->approximate(float(), context, angleUnit).toScalar();
     if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
       // arg(x) = 0 if x > 0
       Expression result = Rational(0);

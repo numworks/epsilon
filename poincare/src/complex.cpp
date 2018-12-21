@@ -22,6 +22,9 @@ namespace Poincare {
 
 template<typename T>
 void ComplexNode<T>::setComplex(std::complex<T> c) {
+  if (c.imag() != 0.0) {
+    Expression::SetEncounterComplex(true);
+  }
   this->real(c.real());
   this->imag(c.imag());
   if (this->real() == -0) {

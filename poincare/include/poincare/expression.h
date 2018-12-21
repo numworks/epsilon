@@ -167,6 +167,7 @@ public:
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Complex */
+  static void SetEncounterComplex(bool encounterComplex);
   static Preferences::ComplexFormat UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput);
   static Preferences::ComplexFormat UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & e, Context & context);
   bool isReal(Context & context) const { return node()->isReal(context); }
@@ -193,20 +194,21 @@ public:
   Expression degreeToRadian();
 
   /* Approximation Helper */
+  // These methods reset the sApproximationEncounterComplex flag. They should not be use to implement node approximation
   template<typename U> static U epsilon();
   template<typename U> Expression approximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename U> U approximateToScalar(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename U> static U approximateToScalar(const char * text, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const;
+  template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
   struct Coordinate2D {
     double abscissa;
     double value;
   };
-  Coordinate2D nextMinimum(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
-  Coordinate2D nextMaximum(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
-  double nextRoot(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
-  Coordinate2D nextIntersection(const char * symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
+  Coordinate2D nextMinimum(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Coordinate2D nextMaximum(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  double nextRoot(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Coordinate2D nextIntersection(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
 
   /* This class is meant to contain data about named functions (e.g. sin, tan...)
    * in one place: their name, their number of children and a pointer to a builder.
@@ -298,7 +300,7 @@ private:
   Expression defaultShallowBeautify() { return *this; }
 
   /* Approximation */
-  template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   /* Properties */
   Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
@@ -315,13 +317,13 @@ private:
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
   constexpr static double k_maxFloat = 1e100;
-  typedef double (*EvaluationAtAbscissa)(const char * symbol, double abscissa, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1);
-  Coordinate2D nextMinimumOfExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression = Expression(), bool lookForRootMinimum = false) const;
-  void bracketMinimum(const char * symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression = Expression()) const;
-  Coordinate2D brentMinimum(const char * symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression = Expression()) const;
-  double nextIntersectionWithExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
-  void bracketRoot(const char * symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
-  double brentRoot(const char * symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
+  typedef double (*EvaluationAtAbscissa)(const char * symbol, double abscissa, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1);
+  Coordinate2D nextMinimumOfExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression = Expression(), bool lookForRootMinimum = false) const;
+  void bracketMinimum(const char * symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression = Expression()) const;
+  Coordinate2D brentMinimum(const char * symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression = Expression()) const;
+  double nextIntersectionWithExpression(const char * symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
+  void bracketRoot(const char * symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
+  double brentRoot(const char * symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const;
 };
 
 }

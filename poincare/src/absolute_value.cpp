@@ -49,7 +49,7 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexF
 #endif
   Expression c = childAtIndex(0);
   if (c.isReal(context)) {
-    float app = c.approximateToScalar<float>(context, angleUnit);
+    float app = c.node()->approximate(float(), context, angleUnit).toScalar();
     if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
       // abs(a) = a with a > 0
       replaceWithInPlace(c);

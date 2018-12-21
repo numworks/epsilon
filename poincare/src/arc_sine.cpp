@@ -19,8 +19,8 @@ int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
 }
 
-Expression ArcSineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ArcSine(this).shallowReduce(context, angleUnit, target);
+Expression ArcSineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ArcSine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
@@ -48,9 +48,9 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcSine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ArcSine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -60,7 +60,7 @@ Expression ArcSine::shallowReduce(Context & context, Preferences::AngleUnit angl
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit, target);
+  return Trigonometry::shallowReduceInverseFunction(*this, context, complexFormat, angleUnit, target);
 }
 
 }

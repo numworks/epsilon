@@ -126,7 +126,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], *context, preferences->angleUnit());
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], *context,  updatedComplexFormat(), preferences->angleUnit());
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -157,7 +157,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     /* 2- Polynomial & Monovariable? */
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, *context, preferences->angleUnit());
+    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, *context, updatedComplexFormat(), preferences->angleUnit());
     if (degree == 2) {
       /* Polynomial degree <= 2*/
       m_type = Type::PolynomialMonovariable;
@@ -201,7 +201,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[solutionIndex]) {
         char buffer[Shared::ExpressionModel::k_expressionBufferSize];
-        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->complexFormat(), preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
       }
       solutionIndex++;
     }
@@ -226,7 +226,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Ab.setDimensions(m, n+1);
 
   // Compute the rank of (A | b)
-  int rankAb = Ab.rank(*context, angleUnit, true);
+  int rankAb = Ab.rank(*context, updatedComplexFormat(), angleUnit, true);
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;
@@ -251,7 +251,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         exactSolutions[i] = Ab.matrixChild(i,n);
-        PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context);
+        PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat());
       }
     }
   }
@@ -263,7 +263,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction(Power(coefficients[1].clone(), Rational(2)), Multiplication(Rational(4), coefficients[0].clone(), coefficients[2].clone()));
-  PoincareHelpers::Simplify(&delta, *context);
+  PoincareHelpers::Simplify(&delta, *context, updatedComplexFormat());
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined();
   }
@@ -280,7 +280,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions] = delta;
   for (int i = 0; i <= m_numberOfSolutions; i++) {
-    PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context);
+    PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat());
   }
   return Error::NoError;
 #if 0
@@ -354,6 +354,14 @@ void EquationStore::tidySolution() {
     m_exactSolutionExactLayouts[i] = Layout();
     m_exactSolutionApproximateLayouts[i] = Layout();
   }
+}
+
+Preferences::ComplexFormat EquationStore::updatedComplexFormat() {
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  if (complexFormat == Preferences::ComplexFormat::Real && isExplictlyComplex()) {
+    return Preferences::ComplexFormat::Cartesian;
+  }
+  return complexFormat;
 }
 
 bool EquationStore::isExplictlyComplex() {

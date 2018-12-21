@@ -62,16 +62,16 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Opposite(this).shallowReduce(context, angleUnit, target);
+Expression OppositeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Opposite(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 /* Simplification */
 
 Opposite::Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
 
-Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  Expression result = Expression::defaultShallowReduce(context, angleUnit);
+Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression result = Expression::defaultShallowReduce();
   if (result.isUndefined()) {
     return result;
   }
@@ -80,7 +80,7 @@ Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit ang
 #endif
   result = Multiplication(Rational(-1), child);
   replaceWithInPlace(result);
-  return result.shallowReduce(context, angleUnit, target);
+  return result.shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 }

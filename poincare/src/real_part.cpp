@@ -20,13 +20,13 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.name());
 }
 
-Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return RealPart(this).shallowReduce(context, angleUnit, target);
+Expression RealPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return RealPart(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -45,7 +45,7 @@ Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit ang
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Expression r = complexChild.real();
     replaceWithInPlace(r);
-    return r.shallowReduce(context, angleUnit, target);
+    return r.shallowReduce(context, complexFormat, angleUnit, target);
   }
   return *this;
 }

@@ -83,6 +83,7 @@ private:
   Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
   void tidySolution();
   bool isExplictlyComplex();
+  Poincare::Preferences::ComplexFormat updatedComplexFormat();
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;

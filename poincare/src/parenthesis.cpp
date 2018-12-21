@@ -16,8 +16,8 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-Expression ParenthesisNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Parenthesis(this).shallowReduce(context, angleUnit);
+Expression ParenthesisNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Parenthesis(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
 template<typename T>
@@ -25,8 +25,8 @@ Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preference
   return childAtIndex(0)->approximate(T(), context, angleUnit);
 }
 
-Expression Parenthesis::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+Expression Parenthesis::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }

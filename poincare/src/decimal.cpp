@@ -56,7 +56,7 @@ size_t DecimalNode::size() const {
   return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
-Expression DecimalNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DecimalNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Decimal(this).setSign(s);
 }
 
@@ -85,12 +85,12 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   return ((int)Number(this).sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Decimal(this).shallowReduce(context, angleUnit);
+Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Decimal(this).shallowReduce(context, complexFormat, angleUnit);
 }
 
-Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Decimal(this).shallowBeautify(context, angleUnit);
+Expression DecimalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  return Decimal(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
 Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -342,8 +342,8 @@ Expression Decimal::setSign(ExpressionNode::Sign s) {
   return result;
 }
 
-Expression Decimal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+Expression Decimal::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
@@ -370,7 +370,7 @@ Expression Decimal::shallowReduce(Context & context, Preferences::AngleUnit angl
   return result;
 }
 
-Expression Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Decimal::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
     Opposite o;

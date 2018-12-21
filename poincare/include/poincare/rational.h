@@ -57,10 +57,10 @@ public:
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
-  Expression setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
   uint8_t m_numberOfDigitsNumerator;
   uint8_t m_numberOfDigitsDenominator;
@@ -108,15 +108,15 @@ public:
   static int NaturalOrder(const Rational & i, const Rational & j) { return RationalNode::NaturalOrder(i.node(), j.node()); }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
 private:
   Rational(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   Expression setSign(ExpressionNode::Sign s);
 };
 

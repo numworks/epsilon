@@ -24,7 +24,9 @@ inline int Serialize(const Poincare::Expression e, char * buffer, int bufferSize
 
 template <class T>
 inline Poincare::Expression Approximate(const Poincare::Expression e, Poincare::Context & context) {
-  return e.approximate<T>(context, Poincare::Preferences::sharedPreferences()->angleUnit(), Poincare::Preferences::sharedPreferences()->complexFormat());
+  Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::sharedPreferences()->complexFormat();
+  complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, e, context);
+  return e.approximate<T>(context, complexFormat, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
 template <class T>
@@ -34,23 +36,27 @@ inline T ApproximateToScalar(const Poincare::Expression e, Poincare::Context & c
 
 template <class T>
 inline T ApproximateToScalar(const char * text, Poincare::Context & context) {
-  return Poincare::Expression::approximateToScalar<T>(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
+  Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::sharedPreferences()->complexFormat();
+  complexFormat = Poincare::Expression::UpdatedComplexFormatWithTextInput(complexFormat, text);
+  return Poincare::Expression::approximateToScalar<T>(text, context, complexFormat, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
 inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Context & context) {
-  return Poincare::Expression::ParseAndSimplify(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
+  return Poincare::Expression::ParseAndSimplify(text, context, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
-inline void Simplify(Poincare::Expression * e, Poincare::Context & context) {
-  *e = e->simplify(context, Poincare::Preferences::sharedPreferences()->angleUnit());
+inline void Simplify(Poincare::Expression * e, Poincare::Context & context, Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::sharedPreferences()->complexFormat()) {
+  complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, *e, context);
+  *e = e->simplify(context, complexFormat, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
 inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expression * simplifiedExpression, Poincare::Expression * approximateExpression, Poincare::Context & context) {
-  Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, Poincare::Preferences::sharedPreferences()->angleUnit(), Poincare::Preferences::sharedPreferences()->complexFormat());
+  Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
-inline void SimplifyAndApproximate(Poincare::Expression * e, Poincare::Expression * approximate,  Poincare::Context & context) {
-  e->simplifyAndApproximate(e, approximate, context, Poincare::Preferences::sharedPreferences()->angleUnit(), Poincare::Preferences::sharedPreferences()->complexFormat());
+inline void SimplifyAndApproximate(Poincare::Expression * e, Poincare::Expression * approximate,  Poincare::Context & context, Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::sharedPreferences()->complexFormat()) {
+  complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, *e, context);
+  e->simplifyAndApproximate(e, approximate, context, complexFormat, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
 }

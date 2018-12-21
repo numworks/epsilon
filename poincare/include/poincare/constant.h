@@ -38,7 +38,7 @@ public:
   bool isIComplex() const { return isConstantChar(Ion::Charset::IComplex); }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -58,7 +58,7 @@ public:
   bool isIComplex() const { return node()->isIComplex(); }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }

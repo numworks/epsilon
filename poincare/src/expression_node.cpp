@@ -22,7 +22,7 @@ Expression ExpressionNode::replaceUnknown(const Symbol & symbol) {
   return Expression(this).defaultReplaceUnknown(symbol);
 }
 
-Expression ExpressionNode::setSign(Sign s, Context * context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ExpressionNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   assert(false);
   return Expression();
 }
@@ -108,16 +108,16 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-void ExpressionNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  Expression(this).defaultDeepReduceChildren(context, angleUnit, target);
+void ExpressionNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression(this).defaultDeepReduceChildren(context, complexFormat, angleUnit, target);
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Expression(this).defaultShallowReduce(context, angleUnit);
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Expression(this).defaultShallowReduce();
 }
 
-Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Expression(this).defaultShallowBeautify(context, angleUnit);
+Expression ExpressionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  return Expression(this).defaultShallowBeautify();
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {
@@ -133,7 +133,7 @@ void ExpressionNode::setChildrenInPlace(Expression other) {
   Expression(this).defaultSetChildrenInPlace(other);
 }
 
-Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Expression();
 }
 

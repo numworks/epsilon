@@ -26,11 +26,11 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Factor(this).shallowBeautify(context, angleUnit);
+Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
-Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     Expression result = Undefined();
@@ -42,7 +42,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(r);
     return r;
   }
-  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, angleUnit);
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, complexFormat, angleUnit);
   if (numeratorDecomp.numberOfChildren() == 0) {
     Expression result = Undefined();
     replaceWithInPlace(result);
@@ -50,7 +50,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.integerDenominator().isOne()) {
-    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, angleUnit);
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, complexFormat, angleUnit);
     if (denominatorDecomp.numberOfChildren() == 0) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -65,7 +65,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
   return result;
 }
 
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m;

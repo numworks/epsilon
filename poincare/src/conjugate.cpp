@@ -23,8 +23,8 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
-Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Conjugate(this).shallowReduce(context, angleUnit, target);
+Expression ConjugateNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Conjugate(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
@@ -32,9 +32,9 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>(std::conj(c));
 }
 
-Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -53,7 +53,7 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit an
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Multiplication m(Rational(-1), complexChild.imag());
     complexChild.replaceChildAtIndexInPlace(1, m);
-    m.shallowReduce(context, angleUnit, target);
+    m.shallowReduce(context, complexFormat, angleUnit, target);
     replaceWithInPlace(complexChild);
     return complexChild;
   }

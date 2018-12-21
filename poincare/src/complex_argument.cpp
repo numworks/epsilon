@@ -24,8 +24,8 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
-Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ComplexArgument(this).shallowReduce(context, angleUnit, target);
+Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ComplexArgument(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
@@ -33,9 +33,9 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>(std::arg(c));
 }
 
-Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexArgument::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -63,9 +63,9 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleU
   }
   if (real || c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational(0)) : static_cast<ComplexCartesian &>(c);
-    Expression childArg = complexChild.argument(context, angleUnit, target);
+    Expression childArg = complexChild.argument(context, complexFormat, angleUnit, target);
     replaceWithInPlace(childArg);
-    return childArg.shallowReduce(context, angleUnit, target);
+    return childArg.shallowReduce(context, complexFormat, angleUnit, target);
   }
   return *this;
 }

@@ -61,7 +61,7 @@ public:
   }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 private:
   Derivative(Expression child0, Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {
     assert(child1.type() == ExpressionNode::Type::Symbol);

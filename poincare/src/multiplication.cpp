@@ -505,7 +505,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
     real.shallowReduce(context, complexFormat, angleUnit, target);
     imag.shallowReduce(context, complexFormat, angleUnit, target);
-    return newComplexCartesian.shallowReduce(context, complexFormat, angleUnit);
+    return newComplexCartesian.shallowReduce();
   }
 
   return result;

@@ -38,7 +38,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("trace", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 private:
   explicit MatrixTrace(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {
     replaceChildAtIndexInPlace(0, child);

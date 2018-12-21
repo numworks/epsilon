@@ -39,7 +39,7 @@ public:
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilder);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 private:
   explicit MatrixDimension(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {
     replaceChildAtIndexInPlace(0, child);

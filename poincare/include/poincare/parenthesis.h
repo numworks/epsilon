@@ -42,7 +42,7 @@ public:
     replaceChildAtIndexInPlace(0, exp);
   }
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 };
 
 }

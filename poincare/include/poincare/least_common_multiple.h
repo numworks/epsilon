@@ -42,7 +42,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, &UntypedBuilder);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 private:
   LeastCommonMultiple(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {
     replaceChildAtIndexInPlace(0, child0);

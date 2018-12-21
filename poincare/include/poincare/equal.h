@@ -43,7 +43,7 @@ public:
   // For the equation A = B, create the reduced expression A-B
   Expression standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 };
 
 }

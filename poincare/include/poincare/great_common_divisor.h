@@ -42,7 +42,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, &UntypedBuilder);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
 private:
   GreatCommonDivisor(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<GreatCommonDivisorNode>()) {
     replaceChildAtIndexInPlace(0, child0);

@@ -20,7 +20,7 @@
 namespace Poincare {
 
 Expression ComplexCartesianNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ComplexCartesian(this).shallowReduce(context, complexFormat, angleUnit);
+  return ComplexCartesian(this).shallowReduce();
 }
 
 Expression ComplexCartesianNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -40,7 +40,7 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferen
   return Complex<T>(a.real(), b.real());
 }
 
-Expression ComplexCartesian::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression ComplexCartesian::shallowReduce() {
   if (imag().isRationalZero()) {
     Expression r = real();
     replaceWithInPlace(r);
@@ -253,7 +253,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     Power apow(aclone, Rational(n-i));
     Power bpow(bclone, Rational(i));
     Multiplication m(binom, apow, bpow);
-    binom.shallowReduce(context, complexFormat, angleUnit);
+    binom.shallowReduce();
     apow.shallowReduce(context, complexFormat, angleUnit, target);
     bpow.shallowReduce(context, complexFormat, angleUnit, target);
     if (i/2%2 == 1) {

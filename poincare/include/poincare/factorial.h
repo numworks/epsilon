@@ -57,7 +57,7 @@ public:
     replaceChildAtIndexInPlace(0, child);
   }
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 private:
   constexpr static int k_maxOperandValue = 100;

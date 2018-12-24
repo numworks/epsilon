@@ -60,7 +60,7 @@ private:
     MessageTextView m_approximateSign;
     ExpressionView m_leftExpressionView;
     SubviewPosition m_selectedSubviewPosition;
-};
+  };
   ContentCell m_contentCell;
 };
 

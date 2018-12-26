@@ -139,32 +139,19 @@ void ScrollView::layoutSubviews() {
   // Layout indicators
   /* If the two indicators are visible, we leave an empty rectangle in the right
    * bottom corner. Otherwise, the only indicator uses all the height/width. */
-  if (hasHorizontalIndicator() && hasVerticalIndicator()) {
-      KDRect verticalIndicatorFrame = KDRect(
+  if (hasVerticalIndicator()) {
+    KDRect verticalIndicatorFrame = KDRect(
       m_frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, m_frame.height() - m_indicatorThickness
+      m_indicatorThickness, m_frame.height() - hasHorizontalIndicator() * m_indicatorThickness
     );
     m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
+  }
+  if (hasHorizontalIndicator()) {
     KDRect horizontalIndicatorFrame = KDRect(
       0, m_frame.height() - m_indicatorThickness,
-      m_frame.width() - m_indicatorThickness, m_indicatorThickness
+      m_frame.width() - hasVerticalIndicator() * m_indicatorThickness, m_indicatorThickness
     );
-  m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
-  } else {
-    if (hasVerticalIndicator()) {
-      KDRect verticalIndicatorFrame = KDRect(
-      m_frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, m_frame.height()
-      );
-      m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
-    }
-    if (hasHorizontalIndicator()) {
-      KDRect horizontalIndicatorFrame = KDRect(
-      0, m_frame.height() - m_indicatorThickness,
-      m_frame.width(), m_indicatorThickness
-      );
-      m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
-    }
+    m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
   }
 }
 

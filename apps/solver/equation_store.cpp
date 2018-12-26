@@ -108,7 +108,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
     const Expression e = definedModelAtIndex(i)->standardForm(context);
-    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
+    if (e.isUninitialized() || e.isUndefined()) {
       return Error::EquationUndefined;
     }
     numberOfVariables = e.getVariables(*context, [](const char * symbol) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize);

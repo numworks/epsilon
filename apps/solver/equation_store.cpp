@@ -108,8 +108,11 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
     const Expression e = definedModelAtIndex(i)->standardForm(context);
-    if (e.isUninitialized() || e.isUndefined()) {
+    if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
+    }
+    if (e.type() == ExpressionNode::Type::Unreal) {
+      return Error::EquationUnreal;
     }
     numberOfVariables = e.getVariables(*context, [](const char * symbol) { return true; }, (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize);
     if (numberOfVariables == -1) {
@@ -178,19 +181,15 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   // We iterate through the solutions and the potential delta
   for (int i = 0; i < initialNumberOfSolutions+1; i++) {
     if (!exactSolutions[i].isUninitialized()) {
-      /* Discard complex solutions if ComplexFormat is Real and the equation
-       * system was not explicitly complex. */
-      if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real && !isExplictlyComplex() && exactSolutionsApproximations[i].recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Poincare::Constant &>(e).isIComplex(); }, *context, false)) {
+      if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Unreal) {
+        /* Discard unreal solutions. */
         if (i < initialNumberOfSolutions) {
           // Discard the solution
           m_numberOfSolutions--;
           continue;
-        } else {
-          assert( i == initialNumberOfSolutions);
-          // Delta is not real
-          exactSolutions[i] = Undefined();
-          exactSolutionsApproximations[i] = Undefined();
         }
+        // Delta is not real
+        assert( i == initialNumberOfSolutions);
       }
       m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i]);
       m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);

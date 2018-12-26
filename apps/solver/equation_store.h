@@ -18,9 +18,10 @@ public:
   enum class Error : int16_t {
     NoError = 0,
     EquationUndefined = -1,
-    TooManyVariables = -2,
-    NonLinearSystem = -3,
-    RequireApproximateSolution = -4,
+    EquationUnreal = -2,
+    TooManyVariables = -3,
+    NonLinearSystem = -4,
+    RequireApproximateSolution = -5,
   };
   /* EquationStore */
   EquationStore();

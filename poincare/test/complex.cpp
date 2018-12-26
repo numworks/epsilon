@@ -6,7 +6,33 @@
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_complex_parts) {
+QUIZ_CASE(poincare_complex_evaluate) {
+  // Real
+  assert_parsed_expression_evaluates_to<float>("I", "unreal", Radian, Real);
+  assert_parsed_expression_evaluates_to<double>("R(-1)", "unreal", Radian, Real);
+  assert_parsed_expression_evaluates_to<double>("R(-1)*R(-1)", "unreal", Radian, Real);
+  assert_parsed_expression_evaluates_to<double>("ln(-2)", "unreal", Radian, Real);
+
+  // Cartesian
+  assert_parsed_expression_evaluates_to<float>("I", "I", Radian, Cartesian);
+  assert_parsed_expression_evaluates_to<double>("R(-1)", "I", Radian, Cartesian);
+  assert_parsed_expression_evaluates_to<double>("R(-1)*R(-1)", "-1", Radian, Cartesian);
+  assert_parsed_expression_evaluates_to<double>("ln(-2)", "6.9314718055995E-1+3.1415926535898*I", Radian, Cartesian);
+
+  // Real
+  assert_parsed_expression_evaluates_to<float>("I", "X^(1.570796*I)", Radian, Polar);
+  assert_parsed_expression_evaluates_to<double>("R(-1)", "X^(1.5707963267949*I)", Radian, Polar);
+  assert_parsed_expression_evaluates_to<double>("R(-1)*R(-1)", "X^(3.1415926535898*I)", Radian, Polar);
+}
+
+QUIZ_CASE(poincare_complex_simplify) {
+  // Real
+  assert_parsed_expression_simplify_to("I", "unreal", Radian, Real);
+  assert_parsed_expression_simplify_to("R(-1)", "unreal", Radian, Real);
+  assert_parsed_expression_simplify_to("R(-1)*R(-1)", "unreal", Radian, Real);
+  assert_parsed_expression_simplify_to("ln(-2)", "ln(-2)", Radian, Real);
+
+  // Cartesian
   assert_parsed_expression_simplify_to("-2.3E3", "-2300", Radian, Cartesian);
   assert_parsed_expression_simplify_to("3", "3", Radian, Cartesian);
   assert_parsed_expression_simplify_to("inf", "inf", Radian, Cartesian);
@@ -89,6 +115,7 @@ QUIZ_CASE(poincare_complex_parts) {
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 
+  // Polar
   assert_parsed_expression_simplify_to("-2.3E3", "2300*X^(P*I)", Radian, Polar);
   assert_parsed_expression_simplify_to("3", "3", Radian, Polar);
   assert_parsed_expression_simplify_to("inf", "inf", Radian, Polar);
@@ -134,5 +161,4 @@ QUIZ_CASE(poincare_complex_parts) {
   assert_parsed_expression_simplify_to("f(3)", "R(17)*X^((-2*atan(4)+P)/2*I)", Radian, Polar);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
-
 }

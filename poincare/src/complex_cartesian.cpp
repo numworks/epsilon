@@ -57,7 +57,7 @@ Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::Com
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,
-      a.type() == ExpressionNode::Type::Undefined || b.type() == ExpressionNode::Type::Undefined,
+      a.isUndefined() || b.isUndefined(),
       Expression::isZero(a), Expression::isOne(a), Expression::isZero(b), Expression::isOne(b),
       !oppositeA.isUninitialized(),
       !oppositeB.isUninitialized()

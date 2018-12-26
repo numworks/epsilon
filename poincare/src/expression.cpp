@@ -175,7 +175,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
         /* degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
-        assert(!recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Undefined; }, context, true));
+        assert(!recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.isUndefined(); }, context, true));
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
@@ -457,7 +457,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       bool tbIsNegative = false;
       makePositive(&ra, &raIsNegative);
       makePositive(&tb, &tbIsNegative);
-      *simplifiedExpression = CreateComplexExpression(ra, tb, complexFormat, ra.type() == ExpressionNode::Type::Undefined || tb.type() == ExpressionNode::Type::Undefined, isZero(ra), isOne(ra), isZero(tb), isOne(tb), raIsNegative, tbIsNegative);
+      *simplifiedExpression = CreateComplexExpression(ra, tb, complexFormat, ra.isUndefined() || tb.isUndefined(), isZero(ra), isOne(ra), isZero(tb), isOne(tb), raIsNegative, tbIsNegative);
     } else {
       /* Case 2: The reduced expression has a complex component that could not
        * be bubbled up. */

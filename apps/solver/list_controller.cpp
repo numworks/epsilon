@@ -182,6 +182,9 @@ void ListController::resolveEquations() {
     case EquationStore::Error::EquationUndefined:
       app()->displayWarning(I18n::Message::UndefinedEquation);
       return;
+    case EquationStore::Error::EquationUnreal:
+      app()->displayWarning(I18n::Message::UnrealEquation);
+      return;
     case EquationStore::Error::TooManyVariables:
       app()->displayWarning(I18n::Message::TooManyVariables);
       return;

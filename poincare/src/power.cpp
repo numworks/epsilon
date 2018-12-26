@@ -911,8 +911,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
     exp.shallowReduce(context, complexFormat, angleUnit, target);
   }
-  m.sortChildrenInPlace(PowerNode::SimplificationOrder, false);
-  return m;
+  return m.shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 Expression Power::removeSquareRootsFromDenominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {

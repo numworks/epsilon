@@ -120,17 +120,21 @@ QUIZ_CASE(calculation_complex_format) {
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
   assertCalculationDisplay("1+I", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+I", &globalContext, &store);
-  assertCalculationDisplay("R(-1)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", nullptr, &globalContext, &store);
-  assertCalculationDisplay("ln(-2)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", nullptr, &globalContext, &store);
+  assertCalculationDisplay("R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, "unreal", nullptr, &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
+  assertCalculationDisplay("R(-1)*R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   assertCalculationDisplay("1+I", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+I", &globalContext, &store);
   assertCalculationDisplay("R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "I", &globalContext, &store);
   assertCalculationDisplay("ln(-2)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("R(-1)*R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "-1", &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
   assertCalculationDisplay("1+I", false, false, ::Calculation::Calculation::EqualSign::Approximation, "R(2)*X^(P/4*I)", nullptr, &globalContext, &store);
   assertCalculationDisplay("R(-1)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "X^(P/2*I)", nullptr, &globalContext, &store);
   assertCalculationDisplay("ln(-2)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("R(-1)*R(-1)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "X^(3.1415926535898*I)", &globalContext, &store);
+
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
 }

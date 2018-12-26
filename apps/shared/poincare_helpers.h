@@ -71,7 +71,6 @@ inline void ParseAndSimplifyAndApproximate(const char * text, Poincare::Expressi
 }
 
 inline void SimplifyAndApproximate(Poincare::Expression * e, Poincare::Expression * approximate,  Poincare::Context & context, Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::sharedPreferences()->complexFormat()) {
-  complexFormat = Poincare::Expression::UpdatedComplexFormatWithExpressionInput(complexFormat, *e, context);
   e->simplifyAndApproximate(e, approximate, context, complexFormat, Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 

@@ -622,7 +622,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       }
     }
   }
-  // Step 12: a^(b+c+...) -> Rational(a^b)*a^c with a and b rational and a != 0
+  // Step 12: a^(p/q+c+...) -> Rational(a^p)*a^(1/q+c+...) with a rational and a != 0 and p, q integers
   if (!letPowerAtRoot
       && childAtIndex(0).type() == ExpressionNode::Type::Rational
       && !childAtIndex(0).convert<Rational>().isZero()
@@ -631,12 +631,26 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     Addition a = childAtIndex(1).convert<Addition>();
     // Check is b is rational
     if (a.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-      const Rational rationalBase = childAtIndex(0).convert<Rational>();
       const Rational rationalIndex = a.childAtIndex(0).convert<Rational>();
+      if (rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.integerDenominator().isOne()) {
+        /* Do not reduce a^(1/q+c+...) to avoid potential infinite loop:
+         * a^(1/q+c+...) --> a^(1/q)*a^(c+...) --> a^(1/q+c+...)*/
+        /* TODO: do something more sensible here:
+         * - add rule (-rational)^x --> (-1)^x*rational^x so we only consider
+         *   positive rational or (-1)
+         * - change simplifyRationalRationalPower to be able to detect when no
+         *   rational was extracted (ie 2^(1/2) --> 2^(1/2)) to avoid applying
+         *   this rule in that case
+         * Once this is done, we can reduce 4^(1/2+a) --> 2*4^a which is not
+         * done so far to avoir the infinite loop:
+         * 2^(1/2+s) --> 2^(1/2)*2^s --> 2^(1/2+s)... */
+        return *this;
+      }
+      const Rational rationalBase = childAtIndex(0).convert<Rational>();
       if (RationalExponentShouldNotBeReduced(rationalBase, rationalIndex)) {
         return *this;
       }
-      Power p1 = Power(childAtIndex(0).clone(), a.childAtIndex(0).clone());
+      Power p1 = Power(childAtIndex(0).clone(), a.childAtIndex(0));
       Power thisRef = *this;
       childAtIndex(1).convert<Addition>().removeChildAtIndexInPlace(0); // p2 = a^(c+...)
       // if addition had only 2 children

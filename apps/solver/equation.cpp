@@ -2,6 +2,7 @@
 
 #include <poincare/equal.h>
 #include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <poincare/rational.h>
 
 using namespace Poincare;
@@ -28,7 +29,11 @@ void Equation::tidy() {
 Expression Equation::standardForm(Context * context) const {
   if (m_standardForm.isUninitialized()) {
     const Expression e = expression(context);
-    if (e.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.isUndefined() || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context, replaceSymbols); }, *context, true)) {
+    if (e.type() == ExpressionNode::Type::Unreal) {
+      m_standardForm = Unreal();
+      return m_standardForm;
+    }
+    if (e.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context, replaceSymbols); }, *context, true)) {
       m_standardForm = Undefined();
       return m_standardForm;
     }

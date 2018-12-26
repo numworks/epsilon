@@ -207,12 +207,21 @@ void Expression::defaultDeepReduceChildren(Context & context, Preferences::Compl
 }
 
 Expression Expression::defaultShallowReduce() {
+  Expression result;
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
+    // The reduction is shortcutted if one child is unreal or undefined:
+    // - the result is unreal is at least one child is unreal
+    // - the result is undefined is at least one child is undefined but no child is unreal
+    if (childAtIndex(i).type() == ExpressionNode::Type::Unreal) {
+      result = Unreal();
+      break;
+    } else if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
       Expression result = Undefined();
-      replaceWithInPlace(result);
-      return result;
     }
+  }
+  if (!result.isUninitialized()) {
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

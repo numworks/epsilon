@@ -179,7 +179,7 @@ QUIZ_CASE(equation_solve_complex_format) {
 
   // x+R(-1) = 0 --> pas de solution dans R
   const char * equations1[] = {"x+R(-1)=0", 0};
-  assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, nullptr, 0);
+  assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::EquationUnreal, EquationStore::Type::LinearSystem, (const char **)variablesx, nullptr, 0);
 
   // x^2+x+1=0 --> pas de solution dans R
   const char * equations2[] = {"x^2+x+1=0", 0};
@@ -188,8 +188,8 @@ QUIZ_CASE(equation_solve_complex_format) {
 
   // x^2-R(-1)=0 --> pas de solution dans R
   const char * equations3[] = {"x^2-R(-1)=0", 0};
-  const char * delta3[] = {"undef"};
-  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta3, 0);
+  const char * delta3[] = {"unreal"};
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::EquationUnreal, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta3, 0);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   // x+I = 0 --> x = -I

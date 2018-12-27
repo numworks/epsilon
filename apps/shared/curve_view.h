@@ -97,6 +97,7 @@ private:
    * cursor views may be nullptr if not needed. */
   void computeHorizontalExtremaLabels();
   float labelValueAtIndex(Axis axis, int i) const;
+  bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;
   View * m_cursorView;
   View * m_okView;

@@ -5,27 +5,19 @@ namespace Code {
 constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" R"(from math import *
 )");
 
-constexpr ScriptTemplate factorialScriptTemplate("factorial.py", "\x01" R"(def factorial(n):
-  if n == 0:
-    return 1
-  else:
-    return n * factorial(n-1))");
-
-constexpr ScriptTemplate fibonacciScriptTemplate("fibonacci.py", "\x01" R"(def fibo(n):
-  a=0
-  b=1
-  for i in range(1,n+1):
-    c=a+b
-    a=b
-    b=c
-  return a
-
-def fibo2(n):
-  if n==0:
-    return 0
-  elif n==1 or n==2:
-    return 1
-  return fibo2(n-1)+fibo2(n-2))");
+constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01" R"(from math import *
+from turtle import *
+def squares(angle=0.5):
+  L=330
+  speed(10)
+  penup()
+  goto(-L/2,-L/2)
+  pendown()
+  for i in range(660):
+    forward(L)
+    left(90+angle)
+    L=L-L*sin(angle*pi/180)
+  hideturtle())");
 
 constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", "\x01" R"(# This script draws a Mandelbrot fractal set
 # N_iteration: degree of precision
@@ -60,49 +52,12 @@ def roots(a,b,c):
   else:
     return None)");
 
-constexpr ScriptTemplate spiralScriptTemplate("spiral.py", "\x01" R"(from turtle import *
-def spiral(N_iteration):
-  N_iteration *= 25
-  for i in range(N_iteration):
-# Change pen color
-    gray=255-(i*255/N_iteration)
-    pencolor(int(gray),int(gray*0.75),int(gray*0.25))
-# Draw a segment of the spiral
-    forward(i*0.1)
-    left(10))");
-
-constexpr ScriptTemplate kochScriptTemplate("koch.py", "\x01" R"(from turtle import *
-def koch(N_iteration):
-# Save pencil size and set it to 1
-  prevSize = pensize()
-  pensize(1)
-# Define inner function for recursion
-  def _koch(n, l):
-    if n == 1:
-      forward(l)
-    else:
-      _koch(n-1,l/3)
-      left(60)
-      _koch(n-1,l/3)
-      right(120)
-      _koch(n-1,l/3)
-      left(60)
-      _koch(n-1,l/3)
-# Call inner function
-  _koch(N_iteration,140)
-# Restore pencil size
-  pensize(prevSize))");
-
 const ScriptTemplate * ScriptTemplate::Empty() {
   return &emptyScriptTemplate;
 }
 
-const ScriptTemplate * ScriptTemplate::Factorial() {
-  return &factorialScriptTemplate;
-}
-
-const ScriptTemplate * ScriptTemplate::Fibonacci() {
-  return &fibonacciScriptTemplate;
+const ScriptTemplate * ScriptTemplate::Squares() {
+  return &squaresScriptTemplate;
 }
 
 const ScriptTemplate * ScriptTemplate::Mandelbrot() {
@@ -113,14 +68,4 @@ const ScriptTemplate * ScriptTemplate::Polynomial() {
   return &polynomialScriptTemplate;
 }
 
-const ScriptTemplate * ScriptTemplate::Spiral() {
-  return &spiralScriptTemplate;
 }
-
-const ScriptTemplate * ScriptTemplate::Koch() {
-  return &kochScriptTemplate;
-}
-
-}
-
-

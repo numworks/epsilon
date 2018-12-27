@@ -383,7 +383,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
   if (exp.isUninitialized()) {
     return Undefined();
   }
-  exp = exp.simplify(context, UpdatedComplexFormatWithTextInput(complexFormat, text), angleUnit);
+  exp = exp.simplify(context, complexFormat, angleUnit);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (exp.isUninitialized()) {
@@ -400,7 +400,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
     *approximateExpression = Undefined();
     return;
   }
-  exp.simplifyAndApproximate(simplifiedExpression, approximateExpression, context, UpdatedComplexFormatWithTextInput(complexFormat, text), angleUnit);
+  exp.simplifyAndApproximate(simplifiedExpression, approximateExpression, context, complexFormat, angleUnit);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
   if (simplifiedExpression->isUninitialized()) {
@@ -568,7 +568,7 @@ U Expression::approximateToScalar(Context& context, Preferences::ComplexFormat c
 
 template<typename U>
 U Expression::approximateToScalar(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  Expression exp = ParseAndSimplify(text, context, UpdatedComplexFormatWithTextInput(complexFormat, text), angleUnit);
+  Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
 }
@@ -673,14 +673,12 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
 /* Expression roots/extrema solver*/
 
 typename Expression::Coordinate2D Expression::nextMinimum(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, *this, context);
   return nextMinimumOfExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit);
 }
 
 typename Expression::Coordinate2D Expression::nextMaximum(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, *this, context);
   Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return -expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit);
@@ -688,15 +686,12 @@ typename Expression::Coordinate2D Expression::nextMaximum(const char * symbol, d
 }
 
 double Expression::nextRoot(const char * symbol, double start, double step, double max, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, *this, context);
   return nextIntersectionWithExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, nullptr);
 }
 
 typename Expression::Coordinate2D Expression::nextIntersection(const char * symbol, double start, double step, double max, Poincare::Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression) const {
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, *this, context);
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, expression, context);
   double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](const char * symbol, double x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, complexFormat, angleUnit);
       }, context, complexFormat, angleUnit, expression);

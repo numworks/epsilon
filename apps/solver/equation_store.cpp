@@ -78,8 +78,7 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  Preferences * preferences = Preferences::sharedPreferences();
-  return !std::isnan(definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context, preferences->complexFormat(), preferences->angleUnit()));
+  return !std::isnan(PoincareHelpers::NextRoot(definedModelAtIndex(0)->standardForm(context), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context));
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
@@ -88,9 +87,8 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context, preferences->complexFormat(), preferences->angleUnit());
+    m_approximateSolutions[i] = PoincareHelpers::NextRoot(definedModelAtIndex(0)->standardForm(context), m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -252,7 +250,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         exactSolutions[i] = Ab.matrixChild(i,n);
-        PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat());
+        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
       }
     }
   }
@@ -264,7 +262,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction(Power(coefficients[1].clone(), Rational(2)), Multiplication(Rational(4), coefficients[0].clone(), coefficients[2].clone()));
-  PoincareHelpers::Simplify(&delta, *context, updatedComplexFormat());
+  delta = delta.simplify(*context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined();
   }
@@ -281,7 +279,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions] = delta;
   for (int i = 0; i <= m_numberOfSolutions; i++) {
-    PoincareHelpers::SimplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat());
+    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
   }
   return Error::NoError;
 #if 0

@@ -116,20 +116,17 @@ int CurveView::numberOfLabels(Axis axis) const {
   if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
     return 0;
   }
-  float minA = min(axis);
-  float maxA = max(axis);
-  float margin = LabelsMarginRatio(axis) * (maxA - minA);
-  float minVisibleInAxis = minA + margin;
-  float maxVisibleInAxis = maxA - margin;
   float labelStep = 2.0f * gridUnit(axis);
-  float minLabel = std::ceil(minVisibleInAxis/labelStep);
-  float maxLabel = std::floor(maxVisibleInAxis/labelStep);
+  float minLabel = std::ceil(min(axis)/labelStep);
+  float maxLabel = std::floor(max(axis)/labelStep);
   return maxLabel - minLabel + 1;
 }
 
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
-  return min(axis) + pixels*((float)(max(axis)-min(axis)))/((float)pixelLength(axis));
+  float pixelLen = pixelLength(axis);
+  float minA = min(axis);
+  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLen - p;
+  return minA + pixels*(max(axis)-minA)/pixelLen;
 }
 
 float CurveView::floatToPixel(Axis axis, float f) const {
@@ -656,13 +653,30 @@ View * CurveView::subviewAtIndex(int index) {
 void CurveView::computeHorizontalExtremaLabels() {
   Axis axis = Axis::Horizontal;
   int axisLabelsCount = numberOfLabels(axis);
+  float minA = min(axis);
+
+  /* We want to draw the extrema labels (0 and numberOfLabels -1), but if they
+   * might not be fully visible, draw the labels 1 and numberOfLabels - 2. */
+  bool skipExtremaLabels =
+    (axisLabelsCount >= 4)
+    && ((labelValueAtIndex(axis, 0) - minA)/(max(axis) - minA) < k_labelsHorizontalMarginRatio+FLT_EPSILON);
+  int firstLabel = skipExtremaLabels ? 1 : 0;
+  int lastLabel = axisLabelsCount - (skipExtremaLabels ? 2 : 1);
+
+  assert(firstLabel != lastLabel);
 
   // All labels but the extrema are empty
-  for (int i = 1; i < axisLabelsCount - 1 ; i++) {
+  for (int i = 0; i < firstLabel; i++) {
+    label(axis, i)[0] = 0;
+  }
+  for (int i = firstLabel + 1; i < lastLabel; i++) {
+    label(axis, i)[0] = 0;
+  }
+  for (int i = lastLabel + 1; i < axisLabelsCount; i++) {
     label(axis, i)[0] = 0;
   }
 
-  int minMax[] = {0, axisLabelsCount-1};
+  int minMax[] = {firstLabel, lastLabel};
   for (int i : minMax) {
     // Compute the minimal and maximal label
     PrintFloat::convertFloatToText<float>(
@@ -677,11 +691,8 @@ void CurveView::computeHorizontalExtremaLabels() {
 
 float CurveView::labelValueAtIndex(Axis axis, int i) const {
   assert(i >= 0 && i < numberOfLabels(axis));
-  float minA = min(axis);
-  float maxA = max(axis);
   float labelStep = 2.0f * gridUnit(axis);
-  float minVisibleInAxis = minA + LabelsMarginRatio(axis) * (maxA - minA);
-  return labelStep*(std::ceil(minVisibleInAxis/labelStep)+i);
+  return labelStep*(std::ceil(min(axis)/labelStep)+i);
 }
 
 }

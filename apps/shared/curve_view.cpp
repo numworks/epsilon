@@ -191,11 +191,37 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
   if (labelsCount < 1) {
     return;
   }
+
   float step = gridUnit(axis);
-  float start = labelValueAtIndex(axis, 0);
-  float end = labelValueAtIndex(axis, labelsCount - 1);
   float verticalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Horizontal, 0.0f));
+
+  /* There might be less labels than graduations, if the extrema labels are too
+   * close to the screen edge to write them. We must thus draw the graduations
+   * separately from the labels. */
+
+
+  // Draw the graduations
+  float start = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)));
+  float end = max(axis);
+  for (float x = start; x <= end; x += 2.0f*step) {
+    /* When |start| >> step, start + step = start. In that case, quit the
+     * infinite loop. */
+    if (x == x-step || x == x+step) {
+      return;
+    }
+    KDRect graduation = axis == Axis::Horizontal ?
+      KDRect(std::round(floatToPixel(Axis::Horizontal, x)), verticalCoordinate -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength) :
+      KDRect(horizontalCoordinate-(k_labelGraduationLength-2)/2, std::round(floatToPixel(Axis::Vertical, x)), k_labelGraduationLength, 1);
+    ctx->fillRect(graduation, KDColorBlack);
+  }
+  if (graduationOnly) {
+     return;
+   }
+
+  // Draw the labels
+  start = labelValueAtIndex(axis, 0);
+  end = labelValueAtIndex(axis, labelsCount - 1);
   int i = 0;
   for (float x = start; x <= end + step; x += 2.0f*step) {
     /* When |start| >> step, start + step = start. In that case, quit the
@@ -203,24 +229,19 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     if (x == x-step || x == x+step) {
       return;
     }
-    KDRect graduation(std::round(floatToPixel(Axis::Horizontal, x)), verticalCoordinate -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength);
-    if (axis == Axis::Vertical) {
-      graduation = KDRect(horizontalCoordinate-(k_labelGraduationLength-2)/2, std::round(floatToPixel(Axis::Vertical, x)), k_labelGraduationLength, 1);
+    char * labelI = label(axis, i);
+    KDSize textSize = k_font->stringSize(labelI);
+    KDPoint origin = KDPointZero;
+    if (-step < x && x < step && shiftOrigin) {
+      origin = KDPoint(horizontalCoordinate + k_labelMargin, verticalCoordinate + k_labelMargin);
+    } else {
+      origin = axis == Axis::Horizontal ?
+        KDPoint(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, verticalCoordinate + k_labelMargin) :
+        KDPoint(horizontalCoordinate + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
     }
-    if (!graduationOnly) {
-      KDSize textSize = k_font->stringSize(label(axis, i));
-      KDPoint origin(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, verticalCoordinate + k_labelMargin);
-      if (axis == Axis::Vertical) {
-        origin = KDPoint(horizontalCoordinate + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
-      }
-      if (-step < x && x < step && shiftOrigin) {
-        origin = KDPoint(horizontalCoordinate + k_labelMargin, verticalCoordinate + k_labelMargin);
-      }
-      if (rect.intersects(KDRect(origin, k_font->stringSize(label(axis, i))))) {
-        ctx->drawString(label(axis, i), origin, k_font, KDColorBlack);
-      }
+    if (rect.intersects(KDRect(origin, textSize))) {
+      ctx->drawString(labelI, origin, k_font, KDColorBlack);
     }
-    ctx->fillRect(graduation, KDColorBlack);
     i++;
   }
 }

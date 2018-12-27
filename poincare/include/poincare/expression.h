@@ -194,7 +194,7 @@ public:
   Expression degreeToRadian();
 
   /* Approximation Helper */
-  // These methods reset the sApproximationEncounterComplex flag. They should not be use to implement node approximation
+  // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
   template<typename U> static U epsilon();
   template<typename U> Expression approximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename U> U approximateToScalar(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

@@ -67,7 +67,7 @@ Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences:
 
 template<typename T>
 T IntegralNode::functionValueAtAbscissa(T x, Context & context, Preferences::AngleUnit angleUnit) const {
-  // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounterComplex flag
+  // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
   assert(childAtIndex(1)->type() == Type::Symbol);
   VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
   variableContext.setApproximationForVariable<T>(x);

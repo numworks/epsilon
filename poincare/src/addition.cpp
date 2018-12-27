@@ -99,6 +99,11 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
    * Last but not least, special care must be taken when iterating over children
    * since we may remove some during the process. */
 
+  /* Sort children in decreasing order:
+   * 1+x+x^2 --> x^2+x+1
+   * 1+R(2) --> R(2)+1 */
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e2, e1, canBeInterrupted); }, true);
+
   for (int i = 0; i < numberOfChildren(); i++) {
     // Try to make the child i positive if any negative numeral factor is found
     Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);

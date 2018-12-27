@@ -230,11 +230,11 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     KDSize textSize = k_font->stringSize(labelI);
     KDPoint origin = KDPointZero;
     if (-step < x && x < step && shiftOrigin) {
-      origin = KDPoint(horizontalCoordinate + k_labelMargin, verticalCoordinate + k_labelMargin);
+      origin = KDPoint(horizontalCoordinate - k_labelMargin - textSize.width(), verticalCoordinate + k_labelMargin);
     } else {
       origin = axis == Axis::Horizontal ?
         KDPoint(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, verticalCoordinate + k_labelMargin) :
-        KDPoint(horizontalCoordinate + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
+        KDPoint(horizontalCoordinate - k_labelMargin - textSize.width(), std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
     }
     if (rect.intersects(KDRect(origin, textSize))) {
       ctx->drawString(labelI, origin, k_font, KDColorBlack);

@@ -14,7 +14,7 @@
 namespace Poincare {
 
 bool Expression::sSymbolReplacementsCountLock = false;
-static bool sApproximationEncounterComplex = false;
+static bool sApproximationEncounteredComplex = false;
 
 /* Constructor & Destructor */
 
@@ -280,11 +280,11 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(Context & context, P
 
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  sApproximationEncounterComplex = false;
+  sApproximationEncounteredComplex = false;
   // Reset interrupting flag because some evaluation methods use it
   sSimplificationHasBeenInterrupted = false;
   Evaluation<U> e = node()->approximate(U(), context, angleUnit);
-  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounterComplex) {
+  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
     e = Complex<U>::Undefined();
   }
   return e;
@@ -330,7 +330,7 @@ Expression Expression::defaultReplaceUnknown(const Symbol & symbol) {
 /* Complex */
 
 void Expression::SetEncounterComplex(bool encounterComplex) {
-  sApproximationEncounterComplex = encounterComplex;
+  sApproximationEncounteredComplex = encounterComplex;
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
@@ -599,7 +599,7 @@ bool Expression::isMinusOne(const Expression e) {
 }
 
 Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb) {
-  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounterComplex) {
+  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
     return Unreal();
   } else if (undefined) {
     return Undefined();

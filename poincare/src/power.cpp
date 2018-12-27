@@ -15,6 +15,7 @@
 #include <poincare/symbol.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/serialization_helper.h>
@@ -907,9 +908,24 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     m.addChildAtIndexInPlace(p, 1, 1);
   }
   if (i.isNegative()) {
-    Expression exp = CreateComplexExponent(r, context, complexFormat, angleUnit, target);
-    m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
-    exp.shallowReduce(context, complexFormat, angleUnit, target);
+    if (complexFormat == Preferences::ComplexFormat::Real) {
+      /* On real numbers (-1)^(p/q) =
+       * - 1 if p is even
+       * - -1 if p and q are odd
+       * - has no real solution otherwise */
+      if (!r.unsignedIntegerNumerator().isEven()) {
+        if (r.integerDenominator().isEven()) {
+          return Unreal();
+        } else {
+          m.addChildAtIndexInPlace(Rational(-1), 0, m.numberOfChildren());
+        }
+      }
+    } else {
+      /* On complex numbers, we pick the first root (-1)^(p/q) = e^(i*pi*p/q) */
+      Expression exp = CreateComplexExponent(r, context, complexFormat, angleUnit, target);
+      m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
+      exp.shallowReduce(context, complexFormat, angleUnit, target);
+    }
   }
   return m.shallowReduce(context, complexFormat, angleUnit, target);
 }

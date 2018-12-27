@@ -103,26 +103,22 @@ double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poin
 
 Expression::Coordinate2D StorageCartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  Preferences * preferences = Preferences::sharedPreferences();
-  return expressionReduced(context).nextMinimum(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit());
+  return PoincareHelpers::NextMinimum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  Preferences * preferences = Preferences::sharedPreferences();
-  return expressionReduced(context).nextMaximum(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit());
+  return PoincareHelpers::NextMaximum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 double StorageCartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  Preferences * preferences = Preferences::sharedPreferences();
-  return expressionReduced(context).nextRoot(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit());
+  return PoincareHelpers::NextRoot(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
-  Preferences * preferences = Preferences::sharedPreferences();
-  return expressionReduced(context).nextIntersection(unknownX, start, step, max, *context, preferences->complexFormat(), preferences->angleUnit(), e);
+  return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, *context, e);
 }
 
 StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {

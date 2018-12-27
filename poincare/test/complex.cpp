@@ -31,6 +31,11 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("R(-1)", "unreal", Radian, Real);
   assert_parsed_expression_simplify_to("R(-1)*R(-1)", "unreal", Radian, Real);
   assert_parsed_expression_simplify_to("ln(-2)", "ln(-2)", Radian, Real);
+  assert_parsed_expression_simplify_to("(-8)^(2/3)", "4", Radian, Real);
+  assert_parsed_expression_simplify_to("(-8)^(2/5)", "2*root(2,5)", Radian, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", Radian, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/4)", "unreal", Radian, Real);
+  assert_parsed_expression_simplify_to("(-8)^(1/3)", "-2", Radian, Real);
 
   // Cartesian
   assert_parsed_expression_simplify_to("-2.3E3", "-2300", Radian, Cartesian);

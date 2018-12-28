@@ -11,9 +11,9 @@ public:
   I18n::Message title() override { return I18n::Message::NormalLaw; }
   Type type() const override { return Type::Normal; }
   bool isContinuous() const override { return true; }
-  float xMin() override;
+  float xMin() override { return xExtremum(true); }
   float yMin() override;
-  float xMax() override;
+  float xMax() override { return xExtremum(false); }
   float yMax() override;
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
@@ -31,6 +31,7 @@ private:
   constexpr static double k_boundStandardNormalDistribution = 4.892;
   double standardNormalCumulativeDistributiveFunctionAtAbscissa(double abscissa) const;
   double standardNormalCumulativeDistributiveInverseForProbability(double probability);
+  float xExtremum(bool min) const;
 };
 
 }

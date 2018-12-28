@@ -36,7 +36,6 @@ public:
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
-  static float LabelsMarginRatio(Axis axis) { return axis == Axis::Horizontal ? k_labelsHorizontalMarginRatio : 0.0f; }
 protected:
   CurveViewRange * curveViewRange() { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);

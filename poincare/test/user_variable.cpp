@@ -8,11 +8,11 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_user_variable_simple) {
   // Fill variable
-  assert_parsed_expression_simplify_to("1+2>Adadas", "1+2");
+  assert_parsed_expression_simplify_to("1+2>Adadas", "2+1");
   assert_parsed_expression_simplify_to("Adadas", "3");
 
   // Fill f1
-  assert_parsed_expression_simplify_to("1+x>f1(x)", "1+x");
+  assert_parsed_expression_simplify_to("1+x>f1(x)", "x+1");
   assert_parsed_expression_simplify_to("f1(4)", "5");
   assert_parsed_expression_simplify_to("f1(Adadas)", "4");
 

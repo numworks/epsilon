@@ -19,7 +19,6 @@ double Model::levelSet(double * modelCoefficients, double xMin, double step, dou
   Expression yExpression = Number::DecimalNumber(y);
   PoincareHelpers::Simplify(&yExpression, *context);
   Expression modelExpression = simplifiedExpression(modelCoefficients, context);
-  Preferences * preferences = Preferences::sharedPreferences();
   double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, step, xMax, *context, yExpression).abscissa;
   return result;
 }

@@ -37,6 +37,8 @@ public:
     Addition,
     Factorial,
     Division,
+    Constant,
+    Symbol,
     Store,
     Equal,
     Sine,
@@ -85,8 +87,6 @@ public:
     SquareRoot,
     Subtraction,
     Sum,
-    Symbol,
-    Constant,
 
     ComplexCartesian,
 

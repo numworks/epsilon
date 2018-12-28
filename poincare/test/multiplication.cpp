@@ -22,7 +22,7 @@ QUIZ_CASE(poincare_multiplication_evaluate) {
 QUIZ_CASE(poincare_multiplication_simplify) {
   assert_parsed_expression_simplify_to("0*x+B", "B");
   assert_parsed_expression_simplify_to("0*x*0*32*cos(3)", "0");
-  assert_parsed_expression_simplify_to("3*A^4*B^x*B^2*(A^2+2)*2*1.2", "(72*A^4*B^(2+x)+36*A^6*B^(2+x))/5");
+  assert_parsed_expression_simplify_to("3*A^4*B^x*B^2*(A^2+2)*2*1.2", "(36*A^6*B^(x+2)+72*A^4*B^(x+2))/5");
   assert_parsed_expression_simplify_to("A*(B+C)*(D+3)", "3*A*B+3*A*C+A*B*D+A*C*D");
   assert_parsed_expression_simplify_to("A/B", "A/B");
   assert_parsed_expression_simplify_to("(A*B)^2", "A^2*B^2");
@@ -52,8 +52,8 @@ QUIZ_CASE(poincare_multiplication_simplify) {
   assert_parsed_expression_simplify_to("A^3*A^(-3)", "1");
   assert_parsed_expression_simplify_to("2^P*(1/2)^P", "1");
   assert_parsed_expression_simplify_to("A^3*A^(-3)", "1");
-  assert_parsed_expression_simplify_to("(x+1)*(x+2)", "2+3*x+x^2");
-  assert_parsed_expression_simplify_to("(x+1)*(x-1)", "-1+x^2");
+  assert_parsed_expression_simplify_to("(x+1)*(x+2)", "x^2+3*x+2");
+  assert_parsed_expression_simplify_to("(x+1)*(x-1)", "x^2-1");
   assert_parsed_expression_simplify_to("11P/(22P+11P)", "1/3");
   assert_parsed_expression_simplify_to("11/(22P+11P)", "1/(3*P)");
   assert_parsed_expression_simplify_to("-11/(22P+11P)", "-1/(3*P)");

@@ -110,7 +110,7 @@ QUIZ_CASE(equation_solve) {
 
   // 2*x^2-4*x+4=3
   const char * equations9[] = {"2*x^2-4*x+4=3", 0};
-  const char * solutions9[] = {"(2-R(2))/(2)","(2+R(2))/(2)", "8"};
+  const char * solutions9[] = {"(-R(2)+2)/(2)","(R(2)+2)/(2)", "8"};
   assert_equation_system_exact_solve_to(equations9, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions9, 2);
 
   // 2*x^2-4*x+2=0
@@ -120,7 +120,7 @@ QUIZ_CASE(equation_solve) {
 
   // x^2+x+1=3*x^2+pi*x-R(5)
   const char * equations11[] = {"x^2+x+1=3*x^2+P*x-R(5)", 0};
-  const char * solutions11[] = {"(1-P+R(9+8*R(5)-2*P+P$2#))/(4)", "(1-P-R(9+8*R(5)-2*P+P$2#))/(4)", "9+8*R(5)-2*P+P$2#"};
+  const char * solutions11[] = {"(R(P$2#-2*P+8*R(5)+9)-P+1)/(4)", "(-R(P$2#-2*P+8*R(5)+9)-P+1)/(4)", "P$2#-2*P+8*R(5)+9"};
   assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 2);
 
   // TODO
@@ -144,7 +144,7 @@ QUIZ_CASE(equation_solve) {
   const char * variablesxyz[] = {"x", "y", "z", ""};
 
   const char * equations14[] = {"x+y=0", "3x+y+z=-5", "4z-P=0", 0};
-  const char * solutions14[] = {"(-20-P)/(8)", "(20+P)/(8)", "(P)/(4)"};
+  const char * solutions14[] = {"(-P-20)/(8)", "(P+20)/(8)", "(P)/(4)"};
   assert_equation_system_exact_solve_to(equations14,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesxyz, solutions14, 3);
 
   // Monovariable non-polynomial equation

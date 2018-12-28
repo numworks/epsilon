@@ -186,11 +186,11 @@ enum class FloatingPosition : uint8_t {
 };
 
 void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate) const {
-  if (numberOfLabels(axis) < 1) {
+  int numberLabels = numberOfLabels(axis);
+  if (numberLabels <= 1) {
     return;
   }
 
-  float step = gridUnit(axis);
   float verticalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Horizontal, 0.0f));
 
@@ -212,29 +212,28 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
       floatingLabels = FloatingPosition::Max;
     }
   }
+
   /* There might be less labels than graduations, if the extrema labels are too
    * close to the screen edge to write them. We must thus draw the graduations
    * separately from the labels. */
 
+  float labelStep = 2.0f * gridUnit(axis);
+  int minLabelPixelPosition = std::round(floatToPixel(axis, labelStep * std::ceil(min(axis)/labelStep)));
+  int maxLabelPixelPosition = std::round(floatToPixel(axis, labelStep * std::floor(max(axis)/labelStep)));
+
   // Draw the graduations
   if (floatingLabels == FloatingPosition::None) {
-    float start = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)));
-    float end = max(axis);
-    for (float x = start; x <= end; x += 2.0f*step) {
-      /* When |start| >> step, start + step = start. In that case, quit the
-       * infinite loop. */
-      if (x == x-step || x == x+step) {
-        return;
-      }
+    for (int i = 0; i < numberLabels; i++) {
+      int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
       KDRect graduation = axis == Axis::Horizontal ?
         KDRect(
-            std::round(floatToPixel(Axis::Horizontal, x)),
+            labelPosition,
             verticalCoordinate -(k_labelGraduationLength-2)/2,
             1,
             k_labelGraduationLength) :
         KDRect(
             horizontalCoordinate-(k_labelGraduationLength-2)/2,
-            std::round(floatToPixel(Axis::Vertical, x)),
+            labelPosition,
             k_labelGraduationLength,
             1);
       ctx->fillRect(graduation, KDColorBlack);
@@ -246,24 +245,18 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
   }
 
   // Draw the labels
-  float start = labelValueAtIndex(axis, 0);
-  float end = labelValueAtIndex(axis, numberOfLabels(axis) - 1);
-  int i = 0;
-  for (float x = start; x <= end + step; x += 2.0f*step) {
-    /* When |start| >> step, start + step = start. In that case, quit the
-     * infinite loop. */
-    if (x == x-step || x == x+step) {
-      return;
-    }
+  for (int i = 0; i < numberLabels; i++) {
+    int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
     char * labelI = label(axis, i);
     KDSize textSize = k_font->stringSize(labelI);
     float xPosition = 0.0f;
     float yPosition = 0.0f;
-    if (-step < x && x < step && shiftOrigin && floatingLabels == FloatingPosition::None) {
+
+    if (strcmp(labelI, "0") == 0 && shiftOrigin && floatingLabels == FloatingPosition::None) {
       xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
       yPosition = verticalCoordinate + k_labelMargin;
     } else if (axis == Axis::Horizontal) {
-      xPosition = std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2;
+      xPosition = labelPosition - textSize.width()/2;
       if (floatingLabels == FloatingPosition::None) {
         yPosition = verticalCoordinate + k_labelMargin;
       } else if (floatingLabels == FloatingPosition::Min) {
@@ -272,7 +265,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
         yPosition = viewHeight - k_font->glyphSize().height() - k_labelMargin;
       }
     } else {
-      yPosition = std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2;
+      yPosition = labelPosition - textSize.height()/2;
       if (floatingLabels == FloatingPosition::None) {
         xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
       } else if (floatingLabels == FloatingPosition::Min) {
@@ -285,7 +278,6 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     if (rect.intersects(KDRect(origin, textSize))) {
       ctx->drawString(labelI, origin, k_font, KDColorBlack);
     }
-    i++;
   }
 }
 

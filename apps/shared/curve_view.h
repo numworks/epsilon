@@ -6,6 +6,7 @@
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
 #include "banner_view.h"
+#include <apps/constant.h>
 
 namespace Shared {
 
@@ -46,7 +47,7 @@ protected:
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_numberSignificantDigits = 6;
-  constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 3 + 3 + 1; // '-' + 6 significant digits + '.' + "E-" + 3 digits + null-terminating char
+  constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 3 + 3 + 1; // '-' + significant digits + '.' + "E-" + 3 digits + null-terminating char
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;

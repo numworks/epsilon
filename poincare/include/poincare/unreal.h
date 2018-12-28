@@ -32,7 +32,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   template<typename T> Evaluation<T> templatedApproximate() const {
-    Expression::SetEncounterComplex(true);
+    Expression::SetEncounteredComplex(true);
     return UndefinedNode::templatedApproximate<T>();
   }
 };

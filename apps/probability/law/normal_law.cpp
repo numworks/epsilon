@@ -7,20 +7,6 @@
 
 namespace Probability {
 
-float NormalLaw::xMin() {
-  if (m_parameter2 == 0.0f) {
-    return m_parameter1 - 1.0f;
-  }
-  return m_parameter1 - 5.0f*std::fabs(m_parameter2);
-}
-
-float NormalLaw::xMax() {
-  if (m_parameter2 == 0.0f) {
-    return m_parameter1 + 1.0f;
-  }
-  return m_parameter1 + 5.0f*std::fabs(m_parameter2);
-}
-
 float NormalLaw::yMin() {
   return -k_displayBottomMarginRatio*yMax();
 }
@@ -112,6 +98,14 @@ double NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(doub
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
   }
   return std::sqrt(2.0)*erfInv(2.0*probability-1.0);
+}
+
+float NormalLaw::xExtremum(bool min) const {
+  int coefficient = (min ? -1 : 1);
+  if (m_parameter2 == 0.0f) {
+    return m_parameter1 + coefficient * 1.0f;
+  }
+  return m_parameter1 + coefficient * 5.0f * std::fabs(m_parameter2);
 }
 
 }

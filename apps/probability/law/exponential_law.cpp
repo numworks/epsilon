@@ -1,41 +1,15 @@
 #include "exponential_law.h"
-#include <assert.h>
 #include <cmath>
 #include <float.h>
-#include <ion.h>
 
 namespace Probability {
 
-ExponentialLaw::ExponentialLaw() :
-  OneParameterLaw(1.0f)
-{
-}
-
-I18n::Message ExponentialLaw::title() {
-  return I18n::Message::ExponentialLaw;
-}
-
-Law::Type ExponentialLaw::type() const {
-  return Type::Exponential;
-}
-
-bool ExponentialLaw::isContinuous() const {
-  return true;
-}
-
-I18n::Message ExponentialLaw::parameterNameAtIndex(int index) {
-  assert(index == 0);
-  return I18n::Message::Lambda;
-}
-
-I18n::Message ExponentialLaw::parameterDefinitionAtIndex(int index) {
-  assert(index == 0);
-  return I18n::Message::LambdaExponentialDefinition;
-}
-
 float ExponentialLaw::xMin() {
-  float max = xMax();
-  return - k_displayLeftMarginRatio * max;
+  return - k_displayLeftMarginRatio * xMax();
+}
+
+float ExponentialLaw::yMin() {
+  return -k_displayBottomMarginRatio * yMax();
 }
 
 float ExponentialLaw::xMax() {
@@ -44,11 +18,7 @@ float ExponentialLaw::xMax() {
   if (result <= 0.0f) {
     result = 1.0f;
   }
-  return result*(1.0f+ k_displayRightMarginRatio);
-}
-
-float ExponentialLaw::yMin() {
-  return -k_displayBottomMarginRatio*yMax();
+  return result * (1.0f + k_displayRightMarginRatio);
 }
 
 float ExponentialLaw::yMax() {
@@ -59,14 +29,14 @@ float ExponentialLaw::yMax() {
   if (result <= 0.0f) {
     result = 1.0f;
   }
-  return result*(1.0f+ k_displayTopMarginRatio);
+  return result * (1.0f + k_displayTopMarginRatio);
 }
 
 float ExponentialLaw::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {
     return NAN;
   }
-  return m_parameter1*std::exp(-m_parameter1*x);
+  return m_parameter1 * std::exp(-m_parameter1 * x);
 }
 
 bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
@@ -77,7 +47,7 @@ bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 double ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return 1.0 - std::exp((double)(-m_parameter1*x));
+  return 1.0 - std::exp((double)(-m_parameter1 * x));
 }
 
 double ExponentialLaw::cumulativeDistributiveInverseForProbability(double * probability) {

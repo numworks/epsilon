@@ -5,12 +5,12 @@
 
 namespace Probability {
 
-class UniformLaw : public TwoParameterLaw {
+class UniformLaw final : public TwoParameterLaw {
 public:
-  UniformLaw();
-  I18n::Message title() override;
-  Type type() const override;
-  bool isContinuous() const override;
+  UniformLaw() : TwoParameterLaw(-1.0f, 1.0f) {}
+  I18n::Message title() override { return I18n::Message::UniformLaw; }
+  Type type() const override { return Type::Uniform; }
+  bool isContinuous() const override { return true; }
   float xMin() override;
   float yMin() override;
   float xMax() override;

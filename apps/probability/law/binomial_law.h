@@ -5,12 +5,12 @@
 
 namespace Probability {
 
-class BinomialLaw : public TwoParameterLaw {
+class BinomialLaw final : public TwoParameterLaw {
 public:
-  BinomialLaw();
-  I18n::Message title() override;
-  Type type() const override;
-  bool isContinuous() const override;
+  BinomialLaw() : TwoParameterLaw(20.0, 0.5) {}
+  I18n::Message title() override { return I18n::Message::BinomialLaw; }
+  Type type() const override { return Type::Binomial; }
+  bool isContinuous() const override { return false; }
   float xMin() override;
   float yMin() override;
   float xMax() override;

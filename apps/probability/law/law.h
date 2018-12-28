@@ -10,7 +10,7 @@ namespace Probability {
 
 class Law : public Shared::CurveViewRange {
 public:
-  Law();
+  Law() : Shared::CurveViewRange() {}
   enum class Type : uint8_t{
     Binomial,
     Uniform,

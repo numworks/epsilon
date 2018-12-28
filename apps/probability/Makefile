@@ -18,7 +18,6 @@ app_objs += $(addprefix apps/probability/,\
   law/exponential_law.o\
   law/law.o\
   law/normal_law.o\
-  law/one_parameter_law.o\
   law/poisson_law.o\
   law/two_parameter_law.o\
   law/uniform_law.o\

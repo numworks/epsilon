@@ -5,15 +5,15 @@
 
 namespace Probability {
 
-class LeftIntegralCalculation : public Calculation {
+class LeftIntegralCalculation final : public Calculation {
 public:
   LeftIntegralCalculation();
-  Type type() override;
-  int numberOfParameters() override;
+  Type type() override { return Type::LeftIntegral; }
+  int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
-  double upperBound() override;
+  double upperBound() override { return m_upperBound; }
 private:
   void compute(int indexKnownElement) override;
   double m_upperBound;

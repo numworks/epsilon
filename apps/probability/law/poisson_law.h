@@ -5,18 +5,24 @@
 
 namespace Probability {
 
-class PoissonLaw : public OneParameterLaw {
+class PoissonLaw final : public OneParameterLaw {
 public:
-  PoissonLaw();
-  I18n::Message title() override;
-  Type type() const override;
-  bool isContinuous() const override;
+  PoissonLaw() : OneParameterLaw(4.0f) {}
+  I18n::Message title() override { return I18n::Message::PoissonLaw; }
+  Type type() const override { return Type::Poisson; }
+  bool isContinuous() const override { return false; }
   float xMin() override;
   float yMin() override;
   float xMax() override;
   float yMax() override;
-  I18n::Message parameterNameAtIndex(int index) override;
-  I18n::Message parameterDefinitionAtIndex(int index) override;
+  I18n::Message parameterNameAtIndex(int index) override {
+    assert(index == 0);
+    return I18n::Message::Lambda;
+  }
+  I18n::Message parameterDefinitionAtIndex(int index) override  {
+    assert(index == 0);
+    return I18n::Message::LambdaPoissonDefinition;
+  }
   float evaluateAtAbscissa(float x) const override {
     return templatedApproximateAtAbscissa(x);
   }

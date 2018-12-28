@@ -23,7 +23,7 @@ public:
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
-  constexpr static double k_maxRatioMuSigma = 1000.0f;
+  constexpr static double k_maxRatioMuSigma = 1000000.0f;
   /* For the standard normal law, P(X < y) > 0.9999995 with y >= 4.892 so the
    * value displayed is 1. But this is dependent on the fact that we display
    * only 7 decimal values! */

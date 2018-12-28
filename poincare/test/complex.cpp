@@ -52,8 +52,8 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("(3+I)/(2+I)", "7/5-1/5*I", Radian, Cartesian);
   // The simplification of (3+I)^(2+I) in a Cartesian complex form generates to many nodes
   //assert_parsed_expression_simplify_to("(3+I)^(2+I)", "10*cos((-4*atan(3)+ln(2)+ln(5)+2*P)/2)*X^((2*atan(3)-P)/2)+10*sin((-4*atan(3)+ln(2)+ln(5)+2*P)/2)*X^((2*atan(3)-P)/2)*I", Radian, Cartesian);
-  assert_parsed_expression_simplify_to("(3+I)^(2+I)", "(3+I)^(2+I)", Radian, Cartesian);
-  assert_parsed_expression_simplify_to("R(1+6I)", "R(2+2*R(37))/2+R(-2+2*R(37))/2*I", Radian, Cartesian);
+  assert_parsed_expression_simplify_to("(3+I)^(2+I)", "(I+3)^(I+2)", Radian, Cartesian);
+  assert_parsed_expression_simplify_to("R(1+6I)", "R(2*R(37)+2)/2+R(2*R(37)-2)/2*I", Radian, Cartesian);
   assert_parsed_expression_simplify_to("(1+I)^2", "2*I", Radian, Cartesian);
   assert_parsed_expression_simplify_to("2*I", "2*I", Radian, Cartesian);
   assert_parsed_expression_simplify_to("I!", "I!", Radian, Cartesian);
@@ -101,7 +101,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("sign(x)", "sign(x)", Radian, Cartesian);
   assert_parsed_expression_simplify_to("sin(23)", "sin(23)", Radian, Cartesian);
   assert_parsed_expression_simplify_to("sin(23+I)", "sin(23+I)", Radian, Cartesian);
-  assert_parsed_expression_simplify_to("R(1-I)", "R(2+2*R(2))/2-R(-2+2*R(2))/2*I", Radian, Cartesian);
+  assert_parsed_expression_simplify_to("R(1-I)", "R(2*R(2)+2)/2-R(2*R(2)-2)/2*I", Radian, Cartesian);
   assert_parsed_expression_simplify_to("tan(23)", "tan(23)", Radian, Cartesian);
   assert_parsed_expression_simplify_to("tan(23+I)", "tan(23+I)", Radian, Cartesian);
 
@@ -125,7 +125,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("3", "3", Radian, Polar);
   assert_parsed_expression_simplify_to("inf", "inf", Radian, Polar);
   assert_parsed_expression_simplify_to("1+2+I", "R(10)*X^((-2*atan(3)+P)/2*I)", Radian, Polar);
-  assert_parsed_expression_simplify_to("1+2+I", "R(10)*X^((90*P-atan(3)*P)/180*I)", Degree, Polar);
+  assert_parsed_expression_simplify_to("1+2+I", "R(10)*X^((-P*atan(3)+90*P)/180*I)", Degree, Polar);
   assert_parsed_expression_simplify_to("-(5+2*I)", "R(29)*X^((-2*atan(5/2)-P)/2*I)", Radian, Polar);
   assert_parsed_expression_simplify_to("(5+2*I)", "R(29)*X^((-2*atan(5/2)+P)/2*I)", Radian, Polar);
   assert_parsed_expression_simplify_to("I+I", "2*X^(P/2*I)", Radian, Polar);
@@ -139,7 +139,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   //assert_parsed_expression_simplify_to("(3+I)^(2+I)", "10*X^((2*atan(3)-P)/2)*X^((-4*atan(3)+ln(2)+ln(5)+2*P)/2*I)", Radian, Polar);
   // The simplification of (3+I)^(2+I) in a Polar complex form generates to many nodes
   //assert_parsed_expression_simplify_to("(3+I)^(2+I)", "10*X^((2*atan(3)-P)/2)*X^((atan(tan((-4*atan(3)+ln(2)+ln(5)+2*P)/2))+P)*I)", Radian, Polar);
-  assert_parsed_expression_simplify_to("(3+I)^(2+I)", "(3+I)^(2+I)", Radian, Polar);
+  assert_parsed_expression_simplify_to("(3+I)^(2+I)", "(I+3)^(I+2)", Radian, Polar);
   assert_parsed_expression_simplify_to("(1+I)^2", "2*X^(P/2*I)", Radian, Polar);
   assert_parsed_expression_simplify_to("2*I", "2*X^(P/2*I)", Radian, Polar);
   assert_parsed_expression_simplify_to("3!", "6", Radian, Polar);
@@ -153,14 +153,14 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("-2*X^(I*P/2)", "2*X^(-P/2*I)", Radian, Polar);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "R(a^2)*X^((P-sign(a)*P)/2*I)", Radian, Polar);
+  assert_parsed_expression_simplify_to("a", "R(a^2)*X^((-P*sign(a)+P)/2*I)", Radian, Polar);
   // a = 2+i
   assert_simplify("2+I>a");
   assert_parsed_expression_simplify_to("a", "R(5)*X^((-2*atan(2)+P)/2*I)", Radian, Polar);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
-  assert_parsed_expression_simplify_to("f(3)", "R(f(3)^2)*X^((P-sign(f(3))*P)/2*I)", Radian, Polar);
+  assert_parsed_expression_simplify_to("f(3)", "R(f(3)^2)*X^((-P*sign(f(3))+P)/2*I)", Radian, Polar);
   // f: x -> x+1
   assert_simplify("x+1+I>f(x)");
   assert_parsed_expression_simplify_to("f(3)", "R(17)*X^((-2*atan(4)+P)/2*I)", Radian, Polar);

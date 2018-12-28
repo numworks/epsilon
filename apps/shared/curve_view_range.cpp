@@ -19,9 +19,7 @@ float CurveViewRange::yGridUnit() {
   return 0.0f;
 }
 
-float CurveViewRange::computeGridUnit(Axis axis, float range1) {
-  float marginRatio = CurveView::LabelsMarginRatio(axis == Axis::X ? CurveView::Axis::Horizontal : CurveView::Axis::Vertical);
-  float range = range1 * (1.0f-2.0f*marginRatio);
+float CurveViewRange::computeGridUnit(Axis axis, float range) {
   int a = 0;
   int b = 0;
   float maxNumberOfUnits = (axis == Axis::X) ? k_maxNumberOfXGridUnits : k_maxNumberOfYGridUnits;

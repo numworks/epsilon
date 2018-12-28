@@ -5,15 +5,15 @@
 
 namespace Probability {
 
-class RightIntegralCalculation : public Calculation {
+class RightIntegralCalculation final : public Calculation {
 public:
   RightIntegralCalculation();
-  Type type() override;
-  int numberOfParameters() override;
+  Type type() override { return Type::RightIntegral; }
+  int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
-  double lowerBound() override;
+  double lowerBound() override { return m_lowerBound; }
 private:
   void compute(int indexKnownElement) override;
   double m_lowerBound;

@@ -13,14 +13,6 @@ RightIntegralCalculation::RightIntegralCalculation() :
   compute(0);
 }
 
-Calculation::Type RightIntegralCalculation::type() {
-  return Type::RightIntegral;
-}
-
-int RightIntegralCalculation::numberOfParameters() {
-  return 2;
-}
-
 I18n::Message RightIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -46,10 +38,6 @@ double RightIntegralCalculation::parameterAtIndex(int index) {
     return m_lowerBound;
   }
   return m_result;
-}
-
-double RightIntegralCalculation::lowerBound() {
-  return m_lowerBound;
 }
 
 void RightIntegralCalculation::compute(int indexKnownElement) {

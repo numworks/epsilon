@@ -186,7 +186,9 @@ enum class FloatingPosition : uint8_t {
 };
 
 void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate) const {
-  assert(numberOfLabels(axis) > 1);
+  if (numberOfLabels(axis) < 1) {
+    return;
+  }
 
   float step = gridUnit(axis);
   float verticalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Vertical, 0.0f));

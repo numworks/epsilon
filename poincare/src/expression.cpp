@@ -329,7 +329,11 @@ Expression Expression::defaultReplaceUnknown(const Symbol & symbol) {
 
 /* Complex */
 
-void Expression::SetEncounterComplex(bool encounterComplex) {
+bool Expression::EncounteredComplex() {
+  return sApproximationEncounteredComplex;
+}
+
+void Expression::SetEncounteredComplex(bool encounterComplex) {
   sApproximationEncounteredComplex = encounterComplex;
 }
 
@@ -599,9 +603,7 @@ bool Expression::isMinusOne(const Expression e) {
 }
 
 Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb) {
-  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
-    return Unreal();
-  } else if (undefined) {
+  if (undefined) {
     return Undefined();
   }
   switch (complexFormat) {

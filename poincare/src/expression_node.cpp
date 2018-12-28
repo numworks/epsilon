@@ -72,30 +72,30 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
   return range;
 }
 
-int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) {
+int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted) {
   if (e1->type() > e2->type()) {
     if (canBeInterrupted && Expression::shouldStopProcessing()) {
       return 1;
     }
-    return -(e2->simplificationOrderGreaterType(e1, canBeInterrupted));
+    return -(e2->simplificationOrderGreaterType(e1, ascending, canBeInterrupted));
   } else if (e1->type() == e2->type()) {
-    return e1->simplificationOrderSameType(e2, canBeInterrupted);
+    return e1->simplificationOrderSameType(e2, ascending, canBeInterrupted);
   } else {
     if (canBeInterrupted && Expression::shouldStopProcessing()) {
       return -1;
     }
-    return e1->simplificationOrderGreaterType(e2, canBeInterrupted);
+    return e1->simplificationOrderGreaterType(e2, ascending, canBeInterrupted);
   }
 }
 
-int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
   int index = 0;
   for (ExpressionNode * c : children()) {
     // The NULL node is the least node type.
     if (e->numberOfChildren() <= index) {
       return 1;
     }
-    int childIOrder = SimplificationOrder(c, e->childAtIndex(index), canBeInterrupted);
+    int childIOrder = SimplificationOrder(c, e->childAtIndex(index), ascending, canBeInterrupted);
     if (childIOrder != 0) {
       return childIOrder;
     }
@@ -103,7 +103,7 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   }
   // The NULL node is the least node type.
   if (e->numberOfChildren() > numberOfChildren()) {
-    return -1;
+    return ascending ? -1 : 1;
   }
   return 0;
 }

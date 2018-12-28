@@ -59,7 +59,7 @@ public:
   }
 
   // Comparison
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;

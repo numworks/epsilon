@@ -32,7 +32,7 @@ public:
   void initToMatchSize(size_t goalSize) override;
 
   // ExpressionNode
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
 
   // Property
   Sign sign(Context * context) const override;

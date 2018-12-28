@@ -173,23 +173,23 @@ Expression PowerNode::shallowBeautify(Context & context, Preferences::ComplexFor
   return Power(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
-int PowerNode::simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const {
-  int baseComparison = SimplificationOrder(childAtIndex(0), e, canBeInterrupted);
+int PowerNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+  int baseComparison = SimplificationOrder(childAtIndex(0), e, ascending, canBeInterrupted);
   if (baseComparison != 0) {
     return baseComparison;
   }
   Rational one(1);
-  return SimplificationOrder(childAtIndex(1), one.node(), canBeInterrupted);
+  return SimplificationOrder(childAtIndex(1), one.node(), ascending, canBeInterrupted);
 }
 
-int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+int PowerNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
   assert(e->numberOfChildren() > 0);
-  int baseComparison = SimplificationOrder(childAtIndex(0), e->childAtIndex(0), canBeInterrupted);
+  int baseComparison = SimplificationOrder(childAtIndex(0), e->childAtIndex(0), ascending, canBeInterrupted);
   if (baseComparison != 0) {
     return baseComparison;
   }
   assert(e->numberOfChildren() > 1);
-  return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), canBeInterrupted);
+  return SimplificationOrder(childAtIndex(1), e->childAtIndex(1), ascending, canBeInterrupted);
 }
 
 Expression PowerNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {

@@ -352,7 +352,7 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(P
 bool Expression::isIdenticalTo(const Expression e) const {
   /* We use the simplification order only because it is a already-coded total
    * order on expresssions. */
-  return ExpressionNode::SimplificationOrder(node(), e.node(), true) == 0;
+  return ExpressionNode::SimplificationOrder(node(), e.node(), true, true) == 0;
 }
 
 bool Expression::isEqualToItsApproximationLayout(Expression approximation, char * buffer, int bufferSize, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context) {

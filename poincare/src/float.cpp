@@ -14,7 +14,10 @@ Expression FloatNode<T>::setSign(Sign s, Context * context, Preferences::Complex
 }
 
 template<typename T>
-int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+  }
   assert(e->type() == ExpressionNode::Type::Float);
   const FloatNode<T> * other = static_cast<const FloatNode<T> *>(e);
   if (value() < other->value()) {

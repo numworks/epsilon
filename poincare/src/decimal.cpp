@@ -60,7 +60,10 @@ Expression DecimalNode::setSign(Sign s, Context * context, Preferences::ComplexF
   return Decimal(this).setSign(s);
 }
 
-int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+  }
   assert(e->type() == Type::Decimal);
   const DecimalNode * other = static_cast<const DecimalNode *>(e);
   if (m_negative && !other->m_negative) {

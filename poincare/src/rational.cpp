@@ -135,7 +135,10 @@ int RationalNode::NaturalOrder(const RationalNode * i, const RationalNode * j) {
   return Integer::NaturalOrder(i1, i2);
 }
 
-int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+  }
   assert(e->type() == ExpressionNode::Type::Rational);
   const RationalNode * other = static_cast<const RationalNode *>(e);
   return NaturalOrder(this, other);

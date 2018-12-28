@@ -102,7 +102,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
   /* Sort children in decreasing order:
    * 1+x+x^2 --> x^2+x+1
    * 1+R(2) --> R(2)+1 */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e2, e1, canBeInterrupted); }, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); }, true);
 
   for (int i = 0; i < numberOfChildren(); i++) {
     // Try to make the child i positive if any negative numeral factor is found
@@ -156,7 +156,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::ComplexFormat
   }
 
   // Step 2: Sort the children
-  sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
 
 #if MATRIX_EXACT_REDUCING
 #if 0

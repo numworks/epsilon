@@ -167,7 +167,8 @@ public:
   Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Complex */
-  static void SetEncounterComplex(bool encounterComplex);
+  static bool EncounteredComplex();
+  static void SetEncounteredComplex(bool encounterComplex);
   static Preferences::ComplexFormat UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput);
   static Preferences::ComplexFormat UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & e, Context & context);
   bool isReal(Context & context) const { return node()->isReal(context); }

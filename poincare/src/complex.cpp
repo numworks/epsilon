@@ -15,6 +15,7 @@ extern "C" {
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
 #include <poincare/constant.h>
+#include <poincare/unreal.h>
 #include <ion.h>
 #include <cmath>
 
@@ -23,7 +24,7 @@ namespace Poincare {
 template<typename T>
 void ComplexNode<T>::setComplex(std::complex<T> c) {
   if (!std::isnan(c.imag()) && c.imag() != 0.0) {
-    Expression::SetEncounterComplex(true);
+    Expression::SetEncounteredComplex(true);
   }
   this->real(c.real());
   this->imag(c.imag());
@@ -45,6 +46,9 @@ T ComplexNode<T>::toScalar() const {
 
 template<typename T>
 Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
+  if (complexFormat == Preferences::ComplexFormat::Real && Expression::EncounteredComplex()) {
+    return Unreal();
+  }
   T ra, tb;
   if (complexFormat == Preferences::ComplexFormat::Polar) {
     ra = std::abs(*this);

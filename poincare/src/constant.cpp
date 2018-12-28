@@ -22,6 +22,28 @@ bool ConstantNode::isReal(Context & context) const {
   return !isIComplex();
 }
 
+int rankOfConstant(char c) {
+  switch (c) {
+    case Ion::Charset::IComplex:
+      return 0;
+    case Ion::Charset::SmallPi:
+      return 1;
+    case Ion::Charset::Exponential:
+      return 2;
+    default:
+      assert(false);
+      return -1;
+  }
+}
+
+int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
+  if (!ascending) {
+    return e->simplificationOrderSameType(this, true, canBeInterrupted);
+  }
+  assert(type() == e->type());
+  return (rankOfConstant(name()[0]) - rankOfConstant(static_cast<const ConstantNode *>(e)->name()[0]));
+}
+
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::String(m_name, strlen(m_name));
 }

@@ -532,11 +532,11 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return m1.shallowReduce(context, complexFormat, angleUnit, target);
     }
   }
-  // Step 8: e^(i*Pi*r) with r rational --> cos(pi*r) + i*sin(pi*r)
+  // Step 8: e^(r*i*Pi) with r rational --> cos(pi*r) + i*sin(pi*r)
   if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression m = childAtIndex(1);
-    Expression i = m.childAtIndex(m.numberOfChildren()-1);
-    static_cast<Multiplication &>(m).removeChildAtIndexInPlace(m.numberOfChildren()-1);
+    Expression i = m.childAtIndex(m.numberOfChildren()-2);
+    static_cast<Multiplication &>(m).removeChildAtIndexInPlace(m.numberOfChildren()-2);
     if (angleUnit == Preferences::AngleUnit::Degree) {
       m.replaceChildAtIndexInPlace(m.numberOfChildren()-1, Rational(180));
     }
@@ -1076,11 +1076,11 @@ bool Power::isNthRootOfUnity() const {
   if (childAtIndex(1).numberOfChildren() < 2 || childAtIndex(1).numberOfChildren() > 3) {
     return false;
   }
-  const Expression i = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-1);
+  const Expression i = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-2);
   if (i.type() != ExpressionNode::Type::Constant || !static_cast<const Constant &>(i).isIComplex()) {
     return false;
   }
-  const Expression pi = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-2);
+  const Expression pi = childAtIndex(1).childAtIndex(childAtIndex(1).numberOfChildren()-1);
   if (pi.type() != ExpressionNode::Type::Constant || !static_cast<const Constant &>(pi).isPi()) {
     return false;
   }

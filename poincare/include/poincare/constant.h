@@ -37,6 +37,9 @@ public:
   bool isExponential() const { return isConstantChar(Ion::Charset::Exponential); }
   bool isIComplex() const { return isConstantChar(Ion::Charset::IComplex); }
 
+  // Comparison
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+
   // Simplification
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 private:

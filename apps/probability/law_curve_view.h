@@ -28,6 +28,7 @@ protected:
   char * label(Axis axis, int index) const override;
 private:
   static float EvaluateAtAbscissa(float abscissa, void * model, void * context);
+  static constexpr KDColor k_backgroundColor = Palette::WallScreen;
   void drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const;
   char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   Law * m_law;

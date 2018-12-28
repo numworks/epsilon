@@ -185,7 +185,7 @@ enum class FloatingPosition : uint8_t {
   Max
 };
 
-void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate) const {
+void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
   int numberLabels = numberOfLabels(axis);
   if (numberLabels <= 1) {
     return;
@@ -276,7 +276,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     }
     KDPoint origin =  KDPoint(xPosition, yPosition);
     if (rect.intersects(KDRect(origin, textSize))) {
-      ctx->drawString(labelI, origin, k_font, KDColorBlack);
+      ctx->drawString(labelI, origin, k_font, KDColorBlack, backgroundColor);
     }
   }
 }

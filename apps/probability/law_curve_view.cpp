@@ -6,6 +6,8 @@ using namespace Shared;
 
 namespace Probability {
 
+constexpr KDColor LawCurveView::k_backgroundColor;
+
 void LawCurveView::reload() {
   CurveView::reload();
   markRectAsDirty(bounds());
@@ -14,9 +16,9 @@ void LawCurveView::reload() {
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   float lowerBound = m_calculation->lowerBound();
   float upperBound = m_calculation->upperBound();
-  ctx->fillRect(bounds(), Palette::WallScreen);
+  ctx->fillRect(bounds(), k_backgroundColor);
   drawAxes(ctx, rect, Axis::Horizontal);
-  drawLabels(ctx, rect, Axis::Horizontal, false);
+  drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_law->type() == Law::Type::Normal) {
     // Special case for the normal law, which has always the same curve
     float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, lowerBound));

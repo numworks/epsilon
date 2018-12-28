@@ -21,11 +21,9 @@ public:
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    Expression::SetEncounterComplex(true);
     return templatedApproximate<float>();
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    Expression::SetEncounterComplex(true);
     return templatedApproximate<double>();
   }
 

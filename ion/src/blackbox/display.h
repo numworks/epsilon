@@ -10,6 +10,7 @@ namespace Blackbox {
 const KDColor * frameBufferAddress();
 void setFrameBufferActive(bool enabled);
 void writeFrameBufferToFile(const char * filename);
+void invert(bool val);
 
 }
 }

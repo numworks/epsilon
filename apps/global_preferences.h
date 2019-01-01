@@ -22,7 +22,11 @@ public:
   void setBrightnessLevel(int brightnessLevel);
   constexpr static int NumberOfBrightnessStates = 5;
   bool invert() const { return m_inverted; }
-  void setinvert(bool inverted) { m_inverted = inverted; Ion::Display::invert(inverted); }  
+#if PLATFORM == simulator // ugly fix for "simulator doesn't build"
+  void setinvert(bool inverted) { m_inverted = inverted; }
+#elif
+  void setinvert(bool inverted) { m_inverted = inverted; Ion::Display::invert(inverted); }
+#endif
 private:
   GlobalPreferences() :
     m_language(I18n::Language::EN),

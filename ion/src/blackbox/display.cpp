@@ -32,6 +32,9 @@ void pullRect(KDRect r, KDColor * pixels) {
 void waitForVBlank() {
 }
 
+void invert(bool val){
+}
+
 }
 }
 

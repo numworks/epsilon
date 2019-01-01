@@ -56,6 +56,10 @@ void waitForVBlank() {
   }
 }
 
+void invert(bool val){
+  Device::invert(val);
+}
+
 }
 }
 
@@ -96,6 +100,7 @@ void init() {
   initGPIO();
   initFSMC();
   initPanel();
+  invert(false, true);
 }
 
 void shutdown() {
@@ -369,6 +374,16 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
     numberOfPixels--;
   }
   send_command(Command::PixelFormatSet, 0x05);
+}
+
+void invert(bool val, bool ign) {
+  if (!ign) {sInverted = val;}
+  if (sInverted) {
+    Device::send_command(Ion::Display::Device::Command::InvertOn);
+  }
+  else {
+    Device::send_command(Ion::Display::Device::Command::InvertOff);
+  }
 }
 
 }

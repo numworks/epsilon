@@ -23,6 +23,8 @@ void pullRect(KDRect r, KDColor * pixels);
 
 void waitForVBlank();
 
+void invert(bool val);
+
 constexpr int Width = 320;
 constexpr int Height = 240;
 

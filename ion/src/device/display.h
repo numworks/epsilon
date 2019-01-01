@@ -60,6 +60,9 @@ void pushPixels(const KDColor * pixels, size_t numberOfPixels);
 void pushColor(KDColor color, size_t numberOfPixels);
 void pullPixels(KDColor * pixels, size_t numberOfPixels);
 
+static bool sInverted = false;
+void invert(bool var = false, bool ign = false);
+
 enum class Command : uint16_t {
   Nop = 0x00,
   Reset = 0x01,
@@ -74,7 +77,9 @@ enum class Command : uint16_t {
   TearingEffectLineOn = 0x35,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
-  FrameRateControl = 0xC6
+  FrameRateControl = 0xC6,
+  InvertOff = 0x20,
+  InvertOn = 0x21
 };
 
 constexpr static GPIOPin FSMCPins[] = {

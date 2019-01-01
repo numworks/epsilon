@@ -21,6 +21,8 @@ public:
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
   constexpr static int NumberOfBrightnessStates = 5;
+  bool invert() const { return m_inverted; }
+  void setinvert(bool inverted) { m_inverted = inverted; Ion::Display::invert(inverted); }  
 private:
   GlobalPreferences() :
     m_language(I18n::Language::EN),
@@ -35,8 +37,6 @@ private:
   bool m_showPopUp;
 #endif
   int m_brightnessLevel;
-  bool invert() const { return m_inverted; }
-  void setinvert(bool inverted) { m_inverted = inverted; Ion::Display::invert(inverted); }
   bool m_inverted = false;
 };
 

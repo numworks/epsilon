@@ -34,9 +34,9 @@ const SettingsMessageTree menu[9] =
   SettingsMessageTree(I18n::Message::Inverted),
   SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 10);
 #else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
 #endif
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
@@ -44,6 +44,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
 #ifdef EPSILON_BOOT_PROMPT
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
 #endif
+  m_invertedCell(I18n::Message::Default, KDFont::LargeFont),
   m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
@@ -52,7 +53,6 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_languageController(this, 13),
   m_examModeController(this),
   m_aboutController(this)
-  m_invertedCell(I18n::Message::Default, KDFont::LargeFont),
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -126,9 +126,9 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         subController = &m_examModeController;
         break;
 #ifdef EPSILON_BOOT_PROMPT
-      case 8:
+      case 9:
 #else
-      case 7:
+      case 8:
 #endif
         subController = &m_aboutController;
         break;
@@ -171,6 +171,9 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_popUpCell;
   }
 #endif
+  if (type == 3) {
+    return &m_invertedCell;
+  }
   assert(type == 1);
   return &m_brightnessCell;
 }
@@ -191,6 +194,9 @@ int MainController::typeAtLocation(int i, int j) {
     return 2;
   }
 #endif
+  if (j == 8) {
+  return 3;
+  }
   return 0;
 }
 

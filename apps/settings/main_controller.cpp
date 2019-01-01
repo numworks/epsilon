@@ -126,8 +126,11 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         subController = &m_examModeController;
         break;
 #ifdef EPSILON_BOOT_PROMPT
+      case 7: //was 8
+      case 8:
       case 9:
 #else
+      case 7:
       case 8:
 #endif
         subController = &m_aboutController;
@@ -193,10 +196,14 @@ int MainController::typeAtLocation(int i, int j) {
   if (j == 7) {
     return 2;
   }
-#endif
   if (j == 8) {
   return 3;
   }
+#else
+  if (j == 7) {
+  return 3;
+  }
+#endif
   return 0;
 }
 

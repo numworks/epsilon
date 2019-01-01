@@ -36,6 +36,7 @@ private:
 #endif
   constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
+  MessageTableCellWithSwitch m_invertedCell;
   MessageTableCellWithGauge m_brightnessCell;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;

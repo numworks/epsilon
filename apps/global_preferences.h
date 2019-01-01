@@ -35,6 +35,9 @@ private:
   bool m_showPopUp;
 #endif
   int m_brightnessLevel;
+  bool invert() const { return m_inverted; }
+  void setinvert(bool inverted) { m_inverted = inverted; Ion::Display::invert(inverted); }
+  bool m_inverted = false;
 };
 
 #endif

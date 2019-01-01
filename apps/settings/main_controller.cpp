@@ -15,9 +15,9 @@ const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree menu[9] =
+const SettingsMessageTree menu[10] =
 #else
-const SettingsMessageTree menu[8] =
+const SettingsMessageTree menu[9] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
@@ -31,6 +31,7 @@ const SettingsMessageTree menu[8] =
 #elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
+  SettingsMessageTree(I18n::Message::Inverted),
   SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
 #ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
@@ -51,6 +52,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_languageController(this, 13),
   m_examModeController(this),
   m_aboutController(this)
+  m_invertedCell(I18n::Message::Default, KDFont::LargeFont),
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -85,6 +87,14 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       return false;
     }
 #endif
+    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Inverted) {
+      if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+        globalPreferences->setinvert(!globalPreferences->invert());
+        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+        return true;
+      }
+      return false;
+    }
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Brightness) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
@@ -205,6 +215,19 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
+    return;
+  }
+  if (index == 8) {
+    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
+    mySwitch->setState(globalPreferences->invert());
+    return;
+  }  
+#else
+  if (index == 7) {
+    MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
+    SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
+    mySwitch->setState(globalPreferences->invert());
     return;
   }
 #endif

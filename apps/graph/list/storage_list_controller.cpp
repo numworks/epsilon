@@ -46,6 +46,7 @@ void StorageListController::renameSelectedFunction() {
 }
 
 bool StorageListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  assert(textField != nullptr);
   // Compute the new name
   size_t textLength = strlen(text);
   size_t argumentLength = StorageFunction::k_parenthesedArgumentLength;
@@ -113,6 +114,7 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 }
 
 bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
+  assert(textField != nullptr);
   // Put the name column back to normal size
   computeTitlesColumnWidth();
   selectableTableView()->reloadData();
@@ -129,6 +131,7 @@ bool StorageListController::textFieldShouldFinishEditing(TextField * textField, 
 }
 
 bool StorageListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  assert(textField != nullptr);
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     return false;
   }
@@ -154,8 +157,10 @@ HighlightCell * StorageListController::expressionCells(int index) {
 }
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
+  assert(cell != nullptr);
+  assert(j >= 0 && j < modelStore()->numberOfModels());
   TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
-  // Update the corresponding expression cell in order to geet the baseline
+  // Update the corresponding expression cell in order to get the baseline
   StorageExpressionModelListController::willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
   titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
@@ -168,6 +173,8 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
 }
 
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
+  assert(cell != nullptr);
+  assert(j >= 0 && j < modelStore()->numberOfModels());
   Shared::StorageFunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   ExpiringPointer<StorageFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));

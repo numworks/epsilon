@@ -180,12 +180,12 @@ QUIZ_CASE(poincare_user_variable_properties) {
   Shared::GlobalContext context;
 
   assert_parsed_expression_evaluates_to<double>("[[1]]>a", "[[1]]");
-  assert(Symbol('a').isApproximate(context));
-  assert(Poincare::Expression::IsMatrix(Symbol('a'), context, true));
+  quiz_assert(Symbol('a').isApproximate(context));
+  quiz_assert(Poincare::Expression::IsMatrix(Symbol('a'), context, true));
 
   parse_and_simplify("[[x]]>f(x)");
-  assert(Function("f", 1, Rational(2)).isApproximate(context));
-  assert(Poincare::Expression::IsMatrix(Function("f", 1, Symbol('x')), context, true));
+  quiz_assert(Function("f", 1, Rational(2)).isApproximate(context));
+  quiz_assert(Poincare::Expression::IsMatrix(Function("f", 1, Symbol('x')), context, true));
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();

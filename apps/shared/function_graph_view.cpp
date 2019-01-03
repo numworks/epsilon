@@ -22,10 +22,8 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
 void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
-  drawAxis(ctx, rect, Axis::Horizontal);
-  drawAxis(ctx, rect, Axis::Vertical);
-  drawLabels(ctx, rect, Axis::Horizontal, true);
-  drawLabels(ctx, rect, Axis::Vertical, true);
+  drawAxes(ctx, rect);
+  simpleDrawBothAxesLabels(ctx, rect);
 }
 
 void FunctionGraphView::setContext(Context * context) {

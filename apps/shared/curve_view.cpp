@@ -92,6 +92,27 @@ float CurveView::samplingRatio() const {
   return 1.1f;
 }
 
+void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
+  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
+  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
+  if (axis == Axis::Vertical) {
+    rectMax = pixelToFloat(Axis::Vertical, rect.top());
+    rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
+  }
+  float start = step * ((int)(min(axis)/step));
+  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
+  for (float x = start; x < max(axis); x+= step) {
+    /* When |start| >> step, start + step = start. In that case, quit the
+     * infinite loop. */
+    if (x == x-step || x == x+step) {
+      return;
+    }
+    if (rectMin <= x && x <= rectMax) {
+      drawLine(ctx, rect, otherAxis, x, color);
+    }
+  }
+}
+
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
   return (axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin());
@@ -364,27 +385,6 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   if (oversize) {
     KDRect oversizeDotRect = KDRect(px - oversizeDotDiameter/2, py-oversizeDotDiameter/2, oversizeDotDiameter, oversizeDotDiameter);
     ctx->blendRectWithMask(oversizeDotRect, color, (const uint8_t *)oversizeDotMask, s_oversizeDotWorkingBuffer);
-  }
-}
-
-void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
-  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  if (axis == Axis::Vertical) {
-    rectMax = pixelToFloat(Axis::Vertical, rect.top());
-    rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
-  }
-  float start = step*((int)(min(axis)/step));
-  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-  for (float x = start; x < max(axis); x+= step) {
-    /* When |start| >> step, start + step = start. In that case, quit the
-     * infinite loop. */
-    if (x == x-step || x == x+step) {
-      return;
-    }
-    if (rectMin <= x && x <= rectMax) {
-      drawLine(ctx, rect, otherAxis, x, color);
-    }
   }
 }
 

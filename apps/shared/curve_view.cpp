@@ -388,7 +388,7 @@ void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
   drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), Palette::GreyWhite);
 }
 
-void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
+void CurveView::drawAxis(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1);
 }
 

@@ -106,9 +106,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationDisplay("28^7", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
   assertCalculationDisplay("3+R(2)>a", false, false, ::Calculation::Calculation::EqualSign::Approximation, "R(2)+3", nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  assertCalculationDisplay("3+2>a", false, false, ::Calculation::Calculation::EqualSign::Equal, "3+2", "5", &globalContext, &store);
+  assertCalculationDisplay("3+2>a", false, true, ::Calculation::Calculation::EqualSign::Equal, "5", "5", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  assertCalculationDisplay("3>a", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("3>a", false, true, ::Calculation::Calculation::EqualSign::Equal, "3", "3", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   assertCalculationDisplay("3+x>f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "x+3", nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

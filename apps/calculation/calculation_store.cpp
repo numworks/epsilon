@@ -92,10 +92,10 @@ Expression CalculationStore::ansExpression(Context * context) {
   }
   Calculation * lastCalculation = calculationAtIndex(numberOfCalculations()-1);
   /* Special case: the exact output is a Store/Equal expression.
-   * Store/Equal expression must be final root of an expression.
-   * To avoid turning 'ans->A' in '2->A->A' (or 2->A=A) which cannot be parsed),
-   * ans is replaced by the approximation output in when any Store or Equal
-   * expression appears.*/
+   * Store/Equal expression can only be at the root of an expression.
+   * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
+   * parsed), ans is replaced by the approximation output when any Store or
+   * Equal expression appears. */
   bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput().recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
           return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
         }, *context, false);

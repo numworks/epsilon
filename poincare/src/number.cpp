@@ -91,7 +91,8 @@ Number Number::BinaryOperation(const Number & i, const Number & j, RationalBinar
       return a;
     }
   }
-  // one of the operand is Undefined/Infinity/Float or the Rational addition overflowed
+  /* At least one of the operands is Undefined/Infinity/Float, or the Rational
+   * addition overflowed */
   double a = doubleOp(i.node()->doubleApproximation(), j.node()->doubleApproximation());
   return FloatNumber(a);
 }

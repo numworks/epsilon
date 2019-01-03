@@ -92,7 +92,7 @@ float CurveView::samplingRatio() const {
   return 1.1f;
 }
 
-void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
+void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
   if (axis == Axis::Vertical) {
@@ -100,6 +100,8 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
     rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
   }
   float start = step * ((int)(min(axis)/step));
+  float boldStart = 2*step * ((int)(min(axis)/(2*step)));
+  bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
   for (float x = start; x < max(axis); x+= step) {
     /* When |start| >> step, start + step = start. In that case, quit the
@@ -108,8 +110,9 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
       return;
     }
     if (rectMin <= x && x <= rectMax) {
-      drawLine(ctx, rect, otherAxis, x, color);
+      drawLine(ctx, rect, otherAxis, x, drawBold ? boldColor : lightColor);
     }
+    drawBold = !drawBold;
   }
 }
 
@@ -389,8 +392,10 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), Palette::GreyWhite);
-  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), Palette::GreyWhite);
+  KDColor boldColor = Palette::GreyMiddle;
+  KDColor lightColor = Palette::GreyWhite;
+  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), boldColor, lightColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }
 
 void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {

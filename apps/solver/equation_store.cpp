@@ -176,9 +176,11 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   /* Turn the results in layouts */
   int solutionIndex = 0;
   int initialNumberOfSolutions = m_numberOfSolutions <= k_maxNumberOfExactSolutions ? m_numberOfSolutions : -1;
+  int maxNumberSolutions = initialNumberOfSolutions + (initialNumberOfSolutions >= k_maxNumberOfExactSolutions - 1 ? 0 : 1);
   // We iterate through the solutions and the potential delta
-  for (int i = 0; i < initialNumberOfSolutions+1; i++) {
+  for (int i = 0; i < maxNumberSolutions; i++) {
     if (!exactSolutions[i].isUninitialized()) {
+      assert(!exactSolutionsApproximations[i].isUninitialized());
       if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Unreal) {
         /* Discard unreal solutions. */
         if (i < initialNumberOfSolutions) {

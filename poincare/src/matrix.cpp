@@ -147,7 +147,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   ArrayRowCanonize(operands, dim, 2*dim);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
-    if (std::abs(operands[i*2*dim+i] - (T)1.0) > Expression::epsilon<float>()) {
+    if (std::abs(operands[i*2*dim+i] - (T)1.0) > Expression::Epsilon<float>()) {
       return -2;
     }
   }
@@ -160,7 +160,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 }
 
 Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication determinant) {
-  Expression::setInterruption(false);
+  Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
 
@@ -230,7 +230,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
   while (h < numberOfRows && k < numberOfColumns) {
     // Find the first non-null pivot
     int iPivot = h;
-    while (iPivot < numberOfRows && std::abs(array[iPivot*numberOfColumns+k]) < Expression::epsilon<double>()) {
+    while (iPivot < numberOfRows && std::abs(array[iPivot*numberOfColumns+k]) < Expression::Epsilon<double>()) {
       iPivot++;
     }
     if (iPivot == numberOfRows) {

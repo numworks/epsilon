@@ -99,7 +99,7 @@ class Expression : public TreeHandle {
   friend class SymbolNode;
 
 public:
-  static bool isExpression() { return true; }
+  static bool IsExpression() { return true; }
 
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
@@ -109,9 +109,9 @@ public:
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
-  static void setCircuitBreaker(CircuitBreaker cb);
-  static bool shouldStopProcessing();
-  static void setInterruption(bool interrupt);
+  static void SetCircuitBreaker(CircuitBreaker cb);
+  static bool ShouldStopProcessing();
+  static void SetInterruption(bool interrupt);
 
   /* Hierarchy */
   Expression childAtIndex(int i) const;
@@ -196,10 +196,10 @@ public:
 
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
-  template<typename U> static U epsilon();
+  template<typename U> static U Epsilon();
   template<typename U> Expression approximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename U> U approximateToScalar(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename U> static U approximateToScalar(const char * text, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  template<typename U> static U ApproximateToScalar(const char * text, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
   struct Coordinate2D {
@@ -247,7 +247,7 @@ protected:
      * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'
      * */
 
-    assert(T::isExpression());
+    assert(T::IsExpression());
     static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
     return *reinterpret_cast<T *>(const_cast<Expression *>(this));
   }
@@ -309,9 +309,9 @@ private:
   int defaultGetPolynomialCoefficients(Context & context, const char * symbol, Expression expression[]) const;
 
   /* Builder */
-  static bool isZero(const Expression e);
-  static bool isOne(const Expression e);
-  static bool isMinusOne(const Expression e);
+  static bool IsZero(const Expression e);
+  static bool IsOne(const Expression e);
+  static bool IsMinusOne(const Expression e);
   static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
 
   /* Expression roots/extrema solver*/

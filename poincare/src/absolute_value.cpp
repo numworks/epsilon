@@ -50,11 +50,11 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexF
   Expression c = childAtIndex(0);
   if (c.isReal(context)) {
     float app = c.node()->approximate(float(), context, angleUnit).toScalar();
-    if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
+    if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
       // abs(a) = a with a > 0
       replaceWithInPlace(c);
       return c;
-    } else if (!std::isnan(app) && app <= -Expression::epsilon<float>()) {
+    } else if (!std::isnan(app) && app <= -Expression::Epsilon<float>()) {
       // abs(a) = -a with a < 0
       Multiplication m(Rational(-1), c);
       replaceWithInPlace(m);

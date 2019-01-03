@@ -87,7 +87,7 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
     e = reducedE;
   }
   // Restore the previous interruption flag
-  setInterruption(interruptedSimplification);
+  SetInterruption(interruptedSimplification);
 
   replaceWithInPlace(e);
   return e;

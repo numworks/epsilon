@@ -45,11 +45,11 @@ Expression Expression::ExpressionFromAddress(const void * address, size_t size) 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;
 static bool sSimplificationHasBeenInterrupted = false;
 
-void Expression::setCircuitBreaker(CircuitBreaker cb) {
+void Expression::SetCircuitBreaker(CircuitBreaker cb) {
   sCircuitBreaker = cb;
 }
 
-bool Expression::shouldStopProcessing() {
+bool Expression::ShouldStopProcessing() {
   if (sCircuitBreaker == nullptr) {
     return false;
   }
@@ -60,7 +60,7 @@ bool Expression::shouldStopProcessing() {
   return false;
 }
 
-void Expression::setInterruption(bool interrupt) {
+void Expression::SetInterruption(bool interrupt) {
   sSimplificationHasBeenInterrupted = interrupt;
 }
 
@@ -474,7 +474,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       bool tbIsNegative = false;
       makePositive(&ra, &raIsNegative);
       makePositive(&tb, &tbIsNegative);
-      *simplifiedExpression = CreateComplexExpression(ra, tb, complexFormat, ra.isUndefined() || tb.isUndefined(), isZero(ra), isOne(ra), isZero(tb), isOne(tb), raIsNegative, tbIsNegative);
+      *simplifiedExpression = CreateComplexExpression(ra, tb, complexFormat, ra.isUndefined() || tb.isUndefined(), IsZero(ra), IsOne(ra), IsZero(tb), IsOne(tb), raIsNegative, tbIsNegative);
     } else {
       /* Case 2: The reduced expression has a complex component that could not
        * be bubbled up. */
@@ -575,7 +575,7 @@ U Expression::approximateToScalar(Context& context, Preferences::ComplexFormat c
 }
 
 template<typename U>
-U Expression::approximateToScalar(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+U Expression::ApproximateToScalar(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
@@ -589,20 +589,20 @@ U Expression::approximateWithValueForSymbol(const char * symbol, U x, Context & 
 }
 
 template<typename U>
-U Expression::epsilon() {
+U Expression::Epsilon() {
   static U epsilon = sizeof(U) == sizeof(double) ? 1E-15 : 1E-7f;
   return epsilon;
 }
 
 /* Builder */
 
-bool Expression::isZero(const Expression e) {
+bool Expression::IsZero(const Expression e) {
   return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isZero();
 }
-bool Expression::isOne(const Expression e) {
+bool Expression::IsOne(const Expression e) {
   return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isOne();
 }
-bool Expression::isMinusOne(const Expression e) {
+bool Expression::IsMinusOne(const Expression e) {
   return e.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(e).isMinusOne();
 }
 
@@ -996,8 +996,8 @@ double Expression::brentRoot(const char * symbol, double ax, double bx, double p
   return NAN;
 }
 
-template float Expression::epsilon<float>();
-template double Expression::epsilon<double>();
+template float Expression::Epsilon<float>();
+template double Expression::Epsilon<double>();
 
 template Expression Expression::approximate<float>(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 template Expression Expression::approximate<double>(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
@@ -1005,8 +1005,8 @@ template Expression Expression::approximate<double>(Context& context, Preference
 template float Expression::approximateToScalar(Context& context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateToScalar(Context& context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 
-template float Expression::approximateToScalar<float>(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-template double Expression::approximateToScalar<double>(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+template float Expression::ApproximateToScalar<float>(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+template double Expression::ApproximateToScalar<double>(const char * text, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
 template Evaluation<float> Expression::approximateToEvaluation(Context& context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;
 template Evaluation<double> Expression::approximateToEvaluation(Context& context, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) const;

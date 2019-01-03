@@ -206,6 +206,7 @@ Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, co
     if (strncmp(baseName, currentName, nameLength) == 0) {
       for (size_t i = 0; i < numberOfExtensions; i++) {
         if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
+          assert(*(currentName + nameLength) == '.');
           return Record(currentName);
         }
       }

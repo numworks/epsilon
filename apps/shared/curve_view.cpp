@@ -185,6 +185,11 @@ enum class FloatingPosition : uint8_t {
   Max
 };
 
+void CurveView::simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const {
+  drawLabels(ctx, rect, Axis::Vertical, true);
+  drawLabels(ctx, rect, Axis::Horizontal, true);
+}
+
 void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
   int numberLabels = numberOfLabels(axis);
   if (numberLabels <= 1) {
@@ -386,6 +391,11 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
   drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), Palette::GreyWhite);
   drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), Palette::GreyWhite);
+}
+
+void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {
+  drawAxis(ctx, rect, Axis::Vertical);
+  drawAxis(ctx, rect, Axis::Horizontal);
 }
 
 void CurveView::drawAxis(KDContext * ctx, KDRect rect, Axis axis) const {

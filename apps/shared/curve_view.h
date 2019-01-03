@@ -61,11 +61,13 @@ protected:
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize = false) const;
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
+  void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
+  void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;

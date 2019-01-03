@@ -20,10 +20,8 @@ GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * banne
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
-  drawAxis(ctx, rect, Axis::Horizontal);
-  drawAxis(ctx, rect, Axis::Vertical);
-  drawLabels(ctx, rect, Axis::Horizontal, true);
-  drawLabels(ctx, rect, Axis::Vertical, true);
+  drawAxes(ctx, rect);
+  simpleDrawBothAxesLabels(ctx, rect);
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series)) {
       KDColor color = Palette::DataColor[series];

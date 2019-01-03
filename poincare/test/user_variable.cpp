@@ -179,11 +179,11 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
 QUIZ_CASE(poincare_user_variable_properties) {
   Shared::GlobalContext context;
 
-  assert_simplify("[[1]]>a");
+  assert_parsed_expression_evaluates_to<double>("[[1]]>a", "[[1]]");
   assert(Symbol('a').isApproximate(context));
   assert(Poincare::Expression::IsMatrix(Symbol('a'), context, true));
 
-  assert_simplify("[[x]]>f(x)");
+  parse_and_simplify("[[x]]>f(x)");
   assert(Function("f", 1, Rational(2)).isApproximate(context));
   assert(Poincare::Expression::IsMatrix(Function("f", 1, Symbol('x')), context, true));
 

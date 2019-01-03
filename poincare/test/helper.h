@@ -20,6 +20,8 @@ bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression g
 void translate_in_special_chars(char * expression);
 void translate_in_ASCII_chars(char * expression);
 Poincare::Expression parse_expression(const char * expression, bool canBeUnparsable = false);
+Poincare::Expression parse_and_simplify(const char * expression);
+
 void assert_expression_not_parsable(const char * expression);
 void assert_parsed_expression_type(const char * expression, Poincare::ExpressionNode::Type type);
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r);

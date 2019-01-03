@@ -113,12 +113,16 @@ void assert_parsed_expression_polynomial_degree(const char * expression, int deg
   quiz_assert(result.polynomialDegree(globalContext, symbolName) == degree);
 }
 
-void assert_simplify(const char * expression) {
+
+Expression parse_and_simplify(const char * expression) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  e = e.simplify(globalContext, Cartesian, Radian);
-  quiz_assert(!e.isUninitialized());
+  return e.simplify(globalContext, Cartesian, Radian);
+}
+
+void assert_simplify(const char * expression) {
+  quiz_assert(!(parse_and_simplify(expression).isUninitialized()));
 }
 
 typedef Expression (*ProcessExpression)(Expression, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);

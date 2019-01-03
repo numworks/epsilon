@@ -338,6 +338,7 @@ QUIZ_CASE(poincare_parser_parse_store) {
   assert_parsed_expression_is("1>f(x)", Store(Rational(1),Function("f",1,Symbol("x",1))));
   assert_parsed_expression_is("x>f(x)", Store(Symbol("x",1),Function("f",1,Symbol("x",1))));
   assert_parsed_expression_is("n>f(x)", Store(Symbol("n",1),Function("f",1,Symbol("x",1))));
+  assert_parsed_expression_is("[[x]]>f(x)", Store(Matrix(Symbol('x')), Function("f", 1, Symbol('x'))));
   assert_raises_parsing_error("a>b>c");
   assert_raises_parsing_error("1>2");
   assert_raises_parsing_error("1>");

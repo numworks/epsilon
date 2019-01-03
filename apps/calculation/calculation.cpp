@@ -166,7 +166,7 @@ bool Calculation::shouldOnlyDisplayExactOutput() {
   /* If the approximateOutput is undef, we not not want to display it.
    * This prevents:
    * x->f(x) from displaying x = undef
-   * x+x form displaying 2x = undef */
+   * x+x from displaying 2x = undef */
   return strcmp(m_approximateOutputText, Undefined::Name()) == 0;
 }
 

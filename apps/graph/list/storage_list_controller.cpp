@@ -176,13 +176,14 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
 }
 
 void StorageListController::setFunctionNameInTextField(ExpiringPointer<StorageFunction> function, TextField * textField) {
+  assert(textField != nullptr);
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
   textField->setText(bufferName);
 }
 
 KDCoordinate StorageListController::privateBaseline(int j) const {
-  assert(j>=0 && j<k_maxNumberOfDisplayableRows);
+  assert(j >= 0 && j < const_cast<StorageListController *>(this)->modelStore()->numberOfModels());
   Shared::FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {

@@ -8,6 +8,7 @@ constexpr ScriptTemplate emptyScriptTemplate(".py", "\x01" R"(from math import *
 constexpr ScriptTemplate squaresScriptTemplate("squares.py", "\x01" R"(from math import *
 from turtle import *
 def squares(angle=0.5):
+  reset()
   L=330
   speed(10)
   penup()

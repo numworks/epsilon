@@ -15,17 +15,17 @@ QUIZ_CASE(poincare_store_evaluate) {
 }
 
 QUIZ_CASE(poincare_store_simplify) {
-  assert_parsed_expression_simplify_to("1+2>A", "2+1");
-  assert_parsed_expression_simplify_to("1+2>x", "2+1");
+  assert_parsed_expression_simplify_to("1+2>x", "3");
+  assert_parsed_expression_simplify_to("0.1+0.2>x", "3/10");
+  assert_parsed_expression_simplify_to("a+a>x", "2*a");
 
   // Clean the storage for other tests
-  Ion::Storage::sharedStorage()->recordNamed("A.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
 QUIZ_CASE(poincare_store_matrix) {
   assert_parsed_expression_evaluates_to<double>("[[7]]>a", "[[7]]");
-  assert_parsed_expression_simplify_to("1+1>a", "1+1");
+  assert_parsed_expression_simplify_to("1+1>a", "2");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
@@ -54,7 +54,7 @@ QUIZ_CASE(poincare_store_overwrite) {
 
 QUIZ_CASE(poincare_store_do_not_overwrite) {
   assert_parsed_expression_simplify_to("-1>g(x)", "-1");
-  assert_parsed_expression_simplify_to("1+g(x)>f(x)", "g(x)+1");
+  assert_parsed_expression_simplify_to("1+g(x)>f(x)", "0");
   assert_parsed_expression_simplify_to("2>g", Undefined::Name());
   assert_parsed_expression_evaluates_to<double>("g(4)", "-1");
   assert_parsed_expression_evaluates_to<double>("f(4)", "0");

@@ -226,6 +226,10 @@ Expression Expression::defaultShallowReduce() {
   return *this;
 }
 
+bool Expression::SimplificationHasBeenInterrupted() {
+  return sSimplificationHasBeenInterrupted;
+}
+
 Expression Expression::parent() const {
   TreeHandle p = TreeHandle::parent();
   return static_cast<Expression &>(p);

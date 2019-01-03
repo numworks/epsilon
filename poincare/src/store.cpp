@@ -75,8 +75,21 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
     Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
     e = e.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
+
+  /* We want to replace the store with its reduced left side. If the
+   * simplification of the left side failed, just replace with the left side of
+   * the store without simplifying it.
+   * The simplification fails for [x]->d(x) for instance, because we do not
+   * have exact simplification of matrices yet. */
+  bool interruptedSimplification = SimplificationHasBeenInterrupted();
+  Expression reducedE = e.clone().deepReduce(context, complexFormat, angleUnit, target);
+  if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
+    e = reducedE;
+  }
+  // Restore the previous interruption flag
+  setInterruption(interruptedSimplification);
+
   replaceWithInPlace(e);
-  e = e.deepReduce(context, complexFormat, angleUnit, target);
   return e;
 }
 

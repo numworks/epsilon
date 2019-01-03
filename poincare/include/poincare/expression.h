@@ -232,6 +232,7 @@ public:
   static void Tidy() { sSymbolReplacementsCountLock = false; }
 
 protected:
+  static bool SimplificationHasBeenInterrupted();
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
 
   template<class T> T convert() const {

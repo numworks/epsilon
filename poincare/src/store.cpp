@@ -20,7 +20,7 @@ void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat
 }
 
 Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Store(this).shallowReduce(context);
+  return Store(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -50,7 +50,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   return e.node()->approximate(T(), context, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context) {
+Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
@@ -76,6 +76,7 @@ Expression Store::shallowReduce(Context & context) {
     e = e.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
   replaceWithInPlace(e);
+  e = e.deepReduce(context, complexFormat, angleUnit, target);
   return e;
 }
 

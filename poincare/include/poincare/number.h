@@ -11,7 +11,9 @@ namespace Poincare {
  * - Float
  * - Decimal
  * - Infinity
- */
+ *
+ * Before being approximated, an expression should be reduced and thus should
+ * not contain any Decimal. */
 
 class Rational;
 

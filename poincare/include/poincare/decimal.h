@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-/* A decimal as 0.01234 is stored that way:
+/* The decimal 0.01234 is stored as:
  *  - bool m_negative = false
  *  - int m_exponent = -2
  *  - int m_numberOfDigitsInMantissa = 1

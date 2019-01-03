@@ -31,7 +31,7 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
   VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
   Evaluation<T> result = Complex<T>((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
-    if (Expression::shouldStopProcessing()) {
+    if (Expression::ShouldStopProcessing()) {
       return Complex<T>::Undefined();
     }
     nContext.setApproximationForVariable<T>((T)i);

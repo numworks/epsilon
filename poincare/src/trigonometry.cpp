@@ -455,7 +455,7 @@ Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Co
   }
   for (int i = 0; i < k_numberOfEntries; i++) {
     float inputValue = cheatTable[i][inputIndex].value;
-    if (std::isnan(inputValue) || std::fabs(inputValue-eValue) > Expression::epsilon<float>()) {
+    if (std::isnan(inputValue) || std::fabs(inputValue-eValue) > Expression::Epsilon<float>()) {
       continue;
     }
     // Our given expression approximation matches a table entry, we check that both expressions are identical
@@ -502,8 +502,8 @@ T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
    * have sin(pi) ~ 0 and sin(1E-15)=1E-15.
    * We can't do that for all evaluation as the user can operate on values as
    * small as 1E-308 (in double) and most results still be correct. */
-  if (input == 0.0 || std::fabs(result/input) <= Expression::epsilon<T>()) {
-     T precision = 10*Expression::epsilon<T>();
+  if (input == 0.0 || std::fabs(result/input) <= Expression::Epsilon<T>()) {
+     T precision = 10*Expression::Epsilon<T>();
      result = std::round(result/precision)*precision;
   }
   return result;

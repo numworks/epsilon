@@ -16,7 +16,7 @@ template <typename T> T absMod(T a, T b) {
 
 template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c) {
   T arg = std::arg(c);
-  T precision = 10*Expression::epsilon<T>();
+  T precision = 10*Expression::Epsilon<T>();
   if (absMod<T>(arg, (T)M_PI) <= precision) {
     c.imag(0);
   }

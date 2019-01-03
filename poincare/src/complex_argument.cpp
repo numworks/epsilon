@@ -49,12 +49,12 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
   bool real = c.isReal(context);
   if (real) {
     float app = c.node()->approximate(float(), context, angleUnit).toScalar();
-    if (!std::isnan(app) && app >= Expression::epsilon<float>()) {
+    if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
       // arg(x) = 0 if x > 0
       Expression result = Rational(0);
       replaceWithInPlace(result);
       return result;
-    } else if (!std::isnan(app) && app <= -Expression::epsilon<float>()) {
+    } else if (!std::isnan(app) && app <= -Expression::Epsilon<float>()) {
       // arg(x) = Pi if x < 0
       Expression result = Constant(Ion::Charset::SmallPi);
       replaceWithInPlace(result);

@@ -84,7 +84,7 @@ AppsContainer::AppsContainer() :
    * We just remove the circuit breaker for now.
    * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
 #else
-  Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
+  Poincare::Expression::SetCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 #endif
   Ion::Storage::sharedStorage()->setDelegate(this);
 }

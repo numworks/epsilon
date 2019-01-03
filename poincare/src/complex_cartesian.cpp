@@ -58,7 +58,7 @@ Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::Com
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,
       a.isUndefined() || b.isUndefined(),
-      Expression::isZero(a), Expression::isOne(a), Expression::isZero(b), Expression::isOne(b),
+      Expression::IsZero(a), Expression::IsOne(a), Expression::IsZero(b), Expression::IsOne(b),
       !oppositeA.isUninitialized(),
       !oppositeB.isUninitialized()
     );
@@ -357,7 +357,7 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & con
 
 ComplexCartesian ComplexCartesian::interruptComputationIfManyNodes() {
   if (numberOfDescendants(true) > k_maxNumberOfNodesBeforeInterrupting) {
-    Expression::setInterruption(true);
+    Expression::SetInterruption(true);
     return ComplexCartesian(Undefined(), Undefined());
   }
   return *this;

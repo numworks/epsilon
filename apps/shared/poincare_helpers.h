@@ -48,7 +48,7 @@ template <class T>
 inline T ApproximateToScalar(const char * text, Poincare::Context & context) {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
   Poincare::Preferences::ComplexFormat complexFormat = Poincare::Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), text);
-  return Poincare::Expression::approximateToScalar<T>(text, context, complexFormat, preferences->angleUnit());
+  return Poincare::Expression::ApproximateToScalar<T>(text, context, complexFormat, preferences->angleUnit());
 }
 
 inline Poincare::Expression ParseAndSimplify(const char * text, Poincare::Context & context) {

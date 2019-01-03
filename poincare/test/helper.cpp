@@ -166,7 +166,7 @@ template<typename T>
 void assert_parsed_expression_approximates_with_value_for_symbol(Expression expression, const char * symbol, T value, T approximation, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit) {
   Shared::GlobalContext globalContext;
   T result = expression.approximateWithValueForSymbol(symbol, value, globalContext, complexFormat, angleUnit);
-  quiz_assert((std::isnan(result) && std::isnan(approximation)) || std::fabs(result - approximation) < 10.0*Expression::epsilon<T>());
+  quiz_assert((std::isnan(result) && std::isnan(approximation)) || std::fabs(result - approximation) < 10.0*Expression::Epsilon<T>());
 }
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {

@@ -74,14 +74,14 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
 
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted) {
   if (e1->type() > e2->type()) {
-    if (canBeInterrupted && Expression::shouldStopProcessing()) {
+    if (canBeInterrupted && Expression::ShouldStopProcessing()) {
       return 1;
     }
     return -(e2->simplificationOrderGreaterType(e1, ascending, canBeInterrupted));
   } else if (e1->type() == e2->type()) {
     return e1->simplificationOrderSameType(e2, ascending, canBeInterrupted);
   } else {
-    if (canBeInterrupted && Expression::shouldStopProcessing()) {
+    if (canBeInterrupted && Expression::ShouldStopProcessing()) {
       return -1;
     }
     return e1->simplificationOrderGreaterType(e2, ascending, canBeInterrupted);

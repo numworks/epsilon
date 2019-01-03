@@ -59,7 +59,6 @@ protected:
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1) const;
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize = false) const;
-  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
@@ -73,6 +72,7 @@ protected:
   CurveViewCursor * m_curveViewCursor;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
+  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
   float min(Axis axis) const;

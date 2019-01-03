@@ -17,7 +17,7 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   float lowerBound = m_calculation->lowerBound();
   float upperBound = m_calculation->upperBound();
   ctx->fillRect(bounds(), k_backgroundColor);
-  drawAxes(ctx, rect, Axis::Horizontal);
+  drawAxis(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_law->type() == Law::Type::Normal) {
     // Special case for the normal law, which has always the same curve

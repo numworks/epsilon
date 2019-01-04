@@ -91,25 +91,46 @@ const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * a = (AppsContainer *)(app()->container());
   m_inputRunLoopActive = true;
 
-  // Set the prompt text
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  m_editCell.setPrompt(prompt);
+  const char * promptText = prompt;
+  /* Set the prompt text. If the prompt text has a '\n', put the prompt text in
+   * the history until the last '\n', and put the remaining prompt text in the
+   * edit cell's prompt. */
+  char * lastCarriageReturn = nullptr;
+  char * s = const_cast<char *>(prompt);
+  while (*s != 0) {
+    if (*s == '\n') {
+      lastCarriageReturn = s;
+    }
+    s++;
+  }
+  if (lastCarriageReturn != nullptr) {
+    printText(prompt, lastCarriageReturn-prompt+1);
+    promptText = lastCarriageReturn+1;
+  }
+
+  m_editCell.setPrompt(promptText);
   m_editCell.setText("");
 
-  // Run new input loop
+  // Reload the history
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   a->redrawWindow();
+
+  // Launch a new input loop
   a->runWhile([](void * a){
       ConsoleController * c = static_cast<ConsoleController *>(a);
       return c->inputRunLoopActive();
   }, this);
 
-  // Reset the prompt line
+  // Handle the input text
+  printText(promptText, s - promptText);
+  const char * text = m_editCell.text();
+  printText(text, strlen(text));
   flushOutputAccumulationBufferToStore();
-  m_consoleStore.deleteLastLineIfEmpty();
+
   m_editCell.setPrompt(sStandardPromptText);
 
-  return m_editCell.text();
+  return text;
 }
 
 void ConsoleController::viewWillAppear() {

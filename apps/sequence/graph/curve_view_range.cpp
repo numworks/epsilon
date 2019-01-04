@@ -78,7 +78,7 @@ void CurveViewRange::setDefault() {
   if (m_delegate == nullptr) {
     return;
   }
-  m_xMax = m_delegate->interestingXRange();
+  m_xMax = m_delegate->interestingXHalfRange();
   m_xMin = -k_displayLeftMarginRatio*m_xMax;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
   setYAuto(true);

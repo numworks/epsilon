@@ -39,7 +39,7 @@ void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
   m_displayDerivativeInBanner = displayDerivative;
 }
 
-float GraphController::interestingXHalfRange() {
+float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {

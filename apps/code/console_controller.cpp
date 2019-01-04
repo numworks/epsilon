@@ -85,17 +85,20 @@ const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * a = (AppsContainer *)(app()->container());
   m_inputRunLoopActive = true;
 
+  // Set the prompt text
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setPrompt(prompt);
   m_editCell.setText("");
 
+  // Run new input loop
   a->redrawWindow();
   a->runWhile([](void * a){
       ConsoleController * c = static_cast<ConsoleController *>(a);
       return c->inputRunLoopActive();
   }, this);
 
+  // Reset the prompt line
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
   m_editCell.setPrompt(sStandardPromptText);

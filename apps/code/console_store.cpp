@@ -1,20 +1,9 @@
 #include "console_store.h"
-#include <assert.h>
 #include <string.h>
 
 namespace Code {
 
 static inline int min(int x, int y) { return (x<y ? x : y); }
-
-ConsoleStore::ConsoleStore() :
-  m_history{0}
-{
-}
-
-void ConsoleStore::clear() {
-  assert(k_historySize > 0);
-  m_history[0] = 0;
-}
 
 void ConsoleStore::startNewSession() {
   if (k_historySize < 1) {

@@ -18,8 +18,8 @@ public:
   I18n::Message emptyMessage() override;
   TermSumController * termSumController() { return &m_termSumController; }
   // InteractiveCurveViewRangeDelegate
-  float interestingXMin() override;
-  float interestingXHalfRange() override;
+  float interestingXMin() const override;
+  float interestingXHalfRange() const override;
 protected:
   int numberOfCurves() const override { return m_sequenceStore->numberOfModels(); }
 private:

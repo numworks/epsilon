@@ -29,7 +29,7 @@ I18n::Message GraphController::emptyMessage() {
   return I18n::Message::NoActivatedSequence;
 }
 
-float GraphController::interestingXMin() {
+float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
     Sequence * s = m_sequenceStore->modelAtIndex(i);
@@ -41,7 +41,7 @@ float GraphController::interestingXMin() {
   return nmin;
 }
 
-float GraphController::interestingXHalfRange() {
+float GraphController::interestingXHalfRange() const {
   float standardRange = Shared::FunctionGraphController::interestingXHalfRange();
   int nmin = INT_MAX;
   int nmax = 0;

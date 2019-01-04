@@ -334,25 +334,24 @@ void ConsoleController::resetSandbox() {
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
   size_t textCutIndex = firstNewLineCharIndex(text, length);
-  // If there is no new line in text, just append it to the output accumulation
-  // buffer.
   if (textCutIndex >= length) {
+    /* If there is no new line in text, just append it to the output
+     * accumulation buffer. */
     appendTextToOutputAccumulationBuffer(text, length);
     return;
   }
-  // If there is a new line in the middle of the text, we have to store at least
-  // two new console lines in the console store.
   if (textCutIndex < length - 1) {
+    /* If there is a new line in the middle of the text, we have to store at
+     * least two new console lines in the console store. */
     printText(text, textCutIndex + 1);
     printText(&text[textCutIndex+1], length - (textCutIndex + 1));
     return;
   }
-  // If there is a new line at the end of the text, we have to store the line in
-  // the console store.
-  if (textCutIndex == length - 1) {
-    appendTextToOutputAccumulationBuffer(text, length-1);
-    flushOutputAccumulationBufferToStore();
-  }
+  /* There is a new line at the end of the text, we have to store the line in
+   * the console store. */
+  assert(textCutIndex == length - 1);
+  appendTextToOutputAccumulationBuffer(text, length-1);
+  flushOutputAccumulationBufferToStore();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {

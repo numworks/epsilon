@@ -183,7 +183,7 @@ void CurveView::computeLabels(Axis axis) {
     }
 
     /* Label cannot hold more than k_labelBufferSize characters to prevent them
-     * from overprinting one another.*/
+     * from overprinting one another. */
 
     char * labelBuffer = label(axis, i);
     PrintFloat::convertFloatToText<float>(
@@ -194,11 +194,19 @@ void CurveView::computeLabels(Axis axis) {
         Preferences::PrintFloatMode::Decimal,
         axis == Axis::Vertical);
 
-    if (labelBuffer[0] == 0 && axis == Axis::Horizontal) {
-      /* Some labels are too big and may overlap their neighbours. We write the
-       * extrema labels only. */
-      computeHorizontalExtremaLabels();
-      return;
+    if (axis == Axis::Horizontal) {
+      if (labelBuffer[0] == 0) {
+        /* Some labels are too big and may overlap their neighbours. We write the
+         * extrema labels only. */
+        computeHorizontalExtremaLabels();
+        return;
+      }
+      if (i > 0 && strcmp(labelBuffer, label(axis, i-1)) == 0) {
+        /* We need to increase the number if significant digits, otherwise some
+         * labels are rounded to the same value. */
+        computeHorizontalExtremaLabels(true);
+        return;
+      }
     }
   }
 }
@@ -729,7 +737,7 @@ View * CurveView::subviewAtIndex(int index) {
   return m_bannerView;
 }
 
-void CurveView::computeHorizontalExtremaLabels() {
+void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits) {
   Axis axis = Axis::Horizontal;
   int axisLabelsCount = numberOfLabels(axis);
   float minA = min(axis);
@@ -762,7 +770,7 @@ void CurveView::computeHorizontalExtremaLabels() {
         labelValueAtIndex(axis, i),
         label(axis, i),
         k_labelBufferMaxSize,
-        k_numberSignificantDigits,
+        increaseNumberOfSignificantDigits ? k_bigNumberSignificantDigits : k_numberSignificantDigits,
         Preferences::PrintFloatMode::Decimal,
         false);
   }

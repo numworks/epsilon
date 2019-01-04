@@ -47,7 +47,8 @@ protected:
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_numberSignificantDigits = 6;
-  constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 3 + 3 + 1; // '-' + significant digits + '.' + "E-" + 3 digits + null-terminating char
+  constexpr static int k_bigNumberSignificantDigits = Constant::LargeNumberOfSignificantDigits;
+  constexpr static int k_labelBufferMaxSize = 1 + k_bigNumberSignificantDigits + 3 + 3 + 1; // '-' + significant digits + '.' + "E-" + 3 digits + null-terminating char
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;
@@ -98,7 +99,7 @@ private:
   View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
    * cursor views may be nullptr if not needed. */
-  void computeHorizontalExtremaLabels();
+  void computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits = false);
   float labelValueAtIndex(Axis axis, int i) const;
   bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;

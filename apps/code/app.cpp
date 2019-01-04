@@ -46,23 +46,23 @@ bool App::Snapshot::lockOnConsole() const {
 
 void App::Snapshot::setOpt(const char * name, char * value) {
   if (strcmp(name, "script") == 0) {
-      m_scriptStore.deleteAllScripts();
-      char * separator = strchr(value, ':');
-      if (!separator) {
-        return;
-      }
-      *separator = 0;
-      const char * scriptName = value;
-      /* We include the 0 in the scriptContent to represent the importation
-       * status. It is set to 1 after addScriptFromTemplate. Indeed, this '/0'
-       * char has two goals: ending the scriptName and representing the
-       * importation status; we cannot set it to 1 before adding the script to
-       * storage. */
-      const char * scriptContent = separator;
-      Code::ScriptTemplate script(scriptName, scriptContent);
-      m_scriptStore.addScriptFromTemplate(&script);
-      m_scriptStore.scriptNamed(scriptName).toggleImportationStatus(); // set Importation Status to 1
+    m_scriptStore.deleteAllScripts();
+    char * separator = strchr(value, ':');
+    if (!separator) {
       return;
+    }
+    *separator = 0;
+    const char * scriptName = value;
+    /* We include the 0 in the scriptContent to represent the importation
+     * status. It is set to 1 after addScriptFromTemplate. Indeed, this '/0'
+     * char has two goals: ending the scriptName and representing the
+     * importation status; we cannot set it to 1 before adding the script to
+     * storage. */
+    const char * scriptContent = separator;
+    Code::ScriptTemplate script(scriptName, scriptContent);
+    m_scriptStore.addScriptFromTemplate(&script);
+    m_scriptStore.scriptNamed(scriptName).toggleImportationStatus(); // set Importation Status to 1
+    return;
   }
   if (strcmp(name, "lock-on-console") == 0) {
     m_lockOnConsole = true;

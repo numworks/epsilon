@@ -23,10 +23,6 @@ extern "C" {
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
 
-MicroPython::ExecutionEnvironment::ExecutionEnvironment() :
-  m_sandboxIsDisplayed(false)
-{
-}
 
 MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentExecutionEnvironment() {
   return sCurrentExecutionEnvironment;

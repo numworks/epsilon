@@ -14,7 +14,7 @@ public:
 
 class ExecutionEnvironment {
 public:
-  ExecutionEnvironment();
+  ExecutionEnvironment() : m_sandboxIsDisplayed(false) {}
   static ExecutionEnvironment * currentExecutionEnvironment();
   void runCode(const char * );
   virtual const char * inputText(const char * prompt) {

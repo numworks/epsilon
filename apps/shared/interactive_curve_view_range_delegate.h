@@ -8,7 +8,7 @@ class InteractiveCurveViewRange;
 class InteractiveCurveViewRangeDelegate {
 public:
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange);
-  virtual float interestingXRange();
+  virtual float interestingXHalfRange() { return 10.0f; }
 protected:
   struct Range {
     float min;

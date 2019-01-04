@@ -152,14 +152,25 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
-      /* Just after a software update, the battery timer does not have time to
-       * fire before the calculator enters DFU mode. As the DFU mode blocks the
-       * event loop, we update the battery state "manually" here. */
-      updateBatteryState();
-      switchTo(usbConnectedAppSnapshot());
-      Ion::USB::DFU();
-      switchTo(activeSnapshot);
-      didProcessEvent = true;
+      if (activeApp() == nullptr || activeApp()->prepareForExit()) {
+        /* Just after a software update, the battery timer does not have time to
+         * fire before the calculator enters DFU mode. As the DFU mode blocks the
+         * event loop, we update the battery state "manually" here. */
+        updateBatteryState();
+        switchTo(usbConnectedAppSnapshot());
+        Ion::USB::DFU();
+        switchTo(activeSnapshot);
+        didProcessEvent = true;
+      } else {
+        /* activeApp()->prepareForExit() returned false, which means that the
+         * app needs another event loop to prepare for being switched off.
+         * Discard the current enumeration interruption.
+         * The USB host tries a few times in a row to enumerate the device, so
+         * hopefully the device will get another enumeration event soon and this
+         * time the device will be ready to go in DFU mode. Otherwise, the user
+         * needs to re-plug the device to go into DFU mode. */
+        Ion::USB::clearEnumerationInterrupt();
+      }
     } else {
       /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
        * from a non-USB communicating host (e.g. a USB charger). The interrupt
@@ -212,6 +223,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App::Snapshot * snapshot) {
+  assert(activeApp() == nullptr || activeApp()->prepareForExit());
   if (activeApp() && snapshot != activeApp()->snapshot()) {
     resetShiftAlphaStatus();
   }

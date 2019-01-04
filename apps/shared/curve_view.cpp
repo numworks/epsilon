@@ -301,9 +301,15 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     float xPosition = 0.0f;
     float yPosition = 0.0f;
 
-    if (strcmp(labelI, "0") == 0 && shiftOrigin && floatingLabels == FloatingPosition::None) {
-      xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
-      yPosition = verticalCoordinate + k_labelMargin;
+    if (strcmp(labelI, "0") == 0) {
+      if (floatingLabels != FloatingPosition::None) {
+        // Do not draw the zero, it is symbolized by the other axis
+        continue;
+      }
+      if (shiftOrigin && floatingLabels == FloatingPosition::None) {
+        xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
+        yPosition = verticalCoordinate + k_labelMargin;
+      }
     } else if (axis == Axis::Horizontal) {
       xPosition = labelPosition - textSize.width()/2;
       if (floatingLabels == FloatingPosition::None) {

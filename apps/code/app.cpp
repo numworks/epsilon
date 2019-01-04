@@ -88,6 +88,7 @@ App::App(Container * container, Snapshot * snapshot) :
 }
 
 App::~App() {
+  assert(!m_consoleController.inputRunLoopActive());
   deinitPython();
 }
 

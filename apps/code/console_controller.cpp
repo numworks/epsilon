@@ -33,7 +33,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_sandboxController(this),
   m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
-      , m_locked(lockOnConsole)
+  , m_locked(lockOnConsole)
 #endif
 {
   m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin);

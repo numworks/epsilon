@@ -1,10 +1,14 @@
 #include "graph_controller.h"
 #include <cmath>
+#include <limits.h>
 
 using namespace Shared;
 using namespace Poincare;
 
 namespace Sequence {
+
+static inline int minInt(int x, int y) { return (x < y ? x : y); }
+static inline int maxInt(int x, int y) { return (x > y ? x : y); }
 
 GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
@@ -23,6 +27,34 @@ I18n::Message GraphController::emptyMessage() {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
+}
+
+float GraphController::interestingXMin() {
+  int nmin = INT_MAX;
+  for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
+    Sequence * s = m_sequenceStore->modelAtIndex(i);
+    if (s->isDefined() && s->isActive()) {
+      nmin = minInt(nmin, s->initialRank());
+    }
+  }
+  assert(nmin < INT_MAX);
+  return nmin;
+}
+
+float GraphController::interestingXHalfRange() {
+  float standardRange = Shared::FunctionGraphController::interestingXHalfRange();
+  int nmin = INT_MAX;
+  int nmax = 0;
+  for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
+    Sequence * s = m_sequenceStore->modelAtIndex(i);
+    if (s->isDefined() && s->isActive()) {
+      int firstInterestingIndex = s->initialRank();
+      nmin = minInt(nmin, firstInterestingIndex);
+      nmax = maxInt(nmax, firstInterestingIndex + standardRange);
+    }
+  }
+  assert(nmax - nmin >= standardRange);
+  return nmax - nmin;
 }
 
 bool GraphController::handleEnter() {

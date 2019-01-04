@@ -17,6 +17,9 @@ public:
   GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
   TermSumController * termSumController() { return &m_termSumController; }
+  // InteractiveCurveViewRangeDelegate
+  float interestingXMin() override;
+  float interestingXHalfRange() override;
 protected:
   int numberOfCurves() const override { return m_sequenceStore->numberOfModels(); }
 private:

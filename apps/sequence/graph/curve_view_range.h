@@ -13,7 +13,7 @@ public:
   void setTrigonometric() override;
   void setDefault() override;
 private:
-  constexpr static float k_displayLeftMarginRatio = 0.05f;
+  constexpr static float k_displayLeftMarginRatio = 0.1f;
 };
 
 }

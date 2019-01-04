@@ -39,7 +39,7 @@ void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
   m_displayDerivativeInBanner = displayDerivative;
 }
 
-float GraphController::interestingXRange() {
+float GraphController::interestingXHalfRange() {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
@@ -49,7 +49,7 @@ float GraphController::interestingXRange() {
       characteristicRange = max(fRange, characteristicRange);
     }
   }
-  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::interestingXRange());
+  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::interestingXHalfRange());
 }
 
 int GraphController::estimatedBannerNumberOfLines() const {

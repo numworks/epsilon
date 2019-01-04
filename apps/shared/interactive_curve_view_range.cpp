@@ -154,7 +154,7 @@ void InteractiveCurveViewRange::setDefault() {
   if (m_delegate == nullptr) {
     return;
   }
-  m_xMax = m_delegate->interestingXRange();
+  m_xMax = m_delegate->interestingXHalfRange();
   MemoizedCurveViewRange::setXMin(-m_xMax);
   setYAuto(true);
 }

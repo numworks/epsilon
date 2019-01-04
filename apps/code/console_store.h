@@ -2,14 +2,15 @@
 #define CODE_CONSOLE_STORE_H
 
 #include "console_line.h"
+#include <assert.h>
 #include <stddef.h>
 
 namespace Code {
 
 class ConsoleStore {
 public:
-  ConsoleStore();
-  void clear();
+  ConsoleStore() : m_history{0} {}
+  void clear() { assert(k_historySize > 0); m_history[0] = 0; }
   void startNewSession();
   ConsoleLine lineAtIndex(int i) const;
   int numberOfLines() const;

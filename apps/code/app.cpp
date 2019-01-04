@@ -93,10 +93,9 @@ App::~App() {
 
 bool App::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Home && m_consoleController.inputRunLoopActive()) {
-    // We need to return true here because we want to actually exit from the
-    // input run loop, which requires ending a dispatchEvent cycle.
-    m_consoleController.askInputRunLoopTermination();
-    m_consoleController.interrupt();
+    /* We need to return true here because we want to actually exit from the
+     * input run loop, which requires ending a dispatchEvent cycle. */
+    m_consoleController.terminateInputLoop();
     if (m_modalViewController.isDisplayingModal()) {
       m_modalViewController.dismissModalViewController();
     }

@@ -31,8 +31,8 @@ public:
   void autoImport();
   void autoImportScript(Script script, bool force = false);
   void runAndPrintForCommand(const char * command);
-  bool inputRunLoopActive() { return m_inputRunLoopActive; }
-  void askInputRunLoopTermination() { m_inputRunLoopActive = false; }
+  bool inputRunLoopActive() const { return m_inputRunLoopActive; }
+  void terminateInputLoop();
 
   // ViewController
   View * view() override { return &m_selectableTableView; }

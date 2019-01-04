@@ -81,6 +81,12 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.deleteLastLineIfEmpty();
 }
 
+void ConsoleController::terminateInputLoop() {
+  assert(m_inputRunLoopActive);
+  m_inputRunLoopActive = false;
+  interrupt();
+}
+
 const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * a = (AppsContainer *)(app()->container());
   m_inputRunLoopActive = true;
@@ -149,9 +155,8 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
   }
 #if EPSILON_GETOPT
   if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
-    if (inputRunLoopActive()) {
-      askInputRunLoopTermination();
-      interrupt();
+    if (m_inputRunLoopActive) {
+      terminateInputLoop();
     }
     return true;
   }
@@ -238,10 +243,10 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Up && inputRunLoopActive()) {
-    askInputRunLoopTermination();
-    // We need to return true here because we want to actually exit from the
-    // input run loop, which requires ending a dispatchEvent cycle.
+  if (event == Ion::Events::Up && m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
+    /* We need to return true here because we want to actually exit from the
+     * input run loop, which requires ending a dispatchEvent cycle. */
     return true;
   }
   if (event == Ion::Events::Up) {
@@ -255,8 +260,8 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (inputRunLoopActive()) {
-    askInputRunLoopTermination();
+  if (m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
     return false;
   }
   runAndPrintForCommand(text);
@@ -271,8 +276,8 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
 }
 
 bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
-  if (inputRunLoopActive()) {
-    askInputRunLoopTermination();
+  if (m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
   } else {
 #if EPSILON_GETOPT
     /* In order to lock the console controller, we disable poping controllers

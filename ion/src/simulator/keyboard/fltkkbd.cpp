@@ -70,16 +70,16 @@ static void alphabetEventHandler(Fl_Widget *, long c) {
 }
 
 FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-  assert(KeyboardRows*KeyboardColumns == Ion::Keyboard::NumberOfKeys);
-  int key_width = w/KeyboardColumns;
-  int key_height = h/KeyboardRows;
-  for (int k=0; k<Ion::Keyboard::NumberOfKeys; k++) {
-    int key_x = x + (k%KeyboardColumns)*key_width;
-    int key_y = y + (k/KeyboardColumns)*key_height;
+  assert(KeyboardRows * KeyboardColumns == Ion::Keyboard::NumberOfKeys);
+  int keyWidth = w / KeyboardColumns;
+  int keyHeight = h / KeyboardRows;
+  for (int k = 0; k < Ion::Keyboard::NumberOfKeys; k++) {
+    int keyX = x + (k % KeyboardColumns) * keyWidth;
+    int keyY = y + (k / KeyboardColumns) * keyHeight;
     if (shouldRepeatKey((Ion::Keyboard::Key)k)) {
-      m_buttons[k] = new Fl_Repeat_Button(key_x, key_y, key_width, key_height, kCharForKey[k]);
+      m_buttons[k] = new Fl_Repeat_Button(keyX, keyY, keyWidth, keyHeight, kCharForKey[k]);
     } else {
-      m_buttons[k] = new Fl_Button(key_x, key_y, key_width, key_height, kCharForKey[k]);
+      m_buttons[k] = new Fl_Button(keyX, keyY, keyWidth, keyHeight, kCharForKey[k]);
     }
 #if defined(_WIN32) || defined(_WIN64)
     m_buttons[k]->labelfont(FL_SYMBOL);

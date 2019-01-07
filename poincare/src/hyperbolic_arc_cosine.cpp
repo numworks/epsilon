@@ -17,7 +17,7 @@ int HyperbolicArcCosineNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 template<typename T>
-Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::acosh(c);
   /* asinh has a branch cut on ]-inf, 1]: it is then multivalued
    * on this cut. We followed the convention chosen by the lib c++ of llvm on
@@ -26,7 +26,7 @@ Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Pr
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
-template Complex<float> Poincare::HyperbolicArcCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicArcCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
+template Complex<float> Poincare::HyperbolicArcCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicArcCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

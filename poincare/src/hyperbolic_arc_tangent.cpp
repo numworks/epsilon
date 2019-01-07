@@ -17,7 +17,7 @@ int HyperbolicArcTangentNode::serialize(char * buffer, int bufferSize, Preferenc
 }
 
 template<typename T>
-Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atanh(c);
   /* atanh has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
    * this cut. We followed the convention chosen by the lib c++ of llvm on
@@ -30,7 +30,7 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, P
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
-template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicArcTangentNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
+template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicArcTangentNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

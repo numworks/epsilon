@@ -126,13 +126,13 @@ Expression SymbolNode::shallowReplaceReplaceableSymbols(Context & context) {
 }
 
 template<typename T>
-Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Symbol s(this);
   Expression e = SymbolAbstract::Expand(s, context, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, angleUnit);
+  return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
 Symbol::Symbol(const char * name, int length) : SymbolAbstract(TreePool::sharedPool()->createTreeNode<SymbolNode>(SymbolAbstract::AlignedNodeSize(length, sizeof(SymbolNode)))) {

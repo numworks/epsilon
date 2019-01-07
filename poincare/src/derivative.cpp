@@ -44,12 +44,12 @@ Expression DerivativeNode::shallowReduce(Context & context, Preferences::Complex
 }
 
 template<typename T>
-Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
   T evaluationArgument = evaluationArgumentInput.toScalar();
-  T functionValue = approximateWithArgument(evaluationArgument, context, angleUnit);
+  T functionValue = approximateWithArgument(evaluationArgument, context, complexFormat, angleUnit);
   // No complex/matrix version of Derivative
   if (std::isnan(evaluationArgument) || std::isnan(functionValue)) {
     return Complex<T>::Undefined();
@@ -58,7 +58,7 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
   T error, result;
   T h = k_minInitialRate;
   do {
-    result = riddersApproximation(context, angleUnit, evaluationArgument, h, &error);
+    result = riddersApproximation(context, complexFormat, angleUnit, evaluationArgument, h, &error);
     h /= 10.0;
   } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= epsilon);
 
@@ -74,23 +74,23 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
 }
 
 template<typename T>
-T DerivativeNode::approximateWithArgument(T x, Context & context, Preferences::AngleUnit angleUnit) const {
+T DerivativeNode::approximateWithArgument(T x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(childAtIndex(1)->type() == Type::Symbol);
   VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
   variableContext.setApproximationForVariable<T>(x);
   // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
-  return childAtIndex(0)->approximate(T(), variableContext, angleUnit).toScalar();
+  return childAtIndex(0)->approximate(T(), variableContext, complexFormat, angleUnit).toScalar();
 }
 
 template<typename T>
-T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context & context, Preferences::AngleUnit angleUnit) const {
-  T expressionPlus = approximateWithArgument(x+h, context, angleUnit);
-  T expressionMinus = approximateWithArgument(x-h, context, angleUnit);
+T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  T expressionPlus = approximateWithArgument(x+h, context, complexFormat, angleUnit);
+  T expressionMinus = approximateWithArgument(x-h, context, complexFormat, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
 template<typename T>
-T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit angleUnit, T x, T h, T * error) const {
+T DerivativeNode::riddersApproximation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
@@ -109,7 +109,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
       a[i][j] = 1;
     }
   }
-  a[0][0] = growthRateAroundAbscissa(x, hh, context, angleUnit);
+  a[0][0] = growthRateAroundAbscissa(x, hh, context, complexFormat, angleUnit);
   T ans = 0;
   T errt = 0;
   // Loop on i: change the step size
@@ -118,7 +118,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
     // Make hh an exactly representable number
     volatile T temp = x+hh;
     hh = temp - x;
-    a[0][i] = growthRateAroundAbscissa(x, hh, context, angleUnit);
+    a[0][i] = growthRateAroundAbscissa(x, hh, context, complexFormat, angleUnit);
     T fac = k_rateStepSize*k_rateStepSize;
     // Loop on j: compute extrapolation for several orders
     for (int j = 1; j < 10; j++) {

@@ -36,12 +36,12 @@ private:
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T approximateWithArgument(T x, Context & context, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T growthRateAroundAbscissa(T x, T h, Context & context, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T riddersApproximation(Context & context, Preferences::AngleUnit angleUnit, T x, T h, T * error) const;
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T approximateWithArgument(T x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T growthRateAroundAbscissa(T x, T h, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T riddersApproximation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, T x, T h, T * error) const;
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;

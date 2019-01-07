@@ -33,9 +33,9 @@ private:
   // Simplification
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+ template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename T>
   struct DetailedResult
   {
@@ -44,12 +44,12 @@ private:
   };
   constexpr static int k_maxNumberOfIterations = 10;
 #ifdef LAGRANGE_METHOD
-  template<typename T> T lagrangeGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T lagrangeGaussQuadrature(T a, T b, Context Context & context, Preferences::AngleUnit angleUnit context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #else
-  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
-  template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Integral final : public Expression {

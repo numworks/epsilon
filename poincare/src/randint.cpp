@@ -24,9 +24,9 @@ int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
-template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> aInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
   if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b) {

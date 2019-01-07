@@ -36,7 +36,7 @@ Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 }
 
 template<typename T>
-Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbol. */
@@ -47,7 +47,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, angleUnit);
+  return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
 Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

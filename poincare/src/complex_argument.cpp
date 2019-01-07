@@ -29,7 +29,7 @@ Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::Co
 }
 
 template<typename T>
-Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   return Complex<T>(std::arg(c));
 }
 
@@ -48,7 +48,7 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
 #endif
   bool real = c.isReal(context);
   if (real) {
-    float app = c.node()->approximate(float(), context, angleUnit).toScalar();
+    float app = c.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
       // arg(x) = 0 if x > 0
       Expression result = Rational(0);

@@ -33,16 +33,16 @@ Expression NthRootNode::shallowReduce(Context & context, Preferences::ComplexFor
 }
 
 template<typename T>
-Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> base = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> index = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> index = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   Complex<T> result = Complex<T>::Undefined();
   if (base.type() == EvaluationNode<T>::Type::Complex
       && index.type() == EvaluationNode<T>::Type::Complex)
   {
     Complex<T> basec = static_cast<Complex<T> &>(base);
     Complex<T> indexc = static_cast<Complex<T> &>(index);
-    result = PowerNode::compute(basec.stdComplex(), std::complex<T>(1)/(indexc.stdComplex()));
+    result = PowerNode::compute(basec.stdComplex(), std::complex<T>(1.0)/(indexc.stdComplex()), complexFormat);
   }
   return result;
 }

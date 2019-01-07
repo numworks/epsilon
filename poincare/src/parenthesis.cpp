@@ -21,8 +21,8 @@ Expression ParenthesisNode::shallowReduce(Context & context, Preferences::Comple
 }
 
 template<typename T>
-Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  return childAtIndex(0)->approximate(T(), context, angleUnit);
+Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
 }
 
 Expression Parenthesis::shallowReduce() {

@@ -43,7 +43,7 @@ Expression FactorialNode::shallowBeautify(Context & context, Preferences::Comple
 }
 
 template<typename T>
-Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   T n = c.real();
   if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Undefined();

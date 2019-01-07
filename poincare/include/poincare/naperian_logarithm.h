@@ -27,17 +27,17 @@ private:
   // Simplification
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   /* Evaluation */
-  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
     /* ln has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
      * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
      * (warning: ln takes the other side of the cut values on ]-inf-0i, 0-0i]). */
     return Complex<T>(std::log(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, angleUnit, computeOnComplex<double>);
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
 };
 

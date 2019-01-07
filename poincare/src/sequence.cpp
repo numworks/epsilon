@@ -20,9 +20,9 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 template<typename T>
-Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, angleUnit);
-  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, angleUnit);
+Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
   T start = aInput.toScalar();
   T end = bInput.toScalar();
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
@@ -35,7 +35,7 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
       return Complex<T>::Undefined();
     }
     nContext.setApproximationForVariable<T>((T)i);
-    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), nContext, angleUnit));
+    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), nContext, complexFormat, angleUnit), complexFormat);
     if (result.isUndefined()) {
       return Complex<T>::Undefined();
     }
@@ -43,7 +43,7 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
   return result;
 }
 
-template Evaluation<float> SequenceNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> SequenceNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> SequenceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> SequenceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

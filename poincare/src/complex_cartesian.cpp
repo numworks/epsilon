@@ -28,9 +28,9 @@ Expression ComplexCartesianNode::shallowBeautify(Context & context, Preferences:
 }
 
 template<typename T>
-Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), context, angleUnit);
+Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);
   assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
   std::complex<T> a = static_cast<Complex<T> &>(realEvaluation).stdComplex();

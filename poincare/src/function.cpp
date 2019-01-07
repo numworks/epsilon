@@ -70,22 +70,22 @@ Expression FunctionNode::shallowReplaceReplaceableSymbols(Context & context) {
   return Function(this).shallowReplaceReplaceableSymbols(context);
 }
 
-Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<float>(context, angleUnit);
+Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return templatedApproximate<float>(context, complexFormat, angleUnit);
 }
 
-Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<double>(context, angleUnit);
+Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return templatedApproximate<double>(context, complexFormat, angleUnit);
 }
 
 template<typename T>
-Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, angleUnit);
+  return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
 Function::Function(const char * name, size_t length) :

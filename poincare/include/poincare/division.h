@@ -27,15 +27,15 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Approximation
-  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<float>(
-        this, context, angleUnit, compute<float>,
+        this, context, complexFormat, angleUnit, compute<float>,
         computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
         computeOnMatrices<float>);
   }
-  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(
-        this, context, angleUnit, compute<double>,
+        this, context, complexFormat, angleUnit, compute<double>,
         computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>,
         computeOnMatrices<double>);
   }
@@ -50,12 +50,12 @@ public:
 
 private:
   // Approximation
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
-  template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat);
+  template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
   }
-  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n);
-  template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
+  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
+  template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
 };
 
 class Division final : public Expression {

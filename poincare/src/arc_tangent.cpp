@@ -20,7 +20,7 @@ int ArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 template<typename T>
-Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
   if (c.imag() == 0 && std::fabs(c.real()) <= 1.0) {
     /* atan: R -> R

@@ -14,11 +14,11 @@ int HyperbolicSineNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 template<typename T>
-Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(std::sinh(c), c));
 }
 
-template Complex<float> Poincare::HyperbolicSineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicSineNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
+template Complex<float> Poincare::HyperbolicSineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicSineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 
 }

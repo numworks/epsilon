@@ -287,7 +287,7 @@ Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences:
   sApproximationEncounteredComplex = false;
   // Reset interrupting flag because some evaluation methods use it
   sSimplificationHasBeenInterrupted = false;
-  Evaluation<U> e = node()->approximate(U(), context, angleUnit);
+  Evaluation<U> e = node()->approximate(U(), context, complexFormat, angleUnit);
   if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
     e = Complex<U>::Undefined();
   }

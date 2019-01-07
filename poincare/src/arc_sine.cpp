@@ -24,7 +24,7 @@ Expression ArcSineNode::shallowReduce(Context & context, Preferences::ComplexFor
 }
 
 template<typename T>
-Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
   if (c.imag() == 0 && std::fabs(c.real()) <= 1.0) {
     /* asin: [-1;1] -> R

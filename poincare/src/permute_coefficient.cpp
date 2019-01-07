@@ -28,9 +28,9 @@ Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences:
 }
 
 template<typename T>
-Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();
   T k = kInput.toScalar();
   if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {

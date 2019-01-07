@@ -27,7 +27,7 @@ int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 template<typename T>
-Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::sqrt(c);
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.

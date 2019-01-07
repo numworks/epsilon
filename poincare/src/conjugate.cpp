@@ -28,7 +28,7 @@ Expression ConjugateNode::shallowReduce(Context & context, Preferences::ComplexF
 }
 
 template<typename T>
-Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   return Complex<T>(std::conj(c));
 }
 

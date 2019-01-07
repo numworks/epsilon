@@ -68,19 +68,19 @@ Expression LogarithmNode<2>::shallowBeautify(Context & context, Preferences::Com
 }
 
 template<>
-template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  return ApproximationHelper::Map(this, context, angleUnit, computeOnComplex<U>);
+template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return ApproximationHelper::Map(this, context, complexFormat, angleUnit, computeOnComplex<U>);
 }
 
 template<>
-template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<U> x = childAtIndex(0)->approximate(U(), context, angleUnit);
-  Evaluation<U> n = childAtIndex(1)->approximate(U(), context, angleUnit);
+template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<U> x = childAtIndex(0)->approximate(U(), context, complexFormat, angleUnit);
+  Evaluation<U> n = childAtIndex(1)->approximate(U(), context, complexFormat, angleUnit);
   std::complex<U> result = std::complex<U>(NAN, NAN);
   if (x.type() == EvaluationNode<U>::Type::Complex && n.type() == EvaluationNode<U>::Type::Complex) {
     std::complex<U> xc = (static_cast<Complex<U>&>(x)).stdComplex();
     std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
-    result = DivisionNode::compute<U>(computeOnComplex(xc, angleUnit).stdComplex(), computeOnComplex(nc, angleUnit).stdComplex()).stdComplex();
+    result = DivisionNode::compute<U>(computeOnComplex(xc, complexFormat, angleUnit).stdComplex(), computeOnComplex(nc, complexFormat, angleUnit).stdComplex(), complexFormat).stdComplex();
   }
   return Complex<U>(result);
 }
@@ -220,7 +220,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
     if (r.isZero()) {
       bool isNegative = true;
       Expression result;
-      Evaluation<float> baseApproximation = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
+      Evaluation<float> baseApproximation = childAtIndex(1).node()->approximate(1.0f, context, complexFormat, angleUnit);
       std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
         result = Undefined();
@@ -326,10 +326,10 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::ComplexFor
   return *this;
 }
 
-template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
+template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
+template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit) const;
 template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 

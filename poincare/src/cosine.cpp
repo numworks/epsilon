@@ -16,7 +16,7 @@ float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit
 }
 
 template<typename T>
-Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::cos(angleInput);
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));

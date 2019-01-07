@@ -24,8 +24,8 @@ int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, angleUnit);
+Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     operands[0] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());

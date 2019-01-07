@@ -98,7 +98,7 @@ bool PowerNode::isReal(Context & context) const {
 // Private
 
 template<typename T>
-Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
+Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   std::complex<T> result;
   if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() != 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
@@ -197,11 +197,11 @@ Expression PowerNode::denominator(Context & context, Preferences::ComplexFormat 
 }
 
 // Evaluation
-template<typename T> MatrixComplex<T> PowerNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
+template<typename T> MatrixComplex<T> PowerNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   return MatrixComplex<T>::Undefined();
 }
 
-template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d) {
+template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfRows() != m.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
   }
@@ -215,7 +215,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
       return MatrixComplex<T>::Undefined();
     }
     Complex<T> minusC = Complex<T>(-d);
-    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex());
+    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex(), complexFormat);
     return result;
   }
   MatrixComplex<T> result = MatrixComplex<T>::createIdentity(m.numberOfRows());
@@ -224,12 +224,12 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
     if (Expression::ShouldStopProcessing()) {
       return MatrixComplex<T>::Undefined();
     }
-    result = MultiplicationNode::computeOnMatrices<T>(result, m);
+    result = MultiplicationNode::computeOnMatrices<T>(result, m, complexFormat);
   }
   return result;
 }
 
-template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   return MatrixComplex<T>::Undefined();
 }
 
@@ -1209,7 +1209,7 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rationa
 }
 
 
-template Complex<float> PowerNode::compute<float>(std::complex<float>, std::complex<float>);
-template Complex<double> PowerNode::compute<double>(std::complex<double>, std::complex<double>);
+template Complex<float> PowerNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> PowerNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
 
 }

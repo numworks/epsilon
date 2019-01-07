@@ -56,7 +56,7 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 template<typename T>
-Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (isIComplex()) {
     assert(m_name[1] == 0);
     return Complex<T>(0.0, 1.0);
@@ -90,6 +90,6 @@ Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat
   return *this;
 }
 
-template Evaluation<float> ConstantNode::templatedApproximate<float>(Context& context, Preferences::AngleUnit angleUnit) const;
-template Evaluation<double> ConstantNode::templatedApproximate<double>(Context& context, Preferences::AngleUnit angleUnit) const;
+template Evaluation<float> ConstantNode::templatedApproximate<float>(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> ConstantNode::templatedApproximate<double>(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 }

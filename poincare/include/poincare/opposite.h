@@ -10,7 +10,7 @@ class Opposite;
 
 class OppositeNode /*final*/ : public ExpressionNode {
 public:
-  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
 
 
   // TreeNode
@@ -28,11 +28,11 @@ public:
   Sign sign(Context * context) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, angleUnit, compute<float>);
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, compute<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, angleUnit, compute<double>);
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, compute<double>);
   }
 
   // Layout

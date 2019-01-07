@@ -25,10 +25,10 @@ static const int kShortcutForKey[Ion::Keyboard::NumberOfKeys] = {
   0, 0, 'x', 0, 0, FL_BackSpace,
   0, 0, 0, 'i', ',', 0,
   0, 0, 0, 0, 0, 0,
-  '7', '8', '9', '(',')', 0,
-  '4', '5', '6', '*', '/', 0,
-  '1', '2', '3', '+', '-', 0,
-  '0', '.', 0, 0, FL_KP_Enter, 0
+  FL_SHIFT | '7', FL_SHIFT | '8', FL_SHIFT | '9', '(',')', 0,
+  FL_SHIFT | '4', FL_SHIFT | '5', FL_SHIFT | '6', '*', '/', 0,
+  FL_SHIFT | '1', FL_SHIFT | '2', FL_SHIFT | '3', '+', '-', 0,
+  FL_SHIFT | '0', '.', 0, 0, FL_KP_Enter, 0
 };
 
 static bool shouldRepeatKey(Ion::Keyboard::Key k) {

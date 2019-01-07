@@ -93,24 +93,22 @@ float CurveView::samplingRatio() const {
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
-  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  if (axis == Axis::Vertical) {
-    rectMax = pixelToFloat(Axis::Vertical, rect.top());
-    rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
-  }
-  float start = step * ((int)(min(axis)/step));
-  float boldStart = 2*step * ((int)(min(axis)/(2*step)));
-  bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-  for (float x = start; x < max(axis); x+= step) {
+
+  float otherAxisMin = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.left() : rect.bottom());
+  float otherAxisMax = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.right() : rect.top());
+  float start = step * ((int)(min(otherAxis)/step));
+  float boldStart = 2*step * ((int)(min(otherAxis)/(2*step)));
+  bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;
+
+  for (float x = start; x < max(otherAxis); x+= step) {
     /* When |start| >> step, start + step = start. In that case, quit the
      * infinite loop. */
     if (x == x-step || x == x+step) {
       return;
     }
-    if (rectMin <= x && x <= rectMax) {
-      drawLine(ctx, rect, otherAxis, x, drawBold ? boldColor : lightColor);
+    if (otherAxisMin <= x && x <= otherAxisMax) {
+      drawLine(ctx, rect, axis, x, drawBold ? boldColor : lightColor);
     }
     drawBold = !drawBold;
   }
@@ -428,8 +426,8 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
   KDColor boldColor = Palette::GreyMiddle;
   KDColor lightColor = Palette::GreyWhite;
-  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), boldColor, lightColor);
-  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), boldColor, lightColor);
+  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->xGridUnit(), boldColor, lightColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }
 
 void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {

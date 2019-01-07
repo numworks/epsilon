@@ -100,7 +100,7 @@ bool PowerNode::isReal(Context & context) const {
 template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d) {
   std::complex<T> result;
-  if (c.imag() == 0.0 && d.imag() == 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
+  if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() != 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
      * pow: (R-, N) -> R+ ((-2)^3 = -8)
      * In these cases we rather use std::pow(double, double) because:

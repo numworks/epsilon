@@ -28,8 +28,8 @@ int MatrixInverseNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, angleUnit);
+Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> inverse;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     inverse = static_cast<MatrixComplex<T>&>(input).inverse();

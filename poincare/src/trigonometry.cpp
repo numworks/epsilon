@@ -36,7 +36,7 @@ float Trigonometry::characteristicXRange(const Expression & e, Context & context
   /* To compute a, the slope of the expression child(0), we compute the
    * derivative of child(0) for any x value. */
   Poincare::Derivative derivative = Poincare::Derivative::Builder(e.childAtIndex(0).clone(), Symbol(x, 1), Float<float>(1.0f));
-  float a = derivative.node()->approximate(float(), context, angleUnit).toScalar();
+  float a = derivative.node()->approximate(float(), context, Preferences::ComplexFormat::Real, angleUnit).toScalar();
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180.0f;
   return 2.0f*pi/std::fabs(a);
 }
@@ -248,7 +248,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
 
   // Step 1. Look for an expression of type "arccos(cos(x))", return x
   if (AreInverseFunctions(e.childAtIndex(0), e)) {
-    float trigoOp = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), context, angleUnit).toScalar();
+    float trigoOp = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if ((e.type() == ExpressionNode::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
         (e.type() == ExpressionNode::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
         (e.type() == ExpressionNode::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
@@ -260,7 +260,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
 
   // Step 2. Special case for arctan(sin(x)/cos(x))
   if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
-    float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), context, angleUnit).toScalar();
+    float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
       Expression result = e.childAtIndex(0).childAtIndex(1).childAtIndex(0);
       e.replaceWithInPlace(result);
@@ -449,7 +449,7 @@ Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Co
     return Expression();
   }
   // We approximate the given expression to quickly compare it to the cheat table entries.
-  float eValue = e.node()->approximate(float(), context, angleUnit).toScalar();
+  float eValue = e.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
   if (std::isnan(eValue) || std::isinf(eValue)) {
     return Expression();
   }

@@ -30,9 +30,9 @@ Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences:
 }
 
 template<typename T>
-Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f = static_cast<Complex<T> &>(fInput).toScalar();
   T n = static_cast<Complex<T> &>(nInput).toScalar();
   if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {

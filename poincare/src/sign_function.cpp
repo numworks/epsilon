@@ -37,7 +37,7 @@ Expression SignFunctionNode::shallowReduce(Context & context, Preferences::Compl
 }
 
 template<typename T>
-Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
@@ -67,7 +67,7 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFo
       one = Rational(-1);
     }
   } else {
-    Evaluation<float> childApproximated = child.node()->approximate(1.0f, context, angleUnit);
+    Evaluation<float> childApproximated = child.node()->approximate(1.0f, context, complexFormat, angleUnit);
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     // c has no sign (c is complex or NAN)

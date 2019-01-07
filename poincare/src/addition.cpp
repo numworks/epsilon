@@ -418,13 +418,13 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context
   m.shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>);
-template Complex<double> Poincare::AdditionNode::compute<double>(std::complex<double>, std::complex<double>);
+template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> Poincare::AdditionNode::compute<double>(std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
 
-template MatrixComplex<float> AdditionNode::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>);
-template MatrixComplex<double> AdditionNode::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>);
+template MatrixComplex<float> AdditionNode::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
+template MatrixComplex<double> AdditionNode::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
 
-template MatrixComplex<float> AdditionNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);
-template MatrixComplex<double> AdditionNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
+template MatrixComplex<float> AdditionNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>, Preferences::ComplexFormat complexFormat);
+template MatrixComplex<double> AdditionNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>, Preferences::ComplexFormat complexFormat);
 
 }

@@ -49,35 +49,35 @@ Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFo
 }
 
 template<typename T>
-Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, angleUnit);
-  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, angleUnit);
+Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
   if (std::isnan(a) || std::isnan(b)) {
     return Complex<T>::Undefined();
   }
 #ifdef LAGRANGE_METHOD
-  T result = lagrangeGaussQuadrature<T>(a, b, context, angleUnit);
+  T result = lagrangeGaussQuadrature<T>(a, b, context, complexFormat, angleUnit);
 #else
-  T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, context, angleUnit);
+  T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, context, complexFormat, angleUnit);
 #endif
   return Complex<T>(result);
 }
 
 template<typename T>
-T IntegralNode::functionValueAtAbscissa(T x, Context & context, Preferences::AngleUnit angleUnit) const {
+T IntegralNode::functionValueAtAbscissa(T x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
   assert(childAtIndex(1)->type() == Type::Symbol);
   VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
   variableContext.setApproximationForVariable<T>(x);
-  return childAtIndex(0)->approximate(T(), variableContext, angleUnit).toScalar();
+  return childAtIndex(0)->approximate(T(), variableContext, complexFormat, angleUnit).toScalar();
 }
 
 #ifdef LAGRANGE_METHOD
 
 template<typename T>
-T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const {
+T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   /* We here use Gauss-Legendre quadrature with n = 5
    * Gauss-Legendre abscissae and weights can be found in
    * C/C++ library source code. */
@@ -91,11 +91,11 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences
   T result = 0;
   for (int j = 0; j < 10; j++) {
     T dx = xr * x[j];
-    T evaluationAfterX = functionValueAtAbscissa(xm+dx, context, angleUnit);
+    T evaluationAfterX = functionValueAtAbscissa(xm+dx, context, complexFormat, angleUnit);
     if (std::isnan(evaluationAfterX)) {
       return NAN;
     }
-    T evaluationBeforeX = functionValueAtAbscissa(xm-dx, context, angleUnit);
+    T evaluationBeforeX = functionValueAtAbscissa(xm-dx, context, complexFormat, angleUnit);
     if (std::isnan(evaluationBeforeX)) {
       return NAN;
     }
@@ -108,7 +108,7 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences
 #else
 
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const {
+IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -135,7 +135,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, C
   errorResult.absoluteError = 0;
 
   T resg = 0;
-  T fc = functionValueAtAbscissa(centr, context, angleUnit);
+  T fc = functionValueAtAbscissa(centr, context, complexFormat, angleUnit);
   if (std::isnan(fc)) {
     return errorResult;
   }
@@ -143,11 +143,11 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, C
   T resabs = std::fabs(resk);
   for (int j = 0; j < 10; j++) {
     T absc = hlgth*xgk[j];
-    T fval1 = functionValueAtAbscissa(centr-absc, context, angleUnit);
+    T fval1 = functionValueAtAbscissa(centr-absc, context, complexFormat, angleUnit);
     if (std::isnan(fval1)) {
       return errorResult;
     }
-    T fval2 = functionValueAtAbscissa(centr+absc, context, angleUnit);
+    T fval2 = functionValueAtAbscissa(centr+absc, context, complexFormat, angleUnit);
     if (std::isnan(fval2)) {
       return errorResult;
     }
@@ -183,17 +183,17 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, C
 }
 
 template<typename T>
-T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::AngleUnit angleUnit) const {
+T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (Expression::ShouldStopProcessing()) {
     return NAN;
   }
-  DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, context, angleUnit);
+  DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, context, complexFormat, angleUnit);
   T result = quadKG.integral;
   if (quadKG.absoluteError <= eps) {
     return result;
   } else if (--numberOfIterations > 0) {
     T m = (a+b)/2;
-    return adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, context, angleUnit) + adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, context, angleUnit);
+    return adaptiveQuadrature<T>(a, m, eps/2, numberOfIterations, context, complexFormat, angleUnit) + adaptiveQuadrature<T>(m, b, eps/2, numberOfIterations, context, complexFormat, angleUnit);
   } else {
     return NAN;
   }

@@ -46,25 +46,25 @@ Expression DivisionNode::shallowReduce(Context & context, Preferences::ComplexFo
   return Division(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
+template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   if (d.real() == 0.0 && d.imag() == 0.0) {
     return Complex<T>::Undefined();
   }
   return Complex<T>(c/d);
 }
 
-template<typename T> MatrixComplex<T> DivisionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
+template<typename T> MatrixComplex<T> DivisionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   MatrixComplex<T> inverse = n.inverse();
-  MatrixComplex<T> result = MultiplicationNode::computeOnComplexAndMatrix<T>(c, inverse);
+  MatrixComplex<T> result = MultiplicationNode::computeOnComplexAndMatrix<T>(c, inverse, complexFormat);
   return result;
 }
 
-template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfColumns() != n.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
   }
   MatrixComplex<T> inverse = n.inverse();
-  MatrixComplex<T> result = MultiplicationNode::computeOnMatrices<T>(m, inverse);
+  MatrixComplex<T> result = MultiplicationNode::computeOnMatrices<T>(m, inverse, complexFormat);
   return result;
 }
 

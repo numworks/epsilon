@@ -16,7 +16,7 @@ float SineNode::characteristicXRange(Context & context, Preferences::AngleUnit a
 }
 
 template<typename T>
-Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::sin(angleInput);
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));

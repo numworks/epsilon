@@ -48,7 +48,7 @@ int MultiplicationNode::getPolynomialCoefficients(Context & context, const char 
 }
 
 template<typename T>
-MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
   if (m.numberOfColumns() != n.numberOfRows()) {
     return MatrixComplex<T>::Undefined();
   }
@@ -781,10 +781,10 @@ const Expression Multiplication::Base(const Expression e) {
   return e;
 }
 
-template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);
-template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
-template Complex<float> MultiplicationNode::compute<float>(const std::complex<float>, const std::complex<float>);
-template Complex<double> MultiplicationNode::compute<double>(const std::complex<double>, const std::complex<double>);
+template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>, Preferences::ComplexFormat);
+template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>, Preferences::ComplexFormat);
+template Complex<float> MultiplicationNode::compute<float>(const std::complex<float>, const std::complex<float>, Preferences::ComplexFormat);
+template Complex<double> MultiplicationNode::compute<double>(const std::complex<double>, const std::complex<double>, Preferences::ComplexFormat);
 template void Multiplication::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 
 }

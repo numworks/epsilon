@@ -24,7 +24,7 @@ Expression FracPartNode::shallowReduce(Context & context, Preferences::ComplexFo
 }
 
 template<typename T>
-Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }

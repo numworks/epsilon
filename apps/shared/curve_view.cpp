@@ -94,9 +94,10 @@ float CurveView::samplingRatio() const {
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
   Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-
-  float otherAxisMin = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.left() : rect.bottom());
-  float otherAxisMax = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.right() : rect.top());
+  /* We translate the pixel coordinates into floats, adding/subtracting 1 to
+   * account for conversion errors. */
+  float otherAxisMin = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.left() - 1 : rect.bottom() + 1);
+  float otherAxisMax = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.right() + 1 : rect.top() - 1);
   float start = step * ((int)(min(otherAxis)/step));
   float boldStart = 2*step * ((int)(min(otherAxis)/(2*step)));
   bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;

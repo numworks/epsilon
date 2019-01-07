@@ -263,7 +263,11 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Up && m_inputRunLoopActive) {
+  if (m_inputRunLoopActive
+      && (event == Ion::Events::Up
+        || event == Ion::Events::OK
+        || event == Ion::Events::EXE))
+  {
     m_inputRunLoopActive = false;
     /* We need to return true here because we want to actually exit from the
      * input run loop, which requires ending a dispatchEvent cycle. */

@@ -8,7 +8,7 @@
 class FltkKbd : public Fl_Group {
 public:
   constexpr static int sNumberOfLettersInAlphabet = 26;
-  constexpr static int sNumberOfOtherShortcuts = 22;
+  constexpr static int sNumberOfOtherShortcuts = 19; // TODO 3 are not working, when fixed put 22
   FltkKbd(int x, int y, int w, int h);
   bool key_down(Ion::Keyboard::Key key);
 private:

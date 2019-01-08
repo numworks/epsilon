@@ -14,6 +14,7 @@ namespace Poincare {
 
 class Context;
 class SymbolAbstract;
+class Symbol;
 
 class Expression : public TreeHandle {
   friend class AbsoluteValue;
@@ -154,6 +155,8 @@ public:
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+  Expression replaceUnknown(const Symbol & symbol);
+  Expression defaultReplaceUnknown(const Symbol & symbol);
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -167,7 +170,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
-  static Expression ParseAndReduce(const char * text, Context & context, Preferences::AngleUnit);
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::AngleUnit angleUnit);

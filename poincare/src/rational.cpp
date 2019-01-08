@@ -290,6 +290,7 @@ Expression Rational::setSign(ExpressionNode::Sign s) {
   return *this;
 }
 
+template float RationalNode::templatedApproximate() const;
 template double RationalNode::templatedApproximate() const;
 
 }

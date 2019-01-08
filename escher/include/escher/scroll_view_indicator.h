@@ -19,11 +19,8 @@ public:
   void setMargin(KDCoordinate m) { m_margin = m; }
   KDCoordinate margin() const { return m_margin; }
 
-  float start() const;
-  void setStart(float start);
-  float end() const;
-  void setEnd(float end);
-  KDRect frame();
+  void update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength);
+  bool visible() const { return 0 < m_offset || m_visibleLength < 1; }
 protected:
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
@@ -32,8 +29,11 @@ protected:
 private:
   constexpr static KDCoordinate k_indicatorThickness = 4;
   Direction m_direction;
-  float m_start;
-  float m_end;
+  KDCoordinate totalLength() const {
+    return ((m_direction == Direction::Horizontal) ? m_frame.width() : m_frame.height()) - 2*m_margin;
+  }
+  float m_offset;
+  float m_visibleLength;
   KDColor m_indicatorColor;
   KDColor m_backgroundColor;
   KDCoordinate m_margin;

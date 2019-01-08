@@ -163,6 +163,16 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
 }
 
 template<typename T>
+void assert_parsed_expression_evaluates_without_simplifying_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+  int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
+  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
+  assert_parsed_expression_process_to(expression, approximation, complexFormat, angleUnit, [](Expression e, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+      return e.approximate<T>(context, complexFormat, angleUnit);
+    }, numberOfDigits);
+}
+
+
+template<typename T>
 void assert_parsed_expression_approximates_with_value_for_symbol(Expression expression, const char * symbol, T value, T approximation, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit) {
   Shared::GlobalContext globalContext;
   T result = expression.approximateWithValueForSymbol(symbol, value, globalContext, complexFormat, angleUnit);
@@ -223,5 +233,7 @@ void assert_expression_layout_serialize_to(Poincare::Layout layout, const char *
 
 template void assert_parsed_expression_evaluates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
 template void assert_parsed_expression_evaluates_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+template void assert_parsed_expression_evaluates_without_simplifying_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
+template void assert_parsed_expression_evaluates_without_simplifying_to<double>(char const*, char const *,  Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
 template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, float, float, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
 template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, double, double, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);

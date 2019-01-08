@@ -151,6 +151,8 @@ void FltkKbd::initOtherShortcuts() {
   m_otherShortcuts[index++]->shortcut(FL_META | 'v');
   m_otherShortcuts[index]->callback(otherEventHandler, Ion::Events::Clear.id());
   m_otherShortcuts[index++]->shortcut(FL_META | FL_BackSpace);
+  // TODO not working
+#if 0
   m_otherShortcuts[index]->callback(otherEventHandler, Ion::Events::LeftBracket.id());
   m_otherShortcuts[index++]->shortcut(FL_SHIFT | FL_ALT | '(');
   m_otherShortcuts[index]->callback(otherEventHandler, Ion::Events::RightBracket.id());
@@ -158,6 +160,7 @@ void FltkKbd::initOtherShortcuts() {
   m_otherShortcuts[index]->callback(otherEventHandler, Ion::Events::LeftBrace.id());
   m_otherShortcuts[index++]->shortcut(FL_ALT | '(');
   m_otherShortcuts[index]->callback(otherEventHandler, Ion::Events::RightBrace.id());
+#endif
   m_otherShortcuts[index++]->shortcut(FL_ALT | ')');
   m_otherShortcuts[index]->callback(otherEventHandler, Ion::Events::Underscore.id());
   m_otherShortcuts[index++]->shortcut('_');

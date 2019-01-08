@@ -39,7 +39,12 @@ Expression StorageExpressionModel::expressionReduced(Poincare::Context * context
   if (m_expression.isUninitialized()) {
     assert(!isNull());
     Ion::Storage::Record::Data recordData = value();
-    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData)).reduce(*context, Preferences::sharedPreferences()->angleUnit());
+    m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData));
+    PoincareHelpers::Simplify(&m_expression, *context);
+    // simplify might return an uninitialized Expression if interrupted
+    if (m_expression.isUninitialized()) {
+      m_expression = Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData));
+    }
   }
   return m_expression;
 }
@@ -82,8 +87,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char 
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c);
     if (!expressionToStore.isUninitialized()) {
-      Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
-      expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol("x", 1), xUnknown);
+      expressionToStore = expressionToStore.replaceUnknown(Symbol('x')); //TODO Beware of non x unknowns! (for instance whe sequences are in the storage)
     }
   }
   return setExpressionContent(expressionToStore);

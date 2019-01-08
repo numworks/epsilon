@@ -86,4 +86,9 @@ $(app_objs): $(app_image_objs)
 
 epsilon.$(EXE): $(app_objs) $(app_image_objs)
 
+TO_REMOVE := apps/main.o apps/i18n.o
+TMP := $(app_objs) $(app_image_objs)
+VAR := $(filter-out $(TO_REMOVE), $(TMP))
+test.$(EXE): $(VAR)
+
 products += epsilon.$(EXE) $(app_objs) $(call INLINER_PRODUCTS,$(app_images))

@@ -37,6 +37,13 @@ public:
     ScriptStore m_scriptStore;
   };
   ~App();
+  bool prepareForExit() override {
+    if (m_consoleController.inputRunLoopActive()) {
+      m_consoleController.terminateInputLoop();
+      return false;
+    }
+    return true;
+  }
   StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
 

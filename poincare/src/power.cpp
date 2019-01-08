@@ -169,8 +169,8 @@ Expression PowerNode::shallowReduce(Context & context, Preferences::ComplexForma
   return Power(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression PowerNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Power(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression PowerNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  return Power(this).shallowBeautify(context, complexFormat, angleUnit, target);
 }
 
 int PowerNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
@@ -757,7 +757,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
   return *this;
 }
 
-Expression Power::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Power::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
   Expression p = denominator(context, complexFormat, angleUnit);
   // If the denominator is initialized, the index of the power is of form -y
@@ -765,7 +765,7 @@ Expression Power::shallowBeautify(Context & context, Preferences::ComplexFormat 
     Division d = Division(Rational(1), p);
     p.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
     replaceWithInPlace(d);
-    return d.shallowBeautify(context, complexFormat, angleUnit);
+    return d.shallowBeautify(context, complexFormat, angleUnit, target);
   }
   // Step 2: Turn a^(1/n) into root(a, n)
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().signedIntegerNumerator().isOne()) {

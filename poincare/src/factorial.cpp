@@ -38,8 +38,8 @@ Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexF
   return Factorial(this).shallowReduce();
 }
 
-Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Factorial(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Factorial(this).shallowBeautify();
 }
 
 template<typename T>
@@ -127,7 +127,7 @@ Expression Factorial::shallowReduce() {
   return *this;
 }
 
-Expression Factorial::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowBeautify() {
   // +(a,b)! ->(+(a,b))!
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication

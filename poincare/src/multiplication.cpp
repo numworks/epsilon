@@ -97,8 +97,8 @@ Expression MultiplicationNode::shallowReduce(Context & context, Preferences::Com
   return Multiplication(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression MultiplicationNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Multiplication(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression MultiplicationNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Multiplication(this).shallowBeautify(context, complexFormat, angleUnit, target);
 }
 
 Expression MultiplicationNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -136,7 +136,7 @@ Expression Multiplication::shallowReduce(Context & context, Preferences::Complex
   return privateShallowReduce(context, complexFormat, angleUnit, target, true, true);
 }
 
-Expression Multiplication::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
@@ -144,7 +144,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
   // Step 1: Turn -n*A into -(n*A)
-  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
   // If one negative numeral factor was made positive, we turn the expression in an Opposite
   if (!noNegativeNumeral.isUninitialized()) {
     Opposite o = Opposite();
@@ -157,7 +157,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
    * This also turns 2/3*a into 2*a*3^(-1) */
   Expression thisExp = mergeNegativePower(context, complexFormat, angleUnit);
   if (thisExp.type() == ExpressionNode::Type::Power) {
-    return thisExp.shallowBeautify(context, complexFormat, angleUnit);
+    return thisExp.shallowBeautify(context, complexFormat, angleUnit, target);
   }
   assert(thisExp.type() == ExpressionNode::Type::Multiplication);
 
@@ -181,7 +181,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
     Expression denominatorOperand = childI.childAtIndex(0);
     removeChildInPlace(childI, childI.numberOfChildren());
 
-    Expression numeratorOperand = shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    Expression numeratorOperand = shallowReduce(context, complexFormat, angleUnit, target);
     // Delete unnecessary parentheses on numerator
     if (numeratorOperand.type() == ExpressionNode::Type::Parenthesis) {
       Expression numeratorChild0 = numeratorOperand.childAtIndex(0);
@@ -193,7 +193,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
     numeratorOperand.replaceWithInPlace(d);
     d.replaceChildAtIndexInPlace(0, numeratorOperand);
     d.replaceChildAtIndexInPlace(1, denominatorOperand);
-    return d.shallowBeautify(context, complexFormat, angleUnit);
+    return d.shallowBeautify(context, complexFormat, angleUnit, target);
   }
   return thisExp;
 }

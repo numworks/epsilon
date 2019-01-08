@@ -423,7 +423,7 @@ Expression Expression::simplify(Context & context, Preferences::ComplexFormat co
   sSimplificationHasBeenInterrupted = false;
   Expression e = deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
   if (!sSimplificationHasBeenInterrupted) {
-    e = e.deepBeautify(context, complexFormat, angleUnit);
+    e = e.deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
   }
   return sSimplificationHasBeenInterrupted ? Expression() : e;
 }
@@ -461,15 +461,15 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
         // Clone the ComplexCartesian to use it to compute the approximation
         ComplexCartesian ecomplexClone = ecomplex.clone().convert<ComplexCartesian>();
         // To minimize the error on the approximation, we reduce the number of nodes in the expression by beautifying
-        ecomplexClone.real().deepBeautify(context, complexFormat, angleUnit);
-        ecomplexClone.imag().deepBeautify(context, complexFormat, angleUnit);
+        ecomplexClone.real().deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+        ecomplexClone.imag().deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
         *approximateExpression = ecomplexClone.approximate<double>(context, complexFormat, angleUnit);
       }
       // Step 3: create the simplied expression with the required complex format
       Expression ra = complexFormat == Preferences::ComplexFormat::Polar ? ecomplex.clone().convert<ComplexCartesian>().norm(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User) : ecomplex.real();
       Expression tb = complexFormat == Preferences::ComplexFormat::Polar ? ecomplex.argument(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User) : ecomplex.imag();
-      ra = ra.deepBeautify(context, complexFormat, angleUnit);
-      tb = tb.deepBeautify(context, complexFormat, angleUnit);
+      ra = ra.deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+      tb = tb.deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
       bool raIsNegative = false;
       bool tbIsNegative = false;
       makePositive(&ra, &raIsNegative);
@@ -478,7 +478,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     } else {
       /* Case 2: The reduced expression has a complex component that could not
        * be bubbled up. */
-      *simplifiedExpression = e.deepBeautify(context, complexFormat, angleUnit);
+      *simplifiedExpression = e.deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
       if (approximateExpression) {
         *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);
       }
@@ -548,11 +548,11 @@ Expression Expression::deepReduce(Context & context, Preferences::ComplexFormat 
   return shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression Expression::deepBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  Expression e = shallowBeautify(context, complexFormat, angleUnit);
+Expression Expression::deepBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression e = shallowBeautify(context, complexFormat, angleUnit, target);
   int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    e.childAtIndex(i).deepBeautify(context, complexFormat, angleUnit);
+    e.childAtIndex(i).deepBeautify(context, complexFormat, angleUnit, target);
   }
   return e;
 }

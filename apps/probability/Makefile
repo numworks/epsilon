@@ -39,7 +39,6 @@ i18n_files += $(addprefix apps/probability/,\
 tests += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
 )
-test_objs += $(addprefix apps/probability/law/, erf_inv.o)
 
 app_images += apps/probability/probability_icon.png
 

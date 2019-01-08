@@ -33,7 +33,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_sandboxController(this, this),
   m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
-      , m_locked(lockOnConsole)
+  , m_locked(lockOnConsole)
 #endif
 {
   m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin);
@@ -81,21 +81,30 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.deleteLastLineIfEmpty();
 }
 
+void ConsoleController::terminateInputLoop() {
+  assert(m_inputRunLoopActive);
+  m_inputRunLoopActive = false;
+  interrupt();
+}
+
 const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * a = (AppsContainer *)(app()->container());
   m_inputRunLoopActive = true;
 
+  // Set the prompt text
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setPrompt(prompt);
   m_editCell.setText("");
 
+  // Run new input loop
   a->redrawWindow();
   a->runWhile([](void * a){
       ConsoleController * c = static_cast<ConsoleController *>(a);
       return c->inputRunLoopActive();
   }, this);
 
+  // Reset the prompt line
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
   m_editCell.setPrompt(sStandardPromptText);
@@ -145,9 +154,8 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
   }
 #if EPSILON_GETOPT
   if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
-    if (inputRunLoopActive()) {
-      askInputRunLoopTermination();
-      interrupt();
+    if (m_inputRunLoopActive) {
+      terminateInputLoop();
     }
     return true;
   }
@@ -234,10 +242,10 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Up && inputRunLoopActive()) {
-    askInputRunLoopTermination();
-    // We need to return true here because we want to actually exit from the
-    // input run loop, which requires ending a dispatchEvent cycle.
+  if (event == Ion::Events::Up && m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
+    /* We need to return true here because we want to actually exit from the
+     * input run loop, which requires ending a dispatchEvent cycle. */
     return true;
   }
   if (event == Ion::Events::Up) {
@@ -251,8 +259,8 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (inputRunLoopActive()) {
-    askInputRunLoopTermination();
+  if (m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
     return false;
   }
   runAndPrintForCommand(text);
@@ -266,8 +274,8 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
 }
 
 bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
-  if (inputRunLoopActive()) {
-    askInputRunLoopTermination();
+  if (m_inputRunLoopActive) {
+    m_inputRunLoopActive = false;
   } else {
 #if EPSILON_GETOPT
     /* In order to lock the console controller, we disable poping controllers

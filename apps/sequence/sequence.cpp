@@ -96,14 +96,14 @@ void Sequence::setInitialRank(int rank) {
 
 Poincare::Expression Sequence::firstInitialConditionExpression(Context * context) const {
   if (m_firstInitialConditionExpression.isUninitialized()) {
-    m_firstInitialConditionExpression = PoincareHelpers::ParseAndReduce(m_firstInitialConditionText, *context);
+    m_firstInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_firstInitialConditionText, *context);
   }
   return m_firstInitialConditionExpression;
 }
 
 Poincare::Expression Sequence::secondInitialConditionExpression(Context * context) const {
   if (m_secondInitialConditionExpression.isUninitialized()) {
-    m_secondInitialConditionExpression = PoincareHelpers::ParseAndReduce(m_secondInitialConditionText, *context);
+    m_secondInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_secondInitialConditionText, *context);
   }
   return m_secondInitialConditionExpression;
 }

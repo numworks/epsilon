@@ -281,6 +281,18 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
+Expression Expression::replaceUnknown(const Symbol & symbol) {
+  return node()->replaceUnknown(symbol);
+}
+
+Expression Expression::defaultReplaceUnknown(const Symbol & symbol) {
+  int nbChildren = numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    childAtIndex(i).replaceUnknown(symbol);
+  }
+  return *this;
+}
+
 /* Comparison */
 
 bool Expression::isIdenticalTo(const Expression e) const {
@@ -311,14 +323,6 @@ Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
 int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return isUninitialized() ? 0 : node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
 
 /* Simplification */
-
-Expression Expression::ParseAndReduce(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
-  Expression exp = Parse(text);
-  if (exp.isUninitialized()) {
-    return Undefined();
-  }
-  return exp.reduce(context, angleUnit);
-}
 
 Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
   Expression exp = Parse(text);
@@ -423,7 +427,7 @@ U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angle
 
 template<typename U>
 U Expression::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
-  Expression exp = ParseAndReduce(text, context, angleUnit);
+  Expression exp = ParseAndSimplify(text, context, angleUnit);
   return exp.approximateToScalar<U>(context, angleUnit);
 }
 

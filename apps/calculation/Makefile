@@ -24,7 +24,5 @@ i18n_files += $(addprefix apps/calculation/,\
 tests += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\
 )
-test_objs += $(addprefix apps/calculation/, calculation.o calculation_store.o)
 
 app_images += apps/calculation/calculation_icon.png
-

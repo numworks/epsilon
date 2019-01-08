@@ -13,6 +13,7 @@ public:
   // Pixel manipulation
   void setPixel(KDPoint p, KDColor c);
   KDColor getPixel(KDPoint p);
+  void getPixels(KDRect r, KDColor * pixels);
 
   // Text
   KDPoint drawString(const char * text, KDPoint p, const KDFont * font = KDFont::LargeFont, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, int maxLength = -1);

@@ -146,6 +146,16 @@ bool KDRect::contains(KDPoint p) const {
   return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
 }
 
+bool KDRect::containsRect(const KDRect & other) const {
+  if (other.isEmpty()) {
+    return true;
+  }
+  if (isEmpty()) {
+    return false;
+  }
+  return contains(other.topLeft()) && contains(other.bottomRight());
+}
+
 bool KDRect::isAbove(KDPoint p) const {
   return (p.y() >= y());
 }

@@ -133,6 +133,9 @@ port_objs += $(addprefix python/port/,\
   mod/kandinsky/modkandinsky_table.o \
   mod/time/modtime.o \
   mod/time/modtime_table.o \
+  mod/turtle/modturtle.o \
+  mod/turtle/modturtle_table.o \
+  mod/turtle/turtle.o \
   mphalport.o \
 )
 
@@ -161,7 +164,6 @@ port_objs += python/port/stackctrl.o
 ifeq ($(PLATFORM),emscripten)
 $(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
-
 
 # QSTR generation
 

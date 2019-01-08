@@ -98,6 +98,48 @@ bool PowerNode::isReal(Context & context) const {
 // Private
 
 template<typename T>
+Evaluation<T> PowerNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  if (complexFormat == Preferences::ComplexFormat::Real) {
+    /* If the complexFormat is Real, we look for power of form x^(p/q) with x
+     * real and p, q integer because they might have a real form which does not
+     * correspond to the principale angle. */
+    Expression index(childAtIndex(1));
+    /* We simplify the index to turn its Expression in Rational if possible (ie,
+     * Decimal, Symbol, Division, Parenthesis can result in Rational). */
+    index = index.clone().simplify(context, complexFormat, angleUnit);
+    if (index.type() == ExpressionNode::Type::Rational) {
+      Rational r = static_cast<Rational &>(index);
+      // Check that the base approximation is real
+      Evaluation<T> baseEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+      if (baseEvaluation.type() == EvaluationNode<T>::Type::Complex && static_cast<Complex<T> &>(baseEvaluation).imag() == 0.0) {
+      /* Now we now we the power has a form x^(p/q). We are going to approximate
+       * it doing x^(p/q) = |x|^(p/q)*sign(x)^(p/q).
+       * Indeed, |x|^(p/q) is real (since pow: (R+, R) -> R) and we know when
+       * (-1)^(p/q) is real (see next comment).*/
+        std::complex<T> baseEvaluationComplex = static_cast<Complex<T> &>(baseEvaluation).stdComplex();
+        int signBaseEvaluation = baseEvaluationComplex.real() >= 0.0 ? 1 : -1;
+        // Compute |x|^(p/q)
+        baseEvaluationComplex.real(std::fabs(baseEvaluationComplex.real()));
+        Evaluation<T> indexEvaluation = r.node()->approximate(T(), context, complexFormat, angleUnit);
+        Complex<T> absBasePowIndex = compute(baseEvaluationComplex, static_cast<Complex<T> &>(indexEvaluation).stdComplex(), complexFormat);
+        assert(absBasePowIndex.imag() == 0.0);
+        /* (-1)^(p/q) is equal to:
+         * - 1 if p is even
+         * - (-1) if q is odd
+         * - is not real otherwise. */
+        if (signBaseEvaluation > 0 || r.signedIntegerNumerator().isEven()) {
+          return absBasePowIndex;
+        } else if (!r.integerDenominator().isEven()) {
+          return Complex<T>(-absBasePowIndex.stdComplex());
+        }
+      }
+    }
+  }
+  // In any other case, we use the principale angle which is done via the standard library
+  return ApproximationHelper::MapReduce<T>(this, context, complexFormat, angleUnit, compute<T>, computeOnComplexAndMatrix<T>, computeOnMatrixAndComplex<T>, computeOnMatrices<T>);
+}
+
+template<typename T>
 Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) {
   std::complex<T> result;
   if (c.imag() == 0.0 && d.imag() == 0.0 && c.real() != 0.0 && (c.real() > 0.0 || std::round(d.real()) == d.real())) {

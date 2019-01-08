@@ -162,7 +162,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication determinant) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
-  deepReduceChildren(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+  deepReduceChildren(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
 
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -198,7 +198,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h*n+j, newOpHJ);
-        newOpHJ = newOpHJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+        newOpHJ = newOpHJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
       }
       replaceChildInPlace(divisor, Rational(1));
 
@@ -210,8 +210,8 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
           Expression opIJ = matrixChild(i, j);
           Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
-          newOpIJ.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
-          newOpIJ = newOpIJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+          newOpIJ.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+          newOpIJ = newOpIJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
         }
         replaceChildAtIndexInPlace(i*n+k, Rational(0));
       }

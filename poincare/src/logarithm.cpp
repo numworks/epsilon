@@ -58,13 +58,13 @@ Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::Compl
 }
 
 template<>
-Expression LogarithmNode<1>::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression LogarithmNode<1>::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   return CommonLogarithm(this);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Logarithm(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression LogarithmNode<2>::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  return Logarithm(this).shallowBeautify();
 }
 
 template<>
@@ -309,7 +309,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
   return a;
 }
 
-Expression Logarithm::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
   Constant e = Constant(Ion::Charset::Exponential);
   if (childAtIndex(1).isIdenticalTo(e)) {

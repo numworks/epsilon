@@ -150,8 +150,8 @@ Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFo
   return Rational(this).shallowReduce();
 }
 
-Expression RationalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Rational(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression RationalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Rational(this).shallowBeautify();
 }
 
 Expression RationalNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -262,7 +262,7 @@ Expression Rational::shallowReduce() {
   return *this;
 }
 
-Expression Rational::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Rational::shallowBeautify() {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
     Opposite o;

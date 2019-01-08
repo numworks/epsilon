@@ -92,8 +92,8 @@ Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFor
   return Decimal(this).shallowReduce();
 }
 
-Expression DecimalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Decimal(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression DecimalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Decimal(this).shallowBeautify();
 }
 
 Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -373,7 +373,7 @@ Expression Decimal::shallowReduce() {
   return result;
 }
 
-Expression Decimal::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Decimal::shallowBeautify() {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
     Opposite o;

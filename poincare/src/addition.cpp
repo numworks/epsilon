@@ -54,8 +54,8 @@ Expression AdditionNode::shallowReduce(Context & context, Preferences::ComplexFo
   return Addition(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression AdditionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return Addition(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression AdditionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Addition(this).shallowBeautify(context, complexFormat, angleUnit, target);
 }
 
 // Addition
@@ -88,7 +88,7 @@ int Addition::getPolynomialCoefficients(Context & context, const char * symbolNa
   return deg;
 }
 
-Expression Addition::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Addition::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   /* Beautifying AdditionNode essentially consists in adding Subtractions if
    * needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
@@ -106,7 +106,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
 
   for (int i = 0; i < numberOfChildren(); i++) {
     // Try to make the child i positive if any negative numeral factor is found
-    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    Expression subtractant = childAtIndex(i).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
     if (subtractant.isUninitialized())
     {
       // if subtractant is not initialized, it means the child i had no negative numeral factor

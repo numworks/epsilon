@@ -28,7 +28,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) override;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -49,7 +49,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowBeautify();
 
 private:
   Logarithm(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {

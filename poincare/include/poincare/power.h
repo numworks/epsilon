@@ -46,7 +46,7 @@ private:
 
   // Simplify
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) override;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
   Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
@@ -71,7 +71,7 @@ public:
   Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;

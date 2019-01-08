@@ -17,15 +17,15 @@ public:
   ExecutionEnvironment() : m_sandboxIsDisplayed(false) {}
   static ExecutionEnvironment * currentExecutionEnvironment();
   void runCode(const char * );
-  virtual const char * inputText(const char * prompt) {
-    return nullptr;
-  }
-  virtual void displaySandbox() {
-  }
-  virtual void printText(const char * text, size_t length) {
-  }
+  virtual const char * inputText(const char * prompt) { return nullptr; }
+  virtual void displaySandbox() {}
+  virtual void resetSandbox() {}
+  virtual void printText(const char * text, size_t length) {}
   void interrupt();
+  void setSandboxIsDisplayed(bool display);
 protected:
+  bool sandboxIsDisplayed() const { return m_sandboxIsDisplayed; }
+private:
   bool m_sandboxIsDisplayed;
 };
 

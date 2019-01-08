@@ -61,7 +61,6 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class NaperianLogarithm;
   friend class NthRoot;
-  friend class NthRootNode;
   friend class Number;
   friend class Opposite;
   friend class Parenthesis;

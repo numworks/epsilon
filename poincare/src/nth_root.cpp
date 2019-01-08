@@ -34,12 +34,17 @@ Expression NthRootNode::shallowReduce(Context & context, Preferences::ComplexFor
 
 template<typename T>
 Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  NthRoot e(this);
-  /* Turn the root(x,n) into x^(1/n) to use the approximation on power (which
-   * takes into account the complex format to force to return the real
-   * approximation when it exists instead of returning the principale value). */
-  Expression equivalence = Power(e.childAtIndex(0).clone(), Division(Rational(1), e.childAtIndex(1).clone()));
-  return equivalence.node()->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> base = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> index = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
+  Complex<T> result = Complex<T>::Undefined();
+  if (base.type() == EvaluationNode<T>::Type::Complex
+      && index.type() == EvaluationNode<T>::Type::Complex)
+  {
+    Complex<T> basec = static_cast<Complex<T> &>(base);
+    Complex<T> indexc = static_cast<Complex<T> &>(index);
+    result = PowerNode::compute(basec.stdComplex(), std::complex<T>(1.0)/(indexc.stdComplex()), complexFormat);
+  }
+  return result;
 }
 
 Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

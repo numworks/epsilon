@@ -2,6 +2,8 @@
 
 namespace Poincare {
 
+static inline Token::Type maxToken(Token::Type x, Token::Type y) { return ((int)x > (int) y ? x : y); }
+
 constexpr const Expression::FunctionHelper * Parser::s_reservedFunctions[];
 
 Expression Parser::parse() {
@@ -50,7 +52,7 @@ bool Parser::IsSpecialIdentifierName(const char * name, size_t nameLength) {
 }
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
-  typedef void (Parser::*TokenParser)(Expression & leftHandSide);
+  typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   static constexpr TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseStore,           // Token::Store
@@ -80,7 +82,7 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
   Expression leftHandSide;
   do {
     popToken();
-    (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide);
+    (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide, stoppingType);
   } while (m_status == Status::Progress && nextTokenHasPrecedenceOver(stoppingType));
   return leftHandSide;
 }
@@ -133,11 +135,11 @@ void Parser::isThereImplicitMultiplication() {
   );
 }
 
-void Parser::parseUnexpected(Expression & leftHandSide) {
+void Parser::parseUnexpected(Expression & leftHandSide, Token::Type stoppingType) {
   m_status = Status::Error; // Unexpected Token
 }
 
-void Parser::parseNumber(Expression & leftHandSide) {
+void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; //FIXME
     return;
@@ -150,14 +152,14 @@ void Parser::parseNumber(Expression & leftHandSide) {
   isThereImplicitMultiplication();
 }
 
-void Parser::parsePlus(Expression & leftHandSide) {
+void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Plus)) {
     leftHandSide = Addition(leftHandSide, rightHandSide);
   }
 }
 
-void Parser::parseEmpty(Expression & leftHandSide) {
+void Parser::parseEmpty(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; //FIXME
     return;
@@ -165,9 +167,9 @@ void Parser::parseEmpty(Expression & leftHandSide) {
   leftHandSide = EmptyExpression();
 }
 
-void Parser::parseMinus(Expression & leftHandSide) {
+void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    Expression rightHandSide = parseUntil(Token::Slash);
+    Expression rightHandSide = parseUntil(maxToken(stoppingType, Token::Minus));
     if (m_status != Status::Progress) {
       return;
     }
@@ -181,35 +183,35 @@ void Parser::parseMinus(Expression & leftHandSide) {
   }
 }
 
-void Parser::parseTimes(Expression & leftHandSide) {
+void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Times)) {
     leftHandSide = Multiplication(leftHandSide, rightHandSide);
   }
 }
 
-void Parser::parseSlash(Expression & leftHandSide) {
+void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
     leftHandSide = Division(leftHandSide, rightHandSide);
   }
 }
 
-void Parser::parseImplicitTimes(Expression & leftHandSide) {
+void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
     leftHandSide = Multiplication(leftHandSide, rightHandSide);
   }
 }
 
-void Parser::parseCaret(Expression & leftHandSide) {
+void Parser::parseCaret(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::ImplicitTimes)) {
     leftHandSide = Power(leftHandSide, rightHandSide);
   }
 }
 
-void Parser::parseEqual(Expression & leftHandSide) {
+void Parser::parseEqual(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Equal must have a left operand
     return;
@@ -226,7 +228,7 @@ void Parser::parseEqual(Expression & leftHandSide) {
   }
 }
 
-void Parser::parseStore(Expression & leftHandSide) {
+void Parser::parseStore(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing.
     return;
@@ -253,7 +255,7 @@ void Parser::parseStore(Expression & leftHandSide) {
   leftHandSide = Store(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
 }
 
-void Parser::parseLeftSuperscript(Expression & leftHandSide) {
+void Parser::parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Power must have a left operand
     return;
@@ -286,7 +288,7 @@ bool Parser::parseBinaryOperator(const Expression & leftHandSide, Expression & r
   return true;
 }
 
-void Parser::parseLeftParenthesis(Expression & leftHandSide) {
+void Parser::parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; //FIXME
     return;
@@ -303,7 +305,7 @@ void Parser::parseLeftParenthesis(Expression & leftHandSide) {
   isThereImplicitMultiplication();
 }
 
-void Parser::parseBang(Expression & leftHandSide) {
+void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing
   } else {
@@ -320,7 +322,7 @@ bool Parser::currentTokenIsSpecialIdentifier() const {
   return IsSpecialIdentifierName(m_currentToken.text(), m_currentToken.length());
 }
 
-void Parser::parseConstant(Expression & leftHandSide) {
+void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {
   leftHandSide = Constant(m_currentToken.text()[0]);
   isThereImplicitMultiplication();
 }
@@ -432,7 +434,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   }
 }
 
-void Parser::parseIdentifier(Expression & leftHandSide) {
+void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; //FIXME
     return;
@@ -470,7 +472,7 @@ Expression Parser::parseFunctionParameters() {
   return commaSeparatedList;
 }
 
-void Parser::parseMatrix(Expression & leftHandSide) {
+void Parser::parseMatrix(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; //FIXME
     return;

@@ -31,33 +31,22 @@ void ScrollView::setCommonMargins() {
   setLeftMargin(Metric::CommonLeftMargin);
 }
 
-bool ScrollView::hasVerticalIndicator() const {
-  if (m_showsIndicators) {
-    return m_verticalScrollIndicator.end() < 1 || m_verticalScrollIndicator.start() > 0;
-  }
-  return false;
-}
-
-bool ScrollView::hasHorizontalIndicator() const {
-  if (m_showsIndicators) {
-    return m_horizontalScrollIndicator.end() < 1 || m_horizontalScrollIndicator.start() > 0;
-  }
-  return false;
-}
-
 int ScrollView::numberOfSubviews() const {
-  return 1 + hasVerticalIndicator() + hasHorizontalIndicator();
+  return (m_showsIndicators) ? 1 + m_verticalScrollIndicator.visible() + m_horizontalScrollIndicator.visible() : 1;
 }
 
 View * ScrollView::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return m_contentView;
-    case 1:
-      return hasHorizontalIndicator() ? &m_horizontalScrollIndicator : &m_verticalScrollIndicator;
-    case 2:
-      return &m_verticalScrollIndicator;
+  if (index == 0) {
+    return m_contentView;
+  }
+  if (m_showsIndicators) {
+    switch (index) {
+      case 1:
+        return m_horizontalScrollIndicator.visible() ? &m_horizontalScrollIndicator : &m_verticalScrollIndicator;
+      case 2:
+        return &m_verticalScrollIndicator;
     }
+  }
   return nullptr;
 }
 
@@ -133,49 +122,38 @@ void ScrollView::layoutSubviews() {
   KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
   m_contentView->setFrame(contentFrame);
 
+  if (!m_showsIndicators) {
+    return;
+  }
+
   // We recompute the size of the scroll indicator
-  updateScrollIndicator();
+  m_verticalScrollIndicator.update(
+    m_contentView->bounds().height()+m_topMargin+m_bottomMargin,
+    contentOffset().y(),
+    m_frame.height()
+  );
+  m_horizontalScrollIndicator.update(
+    m_contentView->bounds().width()+m_leftMargin+m_rightMargin,
+    contentOffset().x(),
+    m_frame.width()
+  );
 
   // Layout indicators
   /* If the two indicators are visible, we leave an empty rectangle in the right
    * bottom corner. Otherwise, the only indicator uses all the height/width. */
-  if (hasVerticalIndicator()) {
+  if (m_verticalScrollIndicator.visible()) {
     KDRect verticalIndicatorFrame = KDRect(
       m_frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, m_frame.height() - hasHorizontalIndicator() * m_indicatorThickness
+      m_indicatorThickness, m_frame.height() - m_horizontalScrollIndicator.visible() * m_indicatorThickness
     );
     m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
   }
-  if (hasHorizontalIndicator()) {
+  if (m_horizontalScrollIndicator.visible()) {
     KDRect horizontalIndicatorFrame = KDRect(
       0, m_frame.height() - m_indicatorThickness,
-      m_frame.width() - hasVerticalIndicator() * m_indicatorThickness, m_indicatorThickness
+      m_frame.width() - m_verticalScrollIndicator.visible() * m_indicatorThickness, m_indicatorThickness
     );
     m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
-  }
-}
-
-void ScrollView::updateScrollIndicator() {
-  if (!m_showsIndicators) {
-    return;
-  }
-  float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
-  bool hadVerticalIndicator = hasVerticalIndicator();
-  float verticalStart = contentOffset().y();
-  float verticalEnd = contentOffset().y() + m_frame.height();
-  m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
-  m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
-  if (hadVerticalIndicator && !hasVerticalIndicator()) {
-    markRectAsDirty(m_verticalScrollIndicator.frame());
-  }
-  float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
-  bool hadHorizontalIndicator = hasHorizontalIndicator();
-  float horizontalStart = contentOffset().x();
-  float horizontalEnd = contentOffset().x() + m_frame.width();
-  m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
-  m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
-  if (hadHorizontalIndicator && !hasHorizontalIndicator()) {
-    markRectAsDirty(m_horizontalScrollIndicator.frame());
   }
 }
 

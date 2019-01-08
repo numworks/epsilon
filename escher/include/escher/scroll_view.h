@@ -47,7 +47,6 @@ protected:
   KDCoordinate maxContentHeightDisplayableWithoutScrolling();
   KDRect visibleContentRect();
   void layoutSubviews() override;
-  void updateScrollIndicator();
   KDSize contentSize();
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
@@ -61,8 +60,6 @@ private:
 
   ScrollViewIndicator m_verticalScrollIndicator;
   ScrollViewIndicator m_horizontalScrollIndicator;
-  bool hasVerticalIndicator() const;
-  bool hasHorizontalIndicator() const;
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;

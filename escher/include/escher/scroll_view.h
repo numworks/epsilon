@@ -32,8 +32,8 @@ public:
   virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   KDColor backgroundColor() const { return m_backgroundColor; }
 
-  ScrollViewIndicator * verticalScrollIndicator() { return &m_verticalScrollIndicator; }
-  ScrollViewIndicator * horizontalScrollIndicator() { return &m_horizontalScrollIndicator; }
+  ScrollViewVerticalIndicator * verticalScrollIndicator() { return &m_verticalScrollIndicator; }
+  ScrollViewHorizontalIndicator * horizontalScrollIndicator() { return &m_horizontalScrollIndicator; }
   void setIndicatorThickness(KDCoordinate t) { m_indicatorThickness = t; }
   KDCoordinate indicatorThickness() const { return m_indicatorThickness; }
 
@@ -58,8 +58,8 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 
-  ScrollViewIndicator m_verticalScrollIndicator;
-  ScrollViewIndicator m_horizontalScrollIndicator;
+  ScrollViewVerticalIndicator m_verticalScrollIndicator;
+  ScrollViewHorizontalIndicator m_horizontalScrollIndicator;
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;

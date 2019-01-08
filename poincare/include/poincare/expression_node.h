@@ -104,8 +104,7 @@ public:
 
   /* Properties */
   enum class ReductionTarget {
-    BottomUpComputation = 0,
-    TopDownComputation = 1,
+    TopDownComputation = 0,
     User
   };
   enum class Sign {

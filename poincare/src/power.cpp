@@ -394,14 +394,10 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     }
   }
 
-  /* We do not apply some rules to a^b if:
-   * - the parent node is a logarithm of same base a. In this case there is a
-   *  simplication of form ln(e^(3^(1/2))->3^(1/2).
-   * - the reduction is being BottomUpComputation. In this case, we do not yet have any
-   *   information on the parent which could later be a logarithm of the same
-   *   base.
+  /* We do not apply some rules to a^b if the parent node is a logarithm of same
+   * base a. In this case there is a simplication of form ln(e^(3^(1/2))->3^(1/2).
    */
-  bool letPowerAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsALogarithmOfSameBase();
+  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
 
   /* Step 2: we now bubble up ComplexCartesian, we handle different cases:
    * At least, one child is a ComplexCartesian and the other is either a

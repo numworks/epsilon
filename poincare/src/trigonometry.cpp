@@ -303,7 +303,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    *   information on the parent which could later be a cosine, a sine or a tangent.
    */
   Expression p = e.parent();
-  bool letArcFunctionAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || (!p.isUninitialized() && isDirectTrigonometryFunction(p));
+  bool letArcFunctionAtRoot = !p.isUninitialized() && isDirectTrigonometryFunction(p);
   /* Step 5. Handle opposite argument: arccos(-x) = Pi-arcos(x),
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
    */

@@ -134,7 +134,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
    * - the reduction is being BottomUp. In this case, we do not yet have any
    *   information on the parent which could later be a power of b.
    */
-  bool letLogAtRoot = target == ExpressionNode::ReductionTarget::BottomUpComputation || parentIsAPowerOfSameBase();
+  bool letLogAtRoot = parentIsAPowerOfSameBase();
   // log(x^y, b)->y*log(x, b) if x>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive) {
     Power p = static_cast<Power &>(c);

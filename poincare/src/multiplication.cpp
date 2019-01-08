@@ -453,7 +453,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * Note: This step must be done after Step 4, otherwise we wouldn't be able to
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
   Expression p = parent();
-  if (target != ExpressionNode::ReductionTarget::BottomUpComputation && shouldExpand && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)) {
+  if (shouldExpand && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)) {
     for (int i = 0; i < numberOfChildren(); i++) {
       if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
         return distributeOnOperandAtIndex(i, context, complexFormat, angleUnit, target);

@@ -35,6 +35,9 @@
 // add bunch of once-off options. May need refactoring later
 #define MICROPY_CPYTHON_COMPAT (0)
 
+// modturtle needs a hook upon init
+#define MICROPY_MODULE_BUILTIN_INIT (1)
+
 // Support for async/await/async for/async with
 #define MICROPY_PY_ASYNC_AWAIT (0)
 
@@ -108,7 +111,10 @@ typedef long mp_off_t;
 
 extern const struct _mp_obj_module_t modkandinsky_module;
 extern const struct _mp_obj_module_t modtime_module;
+extern const struct _mp_obj_module_t modturtle_module;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) },
+    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
+

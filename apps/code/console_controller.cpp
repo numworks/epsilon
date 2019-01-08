@@ -30,7 +30,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDe
   m_selectableTableView(this, this, this, this),
   m_editCell(this, pythonDelegate, this),
   m_scriptStore(scriptStore),
-  m_sandboxController(this),
+  m_sandboxController(this, this),
   m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
   , m_locked(lockOnConsole)
@@ -114,7 +114,6 @@ const char * ConsoleController::inputText(const char * prompt) {
 
 void ConsoleController::viewWillAppear() {
   loadPythonEnvironment();
-  m_sandboxIsDisplayed = false;
   if (m_importScriptsWhenViewAppears) {
     m_importScriptsWhenViewAppears = false;
     autoImport();
@@ -265,13 +264,12 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
     return false;
   }
   runAndPrintForCommand(text);
-  if (m_sandboxIsDisplayed) {
-    return true;
+  if (!sandboxIsDisplayed()) {
+    m_selectableTableView.reloadData();
+    m_editCell.setEditing(true);
+    textField->setText("");
+    m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   }
-  m_selectableTableView.reloadData();
-  m_editCell.setEditing(true);
-  textField->setText("");
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   return true;
 }
 
@@ -298,11 +296,17 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
 }
 
 void ConsoleController::displaySandbox() {
-  if (m_sandboxIsDisplayed) {
+  if (sandboxIsDisplayed()) {
     return;
   }
-  m_sandboxIsDisplayed = true;
   stackViewController()->push(&m_sandboxController);
+}
+
+void ConsoleController::resetSandbox() {
+  if (!sandboxIsDisplayed()) {
+    return;
+  }
+  m_sandboxController.reset();
 }
 
 /* printText is called by the Python machine.

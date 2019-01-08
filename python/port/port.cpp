@@ -18,11 +18,11 @@ extern "C" {
 #include "py/runtime.h"
 #include "py/stackctrl.h"
 #include "mphalport.h"
+#include "mod/turtle/modturtle.h"
 }
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment * sCurrentExecutionEnvironment = nullptr;
-
 
 MicroPython::ExecutionEnvironment * MicroPython::ExecutionEnvironment::currentExecutionEnvironment() {
   return sCurrentExecutionEnvironment;
@@ -85,6 +85,13 @@ void MicroPython::ExecutionEnvironment::interrupt() {
   mp_keyboard_interrupt();
 }
 
+void MicroPython::ExecutionEnvironment::setSandboxIsDisplayed(bool display) {
+  if (m_sandboxIsDisplayed && !display) {
+    modturtle_view_did_disappear();
+  }
+  m_sandboxIsDisplayed = display;
+}
+
 extern "C" {
   extern const void * _stack_start;
   extern const void * _stack_end;
@@ -103,7 +110,7 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
   mp_init();
 }
 
-void MicroPython::deinit(){
+void MicroPython::deinit() {
   mp_deinit();
 }
 
@@ -116,6 +123,8 @@ void gc_collect(void) {
   assert(python_stack_top != NULL);
 
   gc_collect_start();
+
+  modturtle_gc_collect();
 
   /* get the registers.
    * regs is the also the last object on the stack so the stack is bound by

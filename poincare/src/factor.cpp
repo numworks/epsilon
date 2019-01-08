@@ -26,7 +26,7 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 

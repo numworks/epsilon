@@ -116,7 +116,7 @@ Expression ExpressionNode::shallowReduce(Context & context, Preferences::Complex
   return Expression(this).defaultShallowReduce();
 }
 
-Expression ExpressionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression ExpressionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Expression(this).defaultShallowBeautify();
 }
 

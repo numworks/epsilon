@@ -23,8 +23,8 @@ Expression ComplexCartesianNode::shallowReduce(Context & context, Preferences::C
   return ComplexCartesian(this).shallowReduce();
 }
 
-Expression ComplexCartesianNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  return ComplexCartesian(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression ComplexCartesianNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ComplexCartesian(this).shallowBeautify(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
@@ -49,11 +49,11 @@ Expression ComplexCartesian::shallowReduce() {
   return *this;
 }
 
-Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression a = real();
   Expression b = imag();
-  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
-  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
+  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,

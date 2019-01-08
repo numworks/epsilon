@@ -162,7 +162,7 @@ public:
   /* Simplification */
   /*!*/ virtual void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /*!*/ virtual Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 

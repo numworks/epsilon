@@ -421,7 +421,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 
 Expression Expression::simplify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  Expression e = deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+  Expression e = deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
   if (!sSimplificationHasBeenInterrupted) {
     e = e.deepBeautify(context, complexFormat, angleUnit);
   }
@@ -442,7 +442,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
   Expression e = clone().deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
   if (sSimplificationHasBeenInterrupted) {
     sSimplificationHasBeenInterrupted = false;
-    e = deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+    e = deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
   }
   *simplifiedExpression = Expression();
   if (!sSimplificationHasBeenInterrupted) {
@@ -529,7 +529,7 @@ Expression Expression::degreeToRadian() {
 
 Expression Expression::reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  return deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::TopDownComputation);
+  return deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

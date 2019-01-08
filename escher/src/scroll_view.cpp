@@ -10,8 +10,8 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
   m_contentView(contentView),
   m_dataSource(dataSource),
-  m_verticalScrollIndicator(ScrollViewIndicator::Direction::Vertical),
-  m_horizontalScrollIndicator(ScrollViewIndicator::Direction::Horizontal),
+  m_verticalScrollIndicator(),
+  m_horizontalScrollIndicator(),
   m_topMargin(0),
   m_rightMargin(0),
   m_bottomMargin(0),
@@ -42,7 +42,10 @@ View * ScrollView::subviewAtIndex(int index) {
   if (m_showsIndicators) {
     switch (index) {
       case 1:
-        return m_horizontalScrollIndicator.visible() ? &m_horizontalScrollIndicator : &m_verticalScrollIndicator;
+        if (m_horizontalScrollIndicator.visible()) {
+          return &m_horizontalScrollIndicator;
+        }
+        return &m_verticalScrollIndicator;
       case 2:
         return &m_verticalScrollIndicator;
     }

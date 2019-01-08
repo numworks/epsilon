@@ -781,7 +781,16 @@ Expression Power::shallowBeautify(Context & context, Preferences::ComplexFormat 
     return result;
   }
 
-  // Step 3: +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
+  // Optional Step 3: if the ReductionTarget is the System, turn a^(p/q) into (root(a, q))^p
+  if (target == ExpressionNode::ReductionTarget::System && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+    Integer p = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
+    Integer q = childAtIndex(1).convert<Rational>().integerDenominator();
+    Expression result = Power(NthRoot::Builder(childAtIndex(0), Rational(q)), Rational(p));
+    replaceWithInPlace(result);
+    return result;
+  }
+
+  // Step 4: +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication)
   {

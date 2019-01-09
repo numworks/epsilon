@@ -12,9 +12,9 @@ QUIZ_CASE(poincare_complex_evaluate) {
   assert_parsed_expression_evaluates_to<double>("R(-1)", "unreal", Radian, Real);
   assert_parsed_expression_evaluates_to<double>("R(-1)*R(-1)", "unreal", Radian, Real);
   assert_parsed_expression_evaluates_to<double>("ln(-2)", "unreal", Radian, Real);
-  assert_parsed_expression_evaluates_without_simplifying_to<double>("(-8)^(1/3)", "-2", Radian, Real);
-  assert_parsed_expression_evaluates_without_simplifying_to<double>("8^(1/3)", "2", Radian, Real);
-  assert_parsed_expression_evaluates_without_simplifying_to<float>("(-8)^(2/3)", "4", Radian, Real);
+  assert_parsed_expression_evaluates_to<double>("(-8)^(1/3)", "-2", Radian, Real);
+  assert_parsed_expression_evaluates_to<double>("8^(1/3)", "2", Radian, Real);
+  assert_parsed_expression_evaluates_to<float>("(-8)^(2/3)", "4", Radian, Real);
   assert_parsed_expression_evaluates_without_simplifying_to<double>("root(-8,3)", "-2", Radian, Real);
 
   // Cartesian
@@ -22,16 +22,16 @@ QUIZ_CASE(poincare_complex_evaluate) {
   assert_parsed_expression_evaluates_to<double>("R(-1)", "I", Radian, Cartesian);
   assert_parsed_expression_evaluates_to<double>("R(-1)*R(-1)", "-1", Radian, Cartesian);
   assert_parsed_expression_evaluates_to<double>("ln(-2)", "6.9314718055995E-1+3.1415926535898*I", Radian, Cartesian);
-  assert_parsed_expression_evaluates_without_simplifying_to<double>("(-8)^(1/3)", "1+1.7320508075689*I", Radian, Cartesian);
-  assert_parsed_expression_evaluates_without_simplifying_to<float>("(-8)^(2/3)", "-2+3.464102*I", Radian, Cartesian);
+  assert_parsed_expression_evaluates_to<double>("(-8)^(1/3)", "1+1.7320508075689*I", Radian, Cartesian);
+  assert_parsed_expression_evaluates_to<float>("(-8)^(2/3)", "-2+3.464102*I", Radian, Cartesian);
   assert_parsed_expression_evaluates_without_simplifying_to<double>("root(-8,3)", "1+1.7320508075689*I", Radian, Cartesian);
 
   // Polar
   assert_parsed_expression_evaluates_to<float>("I", "X^(1.570796*I)", Radian, Polar);
   assert_parsed_expression_evaluates_to<double>("R(-1)", "X^(1.5707963267949*I)", Radian, Polar);
   assert_parsed_expression_evaluates_to<double>("R(-1)*R(-1)", "X^(3.1415926535898*I)", Radian, Polar);
-  assert_parsed_expression_evaluates_without_simplifying_to<double>("(-8)^(1/3)", "2*X^(1.0471975511966*I)", Radian, Polar);
-  assert_parsed_expression_evaluates_without_simplifying_to<float>("(-8)^(2/3)", "4*X^(2.094395*I)", Radian, Polar);
+  assert_parsed_expression_evaluates_to<double>("(-8)^(1/3)", "2*X^(1.0471975511966*I)", Radian, Polar);
+  assert_parsed_expression_evaluates_to<float>("(-8)^(2/3)", "4*X^(2.094395*I)", Radian, Polar);
   assert_parsed_expression_evaluates_without_simplifying_to<double>("root(-8,3)", "2*X^(1.0471975511966*I)", Radian, Polar);
 }
 

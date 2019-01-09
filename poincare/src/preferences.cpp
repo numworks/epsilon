@@ -7,7 +7,7 @@ Preferences::Preferences() :
   m_angleUnit(AngleUnit::Degree),
   m_displayMode(Preferences::PrintFloatMode::Decimal),
   m_editionMode(EditionMode::Edition2D),
-  m_complexFormat(Preferences::ComplexFormat::Cartesian),
+  m_complexFormat(Preferences::ComplexFormat::Real),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {
 }

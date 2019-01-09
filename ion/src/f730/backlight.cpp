@@ -33,23 +33,23 @@ namespace Device {
 static uint8_t sLevel;
 
 void init() {
-  GPIOC.MODER()->setMode(6, GPIO::MODER::Mode::Output);
+  BacklightPin.group().MODER()->setMode(BacklightPin.pin(), GPIO::MODER::Mode::Output);
   sLevel = 0xF;
   resume();
 }
 
 void shutdown() {
-  GPIOC.MODER()->setMode(6, GPIO::MODER::Mode::Analog);
-  GPIOC.PUPDR()->setPull(6, GPIO::PUPDR::Pull::None);
+  BacklightPin.group().MODER()->setMode(BacklightPin.pin(), GPIO::MODER::Mode::Analog);
+  BacklightPin.group().PUPDR()->setPull(BacklightPin.pin(), GPIO::PUPDR::Pull::None);
 }
 
 void suspend() {
-  GPIOC.ODR()->set(6, false);
+  BacklightPin.group().ODR()->set(BacklightPin.pin(), false);
   Timing::msleep(3); // Might not need to be blocking
 }
 
 void resume() {
-  GPIOC.ODR()->set(6, true);
+  BacklightPin.group().ODR()->set(BacklightPin.pin(), true);
   Timing::usleep(50);
   uint8_t level = sLevel;
   sLevel = 0xF;
@@ -73,9 +73,9 @@ uint8_t level() {
 
 void sendPulses(int n) {
   for (int i=0; i<n; i++) {
-    GPIOC.ODR()->set(6, false);
+    BacklightPin.group().ODR()->set(BacklightPin.pin(), false);
     Timing::usleep(20);
-    GPIOC.ODR()->set(6, true);
+    BacklightPin.group().ODR()->set(BacklightPin.pin(), true);
     Timing::usleep(20);
   }
 }

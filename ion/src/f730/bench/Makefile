@@ -1,10 +1,10 @@
-objs += $(addprefix ion/src/device/bench/, \
+objs += $(addprefix ion/src/f730/bench/, \
   bench.o \
   command_handler.o \
   command_list.o \
 )
 
-objs += $(addprefix ion/src/device/bench/command/, \
+objs += $(addprefix ion/src/f730/bench/command/, \
   command.o \
   adc.o \
   backlight.o \

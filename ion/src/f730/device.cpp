@@ -229,16 +229,16 @@ void shutdownPeripherals(bool keepLEDAwake) {
 }
 
 void initClocks() {
-#if 0
   /* System clock
    * Configure the CPU at 96 MHz, APB2 and USB at 48 MHz. */
 
   /* After reset the Flash runs as fast as the CPU. When we clock the CPU faster
    * the flash memory cannot follow and therefore flash memory accesses need to
    * wait a little bit.
-   * The spec tells us that at 2.8V and over 90MHz the flash expects 3 WS. */
-  FLASH.ACR()->setLATENCY(3);
+   * The spec tells us that at 2.8V and over 210MHz the flash expects 7 WS. */
+  FLASH.ACR()->setLATENCY(7);
 
+#if 0
   /* Enable prefetching flash instructions */
   /* Fetching instructions increases slightly the power consumption but the
    * increase is negligible compared to the screen consumption. */
@@ -247,6 +247,7 @@ void initClocks() {
   /* Set flash instruction and data cache */
   FLASH.ACR()->setDCEN(true);
   FLASH.ACR()->setICEN(true);
+#endif
 
   /* After reset, the device is using the high-speed internal oscillator (HSI)
    * as a clock source, which runs at a fixed 16 MHz frequency. The HSI is not
@@ -260,16 +261,17 @@ void initClocks() {
 
   /* Given the crystal used on our device, the HSE will oscillate at 25 MHz. By
    * piping it through a phase-locked loop (PLL) we can derive other frequencies
-   * for use in different parts of the system. Combining the default PLL values
-   * with a PLLM of 25 and a PLLQ of 4 yields both a 96 MHz frequency for SYSCLK
-   * and the required 48 MHz USB clock. */
+   * for use in different parts of the system.  */
 
   // Configure the PLL ratios and use HSE as a PLL input
   RCC.PLLCFGR()->setPLLM(25);
-  RCC.PLLCFGR()->setPLLQ(4);
+  RCC.PLLCFGR()->setPLLN(384);
+  RCC.PLLCFGR()->setPLLQ(8);
   RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
-  // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
-  RCC.CFGR()->setPPRE1(RCC::CFGR::APBPrescaler::AHBDividedBy2);
+  // 192 MHz is too fast for APB1. Divide it by four to reach 48 MHz
+  RCC.CFGR()->setPPRE1(RCC::CFGR::APBPrescaler::AHBDividedBy4);
+  // 192 MHz is too fast for APB2. Divide it by two to reach 96 MHz
+  RCC.CFGR()->setPPRE2(RCC::CFGR::APBPrescaler::AHBDividedBy2);
 
   /* If you want to considerably slow down the whole machine uniformely, which
    * can be very useful to diagnose performance issues, just uncomment the line
@@ -289,7 +291,6 @@ void initClocks() {
 
   // Now that we don't need use it anymore, turn the HSI off
   RCC.CR()->setHSION(false);
-#endif
 
   // Peripheral clocks
 

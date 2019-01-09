@@ -1,6 +1,6 @@
-include ion/src/device/boot/Makefile
-include ion/src/device/bench/Makefile
-include ion/src/device/usb/Makefile
+include ion/src/f730/boot/Makefile
+include ion/src/f730/bench/Makefile
+include ion/src/f730/usb/Makefile
 
 ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
@@ -13,7 +13,7 @@ objs += $(addprefix ion/src/shared/, \
 # If you need to profile execution, you can replace events_keyboard with
 # events_replay.o and dummy/events_modifier.o
 
-objs += $(addprefix ion/src/device/, \
+objs += $(addprefix ion/src/f730/, \
   backlight.o \
   battery.o\
   base64.o\
@@ -41,11 +41,11 @@ objs += $(addprefix ion/src/device/, \
 
 ifneq ($(DEBUG),1)
 ifneq ($(COMPILER),llvm)
-ion/src/device/led.o: SFLAGS+=-O3
-ion/src/device/console.o: SFLAGS+=-O3
-ion/src/device/display.o: SFLAGS+=-O3
-ion/src/device/swd.o: SFLAGS+=-O3
+ion/src/f730/led.o: SFLAGS+=-O3
+ion/src/f730/console.o: SFLAGS+=-O3
+ion/src/f730/display.o: SFLAGS+=-O3
+ion/src/f730/swd.o: SFLAGS+=-O3
 endif
 endif
 
-#objs += $(addprefix ion/src/device/keyboard/, keyboard.o)
+#objs += $(addprefix ion/src/f730/keyboard/, keyboard.o)

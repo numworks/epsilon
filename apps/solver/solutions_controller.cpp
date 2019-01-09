@@ -136,9 +136,6 @@ Responder * SolutionsController::defaultController() {
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() {
-  if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable) {
-    return m_equationStore->numberOfSolutions() + 1; // add the delta row
-  }
   return m_equationStore->numberOfSolutions();
 }
 
@@ -149,7 +146,7 @@ int SolutionsController::numberOfColumns() {
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (i == 0) {
     // Name of the variable or discriminant
-    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
+    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()-1) {
       // Discriminant
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
       deltaCell->setLayout(m_delta2Layout);
@@ -265,7 +262,7 @@ int SolutionsController::reusableCellCount(int type) {
 
 int SolutionsController::typeAtLocation(int i, int j) {
   if (i == 0) {
-    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
+    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()-1) {
       return 1;
     }
     return 0;

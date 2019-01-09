@@ -2,6 +2,20 @@
 #include "global_preferences.h"
 #include <poincare/init.h>
 
+#define DUMMY_MAIN 1
+#if DUMMY_MAIN
+
+void ion_main(int argc, char * argv[]) {
+  while (1) {
+    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorRed);
+    Ion::Timing::msleep(100);
+    Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorBlue);
+    Ion::Timing::msleep(100);
+  }
+}
+
+#else
+
 void ion_main(int argc, char * argv[]) {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
@@ -44,3 +58,5 @@ void ion_main(int argc, char * argv[]) {
 #endif
   AppsContainerStorage::sharedContainer()->run();
 }
+
+#endif

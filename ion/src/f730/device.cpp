@@ -314,7 +314,7 @@ void initClocks() {
   RCC.APB1ENR()->setPWREN(true);
 
   // APB2 bus
-  class RCC::APB2ENR apb2enr(0x00008000); // Reset value
+  class RCC::APB2ENR apb2enr(0); // Reset value
   apb2enr.setADC1EN(true);
   apb2enr.setSYSCFGEN(true);
 #if USE_SD_CARD

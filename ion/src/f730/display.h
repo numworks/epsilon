@@ -12,30 +12,32 @@ namespace Ion {
 namespace Display {
 namespace Device {
 
-/*  Pin | Role              | Mode                  | Function | Note
- * -----+-------------------+-----------------------+----------|------
- *  PA2 | LCD D4            | Alternate Function 12 | FSMC_D4  |
- *  PA3 | LCD D5            | Alternate Function 12 | FSMC_D5  |
- *  PA4 | LCD D6            | Alternate Function 12 | FSMC_D6  |
- * PB12 | LCD D13           | Alternate Function 12 | FSMC_D13 |
- * PB14 | LCD power         | Output                |          | LCD controller is powered directly from GPIO
- *  PD0 | LCD D2            | Alternate Function 12 | FSMC_D2  |
- *  PD1 | LCD D3            | Alternate Function 12 | FSMC_D3  |
- *  PD4 | LCD read signal   | Alternate Function 12 | FSMC_NOE |
- *  PD5 | LCD write signal  | Alternate Function 12 | FSMC_NWE
- *  PD7 | LCD chip select   | Alternate Function 12 | FSMC_NE1 | Memory bank 1
- *  PD9 | LCD D14           | Alternate Function 12 | FSMC_D14 |
- * PD10 | LCD D15           | Alternate Function 12 | FSMC_D15 |
- * PD11 | LCD data/command  | Alternate Function 12 | FSMC_A16 | Data/Command is address bit 16
- * PD14 | LCD D0            | Alternate Function 12 | FSMC_D0  |
- * PD15 | LCD D1            | Alternate Function 12 | FSMC_D1  |
- *  PE9 | LCD reset         | Output                |          |
- * PE10 | LCD D7            | Alternate Function 12 | FSMC_D7  |
- * PE11 | LCD D8            | Alternate Function 12 | FSMC_D8  |
- * PE12 | LCD D9            | Alternate Function 12 | FSMC_D9  |
- * PE13 | LCD D10           | Alternate Function 12 | FSMC_D10 |
- * PE14 | LCD D11           | Alternate Function 12 | FSMC_D11 |
- * PE15 | LCD D12           | Alternate Function 12 | FSMC_D12 |
+/*  Pin | Role               | Mode                  | Function | Note
+ * -----+--------------------+-----------------------+----------|------
+ * PB11 | LCD Tearing effect | Input                 |          |
+ *  PC8 | LCD power          | Output                |          | LCD controller is powered directly from GPIO
+ *  PD0 | LCD D2             | Alternate Function 12 | FMC_D2   |
+ *  PD1 | LCD D3             | Alternate Function 12 | FMC_D3   |
+ *  PD4 | LCD read signal    | Alternate Function 12 | FMC_NOE  |
+ *  PD5 | LCD write signal   | Alternate Function 12 | FMC_NWE  |
+ *  PD6 | LCD extended cmd   | Output                |          |
+ *  PD7 | LCD chip select    | Alternate Function 12 | FMC_NE1  | Memory bank 1
+ *  PD8 | LCD D13            | Alternate Function 12 | FMC_D13  |
+ *  PD9 | LCD D14            | Alternate Function 12 | FMC_D14  |
+ * PD10 | LCD D15            | Alternate Function 12 | FMC_D15  |
+ * PD11 | LCD data/command   | Alternate Function 12 | FMC_A16  | Data/Command is address bit 16
+ * PD14 | LCD D0             | Alternate Function 12 | FMC_D0   |
+ * PD15 | LCD D1             | Alternate Function 12 | FMC_D1   |
+ *  PE1 | LCD reset          | Output                |          |
+ *  PE7 | LCD D4             | Alternate Function 12 | FMC_D4   |
+ *  PE8 | LCD D5             | Alternate Function 12 | FMC_D5   |
+ *  PE9 | LCD D6             | Alternate Function 12 | FMC_D6   |
+ * PE10 | LCD D7             | Alternate Function 12 | FMC_D7   |
+ * PE11 | LCD D8             | Alternate Function 12 | FMC_D8   |
+ * PE12 | LCD D9             | Alternate Function 12 | FMC_D9   |
+ * PE13 | LCD D10            | Alternate Function 12 | FMC_D10  |
+ * PE14 | LCD D11            | Alternate Function 12 | FMC_D11  |
+ * PE15 | LCD D12            | Alternate Function 12 | FMC_D12  |
  */
 
 void init();
@@ -44,8 +46,8 @@ void shutdown();
 void initDMA();
 void initGPIO();
 void shutdownGPIO();
-void initFSMC();
-void shutdownFSMC();
+void initFMC();
+void shutdownFMC();
 void initPanel();
 void shutdownPanel();
 
@@ -77,31 +79,30 @@ enum class Command : uint16_t {
   FrameRateControl = 0xC6
 };
 
-constexpr static GPIOPin FSMCPins[] = {
-  GPIOPin(GPIOA, 2), GPIOPin(GPIOA, 3), GPIOPin(GPIOA, 4), GPIOPin(GPIOB, 12),
-  GPIOPin(GPIOB, 12), GPIOPin(GPIOD, 0), GPIOPin(GPIOD, 1), GPIOPin(GPIOD, 4),
-  GPIOPin(GPIOD, 5), GPIOPin(GPIOD, 7), GPIOPin(GPIOD, 9), GPIOPin(GPIOD, 10),
-  GPIOPin(GPIOD, 11), GPIOPin(GPIOD, 14), GPIOPin(GPIOD, 15), GPIOPin(GPIOE, 10),
-  GPIOPin(GPIOE, 11), GPIOPin(GPIOE, 12), GPIOPin(GPIOE, 13), GPIOPin(GPIOE, 14),
-  GPIOPin(GPIOE, 15)
+constexpr static GPIOPin FMCPins[] = {
+  GPIOPin(GPIOD, 0), GPIOPin(GPIOD, 1), GPIOPin(GPIOD, 4), GPIOPin(GPIOD, 5),
+  GPIOPin(GPIOD, 7), GPIOPin(GPIOD, 8), GPIOPin(GPIOD, 9), GPIOPin(GPIOD, 10),
+  GPIOPin(GPIOD, 11), GPIOPin(GPIOD, 14), GPIOPin(GPIOD, 15), GPIOPin(GPIOE, 7),
+  GPIOPin(GPIOE, 8), GPIOPin(GPIOE, 9), GPIOPin(GPIOE, 10), GPIOPin(GPIOE, 11),
+  GPIOPin(GPIOE, 12), GPIOPin(GPIOE, 13), GPIOPin(GPIOE, 14), GPIOPin(GPIOE, 15),
 };
 
-constexpr static GPIOPin PowerPin = GPIOPin(GPIOB, 14);
-constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 9);
-constexpr static GPIOPin ExtendedCommandPin = GPIOPin(GPIOB, 13);
-constexpr static GPIOPin TearingEffectPin = GPIOPin(GPIOB, 10);
+constexpr static GPIOPin PowerPin = GPIOPin(GPIOC, 8);
+constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 1);
+constexpr static GPIOPin ExtendedCommandPin = GPIOPin(GPIOD, 6);
+constexpr static GPIOPin TearingEffectPin = GPIOPin(GPIOB, 11);
 
-constexpr static int FSMCMemoryBank = 1;
-constexpr static int FSMCDataCommandAddressBit = 16;
+constexpr static int FMCMemoryBank = 1;
+constexpr static int FMCDataCommandAddressBit = 16;
 
-constexpr static uint32_t FSMCBaseAddress = 0x60000000;
-constexpr static uint32_t FSMCBankAddress = FSMCBaseAddress + (FSMCMemoryBank-1)*0x04000000;
+constexpr static uint32_t FMCBaseAddress = 0x60000000;
+constexpr static uint32_t FMCBankAddress = FMCBaseAddress + (FMCMemoryBank-1)*0x04000000;
 
 constexpr static DMA DMAEngine = DMA2;
 constexpr static int DMAStream = 0;
 
-static volatile Command * const CommandAddress = (Command *)(FSMCBankAddress);
-static volatile uint16_t * const DataAddress = (uint16_t *)(FSMCBankAddress | (1<<(FSMCDataCommandAddressBit+1)));
+static volatile Command * const CommandAddress = (Command *)(FMCBankAddress);
+static volatile uint16_t * const DataAddress = (uint16_t *)(FMCBankAddress | (1<<(FMCDataCommandAddressBit+1)));
 
 }
 }

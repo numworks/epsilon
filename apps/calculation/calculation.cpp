@@ -163,11 +163,12 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
-  /* If the approximateOutput is undef, we not not want to display it.
+  /* If the approximateOutput is undef or unreal, we not not want to display it.
    * This prevents:
    * x->f(x) from displaying x = undef
    * x+x from displaying 2x = undef */
-  return strcmp(m_approximateOutputText, Undefined::Name()) == 0;
+  return strcmp(m_approximateOutputText, Undefined::Name()) == 0
+    || strcmp(m_approximateOutputText, Unreal::Name()) == 0;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

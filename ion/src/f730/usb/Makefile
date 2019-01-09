@@ -1,9 +1,9 @@
-usb_objs += $(addprefix ion/src/device/usb/, \
+usb_objs += $(addprefix ion/src/f730/usb/, \
   calculator.o \
   dfu_interface.o\
 )
 
-usb_objs += $(addprefix ion/src/device/usb/stack/, \
+usb_objs += $(addprefix ion/src/f730/usb/stack/, \
   device.o\
   endpoint0.o \
   interface.o\
@@ -12,7 +12,7 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   streamable.o\
 )
 
-usb_objs += $(addprefix ion/src/device/usb/stack/descriptor/, \
+usb_objs += $(addprefix ion/src/f730/usb/stack/descriptor/, \
   bos_descriptor.o\
   configuration_descriptor.o \
   descriptor.o\
@@ -33,7 +33,7 @@ EPSILON_USB_DFU_XIP ?= 0
 
 ifeq ($(EPSILON_USB_DFU_XIP),1)
 
-objs += ion/src/device/usb/dfu_xip.o
+objs += ion/src/f730/usb/dfu_xip.o
 objs += $(usb_objs)
 
 else
@@ -44,24 +44,24 @@ dfu_objs += liba/src/strlcpy.o
 dfu_objs += liba/src/memset.o
 dfu_objs += liba/src/memcpy.o
 dfu_objs += libaxx/src/cxxabi/pure_virtual.o
-dfu_objs += ion/src/device/usb/boot.o
-dfu_objs += ion/src/device/keyboard.o
-dfu_objs += ion/src/device/device.o
-dfu_objs += ion/src/device/usb.o
-dfu_objs += ion/src/device/base64.o
-dfu_objs += ion/src/device/flash.o
-dfu_objs += ion/src/device/timing.o
+dfu_objs += ion/src/f730/usb/boot.o
+dfu_objs += ion/src/f730/keyboard.o
+dfu_objs += ion/src/f730/device.o
+dfu_objs += ion/src/f730/usb.o
+dfu_objs += ion/src/f730/base64.o
+dfu_objs += ion/src/f730/flash.o
+dfu_objs += ion/src/f730/timing.o
 
-ion/src/device/usb/dfu.elf: LDSCRIPT = ion/src/device/usb/dfu.ld
-ion/src/device/usb/dfu.elf: $(usb_objs) $(dfu_objs)
+ion/src/f730/usb/dfu.elf: LDSCRIPT = ion/src/f730/usb/dfu.ld
+ion/src/f730/usb/dfu.elf: $(usb_objs) $(dfu_objs)
 
-ion/src/device/usb/dfu.o: ion/src/device/usb/dfu.bin
+ion/src/f730/usb/dfu.o: ion/src/f730/usb/dfu.bin
 	@echo "OBJCOPY $@"
 	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_ion_src_device_usb_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_ion_src_device_usb_dfu_bin_end=_dfu_bootloader_flash_end $< $@
 
-objs += ion/src/device/usb/dfu.o
-objs += ion/src/device/usb/dfu_relocated.o
+objs += ion/src/f730/usb/dfu.o
+objs += ion/src/f730/usb/dfu_relocated.o
 
-products += $(usb_objs) $(addprefix ion/src/device/usb/dfu, .elf .bin)
+products += $(usb_objs) $(addprefix ion/src/f730/usb/dfu, .elf .bin)
 
 endif

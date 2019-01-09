@@ -201,8 +201,8 @@ void initPeripherals() {
   Keyboard::Device::init();
   LED::Device::init();
   Battery::Device::init();
-  return; // FIXME, obviously!
   USB::Device::init();
+  return; // FIXME, obviously!
 #if USE_SD_CARD
   SDCard::Device::init();
 #endif

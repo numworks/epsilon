@@ -7,7 +7,7 @@ extern "C" {
 
 /* This driver interfaces with the ST7789V LCD controller.
  * This chip keeps a whole frame in SRAM memory and feeds it to the LCD panel as
- * needed. We use the STM32's FSMC to drive the bus between the ST7789V. Once
+ * needed. We use the STM32's FMC to drive the bus between the ST7789V. Once
  * configured, we only need to write in the address space of the MCU to actually
  * send some data to the LCD controller. */
 
@@ -94,13 +94,13 @@ void init() {
   initDMA();
 #endif
   initGPIO();
-  initFSMC();
+  initFMC();
   initPanel();
 }
 
 void shutdown() {
   shutdownPanel();
-  shutdownFSMC();
+  shutdownFMC();
   shutdownGPIO();
 }
 
@@ -140,8 +140,8 @@ static inline void startDMAUpload(const KDColor * src, bool incrementSrc, uint16
 #endif
 
 void initGPIO() {
-  // All the FSMC GPIO pins use the alternate function number 12
-  for(const GPIOPin & g : FSMCPins) {
+  // All the FMC GPIO pins use the alternate function number 12
+  for(const GPIOPin & g : FMCPins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
     g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF12);
   }
@@ -167,8 +167,8 @@ void initGPIO() {
 
 
 void shutdownGPIO() {
-  // All the FSMC GPIO pins use the alternate function number 12
-  for(const GPIOPin & g : FSMCPins) {
+  // All the FMC GPIO pins use the alternate function number 12
+  for(const GPIOPin & g : FMCPins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }
@@ -185,26 +185,26 @@ void shutdownGPIO() {
   TearingEffectPin.group().MODER()->setMode(TearingEffectPin.pin(), GPIO::MODER::Mode::Analog);
 }
 
-void initFSMC() {
-  /* Set up the FSMC control registers.
+void initFMC() {
+  /* Set up the FMC control registers.
    * We address the LCD panel as if it were an SRAM module, using a 16bits wide
    * bus, non-multiplexed.
-   * The STM32 FSMC supports two kinds of memory access modes :
+   * The STM32 FMC supports two kinds of memory access modes :
    *  - Base modes (1 and 2), which use the same timings for reads and writes
    *  - Extended modes (named A to D), which can be customized further.
    *  The LCD panel can be written to faster than it can be read from, therefore
    *  we want to use one of the extended modes. */
-  FSMC.BCR(FSMCMemoryBank)->setEXTMOD(true);
-  FSMC.BCR(FSMCMemoryBank)->setWREN(true);
-  FSMC.BCR(FSMCMemoryBank)->setMWID(FSMC::BCR::MWID::SIXTEEN_BITS);
-  FSMC.BCR(FSMCMemoryBank)->setMTYP(FSMC::BCR::MTYP::SRAM);
-  FSMC.BCR(FSMCMemoryBank)->setMUXEN(false);
-  FSMC.BCR(FSMCMemoryBank)->setMBKEN(true);
+  FMC.BCR(FMCMemoryBank)->setEXTMOD(true);
+  FMC.BCR(FMCMemoryBank)->setWREN(true);
+  FMC.BCR(FMCMemoryBank)->setMWID(FMC::BCR::MWID::SIXTEEN_BITS);
+  FMC.BCR(FMCMemoryBank)->setMTYP(FMC::BCR::MTYP::SRAM);
+  FMC.BCR(FMCMemoryBank)->setMUXEN(false);
+  FMC.BCR(FMCMemoryBank)->setMBKEN(true);
 
-  /* We now need to set the actual timings. First, the FSMC and LCD specs don't
+  /* We now need to set the actual timings. First, the FMC and LCD specs don't
    * use the same names. Here's the mapping:
    *
-   * FSMC | LCD
+   * FMC | LCD
    * -----+-----
    *  NOE | RDX
    *  NWE | WRX
@@ -228,21 +228,21 @@ void initFSMC() {
    */
 
   // Read timing from the LCD
-  FSMC.BTR(FSMCMemoryBank)->setADDSET(2);
-  FSMC.BTR(FSMCMemoryBank)->setADDHLD(0);
-  FSMC.BTR(FSMCMemoryBank)->setDATAST(36);
-  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(10);
-  FSMC.BTR(FSMCMemoryBank)->setACCMOD(FSMC::BTR::ACCMOD::A);
+  FMC.BTR(FMCMemoryBank)->setADDSET(2);
+  FMC.BTR(FMCMemoryBank)->setADDHLD(0);
+  FMC.BTR(FMCMemoryBank)->setDATAST(36);
+  FMC.BTR(FMCMemoryBank)->setBUSTURN(10);
+  FMC.BTR(FMCMemoryBank)->setACCMOD(FMC::BTR::ACCMOD::A);
 
   // Write timings for the LCD
-  FSMC.BWTR(FSMCMemoryBank)->setADDSET(2);
-  FSMC.BWTR(FSMCMemoryBank)->setADDHLD(0);
-  FSMC.BWTR(FSMCMemoryBank)->setDATAST(3);
-  FSMC.BWTR(FSMCMemoryBank)->setBUSTURN(3);
-  FSMC.BWTR(FSMCMemoryBank)->setACCMOD(FSMC::BWTR::ACCMOD::A);
+  FMC.BWTR(FMCMemoryBank)->setADDSET(2);
+  FMC.BWTR(FMCMemoryBank)->setADDHLD(0);
+  FMC.BWTR(FMCMemoryBank)->setDATAST(3);
+  FMC.BWTR(FMCMemoryBank)->setBUSTURN(3);
+  FMC.BWTR(FMCMemoryBank)->setACCMOD(FMC::BWTR::ACCMOD::A);
 }
 
-void shutdownFSMC() {
+void shutdownFMC() {
 }
 
 void initPanel() {

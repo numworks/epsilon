@@ -151,12 +151,12 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   }
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts
-     * too, do not display the exact result. If, because of the number of
-     * significant digits, the two layouts are not equal, we display both. */
+     * too, do not display the exact result. If the two layouts are not equal
+     * because of the number of significant digits, we display both. */
     return exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
   }
   if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0 ) {
-    /* if the approximate result is 'unreal' or the exact result is 'undef'*/
+    // If the approximate result is 'unreal' or the exact result is 'undef'
     return true;
   }
   return input().isApproximate(*context) || exactOutput().isApproximate(*context);

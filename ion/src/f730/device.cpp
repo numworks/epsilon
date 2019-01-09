@@ -285,7 +285,7 @@ void initClocks() {
   RCC.AHB2ENR()->setOTGFSEN(true);
 
   // AHB3 bus
-  RCC.AHB3ENR()->setFSMCEN(true);
+  RCC.AHB3ENR()->setFMCEN(true);
 
   // APB1 bus
   // We're using TIM3 for the LEDs
@@ -318,7 +318,7 @@ void shutdownClocks(bool keepLEDAwake) {
   RCC.APB1ENR()->set(apb1enr);
   RCC.AHB1ENR()->set(ahb1enr);
 
-  RCC.AHB3ENR()->setFSMCEN(false);
+  RCC.AHB3ENR()->setFMCEN(false);
 }
 
 }

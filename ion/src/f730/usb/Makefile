@@ -50,6 +50,7 @@ dfu_objs += ion/src/f730/device.o
 dfu_objs += ion/src/f730/usb.o
 dfu_objs += ion/src/f730/base64.o
 dfu_objs += ion/src/f730/flash.o
+dfu_objs += ion/src/device/external_flash.o
 dfu_objs += ion/src/f730/timing.o
 
 ion/src/f730/usb/dfu.elf: LDSCRIPT = ion/src/f730/usb/dfu.ld

@@ -1,9 +1,9 @@
-#ifndef REGS_FSMC_H
-#define REGS_FSMC_H
+#ifndef REGS_FMC_H
+#define REGS_FMC_H
 
 #include "register.h"
 
-class FSMC {
+class FMC {
 public:
   class BCR : Register32 {
   public:
@@ -58,7 +58,7 @@ public:
     REGS_TYPE_FIELD(ACCMOD, 29, 28);
   };
 
-  constexpr FSMC() {}
+  constexpr FMC() {}
   volatile BCR * BCR(int index) const {
     return (class BCR *)(Base() + 8*(index-1));
   }
@@ -74,6 +74,6 @@ private:
   };
 };
 
-constexpr FSMC FSMC;
+constexpr FMC FMC;
 
 #endif

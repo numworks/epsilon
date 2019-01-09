@@ -70,6 +70,7 @@ void MenuController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
   if (consoleController()->locked()) {
+    consoleController()->setAutoImport(true);
     stackViewController()->push(consoleController());
     return;
   }

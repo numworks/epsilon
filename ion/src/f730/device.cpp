@@ -229,6 +229,7 @@ void shutdownPeripherals(bool keepLEDAwake) {
 }
 
 void initClocks() {
+#if 0
   /* System clock
    * Configure the CPU at 96 MHz, APB2 and USB at 48 MHz. */
 
@@ -288,6 +289,7 @@ void initClocks() {
 
   // Now that we don't need use it anymore, turn the HSI off
   RCC.CR()->setHSION(false);
+#endif
 
   // Peripheral clocks
 

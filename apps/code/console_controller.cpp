@@ -92,20 +92,23 @@ const char * ConsoleController::inputText(const char * prompt) {
   m_inputRunLoopActive = true;
 
   const char * promptText = prompt;
-  /* Set the prompt text. If the prompt text has a '\n', put the prompt text in
-   * the history until the last '\n', and put the remaining prompt text in the
-   * edit cell's prompt. */
-  char * lastCarriageReturn = nullptr;
   char * s = const_cast<char *>(prompt);
-  while (*s != 0) {
-    if (*s == '\n') {
-      lastCarriageReturn = s;
+
+  if (promptText != nullptr) {
+    /* Set the prompt text. If the prompt text has a '\n', put the prompt text in
+     * the history until the last '\n', and put the remaining prompt text in the
+     * edit cell's prompt. */
+    char * lastCarriageReturn = nullptr;
+    while (*s != 0) {
+      if (*s == '\n') {
+        lastCarriageReturn = s;
+      }
+      s++;
     }
-    s++;
-  }
-  if (lastCarriageReturn != nullptr) {
-    printText(prompt, lastCarriageReturn-prompt+1);
-    promptText = lastCarriageReturn+1;
+    if (lastCarriageReturn != nullptr) {
+      printText(prompt, lastCarriageReturn-prompt+1);
+      promptText = lastCarriageReturn+1;
+    }
   }
 
   m_editCell.setPrompt(promptText);
@@ -123,7 +126,9 @@ const char * ConsoleController::inputText(const char * prompt) {
   }, this);
 
   // Handle the input text
-  printText(promptText, s - promptText);
+  if (promptText != nullptr) {
+    printText(promptText, s - promptText);
+  }
   const char * text = m_editCell.text();
   printText(text, strlen(text));
   flushOutputAccumulationBufferToStore();

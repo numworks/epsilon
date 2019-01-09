@@ -69,7 +69,7 @@ void MenuController::didBecomeFirstResponder() {
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
   app()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
-  if (consoleController()->locked() && consoleController()->loadPythonEnvironment()) {
+  if (consoleController()->locked()) {
     stackViewController()->push(consoleController());
     return;
   }

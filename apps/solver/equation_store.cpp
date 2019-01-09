@@ -43,7 +43,7 @@ void EquationStore::tidy() {
 }
 
 Poincare::Layout EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
-  assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
+  assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions));
   if (exactLayout) {
     return m_exactSolutionExactLayouts[i];
   } else {
@@ -177,20 +177,14 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   // Create the results' layouts
   int solutionIndex = 0;
   int initialNumberOfSolutions = m_numberOfSolutions <= k_maxNumberOfExactSolutions ? m_numberOfSolutions : -1;
-  int maxNumberSolutions = initialNumberOfSolutions + (initialNumberOfSolutions >= k_maxNumberOfExactSolutions - 1 ? 0 : 1);
   // We iterate through the solutions and the potential delta
-  for (int i = 0; i < maxNumberSolutions; i++) {
+  for (int i = 0; i < initialNumberOfSolutions; i++) {
     if (!exactSolutions[i].isUninitialized()) {
       assert(!exactSolutionsApproximations[i].isUninitialized());
       if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Unreal) {
         // Discard unreal solutions.
-        if (i < initialNumberOfSolutions) {
-          // Discard the solution
-          m_numberOfSolutions--;
-          continue;
-        }
-        // Delta is not real
-        assert(i == initialNumberOfSolutions);
+        m_numberOfSolutions--;
+        continue;
       }
       m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i]);
       m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);
@@ -271,16 +265,16 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   if (delta.isRationalZero()) {
     // if delta = 0, x0=x1= -b/(2a)
     exactSolutions[0] = Division(Opposite(coefficients[1]), Multiplication(Rational(2), coefficients[2]));
-    m_numberOfSolutions = 1;
+    m_numberOfSolutions = 2;
   } else {
     // x0 = (-b-sqrt(delta))/(2a)
     exactSolutions[0] = Division(Subtraction(Opposite(coefficients[1].clone()), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2].clone()));
     // x1 = (-b+sqrt(delta))/(2a)
     exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot::Builder(delta.clone())), Multiplication(Rational(2), coefficients[2]));
-    m_numberOfSolutions = 2;
+    m_numberOfSolutions = 3;
   }
-  exactSolutions[m_numberOfSolutions] = delta;
-  for (int i = 0; i <= m_numberOfSolutions; i++) {
+  exactSolutions[m_numberOfSolutions-1] = delta;
+  for (int i = 0; i < m_numberOfSolutions; i++) {
     exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
   }
   return Error::NoError;

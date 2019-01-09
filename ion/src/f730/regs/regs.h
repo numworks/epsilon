@@ -7,7 +7,7 @@
 #include "dma.h"
 #include "exti.h"
 #include "flash.h"
-#include "fsmc.h"
+#include "fmc.h"
 #include "gpio.h"
 #include "itm.h"
 #include "mpu.h"

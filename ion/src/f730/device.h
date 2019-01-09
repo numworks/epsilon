@@ -8,7 +8,7 @@ void init();
 void shutdown();
 
 void initFPU();
-#if 0
+#if 1
 void initMPU();
 #endif
 

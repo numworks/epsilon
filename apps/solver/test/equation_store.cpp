@@ -39,8 +39,7 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   } else {
     quiz_assert(strcmp(equationStore.variableAtIndex(0), variables[0]) == 0);
   }
-  int n = type == EquationStore::Type::PolynomialMonovariable ? numberOfSolutions+1 : numberOfSolutions; // Check Delta for PolynomialMonovariable
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < numberOfSolutions; i++) {
     equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, 200);
     translate_in_ASCII_chars(buffer);
     quiz_assert(strcmp(buffer, solutions[i]) == 0);
@@ -106,27 +105,27 @@ QUIZ_CASE(equation_solve) {
   // 3x^2-4x+4=2
   const char * equations8[] = {"3*x^2-4x+4=2", 0};
   const char * solutions8[] = {"(2)/(3)-(R(2))/(3)*I","(2)/(3)+(R(2))/(3)*I", "-8"};
-  assert_equation_system_exact_solve_to(equations8, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions8, 2);
+  assert_equation_system_exact_solve_to(equations8, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions8, 3);
 
   // 2*x^2-4*x+4=3
   const char * equations9[] = {"2*x^2-4*x+4=3", 0};
   const char * solutions9[] = {"(-R(2)+2)/(2)","(R(2)+2)/(2)", "8"};
-  assert_equation_system_exact_solve_to(equations9, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions9, 2);
+  assert_equation_system_exact_solve_to(equations9, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions9, 3);
 
   // 2*x^2-4*x+2=0
   const char * equations10[] = {"2*x^2-4*x+2=0", 0};
   const char * solutions10[] = {"1", "0"};
-  assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions10, 1);
+  assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions10, 2);
 
   // x^2+x+1=3*x^2+pi*x-R(5)
   const char * equations11[] = {"x^2+x+1=3*x^2+P*x-R(5)", 0};
   const char * solutions11[] = {"(R(P$2#-2*P+8*R(5)+9)-P+1)/(4)", "(-R(P$2#-2*P+8*R(5)+9)-P+1)/(4)", "P$2#-2*P+8*R(5)+9"};
-  assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 2);
+  assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 3);
 
   // TODO
   // x^3 - 4x^2 + 6x - 24 = 0
   //const char * equations10[] = {"2*x^2-4*x+4=3", 0};
-  //assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, {"x", ""}, {"4", "I*R(6)", "-I*R(6)", "-11616"}, 3);
+  //assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, {"x", ""}, {"4", "I*R(6)", "-I*R(6)", "-11616"}, 4);
 
   //x^3+x^2+1=0
   // x^3-3x-2=0
@@ -184,12 +183,11 @@ QUIZ_CASE(equation_solve_complex_format) {
   // x^2+x+1=0 --> No solution in R
   const char * equations2[] = {"x^2+x+1=0", 0};
   const char * delta2[] = {"-3"};
-  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta2, 0);
+  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta2, 1);
 
   // x^2-R(-1)=0 --> Not defined in R
   const char * equations3[] = {"x^2-R(-1)=0", 0};
-  const char * delta3[] = {"unreal"};
-  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::EquationUnreal, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, delta3, 0);
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::EquationUnreal, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, nullptr, 0);
 
   // x+R(-1)*R(-1) = 0 --> Not defined in R
   const char * equations4[] = {"x+R(-1)*R(-1)=0", 0};
@@ -204,11 +202,11 @@ QUIZ_CASE(equation_solve_complex_format) {
 
   // x^2+x+1=0
   const char * solutions2[] = {"-(1)/(2)-(R(3))/(2)*I","-(1)/(2)+(R(3))/(2)*I", "-3"};
-  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2, 2);
+  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2, 3);
 
   // x^2-R(-1)=0
   const char * solutions3[] = {"-(R(2))/(2)-(R(2))/(2)*I", "(R(2))/(2)+(R(2))/(2)*I","4*I"};
-  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3, 2);
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3, 3);
 
   // x+R(-1)*R(-1) = 0
   const char * solutions4[] = {"1"};
@@ -224,11 +222,11 @@ QUIZ_CASE(equation_solve_complex_format) {
 
   // x^2+x+1=0
   const char * solutions2Polar[] = {"X$-(2*P)/(3)*I#","X$(2*P)/(3)*I#", "3*X$P*I#"};
-  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2Polar, 2);
+  assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2Polar, 3);
 
   // x^2-R(-1)=0
   const char * solutions3Polar[] = {"X$-(3*P)/(4)*I#", "X$(P)/(4)*I#", "4*X$(P)/(2)*I#"};
-  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3Polar, 2);
+  assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3Polar, 3);
 
 }
 

@@ -21,3 +21,5 @@ ApproximateSolutionIntervalInstruction0= "Geben Sie das Intervall fuer die Suche
 ApproximateSolutionIntervalInstruction1= "nach einer ungefaehren Loesung ein"
 OnlyFirstSolutionsDisplayed0 = "Es werden nur die ersten"
 OnlyFirstSolutionsDisplayed1 = "zehn Loesungen angezeigt."
+PolynomeHasNoRealSolution0 = "Das Polynom hat"
+PolynomeHasNoRealSolution1 = "keine reelle Nullstelle"

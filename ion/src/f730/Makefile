@@ -21,6 +21,7 @@ objs += $(addprefix ion/src/f730/, \
   device.o\
   display.o\
   events.o\
+  external_flash.o\
   flash.o\
   keyboard.o\
   led.o\

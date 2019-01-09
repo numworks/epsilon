@@ -61,7 +61,7 @@ void start() {
    * For example, static C++ objects are very likely to manipulate float values */
   Ion::Device::initFPU();
 
-#if 0
+#if 1
   Ion::Device::initMPU();
 #endif
 

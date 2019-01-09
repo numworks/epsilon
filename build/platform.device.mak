@@ -1,4 +1,4 @@
-TOOLCHAIN ?= arm-gcc
+TOOLCHAIN ?= arm-gcc-m4f
 USE_LIBA = 1
 EXE = elf
 EPSILON_BOOT_PROMPT = update

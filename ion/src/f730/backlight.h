@@ -9,7 +9,7 @@ namespace Device {
 
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------
- *  PC6 | Backlight Enable  | Output                |
+ *  PE0 | Backlight Enable  | Output                |
  */
 
 void init();
@@ -20,6 +20,8 @@ void setLevel(uint8_t level);
 uint8_t level();
 
 void sendPulses(int n);
+
+constexpr static GPIOPin BacklightPin = GPIOPin(GPIOE, 0);
 
 }
 }

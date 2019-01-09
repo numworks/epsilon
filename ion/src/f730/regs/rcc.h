@@ -83,7 +83,7 @@ public:
 
   class AHB3ENR : Register32 {
   public:
-    REGS_BOOL_FIELD(FSMCEN, 0);
+    REGS_BOOL_FIELD(FMCEN, 0);
     REGS_BOOL_FIELD(QSPIEN, 1);
   };
 

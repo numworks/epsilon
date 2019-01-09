@@ -228,17 +228,17 @@ void initFMC() {
    */
 
   // Read timing from the LCD
-  FMC.BTR(FMCMemoryBank)->setADDSET(2);
+  FMC.BTR(FMCMemoryBank)->setADDSET(4);
   FMC.BTR(FMCMemoryBank)->setADDHLD(0);
-  FMC.BTR(FMCMemoryBank)->setDATAST(36);
-  FMC.BTR(FMCMemoryBank)->setBUSTURN(10);
+  FMC.BTR(FMCMemoryBank)->setDATAST(72);
+  FMC.BTR(FMCMemoryBank)->setBUSTURN(20);
   FMC.BTR(FMCMemoryBank)->setACCMOD(FMC::BTR::ACCMOD::A);
 
   // Write timings for the LCD
-  FMC.BWTR(FMCMemoryBank)->setADDSET(2);
+  FMC.BWTR(FMCMemoryBank)->setADDSET(4);
   FMC.BWTR(FMCMemoryBank)->setADDHLD(0);
-  FMC.BWTR(FMCMemoryBank)->setDATAST(3);
-  FMC.BWTR(FMCMemoryBank)->setBUSTURN(3);
+  FMC.BWTR(FMCMemoryBank)->setDATAST(6);
+  FMC.BWTR(FMCMemoryBank)->setBUSTURN(6);
   FMC.BWTR(FMCMemoryBank)->setACCMOD(FMC::BWTR::ACCMOD::A);
 }
 

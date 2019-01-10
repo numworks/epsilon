@@ -297,7 +297,7 @@ void initClocks() {
   // AHB1 bus
   // Our peripherals are using GPIO A, B, C, D and E.
   // We're not using the CRC nor DMA engines.
-  class RCC::AHB1ENR ahb1enr(0); // Reset value
+  class RCC::AHB1ENR ahb1enr(0x00100000); // Reset value
   ahb1enr.setGPIOAEN(true);
   ahb1enr.setGPIOBEN(true);
   ahb1enr.setGPIOCEN(true);
@@ -329,12 +329,12 @@ void initClocks() {
 
 void shutdownClocks(bool keepLEDAwake) {
   // APB2 bus
-  RCC.APB2ENR()->set(0x00008000); // Reset value
+  RCC.APB2ENR()->set(0); // Reset value
 
   // APB1
-  class RCC::APB1ENR apb1enr(0x00000400); // Reset value
+  class RCC::APB1ENR apb1enr(0); // Reset value
   // AHB1 bus
-  class RCC::AHB1ENR ahb1enr(0); // Reset value
+  class RCC::AHB1ENR ahb1enr(0x00100000); // Reset value
   if (keepLEDAwake) {
     apb1enr.setTIM3EN(true);
     ahb1enr.setGPIOBEN(true);

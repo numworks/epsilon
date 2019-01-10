@@ -10,7 +10,7 @@
  * be stored in Flash. */
 MEMORY {
   FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
-  SRAM (rw) : ORIGIN = 0x20010000, LENGTH = 176K
+  SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 256K
 }
 
 STACK_SIZE = 32K;

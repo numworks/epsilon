@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/display.h>
+#include <ion/src/f730/display.h>
 #include <poincare/integer.h>
 
 namespace Ion {

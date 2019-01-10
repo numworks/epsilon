@@ -1,6 +1,6 @@
 #include "dfu_interface.h"
 #include <string.h>
-#include <ion/src/device/flash.h>
+#include <ion/src/f730/flash.h>
 
 namespace Ion {
 namespace USB {

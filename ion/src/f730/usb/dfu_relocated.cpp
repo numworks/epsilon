@@ -1,7 +1,7 @@
 #include <ion/usb.h>
 #include <string.h>
 #include <assert.h>
-#include <ion/src/device/device.h>
+#include <ion/src/f730/device.h>
 
 extern char _stack_end;
 extern char _dfu_bootloader_flash_start;
@@ -60,11 +60,11 @@ void DFU() {
 
   /* To have the right debug symbols for the reallocated code, break here and:
    *  - Get the address of the new .text section
-   *        In a terminal: arm-none-eabi-readelf -a ion/src/device/usb/dfu.elf
+   *        In a terminal: arm-none-eabi-readelf -a ion/src/f730/usb/dfu.elf
    *  - Delete the current symbol table
    *        symbol-file
    *  - Add the new symbol table, with the address of the new .text section
-   *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
+   *        add-symbol-file ion/src/f730/usb/dfu.elf 0x20038000
    */
 
   dfu_bootloader_entry(true);

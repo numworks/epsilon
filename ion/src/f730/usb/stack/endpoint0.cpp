@@ -1,6 +1,6 @@
 #include "endpoint0.h"
 #include <string.h>
-#include <ion/src/device/regs/regs.h>
+#include <ion/src/f730/regs/regs.h>
 #include "device.h"
 #include "interface.h"
 #include "request_recipient.h"

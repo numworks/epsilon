@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/backlight.h>
+#include <ion/src/f730/backlight.h>
 
 namespace Ion {
 namespace Device {

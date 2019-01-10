@@ -51,6 +51,7 @@ private:
   bool displayEmptyController();
   bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
   void resetMemoization();
+  void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
   Page m_lockPageDelete;
   ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];

@@ -321,9 +321,6 @@ void initClocks() {
   class RCC::APB2ENR apb2enr(0); // Reset value
   apb2enr.setADC1EN(true);
   apb2enr.setSYSCFGEN(true);
-#if USE_SD_CARD
-  apb2enr.setSDIOEN(true);
-#endif
   RCC.APB2ENR()->set(apb2enr);
 }
 

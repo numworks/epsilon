@@ -59,7 +59,7 @@ State scan() {
     /* The key is down if the input is brought low by the output. In other
      * words, we want to return true if the input is low (false). So we need to
      * append 6 bits of (not columns) to state. */
-    state = (state << 6) | (~columns & 0x3F);
+    state = (state << Device::numberOfColumns) | (~columns & 0x3F);
   }
 
   /* Last but not least, keys number 8, 9, 10, 11, 35, 41, 47 and 53 are not

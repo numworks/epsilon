@@ -9,7 +9,7 @@
  * This will let us use shortcuts such as ">FLASH" to ask for a given section to
  * be stored in Flash. */
 MEMORY {
-  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
+  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 512K
   SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 256K
 }
 

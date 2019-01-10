@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include <ion/charset.h>
 #include <poincare/number.h>
+#include <kandinsky/unicode/utf8decoder.h>
 
 namespace Poincare {
 
@@ -12,54 +13,70 @@ static inline bool isDigit(const char c) {
   return '0' <= c && c <= '9';
 }
 
+const char Tokenizer::nextChar(PopTest popTest, char context, bool * testResult) {
+  // Beware of chars spaning over more than one byte: use the UTF8Decoder.
+  UTF8Decoder decoder(m_text);
+  Codepoint firstCodepoint = decoder.nextCodepoint();
+  int numberOfBytesForChar = 1;
+  if (firstCodepoint != Null) {
+    Codepoint codepoint = decoder.nextCodepoint();
+    while (codepoint.isCombining()) {
+      numberOfBytesForChar++;
+      codepoint = decoder.nextCodepoint();
+    }
+  }
+  char c = *m_text; // TODO handle combined chars?
+  bool shouldPop = popTest(c, context);
+  if (testResult != nullptr) {
+    *testResult = shouldPop;
+  }
+  if (shouldPop) {
+    m_text+= numberOfBytesForChar;
+  }
+  return c;
+}
+
 const char Tokenizer::popChar() {
-  const char nextChar = *m_nextCharP;
-  m_nextCharP++;
-  return nextChar;
-  // After returning, m_nextCharP points to the character after nextChar.
+  return nextChar([](char c, char context) { return true; });
+  // m_text now points to the start of the character after the returned char.
 }
 
 bool Tokenizer::canPopChar (const char c) {
-  if (*m_nextCharP == c) {
-    m_nextCharP++;
-    return true;
+  bool didPop = false;
+  nextChar([](char nextC, char context) { return nextC == context; }, c, &didPop);
+  return didPop;
+}
+
+size_t Tokenizer::popWhile(PopTest popTest, char context) {
+  size_t length = 0;
+  bool didPop = true;
+  while (didPop) {
+    nextChar(popTest, context, &didPop);
+    if (didPop) {
+      length++;
+    }
   }
-  return false;
+  return length;
 }
 
 size_t Tokenizer::popIdentifier() {
-  /* Since this method is only called by popToken, currentChar is necessarily a
-   * letter. */
-  size_t length = 1;
-  char nextChar = *m_nextCharP;
-  while (isLetter(nextChar) || isDigit(nextChar) || nextChar == '_') {
-    length++;
-    nextChar = *++m_nextCharP;
-  }
-  return length;
+  return popWhile([](char c, char context) { return isLetter(c) || isDigit(c) || c == context; }, '_');
 }
 
 size_t Tokenizer::popDigits() {
-  size_t length = 0;
-  while (isDigit(*m_nextCharP)) {
-    length++;
-    m_nextCharP++;
-  }
-  return length;
+  return popWhile([](char c, char context) { return isDigit(c); });
 }
 
 Token Tokenizer::popNumber() {
-  /* This method is only called by popToken, after popping a dot or a digit.
-   * Hence the need to get one character back. */
-  m_nextCharP--;
-
-  const char * integralPartText = m_nextCharP;
+  const char * integralPartText = m_text;
   size_t integralPartLength = popDigits();
 
-  const char * fractionalPartText = m_nextCharP;
+  const char * fractionalPartText = m_text;
   size_t fractionalPartLength = 0;
+
+  assert(integralPartLength > 0 || *m_text == '.');
   if (canPopChar('.')) {
-    fractionalPartText = m_nextCharP;
+    fractionalPartText = m_text;
     fractionalPartLength = popDigits();
   }
 
@@ -67,12 +84,12 @@ Token Tokenizer::popNumber() {
     return Token(Token::Undefined);
   }
 
-  const char * exponentPartText = m_nextCharP;
+  const char * exponentPartText = m_text;
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
   if (canPopChar(Ion::Charset::Exponent)) {
     exponentIsNegative = canPopChar('-');
-    exponentPartText = m_nextCharP;
+    exponentPartText = m_text;
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
       return Token(Token::Undefined);
@@ -88,18 +105,22 @@ Token Tokenizer::popToken() {
   // Skip whitespaces
   while (canPopChar(' ')) {}
 
-  /* Save for later use (since m_nextCharP is altered by popChar, popNumber,
+  /* Save for later use (since m_text is altered by popChar, popNumber,
    * popIdentifier). */
-  const char * start = m_nextCharP;
+  const char * start = m_text;
 
-  const char currentChar = popChar();
+  /* If the next char is the start of a number, we do not want to pop it because
+   * popNumber needs this char. */
+  bool nextCharIsNeitherDotNorDigit = true;
+  const char currentChar = nextChar([](char c, char context) { return c != context && !isDigit(c); }, '.', &nextCharIsNeitherDotNorDigit);
+
   // According to currentChar, recognize the Token::Type.
-  if (currentChar == '.' || isDigit(currentChar)) {
+  if (!nextCharIsNeitherDotNorDigit) {
     return popNumber();
   }
   if (isLetter(currentChar)) {
     Token result(Token::Identifier);
-    result.setString(start, popIdentifier());
+    result.setString(start, 1 + popIdentifier()); // We already popped 1 char
     return result;
   }
   if ('(' <= currentChar && currentChar <= '/') {

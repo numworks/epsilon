@@ -9,8 +9,8 @@ namespace Device {
 
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------
- *  PA0 | BAT_CHRG          | Input, pulled up      | Low = charging, high = full
- *  PA1 | VBAT_SNS          | Analog                | ADC1_1
+ *  PE3 | BAT_CHRG          | Input, pulled up      | Low = charging, high = full
+ *  PB1 | VBAT_SNS          | Analog                | ADC1_1
  */
 
 void init();
@@ -18,10 +18,10 @@ void shutdown();
 void initGPIO();
 void initADC();
 
-constexpr GPIO ChargingGPIO = GPIOA;
-constexpr uint8_t ChargingPin = 0;
+constexpr GPIO ChargingGPIO = GPIOE;
+constexpr uint8_t ChargingPin = 3;
 
-constexpr GPIO ADCGPIO = GPIOA;
+constexpr GPIO ADCGPIO = GPIOB;
 constexpr uint8_t ADCPin = 1;
 constexpr uint8_t ADCChannel = 1;
 

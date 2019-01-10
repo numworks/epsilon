@@ -16,7 +16,7 @@ const char Tokenizer::popChar() {
   const char nextChar = *m_nextCharP;
   m_nextCharP++;
   return nextChar;
-  // Note that, after returning, m_nextCharP points to the character after nextChar.
+  // After returning, m_nextCharP points to the character after nextChar.
 }
 
 bool Tokenizer::canPopChar (const char c) {
@@ -28,8 +28,8 @@ bool Tokenizer::canPopChar (const char c) {
 }
 
 size_t Tokenizer::popIdentifier() {
-  // Since this method is only called by popToken,
-  // currentChar is necessary a letter.
+  /* Since this method is only called by popToken, currentChar is necessarily a
+   * letter. */
   size_t length = 1;
   char nextChar = *m_nextCharP;
   while (isLetter(nextChar) || isDigit(nextChar) || nextChar == '_') {
@@ -50,7 +50,7 @@ size_t Tokenizer::popDigits() {
 
 Token Tokenizer::popNumber() {
   /* This method is only called by popToken, after popping a dot or a digit.
-   * Hence one needs to get one character back. */
+   * Hence the need to get one character back. */
   m_nextCharP--;
 
   const char * integralPartText = m_nextCharP;
@@ -88,7 +88,8 @@ Token Tokenizer::popToken() {
   // Skip whitespaces
   while (canPopChar(' ')) {}
 
-  // Save for later use (since m_nextCharP is altered by popChar, popNumber, popIdentifier).
+  /* Save for later use (since m_nextCharP is altered by popChar, popNumber,
+   * popIdentifier). */
   const char * start = m_nextCharP;
 
   const char currentChar = popChar();
@@ -102,8 +103,8 @@ Token Tokenizer::popToken() {
     return result;
   }
   if ('(' <= currentChar && currentChar <= '/') {
-    // Those characters form a contiguous range in the ascii character set,
-    // so one can make searching faster with this lookup table.
+    /* Those characters form a contiguous range in the ascii character set, we
+     * make searching faster with this lookup table. */
     constexpr Token::Type typeForChar[] = {
       Token::LeftParenthesis,
       Token::RightParenthesis,
@@ -114,8 +115,8 @@ Token Tokenizer::popToken() {
       Token::Undefined,
       Token::Slash
     };
-    // The dot character is the second last of that range,
-    // but it is matched before (with popNumber).
+    /* The dot character is the second last of that range, but it is matched
+     * before (with popNumber). */
     assert(currentChar != '.');
     return Token(typeForChar[currentChar - '(']);
   }

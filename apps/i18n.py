@@ -85,14 +85,20 @@ def print_implementation(data, path, locales):
     f = open(path, "w")
     f.write("#include \"i18n.h\"\n")
     f.write("#include <apps/global_preferences.h>\n")
-    f.write("#include <assert.h>\n\n");
+    f.write("#include <assert.h>\n\n")
     f.write("namespace I18n {\n\n")
+
 
     # Write the default message
     f.write("constexpr static char universalDefault[] = {0};\n")
+
     # Write the universal messages
     for message in data["universal_messages"]:
-        f.write("constexpr static char universal" + message + "[] = " + data["data"]["universal"][message] + ";\n")
+        f.write("constexpr static char universal" + message + "[] = ")
+        f = open(path, "ab") # Re-open the file as binary to output raw UTF-8 bytes
+        f.write(data["data"]["universal"][message])
+        f = open(path, "a") # Re-open the file as text
+        f.write(";\n")
     f.write("\n")
     f.write("constexpr static const char * universalMessages[%d] = {\n" % (len(data["universal_messages"])+1))
     f.write("  universalDefault,\n")
@@ -123,19 +129,8 @@ def print_implementation(data, path, locales):
         f.write("},\n")
     f.write("};\n\n")
 
+
     # Write the translate method
-    for message in data["universal_messages"]:
-        f.write("constexpr static char universal" + message + "[] = ")
-        f = open(path, "ab") # Re-open the file as binary to output raw UTF-8 bytes
-        f.write(data["data"]["universal"][message])
-        f = open(path, "a") # Re-open the file as text
-        f.write(";\n")
-    f.write("\n")
-    f.write("constexpr static const char * universalMessages[%d] = {\n" % len(data["universal_messages"]))
-    for message in data["universal_messages"]:
-        f.write("  universal" + message + ",\n")
-    f.write("};\n")
-    f.write("\n")
     f.write("const char * translate(Message m, Language l) {\n")
     f.write("  assert(m != Message::LocalizedMessageMarker);\n")
     f.write("  int localizedMessageOffset = (int)Message::LocalizedMessageMarker+1;\n")

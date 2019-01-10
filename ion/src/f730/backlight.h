@@ -2,6 +2,7 @@
 #define ION_DEVICE_BACKLIGHT_H
 
 #include <ion/backlight.h>
+#include "regs/regs.h"
 
 namespace Ion {
 namespace Backlight {

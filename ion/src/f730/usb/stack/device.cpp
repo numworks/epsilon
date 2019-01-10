@@ -1,5 +1,5 @@
 #include "device.h"
-#include <ion/src/device/regs/regs.h>
+#include <ion/src/f730/regs/regs.h>
 
 namespace Ion {
 namespace USB {

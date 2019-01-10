@@ -56,9 +56,10 @@ uint32_t Ion::random() {
 }
 
 void Ion::Device::copySerialNumber(char * buffer) {
-  const unsigned char * rawUniqueID = (const unsigned char *)0x1FFF7A10;
-  Base64::encode(rawUniqueID, 12, buffer);
-  buffer[SerialNumberLength] = 0;
+  //const unsigned char * rawUniqueID = (const unsigned char *)0x1FFF7A10;
+  //Base64::encode(rawUniqueID, 12, buffer);
+  buffer[0]='A';
+  buffer[1] = 0;
 }
 
 const char * Ion::serialNumber() {

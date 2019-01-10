@@ -13,16 +13,19 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text) : m_nextCharP(text) {}
+  Tokenizer(const char * text) : m_text(text) {}
   Token popToken();
 private:
+  typedef bool (*PopTest)(char c, char context);
+  const char nextChar(PopTest popTest, char context = 0, bool * testResult = nullptr);
   const char popChar();
   bool canPopChar(const char c);
+  size_t popWhile(PopTest popTest, char context = 0);
   size_t popDigits();
   size_t popIdentifier();
   Token popNumber();
 
-  const char * m_nextCharP;
+  const char * m_text;
 };
 
 }

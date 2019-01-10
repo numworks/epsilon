@@ -87,7 +87,7 @@ KDFont::GlyphIndex KDFont::indexForCodepoint(Codepoint c) const {
     int currentIndex = (lowerBound+upperBound)/2;
     // printf("Considering %d in [%d,%d]\n", currentIndex, lowerBound, upperBound);
     const CodepointIndexPair * currentPair = m_table + currentIndex;
-    const CodepointIndexPair * nextPair = currentIndex + 1 < m_tableLength ? currentPair + 1 : nullptr;
+    const CodepointIndexPair * nextPair = (currentIndex + 1) < m_tableLength ? currentPair + 1 : nullptr;
     // printf("At this point, currentPair->codepoint() = %d and c = %d\n", currentPair->codepoint(), c);
     if (currentPair->codepoint() == c) {
       return currentPair->glyphIndex();

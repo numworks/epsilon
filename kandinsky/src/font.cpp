@@ -64,7 +64,7 @@ void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffe
   KDColor * colorBuffer = glyphBuffer->colorBuffer();
 
   uint8_t mask = (0xFF >> (8-k_bitsPerPixel));
-  int pixelIndex = pixelCount; // Let's start at the final pixel
+  int pixelIndex = m_glyphSize.width() * m_glyphSize.height() - 1; // Let's start at the final pixel
   int greyscaleByteIndex = pixelIndex * k_bitsPerPixel / 8;
   while (pixelIndex >= 0) {
     assert(greyscaleByteIndex == pixelIndex * k_bitsPerPixel / 8);

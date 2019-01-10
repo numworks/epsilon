@@ -2,7 +2,7 @@
 #include "global_preferences.h"
 #include <poincare/init.h>
 
-#define DUMMY_MAIN 1
+#define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
 void ion_main(int argc, char * argv[]) {

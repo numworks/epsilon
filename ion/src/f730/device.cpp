@@ -15,6 +15,7 @@ extern "C" {
 #include "usb.h"
 #include "bench/bench.h"
 #include "base64.h"
+#include "cache.h"
 
 #define USE_SD_CARD 0
 
@@ -159,8 +160,14 @@ void jumpReset() {
   );
 }
 
+void initL1Cache() {
+  Cache::enableICache();
+  Cache::enableDCache();
+}
+
 void init() {
   initClocks();
+  initL1Cache();
 
   // Ensure right location of interrupt vectors
   // The bootloader leaves its own after flashing

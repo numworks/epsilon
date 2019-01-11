@@ -17,6 +17,7 @@ objs += $(addprefix ion/src/f730/, \
   backlight.o \
   battery.o\
   base64.o\
+  cache.o \
   console.o \
   device.o\
   display.o\

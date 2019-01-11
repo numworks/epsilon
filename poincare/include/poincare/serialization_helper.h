@@ -27,8 +27,8 @@ namespace SerializationHelper {
       const char * operatorName,
       bool writeFirstChild = true);
 
-  // Write one char in buffer
-  int Char(char * buffer, int bufferSize, char charToWrite); // TODO REMOVE
+  // Write one char in a buffer
+  int Char(char * buffer, int bufferSize, char c);
   // Write one code point in a buffer
   int CodePoint(char * buffer, int bufferSize, CodePoint c);
 };

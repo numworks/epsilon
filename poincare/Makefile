@@ -4,7 +4,6 @@ src += $(addprefix poincare/src/,\
   binomial_coefficient_layout.cpp \
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
-  char_layout.cpp \
   code_point_layout.cpp\
   condensed_sum_layout.cpp \
   conjugate_layout.cpp \

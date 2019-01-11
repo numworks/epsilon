@@ -1,5 +1,5 @@
 #include <quiz.h>
-#include <kandinsky/unicode/utf8decoder.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 
 void assert_decodes_to(const char * string, CodePoint c) {
   UTF8Decoder d(string);

@@ -2,11 +2,12 @@
 #define POINCARE_SERIALIZATION_HELPER_H
 
 #include <poincare/tree_node.h>
+#include <kandinsky/include/kandinsky/unicode/code_point.h>
 
 namespace Poincare {
 
 namespace SerializationHelper {
-  /* SerializableReference to Text */
+  // SerializableReference to text
   int Infix(
       const TreeNode * node,
       char * buffer,
@@ -26,8 +27,10 @@ namespace SerializationHelper {
       const char * operatorName,
       bool writeFirstChild = true);
 
-  /* Write one char in buffer */
-  int Char(char * buffer, int bufferSize, char charToWrite);
+  // Write one char in buffer
+  int Char(char * buffer, int bufferSize, char charToWrite); // TODO REMOVE
+  // Write one code point in a buffer
+  int CodePoint(char * buffer, int bufferSize, CodePoint c);
 };
 
 }

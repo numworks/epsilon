@@ -342,9 +342,10 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
-  if (complexFormat == Preferences::ComplexFormat::Real && strchr(textInput, Ion::Charset::IComplex) != nullptr) {
+  /* TODO LEA if (complexFormat == Preferences::ComplexFormat::Real && strchr(textInput, KDCodePointMathematicalBoldSmallI) != nullptr) {
     return Preferences::ComplexFormat::Cartesian;
   }
+  */
   return complexFormat;
 }
 
@@ -519,12 +520,12 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(Ion::Charset::SmallPi), Rational::Builder(-1)));
+  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(KDCodePointGreekSmallLetterPi), Rational::Builder(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(Ion::Charset::SmallPi));
+  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(KDCodePointGreekSmallLetterPi));
 }
 
 Expression Expression::reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -626,9 +627,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       }
       if (!isZeroTb) {
         if (isOneTb) {
-          imag = Constant::Builder(Ion::Charset::IComplex);
+          imag = Constant::Builder(KDCodePointMathematicalBoldSmallI);
         } else {
-          imag = Multiplication::Builder(tb , Constant::Builder(Ion::Charset::IComplex));
+          imag = Multiplication::Builder(tb , Constant::Builder(KDCodePointMathematicalBoldSmallI));
         }
       }
       if (imag.isUninitialized()) {
@@ -657,14 +658,14 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa && !isZeroTb) {
         Expression arg;
         if (isOneTb) {
-          arg = Constant::Builder(Ion::Charset::IComplex);
+          arg = Constant::Builder(KDCodePointMathematicalBoldSmallI);
         } else {
-          arg = Multiplication::Builder(tb, Constant::Builder(Ion::Charset::IComplex));
+          arg = Multiplication::Builder(tb, Constant::Builder(KDCodePointMathematicalBoldSmallI));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
         }
-        exp = Power::Builder(Constant::Builder(Ion::Charset::Exponential), arg);
+        exp = Power::Builder(Constant::Builder(KDCodePointScriptSmallE), arg);
       }
       if (exp.isUninitialized()) {
         return norm;

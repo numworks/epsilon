@@ -63,7 +63,7 @@ private:
 class CodePointLayout final : public Layout {
 public:
   CodePointLayout(const CodePointLayoutNode * n) : Layout(n) {}
-  static CharLayout Builder(CodePoint c, const KDFont * font = KDFont::LargeFont);
+  static CodePointLayout Builder(CodePoint c, const KDFont * font = KDFont::LargeFont);
   const KDFont * font() const { return const_cast<CodePointLayout *>(this)->node()->font(); }
   CodePoint codePoint() const { return const_cast<CodePointLayout *>(this)->node()->codePoint(); }
 private:

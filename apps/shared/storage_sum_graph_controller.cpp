@@ -13,7 +13,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageSumGraphController::StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol) :
+StorageSumGraphController::StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, range, graphView, cursor),
   m_step(Step::FirstParameter),
   m_startSum(NAN),
@@ -203,7 +203,7 @@ bool StorageSumGraphController::handleEnter() {
 
 /* Legend View */
 
-StorageSumGraphController::LegendView::LegendView(StorageSumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, char sumSymbol) :
+StorageSumGraphController::LegendView::LegendView(StorageSumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumLayout(),
   m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
@@ -234,25 +234,26 @@ void StorageSumGraphController::LegendView::setEditableZone(double d) {
 
 void StorageSumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, Layout functionLayout) {
   assert(step == Step::Result || functionLayout.isUninitialized());
-  const char sigma[] = {' ', m_sumSymbol};
+  constexpr int sigmaLength = 2;
+  const CodePoint sigma[sigmaLength] = {KDCodePointSpace, m_sumSymbol};
   if (step == Step::FirstParameter) {
-    m_sumLayout = LayoutHelper::String(sigma, sizeof(sigma));
+    m_sumLayout = LayoutHelper::CodePointString(sigma, sigmaLength);
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     m_sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::String(sigma, sizeof(sigma)),
+        LayoutHelper::CodePointString(sigma, sizeof(sigma)),
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
-    m_sumLayout = LayoutHelper::String(sigma, sizeof(sigma));
+    m_sumLayout = LayoutHelper::CodePointString(sigma, sizeof(sigma));
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout start = LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
     m_sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::String(sigma, sizeof(sigma)),
+        LayoutHelper::CodePointString(sigma, sizeof(sigma)),
         start,
         end);
     strlcpy(buffer, "= ", 3);

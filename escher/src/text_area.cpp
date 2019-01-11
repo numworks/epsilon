@@ -30,11 +30,12 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 
   // Remove EmptyChars
   for (size_t i = bufferIndex; i < eventTextSize; i++) {
+    /* TODO LEA
     if (text[i] != Ion::Charset::Empty) {
       buffer[bufferIndex++] = text[i];
     } else if (i < cursorIndexInCommand) {
       cursorIndexInCommand--;
-    }
+    } */
   }
 
   if ((indentation && insertTextWithIndentation(buffer, cursorLocation())) || insertTextAtLocation(buffer, cursorLocation())) {

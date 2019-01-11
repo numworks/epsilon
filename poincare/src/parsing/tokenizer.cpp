@@ -16,13 +16,13 @@ static inline bool isDigit(const char c) {
 const char Tokenizer::nextChar(PopTest popTest, char context, bool * testResult) {
   // Beware of chars spaning over more than one byte: use the UTF8Decoder.
   UTF8Decoder decoder(m_text);
-  Codepoint firstCodepoint = decoder.nextCodepoint();
+  CodePoint firstCodePoint = decoder.nextCodePoint();
   int numberOfBytesForChar = 1;
-  if (firstCodepoint != Null) {
-    Codepoint codepoint = decoder.nextCodepoint();
-    while (codepoint.isCombining()) {
+  if (firstCodePoint != Null) {
+    CodePoint codePoint = decoder.nextCodePoint();
+    while (codePoint.isCombining()) {
       numberOfBytesForChar++;
-      codepoint = decoder.nextCodepoint();
+      codePoint = decoder.nextCodePoint();
     }
   }
   char c = *m_text; // TODO handle combined chars?

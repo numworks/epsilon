@@ -16,8 +16,8 @@ private:
   uint32_t m_code;
 };
 
-static constexpr CodePoint Null = 0x0;
-static constexpr CodePoint Tabulation = 0x9;
-static constexpr CodePoint LineFeed = 0xA;
+static constexpr CodePoint KDCodePointNull = 0x0;
+static constexpr CodePoint KDCodePointTabulation = 0x9;
+static constexpr CodePoint KDCodePointLineFeed = 0xA;
 
 #endif

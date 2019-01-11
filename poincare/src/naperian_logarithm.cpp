@@ -35,7 +35,7 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Comp
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(Ion::Charset::Exponential));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(KDCodePointScriptSmallE));
   replaceWithInPlace(l);
   return l.shallowReduce(context, complexFormat, angleUnit, target);
 }

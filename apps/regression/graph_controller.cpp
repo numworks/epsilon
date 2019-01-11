@@ -121,7 +121,7 @@ void GraphController::reloadBannerView() {
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    constexpr static char legX[] = {Ion::Charset::XBar, '=', 0};
+    constexpr static char legX[] = {'X'/*TODO LEA Ion::Charset::XBar*/, '=', 0};
     legend = legX;
     x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   }
@@ -138,7 +138,7 @@ void GraphController::reloadBannerView() {
   legend = "y=";
   double y = m_cursor->y();
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    constexpr static char legY[] = {Ion::Charset::YBar, '=', 0};
+    constexpr static char legY[] = {'Y' /*TODO LEA Ion::Charset::YBar*/, '=', 0};
     legend = legY;
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }

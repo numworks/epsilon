@@ -30,6 +30,7 @@ namespace SerializationHelper {
   // Write one char in a buffer
   int Char(char * buffer, int bufferSize, char c);
   // Write one code point in a buffer
+  constexpr int MaxSerializedCodePointSize = CodePoint::MaxCodePointCharLength + 1; // Null-terminating char
   int CodePoint(char * buffer, int bufferSize, CodePoint c);
 };
 

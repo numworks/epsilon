@@ -1,7 +1,6 @@
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
-#include <ion/charset.h>
 #include <assert.h>
 
 /* TextField::ContentView */
@@ -312,13 +311,14 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-char TextField::XNTChar(char defaultXNTChar) {
+CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   static constexpr struct { const char *name; char xnt; } sFunctions[] = {
     { "diff", 'x' }, { "int", 'x' },
     { "product", 'n' }, { "sum", 'n' }
   };
   // Let's assume everything before the cursor is nested correctly, which is reasonable if the expression is being entered left-to-right.
   const char * text = this->text();
+  /* TODO LEA
   size_t location = cursorLocation();
   unsigned level = 0;
   while (location >= 1) {
@@ -355,8 +355,9 @@ char TextField::XNTChar(char defaultXNTChar) {
         break;
     }
   }
+  */
   // Fallback to the default
-  return defaultXNTChar;
+  return defaultXNTCodePoint;
 }
 
 bool TextField::handleEvent(Ion::Events::Event event) {
@@ -404,6 +405,7 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
 }
 
 bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
+//TODO LEA
   size_t previousTextLength = strlen(text());
   size_t eventTextLength = strlen(eventText);
 
@@ -421,11 +423,11 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
   int newBufferIndex = 0;
   // Remove EmptyChars
-  for (size_t i = 0; i < eventTextSize; i++) {
+ /* TODO for (size_t i = 0; i < eventTextSize; i++) {
     if (eventText[i] != Ion::Charset::Empty) {
       buffer[newBufferIndex++] = eventText[i];
     }
-  }
+  }*/
 
   int nextCursorLocation = draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {

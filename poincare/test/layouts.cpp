@@ -265,11 +265,11 @@ QUIZ_CASE(poincare_parse_layouts) {
   // 2e^3
   l = HorizontalLayout::Builder(
       CodePointLayout::Builder('2'),
-      CodePointLayout::Builder(Ion::Charset::Exponential),
+      CodePointLayout::Builder(KDCodePointScriptSmallE),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3'),
         VerticalOffsetLayoutNode::Type::Superscript));
-  e = Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(Ion::Charset::Exponential),Parenthesis::Builder(Rational::Builder(3))));
-  assert_parsed_expression_is("2X^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(Ion::Charset::Exponential),Parenthesis::Builder(Rational::Builder(3)))));
+  e = Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(KDCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3))));
+  assert_parsed_expression_is("2X^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(KDCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
   assert_parsed_layout_is(l, e);
 }

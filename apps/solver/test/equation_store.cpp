@@ -12,15 +12,12 @@ using namespace Poincare;
 namespace Solver {
 
 void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions) {
-  char buffer[200];
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
     Shared::ExpressionModel * e = equationStore.addEmptyModel();
-    strlcpy(buffer, equations[index++], 200);
-    translate_in_special_chars(buffer);
-    e->setContent(buffer);
+    e->setContent(equations[index++]);
   }
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   quiz_assert(err == error);
@@ -40,20 +37,15 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
     quiz_assert(strcmp(equationStore.variableAtIndex(0), variables[0]) == 0);
   }
   for (int i = 0; i < numberOfSolutions; i++) {
-    equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, 200);
-    translate_in_ASCII_chars(buffer);
-    quiz_assert(strcmp(buffer, solutions[i]) == 0);
+    quiz_assert(strcmp(equationStore.exactSolutionLayoutAtIndex(i, true), solutions[i]) == 0);
   }
 }
 
 void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
-  char buffer[200];
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
   Shared::ExpressionModel * e = equationStore.addEmptyModel();
-  strlcpy(buffer, equations, 200);
-  translate_in_special_chars(buffer);
-  e->setContent(buffer);
+  e->setContent(equations);
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   quiz_assert(err == EquationStore::Error::RequireApproximateSolution);
   equationStore.setIntervalBound(0, xMin);

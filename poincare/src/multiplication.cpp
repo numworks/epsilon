@@ -85,13 +85,17 @@ bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-  return LayoutHelper::Infix(Multiplication(this), floatDisplayMode, numberOfSignificantDigits, middleDotString);
+  constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
+  char string[stringMaxSize];
+  SerializationHelper::CodePoint(string, stringMaxSize, KDCodePointMiddleDot);
+  return LayoutHelper::Infix(Multiplication(this), floatDisplayMode, numberOfSignificantDigits, string);
 }
 
 int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
-  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
+  constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
+  char string[stringMaxSize];
+  SerializationHelper::CodePoint(string, stringMaxSize, KDCodePointMultiplicationSign);
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
 Expression MultiplicationNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {

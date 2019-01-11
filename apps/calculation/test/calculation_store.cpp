@@ -70,10 +70,7 @@ QUIZ_CASE(calculation_ans) {
 }
 
 void assertCalculationDisplay(const char * input, bool displayExactOutput, bool displayApproximateOutput, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
-  char buffer[500];
-  strlcpy(buffer, input, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  store->push(buffer, context);
+  store->push(input, context);
   ::Calculation::Calculation * lastCalculation = store->calculationAtIndex(1);
   quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == displayExactOutput);
   quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(context) == displayApproximateOutput);
@@ -81,14 +78,10 @@ void assertCalculationDisplay(const char * input, bool displayExactOutput, bool 
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
-    strlcpy(buffer, exactOutput, sizeof(buffer));
-    translate_in_special_chars(buffer);
-    quiz_assert(strcmp(lastCalculation->exactOutputText(), buffer) == 0);
+    quiz_assert(strcmp(lastCalculation->exactOutputText(), exactOutput) == 0);
   }
   if (approximateOutput) {
-    strlcpy(buffer, approximateOutput, sizeof(buffer));
-    translate_in_special_chars(buffer);
-    quiz_assert(strcmp(lastCalculation->approximateOutputText(),buffer) == 0);
+    quiz_assert(strcmp(lastCalculation->approximateOutputText(), approximateOutput) == 0);
   }
   store->deleteAll();
 }

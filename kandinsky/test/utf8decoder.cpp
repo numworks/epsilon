@@ -1,10 +1,10 @@
 #include <quiz.h>
 #include <kandinsky/unicode/utf8decoder.h>
 
-void assert_decodes_to(const char * string, Codepoint c) {
+void assert_decodes_to(const char * string, CodePoint c) {
   UTF8Decoder d(string);
-  quiz_assert(d.nextCodepoint() == c);
-  quiz_assert(d.nextCodepoint() == 0);
+  quiz_assert(d.nextCodePoint() == c);
+  quiz_assert(d.nextCodePoint() == 0);
 }
 
 QUIZ_CASE(kandinsky_utf8_decoder) {

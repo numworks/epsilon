@@ -12,31 +12,31 @@ KDSize KDFont::stringSize(const char * text) const {
   KDSize stringSize = KDSize(0, m_glyphSize.height());
 
   UTF8Decoder decoder(text);
-  Codepoint codepoint = decoder.nextCodepoint();
-  while (codepoint != Null) {
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != Null) {
     KDSize cSize = KDSize(m_glyphSize.width(), 0);
-    if (codepoint == LineFeed) {
+    if (codePoint == LineFeed) {
       cSize = KDSize(0, m_glyphSize.height());
-      codepoint = decoder.nextCodepoint();
-    } else if (codepoint == Tabulation) {
+      codePoint = decoder.nextCodePoint();
+    } else if (codePoint == Tabulation) {
       cSize = KDSize(k_tabCharacterWidth*m_glyphSize.width(), 0);
-    } else if (codepoint.isCombining()) {
+    } else if (codePoint.isCombining()) {
       cSize = KDSizeZero;
     }
     stringSize = KDSize(stringSize.width()+cSize.width(), stringSize.height()+cSize.height());
-    codepoint = decoder.nextCodepoint();
+    codePoint = decoder.nextCodePoint();
   }
   return stringSize;
 }
 
-void KDFont::setGlyphGreyscalesForCodepoint(Codepoint codepoint, GlyphBuffer * glyphBuffer) const {
-  fetchGreyscaleGlyphAtIndex(indexForCodepoint(codepoint), glyphBuffer->greyscaleBuffer());
+void KDFont::setGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
+  fetchGreyscaleGlyphAtIndex(indexForCodePoint(codePoint), glyphBuffer->greyscaleBuffer());
 }
 
-void KDFont::accumulateGlyphGreyscalesForCodepoint(Codepoint codepoint, GlyphBuffer * glyphBuffer) const {
+void KDFont::accumulateGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const {
   uint8_t * greyscaleBuffer = glyphBuffer->greyscaleBuffer();
   uint8_t * accumulationGreyscaleBuffer = glyphBuffer->secondaryGreyscaleBuffer();
-  fetchGreyscaleGlyphAtIndex(indexForCodepoint(codepoint), accumulationGreyscaleBuffer);
+  fetchGreyscaleGlyphAtIndex(indexForCodePoint(codePoint), accumulationGreyscaleBuffer);
   for (int i=0; i<m_glyphSize.width()*m_glyphSize.height(); i++) {
     greyscaleBuffer[i] |= accumulationGreyscaleBuffer[i];
   }
@@ -78,7 +78,7 @@ void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffe
   }
 }
 
-KDFont::GlyphIndex KDFont::indexForCodepoint(Codepoint c) const {
+KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
 #define USE_BINARY_SEARCH 0
 #if USE_BINARY_SEARCH
   int lowerBound = 0;
@@ -86,12 +86,12 @@ KDFont::GlyphIndex KDFont::indexForCodepoint(Codepoint c) const {
   while (true) {
     int currentIndex = (lowerBound+upperBound)/2;
     // printf("Considering %d in [%d,%d]\n", currentIndex, lowerBound, upperBound);
-    const CodepointIndexPair * currentPair = m_table + currentIndex;
-    const CodepointIndexPair * nextPair = (currentIndex + 1) < m_tableLength ? currentPair + 1 : nullptr;
-    // printf("At this point, currentPair->codepoint() = %d and c = %d\n", currentPair->codepoint(), c);
-    if (currentPair->codepoint() == c) {
+    const CodePointIndexPair * currentPair = m_table + currentIndex;
+    const CodePointIndexPair * nextPair = (currentIndex + 1) < m_tableLength ? currentPair + 1 : nullptr;
+    // printf("At this point, currentPair->codePoint() = %d and c = %d\n", currentPair->codePoint(), c);
+    if (currentPair->codePoint() == c) {
       return currentPair->glyphIndex();
-    } else if (currentPair->codepoint() > c) {
+    } else if (currentPair->codePoint() > c) {
       // We need to look below
       if (upperBound == currentIndex) {
         // There's nothing below. Error out.
@@ -101,9 +101,9 @@ KDFont::GlyphIndex KDFont::indexForCodepoint(Codepoint c) const {
       continue;
     } else if (nextPair == nullptr) {
       return 0;
-    } else if (nextPair->codepoint() == c) {
+    } else if (nextPair->codePoint() == c) {
       return nextPair->glyphIndex();
-    } else if (nextPair->codepoint() < c) {
+    } else if (nextPair->codePoint() < c) {
       // We need to look above
       if (lowerBound == currentIndex) {
         // There's nothing above. Error out.
@@ -113,40 +113,40 @@ KDFont::GlyphIndex KDFont::indexForCodepoint(Codepoint c) const {
       continue;
     } else {
       // At this point,
-      // currentPair->codepoint < c && nextPair != nullptr && nextPair->codepoint > c
+      // currentPair->codePoint < c && nextPair != nullptr && nextPair->codePoint > c
       // Yay, it's over!
       // There can be an empty space between the currentPair and the nextPair
       // e.g. currentPair(3,1) and nextPair(9, 4)
-      // means value at codepoints 3, 4, 5, 6, 7, 8, 9
+      // means value at codePoints 3, 4, 5, 6, 7, 8, 9
       //     are glyph identifiers 1, ?, ?, ?, ?, ?, 4
       //                 solved as 1, 2, 3, 0, 0, 0, 4
 
       // Let's hunt down the zeroes
-      Codepoint lastCodepointOfCurrentPair = currentPair->codepoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
-      if (c > lastCodepointOfCurrentPair) {
+      CodePoint lastCodePointOfCurrentPair = currentPair->codePoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
+      if (c > lastCodePointOfCurrentPair) {
         return 0;
       }
-      return currentPair->glyphIndex() + (c - currentPair->codepoint());
+      return currentPair->glyphIndex() + (c - currentPair->codePoint());
     }
   }
 #else
-  const CodepointIndexPair * currentPair = m_table;
-  if (c < currentPair->codepoint()) {
+  const CodePointIndexPair * currentPair = m_table;
+  if (c < currentPair->codePoint()) {
     return 0;
   }
-  const CodepointIndexPair * endPair = m_table + m_tableLength - 1;
+  const CodePointIndexPair * endPair = m_table + m_tableLength - 1;
   while (currentPair < endPair) {
-    const CodepointIndexPair * nextPair = currentPair + 1;
-    if (c < nextPair->codepoint()) {
-      Codepoint lastCodepointOfCurrentPair = currentPair->codepoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
-      if (c > lastCodepointOfCurrentPair) {
+    const CodePointIndexPair * nextPair = currentPair + 1;
+    if (c < nextPair->codePoint()) {
+      CodePoint lastCodePointOfCurrentPair = currentPair->codePoint() + (nextPair->glyphIndex() - currentPair->glyphIndex() - 1);
+      if (c > lastCodePointOfCurrentPair) {
         return 0;
       }
-      return currentPair->glyphIndex() + (c - currentPair->codepoint());
+      return currentPair->glyphIndex() + (c - currentPair->codePoint());
     }
     currentPair = nextPair;
   }
-  if (endPair->codepoint() == c) {
+  if (endPair->codePoint() == c) {
     return endPair->glyphIndex();
   }
   return 0;

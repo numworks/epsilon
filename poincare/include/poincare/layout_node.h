@@ -84,14 +84,14 @@ public:
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
-   * become 1+ 2/3 - 4 when pressing "Divide": a CharLayout is collapsable if
+   * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if
    * its char is not +, -, or *. */
   virtual bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the
    * layout, next to another layout, might be the factor of a multiplication
    * with an omitted multiplication sign. For instance, an absolute value layout
-   * returns true, because |3|2 means |3|*2. A '+' CharLayout returns false,
+   * returns true, because |3|2 means |3|*2. A '+' CodePointLayout returns false,
    * because +'something' nevers means +*'something'. */
   virtual bool mustHaveLeftSibling() const { return false; }
   virtual bool isVerticalOffset() const { return false; }
@@ -104,7 +104,6 @@ public:
   virtual bool isRightBracket() const { return false; }
   virtual bool isEmpty() const { return false; }
   virtual bool isMatrix() const { return false; }
-  virtual bool isChar() const { return false; }
   virtual bool isCodePoint() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual char XNTChar() const {

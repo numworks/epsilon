@@ -2,7 +2,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/decimal.h>
@@ -20,19 +20,19 @@ namespace Regression {
 Layout QuadraticModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout layoutChildren[] = {
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder('a', KDFont::SmallFont),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder('X', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
-          CharLayout::Builder('2', KDFont::SmallFont),
+          CodePointLayout::Builder('2', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('b', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('c', KDFont::SmallFont),
+      CodePointLayout::Builder('+', KDFont::SmallFont),
+      CodePointLayout::Builder('b', KDFont::SmallFont),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder('+', KDFont::SmallFont),
+      CodePointLayout::Builder('c', KDFont::SmallFont),
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, 10);
   }

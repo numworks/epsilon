@@ -1,5 +1,5 @@
 #include <poincare/sum_layout.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 
 namespace Poincare {

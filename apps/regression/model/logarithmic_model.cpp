@@ -2,7 +2,7 @@
 #include "../store.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 
 using namespace Poincare;
@@ -12,15 +12,15 @@ namespace Regression {
 Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout layoutChildren[] = {
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('l', KDFont::SmallFont),
-      CharLayout::Builder('n', KDFont::SmallFont),
-      CharLayout::Builder('(', KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
-      CharLayout::Builder(')', KDFont::SmallFont),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('b', KDFont::SmallFont)
+      CodePointLayout::Builder('a', KDFont::SmallFont),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder('l', KDFont::SmallFont),
+      CodePointLayout::Builder('n', KDFont::SmallFont),
+      CodePointLayout::Builder('(', KDFont::SmallFont),
+      CodePointLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder(')', KDFont::SmallFont),
+      CodePointLayout::Builder('+', KDFont::SmallFont),
+      CodePointLayout::Builder('b', KDFont::SmallFont)
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, 9);
   }

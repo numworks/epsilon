@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <cmath>
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -84,7 +84,7 @@ Layout layoutForPreferences(I18n::Message message) {
     // Complex format
     case I18n::Message::Real:
     {
-      return CharLayout::Builder('x', KDFont::SmallFont);
+      return CodePointLayout::Builder('x', KDFont::SmallFont);
     }
     case I18n::Message::Cartesian:
     {

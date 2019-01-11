@@ -1,5 +1,5 @@
 #include <poincare/store.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/context.h>
 #include <poincare/complex.h>
 #include <poincare/horizontal_layout.h>
@@ -34,7 +34,7 @@ int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayout::Builder(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CodePointLayout::Builder(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }

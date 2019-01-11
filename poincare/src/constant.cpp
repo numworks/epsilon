@@ -1,5 +1,5 @@
 #include <poincare/constant.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/complex_cartesian.h>

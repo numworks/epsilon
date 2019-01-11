@@ -1,6 +1,6 @@
 #include <poincare/layout.h>
 #include <poincare/bracket_pair_layout.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>

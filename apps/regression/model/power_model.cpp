@@ -2,7 +2,7 @@
 #include "../store.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -13,11 +13,11 @@ namespace Regression {
 Layout PowerModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout layoutChildren[] = {
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder('a', KDFont::SmallFont),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder('X', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
-          CharLayout::Builder('b', KDFont::SmallFont),
+          CodePointLayout::Builder('b', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
       };

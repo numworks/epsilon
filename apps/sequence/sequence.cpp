@@ -2,7 +2,7 @@
 #include "sequence_store.h"
 #include "cache_context.h"
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/integer.h>
 #include "../shared/poincare_helpers.h"
@@ -147,8 +147,8 @@ int Sequence::numberOfElements() {
 Poincare::Layout Sequence::nameLayout() {
   if (m_nameLayout.isUninitialized()) {
     m_nameLayout = HorizontalLayout::Builder(
-        CharLayout::Builder(name()[0], KDFont::SmallFont),
-        VerticalOffsetLayout::Builder(CharLayout::Builder('n', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
+        CodePointLayout::Builder(name()[0], KDFont::SmallFont),
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder('n', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   return m_nameLayout;
@@ -158,16 +158,16 @@ Poincare::Layout Sequence::definitionName() {
   if (m_definitionName.isUninitialized()) {
     if (m_type == Type::Explicit) {
       m_definitionName = HorizontalLayout::Builder(
-          CharLayout::Builder(name()[0], k_layoutFont),
+          CodePointLayout::Builder(name()[0], k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
     } else if (m_type == Type::SingleRecurrence) {
       m_definitionName = HorizontalLayout::Builder(
-          CharLayout::Builder(name()[0], k_layoutFont),
+          CodePointLayout::Builder(name()[0], k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
     } else {
       assert(m_type == Type::DoubleRecurrence);
       m_definitionName = HorizontalLayout::Builder(
-          CharLayout::Builder(name()[0], k_layoutFont),
+          CodePointLayout::Builder(name()[0], k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
     }
   }
@@ -183,7 +183,7 @@ Poincare::Layout Sequence::firstInitialConditionName() {
   {
     Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
     m_firstInitialConditionName = HorizontalLayout::Builder(
-        CharLayout::Builder(name()[0], k_layoutFont),
+        CodePointLayout::Builder(name()[0], k_layoutFont),
         VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Type::Subscript));
   }
   return m_firstInitialConditionName;
@@ -196,7 +196,7 @@ Poincare::Layout Sequence::secondInitialConditionName() {
     if (m_type == Type::DoubleRecurrence) {
       Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
       m_secondInitialConditionName = HorizontalLayout::Builder(
-        CharLayout::Builder(name()[0], k_layoutFont),
+        CodePointLayout::Builder(name()[0], k_layoutFont),
         VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Type::Subscript));
     }
   }

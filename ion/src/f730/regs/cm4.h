@@ -82,7 +82,7 @@ public:
   REGS_REGISTER_AT(SCR, 0xD10);
   REGS_REGISTER_AT(CCR, 0xD10);
   REGS_REGISTER_AT(CPACR, 0xD88);
-  REGS_REGISTER_AT(CPACR, 0xF50);
+  REGS_REGISTER_AT(ICIALLU, 0xF50);
 private:
   constexpr uint32_t Base() const {
     return 0xE000E000;

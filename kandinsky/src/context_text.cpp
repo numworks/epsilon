@@ -13,21 +13,21 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
   KDFont::GlyphBuffer glyphBuffer;
 
   UTF8Decoder decoder(text);
-  Codepoint codepoint = decoder.nextCodepoint();
-  while (codepoint != Null) {
-    if (codepoint == LineFeed) {
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != Null) {
+    if (codePoint == LineFeed) {
       position = KDPoint(0, position.y() + glyphSize.height());
-      codepoint = decoder.nextCodepoint();
-    } else if (codepoint == Tabulation) {
+      codePoint = decoder.nextCodePoint();
+    } else if (codePoint == Tabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
-      codepoint = decoder.nextCodepoint();
+      codePoint = decoder.nextCodePoint();
     } else {
-      assert(!codepoint.isCombining());
-      font->setGlyphGreyscalesForCodepoint(codepoint, &glyphBuffer);
-      codepoint = decoder.nextCodepoint();
-      while (codepoint.isCombining()) {
-        font->accumulateGlyphGreyscalesForCodepoint(codepoint, &glyphBuffer);
-        codepoint = decoder.nextCodepoint();
+      assert(!codePoint.isCombining());
+      font->setGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+      codePoint = decoder.nextCodePoint();
+      while (codePoint.isCombining()) {
+        font->accumulateGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+        codePoint = decoder.nextCodePoint();
       }
       font->colorizeGlyphBuffer(&palette, &glyphBuffer);
       // Flush accumulated content

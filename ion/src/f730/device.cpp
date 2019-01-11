@@ -248,7 +248,6 @@ void initClocks() {
    * The spec tells us that at 2.8V and over 210MHz the flash expects 7 WS. */
   FLASH.ACR()->setLATENCY(7);
 
-#if 1
   /* Enable prefetching flash instructions */
   /* Fetching instructions increases slightly the power consumption but the
    * increase is negligible compared to the screen consumption. */
@@ -256,7 +255,6 @@ void initClocks() {
 
   /* Enable the ART */
   FLASH.ACR()->setARTEN(true);
-#endif
 
   /* After reset, the device is using the high-speed internal oscillator (HSI)
    * as a clock source, which runs at a fixed 16 MHz frequency. The HSI is not

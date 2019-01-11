@@ -14,11 +14,11 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
 
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != Null) {
-    if (codePoint == LineFeed) {
+  while (codePoint != KDCodePointNull) {
+    if (codePoint == KDCodePointLineFeed) {
       position = KDPoint(0, position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
-    } else if (codePoint == Tabulation) {
+    } else if (codePoint == KDCodePointTabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
       codePoint = decoder.nextCodePoint();
     } else {

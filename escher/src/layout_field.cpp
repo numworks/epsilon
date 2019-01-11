@@ -68,12 +68,12 @@ void LayoutField::ContentView::layoutCursorSubview() {
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
 }
 
-char LayoutField::XNTChar(char defaultXNTChar) {
-  char xnt = m_contentView.cursor()->layoutReference().XNTChar();
-  if (xnt != Ion::Charset::Empty) {
+CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
+  CodePoint xnt = m_contentView.cursor()->layoutReference().XNTCodePoint();
+  if (xnt != KDCodePointNull) {
     return xnt;
   }
-  return defaultXNTChar;
+  return defaultXNTCodePoint;
 }
 
 void LayoutField::reload(KDSize previousSize) {

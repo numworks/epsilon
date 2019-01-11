@@ -19,6 +19,7 @@ class UTF8Decoder {
 public:
   UTF8Decoder(const char * string) : m_string(string) {}
   CodePoint nextCodePoint();
+  static size_t CharSizeOfCodePoint(CodePoint c);
   static size_t CodePointToChars(CodePoint c, char * buffer, int bufferSize);
 private:
   const char * m_string;

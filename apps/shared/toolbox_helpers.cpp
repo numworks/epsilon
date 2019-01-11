@@ -1,5 +1,4 @@
 #include "toolbox_helpers.h"
-#include <ion/charset.h>
 #include <apps/i18n.h>
 #include <string.h>
 #include <assert.h>
@@ -8,6 +7,7 @@ namespace Shared {
 namespace ToolboxHelpers {
 
 int CursorIndexInCommandText(const char * text) {
+  // TODO LEA
   size_t textLength = strlen(text);
   for (size_t i = 0; i < textLength; i++) {
     if (text[i] == '(' || text[i] == '\'') {
@@ -49,7 +49,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
       buffer[currentNewTextIndex++] = command[i];
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        buffer[currentNewTextIndex++] = Ion::Charset::Empty;
+        // TODO LEA buffer[currentNewTextIndex++] = Ion::Charset::Empty;
         argumentAlreadyReplaced = true;
       }
     }

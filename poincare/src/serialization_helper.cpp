@@ -1,5 +1,5 @@
 #include <poincare/serialization_helper.h>
-#include <kandinsky/include/kandinsky/unicode/utf8_decoder.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 #include <string.h>
 #include <assert.h>
 
@@ -158,10 +158,9 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     buffer[0] = 0;
     return 0;
   }
-  constexpr int maxCodePointSize = sizeof(class CodePoint)/sizeof(char) + 1; // Null-terminating char
-  char helpBuffer[maxCodePointSize];
-  size_t size = UTF8Decoder::CodePointToChars(c, helpBuffer, maxCodePointSize);
-  assert(size < maxCodePointSize);
+  char helpBuffer[MaxSerializedCodePointSize];
+  size_t size = UTF8Decoder::CodePointToChars(c, helpBuffer, MaxSerializedCodePointSize);
+  assert(size < MaxSerializedCodePointSize);
   helpBuffer[size] = 0;
   strlcpy(buffer, helpBuffer, bufferSize);
   return strlen(buffer);

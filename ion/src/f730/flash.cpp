@@ -30,6 +30,7 @@ static void close() {
   assert(!FLASH.CR()->getPG());
   FLASH.CR()->setLOCK(true);
 
+#if 0
   // Purge Data and instruction cache
   if (FLASH.ACR()->getDCEN()) {
     FLASH.ACR()->setDCEN(false);
@@ -43,6 +44,7 @@ static void close() {
     FLASH.ACR()->setICRST(false);
     FLASH.ACR()->setICEN(true);
   }
+#endif
 }
 
 // Compile-time log2

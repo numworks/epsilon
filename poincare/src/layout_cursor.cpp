@@ -1,5 +1,5 @@
 #include <poincare/layout_cursor.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -75,7 +75,7 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CharLayout::Builder(Ion::Charset::Exponential),
+      CodePointLayout::Builder(Ion::Charset::Exponential),
       VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
@@ -107,16 +107,16 @@ void LayoutCursor::addEmptyPowerLayout() {
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CharLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CharLayout::Builder(Ion::Charset::MiddleDot),
-      CharLayout::Builder('1'),
-      CharLayout::Builder('0'),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot),
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
         emptyLayout,
         VerticalOffsetLayoutNode::Type::Superscript));
@@ -132,8 +132,8 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
   Layout(newChild.node()).collapseSiblings(this);
 }
 
-void LayoutCursor::addXNTCharLayout() {
-  m_layout.addSibling(this, CharLayout::Builder(m_layout.XNTChar()), true);
+void LayoutCursor::addXNTCodePointLayout() {
+  m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTChar()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
@@ -148,7 +148,7 @@ void LayoutCursor::insertText(const char * text) {
       continue;
     }
     if (text[i] == Ion::Charset::MultiplicationSign) {
-      newChild = CharLayout::Builder(Ion::Charset::MiddleDot);
+      newChild = CodePointLayout::Builder(Ion::Charset::MiddleDot);
     } else if (text[i] == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
@@ -167,7 +167,7 @@ void LayoutCursor::insertText(const char * text) {
     }
 #endif
     else {
-      newChild = CharLayout::Builder(text[i]);
+      newChild = CodePointLayout::Builder(text[i]);
     }
     m_layout.addSibling(this, newChild, true);
   }

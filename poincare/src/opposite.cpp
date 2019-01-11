@@ -1,6 +1,6 @@
 #include <poincare/opposite.h>
 #include <poincare/addition.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
 #include <poincare/horizontal_layout.h>
 #include <cmath>
@@ -41,7 +41,7 @@ bool OppositeNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout result = HorizontalLayout::Builder(CharLayout::Builder('-'));
+  HorizontalLayout result = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
   if (childAtIndex(0)->type() == Type::Opposite) {
     result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {

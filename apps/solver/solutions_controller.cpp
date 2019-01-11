@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/vertical_offset_layout.h>
@@ -75,7 +75,7 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout(),
   m_contentView(this)
 {
-  m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CharLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
+  m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
   char deltaB[] = {Ion::Charset::CapitalDelta, '=', 'b'};
   static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDFont::SmallFont), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {

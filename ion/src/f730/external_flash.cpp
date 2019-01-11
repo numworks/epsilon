@@ -64,7 +64,7 @@ public:
 };
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
-static constexpr int ClockFrequencyDivisor = 2;
+static constexpr int ClockFrequencyDivisor = 256;// TODO: optimize me (value forSTM32F412: 2);
 static constexpr int ChipSelectHighTime = (ClockFrequencyDivisor == 1) ? 3 : (ClockFrequencyDivisor == 2) ? 2 : 1;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);

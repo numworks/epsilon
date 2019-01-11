@@ -24,3 +24,24 @@ CodePoint UTF8Decoder::nextCodePoint() {
   }
   return CodePoint(result);
 }
+
+size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize) {
+  assert(bufferSize >= sizeof(CodePoint)/sizeof(char));
+  size_t i = 0;
+  if (c <= 0x7F) {
+    buffer[i++] = c;
+  } else if (c <= 0x7FF) {
+    buffer[i++] = 0b11000000 | (c >> 6);
+    buffer[i++] = 0b10000000 | (c & 0b111111);
+  } else if (c <= 0xFFFF) {
+    buffer[i++] = 0b11100000 | (c >> 12);
+    buffer[i++] = 0b10000000 | ((c >> 6) & 0b111111);
+    buffer[i++] = 0b10000000 | (c & 0b111111);
+  } else {
+    buffer[i++] = 0b11110000 | (c >> 18);
+    buffer[i++] = 0b10000000 | ((c >> 12) & 0b111111);
+    buffer[i++] = 0b10000000 | ((c >> 6) & 0b111111);
+    buffer[i++] = 0b10000000 | (c & 0b111111);
+  }
+  return i;
+}

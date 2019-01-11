@@ -1,7 +1,7 @@
 // [0x30a].map{|i| "0x" + i.to_s(16) +", // " + [i].pack("U") + " // " + Unicode::Name.of([i].pack("U"))}.join("|")
 #include <stdint.h>
 
-uint32_t Codepoints[] = {
+uint32_t CodePoints[] = {
   0x20, //   // SPACE
   0x21, // ! // EXCLAMATION MARK
   0x22, // " // QUOTATION MARK
@@ -146,4 +146,4 @@ uint32_t Codepoints[] = {
 
 };
 
-int NumberOfCodepoints = sizeof(Codepoints)/sizeof(Codepoints[0]);
+int NumberOfCodePoints = sizeof(CodePoints)/sizeof(CodePoints[0]);

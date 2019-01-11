@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <kandinsky/size.h>
 #include <kandinsky/coordinate.h>
-#include <kandinsky/unicode/codepoint.h>
+#include <kandinsky/unicode/code_point.h>
 #include "palette.h"
 
 /* We use UTF-8 encoding. This means that a character is encoded as a code point
@@ -17,11 +17,11 @@
  * ASCII characters have the same encoding in ASCII and in UTF-8.
  *
  * We do not provide a glyph for each of the 1,112,064 valid UTF-8 code points.
- * We thus have a table of the glyphs we can draw (uint32_t Codepoints[] in
- * kandinsky/fonts/codepoints.h). To easily compute the index of a code point in
- * the Codepoints table, we use the m_table matching table: it contains the
- * CodepointIndexPairs of the first code point of each series of consecutive
- * code points in the Codepoints table. */
+ * We thus have a table of the glyphs we can draw (uint32_t CodePoints[] in
+ * kandinsky/fonts/code_points.h). To easily compute the index of a code point in
+ * the CodePoints table, we use the m_table matching table: it contains the
+ * CodePointIndexPairs of the first code point of each series of consecutive
+ * code points in the CodePoints table. */
 
 class KDFont {
 private:
@@ -47,19 +47,19 @@ public:
   };
 
   using GlyphIndex = uint8_t;
-  class CodepointIndexPair {
+  class CodePointIndexPair {
   public:
-    constexpr CodepointIndexPair(Codepoint c, GlyphIndex i) : m_codepoint(c), m_glyphIndex(i) {}
-    Codepoint codepoint() const { return m_codepoint; }
+    constexpr CodePointIndexPair(CodePoint c, GlyphIndex i) : m_codePoint(c), m_glyphIndex(i) {}
+    CodePoint codePoint() const { return m_codePoint; }
     GlyphIndex glyphIndex() const { return m_glyphIndex; }
   private:
-    Codepoint m_codepoint;
+    CodePoint m_codePoint;
     GlyphIndex m_glyphIndex;
   };
-  GlyphIndex indexForCodepoint(Codepoint c) const;
+  GlyphIndex indexForCodePoint(CodePoint c) const;
 
-  void setGlyphGreyscalesForCodepoint(Codepoint codepoint, GlyphBuffer * glyphBuffer) const;
-  void accumulateGlyphGreyscalesForCodepoint(Codepoint codepoint, GlyphBuffer * glyphBuffer) const;
+  void setGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
+  void accumulateGlyphGreyscalesForCodePoint(CodePoint codePoint, GlyphBuffer * glyphBuffer) const;
 
   using RenderPalette = KDPalette<(1<<k_bitsPerPixel)>;
   void colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffer * glyphBuffer) const;
@@ -69,7 +69,7 @@ public:
   }
   KDSize glyphSize() const { return m_glyphSize; }
 
-  constexpr KDFont(size_t tableLength, const CodepointIndexPair * table, KDCoordinate glyphWidth, KDCoordinate glyphHeight, const uint16_t * glyphDataOffset, const uint8_t * data) :
+  constexpr KDFont(size_t tableLength, const CodePointIndexPair * table, KDCoordinate glyphWidth, KDCoordinate glyphHeight, const uint16_t * glyphDataOffset, const uint8_t * data) :
     m_tableLength(tableLength), m_table(table), m_glyphSize(glyphWidth, glyphHeight), m_glyphDataOffset(glyphDataOffset), m_data(data) { }
 private:
   void fetchGreyscaleGlyphAtIndex(GlyphIndex index, uint8_t * greyscaleBuffer) const;
@@ -83,7 +83,7 @@ private:
   }
 
   size_t m_tableLength;
-  const CodepointIndexPair * m_table;
+  const CodePointIndexPair * m_table;
   KDSize m_glyphSize;
   const uint16_t * m_glyphDataOffset;
   const uint8_t * m_data;

@@ -9,10 +9,8 @@ public:
   public:
     REGS_FIELD(LATENCY, uint8_t, 3, 0);
     REGS_BOOL_FIELD(PRFTEN, 8);
-    REGS_BOOL_FIELD(ICEN, 9);
-    REGS_BOOL_FIELD(DCEN, 10);
-    REGS_BOOL_FIELD(ICRST, 11);
-    REGS_BOOL_FIELD(DCRST, 12);
+    REGS_BOOL_FIELD(ARTEN, 9);
+    REGS_BOOL_FIELD(ARTRST, 11);
   };
 
   class KEYR : public Register32 {

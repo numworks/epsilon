@@ -13,12 +13,12 @@ KDSize KDFont::stringSize(const char * text) const {
 
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != Null) {
+  while (codePoint != KDCodePointNull) {
     KDSize cSize = KDSize(m_glyphSize.width(), 0);
-    if (codePoint == LineFeed) {
+    if (codePoint == KDCodePointLineFeed) {
       cSize = KDSize(0, m_glyphSize.height());
       codePoint = decoder.nextCodePoint();
-    } else if (codePoint == Tabulation) {
+    } else if (codePoint == KDCodePointTabulation) {
       cSize = KDSize(k_tabCharacterWidth*m_glyphSize.width(), 0);
     } else if (codePoint.isCombining()) {
       cSize = KDSizeZero;

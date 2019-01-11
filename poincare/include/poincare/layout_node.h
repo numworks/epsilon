@@ -105,6 +105,7 @@ public:
   virtual bool isEmpty() const { return false; }
   virtual bool isMatrix() const { return false; }
   virtual bool isChar() const { return false; }
+  virtual bool isCodePoint() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual char XNTChar() const {
     LayoutNode * p = parent();

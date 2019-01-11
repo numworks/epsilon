@@ -16,8 +16,12 @@ private:
   uint32_t m_code;
 };
 
-static constexpr CodePoint KDCodePointNull = 0x0;
-static constexpr CodePoint KDCodePointTabulation = 0x9;
-static constexpr CodePoint KDCodePointLineFeed = 0xA;
+static constexpr CodePoint KDCodePointNull                      = 0x0;
+static constexpr CodePoint KDCodePointTabulation                = 0x9;
+static constexpr CodePoint KDCodePointLineFeed                  = 0xA;
+static constexpr CodePoint KDCodePointMiddleDot                 = 0xB7;
+static constexpr CodePoint KDCodePointMultiplicationSign        = 0xD7;
+static constexpr CodePoint KDCodePointLatinLetterSmallCapitalE  = 0x1d07;
+static constexpr CodePoint KDCodePointRightwardsArrow           = 0x2192;
 
 #endif

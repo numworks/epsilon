@@ -51,8 +51,8 @@ openocd:
 	openocd -f build/$(PLATFORM)/openocd.cfg
 
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
-flasher.$(EXE): LDFLAGS = --gc-sections -T ion/src/device/usb/flasher.ld
-flasher.$(EXE): $(objs) $(usb_objs) ion/src/device/usb/flasher.o
+flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/usb/flasher.ld
+flasher.$(EXE): $(objs) $(usb_objs) ion/src/$(PLATFORM)/usb/flasher.o
 else
 flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"

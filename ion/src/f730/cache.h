@@ -25,7 +25,7 @@ void enableDCache() {
 void enableICache() {
   dsb();
   isb();
-  CM4.ICIALLU->set(0); // Invalidate I-Cache
+  CM4.ICIALLU()->set(0); // Invalidate I-Cache
   CM4.CCR()->setIC(true);
   dsb();
   isb();

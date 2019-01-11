@@ -13,7 +13,7 @@ using namespace Poincare;
 namespace Graph {
 
 IntegralGraphController::IntegralGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  StorageSumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, Ion::Charset::Integral)
+  StorageSumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, KDCodePointIntegral)
 {
 }
 

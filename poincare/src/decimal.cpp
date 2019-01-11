@@ -4,6 +4,7 @@
 #include <poincare/infinity.h>
 #include <poincare/undefined.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/ieee754.h>
 #include <assert.h>
 #include <ion.h>
@@ -176,7 +177,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       return currentChar;
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
-    buffer[currentChar++] = Ion::Charset::Exponent;
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, KDCodePointScriptSmallE);
+    if (currentChar >= bufferSize-1) { return bufferSize-1; }
     currentChar += Integer(exponent).serialize(buffer+currentChar, bufferSize-currentChar);
     return currentChar;
   }

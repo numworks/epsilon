@@ -3,7 +3,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
-#include <ion/charset.h>
 #include <string.h>
 #include <assert.h>
 
@@ -175,12 +174,12 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   }
   assert(m_type == Type::Superscript);
   /* If the layout is a superscript, write:
-   * "Ion::Charset::LeftSuperscript indice Ion::Charset::RightSuperscript" */
-  int numberOfChar = SerializationHelper::Char(buffer, bufferSize, Ion::Charset::LeftSuperscript);
+   * "KDCodePointLeftSuperscript indice KDCodePointRightSuperscript" */
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, KDCodePointLeftSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, Ion::Charset::RightSuperscript);
+  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, KDCodePointRightSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   buffer[numberOfChar] = 0;

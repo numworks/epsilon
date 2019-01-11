@@ -30,7 +30,6 @@ void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMod
   for (int i=tagSize+strlen(buffer)+1; i<bufferSize+2*tagSize; i++) {
     quiz_assert(taggedBuffer[i] == tag);
   }
-  translate_in_ASCII_chars(buffer);
 
   quiz_assert(strcmp(buffer, result) == 0);
 }
@@ -45,7 +44,6 @@ void assert_expression_prints_to(Expression e, const char * result, Preferences:
   char * buffer = taggedBuffer + tagSize;
 
   e.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
-  translate_in_ASCII_chars(buffer);
 
   for (int i=0; i<tagSize; i++) {
     quiz_assert(taggedBuffer[i] == tag || taggedBuffer[i] == 0);

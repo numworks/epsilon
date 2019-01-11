@@ -3,7 +3,6 @@
 
 #include <poincare/tree_node.h>
 #include <kandinsky.h>
-#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -106,9 +105,9 @@ public:
   virtual bool isMatrix() const { return false; }
   virtual bool isCodePoint() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
-  virtual char XNTChar() const {
+  virtual CodePoint XNTCodePoint() const {
     LayoutNode * p = parent();
-    return p == nullptr ? Ion::Charset::Empty : p->XNTChar();
+    return p == nullptr ? KDCodePointNull : p->XNTCodePoint();
   }
 
   virtual bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) { return true; }

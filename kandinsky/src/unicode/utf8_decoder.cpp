@@ -25,8 +25,14 @@ CodePoint UTF8Decoder::nextCodePoint() {
   return CodePoint(result);
 }
 
+size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength;
+  char buffer[bufferSize];
+  return CodePointToChars(c, buffer, bufferSize);
+}
+
 size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize) {
-  assert(bufferSize >= sizeof(CodePoint)/sizeof(char));
+  assert(bufferSize >= CodePoint::MaxCodePointCharLength);
   size_t i = 0;
   if (c <= 0x7F) {
     buffer[i++] = c;

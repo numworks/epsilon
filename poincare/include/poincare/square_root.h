@@ -4,7 +4,6 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/multiplication.h>
-#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -42,13 +41,8 @@ class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(&child, 1); }
-
-  static_assert('\x91' == Ion::Charset::Root, "Charset error");
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilderOneChild<SquareRoot>);
-
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("√", 1, &UntypedBuilderOneChild<SquareRoot>);
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  static const char k_name[2];
 };
 
 }

@@ -211,6 +211,7 @@ void initPeripherals() {
   LED::Device::init();
   Battery::Device::init();
   USB::Device::init();
+  ExternalFlash::Device::init();
   return; // FIXME, obviously!
 #if USE_SD_CARD
   SDCard::Device::init();
@@ -218,7 +219,6 @@ void initPeripherals() {
   Console::Device::init();
   SWD::Device::init();
   initSysTick();
-  ExternalFlash::Device::init();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {

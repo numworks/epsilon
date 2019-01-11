@@ -1,57 +1,56 @@
 #include "tokenizer.h"
-#include <ion/charset.h>
 #include <poincare/number.h>
 #include <kandinsky/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
-static inline bool isLetter(const char c) {
+static inline bool isLetter(const CodePoint c) {
   return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
 }
 
-static inline bool isDigit(const char c) {
+static inline bool isDigit(const CodePoint c) {
   return '0' <= c && c <= '9';
 }
 
-const char Tokenizer::nextChar(PopTest popTest, char context, bool * testResult) {
-  // Beware of chars spaning over more than one byte: use the UTF8Decoder.
+const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
   UTF8Decoder decoder(m_text);
   CodePoint firstCodePoint = decoder.nextCodePoint();
-  int numberOfBytesForChar = 1;
+  size_t numberOfBytesForCodePoint = UTF8Decoder::CharSizeOfCodePoint(firstCodePoint);
   if (firstCodePoint != KDCodePointNull) {
     CodePoint codePoint = decoder.nextCodePoint();
     while (codePoint.isCombining()) {
-      numberOfBytesForChar++;
+      numberOfBytesForCodePoint = UTF8Decoder::CharSizeOfCodePoint(codePoint);
       codePoint = decoder.nextCodePoint();
     }
   }
-  char c = *m_text; // TODO handle combined chars?
-  bool shouldPop = popTest(c, context);
+  // TODO handle combined code points?
+  bool shouldPop = popTest(firstCodePoint, context);
   if (testResult != nullptr) {
     *testResult = shouldPop;
   }
   if (shouldPop) {
-    m_text+= numberOfBytesForChar;
+    m_text+= numberOfBytesForCodePoint;
   }
-  return c;
+  return firstCodePoint;
 }
 
-const char Tokenizer::popChar() {
-  return nextChar([](char c, char context) { return true; });
-  // m_text now points to the start of the character after the returned char.
+const CodePoint Tokenizer::popCodePoint() {
+  return nextCodePoint([](CodePoint c, CodePoint context) { return true; });
+  /* m_text now points to the start of the first non combining code point after
+   * the returned code point. */
 }
 
-bool Tokenizer::canPopChar (const char c) {
+bool Tokenizer::canPopCodePoint(const CodePoint c) {
   bool didPop = false;
-  nextChar([](char nextC, char context) { return nextC == context; }, c, &didPop);
+  nextCodePoint([](CodePoint nextC, CodePoint context) { return nextC == context; }, c, &didPop);
   return didPop;
 }
 
-size_t Tokenizer::popWhile(PopTest popTest, char context) {
+size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
   size_t length = 0;
   bool didPop = true;
   while (didPop) {
-    nextChar(popTest, context, &didPop);
+    nextCodePoint(popTest, context, &didPop);
     if (didPop) {
       length++;
     }
@@ -60,11 +59,11 @@ size_t Tokenizer::popWhile(PopTest popTest, char context) {
 }
 
 size_t Tokenizer::popIdentifier() {
-  return popWhile([](char c, char context) { return isLetter(c) || isDigit(c) || c == context; }, '_');
+  return popWhile([](CodePoint c, CodePoint context) { return isLetter(c) || isDigit(c) || c == context; }, '_');
 }
 
 size_t Tokenizer::popDigits() {
-  return popWhile([](char c, char context) { return isDigit(c); });
+  return popWhile([](CodePoint c, CodePoint context) { return isDigit(c); });
 }
 
 Token Tokenizer::popNumber() {
@@ -75,7 +74,7 @@ Token Tokenizer::popNumber() {
   size_t fractionalPartLength = 0;
 
   assert(integralPartLength > 0 || *m_text == '.');
-  if (canPopChar('.')) {
+  if (canPopCodePoint('.')) {
     fractionalPartText = m_text;
     fractionalPartLength = popDigits();
   }
@@ -87,8 +86,8 @@ Token Tokenizer::popNumber() {
   const char * exponentPartText = m_text;
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
-  if (canPopChar(Ion::Charset::Exponent)) {
-    exponentIsNegative = canPopChar('-');
+  if (canPopCodePoint(KDCodePointLatinLetterSmallCapitalE)) {
+    exponentIsNegative = canPopCodePoint('-');
     exponentPartText = m_text;
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
@@ -103,30 +102,30 @@ Token Tokenizer::popNumber() {
 
 Token Tokenizer::popToken() {
   // Skip whitespaces
-  while (canPopChar(' ')) {}
+  while (canPopCodePoint(' ')) {}
 
-  /* Save for later use (since m_text is altered by popChar, popNumber,
+  /* Save for later use (since m_text is altered by popCodePoint, popNumber,
    * popIdentifier). */
   const char * start = m_text;
 
-  /* If the next char is the start of a number, we do not want to pop it because
-   * popNumber needs this char. */
-  bool nextCharIsNeitherDotNorDigit = true;
-  const char currentChar = nextChar([](char c, char context) { return c != context && !isDigit(c); }, '.', &nextCharIsNeitherDotNorDigit);
+  /* If the next code point is the start of a number, we do not want to pop it
+   * because popNumber needs this code point. */
+  bool nextCodePointIsNeitherDotNorDigit = true;
+  const CodePoint c = nextCodePoint([](CodePoint cp, CodePoint context) { return cp != context && !isDigit(cp); }, '.', &nextCodePointIsNeitherDotNorDigit);
 
-  // According to currentChar, recognize the Token::Type.
-  if (!nextCharIsNeitherDotNorDigit) {
+  // According to c, recognize the Token::Type.
+  if (!nextCodePointIsNeitherDotNorDigit) {
     return popNumber();
   }
-  if (isLetter(currentChar)) {
+  if (isLetter(c)) {
     Token result(Token::Identifier);
-    result.setString(start, 1 + popIdentifier()); // We already popped 1 char
+    result.setString(start, 1 + popIdentifier()); // We already popped 1 code point
     return result;
   }
-  if ('(' <= currentChar && currentChar <= '/') {
-    /* Those characters form a contiguous range in the ascii character set, we
-     * make searching faster with this lookup table. */
-    constexpr Token::Type typeForChar[] = {
+  if ('(' <= c && c <= '/') {
+    /* Those code points form a contiguous range in the utf-8 code points set,
+     * we can thus search faster with this lookup table. */
+    constexpr Token::Type typeForCodePoint[] = {
       Token::LeftParenthesis,
       Token::RightParenthesis,
       Token::Times,
@@ -136,58 +135,61 @@ Token Tokenizer::popToken() {
       Token::Undefined,
       Token::Slash
     };
-    /* The dot character is the second last of that range, but it is matched
+    /* The dot code point is the second last of that range, but it is matched
      * before (with popNumber). */
-    assert(currentChar != '.');
-    return Token(typeForChar[currentChar - '(']);
+    assert(c != '.');
+    return Token(typeForCodePoint[c - '(']);
   }
-  if (currentChar == Ion::Charset::MultiplicationSign || currentChar == Ion::Charset::MiddleDot) {
+  if (c == KDCodePointMultiplicationSign || c == KDCodePointMiddleDot) {
     return Token(Token::Times);
   }
-  if (currentChar == '^') {
+  if (c == '^') {
     return Token(Token::Caret);
   }
-  if (currentChar == Ion::Charset::LeftSuperscript) {
+  if (c == KDCodePointLeftSuperscript) {
     return Token(Token::LeftSuperscript);
   }
-  if (currentChar == Ion::Charset::RightSuperscript) {
+  if (c == KDCodePointRightSuperscript) {
     return Token(Token::RightSuperscript);
   }
-  if (currentChar == '!') {
+  if (c == '!') {
     return Token(Token::Bang);
   }
-  if (currentChar == '=') {
+  if (c == '=') {
     return Token(Token::Equal);
   }
-  if (currentChar == '[') {
+  if (c == '[') {
     return Token(Token::LeftBracket);
   }
-  if (currentChar == ']') {
+  if (c == ']') {
     return Token(Token::RightBracket);
   }
-  if (currentChar == '{') {
+  if (c == '{') {
     return Token(Token::LeftBrace);
   }
-  if (currentChar == '}') {
+  if (c == '}') {
     return Token(Token::RightBrace);
   }
-  if (currentChar == Ion::Charset::SmallPi || currentChar == Ion::Charset::IComplex || currentChar == Ion::Charset::Exponential) {
+  if (c == KDCodePointGreekSmallLetterPi
+      || c == KDCodePointMathematicalBoldSmallI
+      || c == KDCodePointScriptSmallE)
+  {
     Token result(Token::Constant);
     result.setString(start, 1);
     return result;
   }
-  if (currentChar == Ion::Charset::Root) {
+  if (c == KDCodePointSquareRoot) {
     Token result(Token::Identifier);
     result.setString(start, 1);
     return result;
   }
-  if (currentChar == Ion::Charset::Empty) {
+  if (c == KDCodePointEmpty) {
     return Token(Token::Empty);
   }
-  if (currentChar == Ion::Charset::Sto) {
+  if (c == KDCodePointRightwardsArrow) {
     return Token(Token::Store);
   }
-  if (currentChar == 0) {
+  if (c == 0) {
     return Token(Token::EndOfStream);
   }
   return Token(Token::Undefined);

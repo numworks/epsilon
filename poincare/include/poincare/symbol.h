@@ -61,7 +61,7 @@ public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
      * characters but events as 'end of text', 'backspace'... */
-    UnknownX = 1,
+    UnknownX = 1 //TODO LEA make sure there is no collision with the code points
   };
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }

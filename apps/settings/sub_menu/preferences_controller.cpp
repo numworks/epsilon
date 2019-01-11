@@ -54,12 +54,12 @@ Layout layoutForPreferences(I18n::Message message) {
     // Angle Unit
     case I18n::Message::Degres:
     {
-      const char degEx[] = {'9', '0', Ion::Charset::Degree};
-      return LayoutHelper::String(degEx, sizeof(degEx), KDFont::SmallFont);
+      const char * degEx = "90°";
+      return LayoutHelper::String("90°", strlen(degEx), KDFont::SmallFont);
     }
     case I18n::Message::Radian:
     {
-      const char pi[] = {Ion::Charset::SmallPi};
+      const char * pi = "π";
       return FractionLayout::Builder(
           LayoutHelper::String(pi, sizeof(pi), KDFont::SmallFont),
           LayoutHelper::String("2", 1, KDFont::SmallFont)
@@ -70,8 +70,8 @@ Layout layoutForPreferences(I18n::Message message) {
       return LayoutHelper::String("12.34", 5, KDFont::SmallFont);
     case I18n::Message::Scientific:
     {
-      const char text[] = {'1','.', '2', '3', '4', Ion::Charset::Exponent, '1'};
-      return LayoutHelper::String(text, sizeof(text), KDFont::SmallFont);
+      const char * text = "1.234ᴇ1";
+      return LayoutHelper::String(text, strlen(text), KDFont::SmallFont);
     }
     // Edition mode
     case I18n::Message::Edition2D:
@@ -88,16 +88,16 @@ Layout layoutForPreferences(I18n::Message message) {
     }
     case I18n::Message::Cartesian:
     {
-      const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};
-      return LayoutHelper::String(text, sizeof(text), KDFont::SmallFont);
+      const char * text = "a+𝐢b";
+      return LayoutHelper::String(text, strlen(text), KDFont::SmallFont);
     }
     case I18n::Message::Polar:
     {
-      const char base[] = {'r', Ion::Charset::Exponential};
-      const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta};
+      const char * base = "rℯ";
+      const char * superscript = "𝐢θ";
       return HorizontalLayout::Builder(
-          LayoutHelper::String(base, sizeof(base), KDFont::SmallFont),
-          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, sizeof(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
+          LayoutHelper::String(base, strlen(base), KDFont::SmallFont),
+          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
         );
     }
     default:

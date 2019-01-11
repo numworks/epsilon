@@ -3,7 +3,6 @@
 #include <poincare/square_root.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <ion/charset.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -169,7 +168,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
 
-  buffer[numberOfChar++] = Ion::Charset::Root;
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, KDCodePointSquareRoot);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }

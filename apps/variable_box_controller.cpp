@@ -199,7 +199,7 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength++] = '(';
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength++] = Ion::Charset::Empty;
+    // TODO LEA nameToHandle[nameLength++] = Ion::Charset::Empty;
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength++] = ')';
     assert(nameLength < nameToHandleMaxSize);

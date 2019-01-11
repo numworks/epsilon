@@ -341,7 +341,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
 
 Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
-  Constant e = Constant::Builder(Ion::Charset::Exponential);
+  Constant e = Constant::Builder(KDCodePointScriptSmallE);
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);

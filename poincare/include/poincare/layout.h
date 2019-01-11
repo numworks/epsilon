@@ -54,7 +54,7 @@ public:
   int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }
   int rightCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
   bool hasText() { return node()->hasText(); }
-  char XNTChar() const { return const_cast<Layout *>(this)->node()->XNTChar(); }
+  CodePoint XNTCodePoint() const { return const_cast<Layout *>(this)->node()->XNTCodePoint(); }
 
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }

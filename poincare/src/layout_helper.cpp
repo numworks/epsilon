@@ -56,6 +56,16 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
 HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
+  /* TODO LEA */
+  for (int i = 0; i < bufferLen; i++) {
+    resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
+  }
+  return resultLayout;
+}
+
+HorizontalLayout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
+  assert(bufferLen > 0);
+  HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {
     resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
   }

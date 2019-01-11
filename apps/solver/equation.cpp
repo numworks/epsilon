@@ -50,7 +50,7 @@ Expression Equation::standardForm(Context * context) const {
 }
 
 bool Equation::containsIComplex() const {
-  return strchr(text(), Ion::Charset::IComplex) != nullptr;
+  return false; //TODO LEA strchr(text(), KDCodePointMathematicalBoldSmallI) != nullptr;
 }
 
 void Equation::tidyStandardForm() {

@@ -16,11 +16,11 @@ public:
   Tokenizer(const char * text) : m_text(text) {}
   Token popToken();
 private:
-  typedef bool (*PopTest)(char c, char context);
-  const char nextChar(PopTest popTest, char context = 0, bool * testResult = nullptr);
-  const char popChar();
-  bool canPopChar(const char c);
-  size_t popWhile(PopTest popTest, char context = 0);
+  typedef bool (*PopTest)(CodePoint c, CodePoint context);
+  const CodePoint nextCodePoint(PopTest popTest, CodePoint context = KDCodePointNull, bool * testResult = nullptr);
+  const CodePoint popCodePoint();
+  bool canPopCodePoint(const CodePoint c);
+  size_t popWhile(PopTest popTest, CodePoint context = KDCodePointNull);
   size_t popDigits();
   size_t popIdentifier();
   Token popNumber();

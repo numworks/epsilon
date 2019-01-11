@@ -1,5 +1,5 @@
 #include <poincare/symbol.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/context.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
@@ -81,32 +81,32 @@ bool SymbolNode::isReal(Context & context) const {
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
     assert(m_name[1] == 0);
-    return CharLayout::Builder(Symbol::k_unknownXReadableChar);
+    return CodePointLayout::Builder(Symbol::k_unknownXReadableChar);
   }
   if (strcmp(m_name, "u(n)") == 0) {
     return HorizontalLayout::Builder(
-        CharLayout::Builder('u'),
+        CodePointLayout::Builder('u'),
         VerticalOffsetLayout::Builder(
-          CharLayout::Builder('n'),
+          CodePointLayout::Builder('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "u(n+1)") == 0) {
     return HorizontalLayout::Builder(
-      CharLayout::Builder('u'),
+      CodePointLayout::Builder('u'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "v(n)") == 0) {
     return HorizontalLayout::Builder(
-        CharLayout::Builder('v'),
+        CodePointLayout::Builder('v'),
         VerticalOffsetLayout::Builder(
-          CharLayout::Builder('n'),
+          CodePointLayout::Builder('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "v(n+1)") == 0) {
     return HorizontalLayout::Builder(
-      CharLayout::Builder('v'),
+      CodePointLayout::Builder('v'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
           VerticalOffsetLayoutNode::Type::Subscript));

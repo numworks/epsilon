@@ -1,7 +1,7 @@
 #include "logistic_model.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -13,24 +13,24 @@ namespace Regression {
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout exponentLayoutChildren[] = {
-      CharLayout::Builder('-', KDFont::SmallFont),
-      CharLayout::Builder('b', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont)
+      CodePointLayout::Builder('-', KDFont::SmallFont),
+      CodePointLayout::Builder('b', KDFont::SmallFont),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder('X', KDFont::SmallFont)
     };
     Layout layoutChildren[] = {
-      CharLayout::Builder('1', KDFont::SmallFont),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('e', KDFont::SmallFont),
+      CodePointLayout::Builder('1', KDFont::SmallFont),
+      CodePointLayout::Builder('+', KDFont::SmallFont),
+      CodePointLayout::Builder('a', KDFont::SmallFont),
+      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder('e', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(exponentLayoutChildren, 4),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
     m_layout = FractionLayout::Builder(
-       CharLayout::Builder('c', KDFont::SmallFont),
+       CodePointLayout::Builder('c', KDFont::SmallFont),
        HorizontalLayout::Builder(layoutChildren, 6)
       );
   }

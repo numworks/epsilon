@@ -1,6 +1,6 @@
 #include "list_controller.h"
 #include "app.h"
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -124,7 +124,7 @@ bool textRepresentsAnEquality(const char * text) {
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '='; });
+      return layout.isCodePoint() && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '='; });
   return !match.isUninitialized();
 }
 

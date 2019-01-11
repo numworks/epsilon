@@ -1,6 +1,6 @@
 #include <poincare/factorial.h>
 #include <poincare/constant.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
@@ -62,7 +62,7 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
-  result.addChildAtIndex(CharLayout::Builder('!'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
   return result;
 }
 

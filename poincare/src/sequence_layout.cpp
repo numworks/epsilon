@@ -1,5 +1,5 @@
 #include <poincare/sequence_layout.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>

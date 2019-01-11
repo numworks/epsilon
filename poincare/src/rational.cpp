@@ -9,7 +9,7 @@ extern "C" {
 #include <poincare/opposite.h>
 #include <poincare/infinity.h>
 #include <poincare/fraction_layout.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 
 namespace Poincare {
 

@@ -137,15 +137,15 @@ int SerializationHelper::Prefix(
   return numberOfChar;
 }
 
-int SerializationHelper::Char(char * buffer, int bufferSize, char charToWrite) {
+int SerializationHelper::Char(char * buffer, int bufferSize, char c) {
   if (bufferSize == 0) {
     return -1;
   }
-  buffer[bufferSize-1] = 0;
   if (bufferSize == 1) {
+    buffer[0] = 0;
     return 0;
   }
-  buffer[0] = charToWrite;
+  buffer[0] = c;
   buffer[1] = 0;
   return 1;
 }

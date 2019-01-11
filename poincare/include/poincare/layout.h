@@ -49,7 +49,6 @@ public:
   bool isMatrix() const { return const_cast<Layout *>(this)->node()->isMatrix(); }
   bool isVerticalOffset() const { return const_cast<Layout *>(this)->node()->isVerticalOffset(); }
   bool isLeftParenthesis() const { return const_cast<Layout *>(this)->node()->isLeftParenthesis(); }
-  bool isChar() const { return const_cast<Layout *>(this)->node()->isChar(); }
   bool isCodePoint() const { return const_cast<Layout *>(this)->node()->isCodePoint(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
   int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }

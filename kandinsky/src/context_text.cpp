@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
-#include <kandinsky/unicode/utf8decoder.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 
 constexpr static int k_tabCharacterWidth = 4;
 

@@ -1,7 +1,7 @@
 #include "tokenizer.h"
 #include <ion/charset.h>
 #include <poincare/number.h>
-#include <kandinsky/unicode/utf8decoder.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 
 namespace Poincare {
 

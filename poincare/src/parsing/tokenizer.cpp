@@ -18,7 +18,7 @@ const char Tokenizer::nextChar(PopTest popTest, char context, bool * testResult)
   UTF8Decoder decoder(m_text);
   CodePoint firstCodePoint = decoder.nextCodePoint();
   int numberOfBytesForChar = 1;
-  if (firstCodePoint != Null) {
+  if (firstCodePoint != KDCodePointNull) {
     CodePoint codePoint = decoder.nextCodePoint();
     while (codePoint.isCombining()) {
       numberOfBytesForChar++;

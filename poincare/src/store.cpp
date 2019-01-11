@@ -28,13 +28,16 @@ Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexForma
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
+  constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
+  char string[stringMaxSize];
+  SerializationHelper::CodePoint(string, stringMaxSize, KDCodePointRightwardsArrow);
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
 Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CodePointLayout::Builder(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CodePointLayout::Builder(KDCodePointRightwardsArrow), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }

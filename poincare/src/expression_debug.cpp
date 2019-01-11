@@ -213,14 +213,16 @@ void print_expression(const Expression e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Symbol:
       std::cout << "Symbol(";
-      switch (static_cast<const Symbol &>(e).name()) {
-        case Ion::Charset::SmallPi:
+      UTF8Decoder decoder(static_cast<const Symbol &>(e).name());
+      CodePoint firstCodePoint = decoder.nextCodePoint();
+      switch (firstCodePoint) {
+        case KDCodePointGreekSmallLetterPi:
           std::cout << "PI";
           break;
-        case Ion::Charset::IComplex:
+        case KDCodePointMathematicalBoldSmallI:
           std::cout << "i";
           break;
-        case Ion::Charset::Exponential:
+        case KDCodePointScriptSmallE:
           std::cout << "e";
           break;
         default:

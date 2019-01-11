@@ -15,7 +15,7 @@ namespace Shared {
 
 class StorageSumGraphController : public SimpleInteractiveCurveViewController, public TextFieldDelegate {
 public:
-  StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, char sumSymbol);
+  StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -49,7 +49,7 @@ private:
   bool handleEnter() override;
   class LegendView : public View {
   public:
-    LegendView(StorageSumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, char sumSymbol);
+    LegendView(StorageSumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
     LegendView& operator=(const LegendView& other) = delete;
@@ -76,7 +76,7 @@ private:
     MessageTextView m_legend;
     TextField m_editableZone;
     char m_draftText[TextField::maxBufferSize()];
-    char m_sumSymbol;
+    CodePoint m_sumSymbol;
   };
   StorageFunctionGraphView * m_graphView;
   LegendView m_legendView;

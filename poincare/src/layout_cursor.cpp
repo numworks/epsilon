@@ -9,7 +9,6 @@
 #include <poincare/nth_root_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
-#include <ion/charset.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -75,7 +74,7 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(Ion::Charset::Exponential),
+      CodePointLayout::Builder(KDCodePointScriptSmallE),
       VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
@@ -114,7 +113,7 @@ void LayoutCursor::addEmptySquarePowerLayout() {
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(Ion::Charset::MiddleDot),
+      CodePointLayout::Builder(KDCodePointMiddleDot),
       CodePointLayout::Builder('1'),
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
@@ -133,10 +132,12 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
 }
 
 void LayoutCursor::addXNTCodePointLayout() {
-  m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTChar()), true);
+  m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
+// TODO LEA
+#if 0
   int textLength = strlen(text);
   if (textLength <= 0) {
     return;
@@ -144,12 +145,12 @@ void LayoutCursor::insertText(const char * text) {
   Layout newChild;
   Layout pointedChild;
   for (int i = 0; i < textLength; i++) {
-    if (text[i] == Ion::Charset::Empty) {
+    if (text[i] == //TODO Ion::Charset::Empty) {
       continue;
     }
-    if (text[i] == Ion::Charset::MultiplicationSign) {
-      newChild = CodePointLayout::Builder(Ion::Charset::MiddleDot);
-    } else if (text[i] == '(') {
+    if (text[i] == //TODO Ion::Charset::MultiplicationSign) {
+      newChild = CodePointLayout::Builder(KDCodePointMiddleDot);
+    } else*/ if (text[i] == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
@@ -175,6 +176,7 @@ void LayoutCursor::insertText(const char * text) {
     m_layout = pointedChild;
     m_position = Position::Right;
   }
+#endif
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(Layout l) {

@@ -3,7 +3,6 @@
 
 #include <ion/backlight.h>
 #include <ion/battery.h>
-#include <ion/charset.h>
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>

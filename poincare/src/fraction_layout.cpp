@@ -3,7 +3,6 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <ion/charset.h>
 #include <escher/metric.h>
 #include <assert.h>
 
@@ -135,7 +134,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   // Add a multiplication if omitted.
   if (idxInParent > 0 && p->isHorizontal() && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
-    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, KDCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
@@ -159,7 +158,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   // Add a multiplication if omitted.
   if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
-    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, KDCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 

@@ -14,7 +14,7 @@ Layout PowerModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout layoutChildren[] = {
       CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder(KDCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('X', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
           CodePointLayout::Builder('b', KDFont::SmallFont),

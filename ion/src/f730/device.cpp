@@ -228,6 +228,7 @@ void shutdownPeripherals(bool keepLEDAwake) {
 #if USE_SD_CARD
   SDCard::Device::shutdown();
 #endif
+  ExternalFlash::Device::shutdown();
   USB::Device::shutdown();
   Battery::Device::shutdown();
   if (!keepLEDAwake) {

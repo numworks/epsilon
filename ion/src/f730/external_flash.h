@@ -36,8 +36,11 @@ void init();
 void shutdown();
 
 void initGPIO();
+void shutdownGPIO();
 void initQSPI();
+void shutdownQSPI();
 void initChip();
+void shutdownChip();
 
 void MassErase();
 
@@ -61,7 +64,9 @@ enum class Command : uint8_t {
   // Erase the whole chip or a 64-Kbyte block as being "1"
   ChipErase = 0xC7,
   Erase64KbyteBlock = 0xD8,
-  SetReadParameters = 0xC0
+  SetReadParameters = 0xC0,
+  DeepPowerDown = 0xB9,
+  ReleaseDeepPowerDown = 0xAB
 };
 
 constexpr static uint32_t QSPIBaseAddress = 0x90000000;

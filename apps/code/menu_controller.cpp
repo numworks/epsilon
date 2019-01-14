@@ -49,7 +49,7 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
     TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
     if (tf->isEditing()) {
       tf->setEditing(false, false);
-      textFieldDidAbortEditing(tf);
+      privateTextFieldDidAbortEditing(tf, false);
     }
   }
 }
@@ -346,34 +346,6 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   return false;
 }
 
-bool MenuController::textFieldDidAbortEditing(TextField * textField) {
-  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
-  const char * scriptName = script.fullName();
-  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
-    // The previous text was an empty name. Use a numbered default script name.
-    char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
-    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
-    if (!foundDefaultName) {
-      // If we did not find a default name, delete the script
-      deleteScript(script);
-      return true;
-    }
-    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
-    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
-    /* Because we use the numbered default name, the name should not be
-     * already taken. Plus, the script could be added only if the storage has
-     * enough available space to add a script named 'script99.py' */
-    (void) error; // Silence the "variable unused" warning if assertions are not enabled
-    assert(error == Script::ErrorStatus::None);
-    updateAddScriptRowDisplay();
-  }
-  textField->setText(scriptName);
-  m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-  app()->setFirstResponder(&m_selectableTableView);
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
-  return true;
-}
-
 bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing() && textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength) {
@@ -409,6 +381,41 @@ void MenuController::editScriptAtIndex(int scriptIndex) {
 void MenuController::updateAddScriptRowDisplay() {
   m_shouldDisplayAddScriptRow = !m_scriptStore->isFull();
   m_selectableTableView.reloadData();
+}
+
+bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain) {
+  /* If menuControllerStaysInResponderChain is false, we do not want to use
+   * methods that might call setFirstResponder, because we might be in the
+   * middle of another setFirstResponder call. */
+  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+  const char * scriptName = script.fullName();
+  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
+    // The previous text was an empty name. Use a numbered default script name.
+    char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
+    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    if (!foundDefaultName) {
+      // If we did not find a default name, delete the script
+      deleteScript(script);
+      return true;
+    }
+    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
+    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
+    /* Because we use the numbered default name, the name should not be
+     * already taken. Plus, the script could be added only if the storage has
+     * enough available space to add a script named 'script99.py' */
+    (void) error; // Silence the "variable unused" warning if assertions are not enabled
+    assert(error == Script::ErrorStatus::None);
+    if (menuControllerStaysInResponderChain) {
+      updateAddScriptRowDisplay();
+    }
+  }
+  textField->setText(scriptName);
+  if (menuControllerStaysInResponderChain) {
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    app()->setFirstResponder(&m_selectableTableView);
+  }
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  return true;
 }
 
 }

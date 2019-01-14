@@ -1,4 +1,5 @@
 #include "external_flash.h"
+#include "timing.h"
 
 namespace Ion {
 namespace ExternalFlash {
@@ -205,6 +206,12 @@ void init() {
   initChip();
 }
 
+void shutdown() {
+  shutdownChip();
+  shutdownQSPI();
+  shutdownGPIO();
+}
+
 void initGPIO() {
   for(const GPIOPin & g : QSPIPins) {
     g.group().OSPEEDR()->setOutputSpeed(g.pin(), GPIO::OSPEEDR::OutputSpeed::High);
@@ -213,9 +220,17 @@ void initGPIO() {
   }
 }
 
+void shutdownGPIO() {
+  for(const GPIOPin & g : QSPIPins) {
+    g.group().OSPEEDR()->setOutputSpeed(g.pin(), GPIO::OSPEEDR::OutputSpeed::Low);
+    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
+    g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
+  }
+}
+
 void initQSPI() {
   // Enable QUADSPI AHB3 peripheral clock
-  RCC.AHB3ENR()->setQSPIEN(true);
+  RCC.AHB3ENR()->setQSPIEN(true); // TODO: move in Device::initClocks
   // Configure controller for target device
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
@@ -228,10 +243,15 @@ void initQSPI() {
   QUADSPI.CR()->set(cr);
 }
 
+void shutdownQSPI() {
+  RCC.AHB3ENR()->setQSPIEN(false); // TODO: move in Device::shutdownClocks
+}
+
 void initChip() {
+  static bool firstPass = true;
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QPI. */
-  if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
+  if (firstPass && DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
     send_command(Command::WriteEnable, QUADSPI::CCR::OperatingMode::Single);
     ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
     statusRegister2.setQE(true);
@@ -252,8 +272,17 @@ void initChip() {
       readParameters.setP5(true);
       send_write_command(Command::SetReadParameters, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&readParameters), sizeof(readParameters));
     }
+    firstPass = false;
+  } else {
+    // TODO
   }
   set_as_memory_mapped();
+}
+
+void shutdownChip() {
+  unset_memory_mapped_mode();
+  send_command(Command::DeepPowerDown);
+  Timing::usleep(100); // TODO should be 3us when usleep adjusted
 }
 
 int SectorAtAddress(uint32_t address) {

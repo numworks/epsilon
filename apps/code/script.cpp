@@ -49,7 +49,10 @@ bool Script::nameCompliant(const char * name) {
    * create a new empty script. When naming or renaming a script, we check
    * elsewhere that the name is no longer empty.
    * The name format is ([a-z_][a-z0-9_]*)*\.py
-   * */
+   *
+   * We do not allow upper cases in the script names because script names are
+   * used in the URLs of the NumWorks workshop website and we do not want
+   * problems with case sensitivity. */
   const char * c = name;
   if (*c == 0 || (!isSmallLetterOrUnderscoreChar(*c) && *c != '.')) {
     /* The name cannot be empty. Its first letter must be in [a-z_] or the

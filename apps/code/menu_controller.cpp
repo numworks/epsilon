@@ -338,7 +338,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else if (error == Script::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Script::ErrorStatus::NonCompliantName) {
-    app()->displayWarning(I18n::Message::AllowedCharactersaz09);
+    app()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
   } else {
     assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
     app()->displayWarning(I18n::Message::NameTooLong);

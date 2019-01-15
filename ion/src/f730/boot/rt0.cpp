@@ -57,12 +57,11 @@ void start() {
   size_t bssSectionLength = (&_bss_section_end_ram - &_bss_section_start_ram);
   memset(&_bss_section_start_ram, 0, bssSectionLength);
 
+#define JUMP_TO_EXTERNAL_FLASH 1
+#if JUMP_TO_EXTERNAL_FLASH
   /* Initialize the FPU as early as possible.
    * For example, static C++ objects are very likely to manipulate float values */
   Ion::Device::initFPU();
-
-#if 1
-  Ion::Device::initMPU();
 #endif
 
   /* Call static C++ object constructors
@@ -85,9 +84,18 @@ void start() {
   }
 #endif
 
+#if JUMP_TO_EXTERNAL_FLASH
   Ion::Device::init();
 
+  typedef void(*ISR)(void);
+
+//  non_inlined_ion_main();
+
+  ISR externalFlashReset = *(ISR *)(0x90000004);
+  externalFlashReset();
+#else
   non_inlined_ion_main();
+#endif
 
   abort();
 }

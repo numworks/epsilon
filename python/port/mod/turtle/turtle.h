@@ -24,7 +24,7 @@ public:
   constexpr Turtle() :
     m_x(0),
     m_y(0),
-    m_heading(k_headingOffset),
+    m_heading(0),
     m_color(k_defaultColor),
     m_penDown(true),
     m_visible(true),
@@ -47,7 +47,7 @@ public:
   void circle(mp_int_t radius, mp_float_t angle = 360);
   bool goTo(mp_float_t x, mp_float_t y);
 
-  mp_float_t heading() const;
+  mp_float_t heading() const { return m_heading; }
   void setHeading(mp_float_t angle);
 
   uint8_t speed() const { return m_speed; }
@@ -76,7 +76,6 @@ public:
   void viewDidDisappear();
 
 private:
-  static constexpr mp_float_t k_headingOffset = M_PI_2;
   static constexpr mp_float_t k_headingScale = M_PI / 180;
   /* The Y axis is oriented upwards in Turtle and downwards in Kandinsky, so we
    * need to invert some values, hence k_invertedYAxisCoefficient. */
@@ -116,7 +115,7 @@ private:
     KDColor m_color;
   };
 
-  void setHeadingPrivate(mp_float_t angle);
+  void setHeadingPrivate(mp_float_t angle) { m_heading = angle; }
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }
 
@@ -137,7 +136,7 @@ private:
    * right and the y axis goes upwards. */
   mp_float_t m_x;
   mp_float_t m_y;
-  /* The heading is the angle in radians between the direction of the turtle and
+  /* The heading is the angle in degrees between the direction of the turtle and
    * the X axis, in the counterclockwise direction. */
   mp_float_t m_heading;
 

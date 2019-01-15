@@ -31,7 +31,7 @@ void Turtle::reset() {
   // Reset turtle values
   m_x = 0;
   m_y = 0;
-  m_heading = k_headingOffset;
+  m_heading = 0;
   m_color = k_defaultColor;
   m_penDown = true;
   m_visible = true;
@@ -45,20 +45,18 @@ void Turtle::reset() {
 
 bool Turtle::forward(mp_float_t length) {
   return goTo(
-    m_x + length * sin(m_heading),
-    m_y + length * cos(m_heading)
+    m_x + length * cos(m_heading * k_headingScale),
+    m_y + length * sin(m_heading * k_headingScale)
   );
 }
 
 void Turtle::left(mp_float_t angle) {
-  setHeading(
-     k_invertedYAxisCoefficient * ((m_heading - k_headingOffset) + k_invertedYAxisCoefficient * (angle * k_headingScale)) / k_headingScale
-  );
+  setHeading(m_heading + angle);
 }
 
 void Turtle::circle(mp_int_t radius, mp_float_t angle) {
   mp_float_t oldHeading = heading();
-  mp_float_t length = ((angle > 0 ? 1 : -1) * angle * k_headingScale) * radius;
+  mp_float_t length = (angle > 0 ? 1 : -1) * angle * k_headingScale * radius;
   if (length > 1) {
     for (int i = 1; i < length; i++) {
       mp_float_t progress = i / length;
@@ -97,10 +95,6 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   dot(x, y);
   draw(true);
   return false;
-}
-
-mp_float_t Turtle::heading() const {
-  return k_invertedYAxisCoefficient * (m_heading - k_headingOffset) / k_headingScale;
 }
 
 void Turtle::setHeading(mp_float_t angle) {
@@ -173,10 +167,6 @@ void Turtle::viewDidDisappear() {
 
 // Private functions
 
-void Turtle::setHeadingPrivate(mp_float_t angle) {
-  m_heading = k_invertedYAxisCoefficient * angle * k_headingScale + k_headingOffset;
-}
-
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
   return KDPoint(floor(x + k_xOffset), floor(k_invertedYAxisCoefficient * y + k_yOffset));
 }
@@ -245,8 +235,8 @@ bool Turtle::draw(bool force) {
 
     // Draw the head
     KDCoordinate headOffsetLength = 6;
-    KDCoordinate headOffsetX = headOffsetLength * sin(m_heading);
-    KDCoordinate headOffsetY = -headOffsetLength * cos(m_heading);
+    KDCoordinate headOffsetX = headOffsetLength * cos(m_heading * k_headingScale);
+    KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * sin(m_heading * k_headingScale);
     KDPoint headOffset(headOffsetX, headOffsetY);
     drawingRect = KDRect(
         position().translatedBy(headOffset).translatedBy(KDPoint(-k_iconHeadSize/2, -k_iconHeadSize/2)),
@@ -336,8 +326,8 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
   // Compute the paw offset from the turtle center
   float currentAngle = angles[(int) type];
   float crawlDelta = ((float)((int)pos)) * crawlOffset;
-  float pawX = pawOffset * sin(m_heading+currentAngle) + crawlDelta * sin(m_heading);
-  float pawY = - pawOffset * cos(m_heading+currentAngle) - crawlDelta * cos(m_heading);
+  float pawX = pawOffset * cos(m_heading * k_headingScale + currentAngle) + crawlDelta * cos(m_heading * k_headingScale);
+  float pawY = k_invertedYAxisCoefficient * (pawOffset * sin(m_heading * k_headingScale + currentAngle) + crawlDelta * sin(m_heading * k_headingScale));
   KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);
   KDCoordinate pawOffsetY = ((int)pawY) - (pawY < 0 ? 1 : 0);
   KDPoint offset(pawOffsetX, pawOffsetY);

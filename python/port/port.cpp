@@ -138,13 +138,15 @@ void gc_collect(void) {
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLength;
+  void ** scanStart;
   if ((uintptr_t)python_stack_top > (uintptr_t)&regs) {
     stackLength = ((uintptr_t)python_stack_top - (uintptr_t)&regs) / sizeof(uintptr_t);
-    gc_collect_root(regs_ptr, stackLength);
+    scanStart = regs_ptr;
   } else {
     stackLength = ((uintptr_t)(&regs) - (uintptr_t)python_stack_top) / sizeof(uintptr_t);
-    gc_collect_root((void **)python_stack_top, stackLength);
+    scanStart = (void **)python_stack_top;
   }
+  gc_collect_root(scanStart, stackLength);
 
   gc_collect_end();
 }

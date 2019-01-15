@@ -1,6 +1,10 @@
 #include <ion.h>
 #include "display.h"
 #include "regs/regs.h"
+#define MEMORY_BARRIER 0
+#if MEMORY_BARRIER
+#include "cache.h"
+#endif
 extern "C" {
 #include <assert.h>
 }
@@ -66,7 +70,13 @@ namespace Display {
 namespace Device {
 
 static inline void send_data(uint16_t d) {
+#if MEMORY_BARRIER
+  Ion::Device::Cache::dsb();
+#endif
   *DataAddress = d;
+#if MEMORY_BARRIER
+  Ion::Device::Cache::dsb();
+#endif
 }
 
 static inline uint16_t receive_data() {
@@ -80,7 +90,13 @@ static inline void send_data(uint16_t d, Args... other) {
 }
 
 static inline void send_command(Command c) {
+#if MEMORY_BARRIER
+  Ion::Device::Cache::dsb();
+#endif
   *CommandAddress = c;
+#if MEMORY_BARRIER
+  Ion::Device::Cache::dsb();
+#endif
 }
 
 template<typename... Args>

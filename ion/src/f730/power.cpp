@@ -20,8 +20,10 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
   }
   Device::shutdownPeripherals(isLEDActive);
 
-  PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
-  PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
+  PWR.CR1()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
+  PWR.CR1()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
+  PWR.CR1()->setLPUDS(true);
+  PWR.CR1()->setUDEN(PWR::CR1::UnderDrive::Enable);
   CM4.SCR()->setSLEEPDEEP(!isLEDActive);
 
   while (1) {

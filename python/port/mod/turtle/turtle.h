@@ -22,6 +22,9 @@ extern "C" {
 class Turtle {
 public:
   constexpr Turtle() :
+    m_underneathPixelBuffer(nullptr),
+    m_dotMask(nullptr),
+    m_dotWorkingPixelBuffer(nullptr),
     m_x(0),
     m_y(0),
     m_heading(0),
@@ -31,10 +34,7 @@ public:
     m_speed(k_defaultSpeed),
     m_penSize(k_defaultPenSize),
     m_mileage(0),
-    m_drawn(false),
-    m_underneathPixelBuffer(nullptr),
-    m_dotMask(nullptr),
-    m_dotWorkingPixelBuffer(nullptr)
+    m_drawn(false)
   {
   }
 
@@ -132,6 +132,14 @@ private:
   void drawPaw(PawType type, PawPosition position);
   void erase();
 
+  /* When GC is performed, sTurtle is marked as root for GC collection and its
+   * data is scanned for pointers that point to the Python heap. We put the 3
+   * pointers that should be marked at the beginning of the object to maximize
+   * the chances they will be correctly aligned and interpreted as pointers. */
+  KDColor * m_underneathPixelBuffer;
+  uint8_t * m_dotMask;
+  KDColor * m_dotWorkingPixelBuffer;
+
   /* The frame's center is the center of the screen, the x axis goes to the
    * right and the y axis goes upwards. */
   mp_float_t m_x;
@@ -149,9 +157,6 @@ private:
   KDCoordinate m_mileage;
   bool m_drawn;
 
-  KDColor * m_underneathPixelBuffer;
-  uint8_t * m_dotMask;
-  KDColor * m_dotWorkingPixelBuffer;
 };
 
 #endif

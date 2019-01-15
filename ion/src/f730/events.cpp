@@ -1,4 +1,5 @@
 #include <ion.h>
+#include "regs/regs.h"
 #include <assert.h>
 
 namespace Ion {
@@ -6,11 +7,13 @@ namespace Events {
 
 static bool sleepWithTimeout(int duration, int * timeout) {
   if (*timeout >= duration) {
-    Timing::msleep(duration);
+    Timing::usleep(duration*125);
+    //Timing::msleep(duration/8);
     *timeout -= duration;
     return false;
   } else {
-    Timing::msleep(*timeout);
+    //Timing::msleep(*timeout/8);
+    Timing::usleep(*timeout*125);
     *timeout = 0;
     return true;
   }
@@ -70,10 +73,12 @@ Event getEvent(int * timeout) {
       return event;
     }
 
+    RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy8);
     if (sleepWithTimeout(10, timeout)) {
       // Timeout occured
       return Events::None;
     }
+    RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
     time += 10;
 
     // At this point, we know that keysSeenTransitionningFromUpToDown has *always* been zero

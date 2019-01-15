@@ -73,6 +73,24 @@ public:
     using Register32::Register32;
   };
 
+  class CSSELR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(IND, 0);
+  };
+
+  class CCSIDR : public Register32 {
+  public:
+    REGS_FIELD(ASSOCIATIVITY, uint16_t, 12, 3);
+    REGS_FIELD(NUMSETS, uint16_t, 27, 13);
+  };
+
+  class DCISW : public Register32 {
+  public:
+    DCISW() : Register32(0) {}
+    REGS_FIELD(SET, uint16_t, 13, 5);
+    REGS_FIELD(WAY, uint8_t, 31, 30);
+  };
+
   constexpr CM4() {};
   REGS_REGISTER_AT(SYST_CSR, 0x10);
   REGS_REGISTER_AT(SYST_RVR, 0x14);
@@ -80,9 +98,12 @@ public:
   REGS_REGISTER_AT(VTOR, 0xD08);
   REGS_REGISTER_AT(AIRCR, 0xD0C);
   REGS_REGISTER_AT(SCR, 0xD10);
-  REGS_REGISTER_AT(CCR, 0xD10);
+  REGS_REGISTER_AT(CCR, 0xD14);
+  REGS_REGISTER_AT(CCSIDR, 0xD80);
+  REGS_REGISTER_AT(CSSELR, 0xD84);
   REGS_REGISTER_AT(CPACR, 0xD88);
   REGS_REGISTER_AT(ICIALLU, 0xF50);
+  REGS_REGISTER_AT(DCISW, 0xF60);
 private:
   constexpr uint32_t Base() const {
     return 0xE000E000;

@@ -88,22 +88,9 @@ void initFPU() {
   // FIXME: The pipeline should be flushed at this point
 }
 
-#if 1
 void initMPU() {
 
-# if 0
-  // This prevent overflowing the stack
-  /* Region 0 reprensents the last 128 bytes of the stack: accessing this
-   * memory means we are really likely to overflow the stack very soon. */
-  MPU.RNR()->setREGION(0x00);
-  MPU.RBAR()->setADDR(&_stack_end);
-  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::Bytes128);
-  MPU.RASR()->setENABLE(true);
-  MPU.RASR()->setAP(0x000); // Forbid access
-  MPU.CTRL()->setPRIVDEFENA(true);
-  MPU.CTRL()->setENABLE(true);
-#endif
-
+#if 1
   // Configure MPU settings for the FMC memory area
   // This is needed for interfacing with the LCD
   MPU.RNR()->setREGION(0x00);
@@ -111,17 +98,18 @@ void initMPU() {
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_32MB);
   MPU.RASR()->setXN(true);
   MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
-  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setTEX(2);
+  MPU.RASR()->setS(0);
   MPU.RASR()->setC(0);
-  MPU.RASR()->setB(1);
+  MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
   MPU.CTRL()->setPRIVDEFENA(true);
   MPU.CTRL()->setENABLE(true);
+#endif
 
 
 }
-#endif
 
 void initSysTick() {
   // CPU clock is 96 MHz, and systick clock source is divided by 8
@@ -167,8 +155,9 @@ void initL1Cache() {
 }
 
 void init() {
-  initClocks();
   initL1Cache();
+  initMPU();
+  initClocks();
 
   // Ensure right location of interrupt vectors
   // The bootloader leaves its own after flashing

@@ -193,8 +193,13 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<double>("R(3+I)", "1.7553173018244+2.8484878459314E-1*I");
 
   assert_parsed_expression_evaluates_to<float>("sign(-23+1)", "-1");
+  assert_parsed_expression_evaluates_to<float>("sign(inf)", "1");
+  assert_parsed_expression_evaluates_to<float>("sign(-inf)", "-1");
+  assert_parsed_expression_evaluates_to<float>("sign(0)", "0");
+  assert_parsed_expression_evaluates_to<float>("sign(-0)", "0");
   assert_parsed_expression_evaluates_to<float>("sign(x)", "undef");
   assert_parsed_expression_evaluates_to<double>("sign(2+I)", "undef");
+  assert_parsed_expression_evaluates_to<double>("sign(undef)", "undef");
 
   assert_parsed_expression_evaluates_to<double>("sum(2+n*I,n,1,5)", "10+15*I");
   assert_parsed_expression_evaluates_to<double>("sum(2+n*I,n,1,5)", "10+15*I");
@@ -274,6 +279,10 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
   assert_parsed_expression_simplify_to("sign(-23)", "-1");
   assert_parsed_expression_simplify_to("sign(-I)", "sign(-I)");
+  assert_parsed_expression_simplify_to("sign(0)", "sign(0)");
+  assert_parsed_expression_simplify_to("sign(inf)", "1)");
+  assert_parsed_expression_simplify_to("sign(-inf)", "-1)");
+  assert_parsed_expression_simplify_to("sign(undef)", "undef");
   assert_parsed_expression_simplify_to("sign(23)", "1");
   assert_parsed_expression_simplify_to("sign(log(18))", "1");
   assert_parsed_expression_simplify_to("sign(-R(2))", "-1");

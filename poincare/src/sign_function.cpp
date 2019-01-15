@@ -38,10 +38,13 @@ Expression SignFunctionNode::shallowReduce(Context & context, Preferences::Compl
 
 template<typename T>
 Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  if (c.imag() != 0) {
+  if (c.imag() != 0 || std::isnan(c.real())) {
     return Complex<T>::Undefined();
   }
-  if (signbit(c.real())) {
+  if (c.real() == 0) {
+    return Complex<T>(0.0);
+  }
+  if (c.real() < 0) {
     return Complex<T>(-1.0);
   }
   return Complex<T>(1.0);
@@ -59,39 +62,39 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFo
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Rational one(1);
+  Rational resultSign(1);
   Expression child = childAtIndex(0);
   ExpressionNode::Sign s = child.sign(&context);
-  if (s != ExpressionNode::Sign::Unknown) {
-    if (s == ExpressionNode::Sign::Negative) {
-      one = Rational(-1);
-    }
+  if (s == ExpressionNode::Sign::Negative) {
+    resultSign = Rational(-1);
   } else {
     Evaluation<float> childApproximated = child.node()->approximate(1.0f, context, complexFormat, angleUnit);
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
-    // c has no sign (c is complex or NAN)
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
-      // sign(-x) = -sign(x)
-      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
-      if (oppChild.isUninitialized()) {
-        return *this;
+      // c's approximation has no sign (c is complex or NAN)
+      if (target == ExpressionNode::ReductionTarget::User && s == ExpressionNode::Sign::Positive) {
+        // For the user, we want sign(abs(x)) = 1
       } else {
+        // sign(-x) = -sign(x)
+        Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
+        if (oppChild.isUninitialized()) {
+          return *this;
+        }
         Expression sign = *this;
         Multiplication m(Rational(-1));
         replaceWithInPlace(m);
-        m.addChildAtIndexInPlace(sign, 1, 1);
-        // sign does not need to be shallowReduce because -x = NAN --> x = NAN
-        return m;
-        // m does not need to be shallowReduce, -1*sign cannot be reduce
+        m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because -x = NAN --> x = NAN
+        return m; // m does not need to be shallowReduced, -1*sign cannot be reduced
       }
-    }
-    if (c.real() < 0) {
-      one = Rational(-1);
+    } else if (c.real() < 0) {
+      resultSign = Rational(-1);
+    } else if (c.real() == 0) {
+      resultSign = Rational(0);
     }
   }
-  replaceWithInPlace(one);
-  return one;
+  replaceWithInPlace(resultSign);
+  return resultSign;
 }
 
 }

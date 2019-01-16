@@ -47,6 +47,7 @@ QUIZ_CASE(poincare_rational_properties) {
   quiz_assert(Rational(-2).sign() == ExpressionNode::Sign::Negative);
   quiz_assert(Rational(-2, 3).sign() == ExpressionNode::Sign::Negative);
   quiz_assert(Rational(2, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Rational(0, 3).sign() == ExpressionNode::Sign::Positive);
   quiz_assert(Rational(0).isZero());
   quiz_assert(!Rational(231).isZero());
   quiz_assert(Rational(1).isOne());

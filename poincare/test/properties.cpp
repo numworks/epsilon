@@ -34,6 +34,8 @@ QUIZ_CASE(poincare_sign) {
   assert_parsed_expression_sign("-23/32", Negative);
   assert_parsed_expression_sign("P", Positive);
   assert_parsed_expression_sign("X", Positive);
+  assert_parsed_expression_sign("0", Positive);
+  assert_parsed_expression_sign("cos(90)", Positive);
   assert_parsed_expression_sign("R(-1)", Unknown);
   assert_parsed_expression_sign("R(-1)", Unknown, Real);
 }

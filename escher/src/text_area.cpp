@@ -1,6 +1,7 @@
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
 #include <escher/text_input_helpers.h>
+#include <kandinsky/unicode/utf8_helper.h>
 
 #include <stddef.h>
 #include <assert.h>
@@ -24,21 +25,15 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 
   size_t cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(text);
 
-  size_t eventTextSize = min(strlen(text) + 1, TextField::maxBufferSize());
-  char buffer[TextField::maxBufferSize()];
-  size_t bufferIndex = 0;
+  constexpr int bufferSize = TextField::maxBufferSize();
+  char buffer[bufferSize];
 
-  // Remove EmptyChars
-  for (size_t i = bufferIndex; i < eventTextSize; i++) {
-    /* TODO LEA
-    if (text[i] != Ion::Charset::Empty) {
-      buffer[bufferIndex++] = text[i];
-    } else if (i < cursorIndexInCommand) {
-      cursorIndexInCommand--;
-    } */
-  }
+  // Remove the Empty code points
+  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, text, KDCodePointEmpty, &cursorIndexInCommand);
 
+  // Insert the text
   if ((indentation && insertTextWithIndentation(buffer, cursorLocation())) || insertTextAtLocation(buffer, cursorLocation())) {
+    // Set the cursor location
     if (forceCursorRightOfText) {
       nextCursorLocation += strlen(buffer);
     } else {

@@ -1,5 +1,6 @@
 #include "toolbox_helpers.h"
 #include <apps/i18n.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 #include <string.h>
 #include <assert.h>
 
@@ -7,17 +8,24 @@ namespace Shared {
 namespace ToolboxHelpers {
 
 int CursorIndexInCommandText(const char * text) {
-  // TODO LEA
-  size_t textLength = strlen(text);
-  for (size_t i = 0; i < textLength; i++) {
-    if (text[i] == '(' || text[i] == '\'') {
-      return i + 1;
+  UTF8Decoder decoder(text);
+  size_t index = 0;
+  const char * currentPointer = text;
+  const char * nextPointer = decoder.nextCodePointPointer();
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != KDCodePointNull) {
+    if (codePoint == '(' || codePoint == '\'') {
+      return index + 1;
     }
-    if (text[i] == ']') {
-      return i;
+    if (codePoint == '[') {
+      return index;
     }
+    index+= nextPointer - currentPointer;
+    currentPointer = nextPointer;
+    nextPointer = decoder.nextCodePointPointer();
+    codePoint = decoder.nextCodePoint();
   }
-  return textLength;
+  return index;
 }
 
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
@@ -49,7 +57,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
       buffer[currentNewTextIndex++] = command[i];
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        // TODO LEA buffer[currentNewTextIndex++] = Ion::Charset::Empty;
+        currentNewTextIndex += UTF8Decoder::CodePointToChars(KDCodePointEmpty, buffer + currentNewTextIndex, bufferSize - currentNewTextIndex);
         argumentAlreadyReplaced = true;
       }
     }

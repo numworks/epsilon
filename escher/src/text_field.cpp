@@ -1,6 +1,7 @@
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
+#include <kandinsky/unicode/utf8_helper.h>
 #include <assert.h>
 
 /* TextField::ContentView */
@@ -405,29 +406,21 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
 }
 
 bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
-//TODO LEA
   size_t previousTextLength = strlen(text());
-  size_t eventTextLength = strlen(eventText);
 
   if (!isEditing()) {
     setEditing(true);
   }
 
-  if (eventTextLength == 0) {
+  if (eventText[0] == 0) {
     setCursorLocation(0);
     return m_delegate->textFieldDidHandleEvent(this, true, previousTextLength != 0);
   }
 
-  size_t eventTextSize = min(eventTextLength + 1, TextField::maxBufferSize());
-  char buffer[TextField::maxBufferSize()];
-
-  int newBufferIndex = 0;
-  // Remove EmptyChars
- /* TODO for (size_t i = 0; i < eventTextSize; i++) {
-    if (eventText[i] != Ion::Charset::Empty) {
-      buffer[newBufferIndex++] = eventText[i];
-    }
-  }*/
+  // Remove the Empty code points
+  constexpr int bufferSize = TextField::maxBufferSize();
+  char buffer[bufferSize];
+  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, KDCodePointEmpty);
 
   int nextCursorLocation = draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {

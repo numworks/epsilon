@@ -1,9 +1,9 @@
 #include "equation.h"
-
 #include <poincare/equal.h>
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
 #include <poincare/rational.h>
+#include <kandinsky/unicode/utf8_helper.h>
 
 using namespace Poincare;
 
@@ -50,7 +50,7 @@ Expression Equation::standardForm(Context * context) const {
 }
 
 bool Equation::containsIComplex() const {
-  return false; //TODO LEA strchr(text(), KDCodePointMathematicalBoldSmallI) != nullptr;
+  return UTF8Helper::CodePointSearch(text(), KDCodePointMathematicalBoldSmallI) != nullptr;
 }
 
 void Equation::tidyStandardForm() {

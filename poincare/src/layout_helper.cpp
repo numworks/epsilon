@@ -4,6 +4,7 @@
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -56,9 +57,26 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
 HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
-  /* TODO LEA */
-  for (int i = 0; i < bufferLen; i++) {
-    resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
+  UTF8Decoder decoder(buffer);
+  const char * currentPointer = buffer;
+  const char * nextPointer = decoder.nextCodePointPointer();
+  CodePoint codePoint = decoder.nextCodePoint();
+  assert(!codePoint.isCombining());
+  int layoutIndex = 0;
+  int bufferIndex = 0;
+  while (codePoint != KDCodePointNull && bufferIndex < bufferLen) {
+    resultLayout.addChildAtIndex(CodePointLayout::Builder(codePoint, font), layoutIndex, layoutIndex, nullptr);
+    layoutIndex++;
+    bufferIndex+= nextPointer - currentPointer;
+    currentPointer = nextPointer;
+    nextPointer = decoder.nextCodePointPointer();
+    codePoint = decoder.nextCodePoint();
+    while (codePoint.isCombining()) {
+      bufferIndex+= nextPointer - currentPointer;
+      currentPointer = nextPointer;
+      nextPointer = decoder.nextCodePointPointer();
+      codePoint = decoder.nextCodePoint();
+    }
   }
   return resultLayout;
 }

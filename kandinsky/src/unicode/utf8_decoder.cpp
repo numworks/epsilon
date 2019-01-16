@@ -25,6 +25,10 @@ CodePoint UTF8Decoder::nextCodePoint() {
   return CodePoint(result);
 }
 
+const char * UTF8Decoder::nextCodePointPointer() {
+  return m_string + leading_ones(*m_string);
+}
+
 size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength;
   char buffer[bufferSize];
@@ -32,21 +36,29 @@ size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
 }
 
 size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize) {
-  assert(bufferSize >= CodePoint::MaxCodePointCharLength);
+  if (bufferSize <= 0) {
+    return 0;
+  }
   size_t i = 0;
   if (c <= 0x7F) {
     buffer[i++] = c;
   } else if (c <= 0x7FF) {
     buffer[i++] = 0b11000000 | (c >> 6);
+    if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | (c & 0b111111);
   } else if (c <= 0xFFFF) {
     buffer[i++] = 0b11100000 | (c >> 12);
+    if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | ((c >> 6) & 0b111111);
+    if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | (c & 0b111111);
   } else {
     buffer[i++] = 0b11110000 | (c >> 18);
+    if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | ((c >> 12) & 0b111111);
+    if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | ((c >> 6) & 0b111111);
+    if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | (c & 0b111111);
   }
   return i;

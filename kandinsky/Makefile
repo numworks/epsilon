@@ -14,6 +14,7 @@ src += $(addprefix kandinsky/src/,\
   point.cpp \
   rect.cpp \
   unicode/utf8_decoder.cpp\
+  unicode/utf8_helper.cpp\
 )
 
 src += $(addprefix kandinsky/fonts/, \

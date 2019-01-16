@@ -6,6 +6,7 @@
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
+#include <kandinsky/unicode/utf8_helper.h>
 #include <cmath>
 #include <float.h>
 
@@ -342,10 +343,9 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
-  /* TODO LEA if (complexFormat == Preferences::ComplexFormat::Real && strchr(textInput, KDCodePointMathematicalBoldSmallI) != nullptr) {
+  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::CodePointSearch(textInput, KDCodePointMathematicalBoldSmallI) != nullptr) {
     return Preferences::ComplexFormat::Cartesian;
   }
-  */
   return complexFormat;
 }
 

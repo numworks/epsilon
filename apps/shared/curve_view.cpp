@@ -308,6 +308,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     float xPosition = 0.0f;
     float yPosition = 0.0f;
 
+    bool positioned = false;
     if (strcmp(labelI, "0") == 0) {
       if (floatingLabels != FloatingPosition::None) {
         // Do not draw the zero, it is symbolized by the other axis
@@ -316,24 +317,28 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
       if (shiftOrigin && floatingLabels == FloatingPosition::None) {
         xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
         yPosition = verticalCoordinate + k_labelMargin;
+        positioned = true;
       }
-    } else if (axis == Axis::Horizontal) {
-      xPosition = labelPosition - textSize.width()/2;
-      if (floatingLabels == FloatingPosition::None) {
-        yPosition = verticalCoordinate + k_labelMargin;
-      } else if (floatingLabels == FloatingPosition::Min) {
-        yPosition = k_labelMargin;
+    }
+    if (!positioned) {
+      if (axis == Axis::Horizontal) {
+        xPosition = labelPosition - textSize.width()/2;
+        if (floatingLabels == FloatingPosition::None) {
+          yPosition = verticalCoordinate + k_labelMargin;
+        } else if (floatingLabels == FloatingPosition::Min) {
+          yPosition = k_labelMargin;
+        } else {
+          yPosition = viewHeight - k_font->glyphSize().height() - k_labelMargin;
+        }
       } else {
-        yPosition = viewHeight - k_font->glyphSize().height() - k_labelMargin;
-      }
-    } else {
-      yPosition = labelPosition - textSize.height()/2;
-      if (floatingLabels == FloatingPosition::None) {
-        xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
-      } else if (floatingLabels == FloatingPosition::Min) {
-        xPosition = k_labelMargin;
-      } else {
-        xPosition = Ion::Display::Width - textSize.width() - k_labelMargin;
+        yPosition = labelPosition - textSize.height()/2;
+        if (floatingLabels == FloatingPosition::None) {
+          xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
+        } else if (floatingLabels == FloatingPosition::Min) {
+          xPosition = k_labelMargin;
+        } else {
+          xPosition = Ion::Display::Width - textSize.width() - k_labelMargin;
+        }
       }
     }
     KDPoint origin = KDPoint(xPosition, yPosition);

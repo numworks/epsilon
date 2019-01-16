@@ -67,6 +67,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
 }
 
 Expression MultiplicationNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive);
   return Multiplication(this).setSign(s, context, complexFormat, angleUnit, target);
 }
 

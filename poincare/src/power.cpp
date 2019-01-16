@@ -49,6 +49,7 @@ ExpressionNode::Sign PowerNode::sign(Context * context) const {
 }
 
 Expression PowerNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive);
   return Power(this).setSign(s, context, complexFormat, angleUnit, target);
 }
 
@@ -430,6 +431,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
           result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, complexFormat, angleUnit, target);
         } else {
           // (x+iy)^(-n), n integer positive n < 10
+          assert(r.sign() == ExpressionNode::Sign::Negative);
           result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), context, complexFormat, angleUnit, target).inverse(context, complexFormat, angleUnit, target);
         }
       }

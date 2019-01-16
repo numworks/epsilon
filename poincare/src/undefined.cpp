@@ -14,6 +14,7 @@ int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) 
 }
 
 Expression UndefinedNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return Undefined(this);
 }
 

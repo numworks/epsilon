@@ -279,10 +279,10 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
   assert_parsed_expression_simplify_to("sign(-23)", "-1");
   assert_parsed_expression_simplify_to("sign(-I)", "sign(-I)");
-  assert_parsed_expression_simplify_to("sign(0)", "sign(0)");
-  assert_parsed_expression_simplify_to("sign(inf)", "1)");
-  assert_parsed_expression_simplify_to("sign(-inf)", "-1)");
-  assert_parsed_expression_simplify_to("sign(undef)", "undef");
+  assert_parsed_expression_simplify_to("sign(0)", "0");
+  assert_parsed_expression_simplify_to("sign(inf)", "1");
+  assert_parsed_expression_simplify_to("sign(-inf)", "-1");
+  assert_parsed_expression_simplify_to("sign(undef)", "sign(undef)");
   assert_parsed_expression_simplify_to("sign(23)", "1");
   assert_parsed_expression_simplify_to("sign(log(18))", "1");
   assert_parsed_expression_simplify_to("sign(-R(2))", "-1");

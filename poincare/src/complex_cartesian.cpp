@@ -35,6 +35,18 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferen
   assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
   std::complex<T> a = static_cast<Complex<T> &>(realEvaluation).stdComplex();
   std::complex<T> b = static_cast<Complex<T> &>(imagEvalution).stdComplex();
+  if ((a.imag() != 0.0 && !std::isnan(a.imag())) || (b.imag() != 0.0 && !std::isnan(b.imag()))) {
+    /* a and b are supposed to be real (if they are not undefined). However,
+     * due to double precision limit, the approximation of the real part or the
+     * imaginary part can lead to complex values.
+     * For instance, let the real part be
+     * sqrt(2*sqrt(5E23+1)-1E12*sqrt(2)) ~ 1.1892E-6. Due to std::sqrt(2.0)
+     * unprecision, 2*sqrt(5E23+1)-1E12*sqrt(2) < 0 which leads to
+     * sqrt(2*sqrt(5E23+1)-1E12*sqrt(2)) being a complex number.
+     * In this case, we return an undefined complex because the approximation
+     * is very likely to be false. */
+    return Complex<T>::Undefined();
+  }
   assert(a.imag() == 0.0 || std::isnan(a.imag()));
   assert(b.imag() == 0.0 || std::isnan(b.imag()));
   return Complex<T>(a.real(), b.real());

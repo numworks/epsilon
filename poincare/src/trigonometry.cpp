@@ -1,17 +1,18 @@
 #include <poincare/trigonometry.h>
+#include <poincare/addition.h>
 #include <poincare/constant.h>
-#include <poincare/symbol.h>
-#include <poincare/preferences.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
+#include <poincare/decimal.h>
+#include <poincare/derivative.h>
+#include <poincare/float.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
+#include <poincare/preferences.h>
+#include <poincare/rational.h>
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
-#include <poincare/derivative.h>
-#include <poincare/decimal.h>
-#include <poincare/float.h>
-#include <poincare/power.h>
-#include <poincare/addition.h>
+#include <poincare/symbol.h>
+#include <poincare/trigonometry_cheat_table.h>
+#include <poincare/undefined.h>
 #include <ion.h>
 #include <assert.h>
 #include <cmath>
@@ -87,7 +88,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   assert(isDirectTrigonometryFunction(e));
 
   // Step 1. Try finding an easy standard calculation reduction
-  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, complexFormat, angleUnit, target);
+  Expression lookup = TrigonometryCheatTable::Table()->simplify(e.childAtIndex(0), e.type(), context, complexFormat, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
     return lookup;
@@ -290,7 +291,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   }
 
   // Step 4. Try finding an easy standard calculation reduction
-  Expression lookup = Trigonometry::table(e.childAtIndex(0), e.type(), context, complexFormat, angleUnit, target);
+  Expression lookup = TrigonometryCheatTable::Table()->simplify(e.childAtIndex(0), e.type(), context, complexFormat, angleUnit, target);
   if (!lookup.isUninitialized()) {
     e.replaceWithInPlace(lookup);
     return lookup;
@@ -332,147 +333,6 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   }
 
   return e;
-}
-
-/* We use the cheat table to look for known simplifications (e.g.
- * cos(0)=1, cos(Pi/2)=1...). For each entry of the table, we store its
- * expression and its float approximation in order to quickly scan the table
- * looking for our input approximation. If one entry matches, we then check that
- * the actual expression of our input is equivalent to the table expression.
- */
-
-static_assert('\x8A' == Ion::Charset::SmallPi, "Unicode error");
-
-struct Pair {
-  constexpr Pair(const char * e, float v = NAN) : expression(e), value(v) {}
-  const char * expression;
-  float value;
-};
-constexpr Pair cheatTable[Trigonometry::k_numberOfEntries][5] =
-// Angle in Radian | Angle in Degree | Cosine | Sine | Tangent
-{{Pair("-90", -90.0f),                                             Pair("\x8A*(-2)^(-1)", -1.5707963267948966f),        "",
-  Pair("-1",-1.0f),                                                "undef"},
- {Pair("-75",-75.0),                                               Pair("\x8A*(-5)*12^(-1)",-1.3089969389957472f),      "",
-  Pair("(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)",-0.9659258262890683f), Pair("-(3^(1/2)+2)",-3.7320508075688776f)},
- {Pair("-72",-72.0),                                               Pair("\x8A*2*(-5)^(-1)",-1.2566370614359172f),       "",
-  Pair("-(5/8+5^(1/2)/8)^(1/2)",-0.9510565162951535f),             Pair("-(5+2*5^(1/2))^(1/2)",-3.077683537175253f)},
- {Pair("-135/2",67.5f),                                             Pair("\x8A*(-3)*8^(-1)",-1.1780972450961724f),       "",
-  Pair("-(2+2^(1/2))^(1/2)*2^(-1)",-0.9238795325112867f),          Pair("-1-2^(1/2)",-2.4142135623730945f)},
- {Pair("-60",-60.0f),                                              Pair("\x8A*(-3)^(-1)",-1.0471975511965976f),         "",
-  Pair("-3^(1/2)*2^(-1)",-0.8660254037844386f),                    Pair("-3^(1/2)",-1.7320508075688767f)},
- {Pair("-54",-54.0f),                                              Pair("\x8A*(-3)*10^(-1)",-0.9424777960769379),       "",
-  Pair("4^(-1)*(-1-5^(1/2))",-0.8090169943749473f),                Pair("-(1+2*5^(-1/2))^(1/2)",-1.3763819204711731f)},
- {Pair("-45",-45.0f),                                              Pair("\x8A*(-4)^(-1)",-0.7853981633974483f),         "",
-  Pair("(-1)*(2^(-1/2))",-0.7071067811865475f),                    Pair("-1",-1.0f)},
- {Pair("-36",-36.0f),                                              Pair("\x8A*(-5)^(-1)",-0.6283185307179586f),         "",
-  Pair("-(5/8-5^(1/2)/8)^(1/2)",-0.5877852522924731f),             Pair("-(5-2*5^(1/2))^(1/2)",-0.7265425280053609f)},
- {Pair("-30",-30.0f),                                              Pair("\x8A*(-6)^(-1)",-0.5235987755982988f),         "",
-  Pair("-0.5",-0.5f),                                               Pair("-3^(-1/2)",-0.5773502691896256f)},
- {Pair("-45/2",-22.5f),                                            Pair("\x8A*(-8)^(-1)",-0.39269908169872414f),        "",
-  Pair("(2-2^(1/2))^(1/2)*(-2)^(-1)",-0.3826834323650898f),        Pair("1-2^(1/2)",-0.4142135623730951f)},
- {Pair("-18",-18.0f),                                              Pair("\x8A*(-10)^(-1)",-0.3141592653589793f),        "",
-  Pair("4^(-1)*(1-5^(1/2))",-0.3090169943749474f),                 Pair("-(1-2*5^(-1/2))^(1/2)",-0.3249196962329063f)},
- {Pair("-15",-15.0f),                                              Pair("\x8A*(-12)^(-1)",-0.2617993877991494f),        "",
-  Pair("-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",-0.25881904510252074f),    Pair("3^(1/2)-2",-0.2679491924311227f)},
- {Pair("0",0.0f),                                                  Pair("0",0.0f),                                      Pair("1",1.0f),
-  Pair("0",0.0f),                                                  Pair("0",0.0f)},
- {Pair("15",15.0f),                                                Pair("\x8A*12^(-1)",0.2617993877991494f),            Pair("6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",0.9659258262890683f),
-  Pair("6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",0.25881904510252074f),   Pair("-(3^(1/2)-2)",0.2679491924311227f)},
- {Pair("18",18.0f),                                                Pair("\x8A*10^(-1)",0.3141592653589793f),            Pair("(5/8+5^(1/2)/8)^(1/2)",0.9510565162951535f),
-  Pair("4^(-1)*(5^(1/2)-1)",0.3090169943749474f),                  Pair("(1-2*5^(-1/2))^(1/2)",0.3249196962329063f)},
- {Pair("45/2",22.5f),                                               Pair("\x8A*8^(-1)",0.39269908169872414f),            Pair("(2+2^(1/2))^(1/2)*2^(-1)",0.9238795325112867f),
-  Pair("(2-2^(1/2))^(1/2)*2^(-1)",0.3826834323650898f),            Pair("2^(1/2)-1",0.4142135623730951f)},
- {Pair("30",30.0f),                                                Pair("\x8A*6^(-1)",0.5235987755982988f),             Pair("3^(1/2)*2^(-1)",0.8660254037844387f),
-  Pair("0.5",0.5f),                                                Pair("3^(-1/2)",0.5773502691896256f)},
- {Pair("36",36.0f),                                                Pair("\x8A*5^(-1)",0.6283185307179586f),             Pair("(5^(1/2)+1)*4^(-1)",0.8090169943749475f),
-  Pair("(5/8-5^(1/2)/8)^(1/2)",0.5877852522924731f),               Pair("(5-2*5^(1/2))^(1/2)",0.7265425280053609f)},
- {Pair("45",45.0f),                                                Pair("\x8A*4^(-1)",0.7853981633974483f),             Pair("2^(-1/2)",0.7071067811865476f),
-  Pair("2^(-1/2)",0.7071067811865475f),                            Pair("1",1.0f)},
- {Pair("54",54.0f),                                                Pair("\x8A*3*10^(-1)",0.9424777960769379f),          Pair("(5/8-5^(1/2)/8)^(1/2)",0.5877852522924732f),
-  Pair("4^(-1)*(5^(1/2)+1)",0.8090169943749473f),                  Pair("(1+2*5^(-1/2))^(1/2)",1.3763819204711731f)},
- {Pair("60",60.0f),                                                Pair("\x8A*3^(-1)",1.0471975511965976f),             Pair("0.5",0.5f),
-  Pair("3^(1/2)*2^(-1)",0.8660254037844386f),                      Pair("3^(1/2)",1.7320508075688767f)},
- {Pair("135/2",67.5f),                                             Pair("\x8A*3*8^(-1)",1.1780972450961724f),          Pair("(2-2^(1/2))^(1/2)*2^(-1)",0.38268343236508984f),
-  Pair("(2+2^(1/2))^(1/2)*2^(-1)",0.9238795325112867f),            Pair("1+2^(1/2)",2.4142135623730945f)},
- {Pair("72",72.0f),                                                Pair("\x8A*2*5^(-1)",1.2566370614359172f),           Pair("(5^(1/2)-1)*4^(-1)",0.30901699437494745f),
-  Pair("(5/8+5^(1/2)/8)^(1/2)",0.9510565162951535f),               Pair("(5+2*5^(1/2))^(1/2)",3.077683537175253f)},
- {Pair("75",75.0f),                                                Pair("\x8A*5*12^(-1)",1.3089969389957472f),          Pair("6^(1/2)*4^(-1)+2^(1/2)*(-4)^(-1)",0.25881904510252074f),
-  Pair("6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",0.9659258262890683f),       Pair("3^(1/2)+2",3.7320508075688776f)},
- {Pair("90",90.0f),                                                Pair("\x8A*2^(-1)",1.5707963267948966f),             Pair("0",0.0f),
-  Pair("1",1.0f),                                                  "undef"},
- {Pair("105",105.0f),                                              Pair("\x8A*7*12^(-1)",1.832595714594046f),           Pair("-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)",-0.25881904510252063f),
-  "",                                                             ""},
- {Pair("108",108.0f),                                              Pair("\x8A*3*5^(-1)",1.8849555921538759f),           Pair("(1-5^(1/2))*4^(-1)",-0.30901699437494734f),
-  "",                                                              ""},
- {Pair("225/2",112.5f),                                            Pair("\x8A*5*8^(-1)",1.9634954084936207f),           Pair("(2-2^(1/2))^(1/2)*(-2)^(-1)",-0.3826834323650897f),
-  "",                                                              ""},
- {Pair("120",120.0f),                                              Pair("\x8A*2*3^(-1)",2.0943951023931953f),           Pair("-0.5",-0.5f),
-  "",                                                              ""},
- {Pair("126",126.0f),                                              Pair("\x8A*7*10^(-1)",2.199114857512855f),           Pair("-(5*8^(-1)-5^(1/2)*8^(-1))^(1/2)",-0.587785252292473f),
-  "",                                                              ""},
- {Pair("135",135.0f),                                              Pair("\x8A*3*4^(-1)",2.356194490192345f),            Pair("(-1)*(2^(-1/2))",-0.7071067811865475f),
-  "",                                                              ""},
- {Pair("144",144.0f),                                              Pair("\x8A*4*5^(-1)",2.5132741228718345f),           Pair("(-5^(1/2)-1)*4^(-1)",-0.8090169943749473f),
-  "",                                                              ""},
- {Pair("150",150.0f),                                              Pair("\x8A*5*6^(-1)",2.6179938779914944f),           Pair("-3^(1/2)*2^(-1)",-0.8660254037844387f),
-  "",                                                              ""},
- {Pair("315/2",157.5f),                                            Pair("\x8A*7*8^(-1)",2.748893571891069f),            Pair("-(2+2^(1/2))^(1/2)*2^(-1)",-0.9238795325112867f),
-  "",                                                               ""},
- {Pair("162",162.0f),                                              Pair("\x8A*9*10^(-1)",2.827433388230814f),           Pair("-(5*8^(-1)+5^(1/2)*8^(-1))^(1/2)",-0.9510565162951535f),
-  "",                                                              ""},
- {Pair("165",165.0f),                                              Pair("\x8A*11*12^(-1)",2.8797932657906435f),         Pair("(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)",-0.9659258262890682f),
-  "",                                                              ""},
- {Pair("180",180.0f),                                              Pair("\x8A",3.141592653589793f),                     Pair("-1",-1.0f),
-  Pair("0",0.0f),                                                  Pair("0",0.0f)}};
-
-Expression Trigonometry::table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  assert(type == ExpressionNode::Type::Sine
-      || type == ExpressionNode::Type::Cosine
-      || type == ExpressionNode::Type::Tangent
-      || type == ExpressionNode::Type::ArcCosine
-      || type == ExpressionNode::Type::ArcSine
-      || type == ExpressionNode::Type::ArcTangent);
-
-  int angleUnitIndex = angleUnit == Preferences::AngleUnit::Radian ? 1 : 0;
-  int trigonometricFunctionIndex = type == ExpressionNode::Type::Cosine || type == ExpressionNode::Type::ArcCosine ? 2 : (type == ExpressionNode::Type::Sine || type == ExpressionNode::Type::ArcSine ? 3 : 4);
-  int inputIndex = type == ExpressionNode::Type::ArcCosine || type == ExpressionNode::Type::ArcSine || type == ExpressionNode::Type::ArcTangent ? trigonometricFunctionIndex : angleUnitIndex;
-  int outputIndex = type == ExpressionNode::Type::ArcCosine || type == ExpressionNode::Type::ArcSine || type == ExpressionNode::Type::ArcTangent ? angleUnitIndex : trigonometricFunctionIndex;
-
-  /* Avoid looping if we can exclude quickly that the e is in the table */
-  if (inputIndex == 0 && e.type() != ExpressionNode::Type::Rational) {
-    return Expression();
-  }
-  if (inputIndex == 1 && e.type() != ExpressionNode::Type::Rational && e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Constant) {
-    return Expression();
-  }
-  if (inputIndex >1 && e.type() != ExpressionNode::Type::Rational && e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Power && e.type() != ExpressionNode::Type::Addition) {
-    return Expression();
-  }
-  // We approximate the given expression to quickly compare it to the cheat table entries.
-  float eValue = e.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
-  if (std::isnan(eValue) || std::isinf(eValue)) {
-    return Expression();
-  }
-  for (int i = 0; i < k_numberOfEntries; i++) {
-    float inputValue = cheatTable[i][inputIndex].value;
-    if (std::isnan(inputValue) || std::fabs(inputValue-eValue) > Expression::Epsilon<float>()) {
-      continue;
-    }
-    // Our given expression approximation matches a table entry, we check that both expressions are identical
-    Expression input = Expression::Parse(cheatTable[i][inputIndex].expression);
-    assert(!input.isUninitialized());
-    input = input.deepReduce(context, complexFormat, angleUnit, target);
-    bool rightInput = input.isIdenticalTo(e);
-    if (rightInput) {
-      Expression output = Expression::Parse(cheatTable[i][outputIndex].expression);
-      if (output.isUninitialized()) {
-        return Expression();
-      }
-      return output.deepReduce(context, complexFormat, angleUnit, target);
-    }
-    break;
-  }
-  return Expression();
 }
 
 template <typename T>

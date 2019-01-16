@@ -20,10 +20,11 @@ int OppositeNode::polynomialDegree(Context & context, const char * symbolName) c
 }
 
 ExpressionNode::Sign OppositeNode::sign(Context * context) const {
-  if (childAtIndex(0)->sign(context) == Sign::Positive) {
+  Sign child0Sign = childAtIndex(0)->sign(context);
+  if (child0Sign == Sign::Positive) {
     return Sign::Negative;
   }
-  if (childAtIndex(0)->sign(context) == Sign::Negative) {
+  if (child0Sign == Sign::Negative) {
     return Sign::Positive;
   }
   return ExpressionNode::sign(context);

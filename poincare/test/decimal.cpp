@@ -40,6 +40,7 @@ QUIZ_CASE(poincare_decimal_properties) {
   quiz_assert(Decimal(-2, -3).sign() == ExpressionNode::Sign::Negative);
   quiz_assert(Decimal(2, -3).sign() == ExpressionNode::Sign::Positive);
   quiz_assert(Decimal(2, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Decimal(0, 1).sign() == ExpressionNode::Sign::Positive);
 }
 
 // Simplify

@@ -18,6 +18,7 @@ ExpressionNode::Sign SignFunctionNode::sign(Context * context) const {
 }
 
 Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+ assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   SignFunction sign(this);
   Rational r(s == ExpressionNode::Sign::Positive ? 1 : -1);
   sign.replaceWithInPlace(r);

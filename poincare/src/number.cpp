@@ -20,6 +20,7 @@ double NumberNode::doubleApproximation() const {
     case Type::Unreal:
       return NAN;
     case Type::Infinity:
+      assert(Number(this).sign() == Sign::Negative || Number(this).sign() == Sign::Positive);
       return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;
     case Type::Float:
       if (size() == sizeof(FloatNode<float>)) {

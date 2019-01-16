@@ -99,6 +99,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 // Expression subclassing
 
 Expression RationalNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return Rational(this).setSign(s);
 }
 
@@ -285,7 +286,7 @@ Expression Rational::denominator(Context & context, Preferences::ComplexFormat c
 }
 
 Expression Rational::setSign(ExpressionNode::Sign s) {
-  assert(s != ExpressionNode::Sign::Unknown);
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   node()->setNegative(s == ExpressionNode::Sign::Negative);
   return *this;
 }

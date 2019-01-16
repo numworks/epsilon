@@ -558,6 +558,7 @@ Expression Expression::deepBeautify(Context & context, Preferences::ComplexForma
 }
 
 Expression Expression::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return node()->setSign(s, context, complexFormat, angleUnit, target);
 }
 

@@ -15,6 +15,7 @@ constexpr Expression::FunctionHelper AbsoluteValue::s_functionHelper;
 int AbsoluteValueNode::numberOfChildren() const { return AbsoluteValue::s_functionHelper.numberOfChildren(); }
 
 Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive);
   return AbsoluteValue(this).setSign(s, context, complexFormat, angleUnit);
 }
 

@@ -9,6 +9,7 @@
 #include <poincare/nth_root_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
+#include <kandinsky/unicode/utf8_decoder.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -136,47 +137,54 @@ void LayoutCursor::addXNTCodePointLayout() {
 }
 
 void LayoutCursor::insertText(const char * text) {
-// TODO LEA
-#if 0
-  int textLength = strlen(text);
-  if (textLength <= 0) {
-    return;
-  }
   Layout newChild;
   Layout pointedChild;
-  for (int i = 0; i < textLength; i++) {
-    if (text[i] == //TODO Ion::Charset::Empty) {
+  UTF8Decoder decoder(text);
+  CodePoint codePoint = decoder.nextCodePoint();
+  if (codePoint == KDCodePointNull) {
+    return;
+  }
+  assert(!codePoint.isCombining());
+  while (codePoint != KDCodePointNull) {
+    if (codePoint == KDCodePointEmpty) {
+      codePoint = decoder.nextCodePoint();
+      assert(!codePoint.isCombining());
       continue;
     }
-    if (text[i] == //TODO Ion::Charset::MultiplicationSign) {
+    if (codePoint == KDCodePointMultiplicationSign) {
       newChild = CodePointLayout::Builder(KDCodePointMiddleDot);
-    } else*/ if (text[i] == '(') {
+    } else if (codePoint == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
-    } else if (text[i] == ')') {
+    } else if (codePoint == ')') {
       newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
 #if 0
-    else if (text[i] == '[') {
+    else if (codePoint == '[') {
       newChild = LeftSquareBracketLayout();
-    } else if (text[i] == ']') {
+    } else if (codePoint == ']') {
       newChild = RightSquareBracketLayout();
     }
 #endif
     else {
-      newChild = CodePointLayout::Builder(text[i]);
+      newChild = CodePointLayout::Builder(codePoint);
     }
     m_layout.addSibling(this, newChild, true);
+
+    // Get the next code point
+    codePoint = decoder.nextCodePoint();
+    while (codePoint.isCombining()) {
+      codePoint = decoder.nextCodePoint();
+    }
   }
   if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
     m_position = Position::Right;
   }
-#endif
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(Layout l) {

@@ -41,7 +41,7 @@ endif
 $(eval $(call rule_for, \
   HOSTCC, \
   kandinsky/fonts/rasterizer, \
-  kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  kandinsky/fonts/rasterizer.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
   $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@ \
 ))
 

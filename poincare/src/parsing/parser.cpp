@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <kandinsky/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
@@ -323,7 +324,7 @@ bool Parser::currentTokenIsSpecialIdentifier() const {
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {
-  leftHandSide = Constant::Builder(m_currentToken.text()[0]);
+  leftHandSide = Constant::Builder(m_currentToken.codePoint());
   isThereImplicitMultiplication();
 }
 

@@ -19,7 +19,7 @@ const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, boo
   if (firstCodePoint != KDCodePointNull) {
     CodePoint codePoint = decoder.nextCodePoint();
     while (codePoint.isCombining()) {
-      numberOfBytesForCodePoint = UTF8Decoder::CharSizeOfCodePoint(codePoint);
+      numberOfBytesForCodePoint+= UTF8Decoder::CharSizeOfCodePoint(codePoint);
       codePoint = decoder.nextCodePoint();
     }
   }
@@ -175,12 +175,13 @@ Token Tokenizer::popToken() {
       || c == KDCodePointScriptSmallE)
   {
     Token result(Token::Constant);
-    result.setString(start, 1);
+    result.setCodePoint(c);
     return result;
   }
   if (c == KDCodePointSquareRoot) {
     Token result(Token::Identifier);
-    result.setString(start, 1);
+    // TODO compute size manually?
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(KDCodePointSquareRoot));
     return result;
   }
   if (c == KDCodePointEmpty) {

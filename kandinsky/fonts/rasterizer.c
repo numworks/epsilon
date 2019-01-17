@@ -15,7 +15,6 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "unicode_for_symbol.h"
 #include "code_points.h"
 #include "../../ion/src/external/lz4/lz4hc.h"
 

@@ -7,7 +7,7 @@ class CodePoint {
 public:
   constexpr static int MaxCodePointCharLength = sizeof(uint32_t) / sizeof(char);
   constexpr CodePoint(uint32_t c) : m_code(c) {}
-  constexpr operator uint16_t() const { return m_code; }
+  constexpr operator uint32_t() const { return m_code; }
 
   bool isCombining() const {
     return (m_code >= 0x300 && m_code <= 0x036F);

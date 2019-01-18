@@ -16,12 +16,42 @@ static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
 }
 
 CodePoint UTF8Decoder::nextCodePoint() {
-  int leadingOnes = leading_ones(*m_string);
-  uint32_t result = last_k_bits(*m_string++, 8-leadingOnes-1);
-  for (int i=0; i<(leadingOnes-1); i++) {
+  assert(m_stringPosition == m_stringPosition || *(m_stringPosition - 1) != 0);
+  int leadingOnes = leading_ones(*m_stringPosition);
+  uint32_t result = last_k_bits(*m_stringPosition++, 8-leadingOnes-1);
+  for (int i = 0; i < leadingOnes - 1; i++) {
     result <<= 6;
-    result += (*m_string++ & 0x3F);
+    result += (*m_stringPosition++ & 0x3F);
   }
+  return CodePoint(result);
+}
+
+CodePoint UTF8Decoder::previousCodePoint() {
+  assert(m_stringPosition > m_string);
+  if (leading_ones(*(m_stringPosition - 1)) == 0) {
+    // The current code point is one char long
+    m_stringPosition--;
+    return *m_stringPosition;
+  }
+  // The current code point spans over multiple chars
+  uint32_t result = 0;
+  int i = 0;
+  int leadingOnes = 1;
+  m_stringPosition--;
+  assert(leading_ones(*m_stringPosition) == 1);
+  while (leadingOnes == 1) {
+    assert(m_stringPosition > m_string);
+    result += (*m_stringPosition & 0x3F) << (6 * i);
+    i++;
+    m_stringPosition--;
+    leadingOnes = leading_ones(*m_stringPosition);
+  }
+
+  assert(i <= 3);
+  assert(leadingOnes > 1 && leadingOnes <= 4);
+  assert(m_stringPosition >= m_string);
+
+  result+= last_k_bits(*m_stringPosition, 8-leadingOnes-1);
   return CodePoint(result);
 }
 

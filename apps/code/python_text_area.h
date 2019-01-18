@@ -28,7 +28,7 @@ protected:
     void unloadSyntaxHighlighter();
     void clearRect(KDContext * ctx, KDRect rect) const override;
     void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const override;
-    KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak) const override;
+    KDRect dirtyRectFromPosition(const char * position, bool lineBreak) const override;
   private:
     App * m_pythonDelegate;
   };

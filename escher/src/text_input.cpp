@@ -3,10 +3,14 @@
 
 /* TextInput::ContentView */
 
-void TextInput::ContentView::setCursorLocation(int location) {
-  assert(location >= 0);
-  int adjustedLocation = location > (signed int)editedTextLength() ? (signed int)editedTextLength() : location;
-  m_cursorIndex = adjustedLocation;
+static inline const char * min(const char * x, const char * y) { return x < y ? x : y; } // TODO LEA check this compiles OK
+static inline const char * max(const char * x, const char * y) { return x > y ? x : y; } // TODO LEA check this compiles OK
+
+void TextInput::ContentView::setCursorTextLocation(const char * location) {
+  assert(location != nullptr);
+  assert(location >= text());
+  const char * adjustedLocation = min(location, text() + editedTextLength()); // TODO LEA check this complies OK
+  m_cursorTextLocation = adjustedLocation;
   layoutSubviews();
 }
 
@@ -16,30 +20,38 @@ void TextInput::ContentView::setFont(const KDFont * font) {
 }
 
 KDRect TextInput::ContentView::cursorRect() {
-  return characterFrameAtIndex(m_cursorIndex);
+  return glyphFrameAtPosition(m_cursorTextLocation);
 }
 
 void TextInput::ContentView::layoutSubviews() {
   m_cursorView.setFrame(cursorRect());
 }
 
-KDRect TextInput::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) const {
-  KDRect charRect = characterFrameAtIndex(index);
-  KDRect dirtyRect = KDRect(charRect.x(), charRect.y(), bounds().width() - charRect.x(), charRect.height());
+void TextInput::ContentView::reloadRectFromPosition(const char * position, bool lineBreak) {
+  markRectAsDirty(dirtyRectFromPosition(position, lineBreak));
+}
+
+KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
+  KDRect glyphRect = glyphFrameAtPosition(position);
+  KDRect dirtyRect = KDRect(
+      glyphRect.x(),
+      glyphRect.y(),
+      bounds().width() - glyphRect.x(),
+      glyphRect.height());
   if (lineBreak) {
-    dirtyRect = dirtyRect.unionedWith(KDRect(0, charRect.bottom()+1, bounds().width(), bounds().height()-charRect.bottom()-1));
+    dirtyRect = dirtyRect.unionedWith(
+        KDRect(0,
+          glyphRect.bottom() + 1,
+          bounds().width(),
+          bounds().height() - glyphRect.bottom() - 1));
   }
   return dirtyRect;
 }
 
-void TextInput::ContentView::reloadRectFromCursorPosition(size_t index, bool lineBreak) {
-  markRectAsDirty(dirtyRectFromCursorPosition(index, lineBreak));
-}
-
 /* TextInput */
 
-bool TextInput::removeChar() {
-  contentView()->removeChar();
+bool TextInput::removeCodePoint() {
+  contentView()->removeCodePoint();
   scrollToCursor();
   return true;
 }
@@ -56,15 +68,16 @@ void TextInput::scrollToCursor() {
   scrollToContentRect(contentView()->cursorRect(), true);
 }
 
-bool TextInput::setCursorLocation(int location) {
-  int adjustedLocation = location < 0 ? 0 : location;
-  willSetCursorLocation(&adjustedLocation);
-  contentView()->setCursorLocation(adjustedLocation);
+bool TextInput::setCursorTextLocation(const char * location) {
+  assert(location != nullptr);
+  const char * adjustedLocation = max(location, text());
+  willSetCursorTextLocation(&adjustedLocation);
+  contentView()->setCursorTextLocation(adjustedLocation);
   scrollToCursor();
   return true;
 }
 
-bool TextInput::insertTextAtLocation(const char * text, int location) {
+bool TextInput::insertTextAtLocation(const char * text, const char * location) {
   if (contentView()->insertTextAtLocation(text, location)) {
     /* We layout the scrollable view before scrolling to cursor because the
      * content size might have changed. */

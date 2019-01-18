@@ -32,7 +32,10 @@ public:
   static constexpr const KDFont * LargeFont = &privateLargeFont;
   static constexpr const KDFont * SmallFont = &privateSmallFont;
 
-  KDSize stringSize(const char * text) const;
+  KDSize stringSize(const char * text) const {
+    return stringSizeUntil(text, nullptr);
+  }
+  KDSize stringSizeUntil(const char * text, const char * limit) const;
 
   union GlyphBuffer {
   public:

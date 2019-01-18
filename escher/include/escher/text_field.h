@@ -16,7 +16,8 @@ public:
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
   bool isEditing() const override;
-  size_t draftTextLength() const;
+  const char * draftTextBuffer() const { return const_cast<TextField *>(this)->m_contentView.draftTextBuffer(); }
+  size_t draftTextLength() const; //TODO keep ?
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) override;
@@ -40,7 +41,7 @@ protected:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool isEditing() const { return m_isEditing; }
     const char * text() const override;
-    size_t editedTextLength() const override;
+    size_t editedTextLength() const override { return m_currentDraftTextLength; } //TODO keep ?
     char * textBuffer() { return m_textBuffer; }
     char * draftTextBuffer() { return m_draftTextBuffer; }
     int bufferSize() { return k_maxBufferSize; }
@@ -48,12 +49,12 @@ protected:
     void setAlignment(float horizontalAlignment, float verticalAlignment);
     void setEditing(bool isEditing, bool reinitDraftBuffer);
     void reinitDraftTextBuffer();
-  /* If the text to be appended is too long to be added without overflowing the
-   * buffer, nothing is done (not even adding few letters from the text to reach
-   * the maximum buffer capacity) and false is returned. */
-    bool insertTextAtLocation(const char * text, int location) override;
+    /* If the text to be appended is too long to be added without overflowing the
+     * buffer, nothing is done (not even adding few letters from the text to reach
+     * the maximum buffer capacity) and false is returned. */
+    bool insertTextAtLocation(const char * text, const char * location) override; // TODO
     KDSize minimalSizeForOptimalDisplay() const override;
-    bool removeChar() override;
+    bool removeCodePoint() override;
     bool removeEndOfLine() override;
     void willModifyTextBuffer();
     void didModifyTextBuffer();
@@ -65,11 +66,11 @@ protected:
     constexpr static int k_maxBufferSize = 152;
   private:
     void layoutSubviews() override;
-    KDRect characterFrameAtIndex(size_t index) const override;
+    KDRect glyphFrameAtPosition(const char * position) const override;
     bool m_isEditing;
     char * m_textBuffer;
     char * m_draftTextBuffer;
-    size_t m_currentDraftTextLength;
+    size_t m_currentDraftTextLength; //TODO keep ?
     size_t m_textBufferSize;
     float m_horizontalAlignment;
     float m_verticalAlignment;

@@ -24,7 +24,7 @@ public:
     m_extensionLength(extensionLength)
   {}
 private:
-  void willSetCursorLocation(int * location) override;
+  void willSetCursorTextLocation(const char * * location) override;
   bool privateRemoveEndOfLine() override;
   void removeWholeText() override;
   bool removeTextBeforeExtension(bool whole);

@@ -6,6 +6,12 @@
 
 namespace Poincare {
 
+/* The serialization methods write their argument as a string in the given
+ * buffer, with a null-terminating 0. The return value is:
+ *   -> -1 if the buffer size is 0
+ *   -> Otherwise, the number of chars written, without the null terminating 0
+ */
+
 namespace SerializationHelper {
   // SerializableReference to text
   int Infix(
@@ -30,7 +36,6 @@ namespace SerializationHelper {
   // Write one char in a buffer
   int Char(char * buffer, int bufferSize, char c);
   // Write one code point in a buffer
-  constexpr int MaxSerializedCodePointSize = CodePoint::MaxCodePointCharLength + 1; // Null-terminating char
   int CodePoint(char * buffer, int bufferSize, CodePoint c);
 };
 

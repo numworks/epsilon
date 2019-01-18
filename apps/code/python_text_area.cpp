@@ -18,7 +18,7 @@ constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
 
-static inline int min(int x, int y) { return (x<y ? x : y); }
+static inline int min(int x, int y) { return x < y ? x : y; }
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
@@ -164,13 +164,13 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   }
 }
 
-KDRect PythonTextArea::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) const {
+KDRect PythonTextArea::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
   /* Mark the whole line as dirty.
    * TextArea has a very conservative approach and only dirties the surroundings
    * of the current character. That works for plain text, but when doing syntax
    * highlighting, you may want to redraw the surroundings as well. For example,
    * if editing "def foo" into "df foo", you'll want to redraw "df". */
-  KDRect baseDirtyRect = TextArea::ContentView::dirtyRectFromCursorPosition(index, lineBreak);
+  KDRect baseDirtyRect = TextArea::ContentView::dirtyRectFromPosition(position, lineBreak);
   return KDRect(
     bounds().x(),
     baseDirtyRect.y(),

@@ -5,25 +5,26 @@
 
 constexpr static int k_tabCharacterWidth = 4;
 
-KDSize KDFont::stringSize(const char * text) const {
+KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
   if (text == nullptr) {
     return KDSizeZero;
   }
   KDSize stringSize = KDSize(0, m_glyphSize.height());
 
   UTF8Decoder decoder(text);
+  const char * currentStringPosition = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != KDCodePointNull) {
+  while (codePoint != KDCodePointNull && (limit == nullptr || currentStringPosition < limit)) {
     KDSize cSize = KDSize(m_glyphSize.width(), 0);
     if (codePoint == KDCodePointLineFeed) {
       cSize = KDSize(0, m_glyphSize.height());
-      codePoint = decoder.nextCodePoint();
     } else if (codePoint == KDCodePointTabulation) {
-      cSize = KDSize(k_tabCharacterWidth*m_glyphSize.width(), 0);
+      cSize = KDSize(k_tabCharacterWidth * m_glyphSize.width(), 0);
     } else if (codePoint.isCombining()) {
       cSize = KDSizeZero;
     }
-    stringSize = KDSize(stringSize.width()+cSize.width(), stringSize.height()+cSize.height());
+    stringSize = KDSize(stringSize.width() + cSize.width(), stringSize.height() + cSize.height());
+    currentStringPosition = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
   return stringSize;

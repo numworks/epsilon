@@ -1,8 +1,9 @@
 #ifndef KANDINSKY_UNICODE_UTF8_DECODER_H
 #define KANDINSKY_UNICODE_UTF8_DECODER_H
 
-#include <stddef.h>
 #include "code_point.h"
+#include <stddef.h>
+#include <assert.h>
 
 /* UTF-8 encodes all valid code points using at most 4 bytes (= 28 bits), the
  * lowest codes being equal to ASCII codes. There are less than 2^21 different
@@ -17,13 +18,20 @@
 
 class UTF8Decoder {
 public:
-  UTF8Decoder(const char * string) : m_string(string) {}
+  UTF8Decoder(const char * string, const char * initialPosition = nullptr) :
+    m_string(string),
+    m_stringPosition(initialPosition == nullptr ? string : initialPosition)
+  {
+    assert(m_string != nullptr);
+  }
   CodePoint nextCodePoint();
-  const char * stringPosition() const { return m_string; }
+  CodePoint previousCodePoint();
+  const char * stringPosition() const { return m_stringPosition; }
   static size_t CharSizeOfCodePoint(CodePoint c);
   static size_t CodePointToChars(CodePoint c, char * buffer, int bufferSize);
 private:
-  const char * m_string;
+  const char * const m_string;
+  const char * m_stringPosition;
 };
 
 #endif

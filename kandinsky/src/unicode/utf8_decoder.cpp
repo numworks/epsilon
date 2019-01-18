@@ -25,10 +25,6 @@ CodePoint UTF8Decoder::nextCodePoint() {
   return CodePoint(result);
 }
 
-const char * UTF8Decoder::nextCodePointPointer() {
-  return m_string + leading_ones(*m_string);
-}
-
 size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength;
   char buffer[bufferSize];

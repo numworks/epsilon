@@ -361,12 +361,14 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(rightDelimiter)) {
       m_status = Status::Error; // Right delimiter missing.
-    } else if (rank.isIdenticalTo(Symbol::Builder("n",1))) {
-      char sym[5] = {name, '(', 'n', ')', 0};
-      leftHandSide = Symbol::Builder(sym, 4);
-    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder("n",1),Rational::Builder("1")))) {
-      char sym[7] = {name, '(', 'n', '+', '1', ')', 0};
-      leftHandSide = Symbol::Builder(sym, 6);
+    } else if (rank.isIdenticalTo(Symbol::Builder('n'))) {
+      constexpr int symbolNameSize = 5;
+      char sym[symbolNameSize] = {name, '(', 'n', ')', 0};
+      leftHandSide = Symbol::Builder(sym, symbolNameSize);
+    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder('n'), Rational::Builder("1")))) {
+      constexpr int symbolNameSize = 7;
+      char sym[symbolNameSize] = {name, '(', 'n', '+', '1', ')', 0};
+      leftHandSide = Symbol::Builder(sym, symbolNameSize);
     } else {
       m_status = Status::Error; // Unexpected parameter.
     }
@@ -383,8 +385,12 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   } else if (m_currentToken.compareTo(Unreal::Name()) == 0) {
     leftHandSide = Unreal::Builder();
   } else if (m_currentToken.compareTo("u_") == 0 || m_currentToken.compareTo("v_") == 0) { // Special case for sequences (e.g. "u_{n}")
+    /* We now that m_currentToken.text()[0] is either 'u' or 'v', so we do not
+     * need to pass a code point to parseSequence. */
     parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftBrace, Token::RightBrace);
   } else if (m_currentToken.compareTo("u") == 0 || m_currentToken.compareTo("v") == 0) { // Special case for sequences (e.g. "u(n)")
+    /* We now that m_currentToken.text()[0] is either 'u' or 'v', so we do not
+     * need to pass a code point to parseSequence. */
     parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftParenthesis, Token::RightParenthesis);
   } else if (m_currentToken.compareTo("log_") == 0) { // Special case for the log function (e.g. "log_{2}(8)")
     if (!popTokenIfType(Token::LeftBrace)) {
@@ -426,7 +432,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     return;
   }
   parameter = parameter.childAtIndex(0);
-  if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(),name, length) == 0) {
+  if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
     m_status = Status::Error; // Function and variable must have distinct names.
   } else if (!popTokenIfType(Token::RightParenthesis)) {
     m_status = Status::Error; // Right parenthesis missing.
@@ -487,8 +493,7 @@ void Parser::parseMatrix(Expression & leftHandSide, Token::Type stoppingType) {
       return;
     }
     if ((numberOfRows == 0 && (numberOfColumns = row.numberOfChildren()) == 0)
-        ||
-        (numberOfColumns != row.numberOfChildren())) {
+        || (numberOfColumns != row.numberOfChildren())) {
       m_status = Status::Error; // Incorrect matrix.
       return;
     } else {

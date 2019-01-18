@@ -59,8 +59,8 @@ HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const 
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   UTF8Decoder decoder(buffer);
   const char * currentPointer = buffer;
-  const char * nextPointer = decoder.nextCodePointPointer();
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
   assert(!codePoint.isCombining());
   int layoutIndex = 0;
   int bufferIndex = 0;
@@ -69,13 +69,13 @@ HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const 
     layoutIndex++;
     bufferIndex+= nextPointer - currentPointer;
     currentPointer = nextPointer;
-    nextPointer = decoder.nextCodePointPointer();
     codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
     while (codePoint.isCombining()) {
       bufferIndex+= nextPointer - currentPointer;
       currentPointer = nextPointer;
-      nextPointer = decoder.nextCodePointPointer();
       codePoint = decoder.nextCodePoint();
+      nextPointer = decoder.stringPosition();
     }
   }
   return resultLayout;

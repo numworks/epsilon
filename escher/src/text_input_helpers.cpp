@@ -8,8 +8,8 @@ size_t CursorIndexInCommand(const char * text) {
   size_t index = 0;
   UTF8Decoder decoder(text);
   const char * currentPointer = text;
-  const char * nextPointer = decoder.nextCodePointPointer();
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
   while (codePoint != KDCodePointNull) {
     if (codePoint == KDCodePointEmpty) {
       return index;
@@ -18,8 +18,8 @@ size_t CursorIndexInCommand(const char * text) {
     if (codePoint == '\'') {
       index+= nextPointer - currentPointer;
       currentPointer = nextPointer;
-      nextPointer = decoder.nextCodePointPointer();
       codePoint = decoder.nextCodePoint();
+      nextPointer = decoder.stringPosition();
       if (codePoint == '\'') {
         return index;
       }
@@ -28,8 +28,8 @@ size_t CursorIndexInCommand(const char * text) {
     }
     index+= nextPointer - currentPointer;
     currentPointer = nextPointer;
-    nextPointer = decoder.nextCodePointPointer();
     codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
   }
   return index;
 }

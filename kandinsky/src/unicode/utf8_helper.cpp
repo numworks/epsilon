@@ -10,12 +10,12 @@ static inline int min(int x, int y) { return x < y ? x : y; }
 const char * CodePointSearch(const char * s, CodePoint c) {
   UTF8Decoder decoder(s);
   const char * currentPointer = s;
-  const char * nextPointer = decoder.nextCodePointPointer();
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
   while (codePoint != KDCodePointNull && codePoint != c) {
     currentPointer = nextPointer;
-    nextPointer = decoder.nextCodePointPointer();
     codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
   }
   if (codePoint == c) {
     return currentPointer;
@@ -26,9 +26,9 @@ const char * CodePointSearch(const char * s, CodePoint c) {
 void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, size_t * indexToUpdate) {
   UTF8Decoder decoder(src);
   const char * currentPointer = src;
-  const char * nextPointer = decoder.nextCodePointPointer();
   const char * maxPointer = src + strlen(src) + 1;
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
   size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
 
@@ -43,8 +43,8 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
       *indexToUpdate-= codePointCharSize;
     }
     currentPointer = nextPointer;
-    nextPointer = decoder.nextCodePointPointer();
     codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
   }
 }
 

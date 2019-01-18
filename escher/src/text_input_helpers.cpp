@@ -4,34 +4,28 @@
 
 namespace TextInputHelpers {
 
-size_t CursorIndexInCommand(const char * text) {
-  size_t index = 0;
+const char * CursorPositionInCommand(const char * text) {
   UTF8Decoder decoder(text);
   const char * currentPointer = text;
   CodePoint codePoint = decoder.nextCodePoint();
-  const char * nextPointer = decoder.stringPosition();
   while (codePoint != KDCodePointNull) {
     if (codePoint == KDCodePointEmpty) {
-      return index;
+      return currentPointer;
     }
     //TODO make sure changing empty / ' order was OK
     if (codePoint == '\'') {
-      index+= nextPointer - currentPointer;
-      currentPointer = nextPointer;
+      currentPointer = decoder.stringPosition();
       codePoint = decoder.nextCodePoint();
-      nextPointer = decoder.stringPosition();
       if (codePoint == '\'') {
-        return index;
+        return currentPointer;
       }
       // Continue because we already incremented codePoint
       continue;
     }
-    index+= nextPointer - currentPointer;
-    currentPointer = nextPointer;
+    currentPointer = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
-    nextPointer = decoder.stringPosition();
   }
-  return index;
+  return currentPointer;
 }
 
 }

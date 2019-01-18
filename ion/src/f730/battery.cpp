@@ -1,6 +1,7 @@
 #include <ion/battery.h>
 #include "battery.h"
-#include "regs/regs.h"
+
+#include "regs/adc.h"
 
 /* To measure the battery voltage, we're using the internal ADC. The ADC works
  * by comparing the input voltage to a reference voltage. The only fixed voltage
@@ -54,8 +55,7 @@ void init() {
    * has a voltage of Vbat/2. We'll measure this using ADC channel 0. */
   VoltagePin.group().MODER()->setMode(VoltagePin.pin(), GPIO::MODER::Mode::Analog);
 
-  // Step 2 - Enable the ADC
-  RCC.APB2ENR()->setADC1EN(true);
+  // Step 2 - Power on the ADC
   ADC.CR2()->setADON(true);
 
   // Configure the ADC channel
@@ -78,9 +78,8 @@ void shutdown() {
   ChargingPin.group().MODER()->setMode(ChargingPin.pin(), GPIO::MODER::Mode::Analog);
   ChargingPin.group().PUPDR()->setPull(ChargingPin.pin(), GPIO::PUPDR::Pull::None);
 
-  // Disable the ADC
+  // Power down the ADC
   ADC.CR2()->setADON(false);
-  RCC.APB2ENR()->setADC1EN(false);
 }
 
 }

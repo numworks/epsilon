@@ -15,18 +15,18 @@ static inline bool isDigit(const CodePoint c) {
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
   UTF8Decoder decoder(m_text);
   const char * currentPointer = m_text;
-  const char * nextPointer = decoder.nextCodePointPointer();
   CodePoint firstCodePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
   size_t numberOfBytesForCodePoint = nextPointer - currentPointer;
   if (firstCodePoint != KDCodePointNull) {
     currentPointer = nextPointer;
-    nextPointer = decoder.nextCodePointPointer();
     CodePoint codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
     while (codePoint.isCombining()) {
       numberOfBytesForCodePoint+= nextPointer - currentPointer;
       currentPointer = nextPointer;
-      nextPointer = decoder.nextCodePointPointer();
       codePoint = decoder.nextCodePoint();
+      nextPointer = decoder.stringPosition();
     }
   }
   // TODO handle combined code points? For now the combining codepoints get dropped.

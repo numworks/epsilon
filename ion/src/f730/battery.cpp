@@ -14,7 +14,7 @@ namespace Ion {
 namespace Battery {
 
 bool isCharging() {
-  return !Device::ChargingGPIO.IDR()->get(Device::ChargingPin);
+  return !Device::ChargingPin.group().IDR()->get(Device::ChargingPin.pin());
 }
 
 Charge level() {
@@ -52,7 +52,7 @@ void init() {
 
   /* The BAT_SNS pin is connected to Vbat through a divider bridge. It therefore
    * has a voltage of Vbat/2. We'll measure this using ADC channel 0. */
-  ADCGPIO.MODER()->setMode(ADCPin, GPIO::MODER::Mode::Analog);
+  VoltagePin.group().MODER()->setMode(VoltagePin.pin(), GPIO::MODER::Mode::Analog);
 
   // Step 2 - Enable the ADC
   RCC.APB2ENR()->setADC1EN(true);
@@ -70,13 +70,13 @@ void initGPIO() {
    * open-drain output. Open-drain output are either connected to ground or left
    * floating. To interact with such an output, our input must therefore be
    * pulled up. */
-  ChargingGPIO.MODER()->setMode(ChargingPin, GPIO::MODER::Mode::Input);
-  ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::Up);
+  ChargingPin.group().MODER()->setMode(ChargingPin.pin(), GPIO::MODER::Mode::Input);
+  ChargingPin.group().PUPDR()->setPull(ChargingPin.pin(), GPIO::PUPDR::Pull::Up);
 }
 
 void shutdown() {
-  ChargingGPIO.MODER()->setMode(ChargingPin, GPIO::MODER::Mode::Analog);
-  ChargingGPIO.PUPDR()->setPull(ChargingPin, GPIO::PUPDR::Pull::None);
+  ChargingPin.group().MODER()->setMode(ChargingPin.pin(), GPIO::MODER::Mode::Analog);
+  ChargingPin.group().PUPDR()->setPull(ChargingPin.pin(), GPIO::PUPDR::Pull::None);
 
   // Disable the ADC
   ADC.CR2()->setADON(false);

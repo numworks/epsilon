@@ -23,7 +23,7 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   return nullptr;
 }
 
-void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, size_t * indexToUpdate) {
+void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * pointerToUpdate) {
   UTF8Decoder decoder(src);
   const char * currentPointer = src;
   const char * maxPointer = src + strlen(src) + 1;
@@ -38,9 +38,9 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
       int copySize = min(nextPointer - currentPointer, dstSize - bufferIndex);
       memcpy(dst + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
-    } else if (indexToUpdate != nullptr && currentPointer - src < *indexToUpdate) {
-      assert(*indexToUpdate >= codePointCharSize);
-      *indexToUpdate-= codePointCharSize;
+    } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {
+      assert(*pointerToUpdate - src >= codePointCharSize);
+      *pointerToUpdate = *pointerToUpdate - codePointCharSize;
     }
     currentPointer = nextPointer;
     codePoint = decoder.nextCodePoint();

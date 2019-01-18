@@ -1,14 +1,14 @@
 #ifndef ESCHER_TEXT_INPUT_H
 #define ESCHER_TEXT_INPUT_H
 
-#include <assert.h>
-#include <string.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
+#include <assert.h>
+#include <string.h>
 
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
-  TextInput(Responder * parentResponder, View * contentView);
+  TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}
   void setFont(const KDFont * font) { contentView()->setFont(font); }
   const char * text() const { return nonEditableContentView()->text(); }
   bool removeChar();
@@ -18,7 +18,12 @@ public:
 protected:
   class ContentView : public View {
   public:
-    ContentView(const KDFont * font);
+    ContentView(const KDFont * font) :
+      View(),
+      m_cursorView(),
+      m_font(font),
+      m_cursorIndex(0)
+    {}
     void setFont(const KDFont * font);
     const KDFont * font() const { return m_font; }
     size_t cursorLocation() const { return m_cursorIndex; }
@@ -37,8 +42,11 @@ protected:
     const KDFont * m_font;
     size_t m_cursorIndex;
   private:
-    int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    int numberOfSubviews() const override { return 1; }
+    View * subviewAtIndex(int index) override {
+      assert(index == 1);
+      return &m_cursorView;
+    }
     virtual size_t editedTextLength() const = 0;
   };
 protected:

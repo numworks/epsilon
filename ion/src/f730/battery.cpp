@@ -18,7 +18,6 @@ bool isCharging() {
 }
 
 Charge level() {
-  return Charge::FULL;
   if (voltage() < 3.2f) {
     return Charge::EMPTY;
   }

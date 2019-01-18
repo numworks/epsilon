@@ -1,8 +1,11 @@
 #include "wakeup.h"
-#include "regs/regs.h"
+
 #include "battery.h"
 #include "usb.h"
 #include "keyboard.h"
+
+#include "regs/syscfg.h"
+#include "regs/exti.h"
 
 namespace Ion {
 namespace WakeUp {
@@ -15,13 +18,13 @@ void onChargingEvent() {
    * source input for EXTI at the same time. Here, EXTICR1 register is filled
    * between position 0-3 (charging pin = 0) with
    * 0000 (ChargingGPIO = group A). */
-  SYSCFG.EXTICR1()->setEXTI(Battery::Device::ChargingPin, Battery::Device::ChargingGPIO);
+  SYSCFG.EXTICR1()->setEXTI(Battery::Device::ChargingPin.pin(), Battery::Device::ChargingPin.group());
 
-  EXTI.EMR()->set(Battery::Device::ChargingPin, true);
+  EXTI.EMR()->set(Battery::Device::ChargingPin.pin(), true);
 
   /* We need to detect when the battery stops charging. We set the
    * wake up event on the rising edge. */
-  EXTI.RTSR()->set(Battery::Device::ChargingPin, true);
+  EXTI.RTSR()->set(Battery::Device::ChargingPin.pin(), true);
 }
 
 void onUSBPlugging() {

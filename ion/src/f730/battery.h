@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_BATTERY_H
 #define ION_DEVICE_BATTERY_H
 
-#include "regs/regs.h"
+#include "regs/gpio.h"
 
 namespace Ion {
 namespace Battery {
@@ -18,11 +18,9 @@ void shutdown();
 void initGPIO();
 void initADC();
 
-constexpr GPIO ChargingGPIO = GPIOE;
-constexpr uint8_t ChargingPin = 3;
+constexpr GPIOPin ChargingPin = GPIOPin(GPIOE, 3);
 
-constexpr GPIO ADCGPIO = GPIOB;
-constexpr uint8_t ADCPin = 1;
+constexpr GPIOPin VoltagePin = GPIOPin(GPIOB, 1);
 constexpr uint8_t ADCChannel = 9;
 
 constexpr float ADCReferenceVoltage = 2.8f;

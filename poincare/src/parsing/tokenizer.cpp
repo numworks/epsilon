@@ -14,16 +14,22 @@ static inline bool isDigit(const CodePoint c) {
 
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
   UTF8Decoder decoder(m_text);
+  const char * currentPointer = m_text;
+  const char * nextPointer = decoder.nextCodePointPointer();
   CodePoint firstCodePoint = decoder.nextCodePoint();
-  size_t numberOfBytesForCodePoint = UTF8Decoder::CharSizeOfCodePoint(firstCodePoint);
+  size_t numberOfBytesForCodePoint = nextPointer - currentPointer;
   if (firstCodePoint != KDCodePointNull) {
+    currentPointer = nextPointer;
+    nextPointer = decoder.nextCodePointPointer();
     CodePoint codePoint = decoder.nextCodePoint();
     while (codePoint.isCombining()) {
-      numberOfBytesForCodePoint+= UTF8Decoder::CharSizeOfCodePoint(codePoint);
+      numberOfBytesForCodePoint+= nextPointer - currentPointer;
+      currentPointer = nextPointer;
+      nextPointer = decoder.nextCodePointPointer();
       codePoint = decoder.nextCodePoint();
     }
   }
-  // TODO handle combined code points?
+  // TODO handle combined code points? For now the combining codepoints get dropped.
   bool shouldPop = popTest(firstCodePoint, context);
   if (testResult != nullptr) {
     *testResult = shouldPop;
@@ -181,7 +187,9 @@ Token Tokenizer::popToken() {
   if (c == KDCodePointSquareRoot) {
     Token result(Token::Identifier);
     // TODO compute size manually?
-    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(KDCodePointSquareRoot));
+    constexpr int squareRootCharLength = 3;
+    assert(UTF8Decoder::CharSizeOfCodePoint(KDCodePointSquareRoot) == squareRootCharLength);
+    result.setString(start, squareRootCharLength);
     return result;
   }
   if (c == KDCodePointEmpty) {

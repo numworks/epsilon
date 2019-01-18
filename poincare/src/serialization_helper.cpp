@@ -158,12 +158,10 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     buffer[0] = 0;
     return 0;
   }
-  char helpBuffer[MaxSerializedCodePointSize];
-  size_t size = UTF8Decoder::CodePointToChars(c, helpBuffer, MaxSerializedCodePointSize);
-  assert(size < MaxSerializedCodePointSize);
-  helpBuffer[size] = 0;
-  strlcpy(buffer, helpBuffer, bufferSize);
-  return strlen(buffer);
+  size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
+  int nullTerminatingIndex = min(size, bufferSize - 1);
+  buffer[nullTerminatingIndex] = 0;
+  return nullTerminatingIndex;
 }
 
 }

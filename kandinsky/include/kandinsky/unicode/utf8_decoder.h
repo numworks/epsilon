@@ -18,10 +18,8 @@
 class UTF8Decoder {
 public:
   UTF8Decoder(const char * string) : m_string(string) {}
-  /* TODO: Rename methods? nextCodePoint increases m_string but
-   * nextCodePointPointer does not */
   CodePoint nextCodePoint();
-  const char * nextCodePointPointer();
+  const char * stringPosition() const { return m_string; }
   static size_t CharSizeOfCodePoint(CodePoint c);
   static size_t CodePointToChars(CodePoint c, char * buffer, int bufferSize);
 private:

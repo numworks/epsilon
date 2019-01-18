@@ -11,8 +11,8 @@ int CursorIndexInCommandText(const char * text) {
   UTF8Decoder decoder(text);
   size_t index = 0;
   const char * currentPointer = text;
-  const char * nextPointer = decoder.nextCodePointPointer();
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
   while (codePoint != KDCodePointNull) {
     if (codePoint == '(' || codePoint == '\'') {
       return index + 1;
@@ -22,8 +22,8 @@ int CursorIndexInCommandText(const char * text) {
     }
     index+= nextPointer - currentPointer;
     currentPointer = nextPointer;
-    nextPointer = decoder.nextCodePointPointer();
     codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
   }
   return index;
 }

@@ -93,7 +93,7 @@ bool ConstantNode::isConstantCodePoint(CodePoint c) const {
 }
 
 Constant Constant::Builder(CodePoint c) {
-  constexpr int bufferSize = SerializationHelper::MaxSerializedCodePointSize;
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   size_t codePointSize = SerializationHelper::CodePoint(buffer, bufferSize, c);
   return SymbolAbstract::Builder<Constant, ConstantNode>(buffer, codePointSize);

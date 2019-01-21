@@ -55,7 +55,9 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
     app()->dismissModalViewController();
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
-      appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
+      bool switched = appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
+      assert(switched);
+      (void) switched; // Silence compilation warning about unused variable.
     }
     return true;
   }

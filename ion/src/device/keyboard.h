@@ -52,8 +52,8 @@ inline void activateRow(uint8_t row) {
    * the others to 1. */
   uint16_t rowState = ~(1<<row);
 
-  // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0
-  Device::RowGPIO.ODR()->setBitRange(9, 0, rowState);
+  // TODO: Assert pin numbers are sequentials and dynamically find 8 and 0
+  Device::RowGPIO.ODR()->setBitRange(numberOfRows-1, 0, rowState);
 
   // TODO: 100 us seems to work, but wasn't really calculated
   Timing::usleep(100);

@@ -1,5 +1,9 @@
 language: cpp
 
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+
 addons:
   apt:
     sources:

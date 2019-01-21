@@ -244,6 +244,7 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("abs(P)", "P");
   assert_parsed_expression_simplify_to("abs(-P)", "P");
   assert_parsed_expression_simplify_to("abs(1+I)", "R(2)");
+  assert_parsed_expression_simplify_to("abs(0)", "0");
   assert_parsed_expression_simplify_to("arg(1+I)", "P/4");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");

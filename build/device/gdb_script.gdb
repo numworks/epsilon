@@ -3,7 +3,6 @@
 define armex
   printf "SCB_CFSR        0x%x\n", *0xE000ED28
   printf "SCB_HFSR        0x%x\n", *0xE000ED2C
-  printf "SCB_HFSR        0x%x\n", *0xE000ED2C
   printf "SCB_MMAR        0x%x\n", *0xE000ED34
   printf "SCB_BFAR        0x%x\n", *0xE000ED38
   printf "xPSR            0x%x\n", *(int *)($msp+28)

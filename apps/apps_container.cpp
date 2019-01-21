@@ -223,7 +223,6 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
 }
 
 void AppsContainer::switchTo(App::Snapshot * snapshot) {
-  assert(activeApp() == nullptr || activeApp()->prepareForExit());
   if (activeApp() && snapshot != activeApp()->snapshot()) {
     resetShiftAlphaStatus();
   }

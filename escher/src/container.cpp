@@ -17,6 +17,11 @@ void Container::switchTo(App::Snapshot * snapshot) {
   if (m_activeApp && snapshot == m_activeApp->snapshot()) {
     return;
   }
+  if (m_activeApp && !m_activeApp->prepareForExit()) {
+    /* activeApp()->prepareForExit() returned false, which means that the app
+     * needs another event loop to prepare for being switched off. */
+    return;
+  }
   if (m_activeApp) {
     m_activeApp->willBecomeInactive();
     m_activeApp->snapshot()->pack(m_activeApp);

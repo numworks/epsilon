@@ -53,8 +53,8 @@ State scan() {
   for (uint8_t i=0; i<Device::numberOfRows; i++) {
     Device::activateRow(Device::numberOfRows-1-i);
 
-    // TODO: Assert pin numbers are sequentials and dynamically find 8 and 0
-    uint8_t columns = Device::ColumnGPIO.IDR()->getBitRange(5,0);
+    // TODO: Assert pin numbers are sequentials and dynamically find 5 and 0
+    uint8_t columns = Device::ColumnGPIO.IDR()->getBitRange(Device::numberOfColumns-1,0);
 
     /* The key is down if the input is brought low by the output. In other
      * words, we want to return true if the input is low (false). So we need to

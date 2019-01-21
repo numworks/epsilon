@@ -1,5 +1,6 @@
 #include "turtle.h"
 #include <escher/palette.h>
+#include <cmath>
 extern "C" {
 #include <py/misc.h>
 }
@@ -45,8 +46,8 @@ void Turtle::reset() {
 
 bool Turtle::forward(mp_float_t length) {
   return goTo(
-    m_x + length * cos(m_heading * k_headingScale),
-    m_y + length * sin(m_heading * k_headingScale)
+    m_x + length * std::cos(m_heading * k_headingScale),
+    m_y + length * std::sin(m_heading * k_headingScale)
   );
 }
 
@@ -235,8 +236,8 @@ bool Turtle::draw(bool force) {
 
     // Draw the head
     KDCoordinate headOffsetLength = 6;
-    KDCoordinate headOffsetX = headOffsetLength * cos(m_heading * k_headingScale);
-    KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * sin(m_heading * k_headingScale);
+    KDCoordinate headOffsetX = headOffsetLength * std::cos(m_heading * k_headingScale);
+    KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * std::sin(m_heading * k_headingScale);
     KDPoint headOffset(headOffsetX, headOffsetY);
     drawingRect = KDRect(
         position().translatedBy(headOffset).translatedBy(KDPoint(-k_iconHeadSize/2, -k_iconHeadSize/2)),
@@ -326,8 +327,8 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
   // Compute the paw offset from the turtle center
   float currentAngle = angles[(int) type];
   float crawlDelta = ((float)((int)pos)) * crawlOffset;
-  float pawX = pawOffset * cos(m_heading * k_headingScale + currentAngle) + crawlDelta * cos(m_heading * k_headingScale);
-  float pawY = k_invertedYAxisCoefficient * (pawOffset * sin(m_heading * k_headingScale + currentAngle) + crawlDelta * sin(m_heading * k_headingScale));
+  float pawX = pawOffset * std::cos(m_heading * k_headingScale + currentAngle) + crawlDelta * std::cos(m_heading * k_headingScale);
+  float pawY = k_invertedYAxisCoefficient * (pawOffset * std::sin(m_heading * k_headingScale + currentAngle) + crawlDelta * std::sin(m_heading * k_headingScale));
   KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);
   KDCoordinate pawOffsetY = ((int)pawY) - (pawY < 0 ? 1 : 0);
   KDPoint offset(pawOffsetX, pawOffsetY);

@@ -16,6 +16,10 @@ extern "C" {
 namespace Poincare {
 
 void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  // Interrupt simplification if the expression stored contains a matrix
+  if (Expression(childAtIndex(0)).recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return Expression::IsMatrix(e, context, replaceSymbols); }, context, true)) {
+    Expression::SetInterruption(true);
+  }
   return;
 }
 

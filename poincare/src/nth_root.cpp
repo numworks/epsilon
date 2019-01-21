@@ -53,7 +53,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::C
         // compute root(|x|, q)
         Complex<T> absBasePowIndex = PowerNode::compute(absBasec, std::complex<T>(1.0)/(indexc), complexFormat);
         // q odd if (-1)^q = -1
-        if (std::pow(-1.0, indexc.real()) < 0.0) {
+        if (std::pow((T)-1.0, (T)indexc.real()) < 0.0) {
           return basec.real() < 0 ? Complex<T>(-absBasePowIndex.stdComplex()) : absBasePowIndex;
         }
       }

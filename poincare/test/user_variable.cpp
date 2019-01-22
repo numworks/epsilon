@@ -183,7 +183,10 @@ QUIZ_CASE(poincare_user_variable_properties) {
   quiz_assert(Symbol('a').isApproximate(context));
   quiz_assert(Poincare::Expression::IsMatrix(Symbol('a'), context, true));
 
-  parse_and_simplify("[[x]]>f(x)");
+  /* [[x]]->f(x) expression contains a matrix, so its simplification is going
+   * to be interrupted. We thus rather approximate it instead of simplifying it.
+   * TODO: use parse_and_simplify when matrix are simplified. */
+  assert_parsed_expression_evaluates_to<double>("[[x]]>f(x)", "[[undef]]");
   quiz_assert(Function("f", 1, Rational(2)).isApproximate(context));
   quiz_assert(Poincare::Expression::IsMatrix(Function("f", 1, Symbol('x')), context, true));
 

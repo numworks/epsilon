@@ -160,7 +160,7 @@ const char * TextArea::Text::pointerAtPosition(Position p) {
 
 TextArea::Text::Position TextArea::Text::positionAtPointer(const char * p) const {
   assert(m_buffer != nullptr);
-  assert(p <= m_buffer && p < m_buffer + m_bufferSize);
+  assert(m_buffer <= p && p < m_buffer + m_bufferSize);
   size_t y = 0;
   for (Line l : *this) {
     if (l.contains(p)) {
@@ -283,7 +283,9 @@ KDCoordinate TextArea::Text::Line::glyphWidth(const KDFont * const font) const {
 }
 
 bool TextArea::Text::Line::contains(const char * c) const {
-  return (c >= m_text) && (c < m_text + m_charLength);
+  return (c >= m_text)
+    && ((c < m_text + m_charLength)
+        || (c == m_text + m_charLength && (*c == 0 || *c == '\n'))) ;
 }
 
 /* TextArea::Text::LineIterator */

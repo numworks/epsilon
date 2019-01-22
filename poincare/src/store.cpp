@@ -44,17 +44,32 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Com
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbol. */
-  Store s(this);
-  assert(!s.value().isUninitialized());
-  context.setExpressionForSymbol(s.value(), s.symbol(), context);
-  Expression e = context.expressionForSymbol(s.symbol(), false);
-  if (e.isUninitialized()) {
-    return Complex<T>::Undefined();
-  }
-  return e.node()->approximate(T(), context, complexFormat, angleUnit);
+  Expression storedExpression = Store(this).storeValueForSymbol(context, complexFormat, angleUnit);
+  assert(!storedExpression.isUninitialized());
+  return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
 Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression storedExpression = storeValueForSymbol(context, complexFormat, angleUnit);
+
+  /* We want to replace the store with its reduced left side. If the
+   * simplification of the left side failed, just replace with the left side of
+   * the store without simplifying it.
+   * The simplification fails for [x]->d(x) for instance, because we do not
+   * have exact simplification of matrices yet. */
+  bool interruptedSimplification = SimplificationHasBeenInterrupted();
+  Expression reducedE = storedExpression.clone().deepReduce(context, complexFormat, angleUnit, target);
+  if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
+    storedExpression = reducedE;
+  }
+  // Restore the previous interruption flag
+  SetInterruption(interruptedSimplification);
+
+  replaceWithInPlace(storedExpression);
+  return storedExpression;
+}
+
+Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
@@ -68,8 +83,9 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
   }
   assert(!finalValue.isUninitialized());
   context.setExpressionForSymbol(finalValue, symbol(), context);
-  Expression e = context.expressionForSymbol(symbol(), true);
-  if (e.isUninitialized()) {
+  Expression storedExpression = context.expressionForSymbol(symbol(), true);
+
+  if (storedExpression.isUninitialized()) {
     return Undefined();
   }
   if (symbol().type() == ExpressionNode::Type::Function) {
@@ -77,24 +93,9 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
     Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
-    e = e.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
+    storedExpression = storedExpression.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
-
-  /* We want to replace the store with its reduced left side. If the
-   * simplification of the left side failed, just replace with the left side of
-   * the store without simplifying it.
-   * The simplification fails for [x]->d(x) for instance, because we do not
-   * have exact simplification of matrices yet. */
-  bool interruptedSimplification = SimplificationHasBeenInterrupted();
-  Expression reducedE = e.clone().deepReduce(context, complexFormat, angleUnit, target);
-  if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
-    e = reducedE;
-  }
-  // Restore the previous interruption flag
-  SetInterruption(interruptedSimplification);
-
-  replaceWithInPlace(e);
-  return e;
+  return storedExpression;
 }
 
 }

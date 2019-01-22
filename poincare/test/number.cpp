@@ -29,10 +29,10 @@ QUIZ_CASE(poincare_number_parser) {
   assert_parsed_expression_is("12.34567", Decimal::Builder(Integer("1234567"), 1));
 
   // Infinity
-  assert_parsed_expression_is("23E1000", Infinity::Builder(false));
-  assert_parsed_expression_is("2.3E1000", Decimal::Builder(Integer(23), 1000));
+  assert_parsed_expression_is("23ᴇ1000", Infinity::Builder(false));
+  assert_parsed_expression_is("2.3ᴇ1000", Decimal::Builder(Integer(23), 1000));
 
   // Zero
-  assert_parsed_expression_is("0.23E-1000", Decimal::Builder(Integer(0), 0));
-  assert_parsed_expression_is("0.23E-999", Decimal::Builder(Integer(23), -1000));
+  assert_parsed_expression_is("0.23ᴇ-1000", Decimal::Builder(Integer(0), 0));
+  assert_parsed_expression_is("0.23ᴇ-999", Decimal::Builder(Integer(23), -1000));
 }

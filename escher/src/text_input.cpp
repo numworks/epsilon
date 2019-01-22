@@ -3,13 +3,13 @@
 
 /* TextInput::ContentView */
 
-static inline const char * min(const char * x, const char * y) { return x < y ? x : y; } // TODO LEA check this compiles OK
-static inline const char * max(const char * x, const char * y) { return x > y ? x : y; } // TODO LEA check this compiles OK
+static inline const char * min(const char * x, const char * y) { return x < y ? x : y; }
+static inline const char * max(const char * x, const char * y) { return x > y ? x : y; }
 
 void TextInput::ContentView::setCursorTextLocation(const char * location) {
   assert(location != nullptr);
   assert(location >= text());
-  const char * adjustedLocation = min(location, text() + editedTextLength()); // TODO LEA check this complies OK
+  const char * adjustedLocation = min(location, text() + editedTextLength());
   m_cursorTextLocation = adjustedLocation;
   layoutSubviews();
 }

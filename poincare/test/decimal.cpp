@@ -47,13 +47,13 @@ QUIZ_CASE(poincare_decimal_properties) {
 
 QUIZ_CASE(poincare_decimal_simplify) {
   assert_parsed_expression_simplify_to("-2.3", "-23/10");
-  assert_parsed_expression_simplify_to("-232.2E-4", "-1161/50000");
-  assert_parsed_expression_simplify_to("0000.000000E-2", "0");
+  assert_parsed_expression_simplify_to("-232.2ᴇ-4", "-1161/50000");
+  assert_parsed_expression_simplify_to("0000.000000ᴇ-2", "0");
   assert_parsed_expression_simplify_to(".000000", "0");
   assert_parsed_expression_simplify_to("0000", "0");
 }
 
 QUIZ_CASE(poincare_decimal_approximate) {
-  assert_parsed_expression_evaluates_to<float>("1.2343E-2", "0.012343");
-  assert_parsed_expression_evaluates_to<double>("-567.2E2", "-56720");
+  assert_parsed_expression_evaluates_to<float>("1.2343ᴇ-2", "0.012343");
+  assert_parsed_expression_evaluates_to<double>("-567.2ᴇ2", "-56720");
 }

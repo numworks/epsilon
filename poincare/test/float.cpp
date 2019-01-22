@@ -21,16 +21,16 @@ void assert_float_evaluates_to(Float<T> f, const char * result) {
 }
 
 QUIZ_CASE(poincare_float_evaluate) {
-  assert_float_evaluates_to<double>(Float<double>::Builder(-1.23456789E30), "-1.23456789E30");
-  assert_float_evaluates_to<double>(Float<double>::Builder(1.23456789E30), "1.23456789E30");
-  assert_float_evaluates_to<double>(Float<double>::Builder(-1.23456789E-30), "-1.23456789E-30");
+  assert_float_evaluates_to<double>(Float<double>::Builder(-1.23456789E30), "-1.23456789ᴇ30");
+  assert_float_evaluates_to<double>(Float<double>::Builder(1.23456789E30), "1.23456789ᴇ30");
+  assert_float_evaluates_to<double>(Float<double>::Builder(-1.23456789E-30), "-1.23456789ᴇ-30");
   assert_float_evaluates_to<double>(Float<double>::Builder(-1.2345E-3), "-0.0012345");
   assert_float_evaluates_to<double>(Float<double>::Builder(1.2345E-3), "0.0012345");
   assert_float_evaluates_to<double>(Float<double>::Builder(1.2345E3), "1234.5");
   assert_float_evaluates_to<double>(Float<double>::Builder(-1.2345E3), "-1234.5");
-  assert_float_evaluates_to<double>(Float<double>::Builder(0.99999999999995), "9.9999999999995E-1");
-  assert_float_evaluates_to<double>(Float<double>::Builder(0.00000099999999999995), "9.9999999999995E-7");
-  assert_float_evaluates_to<double>(Float<double>::Builder(0.0000009999999999901200121020102010201201201021099995), "9.9999999999012E-7");
+  assert_float_evaluates_to<double>(Float<double>::Builder(0.99999999999995), "9.9999999999995ᴇ-1");
+  assert_float_evaluates_to<double>(Float<double>::Builder(0.00000099999999999995), "9.9999999999995ᴇ-7");
+  assert_float_evaluates_to<double>(Float<double>::Builder(0.0000009999999999901200121020102010201201201021099995), "9.9999999999012ᴇ-7");
   assert_float_evaluates_to<float>(Float<float>::Builder(1.2345E-1), "0.12345");
   assert_float_evaluates_to<float>(Float<float>::Builder(1), "1");
   assert_float_evaluates_to<float>(Float<float>::Builder(0.9999999999999995), "1");

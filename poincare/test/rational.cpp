@@ -111,8 +111,8 @@ QUIZ_CASE(poincare_rational_simplify) {
   assert_parsed_expression_simplify_to("0.1234", "617/5000");
   assert_parsed_expression_simplify_to("0.1234000", "617/5000");
   assert_parsed_expression_simplify_to("001234000", "1234000");
-  assert_parsed_expression_simplify_to("001.234000E3", "1234");
-  assert_parsed_expression_simplify_to("001234000E-4", "617/5");
+  assert_parsed_expression_simplify_to("001.234000ᴇ3", "1234");
+  assert_parsed_expression_simplify_to("001234000ᴇ-4", "617/5");
   assert_parsed_expression_simplify_to("3/4+5/4-12+1/567", "-5669/567");
   assert_parsed_expression_simplify_to("34/78+67^(-1)", "1178/2613");
   assert_parsed_expression_simplify_to("12348/34564", "3087/8641");
@@ -123,14 +123,14 @@ QUIZ_CASE(poincare_rational_simplify) {
   assert_parsed_expression_simplify_to("999^-999", "1/999^999");
   assert_parsed_expression_simplify_to("0^0", Undefined::Name());
   assert_parsed_expression_simplify_to("x^0", "1");
-  assert_parsed_expression_simplify_to("P^0", "1");
+  assert_parsed_expression_simplify_to("π^0", "1");
   assert_parsed_expression_simplify_to("A^0", "1");
   assert_parsed_expression_simplify_to("(-3)^0", "1");
 }
 
 QUIZ_CASE(poincare_rational_approximate) {
   assert_parsed_expression_evaluates_to<float>("1/3", "0.3333333");
-  assert_parsed_expression_evaluates_to<double>("123456/1234567", "9.9999432999586E-2");
+  assert_parsed_expression_evaluates_to<double>("123456/1234567", "9.9999432999586ᴇ-2");
 }
 
 

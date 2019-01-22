@@ -179,7 +179,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     numberOfCharExponent++;
   }
 
-  /* Part III: print mantissa*10^exponent*/
+  /* Part III: print mantissa*10^exponent */
   int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
   // Print mantissa
   assert(!dividend.isOverflow());
@@ -199,11 +199,11 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   // Print exponent
   assert(numberOfCharsForMantissaWithSign < bufferSize);
   int currentNumberOfChar = numberOfCharsForMantissaWithSign;
-  currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, KDCodePointScriptSmallE);
+  currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, KDCodePointLatinLetterSmallCapitalE);
   assert(numberOfCharExponent+currentNumberOfChar < bufferSize);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer+numberOfCharsForMantissaWithSign+1, numberOfCharExponent, Integer(exponentInBase10), -1);
-  buffer[numberOfCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
-  return (numberOfCharsForMantissaWithSign+1+numberOfCharExponent);
+  PrintFloat::printBase10IntegerWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, Integer(exponentInBase10), -1);
+  buffer[currentNumberOfChar + numberOfCharExponent] = 0;
+  return (currentNumberOfChar + numberOfCharExponent);
 }
 
 template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);

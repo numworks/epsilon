@@ -98,6 +98,7 @@ protected:
       TextInput::ContentView(font),
       m_text(nullptr, 0)
     {
+      m_cursorTextLocation = m_text.text();
     }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const;

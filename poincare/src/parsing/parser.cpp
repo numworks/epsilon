@@ -361,10 +361,10 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     } else if (!popTokenIfType(rightDelimiter)) {
       m_status = Status::Error; // Right delimiter missing.
     } else if (rank.isIdenticalTo(Symbol("n",1))) {
-      char sym[4] = {name, '(', 'n', ')'};
+      char sym[5] = {name, '(', 'n', ')', 0};
       leftHandSide = Symbol(sym, 4);
     } else if (rank.isIdenticalTo(Addition(Symbol("n",1),Rational("1")))) {
-      char sym[6] = {name, '(', 'n', '+', '1', ')'};
+      char sym[7] = {name, '(', 'n', '+', '1', ')', 0};
       leftHandSide = Symbol(sym, 6);
     } else {
       m_status = Status::Error; // Unexpected parameter.

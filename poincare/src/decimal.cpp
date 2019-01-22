@@ -177,7 +177,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       return currentChar;
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
-    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, KDCodePointScriptSmallE);
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, KDCodePointLatinLetterSmallCapitalE);
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
     currentChar += Integer(exponent).serialize(buffer+currentChar, bufferSize-currentChar);
     return currentChar;

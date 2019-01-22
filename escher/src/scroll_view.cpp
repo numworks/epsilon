@@ -10,13 +10,11 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
   m_contentView(contentView),
   m_dataSource(dataSource),
-  m_verticalScrollIndicator(),
-  m_horizontalScrollIndicator(),
   m_topMargin(0),
   m_rightMargin(0),
   m_bottomMargin(0),
   m_leftMargin(0),
-  m_indicatorThickness(20),
+  m_decorator(),
   m_showsIndicators(true),
   m_colorsBackground(true),
   m_backgroundColor(Palette::WallScreen)
@@ -32,7 +30,11 @@ void ScrollView::setCommonMargins() {
 }
 
 int ScrollView::numberOfSubviews() const {
-  return (m_showsIndicators) ? 1 + m_verticalScrollIndicator.visible() + m_horizontalScrollIndicator.visible() : 1;
+  int result = 1;
+  if (m_showsIndicators) {
+    result += const_cast<ScrollView *>(this)->m_decorator.numberOfIndicators();
+  }
+  return result;
 }
 
 View * ScrollView::subviewAtIndex(int index) {
@@ -40,15 +42,7 @@ View * ScrollView::subviewAtIndex(int index) {
     return m_contentView;
   }
   if (m_showsIndicators) {
-    switch (index) {
-      case 1:
-        if (m_horizontalScrollIndicator.visible()) {
-          return &m_horizontalScrollIndicator;
-        }
-        return &m_verticalScrollIndicator;
-      case 2:
-        return &m_verticalScrollIndicator;
-    }
+    return m_decorator.indicatorAtIndex(index);
   }
   return nullptr;
 }
@@ -124,39 +118,12 @@ void ScrollView::layoutSubviews() {
   KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
   KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
   m_contentView->setFrame(contentFrame);
-
-  if (!m_showsIndicators) {
-    return;
-  }
-
-  // We recompute the size of the scroll indicator
-  m_verticalScrollIndicator.update(
-    m_contentView->bounds().height()+m_topMargin+m_bottomMargin,
-    contentOffset().y(),
-    m_frame.height()
-  );
-  m_horizontalScrollIndicator.update(
-    m_contentView->bounds().width()+m_leftMargin+m_rightMargin,
-    contentOffset().x(),
-    m_frame.width()
-  );
-
-  // Layout indicators
-  /* If the two indicators are visible, we leave an empty rectangle in the right
-   * bottom corner. Otherwise, the only indicator uses all the height/width. */
-  if (m_verticalScrollIndicator.visible()) {
-    KDRect verticalIndicatorFrame = KDRect(
-      m_frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, m_frame.height() - m_horizontalScrollIndicator.visible() * m_indicatorThickness
+  if (m_showsIndicators) {
+    KDSize content(
+      m_contentView->bounds().width() + m_leftMargin + m_rightMargin,
+      m_contentView->bounds().height() + m_topMargin + m_bottomMargin
     );
-    m_verticalScrollIndicator.setFrame(verticalIndicatorFrame);
-  }
-  if (m_horizontalScrollIndicator.visible()) {
-    KDRect horizontalIndicatorFrame = KDRect(
-      0, m_frame.height() - m_indicatorThickness,
-      m_frame.width() - m_verticalScrollIndicator.visible() * m_indicatorThickness, m_indicatorThickness
-    );
-    m_horizontalScrollIndicator.setFrame(horizontalIndicatorFrame);
+    m_decorator.layoutIndicators(content, contentOffset(), m_frame.size());
   }
 }
 
@@ -176,6 +143,58 @@ KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {
 
 KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
   return m_frame.height() - m_topMargin - m_bottomMargin;
+}
+
+ScrollView::Decorator::Decorator() :
+  m_verticalScrollIndicator(),
+  m_horizontalScrollIndicator(),
+  m_indicatorThickness(20)
+{
+}
+
+int ScrollView::Decorator::numberOfIndicators() {
+  return m_verticalScrollIndicator.visible() + m_horizontalScrollIndicator.visible();
+}
+
+View * ScrollView::Decorator::indicatorAtIndex(int index) {
+  switch (index) {
+    case 1:
+      if (m_horizontalScrollIndicator.visible()) {
+        return &m_horizontalScrollIndicator;
+      } else {
+        return &m_verticalScrollIndicator;
+      }
+    case 2:
+      return &m_verticalScrollIndicator;
+  }
+  return nullptr;
+}
+
+void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
+  m_horizontalScrollIndicator.update(
+    content.width(),
+    offset.x(),
+    frame.width()
+  );
+  m_verticalScrollIndicator.update(
+    content.height(),
+    offset.y(),
+    frame.height()
+  );
+  /* If the two indicators are visible, we leave an empty rectangle in the right
+   * bottom corner. Otherwise, the only indicator uses all the height/width. */
+  if (m_verticalScrollIndicator.visible()) {
+    m_verticalScrollIndicator.setFrame(KDRect(
+      frame.width() - m_indicatorThickness, 0,
+      m_indicatorThickness, frame.height() - m_horizontalScrollIndicator.visible() * m_indicatorThickness
+    ));
+  }
+  if (m_horizontalScrollIndicator.visible()) {
+    m_horizontalScrollIndicator.setFrame(KDRect(
+      0, frame.height() - m_indicatorThickness,
+      frame.width() - m_verticalScrollIndicator.visible() * m_indicatorThickness, m_indicatorThickness
+    ));
+  }
 }
 
 #if ESCHER_VIEW_LOGGING

@@ -25,17 +25,28 @@ public:
   void setMargins(KDCoordinate m) { setMargins(m, m, m, m); }
   void setCommonMargins();
 
+  class Decorator {
+  public:
+    Decorator();
+    int numberOfIndicators();
+    View * indicatorAtIndex(int index);
+    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
+    ScrollViewVerticalIndicator * verticalBar() { return &m_verticalScrollIndicator; }
+    ScrollViewHorizontalIndicator * horizontalBar() { return &m_horizontalScrollIndicator; }
+    void setIndicatorThickness(KDCoordinate t) { m_indicatorThickness = t; }
+  private:
+    ScrollViewVerticalIndicator m_verticalScrollIndicator;
+    ScrollViewHorizontalIndicator m_horizontalScrollIndicator;
+    KDCoordinate m_indicatorThickness;
+  };
+
+  Decorator * decorator() { return &m_decorator; }
   void setShowsIndicators(bool s) { m_showsIndicators = s; }
   bool showsIndicators() const { return m_showsIndicators; }
   void setColorsBackground(bool c) { m_colorsBackground = c; }
   bool colorsBackground() const { return m_colorsBackground; }
   virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   KDColor backgroundColor() const { return m_backgroundColor; }
-
-  ScrollViewVerticalIndicator * verticalScrollIndicator() { return &m_verticalScrollIndicator; }
-  ScrollViewHorizontalIndicator * horizontalScrollIndicator() { return &m_horizontalScrollIndicator; }
-  void setIndicatorThickness(KDCoordinate t) { m_indicatorThickness = t; }
-  KDCoordinate indicatorThickness() const { return m_indicatorThickness; }
 
   void setContentOffset(KDPoint offset, bool forceRelayout = false);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
@@ -58,13 +69,12 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
 
-  ScrollViewVerticalIndicator m_verticalScrollIndicator;
-  ScrollViewHorizontalIndicator m_horizontalScrollIndicator;
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
-  KDCoordinate m_indicatorThickness;
+
+  Decorator m_decorator;
   bool m_showsIndicators;
   bool m_colorsBackground;
   KDColor m_backgroundColor;

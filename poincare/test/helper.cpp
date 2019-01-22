@@ -41,26 +41,6 @@ bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression g
   return identical;
 }
 
-/*TODO LEA
- *void translate_in_ASCII_chars(char * expression) {
-  for (char *c = expression; *c; c++) {
-    switch (*c) {
-      case Ion::Charset::Exponent: *c = 'E'; break;
-      case KDCodePointScriptSmallE: *c = 'X'; break;
-      case KDCodePointMathematicalBoldSmallI: *c = 'I'; break;
-      case Ion::Charset::Root: *c = 'R'; break;
-      case KDCodePointGreekSmallLetterPi: *c = 'P'; break;
-      case Ion::Charset::MultiplicationSign: *c = '*'; break;
-      case KDCodePointMiddleDot: *c = '*'; break;
-      case Ion::Charset::Sto: *c = '>'; break;
-      case Poincare::Symbol::SpecialSymbols::UnknownX: *c = '?'; break;
-      case Ion::Charset::LeftSuperscript: *c = '$'; break;
-      case Ion::Charset::RightSuperscript: *c = '#'; break;
-    }
-  }
-}
-*/
-
 Expression parse_expression(const char * expression, bool canBeUnparsable) {
   quiz_print(expression);
   Expression result = Expression::Parse(expression);

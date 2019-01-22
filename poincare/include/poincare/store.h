@@ -37,6 +37,7 @@ private:
 };
 
 class Store final : public Expression {
+friend class StoreNode;
 public:
   Store(const StoreNode * n) : Expression(n) {}
   Store(Expression value, SymbolAbstract symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {
@@ -56,6 +57,9 @@ public:
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+private:
+  Expression storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  StoreNode * node() const { return static_cast<StoreNode *>(Expression::node()); }
 };
 
 }

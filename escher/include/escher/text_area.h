@@ -107,6 +107,7 @@ protected:
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
     const char * text() const override { return m_text.text(); }
+    const char * editedText() const override { return m_text.text(); }
     size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
     bool insertTextAtLocation(const char * text, const char * location) override;

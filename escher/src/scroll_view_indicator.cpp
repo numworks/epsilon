@@ -32,6 +32,9 @@ void ScrollViewBar::update(KDCoordinate totalContentLength, KDCoordinate content
 }
 
 void ScrollViewHorizontalBar::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!visible()) {
+    return;
+  }
   ctx->fillRect(
     KDRect(
       m_margin, (m_frame.height() - k_indicatorThickness)/2,
@@ -49,6 +52,9 @@ void ScrollViewHorizontalBar::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void ScrollViewVerticalBar::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!visible()) {
+    return;
+  }
   ctx->fillRect(
     KDRect(
       (m_frame.width() - k_indicatorThickness)/2, m_margin,

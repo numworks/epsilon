@@ -7,9 +7,9 @@
 using namespace Poincare;
 using namespace Shared;
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
-static inline int maxInt(int x, int y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 namespace Regression {
 
@@ -400,8 +400,8 @@ InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(Interact
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     for (int k = 0; k < m_store->numberOfPairsOfSeries(series); k++) {
       if (m_store->xMin() <= m_store->get(series, 0, k) && m_store->get(series, 0, k) <= m_store->xMax()) {
-        minY = min(minY, m_store->get(series, 1, k));
-        maxY = max(maxY, m_store->get(series, 1, k));
+        minY = minFloat(minY, m_store->get(series, 1, k));
+        maxY = maxFloat(maxY, m_store->get(series, 1, k));
       }
     }
   }

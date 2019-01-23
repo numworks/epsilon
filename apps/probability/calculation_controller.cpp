@@ -203,10 +203,10 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField, boo
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
        || (event == Ion::Events::Right
-           && textField->cursorTextLocation() == textField->text() + textField->draftTextLength()
+           && textField->cursorLocation() == textField->text() + textField->draftTextLength()
            && selectedColumn() < m_calculation->numberOfParameters())
        || (event == Ion::Events::Left
-           && textField->cursorTextLocation() == textField->text());
+           && textField->cursorLocation() == textField->text());
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

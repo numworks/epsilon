@@ -21,7 +21,7 @@ TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont
 }
 
 bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
-  const char * nextCursorLocation = cursorTextLocation();
+  const char * nextCursorLocation = cursorLocation();
 
   const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(text);
 
@@ -32,7 +32,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, text, UCodePointEmpty, &cursorPositionInCommand);
 
   // Insert the text
-  if ((indentation && insertTextWithIndentation(buffer, cursorTextLocation())) || insertTextAtLocation(buffer, cursorTextLocation())) {
+  if ((indentation && insertTextWithIndentation(buffer, cursorLocation())) || insertTextAtLocation(buffer, cursorLocation())) {
     // Set the cursor location
     if (forceCursorRightOfText) {
       nextCursorLocation += strlen(buffer);
@@ -40,7 +40,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
       nextCursorLocation += cursorPositionInCommand - text;
     }
   }
-  setCursorTextLocation(nextCursorLocation);
+  setCursorLocation(nextCursorLocation);
   return true;
 }
 
@@ -50,20 +50,20 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (handleBoxEvent(app(), event)) {
     return true;
   } else if (event == Ion::Events::Left) {
-    if (cursorTextLocation() <= text()) {
-      assert(cursorTextLocation() == text());
+    if (cursorLocation() <= text()) {
+      assert(cursorLocation() == text());
       return false;
     }
-    UTF8Decoder decoder(text(), cursorTextLocation());
+    UTF8Decoder decoder(text(), cursorLocation());
     decoder.previousCodePoint();
-    return setCursorTextLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.stringPosition());
   } else if (event == Ion::Events::Right) {
-    if (*cursorTextLocation() == 0) {
+    if (*cursorLocation() == 0) {
       return false;
     }
-    UTF8Decoder decoder(text(), cursorTextLocation());
+    UTF8Decoder decoder(text(), cursorLocation());
     decoder.nextCodePoint();
-    return setCursorTextLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.stringPosition());
   } else if (event == Ion::Events::Up) {
     contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
@@ -98,7 +98,7 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
 
 bool TextArea::insertTextWithIndentation(const char * textBuffer, const char * location) {
   int indentation = indentationBeforeCursor();
-  const char * previousChar = cursorTextLocation()-1;
+  const char * previousChar = cursorLocation()-1;
   if (previousChar >= const_cast<TextArea *>(this)->contentView()->text() && *previousChar == ':') {
     indentation += k_indentationSpaces;
   }
@@ -127,7 +127,7 @@ bool TextArea::insertTextWithIndentation(const char * textBuffer, const char * l
 }
 
 int TextArea::indentationBeforeCursor() const {
-  const char * p = cursorTextLocation()-1;
+  const char * p = cursorLocation()-1;
   int indentationSize = 0;
   // No need to use the UTF8Decoder here, be cause we look for an ASCII char.
   while (p >= const_cast<TextArea *>(this)->contentView()->text() && *p != '\n') {
@@ -366,7 +366,7 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
 
 void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
   m_text.setText(textBuffer, textBufferSize);
-  m_cursorTextLocation = text();
+  m_cursorLocation = text();
 }
 
 bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, const char * location) {
@@ -389,39 +389,39 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
 }
 
 bool TextArea::TextArea::ContentView::removeCodePoint() {
-  if (cursorTextLocation() <= text()) {
-    assert(cursorTextLocation() == text());
+  if (cursorLocation() <= text()) {
+    assert(cursorLocation() == text());
     return false;
   }
   bool lineBreak = false;
-  const char * cursorLoc = cursorTextLocation();
+  const char * cursorLoc = cursorLocation();
   lineBreak = m_text.removeCodePoint(&cursorLoc) == '\n';
-  setCursorTextLocation(cursorLoc); // Update the cursor
+  setCursorLocation(cursorLoc); // Update the cursor
   layoutSubviews(); // Reposition the cursor
-  reloadRectFromPosition(cursorTextLocation(), lineBreak);
+  reloadRectFromPosition(cursorLocation(), lineBreak);
   return true;
 }
 
 bool TextArea::ContentView::removeEndOfLine() {
-  size_t removedLine = m_text.removeRemainingLine(cursorTextLocation(), 1);
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), 1);
   if (removedLine > 0) {
     layoutSubviews();
-    reloadRectFromPosition(cursorTextLocation(), false);
+    reloadRectFromPosition(cursorLocation(), false);
     return true;
   }
   return false;
 }
 
 bool TextArea::ContentView::removeStartOfLine() {
-  if (cursorTextLocation() <= text()) {
-    assert(cursorTextLocation() == text());
+  if (cursorLocation() <= text()) {
+    assert(cursorLocation() == text());
     return false;
   }
-  size_t removedLine = m_text.removeRemainingLine(cursorTextLocation(), -1); //TODO LEA Before : cursorTextLocation()-1
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), -1); //TODO LEA Before : cursorLocation()-1
   if (removedLine > 0) {
-    assert(cursorTextLocation() >= text() + removedLine);
-    setCursorTextLocation(cursorTextLocation() - removedLine);
-    reloadRectFromPosition(cursorTextLocation(), false);
+    assert(cursorLocation() >= text() + removedLine);
+    setCursorLocation(cursorLocation() - removedLine);
+    reloadRectFromPosition(cursorLocation(), false);
     return true;
   }
   return false;
@@ -453,6 +453,6 @@ KDRect TextArea::ContentView::glyphFrameAtPosition(const char * position) const 
 }
 
 void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
-  Text::Position p = m_text.positionAtPointer(cursorTextLocation());
-  setCursorTextLocation(m_text.pointerAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
+  Text::Position p = m_text.positionAtPointer(cursorLocation());
+  setCursorLocation(m_text.pointerAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
 }

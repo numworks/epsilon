@@ -19,8 +19,8 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
      || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
      || (event == Ion::Events::Up && selectedRow() > 0)
-     || (event == Ion::Events::Right && (textField->cursorTextLocation() == textField->draftTextBuffer() + textField->draftTextLength()) && selectedColumn() < numberOfColumns()-1)
-     || (event == Ion::Events::Left && textField->cursorTextLocation() == textField->draftTextBuffer() && selectedColumn() > 0);
+     || (event == Ion::Events::Right && (textField->cursorLocation() == textField->draftTextBuffer() + textField->draftTextLength()) && selectedColumn() < numberOfColumns()-1)
+     || (event == Ion::Events::Left && textField->cursorLocation() == textField->draftTextBuffer() && selectedColumn() > 0);
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

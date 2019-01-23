@@ -4,13 +4,20 @@
 #include <escher/view.h>
 #include <kandinsky/color.h>
 
+/* alignment = 0 -> align left or top
+ * alignment = 0.5 -> align center
+ * alignment = 1.0 -> align right or bottom */
+
 class TextView : public View {
 public:
-  // alignment = 0 -> align left or top
-  // alignment = 0.5 -> align center
-  // alignment = 1.0 -> align right or bottom
-  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
-    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  TextView(const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) :
+    View(),
+    m_font(font),
+    m_horizontalAlignment(horizontalAlignment),
+    m_verticalAlignment(verticalAlignment),
+    m_textColor(textColor),
+    m_backgroundColor(backgroundColor)
+  {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
@@ -22,7 +29,7 @@ public:
   void setFont(const KDFont * font);
 protected:
 #if ESCHER_VIEW_LOGGING
-  const char * className() const override;
+  const char * className() const override { return "TextView"; }
 #endif
   const KDFont * m_font;
   float m_horizontalAlignment;

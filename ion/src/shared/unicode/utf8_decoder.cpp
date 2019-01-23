@@ -56,9 +56,16 @@ CodePoint UTF8Decoder::previousCodePoint() {
 }
 
 size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength;
-  char buffer[bufferSize];
-  return CodePointToChars(c, buffer, bufferSize);
+  if (c <= 0x7F) {
+    return 1;
+  }
+  if (c <= 0x7FF) {
+    return 2;
+  }
+  if (c <= 0xFFFF) {
+    return 3;
+  }
+  return 4;
 }
 
 size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize) {
@@ -66,19 +73,21 @@ size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize)
     return 0;
   }
   size_t i = 0;
-  if (c <= 0x7F) {
+  int charCount = CharSizeOfCodePoint(c);
+  if (charCount == 1) {
     buffer[i++] = c;
-  } else if (c <= 0x7FF) {
+  } else if (charCount == 2) {
     buffer[i++] = 0b11000000 | (c >> 6);
     if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | (c & 0b111111);
-  } else if (c <= 0xFFFF) {
+  } else if (charCount == 3) {
     buffer[i++] = 0b11100000 | (c >> 12);
     if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | ((c >> 6) & 0b111111);
     if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | (c & 0b111111);
   } else {
+    assert(charCount == 4);
     buffer[i++] = 0b11110000 | (c >> 18);
     if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | ((c >> 12) & 0b111111);
@@ -87,5 +96,6 @@ size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize)
     if (bufferSize <= i) { return i; }
     buffer[i++] = 0b10000000 | (c & 0b111111);
   }
-  return i;
+  assert(i == charCount);
+  return charCount;
 }

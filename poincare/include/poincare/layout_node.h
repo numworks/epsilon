@@ -107,7 +107,7 @@ public:
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual CodePoint XNTCodePoint() const {
     LayoutNode * p = parent();
-    return p == nullptr ? KDCodePointNull : p->XNTCodePoint();
+    return p == nullptr ? UCodePointNull : p->XNTCodePoint();
   }
 
   virtual bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) { return true; }

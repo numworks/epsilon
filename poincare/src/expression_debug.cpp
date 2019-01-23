@@ -216,13 +216,13 @@ void print_expression(const Expression e, int indentationLevel) {
       UTF8Decoder decoder(static_cast<const Symbol &>(e).name());
       CodePoint firstCodePoint = decoder.nextCodePoint();
       switch (firstCodePoint) {
-        case KDCodePointGreekSmallLetterPi:
+        case UCodePointGreekSmallLetterPi:
           std::cout << "PI";
           break;
-        case KDCodePointMathematicalBoldSmallI:
+        case UCodePointMathematicalBoldSmallI:
           std::cout << "i";
           break;
-        case KDCodePointScriptSmallE:
+        case UCodePointScriptSmallE:
           std::cout << "e";
           break;
         default:

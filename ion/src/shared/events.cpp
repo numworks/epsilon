@@ -1,5 +1,5 @@
 #include <ion/events.h>
-#include <kandinsky/unicode/code_point.h>
+#include <ion/unicode/code_point.h>
 
 extern "C" {
 #include <assert.h>
@@ -25,7 +25,7 @@ private:
 #define U() EventData::Undefined()
 #define T(x) EventData::Text(x)
 
-static_assert('\x11' == KDCodePointEmpty, "Unicode error");
+static_assert('\x11' == UCodePointEmpty, "Unicode error");
 static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),

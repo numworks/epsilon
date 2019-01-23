@@ -14,7 +14,7 @@ QUIZ_CASE(poincare_vertical_offset_layout_serialize) {
         VerticalOffsetLayoutNode::Type::Superscript
       )
     );
-  assert(KDCodePointLeftSuperscript == '\x12');
-  assert(KDCodePointRightSuperscript == '\x13');
+  assert(UCodePointLeftSuperscript == '\x12');
+  assert(UCodePointRightSuperscript == '\x13');
   assert_expression_layout_serialize_to(layout, "2\x12x+5\x13");
 }

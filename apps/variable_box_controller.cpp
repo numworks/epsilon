@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/layout_helper.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -200,7 +200,7 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength++] = '(';
     assert(nameLength < nameToHandleMaxSize);
-    nameLength+= UTF8Decoder::CodePointToChars(KDCodePointEmpty, nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
+    nameLength+= UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength++] = ')';
     assert(nameLength < nameToHandleMaxSize);

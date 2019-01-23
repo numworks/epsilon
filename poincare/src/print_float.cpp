@@ -199,7 +199,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   // Print exponent
   assert(numberOfCharsForMantissaWithSign < bufferSize);
   int currentNumberOfChar = numberOfCharsForMantissaWithSign;
-  currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, KDCodePointLatinLetterSmallCapitalE);
+  currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, UCodePointLatinLetterSmallCapitalE);
   assert(numberOfCharExponent+currentNumberOfChar < bufferSize);
   PrintFloat::printBase10IntegerWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, Integer(exponentInBase10), -1);
   buffer[currentNumberOfChar + numberOfCharExponent] = 0;

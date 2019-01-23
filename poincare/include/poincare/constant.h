@@ -38,9 +38,9 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
   /* Symbol properties */
-  bool isPi() const { return isConstantCodePoint(KDCodePointGreekSmallLetterPi); }
-  bool isExponential() const { return isConstantCodePoint(KDCodePointScriptSmallE); }
-  bool isIComplex() const { return isConstantCodePoint(KDCodePointMathematicalBoldSmallI); }
+  bool isPi() const { return isConstantCodePoint(UCodePointGreekSmallLetterPi); }
+  bool isExponential() const { return isConstantCodePoint(UCodePointScriptSmallE); }
+  bool isIComplex() const { return isConstantCodePoint(UCodePointMathematicalBoldSmallI); }
   CodePoint codePoint() const;
 
   // Comparison

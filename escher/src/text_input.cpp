@@ -6,11 +6,11 @@
 static inline const char * minCharPointer(const char * x, const char * y) { return x < y ? x : y; }
 static inline const char * maxCharPointer(const char * x, const char * y) { return x > y ? x : y; }
 
-void TextInput::ContentView::setCursorTextLocation(const char * location) {
+void TextInput::ContentView::setCursorLocation(const char * location) {
   assert(location != nullptr);
   assert(location >= editedText());
   const char * adjustedLocation = minCharPointer(location, editedText() + editedTextLength());
-  m_cursorTextLocation = adjustedLocation;
+  m_cursorLocation = adjustedLocation;
   layoutSubviews();
 }
 
@@ -20,7 +20,7 @@ void TextInput::ContentView::setFont(const KDFont * font) {
 }
 
 KDRect TextInput::ContentView::cursorRect() {
-  return glyphFrameAtPosition(m_cursorTextLocation);
+  return glyphFrameAtPosition(m_cursorLocation);
 }
 
 void TextInput::ContentView::layoutSubviews() {
@@ -68,11 +68,11 @@ void TextInput::scrollToCursor() {
   scrollToContentRect(contentView()->cursorRect(), true);
 }
 
-bool TextInput::setCursorTextLocation(const char * location) {
+bool TextInput::setCursorLocation(const char * location) {
   assert(location != nullptr);
   const char * adjustedLocation = maxCharPointer(location, text());
-  willSetCursorTextLocation(&adjustedLocation);
-  contentView()->setCursorTextLocation(adjustedLocation);
+  willSetCursorLocation(&adjustedLocation);
+  contentView()->setCursorLocation(adjustedLocation);
   scrollToCursor();
   return true;
 }

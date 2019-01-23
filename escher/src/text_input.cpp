@@ -8,8 +8,8 @@ static inline const char * max(const char * x, const char * y) { return x > y ? 
 
 void TextInput::ContentView::setCursorTextLocation(const char * location) {
   assert(location != nullptr);
-  assert(location >= text());
-  const char * adjustedLocation = min(location, text() + editedTextLength());
+  assert(location >= editedText());
+  const char * adjustedLocation = min(location, editedText() + editedTextLength());
   m_cursorTextLocation = adjustedLocation;
   layoutSubviews();
 }

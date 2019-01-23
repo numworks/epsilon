@@ -75,17 +75,22 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
   if (m_isEditing == isEditing && !reinitDrafBuffer) {
     return;
   }
+  m_isEditing = isEditing;
   if (reinitDrafBuffer) {
     reinitDraftTextBuffer();
   }
   m_currentDraftTextLength = strlen(m_draftTextBuffer);
-  m_isEditing = isEditing;
+  if (m_cursorTextLocation < m_draftTextBuffer
+      || m_cursorTextLocation > m_draftTextBuffer + m_currentDraftTextLength)
+  {
+    m_cursorTextLocation = m_draftTextBuffer + m_currentDraftTextLength;
+  }
   markRectAsDirty(bounds());
   layoutSubviews();
 }
 
 void TextField::ContentView::reinitDraftTextBuffer() {
-  setCursorTextLocation(text());
+  setCursorTextLocation(m_draftTextBuffer);
   m_draftTextBuffer[0] = 0;
   m_currentDraftTextLength = 0;
 }
@@ -426,21 +431,24 @@ void TextField::scrollToCursor() {
 }
 
 bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
-  assert(isEditing());
   if (event == Ion::Events::Left && isEditing() && cursorTextLocation() > m_contentView.draftTextBuffer()) {
+    assert(isEditing());
     UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorTextLocation());
     decoder.previousCodePoint();
     return setCursorTextLocation(decoder.stringPosition());
   }
   if (event == Ion::Events::ShiftLeft && isEditing()) {
+    assert(isEditing());
     return setCursorTextLocation(m_contentView.draftTextBuffer());
   }
   if (event == Ion::Events::Right && isEditing() && cursorTextLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
+    assert(isEditing());
     UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorTextLocation());
     decoder.nextCodePoint();
     return setCursorTextLocation(decoder.stringPosition());
   }
   if (event == Ion::Events::ShiftRight && isEditing()) {
+    assert(isEditing());
     return setCursorTextLocation(m_contentView.draftTextBuffer() + draftTextLength());
   }
   return false;
@@ -456,7 +464,8 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   assert(isEditing());
 
   if (eventText[0] == 0) {
-    assert(false); // TODO LEA Does this ever happen?
+    /* For instance, the event might be EXE on a non-editing text field to start
+     * edition. */
     setCursorTextLocation(m_contentView.draftTextBuffer());
     return m_delegate->textFieldDidHandleEvent(this, true, previousTextLength != 0);
   }

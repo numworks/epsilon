@@ -12,8 +12,8 @@ public:
   void setFont(const KDFont * font) { contentView()->setFont(font); }
   const char * text() const { return nonEditableContentView()->text(); }
   bool removeCodePoint();
-  const char * cursorTextLocation() const { return nonEditableContentView()->cursorTextLocation(); }
-  bool setCursorTextLocation(const char * location);
+  const char * cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
+  bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
 protected:
   class ContentView : public View {
@@ -22,12 +22,12 @@ protected:
       View(),
       m_cursorView(),
       m_font(font),
-      m_cursorTextLocation(nullptr)
+      m_cursorLocation(nullptr)
     {}
     void setFont(const KDFont * font);
     const KDFont * font() const { return m_font; }
-    const char * cursorTextLocation() const { assert(m_cursorTextLocation != nullptr); return m_cursorTextLocation; }
-    void setCursorTextLocation(const char * cursorTextLocation);
+    const char * cursorLocation() const { assert(m_cursorLocation != nullptr); return m_cursorLocation; }
+    void setCursorLocation(const char * cursorLocation);
     virtual const char * text() const = 0;
     virtual bool insertTextAtLocation(const char * text, const char * location) = 0;
     virtual bool removeCodePoint() = 0;
@@ -39,7 +39,7 @@ protected:
     virtual KDRect glyphFrameAtPosition(const char * position) const = 0;
     TextCursorView m_cursorView;
     const KDFont * m_font;
-    const char * m_cursorTextLocation;
+    const char * m_cursorLocation;
     virtual KDRect dirtyRectFromPosition(const char * position, bool lineBreak) const;
   private:
     int numberOfSubviews() const override { return 1; }
@@ -61,7 +61,7 @@ protected:
   }
   virtual const ContentView * nonEditableContentView() const = 0;
 private:
-  virtual void willSetCursorTextLocation(const char * * location) {}
+  virtual void willSetCursorLocation(const char * * location) {}
   virtual bool privateRemoveEndOfLine();
 };
 

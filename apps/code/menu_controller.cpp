@@ -126,7 +126,7 @@ void MenuController::renameSelectedScript() {
   app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
   myCell->textField()->setEditing(true, false);
-  myCell->textField()->setCursorTextLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
+  myCell->textField()->setCursorLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
 }
 
 void MenuController::deleteScript(Script script) {
@@ -285,7 +285,7 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (event == Ion::Events::Right
       && textField->isEditing()
-      && textField->cursorTextLocation() == textField->text() + textField->draftTextLength()) {
+      && textField->cursorLocation() == textField->text() + textField->draftTextLength()) {
     return true;
   }
   if (event == Ion::Events::Clear && textField->isEditing()) {
@@ -294,7 +294,7 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     assert(k_bufferSize >= 1 + strlen(ScriptStore::k_scriptExtension) + 1);
     strlcpy(&buffer[1], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension) + 1);
     textField->setText(buffer);
-    textField->setCursorTextLocation(textField->text());
+    textField->setCursorLocation(textField->text());
     return true;
   }
   return false;
@@ -318,7 +318,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
      * default name and let the user modify it. */
     if (!foundDefaultName) {
       textField->setText(numberedDefaultName);
-      textField->setCursorTextLocation(textField->draftTextBuffer() + defaultNameLength);
+      textField->setCursorLocation(textField->draftTextBuffer() + defaultNameLength);
     }
     newName = const_cast<const char *>(numberedDefaultName);
   }
@@ -351,8 +351,8 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   const char * maxPointerLocation = textField->text() + textField->draftTextLength() - scriptExtensionLength;
-  if (textField->isEditing() && textField->cursorTextLocation() > maxPointerLocation) {
-    textField->setCursorTextLocation(maxPointerLocation);
+  if (textField->isEditing() && textField->cursorLocation() > maxPointerLocation) {
+    textField->setCursorLocation(maxPointerLocation);
   }
   return returnValue;
 }

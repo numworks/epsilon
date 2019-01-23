@@ -145,9 +145,6 @@ uint32_t CodePoints[] = {
   0x1d422, // 𝐢 // MATHEMATICAL BOLD SMALL I"
 
   // Apostrophe
-  // Xbar
-  // Ybar
-
 };
 
 int NumberOfCodePoints = sizeof(CodePoints)/sizeof(CodePoints[0]);

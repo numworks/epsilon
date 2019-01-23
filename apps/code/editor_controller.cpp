@@ -124,6 +124,7 @@ void EditorController::saveScript() {
   size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
   Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
   assert(err != Script::ErrorStatus::NotEnoughSpaceAvailable && err != Script::ErrorStatus::RecordDoesNotExist); // This should not happen as we set the text area according to the available space in the Kallax
+  (void) err;
 }
 
 }

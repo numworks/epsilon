@@ -1,6 +1,6 @@
 #include "helpers.h"
 #include <string.h>
-#include <kandinsky/unicode/code_point.h>
+#include <ion/unicode/code_point.h>
 #include <ion.h>
 
 namespace Code {
@@ -16,7 +16,7 @@ private:
   const char * m_text;
 };
 
-static_assert('\x11' == KDCodePointEmpty, "Unicode error");
+static_assert('\x11' == UCodePointEmpty, "Unicode error");
 static constexpr EventTextPair sEventTextMap[] = {
   EventTextPair(Ion::Events::XNT, "x"),
   EventTextPair(Ion::Events::Exp, "exp(\x11)"),

@@ -152,7 +152,7 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
     }
     // Then, compute sign(b) * Pi/2 - arctan(a/b)
     Expression signb = SignFunction::Builder(b);
-    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::Builder(KDCodePointGreekSmallLetterPi));
+    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::Builder(UCodePointGreekSmallLetterPi));
     signb.shallowReduce(context, complexFormat, angleUnit, target);
     Expression sub = Subtraction::Builder(signbPi2, arcTangent);
     signbPi2.shallowReduce(context, complexFormat, angleUnit, target);
@@ -163,7 +163,7 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
     Expression signa = SignFunction::Builder(a).shallowReduce(context, complexFormat, angleUnit, target);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
     signa.shallowReduce(context, complexFormat, angleUnit, target);
-    Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::Builder(KDCodePointGreekSmallLetterPi), sub);
+    Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::Builder(UCodePointGreekSmallLetterPi), sub);
     sub.shallowReduce(context, complexFormat, angleUnit, target);
     return mul;
   }
@@ -330,7 +330,7 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & con
   rclone.shallowReduce(context, complexFormat, angleUnit, target);
   Expression thmuld = Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
   thclone.shallowReduce(context, complexFormat, angleUnit, target);
-  Expression exp = Power::Builder(Constant::Builder(KDCodePointScriptSmallE), thmuld);
+  Expression exp = Power::Builder(Constant::Builder(UCodePointScriptSmallE), thmuld);
   thmuld.shallowReduce(context, complexFormat, angleUnit, target);
   Multiplication norm = Multiplication::Builder(rpowc, exp);
   rpowc.shallowReduce(context, complexFormat, angleUnit, target);

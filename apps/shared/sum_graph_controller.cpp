@@ -234,7 +234,7 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, Layout functionLayout) {
   assert(step == Step::Result || functionLayout.isUninitialized());
   constexpr int sigmaSize = 2;
-  const CodePoint sigma[sigmaSize] = {KDCodePointSpace, m_sumSymbol};
+  const CodePoint sigma[sigmaSize] = {UCodePointSpace, m_sumSymbol};
   if (step == Step::FirstParameter) {
     m_sumLayout = LayoutHelper::CodePointString(sigma, sigmaSize);
   } else if (step == Step::SecondParameter) {

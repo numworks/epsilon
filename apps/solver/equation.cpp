@@ -3,7 +3,7 @@
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
 #include <poincare/rational.h>
-#include <kandinsky/unicode/utf8_helper.h>
+#include <ion/unicode/utf8_helper.h>
 
 using namespace Poincare;
 
@@ -50,7 +50,7 @@ Expression Equation::standardForm(Context * context) const {
 }
 
 bool Equation::containsIComplex() const {
-  return UTF8Helper::CodePointSearch(text(), KDCodePointMathematicalBoldSmallI) != nullptr;
+  return UTF8Helper::CodePointSearch(text(), UCodePointMathematicalBoldSmallI) != nullptr;
 }
 
 void Equation::tidyStandardForm() {

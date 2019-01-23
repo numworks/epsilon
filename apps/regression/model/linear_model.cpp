@@ -13,7 +13,7 @@ Layout LinearModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout layoutChildren[] = {
       CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(KDCodePointMiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('X', KDFont::SmallFont),
       CodePointLayout::Builder('+', KDFont::SmallFont),
       CodePointLayout::Builder('b', KDFont::SmallFont),

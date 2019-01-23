@@ -34,7 +34,7 @@ int CodePointLayoutNode::serialize(char * buffer, int bufferSize, Preferences::P
 bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
   if (*numberOfOpenParenthesis <= 0) {
     if (m_codePoint == '+'
-        || m_codePoint == KDCodePointRightwardsArrow
+        || m_codePoint == UCodePointRightwardsArrow
         || m_codePoint == '='
         || m_codePoint == ',')
     {
@@ -50,7 +50,7 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goin
         if (indexOfThis > 0) {
           Layout leftBrother = parent.childAtIndex(indexOfThis-1);
           if (leftBrother.isCodePoint()
-              && static_cast<CodePointLayout&>(leftBrother).codePoint() == KDCodePointLatinLetterSmallCapitalE)
+              && static_cast<CodePointLayout&>(leftBrother).codePoint() == UCodePointLatinLetterSmallCapitalE)
           {
             return true;
           }
@@ -94,8 +94,8 @@ void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionC
 
 bool CodePointLayoutNode::isMultiplicationCodePoint() const {
   return m_codePoint == '*'
-    || m_codePoint == KDCodePointMultiplicationSign
-    || m_codePoint == KDCodePointMiddleDot;
+    || m_codePoint == UCodePointMultiplicationSign
+    || m_codePoint == UCodePointMiddleDot;
 }
 
 CodePointLayout CodePointLayout::Builder(CodePoint c, const KDFont * font) {

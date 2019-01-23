@@ -134,7 +134,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   // Add a multiplication if omitted.
   if (idxInParent > 0 && p->isHorizontal() && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
-    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, KDCodePointMiddleDot);
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
@@ -158,7 +158,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   // Add a multiplication if omitted.
   if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
-    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, KDCodePointMiddleDot);
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 

@@ -5,7 +5,7 @@
 using namespace Shared;
 using namespace Poincare;
 
-//TODO static inline KDCoordinate max(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 namespace Sequence {
 
@@ -74,7 +74,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     return defaultHeight;
   }
   KDCoordinate sequenceHeight = layout.layoutSize().height();
-  return max(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
+  return maxCoordinate(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

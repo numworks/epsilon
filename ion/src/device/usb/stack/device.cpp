@@ -5,7 +5,7 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-static inline uint16_t min(uint16_t x, uint16_t y) { return (x<y ? x : y); }
+static inline uint16_t minUint16T(uint16_t x, uint16_t y) { return x < y ? x : y; }
 
 void Device::poll() {
   // Read the interrupts
@@ -116,7 +116,7 @@ bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuff
 }
 
 bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  *transferBufferLength = min(2, transferBufferMaxLength);
+  *transferBufferLength = minUint16T(2, transferBufferMaxLength);
   for (int i = 0; i<*transferBufferLength; i++) {
     transferBuffer[i] = 0; // No remote wakeup, not self-powered.
   }

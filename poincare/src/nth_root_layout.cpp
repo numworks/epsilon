@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode::k_leftRadixWidth] = {
   {0x00, 0xFF, 0xFF, 0xFF, 0xFF},
@@ -198,7 +198,7 @@ KDSize NthRootLayoutNode::computeSize() {
 
 KDCoordinate NthRootLayoutNode::computeBaseline() {
   if (indexLayout() != nullptr) {
-    return max(
+    return maxCoordinate(
         radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
         indexLayout()->layoutSize().height() + k_indexHeight);
   } else {
@@ -225,7 +225,7 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
 KDSize NthRootLayoutNode::adjustedIndexSize() {
   return indexLayout() == nullptr ?
     KDSize(k_leftRadixWidth, 0) :
-    KDSize(max(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
+    KDSize(maxCoordinate(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
 }
 
 void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

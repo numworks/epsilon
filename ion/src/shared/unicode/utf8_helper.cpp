@@ -5,7 +5,7 @@
 
 namespace UTF8Helper {
 
-static inline int min(int x, int y) { return x < y ? x : y; }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 const char * CodePointSearch(const char * s, CodePoint c) {
   UTF8Decoder decoder(s);
@@ -35,7 +35,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   // Remove CodePoint c
   while (currentPointer < maxPointer && bufferIndex < dstSize) {
     if (codePoint != c) {
-      int copySize = min(nextPointer - currentPointer, dstSize - bufferIndex);
+      int copySize = minInt(nextPointer - currentPointer, dstSize - bufferIndex);
       memcpy(dst + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
     } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {

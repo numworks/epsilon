@@ -4,8 +4,8 @@
 
 namespace Graph {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
@@ -57,9 +57,9 @@ void TextFieldFunctionTitleCell::layoutSubviews() {
   KDRect frame = subviewFrame();
   m_textField.setFrame(frame);
   KDCoordinate maxTextFieldX = frame.width() - m_textField.minimalSizeForOptimalDisplay().width();
-  float horizontalAlignment = max(
+  float horizontalAlignment = maxFloat(
       0.0f,
-      min(
+      minFloat(
         1.0f,
         ((float)(maxTextFieldX - k_textFieldRightMargin))/((float)maxTextFieldX)));
   m_textField.setAlignment(horizontalAlignment, verticalAlignment());

@@ -28,8 +28,11 @@ public:
   class Decorator {
   public:
     Decorator();
-    int numberOfIndicators();
-    View * indicatorAtIndex(int index);
+    int numberOfIndicators() { return 2; }
+    View * indicatorAtIndex(int index) {
+      assert(0 < index && index <= numberOfIndicators());
+      return &m_verticalBar + (index-1);
+    }
     void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }

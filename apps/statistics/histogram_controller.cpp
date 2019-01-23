@@ -11,8 +11,8 @@ using namespace Shared;
 
 namespace Statistics {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 HistogramController::HistogramController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex, int * selectedSeriesIndex) :
   MultipleDataViewController(parentResponder, store, selectedBarIndex, selectedSeriesIndex),
@@ -191,7 +191,7 @@ void HistogramController::initRangeParameters() {
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      maxValue = max(maxValue, m_store->maxValue(i));
+      maxValue = maxFloat(maxValue, m_store->maxValue(i));
     }
   }
   float barWidth = m_store->barWidth();
@@ -244,8 +244,8 @@ void HistogramController::initBarParameters() {
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
-      minValue = min(minValue, m_store->minValue(i));
-      maxValue = max(maxValue, m_store->maxValue(i));
+      minValue = minFloat(minValue, m_store->minValue(i));
+      maxValue = maxFloat(maxValue, m_store->maxValue(i));
     }
   }
   maxValue = minValue >= maxValue ? minValue + std::pow(10.0f, std::floor(std::log10(std::fabs(minValue)))-1.0f) : maxValue;

@@ -18,7 +18,7 @@ constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
 
-static inline int min(int x, int y) { return x < y ? x : y; }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
@@ -104,7 +104,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       line,
       fromColumn,
       text + fromColumn,
-      min(length - fromColumn, toColumn - fromColumn),
+      minInt(length - fromColumn, toColumn - fromColumn),
       StringColor,
       BackgroundColor
     );

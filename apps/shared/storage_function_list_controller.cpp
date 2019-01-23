@@ -3,8 +3,8 @@
 
 namespace Shared {
 
-static inline int max(int x, int y) { return x > y ? x : y; }
-static inline int min(int x, int y) { return x < y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 StorageFunctionListController::StorageFunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   StorageExpressionModelListController(parentResponder, text),
@@ -104,7 +104,7 @@ int StorageFunctionListController::indexFromCumulatedHeight(KDCoordinate offsetY
 
   KDCoordinate currentCumulatedHeight = cumulatedHeightFromIndex(currentSelectedRow);
   if (offsetY > currentCumulatedHeight) {
-    int iMax = min(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
+    int iMax = minInt(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
     for (int i = 0; i < iMax; i++) {
       currentCumulatedHeight+= rowHeight(currentSelectedRow + i);
       if (offsetY <= currentCumulatedHeight) {
@@ -112,7 +112,7 @@ int StorageFunctionListController::indexFromCumulatedHeight(KDCoordinate offsetY
       }
     }
   } else {
-    int iMax = min(k_memoizedCellsCount/2, currentSelectedRow);
+    int iMax = minInt(k_memoizedCellsCount/2, currentSelectedRow);
     for (int i = 1; i <= iMax; i++) {
       currentCumulatedHeight-= rowHeight(currentSelectedRow-i);
       if (offsetY > currentCumulatedHeight) {
@@ -285,7 +285,7 @@ void StorageFunctionListController::computeTitlesColumnWidth(bool forceMax) {
     return;
   }
   KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
-  m_titlesColumnWidth = max(maxTitleWidth, k_minTitleColumnWidth);
+  m_titlesColumnWidth = maxInt(maxTitleWidth, k_minTitleColumnWidth);
 }
 
 TabViewController * StorageFunctionListController::tabController() const {
@@ -310,7 +310,7 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
     const char * functionName = record.fullName();
     const char * dotPosition = strchr(functionName, Ion::Storage::k_dotChar);
     assert(dotPosition != nullptr);
-    maxNameLength = max(maxNameLength, dotPosition-functionName);
+    maxNameLength = maxInt(maxNameLength, dotPosition-functionName);
   }
   return nameWidth(maxNameLength + StorageFunction::k_parenthesedArgumentLength);
 }

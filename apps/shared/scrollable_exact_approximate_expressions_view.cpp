@@ -5,6 +5,8 @@ using namespace Poincare;
 
 namespace Shared {
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
   m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
@@ -51,7 +53,7 @@ KDSize ScrollableExactApproximateExpressionsView::ContentCell::minimalSizeForOpt
   KDSize leftExpressionSize = m_leftExpressionView.minimalSizeForOptimalDisplay();
   KDCoordinate leftBaseline = m_leftExpressionView.layout().baseline();
   KDCoordinate rightBaseline = m_rightExpressionView.layout().baseline();
-  KDCoordinate height = max(leftBaseline, rightBaseline) + max(leftExpressionSize.height()-leftBaseline, rightExpressionSize.height()-rightBaseline);
+  KDCoordinate height = maxCoordinate(leftBaseline, rightBaseline) + maxCoordinate(leftExpressionSize.height()-leftBaseline, rightExpressionSize.height()-rightBaseline);
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
   return KDSize(leftExpressionSize.width()+approximateSignSize.width()+rightExpressionSize.width()+2*Metric::CommonLargeMargin, height);
 }
@@ -90,7 +92,7 @@ void ScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews() {
   }
   KDCoordinate leftBaseline = m_leftExpressionView.layout().baseline();
   KDCoordinate rightBaseline = m_rightExpressionView.layout().baseline();
-  KDCoordinate baseline = max(leftBaseline, rightBaseline);
+  KDCoordinate baseline = maxCoordinate(leftBaseline, rightBaseline);
   KDSize leftExpressionSize = m_leftExpressionView.minimalSizeForOptimalDisplay();
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
   m_leftExpressionView.setFrame(KDRect(0, baseline-leftBaseline, leftExpressionSize));

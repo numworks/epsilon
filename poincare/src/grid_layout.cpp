@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 // LayoutNode
 
@@ -220,7 +220,7 @@ KDPoint GridLayoutNode::positionOfChild(LayoutNode * l) {
 KDCoordinate GridLayoutNode::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowBaseline = max(rowBaseline, childAtIndex(i*m_numberOfColumns+j)->baseline());
+    rowBaseline = maxCoordinate(rowBaseline, childAtIndex(i*m_numberOfColumns+j)->baseline());
   }
   return rowBaseline;
 }
@@ -230,7 +230,7 @@ KDCoordinate GridLayoutNode::rowHeight(int i) const {
   KDCoordinate baseline = const_cast<GridLayoutNode *>(this)->rowBaseline(i);
   for (int j = 0; j < m_numberOfColumns; j++) {
     LayoutNode * currentChild = const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j);
-    rowHeight = max(rowHeight, currentChild->layoutSize().height() - currentChild->baseline());
+    rowHeight = maxCoordinate(rowHeight, currentChild->layoutSize().height() - currentChild->baseline());
   }
   return baseline+rowHeight;
 }
@@ -240,14 +240,14 @@ KDCoordinate GridLayoutNode::height() const {
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i);
   }
-  totalHeight += max((m_numberOfRows-1)*k_gridEntryMargin, 0);
+  totalHeight += maxCoordinate((m_numberOfRows-1)*k_gridEntryMargin, 0);
   return totalHeight;
 }
 
 KDCoordinate GridLayoutNode::columnWidth(int j) const {
   KDCoordinate columnWidth = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
-    columnWidth = max(columnWidth, const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->layoutSize().width());
+    columnWidth = maxCoordinate(columnWidth, const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->layoutSize().width());
   }
   return columnWidth;
 }
@@ -257,7 +257,7 @@ KDCoordinate GridLayoutNode::width() const {
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j);
   }
-  totalWidth += max(0, (m_numberOfColumns-1)*k_gridEntryMargin);
+  totalWidth += maxCoordinate(0, (m_numberOfColumns-1)*k_gridEntryMargin);
   return totalWidth;
 }
 

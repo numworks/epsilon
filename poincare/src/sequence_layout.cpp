@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 constexpr char SequenceLayoutNode::k_equal[];
 
@@ -159,7 +159,7 @@ KDSize SequenceLayoutNode::lowerBoundSizeWithVariableEquals() {
   KDSize equalSize = k_font->stringSize(k_equal);
   return KDSize(
       variableSize.width() + equalSize.width() + lowerBoundSize.width(),
-      subscriptBaseline() + max(max(variableSize.height() - variableLayout()->baseline(), lowerBoundSize.height() - lowerBoundLayout()->baseline()), equalSize.height()/2));
+      subscriptBaseline() + maxCoordinate(maxCoordinate(variableSize.height() - variableLayout()->baseline(), lowerBoundSize.height() - lowerBoundLayout()->baseline()), equalSize.height()/2));
 }
 
 KDSize SequenceLayoutNode::computeSize() {
@@ -170,13 +170,13 @@ KDSize SequenceLayoutNode::computeSize() {
     argumentSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth(),
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
-    max(max(k_symbolWidth, totalLowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
-    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
+    maxCoordinate(maxCoordinate(k_symbolWidth, totalLowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
+    baseline() + maxCoordinate(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
   return result;
 }
 
 KDCoordinate SequenceLayoutNode::computeBaseline() {
-  return max(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
+  return maxCoordinate(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
 }
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
@@ -192,10 +192,10 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
     x = completeLowerBoundX() + equalSize.width() + variableSize.width();
     y = baseline() + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline() - lowerBoundLayout()->baseline();
   } else if (l == upperBoundLayout()) {
-    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2);
+    x = maxCoordinate(maxCoordinate(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithVariableEquals().width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = max(max(k_symbolWidth, lowerBoundSizeWithVariableEquals().width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::ParenthesisWidth();
+    x = maxCoordinate(maxCoordinate(k_symbolWidth, lowerBoundSizeWithVariableEquals().width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::ParenthesisWidth();
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
@@ -258,12 +258,12 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX() {
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
- return max(max(0, (k_symbolWidth-lowerBoundSizeWithVariableEquals().width())/2),
+ return maxCoordinate(maxCoordinate(0, (k_symbolWidth-lowerBoundSizeWithVariableEquals().width())/2),
           (upperBoundSize.width()-lowerBoundSizeWithVariableEquals().width())/2);
 }
 
 KDCoordinate SequenceLayoutNode::subscriptBaseline() {
-  return max(max(variableLayout()->baseline(), lowerBoundLayout()->baseline()), k_font->stringSize(k_equal).height()/2);
+  return maxCoordinate(maxCoordinate(variableLayout()->baseline(), lowerBoundLayout()->baseline()), k_font->stringSize(k_equal).height()/2);
 }
 
 }

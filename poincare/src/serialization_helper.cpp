@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-static inline int min(int x, int y) { return x < y ? x : y; }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
   // If buffer has size 0 or 1, put a zero if it fits and return
@@ -191,7 +191,7 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     }
   }
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  int nullTerminatingIndex = min(size, bufferSize - 1);
+  int nullTerminatingIndex = minInt(size, bufferSize - 1);
   buffer[nullTerminatingIndex] = 0;
   return nullTerminatingIndex;
 }

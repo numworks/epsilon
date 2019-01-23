@@ -3,8 +3,8 @@
 
 namespace Shared {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 void FunctionTitleCell::setOrientation(Orientation orientation) {
   m_orientation = orientation;
@@ -51,9 +51,9 @@ KDRect FunctionTitleCell::subviewFrame() const {
 
 float FunctionTitleCell::verticalAlignment() const {
   assert(m_orientation == Orientation::VerticalIndicator);
-  return max(
+  return maxFloat(
       0.0f,
-      min(
+      minFloat(
         1.0f,
         m_baseline < 0 ? 0.5f : verticalAlignmentGivenExpressionBaselineAndRowHeight(m_baseline, subviewFrame().height())));
 }

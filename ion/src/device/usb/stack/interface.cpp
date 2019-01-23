@@ -4,7 +4,7 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-static inline uint16_t min(uint16_t x, uint16_t y) { return (x<y ? x : y); }
+static inline uint16_t minUint16T(uint16_t x, uint16_t y) { return x < y ? x : y; }
 
 bool Interface::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   if (request->requestType() != SetupPacket::RequestType::Standard) {
@@ -26,7 +26,7 @@ bool Interface::processSetupInRequest(SetupPacket * request, uint8_t * transferB
 }
 
 bool Interface::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  *transferBufferLength = min(2, transferBufferMaxLength);
+  *transferBufferLength = minUint16T(2, transferBufferMaxLength);
   for (int i = 0; i<*transferBufferLength; i++) {
     transferBuffer[i] = 0; // Reserved, must be set to 0
   }
@@ -34,7 +34,7 @@ bool Interface::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLen
 }
 
 bool Interface::getInterface(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  *transferBufferLength = min(1, transferBufferMaxLength);;
+  *transferBufferLength = minUint16T(1, transferBufferMaxLength);;
   if (*transferBufferLength > 0) {
     transferBuffer[0] = getActiveInterfaceAlternative();
   }

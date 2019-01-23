@@ -16,6 +16,8 @@ namespace Poincare {
 
 /* Getters and setters */
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 KDCoordinate LayoutCursor::cursorHeight() {
   KDCoordinate height = layoutHeight();
   return height == 0 ? k_cursorHeight : height;
@@ -33,7 +35,7 @@ KDCoordinate LayoutCursor::baseline() {
   if (m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.baseline();
   } else if (m_layout.hasSibling(equivalentLayout)) {
-    return max(layoutBaseline, equivalentLayout.baseline());
+    return maxCoordinate(layoutBaseline, equivalentLayout.baseline());
   }
   return layoutBaseline;
 }
@@ -214,8 +216,8 @@ KDCoordinate LayoutCursor::layoutHeight() {
     KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
     KDCoordinate pointedLayoutBaseline = m_layout.baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
-    return max(pointedLayoutBaseline, equivalentLayoutBaseline)
-      + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
+    return maxCoordinate(pointedLayoutBaseline, equivalentLayoutBaseline)
+      + maxCoordinate(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
 }

@@ -4,18 +4,18 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 KDCoordinate CondensedSumLayoutNode::computeBaseline() {
-  return baseLayout()->baseline() + max(0, superscriptLayout()->layoutSize().height() - baseLayout()->layoutSize().height()/2);
+  return baseLayout()->baseline() + maxCoordinate(0, superscriptLayout()->layoutSize().height() - baseLayout()->layoutSize().height()/2);
 }
 
 KDSize CondensedSumLayoutNode::computeSize() {
   KDSize baseSize = baseLayout()->layoutSize();
   KDSize subscriptSize = subscriptLayout()->layoutSize();
   KDSize superscriptSize = superscriptLayout()->layoutSize();
-  KDCoordinate sizeWidth = baseSize.width() + max(subscriptSize.width(), superscriptSize.width());
-  KDCoordinate sizeHeight = max(baseSize.height()/2, subscriptSize.height()) + max(baseSize.height()/2, superscriptSize.height());
+  KDCoordinate sizeWidth = baseSize.width() + maxCoordinate(subscriptSize.width(), superscriptSize.width());
+  KDCoordinate sizeHeight = maxCoordinate(baseSize.height()/2, subscriptSize.height()) + maxCoordinate(baseSize.height()/2, superscriptSize.height());
   return KDSize(sizeWidth, sizeHeight);
 }
 
@@ -25,11 +25,11 @@ KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child) {
   KDSize baseSize = baseLayout()->layoutSize();
   KDSize superscriptSize = superscriptLayout()->layoutSize();
   if (child == baseLayout()) {
-    y = max(0, superscriptSize.height() - baseSize.height()/2);
+    y = maxCoordinate(0, superscriptSize.height() - baseSize.height()/2);
   }
   if (child == subscriptLayout()) {
     x = baseSize.width();
-    y = max(baseSize.height()/2, superscriptSize.height());
+    y = maxCoordinate(baseSize.height()/2, superscriptSize.height());
   }
   if (child == superscriptLayout()) {
     x = baseSize.width();

@@ -7,6 +7,9 @@
 
 namespace Calculation {
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 /* HistoryViewCellDataSource */
 
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
@@ -99,14 +102,14 @@ void HistoryViewCell::layoutSubviews() {
   m_inputView.setFrame(KDRect(
     0,
     0,
-    min(maxFrameWidth, inputSize.width()),
+    minCoordinate(maxFrameWidth, inputSize.width()),
     inputSize.height()
   ));
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
   m_scrollableOutputView.setFrame(KDRect(
-    max(0, maxFrameWidth - outputSize.width()),
+    maxCoordinate(0, maxFrameWidth - outputSize.width()),
     inputSize.height(),
-    min(maxFrameWidth, outputSize.width()),
+    minCoordinate(maxFrameWidth, outputSize.width()),
     bounds().height() - inputSize.height()
   ));
 }

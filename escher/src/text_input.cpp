@@ -3,13 +3,13 @@
 
 /* TextInput::ContentView */
 
-static inline const char * min(const char * x, const char * y) { return x < y ? x : y; }
-static inline const char * max(const char * x, const char * y) { return x > y ? x : y; }
+static inline const char * minCharPointer(const char * x, const char * y) { return x < y ? x : y; }
+static inline const char * maxCharPointer(const char * x, const char * y) { return x > y ? x : y; }
 
 void TextInput::ContentView::setCursorTextLocation(const char * location) {
   assert(location != nullptr);
   assert(location >= editedText());
-  const char * adjustedLocation = min(location, editedText() + editedTextLength());
+  const char * adjustedLocation = minCharPointer(location, editedText() + editedTextLength());
   m_cursorTextLocation = adjustedLocation;
   layoutSubviews();
 }
@@ -70,7 +70,7 @@ void TextInput::scrollToCursor() {
 
 bool TextInput::setCursorTextLocation(const char * location) {
   assert(location != nullptr);
-  const char * adjustedLocation = max(location, text());
+  const char * adjustedLocation = maxCharPointer(location, text());
   willSetCursorTextLocation(&adjustedLocation);
   contentView()->setCursorTextLocation(adjustedLocation);
   scrollToCursor();

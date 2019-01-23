@@ -15,6 +15,8 @@ using namespace Poincare;
 using namespace Shared;
 using namespace Ion;
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 VariableBoxController::VariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
@@ -124,7 +126,7 @@ KDCoordinate VariableBoxController::rowHeight(int index) {
   if (m_currentPage != Page::RootMenu) {
     Layout layoutR = expressionLayoutForRecord(recordAtIndex(index), index);
     if (!layoutR.isUninitialized()) {
-      return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
+      return maxCoordinate(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
     }
   }
   return NestedMenuController::rowHeight(index);

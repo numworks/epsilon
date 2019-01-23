@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 
 constexpr static int k_tabCharacterWidth = 4;
 
@@ -14,11 +14,11 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
 
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != KDCodePointNull) {
-    if (codePoint == KDCodePointLineFeed) {
+  while (codePoint != UCodePointNull) {
+    if (codePoint == UCodePointLineFeed) {
       position = KDPoint(0, position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
-    } else if (codePoint == KDCodePointTabulation) {
+    } else if (codePoint == UCodePointTabulation) {
       position = position.translatedBy(KDPoint(k_tabCharacterWidth * glyphSize.width(), 0));
       codePoint = decoder.nextCodePoint();
     } else {

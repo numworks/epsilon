@@ -1,8 +1,8 @@
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
-#include <kandinsky/unicode/utf8_decoder.h>
-#include <kandinsky/unicode/utf8_helper.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
@@ -112,7 +112,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, const char 
   const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
   assert(!codePoint.isCombining());
-  while (codePoint != KDCodePointNull) {
+  while (codePoint != UCodePointNull) {
     assert(codePointPointer < m_draftTextBuffer + m_textBufferSize);
     if (codePoint == '\n') {
       *(const_cast<char *>(codePointPointer)) = 0;
@@ -464,7 +464,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   // Remove the Empty code points
   constexpr int bufferSize = TextField::maxBufferSize();
   char buffer[bufferSize];
-  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, KDCodePointEmpty);
+  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
 
   const char * nextCursorLocation = m_contentView.draftTextBuffer() + draftTextLength();
   if (insertTextAtLocation(buffer, cursorTextLocation())) {

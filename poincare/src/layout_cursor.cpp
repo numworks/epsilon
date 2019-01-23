@@ -9,7 +9,7 @@
 #include <poincare/nth_root_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -75,7 +75,7 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(KDCodePointScriptSmallE),
+      CodePointLayout::Builder(UCodePointScriptSmallE),
       VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
@@ -114,7 +114,7 @@ void LayoutCursor::addEmptySquarePowerLayout() {
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(KDCodePointMiddleDot),
+      CodePointLayout::Builder(UCodePointMiddleDot),
       CodePointLayout::Builder('1'),
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
@@ -141,18 +141,18 @@ void LayoutCursor::insertText(const char * text) {
   Layout pointedChild;
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
-  if (codePoint == KDCodePointNull) {
+  if (codePoint == UCodePointNull) {
     return;
   }
   assert(!codePoint.isCombining());
-  while (codePoint != KDCodePointNull) {
-    if (codePoint == KDCodePointEmpty) {
+  while (codePoint != UCodePointNull) {
+    if (codePoint == UCodePointEmpty) {
       codePoint = decoder.nextCodePoint();
       assert(!codePoint.isCombining());
       continue;
     }
-    if (codePoint == KDCodePointMultiplicationSign) {
-      newChild = CodePointLayout::Builder(KDCodePointMiddleDot);
+    if (codePoint == UCodePointMultiplicationSign) {
+      newChild = CodePointLayout::Builder(UCodePointMiddleDot);
     } else if (codePoint == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {

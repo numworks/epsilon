@@ -168,7 +168,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
 
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, KDCodePointSquareRoot);
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSquareRoot);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }

@@ -22,7 +22,7 @@ public:
   void reloadCell() override;
   const char * text() const override { return m_scriptNodeView.text(); }
 
-  static_assert('\x11' == KDCodePointEmpty, "Unicode error");
+  static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
 

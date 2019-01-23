@@ -3,7 +3,7 @@
 
 #include <ion.h>
 #include <escher/input_event_handler.h>
-#include <kandinsky/unicode/code_point.h>
+#include <ion/unicode/code_point.h>
 
 class EditableField : public InputEventHandler {
 public:

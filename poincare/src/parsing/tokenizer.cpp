@@ -1,6 +1,6 @@
 #include "tokenizer.h"
 #include <poincare/number.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
@@ -18,7 +18,7 @@ const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, boo
   CodePoint firstCodePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();
   size_t numberOfBytesForCodePoint = nextPointer - currentPointer;
-  if (firstCodePoint != KDCodePointNull) {
+  if (firstCodePoint != UCodePointNull) {
     currentPointer = nextPointer;
     CodePoint codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
@@ -92,7 +92,7 @@ Token Tokenizer::popNumber() {
   const char * exponentPartText = m_text;
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
-  if (canPopCodePoint(KDCodePointLatinLetterSmallCapitalE)) {
+  if (canPopCodePoint(UCodePointLatinLetterSmallCapitalE)) {
     exponentIsNegative = canPopCodePoint('-');
     exponentPartText = m_text;
     exponentPartLength = popDigits();
@@ -146,16 +146,16 @@ Token Tokenizer::popToken() {
     assert(c != '.');
     return Token(typeForCodePoint[c - '(']);
   }
-  if (c == KDCodePointMultiplicationSign || c == KDCodePointMiddleDot) {
+  if (c == UCodePointMultiplicationSign || c == UCodePointMiddleDot) {
     return Token(Token::Times);
   }
   if (c == '^') {
     return Token(Token::Caret);
   }
-  if (c == KDCodePointLeftSuperscript) {
+  if (c == UCodePointLeftSuperscript) {
     return Token(Token::LeftSuperscript);
   }
-  if (c == KDCodePointRightSuperscript) {
+  if (c == UCodePointRightSuperscript) {
     return Token(Token::RightSuperscript);
   }
   if (c == '!') {
@@ -176,26 +176,26 @@ Token Tokenizer::popToken() {
   if (c == '}') {
     return Token(Token::RightBrace);
   }
-  if (c == KDCodePointGreekSmallLetterPi
-      || c == KDCodePointMathematicalBoldSmallI
-      || c == KDCodePointScriptSmallE)
+  if (c == UCodePointGreekSmallLetterPi
+      || c == UCodePointMathematicalBoldSmallI
+      || c == UCodePointScriptSmallE)
   {
     Token result(Token::Constant);
     result.setCodePoint(c);
     return result;
   }
-  if (c == KDCodePointSquareRoot) {
+  if (c == UCodePointSquareRoot) {
     Token result(Token::Identifier);
     // TODO compute size manually?
     constexpr int squareRootCharLength = 3;
-    assert(UTF8Decoder::CharSizeOfCodePoint(KDCodePointSquareRoot) == squareRootCharLength);
+    assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSquareRoot) == squareRootCharLength);
     result.setString(start, squareRootCharLength);
     return result;
   }
-  if (c == KDCodePointEmpty) {
+  if (c == UCodePointEmpty) {
     return Token(Token::Empty);
   }
-  if (c == KDCodePointRightwardsArrow) {
+  if (c == UCodePointRightwardsArrow) {
     return Token(Token::Store);
   }
   if (c == 0) {

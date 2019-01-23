@@ -1,5 +1,5 @@
-#ifndef KANDINSKY_UNICODE_UTF8_DECODER_H
-#define KANDINSKY_UNICODE_UTF8_DECODER_H
+#ifndef ION_UNICODE_UTF8_DECODER_H
+#define ION_UNICODE_UTF8_DECODER_H
 
 #include "code_point.h"
 #include <stddef.h>

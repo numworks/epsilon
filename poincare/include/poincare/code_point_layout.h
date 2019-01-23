@@ -1,7 +1,7 @@
 #ifndef POINCARE_CODEPOINT_LAYOUT_NODE_H
 #define POINCARE_CODEPOINT_LAYOUT_NODE_H
 
-#include <kandinsky/include/kandinsky/unicode/code_point.h>
+#include <ion/unicode/code_point.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 
@@ -13,7 +13,7 @@ namespace Poincare {
 class CodePointLayoutNode final : public LayoutNode {
 public:
   static constexpr const KDFont * k_defaultFont = KDFont::LargeFont;
-  CodePointLayoutNode(CodePoint c = KDCodePointNull, const KDFont * font = k_defaultFont) :
+  CodePointLayoutNode(CodePoint c = UCodePointNull, const KDFont * font = k_defaultFont) :
     LayoutNode(),
     m_codePoint(c),
     m_font(font)

@@ -4,7 +4,7 @@
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -64,7 +64,7 @@ HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const 
   assert(!codePoint.isCombining());
   int layoutIndex = 0;
   int bufferIndex = 0;
-  while (codePoint != KDCodePointNull && bufferIndex < bufferLen) {
+  while (codePoint != UCodePointNull && bufferIndex < bufferLen) {
     resultLayout.addChildAtIndex(CodePointLayout::Builder(codePoint, font), layoutIndex, layoutIndex, nullptr);
     layoutIndex++;
     bufferIndex+= nextPointer - currentPointer;

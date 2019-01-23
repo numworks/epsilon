@@ -57,7 +57,7 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
       return result;
     } else if (!std::isnan(app) && app <= -Expression::Epsilon<float>()) {
       // arg(x) = Pi if x < 0
-      Expression result = Constant::Builder(KDCodePointGreekSmallLetterPi);
+      Expression result = Constant::Builder(UCodePointGreekSmallLetterPi);
       replaceWithInPlace(result);
       return result;
     }

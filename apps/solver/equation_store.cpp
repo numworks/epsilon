@@ -325,7 +325,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
       // C = Root((delta1+sqrt(-27a^2*delta))/2, 3)
       Expression * mult11Operands[3] = {new Rational::Builder(-27), new Power::Builder(a->clone(), new Rational::Builder(2), false), (*delta)->clone()};
       Expression * c = new Power::Builder(new Division::Builder(new Addition(delta1, new SquareRoot(new Multiplication::Builder(mult11Operands, 3, false), false), false), new Rational::Builder(2), false), new Rational::Builder(1,3), false);
-      Expression * unary3roots[2] = {new Addition(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(KDCodePointMathematicalBoldSmallI), false), new Rational::Builder(2), false), false), new Subtraction::Builder(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(KDCodePointMathematicalBoldSmallI), false), new Rational::Builder(2), false), false)};
+      Expression * unary3roots[2] = {new Addition(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(UCodePointMathematicalBoldSmallI), false), new Rational::Builder(2), false), false), new Subtraction::Builder(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(UCodePointMathematicalBoldSmallI), false), new Rational::Builder(2), false), false)};
       // x_k = -1/(3a)*(b+C*z+delta0/(zC)) with z = unary cube root
       for (int k = 0; k < 3; k++) {
         Expression * ccopy = c;

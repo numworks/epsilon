@@ -15,14 +15,14 @@ Layout LogisticModel::layout() {
     Layout exponentLayoutChildren[] = {
       CodePointLayout::Builder('-', KDFont::SmallFont),
       CodePointLayout::Builder('b', KDFont::SmallFont),
-      CodePointLayout::Builder(KDCodePointMiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('X', KDFont::SmallFont)
     };
     Layout layoutChildren[] = {
       CodePointLayout::Builder('1', KDFont::SmallFont),
       CodePointLayout::Builder('+', KDFont::SmallFont),
       CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(KDCodePointMiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('e', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(exponentLayoutChildren, 4),

@@ -2,7 +2,7 @@
 #define POINCARE_SERIALIZATION_HELPER_H
 
 #include <poincare/tree_node.h>
-#include <kandinsky/include/kandinsky/unicode/code_point.h>
+#include <ion/unicode/code_point.h>
 
 namespace Poincare {
 

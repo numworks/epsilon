@@ -1,5 +1,5 @@
-#ifndef KANDINSKY_UNICODE_UTF8_HELPER_H
-#define KANDINSKY_UNICODE_UTF8_HELPER_H
+#ifndef ION_UNICODE_UTF8_HELPER_H
+#define ION_UNICODE_UTF8_HELPER_H
 
 #include "code_point.h"
 #include <stddef.h>

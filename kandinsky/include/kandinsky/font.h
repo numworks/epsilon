@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <kandinsky/size.h>
 #include <kandinsky/coordinate.h>
-#include <kandinsky/unicode/code_point.h>
+#include <ion/unicode/code_point.h>
 #include "palette.h"
 
 /* We use UTF-8 encoding. This means that a character is encoded as a code point

@@ -13,7 +13,7 @@ Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
     Layout layoutChildren[] = {
       CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(KDCodePointMiddleDot, KDFont::SmallFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('l', KDFont::SmallFont),
       CodePointLayout::Builder('n', KDFont::SmallFont),
       CodePointLayout::Builder('(', KDFont::SmallFont),

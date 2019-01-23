@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <kandinsky/font.h>
 #include <ion.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 
 constexpr static int k_tabCharacterWidth = 4;
 
@@ -14,11 +14,11 @@ KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
   UTF8Decoder decoder(text);
   const char * currentStringPosition = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != KDCodePointNull && (limit == nullptr || currentStringPosition < limit)) {
+  while (codePoint != UCodePointNull && (limit == nullptr || currentStringPosition < limit)) {
     KDSize cSize = KDSize(m_glyphSize.width(), 0);
-    if (codePoint == KDCodePointLineFeed) {
+    if (codePoint == UCodePointLineFeed) {
       cSize = KDSize(0, m_glyphSize.height());
-    } else if (codePoint == KDCodePointTabulation) {
+    } else if (codePoint == UCodePointTabulation) {
       cSize = KDSize(k_tabCharacterWidth * m_glyphSize.width(), 0);
     } else if (codePoint.isCombining()) {
       cSize = KDSizeZero;

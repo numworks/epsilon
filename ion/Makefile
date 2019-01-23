@@ -22,6 +22,8 @@ src += $(addprefix ion/src/shared/, \
   events.cpp \
   platform_info.cpp \
   storage.cpp \
+  unicode/utf8_decoder.cpp\
+  unicode/utf8_helper.cpp\
 )
 
 src += ion/src/external/lz4/lz4.c
@@ -31,4 +33,5 @@ tests += $(addprefix ion/test/,\
   events.cpp\
   keyboard.cpp\
   storage.cpp\
+  utf8_decoder.cpp\
 )

@@ -6,7 +6,7 @@
 namespace Poincare {
 
 int EmptyExpressionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::CodePoint(buffer, bufferSize, KDCodePointEmpty);
+  return SerializationHelper::CodePoint(buffer, bufferSize, UCodePointEmpty);
 }
 
 Layout EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

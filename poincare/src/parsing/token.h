@@ -53,7 +53,7 @@ public:
     Undefined
   };
 
-  Token(Type type) : m_type(type), m_text(0), m_codePoint(KDCodePointNull) {};
+  Token(Type type) : m_type(type), m_text(0), m_codePoint(UCodePointNull) {};
 
   Type type() const { return m_type; }
   bool is(Type t) const { return m_type == t; }

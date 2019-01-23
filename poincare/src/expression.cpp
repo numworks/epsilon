@@ -6,7 +6,7 @@
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
-#include <kandinsky/unicode/utf8_helper.h>
+#include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <float.h>
 
@@ -343,7 +343,7 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
-  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::CodePointSearch(textInput, KDCodePointMathematicalBoldSmallI) != nullptr) {
+  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::CodePointSearch(textInput, UCodePointMathematicalBoldSmallI) != nullptr) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
@@ -520,12 +520,12 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(KDCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(KDCodePointGreekSmallLetterPi));
+  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
 }
 
 Expression Expression::reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -627,9 +627,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       }
       if (!isZeroTb) {
         if (isOneTb) {
-          imag = Constant::Builder(KDCodePointMathematicalBoldSmallI);
+          imag = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          imag = Multiplication::Builder(tb , Constant::Builder(KDCodePointMathematicalBoldSmallI));
+          imag = Multiplication::Builder(tb , Constant::Builder(UCodePointMathematicalBoldSmallI));
         }
       }
       if (imag.isUninitialized()) {
@@ -658,14 +658,14 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa && !isZeroTb) {
         Expression arg;
         if (isOneTb) {
-          arg = Constant::Builder(KDCodePointMathematicalBoldSmallI);
+          arg = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          arg = Multiplication::Builder(tb, Constant::Builder(KDCodePointMathematicalBoldSmallI));
+          arg = Multiplication::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
         }
-        exp = Power::Builder(Constant::Builder(KDCodePointScriptSmallE), arg);
+        exp = Power::Builder(Constant::Builder(UCodePointScriptSmallE), arg);
       }
       if (exp.isUninitialized()) {
         return norm;

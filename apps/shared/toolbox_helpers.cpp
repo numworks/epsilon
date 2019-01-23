@@ -1,6 +1,6 @@
 #include "toolbox_helpers.h"
 #include <apps/i18n.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <assert.h>
 
@@ -13,7 +13,7 @@ int CursorIndexInCommandText(const char * text) {
   const char * currentPointer = text;
   CodePoint codePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();
-  while (codePoint != KDCodePointNull) {
+  while (codePoint != UCodePointNull) {
     if (codePoint == '(' || codePoint == '\'') {
       return index + 1;
     }
@@ -57,7 +57,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
       buffer[currentNewTextIndex++] = command[i];
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        currentNewTextIndex += UTF8Decoder::CodePointToChars(KDCodePointEmpty, buffer + currentNewTextIndex, bufferSize - currentNewTextIndex);
+        currentNewTextIndex += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + currentNewTextIndex, bufferSize - currentNewTextIndex);
         argumentAlreadyReplaced = true;
       }
     }

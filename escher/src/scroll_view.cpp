@@ -146,53 +146,53 @@ KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
 }
 
 ScrollView::Decorator::Decorator() :
-  m_verticalScrollIndicator(),
-  m_horizontalScrollIndicator(),
+  m_verticalBar(),
+  m_horizontalBar(),
   m_indicatorThickness(20)
 {
 }
 
 int ScrollView::Decorator::numberOfIndicators() {
-  return m_verticalScrollIndicator.visible() + m_horizontalScrollIndicator.visible();
+  return m_verticalBar.visible() + m_horizontalBar.visible();
 }
 
 View * ScrollView::Decorator::indicatorAtIndex(int index) {
   switch (index) {
     case 1:
-      if (m_horizontalScrollIndicator.visible()) {
-        return &m_horizontalScrollIndicator;
+      if (m_horizontalBar.visible()) {
+        return &m_horizontalBar;
       } else {
-        return &m_verticalScrollIndicator;
+        return &m_verticalBar;
       }
     case 2:
-      return &m_verticalScrollIndicator;
+      return &m_verticalBar;
   }
   return nullptr;
 }
 
 void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
-  m_horizontalScrollIndicator.update(
+  m_horizontalBar.update(
     content.width(),
     offset.x(),
     frame.width()
   );
-  m_verticalScrollIndicator.update(
+  m_verticalBar.update(
     content.height(),
     offset.y(),
     frame.height()
   );
   /* If the two indicators are visible, we leave an empty rectangle in the right
    * bottom corner. Otherwise, the only indicator uses all the height/width. */
-  if (m_verticalScrollIndicator.visible()) {
-    m_verticalScrollIndicator.setFrame(KDRect(
+  if (m_verticalBar.visible()) {
+    m_verticalBar.setFrame(KDRect(
       frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, frame.height() - m_horizontalScrollIndicator.visible() * m_indicatorThickness
+      m_indicatorThickness, frame.height() - m_horizontalBar.visible() * m_indicatorThickness
     ));
   }
-  if (m_horizontalScrollIndicator.visible()) {
-    m_horizontalScrollIndicator.setFrame(KDRect(
+  if (m_horizontalBar.visible()) {
+    m_horizontalBar.setFrame(KDRect(
       0, frame.height() - m_indicatorThickness,
-      frame.width() - m_verticalScrollIndicator.visible() * m_indicatorThickness, m_indicatorThickness
+      frame.width() - m_verticalBar.visible() * m_indicatorThickness, m_indicatorThickness
     ));
   }
 }

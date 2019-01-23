@@ -174,12 +174,12 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   }
   assert(m_type == Type::Superscript);
   /* If the layout is a superscript, write:
-   * "KDCodePointLeftSuperscript indice KDCodePointRightSuperscript" */
-  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, KDCodePointLeftSuperscript);
+   * "UCodePointLeftSuperscript indice UCodePointRightSuperscript" */
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointLeftSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, KDCodePointRightSuperscript);
+  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, UCodePointRightSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   buffer[numberOfChar] = 0;

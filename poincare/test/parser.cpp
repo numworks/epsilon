@@ -257,9 +257,9 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
 
   // Reserved symbols
   assert_parsed_expression_is("ans", Symbol::Builder("ans", 3));
-  assert_parsed_expression_is("𝐢", Constant::Builder(KDCodePointMathematicalBoldSmallI));
-  assert_parsed_expression_is("π", Constant::Builder(KDCodePointGreekSmallLetterPi));
-  assert_parsed_expression_is("ℯ", Constant::Builder(KDCodePointScriptSmallE));
+  assert_parsed_expression_is("𝐢", Constant::Builder(UCodePointMathematicalBoldSmallI));
+  assert_parsed_expression_is("π", Constant::Builder(UCodePointGreekSmallLetterPi));
+  assert_parsed_expression_is("ℯ", Constant::Builder(UCodePointScriptSmallE));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
@@ -364,7 +364,7 @@ QUIZ_CASE(poincare_parser_implicit_multiplication) {
   assert_parsed_expression_is("1ans", Multiplication::Builder(Rational::Builder(1),Symbol::Builder("ans", 3)));
   assert_parsed_expression_is("x1", Symbol::Builder("x1", 2));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1)),Rational::Builder(2)));
-  assert_parsed_expression_is("1π", Multiplication::Builder(Rational::Builder(1),Constant::Builder(KDCodePointGreekSmallLetterPi)));
+  assert_parsed_expression_is("1π", Multiplication::Builder(Rational::Builder(1),Constant::Builder(UCodePointGreekSmallLetterPi)));
   assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1)),Rational::Builder(2)));
   assert_parsed_expression_is("-1x", Opposite::Builder(Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1))));
   assert_parsed_expression_is("2×1x", Multiplication::Builder(Rational::Builder(2),Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1))));
@@ -377,7 +377,7 @@ QUIZ_CASE(poincare_parser_implicit_multiplication) {
   assert_parsed_expression_is("sin(1)2", Multiplication::Builder(Sine::Builder(Rational::Builder(1)),Rational::Builder(2)));
   assert_parsed_expression_is("1cos(2)", Multiplication::Builder(Rational::Builder(1),Cosine::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("1!2", Multiplication::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(KDCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
+  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
   Expression m1[] = {Rational::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {Rational::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);
   assert_parsed_expression_is("[[1]][[2]]", Multiplication::Builder(M1,M2));

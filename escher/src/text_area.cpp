@@ -1,8 +1,8 @@
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
 #include <escher/text_input_helpers.h>
-#include <kandinsky/unicode/utf8_decoder.h>
-#include <kandinsky/unicode/utf8_helper.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 
 #include <stddef.h>
 #include <assert.h>
@@ -29,7 +29,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   char buffer[bufferSize];
 
   // Remove the Empty code points
-  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, text, KDCodePointEmpty, &cursorPositionInCommand);
+  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, text, UCodePointEmpty, &cursorPositionInCommand);
 
   // Insert the text
   if ((indentation && insertTextWithIndentation(buffer, cursorTextLocation())) || insertTextAtLocation(buffer, cursorTextLocation())) {

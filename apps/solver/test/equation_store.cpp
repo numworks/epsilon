@@ -112,10 +112,10 @@ QUIZ_CASE(equation_solve) {
   const char * solutions10[] = {"1", "0"};
   assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions10, 2);
 
-  quiz_assert(KDCodePointLeftSuperscript == '\022');
-  quiz_assert(KDCodePointLeftSuperscript == '\x12');
-  quiz_assert(KDCodePointRightSuperscript == '\023');
-  quiz_assert(KDCodePointRightSuperscript == '\x13');
+  quiz_assert(UCodePointLeftSuperscript == '\022');
+  quiz_assert(UCodePointLeftSuperscript == '\x12');
+  quiz_assert(UCodePointRightSuperscript == '\023');
+  quiz_assert(UCodePointRightSuperscript == '\x13');
 
   // x^2+x+1=3×x^2+pi×x-√(5)
   const char * equations11[] = {"x^2+x+1=3×x^2+π×x-√(5)", 0};

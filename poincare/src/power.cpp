@@ -521,7 +521,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       Multiplication m1 = Multiplication::Builder();
       replaceWithInPlace(m1);
       // Multiply m1 by i complex
-      Constant i = Constant::Builder(KDCodePointMathematicalBoldSmallI);
+      Constant i = Constant::Builder(UCodePointMathematicalBoldSmallI);
       m1.addChildAtIndexInPlace(i, 0, 0);
       i.shallowReduce(context, complexFormat, angleUnit, target);
       m1.addChildAtIndexInPlace(*this, 1, 1);
@@ -1136,17 +1136,17 @@ Expression Power::equivalentExpressionUsingStandardExpression() const {
 
 Expression Power::CreateComplexExponent(const Expression & r, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // Returns e^(i*pi*r)
-  const Constant exp = Constant::Builder(KDCodePointScriptSmallE);
-  Constant iComplex = Constant::Builder(KDCodePointMathematicalBoldSmallI);
-  const Constant pi = Constant::Builder(KDCodePointGreekSmallLetterPi);
+  const Constant exp = Constant::Builder(UCodePointScriptSmallE);
+  Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
+  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
   Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());
   iComplex.shallowReduce(context, complexFormat, angleUnit, target);
   Power p = Power::Builder(exp, mExp);
   mExp.shallowReduce(context, complexFormat, angleUnit, target);
   return p;
 #if 0
-  const Constant iComplex = Constant::Builder(KDCodePointMathematicalBoldSmallI);
-  const Constant pi = Constant::Builder(KDCodePointGreekSmallLetterPi);
+  const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
+  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
   Expression op = Multiplication::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
   Cosine cos = Cosine(op).shallowReduce(context, complexFormat, angleUnit, false);;
   Sine sin = Sine(op).shallowReduce(context, complexFormat, angleUnit, false);

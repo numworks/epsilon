@@ -70,7 +70,7 @@ void LayoutField::ContentView::layoutCursorSubview() {
 
 CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   CodePoint xnt = m_contentView.cursor()->layoutReference().XNTCodePoint();
-  if (xnt != KDCodePointNull) {
+  if (xnt != UCodePointNull) {
     return xnt;
   }
   return defaultXNTCodePoint;

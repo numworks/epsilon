@@ -278,7 +278,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
      *   reduced to undef) */
     if (target == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(KDCodePointGreekSmallLetterPi));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
       sign.shallowReduce(context, complexFormat, angleUnit, target);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
@@ -314,7 +314,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
       // The argument was made positive
       // acos(-x) = π-acos(x)
       if (e.type() == ExpressionNode::Type::ArcCosine) {
-        Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant::Builder(KDCodePointGreekSmallLetterPi)) : static_cast<Expression>(Rational::Builder(180));
+        Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant::Builder(UCodePointGreekSmallLetterPi)) : static_cast<Expression>(Rational::Builder(180));
         Subtraction s = Subtraction::Builder();
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);

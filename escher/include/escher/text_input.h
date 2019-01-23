@@ -47,6 +47,7 @@ protected:
       assert(index == 0);
       return &m_cursorView;
     }
+    virtual const char * editedText() const = 0;
     virtual size_t editedTextLength() const = 0;
   };
 protected:

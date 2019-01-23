@@ -2,7 +2,7 @@
 
 namespace Shared {
 
-void TextFieldWithExtension::willSetCursorTextLocation(const char * * location) {
+void TextFieldWithExtension::willSetCursorLocation(const char * * location) {
   size_t textLength = strlen(text());
   assert(textLength >= m_extensionLength);
   const char * maxLocation = m_contentView.draftTextBuffer() + (textLength - m_extensionLength);
@@ -24,7 +24,7 @@ bool TextFieldWithExtension::removeTextBeforeExtension(bool whole) {
   assert(isEditing());
   const char * extension = m_contentView.draftTextBuffer() + (strlen(text()) - m_extensionLength);
   assert(extension >= m_contentView.draftTextBuffer() && extension < m_contentView.draftTextBuffer() + (ContentView::k_maxBufferSize - m_extensionLength));
-  char * destination = whole ? m_contentView.draftTextBuffer() : const_cast<char *>(cursorTextLocation());
+  char * destination = whole ? m_contentView.draftTextBuffer() : const_cast<char *>(cursorLocation());
   if (destination == extension) {
     return false;
   }
@@ -32,7 +32,7 @@ bool TextFieldWithExtension::removeTextBeforeExtension(bool whole) {
   assert(destination < extension);
   m_contentView.willModifyTextBuffer();
   strlcpy(destination, extension, ContentView::k_maxBufferSize - (destination - m_contentView.draftTextBuffer()));
-  m_contentView.setCursorTextLocation(destination);
+  m_contentView.setCursorLocation(destination);
   m_contentView.didModifyTextBuffer();
   layoutSubviews();
   return true;

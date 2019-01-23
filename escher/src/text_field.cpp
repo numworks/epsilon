@@ -22,7 +22,7 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
   m_backgroundColor(backgroundColor)
 {
   assert(m_textBufferSize <= k_maxBufferSize);
-  m_cursorTextLocation = draftTextBuffer;
+  m_cursorLocation = draftTextBuffer;
 }
 
 void TextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
@@ -80,17 +80,17 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
     reinitDraftTextBuffer();
   }
   m_currentDraftTextLength = strlen(m_draftTextBuffer);
-  if (m_cursorTextLocation < m_draftTextBuffer
-      || m_cursorTextLocation > m_draftTextBuffer + m_currentDraftTextLength)
+  if (m_cursorLocation < m_draftTextBuffer
+      || m_cursorLocation > m_draftTextBuffer + m_currentDraftTextLength)
   {
-    m_cursorTextLocation = m_draftTextBuffer + m_currentDraftTextLength;
+    m_cursorLocation = m_draftTextBuffer + m_currentDraftTextLength;
   }
   markRectAsDirty(bounds());
   layoutSubviews();
 }
 
 void TextField::ContentView::reinitDraftTextBuffer() {
-  setCursorTextLocation(m_draftTextBuffer);
+  setCursorLocation(m_draftTextBuffer);
   m_draftTextBuffer[0] = 0;
   m_currentDraftTextLength = 0;
 }
@@ -143,28 +143,28 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
 
 bool TextField::ContentView::removeCodePoint() {
   assert(m_isEditing);
-  if (cursorTextLocation() <= m_draftTextBuffer) {
-    assert(cursorTextLocation() == m_draftTextBuffer);
+  if (cursorLocation() <= m_draftTextBuffer) {
+    assert(cursorLocation() == m_draftTextBuffer);
     return false;
   }
-  UTF8Decoder decoder(m_draftTextBuffer, cursorTextLocation());
+  UTF8Decoder decoder(m_draftTextBuffer, cursorLocation());
   decoder.previousCodePoint();
   const char * newCursorLocation = decoder.stringPosition();
 
-  assert(newCursorLocation < cursorTextLocation());
-  int removedCodePointLength = cursorTextLocation() - newCursorLocation;
+  assert(newCursorLocation < cursorLocation());
+  int removedCodePointLength = cursorLocation() - newCursorLocation;
   m_currentDraftTextLength-= removedCodePointLength;
 
   if (m_horizontalAlignment > 0.0f) {
     reloadRectFromPosition(m_draftTextBuffer);
   }
 
-  setCursorTextLocation(newCursorLocation);
+  setCursorLocation(newCursorLocation);
   if (m_horizontalAlignment == 0.0f) {
-    reloadRectFromPosition(cursorTextLocation());
+    reloadRectFromPosition(cursorLocation());
   }
 
-  for (char * k = const_cast<char *>(cursorTextLocation()); k < m_draftTextBuffer + m_currentDraftTextLength + removedCodePointLength; k++) {
+  for (char * k = const_cast<char *>(cursorLocation()); k < m_draftTextBuffer + m_currentDraftTextLength + removedCodePointLength; k++) {
     *k = *(k+removedCodePointLength);
     if (*k == 0) {
       break;
@@ -178,12 +178,12 @@ bool TextField::ContentView::removeCodePoint() {
 
 bool TextField::ContentView::removeEndOfLine() {
   assert(m_isEditing);
-  if (m_currentDraftTextLength == cursorTextLocation() - m_draftTextBuffer) {
+  if (m_currentDraftTextLength == cursorLocation() - m_draftTextBuffer) {
     return false;
   }
-  reloadRectFromPosition(m_horizontalAlignment == 0.0f ? cursorTextLocation() : m_draftTextBuffer);
-  m_currentDraftTextLength = cursorTextLocation() - m_draftTextBuffer;
-  *(const_cast<char *>(cursorTextLocation())) = 0;
+  reloadRectFromPosition(m_horizontalAlignment == 0.0f ? cursorLocation() : m_draftTextBuffer);
+  m_currentDraftTextLength = cursorLocation() - m_draftTextBuffer;
+  *(const_cast<char *>(cursorLocation())) = 0;
   layoutSubviews();
   return true;
 }
@@ -262,7 +262,7 @@ void TextField::setText(const char * text) {
   m_contentView.setText(text);
   /* Set the cursor location here and not in ContentView::setText so that
    * TextInput::willSetCursorLocation is called. */
-  setCursorTextLocation(m_contentView.draftTextBuffer()+strlen(text));
+  setCursorLocation(m_contentView.draftTextBuffer()+strlen(text));
 }
 
 void TextField::setAlignment(float horizontalAlignment, float verticalAlignment) {
@@ -286,7 +286,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (isEditing() && shouldFinishEditing(event)) {
     char bufferText[ContentView::k_maxBufferSize];
-    const char * cursorLoc = cursorTextLocation();
+    const char * cursorLoc = cursorLocation();
     if (m_hasTwoBuffers) {
       strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
@@ -310,7 +310,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
        * reset the textfield in the same state as before */
       setText(m_contentView.textBuffer());
       strlcpy(m_contentView.textBuffer(), bufferText, ContentView::k_maxBufferSize);
-      setCursorTextLocation(cursorLoc);
+      setCursorLocation(cursorLoc);
     }
     return true;
   }
@@ -359,7 +359,7 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   /* Let's assume everything before the cursor is nested correctly, which is
    * reasonable if the expression is being entered left-to-right. */
   const char * text = this->text();
-  const char * location = cursorTextLocation();
+  const char * location = cursorLocation();
   UTF8Decoder decoder(text, text + (location - m_contentView.draftTextBuffer()));
   unsigned level = 0;
   while (location > m_contentView.draftTextBuffer()) {
@@ -431,25 +431,25 @@ void TextField::scrollToCursor() {
 }
 
 bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left && isEditing() && cursorTextLocation() > m_contentView.draftTextBuffer()) {
+  if (event == Ion::Events::Left && isEditing() && cursorLocation() > m_contentView.draftTextBuffer()) {
     assert(isEditing());
-    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorTextLocation());
+    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
     decoder.previousCodePoint();
-    return setCursorTextLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.stringPosition());
   }
   if (event == Ion::Events::ShiftLeft && isEditing()) {
     assert(isEditing());
-    return setCursorTextLocation(m_contentView.draftTextBuffer());
+    return setCursorLocation(m_contentView.draftTextBuffer());
   }
-  if (event == Ion::Events::Right && isEditing() && cursorTextLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
+  if (event == Ion::Events::Right && isEditing() && cursorLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
     assert(isEditing());
-    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorTextLocation());
+    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
     decoder.nextCodePoint();
-    return setCursorTextLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.stringPosition());
   }
   if (event == Ion::Events::ShiftRight && isEditing()) {
     assert(isEditing());
-    return setCursorTextLocation(m_contentView.draftTextBuffer() + draftTextLength());
+    return setCursorLocation(m_contentView.draftTextBuffer() + draftTextLength());
   }
   return false;
 }
@@ -466,7 +466,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   if (eventText[0] == 0) {
     /* For instance, the event might be EXE on a non-editing text field to start
      * edition. */
-    setCursorTextLocation(m_contentView.draftTextBuffer());
+    setCursorLocation(m_contentView.draftTextBuffer());
     return m_delegate->textFieldDidHandleEvent(this, true, previousTextLength != 0);
   }
 
@@ -476,18 +476,18 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
 
   const char * nextCursorLocation = m_contentView.draftTextBuffer() + draftTextLength();
-  if (insertTextAtLocation(buffer, cursorTextLocation())) {
+  if (insertTextAtLocation(buffer, cursorLocation())) {
     /* The cursor position depends on the text as we sometimes want to position
      * the cursor at the end of the text and sometimes after the first
      * parenthesis. */
-    nextCursorLocation = cursorTextLocation();
+    nextCursorLocation = cursorLocation();
     if (forceCursorRightOfText) {
       nextCursorLocation+= strlen(buffer);
     } else {
       nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
     }
   }
-  setCursorTextLocation(nextCursorLocation);
+  setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
 }
 

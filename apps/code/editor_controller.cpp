@@ -44,7 +44,7 @@ void EditorController::didBecomeFirstResponder() {
 
 void EditorController::viewWillAppear() {
   m_editorView.loadSyntaxHighlighter();
-  m_editorView.setCursorTextLocation(m_editorView.text() + strlen(m_editorView.text()));
+  m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
 }
 
 void EditorController::viewDidDisappear() {
@@ -70,7 +70,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */
     char * text = const_cast<char *>(textArea->text());
-    const char * charBeforeCursorPointer = textArea->cursorTextLocation()-1;
+    const char * charBeforeCursorPointer = textArea->cursorLocation()-1;
     int indentationSize = 0;
     while (charBeforeCursorPointer >= text && *charBeforeCursorPointer == ' ') {
       charBeforeCursorPointer--;
@@ -89,7 +89,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     /* If the cursor is on the left of the text of a line, a space triggers an
      * indentation. */
     char * text = const_cast<char *>(textArea->text());
-    const char * charBeforeCursorPointer = textArea->cursorTextLocation()-1;
+    const char * charBeforeCursorPointer = textArea->cursorLocation()-1;
     while (charBeforeCursorPointer >= text && *charBeforeCursorPointer == ' ') {
       charBeforeCursorPointer--;
     }

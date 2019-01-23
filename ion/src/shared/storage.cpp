@@ -360,10 +360,8 @@ const char * Storage::fullNameOfRecordStarting(char * start) const {
 
 const void * Storage::valueOfRecordStarting(char * start) const {
   char * currentChar = start+sizeof(record_size_t);
-  while (*currentChar != 0) {
-    currentChar++;
-  }
-  return currentChar+1;
+  size_t fullNameLength = strlen(currentChar);
+  return currentChar+fullNameLength+1;
 }
 
 size_t Storage::overrideSizeAtPosition(char * position, record_size_t size) {

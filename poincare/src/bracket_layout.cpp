@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void BracketLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->layoutNode() == this);
@@ -84,7 +84,7 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
     {
       currentNumberOfOpenBrackets++;
     }
-    result = max(result, sibling->baseline());
+    result = maxCoordinate(result, sibling->baseline());
   }
   return result + (layoutSize().height() - childHeight()) / 2;
 }
@@ -138,10 +138,10 @@ KDCoordinate BracketLayoutNode::computeChildHeight() {
     }
     KDCoordinate siblingHeight = sibling->layoutSize().height();
     KDCoordinate siblingBaseline = sibling->baseline();
-    maxUnderBaseline = max(maxUnderBaseline, siblingHeight - siblingBaseline);
-    maxAboveBaseline = max(maxAboveBaseline, siblingBaseline);
+    maxUnderBaseline = maxCoordinate(maxUnderBaseline, siblingHeight - siblingBaseline);
+    maxAboveBaseline = maxCoordinate(maxAboveBaseline, siblingBaseline);
   }
-  return max(result, maxUnderBaseline + maxAboveBaseline);
+  return maxCoordinate(result, maxUnderBaseline + maxAboveBaseline);
 }
 
 KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child) {

@@ -7,6 +7,9 @@ extern "C" {
 #include <assert.h>
 }
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
   m_contentView(contentView),
@@ -70,8 +73,8 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
 
   /* Handle cases when the size of the view has decreased. */
   setContentOffset(KDPoint(
-    min(contentOffset().x(), max(minimalSizeForOptimalDisplay().width() - bounds().width(), 0)),
-    min(contentOffset().y(), max(minimalSizeForOptimalDisplay().height() - bounds().height(), 0))
+    minCoordinate(contentOffset().x(), maxCoordinate(minimalSizeForOptimalDisplay().width() - bounds().width(), 0)),
+    minCoordinate(contentOffset().y(), maxCoordinate(minimalSizeForOptimalDisplay().height() - bounds().height(), 0))
   ));
 }
 

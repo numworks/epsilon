@@ -121,8 +121,8 @@ void GraphController::reloadBannerView() {
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    constexpr static char legX[] = {'X'/*TODO LEA Ion::Charset::XBar*/, '=', 0};
-    legend = legX;
+    // \xCC\x84 represents the combining bar ' ̄'
+    legend = "x\xCC\x84=";
     x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
@@ -138,8 +138,8 @@ void GraphController::reloadBannerView() {
   legend = "y=";
   double y = m_cursor->y();
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    constexpr static char legY[] = {'Y' /*TODO LEA Ion::Charset::YBar*/, '=', 0};
-    legend = legY;
+    // \xCC\x84 represents the combining bar ' ̄'
+    legend = "y\xCC\x84=";
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);

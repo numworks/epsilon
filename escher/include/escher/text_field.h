@@ -41,6 +41,7 @@ protected:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool isEditing() const { return m_isEditing; }
     const char * text() const override;
+    const char * editedText() const override { return m_draftTextBuffer; }
     size_t editedTextLength() const override { return m_currentDraftTextLength; } //TODO keep ?
     char * textBuffer() { return m_textBuffer; }
     char * draftTextBuffer() { return m_draftTextBuffer; }

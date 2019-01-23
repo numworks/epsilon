@@ -152,24 +152,6 @@ ScrollView::Decorator::Decorator() :
 {
 }
 
-int ScrollView::Decorator::numberOfIndicators() {
-  return m_verticalBar.visible() + m_horizontalBar.visible();
-}
-
-View * ScrollView::Decorator::indicatorAtIndex(int index) {
-  switch (index) {
-    case 1:
-      if (m_horizontalBar.visible()) {
-        return &m_horizontalBar;
-      } else {
-        return &m_verticalBar;
-      }
-    case 2:
-      return &m_verticalBar;
-  }
-  return nullptr;
-}
-
 void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
   m_horizontalBar.update(
     content.width(),

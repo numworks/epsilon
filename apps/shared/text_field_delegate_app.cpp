@@ -1,5 +1,5 @@
 #include "text_field_delegate_app.h"
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <apps/apps_container.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>

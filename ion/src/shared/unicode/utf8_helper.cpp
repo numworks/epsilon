@@ -1,5 +1,5 @@
-#include <kandinsky/unicode/utf8_helper.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <assert.h>
 
@@ -12,7 +12,7 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   const char * currentPointer = s;
   CodePoint codePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();
-  while (codePoint != KDCodePointNull && codePoint != c) {
+  while (codePoint != UCodePointNull && codePoint != c) {
     currentPointer = nextPointer;
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();

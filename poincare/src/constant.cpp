@@ -10,7 +10,7 @@
 #include <ion.h>
 #include <cmath>
 #include <assert.h>
-#include <kandinsky/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
@@ -31,11 +31,11 @@ bool ConstantNode::isReal(Context & context) const {
 
 int rankOfConstant(CodePoint c) {
   switch (c) {
-    case KDCodePointMathematicalBoldSmallI :
+    case UCodePointMathematicalBoldSmallI :
       return 0;
-    case KDCodePointGreekSmallLetterPi :
+    case UCodePointGreekSmallLetterPi :
       return 1;
-    case KDCodePointScriptSmallE :
+    case UCodePointScriptSmallE :
       return 2;
     default:
       assert(false);
@@ -46,7 +46,7 @@ int rankOfConstant(CodePoint c) {
 CodePoint ConstantNode::codePoint() const {
   UTF8Decoder decoder = UTF8Decoder(m_name);
   CodePoint result = decoder.nextCodePoint();
-  assert(decoder.nextCodePoint() == KDCodePointNull);
+  assert(decoder.nextCodePoint() == UCodePointNull);
   return result;
 }
 
@@ -88,7 +88,7 @@ Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFo
 bool ConstantNode::isConstantCodePoint(CodePoint c) const {
   UTF8Decoder decoder(m_name);
   bool result = (decoder.nextCodePoint() == c);
-  assert(decoder.nextCodePoint() == KDCodePointNull);
+  assert(decoder.nextCodePoint() == UCodePointNull);
   return result;
 }
 

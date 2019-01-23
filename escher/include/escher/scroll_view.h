@@ -31,12 +31,12 @@ public:
     int numberOfIndicators();
     View * indicatorAtIndex(int index);
     void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
-    ScrollViewVerticalIndicator * verticalBar() { return &m_verticalScrollIndicator; }
-    ScrollViewHorizontalIndicator * horizontalBar() { return &m_horizontalScrollIndicator; }
+    ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
+    ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
     void setIndicatorThickness(KDCoordinate t) { m_indicatorThickness = t; }
   private:
-    ScrollViewVerticalIndicator m_verticalScrollIndicator;
-    ScrollViewHorizontalIndicator m_horizontalScrollIndicator;
+    ScrollViewVerticalBar m_verticalBar;
+    ScrollViewHorizontalBar m_horizontalBar;
     KDCoordinate m_indicatorThickness;
   };
 

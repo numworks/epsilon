@@ -13,6 +13,8 @@
 
 namespace Poincare {
 
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
 void removeZeroAtTheEnd(Integer * i) {
   if (i->isZero()) {
     return;
@@ -184,7 +186,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   }
   /* Case 1: Decimal mode */
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
-  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, max(0, bufferSize-deltaCharMantissa-currentChar));
+  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, maxInt(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
     for (int i = 0; i <= -exponent; i++) {
       if (currentChar >= bufferSize-1) { return bufferSize-1; }

@@ -15,6 +15,8 @@ using namespace Shared;
 
 namespace Solver {
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 SolutionsController::ContentView::ContentView(SolutionsController * controller) :
   m_warningMessageView0(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
   m_warningMessageView1(KDFont::SmallFont, I18n::Message::Default, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
@@ -219,7 +221,7 @@ KDCoordinate SolutionsController::rowHeight(int j) {
   Poincare::Layout approximateLayout = m_equationStore->exactSolutionLayoutAtIndex(j, false);
   KDCoordinate exactLayoutHeight = exactLayout.layoutSize().height();
   KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize().height();
-  KDCoordinate layoutHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
+  KDCoordinate layoutHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
   return layoutHeight + 2 * Metric::CommonSmallMargin;
 }
 

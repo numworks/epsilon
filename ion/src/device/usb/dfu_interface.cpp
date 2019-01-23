@@ -6,7 +6,7 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-static inline uint32_t min(uint32_t x, uint32_t y) { return (x<y ? x : y); }
+static inline uint32_t minUint32T(uint32_t x, uint32_t y) { return x < y ? x : y; }
 
 void DFUInterface::StatusData::push(Channel * c) const {
   c->push(m_bStatus);
@@ -136,7 +136,7 @@ bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transfe
     // Compute the reading address
     uint32_t readAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
     // Copy the requested memory zone into the transfer buffer.
-    uint16_t copySize = min(transferBufferMaxLength, request->wLength());
+    uint16_t copySize = minUint32T(transferBufferMaxLength, request->wLength());
     memcpy(transferBuffer, (void *)readAddress, copySize);
     *transferBufferLength = copySize;
   }

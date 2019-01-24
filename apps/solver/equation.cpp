@@ -50,7 +50,7 @@ Expression Equation::standardForm(Context * context) const {
 }
 
 bool Equation::containsIComplex() const {
-  return UTF8Helper::CodePointSearch(text(), UCodePointMathematicalBoldSmallI) != nullptr;
+  return *(UTF8Helper::CodePointSearch(text(), UCodePointMathematicalBoldSmallI)) != 0;
 }
 
 void Equation::tidyStandardForm() {

@@ -32,7 +32,7 @@ void ScrollView::setCommonMargins() {
 int ScrollView::numberOfSubviews() const {
   int result = 1;
   if (m_showsIndicators) {
-    result += const_cast<ScrollView *>(this)->m_decorator.numberOfIndicators();
+    result += const_cast<ScrollView *>(this)->decorator()->numberOfIndicators();
   }
   return result;
 }
@@ -42,7 +42,7 @@ View * ScrollView::subviewAtIndex(int index) {
     return m_contentView;
   }
   if (m_showsIndicators) {
-    return m_decorator.indicatorAtIndex(index);
+    return decorator()->indicatorAtIndex(index);
   }
   return nullptr;
 }
@@ -123,7 +123,7 @@ void ScrollView::layoutSubviews() {
       m_contentView->bounds().width() + m_leftMargin + m_rightMargin,
       m_contentView->bounds().height() + m_topMargin + m_bottomMargin
     );
-    m_decorator.layoutIndicators(content, contentOffset(), m_frame.size());
+    decorator()->layoutIndicators(content, contentOffset(), m_frame.size());
   }
 }
 

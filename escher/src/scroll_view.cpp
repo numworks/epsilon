@@ -14,7 +14,10 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   m_rightMargin(0),
   m_bottomMargin(0),
   m_leftMargin(0),
+  m_decoratorType(Decorator::Type::Bars),
   m_decorator(),
+  m_barDecorator(),
+  m_arrowDecorator(),
   m_showsIndicators(true),
   m_colorsBackground(true),
   m_backgroundColor(Palette::WallScreen)
@@ -27,6 +30,18 @@ void ScrollView::setCommonMargins() {
   setRightMargin(Metric::CommonRightMargin);
   setBottomMargin(Metric::CommonBottomMargin);
   setLeftMargin(Metric::CommonLeftMargin);
+}
+
+ScrollView::Decorator * ScrollView::decorator() {
+  switch (m_decoratorType) {
+    case Decorator::Type::Bars:
+      return &m_barDecorator;
+    case Decorator::Type::Arrows:
+      return &m_arrowDecorator;
+    default:
+      assert(m_decoratorType == Decorator::Type::None);
+      return &m_decorator;
+  }
 }
 
 int ScrollView::numberOfSubviews() const {

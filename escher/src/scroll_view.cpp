@@ -148,17 +148,17 @@ KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
 ScrollView::Decorator::Decorator() :
   m_verticalBar(),
   m_horizontalBar(),
-  m_indicatorThickness(20)
+  m_barsFrameBreadth(20)
 {
 }
 
 void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
-  KDCoordinate hBarFrameBreadth = m_indicatorThickness * m_horizontalBar.update(
+  KDCoordinate hBarFrameBreadth = m_barsFrameBreadth * m_horizontalBar.update(
     content.width(),
     offset.x(),
     frame.width()
   );
-  KDCoordinate vBarFrameBreadth = m_indicatorThickness * m_verticalBar.update(
+  KDCoordinate vBarFrameBreadth = m_barsFrameBreadth * m_verticalBar.update(
     content.height(),
     offset.y(),
     frame.height()

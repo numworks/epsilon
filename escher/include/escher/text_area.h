@@ -30,7 +30,7 @@ protected:
       m_buffer = buffer;
       m_bufferSize = bufferSize;
     }
-    const char * text() const { return const_cast<const char *>(m_buffer); }
+    const char * text() const { return m_buffer; }
 
     class Line {
     public:

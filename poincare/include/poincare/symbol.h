@@ -48,6 +48,7 @@ private:
 
   size_t nodeSize() const override { return sizeof(SymbolNode); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool isUnknownX() const;
 };
 
 class Symbol final : public SymbolAbstract {
@@ -57,7 +58,7 @@ class Symbol final : public SymbolAbstract {
 public:
   static constexpr int k_ansLength = 3;
   static constexpr char k_ans[k_ansLength+1] = "ans";
-  static constexpr char k_unknownXReadableChar = 'x';
+  static constexpr CodePoint k_unknownXReadableChar = 'x';
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
      * characters but events as 'end of text', 'backspace'... */

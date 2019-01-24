@@ -142,7 +142,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->isVerticalOffset()) {
     addParenthesis = true;
     // Add parenthesis
-    buffer[numberOfChar++] = '(';
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
@@ -152,7 +152,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   if (addParenthesis) {
     // Add parenthesis
-    buffer[numberOfChar++] = ')';
+    numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 

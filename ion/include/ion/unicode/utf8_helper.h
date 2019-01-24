@@ -17,6 +17,9 @@ const char * CodePointSearch(const char * s, CodePoint c);
  * that should be lower if code points where removed before it. */
 void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * indexToDUpdate = nullptr);
 
+/* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
+size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);
+
 /* Perform actionCodePoint each time a given code point is found, and
  * actionOtherCodePoint for other code points.
  * goingRight tells if we are decoding towards the right or the left. If

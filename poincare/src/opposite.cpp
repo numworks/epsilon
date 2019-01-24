@@ -3,12 +3,13 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
 #include <poincare/horizontal_layout.h>
-#include <cmath>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 extern "C" {
+#include <cmath>
 #include <assert.h>
 #include <stdlib.h>
 }
@@ -57,7 +58,10 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
-  buffer[numberOfChar++] = '-';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '-');
+  if (numberOfChar >= bufferSize - 1) {
+    return bufferSize - 1;
+  }
   numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   buffer[numberOfChar] = 0;
   return numberOfChar;

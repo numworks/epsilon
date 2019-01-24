@@ -7,13 +7,14 @@
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/vertical_offset_layout.h>
-#include <ion.h>
+#include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <assert.h>
 
 namespace Poincare {
 
 constexpr char Symbol::k_ans[];
+constexpr CodePoint Symbol::k_unknownXReadableChar;
 
 SymbolNode::SymbolNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
@@ -28,7 +29,7 @@ Expression SymbolNode::replaceUnknown(const Symbol & symbol) {
 }
 
 int SymbolNode::polynomialDegree(Context & context, const char * symbolName) const {
-  if (strcmp(m_name,symbolName) == 0) {
+  if (strcmp(m_name, symbolName) == 0) {
     return 1;
   }
   return 0;
@@ -66,11 +67,7 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
 }
 
 float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
-    assert(m_name[1] == 0);
-    return NAN;
-  }
-  return 0.0f;
+  return isUnknownX() ? NAN : 0.0f;
 }
 
 bool SymbolNode::isReal(Context & context) const {
@@ -79,10 +76,10 @@ bool SymbolNode::isReal(Context & context) const {
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
-    assert(m_name[1] == 0);
+  if (isUnknownX()) {
     return CodePointLayout::Builder(Symbol::k_unknownXReadableChar);
   }
+  // TODO return Parse(m_name).createLayout() ?
   if (strcmp(m_name, "u(n)") == 0) {
     return HorizontalLayout::Builder(
         CodePointLayout::Builder('u'),
@@ -146,6 +143,14 @@ Expression Symbol::UntypedBuilder(const char * name, size_t length, Context * co
     return s;
   }
   return Expression();
+}
+
+bool SymbolNode::isUnknownX() const {
+  bool result = UTF8Helper::CodePointIs(m_name, Symbol::SpecialSymbols::UnknownX);
+  if (result) {
+    assert(m_name[1] == 0);
+  }
+  return result;
 }
 
 bool Symbol::isSeriesSymbol(const char * c) {

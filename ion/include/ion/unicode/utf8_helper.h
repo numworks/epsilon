@@ -40,7 +40,7 @@ size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoin
  *    ^start of string        ^initialPosition
  *
  * */
-typedef void (*CodePointAction)(char * codePointLocation, void * contextPointer, int contextInt);
+typedef void (*CodePointAction)(int codePointOffset, void * contextPointer, int contextInt);
 const char *  PerformAtCodePoints(const char * string, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt, CodePoint stoppingCodePoint = UCodePointNull, bool goingRight = true, const char * initialPosition = nullptr);
 
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);

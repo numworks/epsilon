@@ -343,7 +343,7 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Preferences::ComplexFormat complexFormat, const char * textInput) {
-  if (complexFormat == Preferences::ComplexFormat::Real && UTF8Helper::CodePointSearch(textInput, UCodePointMathematicalBoldSmallI) != nullptr) {
+  if (complexFormat == Preferences::ComplexFormat::Real && *(UTF8Helper::CodePointSearch(textInput, UCodePointMathematicalBoldSmallI)) != 0) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;

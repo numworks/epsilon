@@ -29,7 +29,7 @@ protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
   constexpr static const KDFont * k_font = KDFont::LargeFont;
-  constexpr static char k_equal[] = {'=', 0};
+  constexpr static const char * k_equal = "=";
 
   KDSize lowerBoundSizeWithVariableEquals();
 

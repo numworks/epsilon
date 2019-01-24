@@ -101,22 +101,23 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
     return 1;
   }
   int numberOfChar = 0;
-  buffer[numberOfChar++] = '[';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
   int maxRowIndex = hasGreySquares() ? m_numberOfRows - 1 : m_numberOfRows;
   int maxColumnIndex = hasGreySquares() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
   for (int i = 0; i < maxRowIndex; i++) {
-    buffer[numberOfChar++] = '[';
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
     numberOfChar += SerializationHelper::Infix(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    buffer[numberOfChar++] = ']';
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
-  buffer[numberOfChar++] = ']';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

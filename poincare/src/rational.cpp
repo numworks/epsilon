@@ -1,16 +1,16 @@
 #include <poincare/rational.h>
+#include <poincare/arithmetic.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/fraction_layout.h>
+#include <poincare/infinity.h>
+#include <poincare/opposite.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
 }
-#include <poincare/arithmetic.h>
-#include <poincare/opposite.h>
-#include <poincare/infinity.h>
-#include <poincare/fraction_layout.h>
-#include <poincare/code_point_layout.h>
-
 namespace Poincare {
 
 /* Rational Node */
@@ -78,7 +78,10 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   if (numberOfChar >= bufferSize-1) {
     return numberOfChar;
   }
-  buffer[numberOfChar++] = '/';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '/');
+  if (numberOfChar >= bufferSize-1) {
+    return numberOfChar;
+  }
   numberOfChar += denominator().serialize(buffer+numberOfChar, bufferSize-numberOfChar);
   return numberOfChar;
 }

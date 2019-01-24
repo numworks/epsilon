@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include <poincare/number.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 
 namespace Poincare {
 
@@ -79,7 +80,7 @@ Token Tokenizer::popNumber() {
   const char * fractionalPartText = m_text;
   size_t fractionalPartLength = 0;
 
-  assert(integralPartLength > 0 || *m_text == '.');
+  assert(integralPartLength > 0 || UTF8Helper::CodePointIs(m_text, '.'));
   if (canPopCodePoint('.')) {
     fractionalPartText = m_text;
     fractionalPartLength = popDigits();

@@ -11,7 +11,7 @@ class LeftSquareBracketLayoutNode final : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Char(buffer, bufferSize, '[');
+    return SerializationHelper::CodePoint(buffer, bufferSize, '[');
   }
   bool isLeftBracket() const override { return true; }
 

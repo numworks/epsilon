@@ -171,11 +171,12 @@ bool TextField::ContentView::removeCodePoint() {
 
 bool TextField::ContentView::removeEndOfLine() {
   assert(m_isEditing);
-  if (m_currentDraftTextLength == cursorLocation() - m_draftTextBuffer) {
+  size_t lengthToCursor = (size_t)(cursorLocation() - m_draftTextBuffer);
+  if (m_currentDraftTextLength == lengthToCursor) {
     return false;
   }
   reloadRectFromPosition(m_horizontalAlignment == 0.0f ? cursorLocation() : m_draftTextBuffer);
-  m_currentDraftTextLength = cursorLocation() - m_draftTextBuffer;
+  m_currentDraftTextLength = lengthToCursor;
   *(const_cast<char *>(cursorLocation())) = 0;
   layoutSubviews();
   return true;

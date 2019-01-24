@@ -143,35 +143,28 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
 
 bool TextField::ContentView::removeCodePoint() {
   assert(m_isEditing);
-  if (cursorLocation() <= m_draftTextBuffer) {
+
+  // Remove the code point if possible
+  CodePoint removedCodePoint = 0;
+  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
+  if (removedSize == 0) {
     assert(cursorLocation() == m_draftTextBuffer);
     return false;
   }
-  UTF8Decoder decoder(m_draftTextBuffer, cursorLocation());
-  decoder.previousCodePoint();
-  const char * newCursorLocation = decoder.stringPosition();
 
-  assert(newCursorLocation < cursorLocation());
-  int removedCodePointLength = cursorLocation() - newCursorLocation;
-  m_currentDraftTextLength-= removedCodePointLength;
+  // Update the draft buffer length
+  m_currentDraftTextLength-= removedSize;
+  assert(m_draftTextBuffer[m_currentDraftTextLength] == 0);
 
+  // Reload the view and set the cursor location
   if (m_horizontalAlignment > 0.0f) {
     reloadRectFromPosition(m_draftTextBuffer);
   }
-
-  setCursorLocation(newCursorLocation);
+  assert(cursorLocation() - removedSize >= m_draftTextBuffer);
+  setCursorLocation(cursorLocation() - removedSize);
   if (m_horizontalAlignment == 0.0f) {
     reloadRectFromPosition(cursorLocation());
   }
-
-  for (char * k = const_cast<char *>(cursorLocation()); k < m_draftTextBuffer + m_currentDraftTextLength + removedCodePointLength; k++) {
-    *k = *(k+removedCodePointLength);
-    if (*k == 0) {
-      break;
-    }
-  }
-
-  assert(m_draftTextBuffer[m_currentDraftTextLength] == 0);
   layoutSubviews();
   return true;
 }

@@ -160,7 +160,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Write the opening parenthesis
-  buffer[numberOfChar++] = '(';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -170,6 +170,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     if (i != 0) {
       // Write the comma
       buffer[numberOfChar++] = ',';
+      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
 
@@ -179,7 +180,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Write the closing parenthesis
-  buffer[numberOfChar++] = ')';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

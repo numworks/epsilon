@@ -32,7 +32,7 @@ StorageValuesController::StorageValuesController(Responder * parentResponder, In
   m_selectableTableView.setBottomMargin(k_bottomMargin);
   m_selectableTableView.setLeftMargin(k_leftMargin);
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_selectableTableView.decorator()->setBarsFrameBreadth(13);
+  static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->setBarsFrameBreadth(13);
   m_abscissaTitleCell.setMessageFont(k_font);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i].setParentResponder(&m_selectableTableView);

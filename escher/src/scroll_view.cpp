@@ -145,14 +145,14 @@ KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
   return m_frame.height() - m_topMargin - m_bottomMargin;
 }
 
-ScrollView::Decorator::Decorator() :
+ScrollView::BarDecorator::BarDecorator() :
   m_verticalBar(),
   m_horizontalBar(),
   m_barsFrameBreadth(20)
 {
 }
 
-void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
+void ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
   KDCoordinate hBarFrameBreadth = m_barsFrameBreadth * m_horizontalBar.update(
     content.width(),
     offset.x(),
@@ -175,7 +175,7 @@ void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDS
   ));
 }
 
-ScrollView::DecoratorV2::DecoratorV2() :
+ScrollView::ArrowDecorator::ArrowDecorator() :
   m_topArrow(ScrollViewArrow::Side::Top),
   m_rightArrow(ScrollViewArrow::Side::Right),
   m_bottomArrow(ScrollViewArrow::Side::Bottom),
@@ -183,7 +183,7 @@ ScrollView::DecoratorV2::DecoratorV2() :
 {
 }
 
-void ScrollView::DecoratorV2::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
+void ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
   KDSize arrowSize = KDFont::LargeFont->glyphSize();
   KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());
   KDCoordinate rightArrowFrameBreadth = arrowSize.width() * m_rightArrow.update(offset.x() + frame.width() < content.width());

@@ -27,13 +27,20 @@ public:
 
   class Decorator {
   public:
-    Decorator();
-    int numberOfIndicators() { return 2; }
-    View * indicatorAtIndex(int index) {
+    virtual int numberOfIndicators() { return 0; }
+    virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
+    virtual void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {}
+  };
+
+  class BarDecorator : public Decorator {
+  public:
+    BarDecorator();
+    int numberOfIndicators() override { return 2; }
+    View * indicatorAtIndex(int index) override {
       assert(0 < index && index <= numberOfIndicators());
       return &m_verticalBar + (index-1);
     }
-    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
+    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
     void setBarsFrameBreadth(KDCoordinate t) { m_barsFrameBreadth = t; }
@@ -43,15 +50,15 @@ public:
     KDCoordinate m_barsFrameBreadth;
   };
 
-  class DecoratorV2 {
+  class ArrowDecorator : public Decorator {
   public:
-    DecoratorV2();
-    int numberOfIndicators() { return 4; }
-    View * indicatorAtIndex(int index) {
+    ArrowDecorator();
+    int numberOfIndicators() override { return 4; }
+    View * indicatorAtIndex(int index) override {
       assert(0 < index && index <= numberOfIndicators());
       return &m_topArrow + (index-1);
     }
-    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
+    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) override;
   private:
     ScrollViewArrow m_topArrow;
     ScrollViewArrow m_rightArrow;
@@ -93,7 +100,7 @@ private:
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
 
-  Decorator m_decorator;
+  BarDecorator m_decorator;
   bool m_showsIndicators;
   bool m_colorsBackground;
   KDColor m_backgroundColor;

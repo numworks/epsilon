@@ -19,7 +19,7 @@ public:
 
   // Serializable Node
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Char(buffer, bufferSize, '(');
+    return SerializationHelper::CodePoint(buffer, bufferSize, '(');
   }
 
   // TreeNode

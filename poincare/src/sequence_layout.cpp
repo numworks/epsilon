@@ -9,8 +9,6 @@ namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-constexpr char SequenceLayoutNode::k_equal[];
-
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->layoutNode() == upperBoundLayout())
   {
@@ -215,14 +213,14 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the opening parenthesis
-  buffer[numberOfChar++] = '(';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
   for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
     if (i != 0) {
       // Write the comma
-      buffer[numberOfChar++] = ',';
+      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ',');
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
     numberOfChar += argLayouts[i]->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
@@ -230,7 +228,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   }
 
   // Write the closing parenthesis
-  buffer[numberOfChar++] = ')';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

@@ -6,6 +6,8 @@
 #include <poincare/symbol.h>
 #include <poincare/expression.h>
 #include <poincare/helpers.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
 namespace Poincare {
@@ -46,13 +48,7 @@ T SymbolAbstract::Builder(const char * name, int length) {
 }
 
 size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
-  const char * cur = src;
-  const char * end = src+len-1;
-  while (*cur != '.' && cur < end) {
-    *dst++ = *cur++;
-  }
-  *dst = 0;
-  return cur-src;
+  return UTF8Helper::CopyUntilCodePoint(dst, len, src, '.');
 }
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test, Context & context) {

@@ -6,8 +6,9 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/ieee754.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
-#include <ion.h>
 #include <cmath>
 #include <assert.h>
 
@@ -111,8 +112,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   int currentChar = 0;
   if (currentChar >= bufferSize-1) { return bufferSize-1; }
   if (unsignedMantissa().isZero()) {
-    buffer[currentChar++] = '0';
-    buffer[currentChar] = 0;
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '0'); // This already writes the null terminating char
     return currentChar;
   }
   int exponent = m_exponent;
@@ -136,14 +136,14 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     removeZeroAtTheEnd(&m);
   }
   if (m_negative) {
-    buffer[currentChar++] = '-';
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '-');
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
 
   // Assert that m is not +/-inf
   assert(strcmp(tempBuffer, Infinity::Name()) != 0);
-  assert(!(tempBuffer[0] == '-' && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
+  assert(!(UTF8Helper::CodePointIs(tempBuffer, '-') && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
 
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
@@ -168,10 +168,20 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     if (mantissaLength == 1) {
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     } else {
+      /* Forward one char: _
+       * Write the mantissa _23456
+       * Copy the most significant digit on the forwarded char: 223456
+       * Write the dot : 2.3456
+       *
+       * We should use the UTF8Helper to manipulate chars, but it is clearer to
+       * manipulate chars directly, so we just put assumptions on the char size
+       * of the code points we manipuate. */
+      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       currentChar++;
-      int decimalMarkerPosition = currentChar;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
+      int decimalMarkerPosition = currentChar;
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
+      assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) == 1);
       buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
       buffer[decimalMarkerPosition] = '.';
     }
@@ -189,12 +199,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, maxInt(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
     for (int i = 0; i <= -exponent; i++) {
+      currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, i == 1 ? '.' : '0');
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
-      if (i == 1) {
-        buffer[currentChar++] = '.';
-        continue;
-      }
-      buffer[currentChar++] = '0';
     }
   }
   currentChar += mantissaLength;
@@ -205,17 +211,18 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       buffer[i+1] = buffer[i];
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
+  if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
   if (exponent >= 0 && exponent > mantissaLength-1) {
     int endMarkerPosition = m_negative ? exponent+1 : exponent;
     for (int i = currentChar-1; i < endMarkerPosition; i++) {
+      currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '0');
       if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
-      buffer[currentChar++] = '0';
     }
   }
-  if (currentChar >= bufferSize-1) { return bufferSize-1; }
   buffer[currentChar] = 0;
   return currentChar;
 }
@@ -228,7 +235,7 @@ template<typename T> T DecimalNode::templatedApproximate() const {
 }
 
 int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
-  if (exponentLength > 0 && exponent[0] == '-') {
+  if (exponentLength > 0 && UTF8Helper::CodePointIs(exponent, '-')) {
     exponent++;
     exponentNegative = true;
     exponentLength--;
@@ -237,6 +244,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   int exp = 0;
   for (int i = 0; i < exponentLength; i++) {
     exp *= base;
+    assert(*exponent >= '0' && *exponent <= '9');
     exp += *exponent-'0';
     exponent++;
   }
@@ -253,7 +261,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   if (integralPart == integralPartEnd) {
     const char * fractionalPartEnd = fractionalPart + fractionalPartLength;
     if (fractionalPart != nullptr) {
-      while (*fractionalPart == '0' && fractionalPart < fractionalPartEnd) {
+      while (UTF8Helper::CodePointIs(fractionalPart, '0') && fractionalPart < fractionalPartEnd) {
         fractionalPart++;
         exp--;
       }
@@ -271,7 +279,7 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   Integer zero(0);
   Integer base(10);
   // Get rid of useless preceeding 0s
-  while (*integralPart == '0' && integralPartLength > 1) {
+  while (UTF8Helper::CodePointIs(integralPart, '0') && integralPartLength > 1) {
     integralPart++;
     integralPartLength--;
   }
@@ -282,9 +290,9 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   Integer numerator(integralPart, integralPartLength, false);
   assert(!numerator.isOverflow());
   // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
-  if (fractionalPart != nullptr && integralPartLength == 1 && integralPart[0] == '0') {
+  if (fractionalPart != nullptr && integralPartLength == 1 && UTF8Helper::CodePointIs(integralPart, '0')) {
     integralPartLength = 0;
-    while (*fractionalPart == '0') {
+    while (UTF8Helper::CodePointIs(fractionalPart, '0')) {
       fractionalPart++;
       fractionalPartLength--;
     }
@@ -293,6 +301,7 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   fractionalPartLength = integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits - integralPartLength : fractionalPartLength;
   for (int i = 0; i < fractionalPartLength; i++) {
     numerator = Integer::Multiplication(numerator, base);
+    assert(*fractionalPart >= '0' && *fractionalPart <= '9');
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
     fractionalPart++;
   }

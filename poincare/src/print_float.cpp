@@ -5,6 +5,8 @@
 #include <poincare/preferences.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -24,19 +26,26 @@ void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLe
   constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
   char tempBuffer[tempBufferSize];
   int intLength = i.serialize(tempBuffer, tempBufferSize);
-  int firstDigitChar = tempBuffer[0] == '-' ? 1 : 0;
+  int firstDigitChar = UTF8Helper::CodePointIs(tempBuffer, '-') ? 1 : 0;
+  /* We should use the UTF8Decoder to write code points in buffers, but it is
+   * much clearer to manipulate chars directly as we know that the code point we
+   * use ('.', '0, '1', '2', ...) are only one char long. */
   for (int k = bufferLength-1; k >= firstDigitChar; k--) {
     if (k == decimalMarkerPosition) {
+      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       buffer[k] = '.';
       continue;
     }
     if (intLength > firstDigitChar) {
+      assert(UTF8Decoder::CharSizeOfCodePoint(tempBuffer[intLength-1]) == 1);
       buffer[k] = tempBuffer[--intLength];
       continue;
     }
+    assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     buffer[k] = '0';
   }
   if (firstDigitChar == 1) {
+    assert(UTF8Decoder::CharSizeOfCodePoint(tempBuffer[0]) == 1);
     buffer[0] = tempBuffer[0];
   }
 }
@@ -82,7 +91,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     assert(Infinity::NameSize()+1 < bufferSize);
     int currentChar = 0;
     if (f < 0) {
-      buffer[currentChar++] = '-';
+      currentChar+= SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '-');
     }
     strlcpy(&buffer[currentChar], Infinity::Name(), bufferSize-1);
     return currentChar + Infinity::NameSize() - 1;
@@ -149,6 +158,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   int numberOfZerosRemoved = 0;
   while (digit.isZero() && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
       (numberOfCharsForMantissaWithoutSign > exponentInBase10+1 || mode == Preferences::PrintFloatMode::Scientific)) {
+    assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     numberOfCharsForMantissaWithoutSign--;
     dividend = quotient;
     quotient = Integer::Division(dividend, Integer(10)).quotient;
@@ -164,12 +174,14 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   // Force a decimal marker if there is fractional part
   bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific && numberOfCharsForMantissaWithoutSign > 1) || (mode == Preferences::PrintFloatMode::Decimal && numberOfCharsForMantissaWithoutSign > exponentInBase10 +1);
   if (decimalMarker) {
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
   }
 
   /* Find the position of the decimal marker position */
   int decimalMarkerPosition = exponentInBase10 < 0 || mode == Preferences::PrintFloatMode::Scientific ? 1 : exponentInBase10+1;
   decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
+  assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
 
   /* Part III: Exponent */
 
@@ -177,10 +189,12 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   if (exponentInBase10 < 0){
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;
+    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   }
 
   /* Part III: print mantissa*10^exponent */
   int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
+  assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
   assert(!dividend.isOverflow());
   if (numberOfCharsForMantissaWithSign >= bufferSize) {

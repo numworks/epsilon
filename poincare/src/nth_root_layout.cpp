@@ -173,7 +173,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
     return bufferSize-1;
   }
 
-  buffer[numberOfChar++] = '(';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -181,7 +181,7 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   numberOfChar += (const_cast<NthRootLayoutNode *>(this))->radicandLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  buffer[numberOfChar++] = ')';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

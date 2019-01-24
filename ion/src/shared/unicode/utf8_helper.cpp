@@ -6,6 +6,7 @@
 namespace UTF8Helper {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline size_t minSizeT(size_t x, size_t y) { return x < y ? x : y; }
 
 int CountOccurrences(const char * s, CodePoint c) {
   int count = 0;
@@ -76,6 +77,22 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
   }
+}
+
+size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
+  UTF8Decoder decoder(src);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull && codePoint != c) {
+    codePointPointer = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
+  }
+  size_t copySize = minSizeT(dstSize - 1, codePointPointer - src);
+  assert(UTF8Helper::CodePointIs(src + copySize, 0) || UTF8Helper::CodePointIs(src + copySize, c));
+  memmove(dst, src, copySize);
+  assert(copySize < dstSize);
+  dst[copySize] = 0;
+  return copySize;
 }
 
 const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt, CodePoint stoppingCodePoint, bool goingRight, const char * initialPosition) {

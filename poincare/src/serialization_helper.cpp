@@ -5,8 +5,6 @@
 
 namespace Poincare {
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
-
 static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
   // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
@@ -41,7 +39,7 @@ static int serializeChild(
   // Write the child with parentheses if needed
   bool addParentheses = parentNode->childNeedsParenthesis(childNode);
   if (addParentheses) {
-    buffer[numberOfChar++] = '(';
+    numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -52,7 +50,11 @@ static int serializeChild(
     return bufferSize-1;
   }
   if (addParentheses) {
-    buffer[numberOfChar++] = ')';
+    numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
+  }
+  if (numberOfChar >= bufferSize-1) {
+    assert(buffer[bufferSize - 1] == 0);
+    return bufferSize-1;
   }
   buffer[numberOfChar] = 0;
   return numberOfChar;
@@ -132,7 +134,7 @@ int SerializationHelper::Prefix(
   }
 
   // Add the opening parenthese
-  buffer[numberOfChar++] = '(';
+  numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -153,7 +155,7 @@ int SerializationHelper::Prefix(
 
     // Write the remaining children, separated with commas
     for (int i = firstChildIndex + 1; i < childrenCount; i++) {
-      buffer[numberOfChar++] = ',';
+      numberOfChar += UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
       }
@@ -166,21 +168,12 @@ int SerializationHelper::Prefix(
   }
 
   // Add the closing parenthese
-  buffer[numberOfChar++] = ')';
+  numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
   buffer[numberOfChar] = 0;
   return numberOfChar;
-}
-
-int SerializationHelper::Char(char * buffer, int bufferSize, char c) {
-  {
-    int result = 0;
-    if (checkBufferSize(buffer, bufferSize, &result)) {
-      return result;
-    }
-  }
-  buffer[0] = c;
-  buffer[1] = 0;
-  return 1;
 }
 
 int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoint c) {
@@ -191,9 +184,9 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     }
   }
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  int nullTerminatingIndex = minInt(size, bufferSize - 1);
-  buffer[nullTerminatingIndex] = 0;
-  return nullTerminatingIndex;
+  assert(size <= bufferSize - 1);
+  buffer[size] = 0;
+  return size;
 }
 
 }

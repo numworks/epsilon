@@ -1,6 +1,8 @@
 #include <poincare/integer.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+#include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -135,7 +137,7 @@ Integer::Integer(double_native_int_t i) {
 Integer::Integer(const char * digits, size_t length, bool negative) :
   Integer(0)
 {
-  if (digits != nullptr && digits[0] == '-') {
+  if (digits != nullptr && UTF8Helper::CodePointIs(digits, '-')) {
     negative = true;
     digits++;
     length--;
@@ -144,7 +146,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
     Integer base(10);
     for (size_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
-      *this = Addition(*this, Integer(*digits-'0'));
+      *this = Addition(*this, Integer(*digits - '0'));
       digits++;
     }
   }
@@ -158,6 +160,9 @@ int Integer::serialize(char * buffer, int bufferSize) const {
     return -1;
   }
   buffer[bufferSize-1] = 0;
+  if (bufferSize == 1) {
+    return 0;
+  }
   if (isOverflow()) {
     return PrintFloat::convertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
@@ -166,14 +171,12 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   Integer abs = *this;
   abs.setNegative(false);
   IntegerDivision d = udiv(abs, base);
+
   int size = 0;
-  if (bufferSize == 1) {
-    return 0;
-  }
   if (isZero()) {
-    buffer[size++] = '0';
+    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, '0');
   } else if (isNegative()) {
-    buffer[size++] = '-';
+    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, '-');
   }
 
   while (!(d.remainder.isZero() &&
@@ -182,9 +185,10 @@ int Integer::serialize(char * buffer, int bufferSize) const {
     if (size >= bufferSize-1) {
       return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
     }
-    buffer[size++] = c;
+    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, c);
     d = udiv(d.quotient, base);
   }
+  assert(size <= bufferSize - 1);
   buffer[size] = 0;
 
   // Flip the string

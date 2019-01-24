@@ -27,6 +27,11 @@ public:
 
   class Decorator {
   public:
+    enum class Type {
+      None,
+      Bars,
+      Arrows
+    };
     virtual int numberOfIndicators() { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
     virtual void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {}
@@ -66,7 +71,8 @@ public:
     ScrollViewArrow m_leftArrow;
   };
 
-  Decorator * decorator() { return &m_decorator; }
+  Decorator * decorator();
+  void setDecoratorType(Decorator::Type t) { m_decoratorType = t; }
   void setShowsIndicators(bool s) { m_showsIndicators = s; }
   bool showsIndicators() const { return m_showsIndicators; }
   void setColorsBackground(bool c) { m_colorsBackground = c; }
@@ -100,7 +106,10 @@ private:
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
 
-  BarDecorator m_decorator;
+  Decorator::Type m_decoratorType;
+  Decorator m_decorator;
+  BarDecorator m_barDecorator;
+  ArrowDecorator m_arrowDecorator;
   bool m_showsIndicators;
   bool m_colorsBackground;
   KDColor m_backgroundColor;

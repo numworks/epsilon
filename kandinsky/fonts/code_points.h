@@ -143,8 +143,6 @@ uint32_t CodePoints[] = {
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO
   0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
   0x1d422, // 𝐢 // MATHEMATICAL BOLD SMALL I"
-
-  // Apostrophe
 };
 
 int NumberOfCodePoints = sizeof(CodePoints)/sizeof(CodePoints[0]);

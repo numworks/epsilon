@@ -12,8 +12,8 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
   m_selectableTableView.setColorsBackground(false);
-  m_selectableTableView.decorator()->setBarsFrameBreadth(k_scrollBarsFrameBreadth);
-  m_selectableTableView.decorator()->verticalBar()->setMargin(k_indicatorMargin);
+  static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->setBarsFrameBreadth(k_scrollBarsFrameBreadth);
+  static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(k_indicatorMargin);
 }
 
 SelectableTableView * Controller::ContentView::selectableTableView() {

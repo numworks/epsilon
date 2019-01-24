@@ -109,9 +109,9 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
       const char * i = s;
       while (*i != stoppingCodePoint && *i != 0) {
         if (*i == c) {
-          actionCodePoint(const_cast<char *>(i), contextPointer, contextInt);
+          actionCodePoint(i - s, contextPointer, contextInt);
         } else {
-          actionOtherCodePoint(const_cast<char *>(i), contextPointer, contextInt);
+          actionOtherCodePoint(i - s, contextPointer, contextInt);
         }
         i++;
       }
@@ -120,9 +120,9 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
     const char * i = initialPosition - 1;
     while (i >= s && *i != stoppingCodePoint) {
       if (*i == c) {
-        actionCodePoint(const_cast<char *>(i), contextPointer, contextInt);
+        actionCodePoint(i - s, contextPointer, contextInt);
       } else {
-        actionOtherCodePoint(const_cast<char *>(i), contextPointer, contextInt);
+        actionOtherCodePoint(i - s, contextPointer, contextInt);
       }
       i--;
     }
@@ -135,9 +135,9 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
     CodePoint codePoint = decoder.nextCodePoint();
     while (codePoint != stoppingCodePoint && codePoint != UCodePointNull) {
       if (codePoint == c) {
-        actionCodePoint(const_cast<char *>(codePointPointer), contextPointer, contextInt);
+        actionCodePoint(codePointPointer - s, contextPointer, contextInt);
       } else {
-        actionOtherCodePoint(const_cast<char *>(codePointPointer), contextPointer, contextInt);
+        actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt);
       }
       codePointPointer = decoder.stringPosition();
       codePoint = decoder.nextCodePoint();
@@ -153,9 +153,9 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
   const char * codePointPointer = decoder.stringPosition();
   while (codePointPointer >= s && codePoint != stoppingCodePoint) {
     if (codePoint == c) {
-      actionCodePoint(const_cast<char *>(codePointPointer), contextPointer, contextInt);
+      actionCodePoint(codePointPointer - s, contextPointer, contextInt);
     } else {
-      actionOtherCodePoint(const_cast<char *>(codePointPointer), contextPointer, contextInt);
+      actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt);
     }
     if (codePointPointer > s) {
       codePoint = decoder.previousCodePoint();

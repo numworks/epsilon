@@ -20,10 +20,10 @@ protected:
 class ScrollViewBar : public ScrollViewIndicator {
 public:
   ScrollViewBar();
-  void update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength);
-  bool visible() const { return 0 < m_offset || m_visibleLength < 1; }
+  bool update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength);
 protected:
   constexpr static KDCoordinate k_indicatorThickness = 4;
+  bool visible() const { return 0 < m_offset || m_visibleLength < 1; }
   float m_offset;
   float m_visibleLength;
   KDColor m_trackColor;

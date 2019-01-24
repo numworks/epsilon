@@ -9,6 +9,7 @@ static inline int leading_ones(uint8_t value) {
     value = value << 1;
   }
   assert(false);
+  return 0;
 }
 
 static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
@@ -68,7 +69,7 @@ size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
   return 4;
 }
 
-size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, int bufferSize) {
+size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferSize) {
   if (bufferSize <= 0) {
     return 0;
   }

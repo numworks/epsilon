@@ -99,8 +99,8 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
 bool TextArea::insertTextWithIndentation(const char * textBuffer, const char * location) {
   // Compute the indentation
   int indentation = indentationBeforeCursor();
-  const char * previousChar = cursorLocation()-1;
-  if (previousChar >= const_cast<TextArea *>(this)->contentView()->text() && *previousChar == ':') {
+  const char * buffer = contentView()->text();
+  if (cursorLocation() > buffer && UTF8Helper::PreviousCodePointIs(buffer, cursorLocation(), ':')) {
     indentation += k_indentationSpaces;
   }
 
@@ -117,26 +117,29 @@ bool TextArea::insertTextWithIndentation(const char * textBuffer, const char * l
   // Insert the indentation
   UTF8Helper::PerformAtCodePoints(
       textBuffer, '\n',
-      [](char * codePointLocation, void * text, int indentation){
+      [](char * codePointLocation, void * text, int indentation) {
         ((Text *)text)->insertSpacesAtLocation(indentation, codePointLocation);
       },
+      [](char * c1, void * c2, int c3) { },
       (void *)(contentView()->getText()),
       indentation);
   return true;
 }
 
 int TextArea::indentationBeforeCursor() const {
-  const char * p = cursorLocation()-1;
   int indentationSize = 0;
-  // No need to use the UTF8Decoder here, be cause we look for an ASCII char.
-  while (p >= const_cast<TextArea *>(this)->contentView()->text() && *p != '\n') {
-    if (*p == ' ') {
-      indentationSize++;
-    } else {
-      indentationSize = 0;
-    }
-    p--;
-  }
+  /* Compute the number of spaces at the beginning of the line. Increase the
+   * indentation size when encountering spaces, reset it to 0 when encountering
+   * another code point, until reaching the beginning of the line. */
+  UTF8Helper::PerformAtCodePoints(const_cast<TextArea *>(this)->contentView()->text(), ' ',
+      [](char * codePointLocation, void * indentationSize, int context){
+        int * castedSize = (int *) indentationSize;
+        *castedSize = *castedSize + 1;
+      },
+      [](char * codePointLocation, void * indentationSize, int context){
+        *((int *) indentationSize) = 0;
+      },
+      &indentationSize, 0, '\n', false, cursorLocation());
   return indentationSize;
 }
 
@@ -208,6 +211,7 @@ CodePoint TextArea::Text::removeCodePoint(const char * * position) {
 
   // Shift the buffer
   int codePointSize = *position - newCursorLocation;
+  assert(codePointSize == UTF8Decoder::CharSizeOfCodePoint(deletedCodePoint));
   assert(newCursorLocation >= m_buffer);
   for (size_t i = newCursorLocation - m_buffer; i < m_bufferSize; i++) {
     m_buffer[i] = m_buffer[i + codePointSize];
@@ -269,11 +273,7 @@ TextArea::Text::Line::Line(const char * text) :
   m_charLength(0)
 {
   if (m_text != nullptr) {
-    // No need to use the UTF8Decoder here, because we look for an ASCII char.
-    while (*text != 0 && *text != '\n') {
-      text++;
-    }
-    m_charLength = text - m_text;
+    m_charLength = UTF8Helper::CodePointSearch(text, '\n') - m_text;
   }
 }
 
@@ -284,14 +284,18 @@ KDCoordinate TextArea::Text::Line::glyphWidth(const KDFont * const font) const {
 bool TextArea::Text::Line::contains(const char * c) const {
   return (c >= m_text)
     && ((c < m_text + m_charLength)
-        || (c == m_text + m_charLength && (*c == 0 || *c == '\n'))) ;
+        || (c == m_text + m_charLength
+          && (UTF8Helper::CodePointIs(c, 0)
+            || UTF8Helper::CodePointIs(c, '\n')))) ;
 }
 
 /* TextArea::Text::LineIterator */
 
 TextArea::Text::LineIterator & TextArea::Text::LineIterator::operator++() {
   const char * last = m_line.text() + m_line.charLength();
-  m_line = Line(*last == 0 ? nullptr : last+1);
+  assert(UTF8Helper::CodePointIs(last, 0) || UTF8Helper::CodePointIs(last, '\n'));
+  assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
+  m_line = Line(UTF8Helper::CodePointIs(last, 0) ? nullptr : last + 1);
   return *this;
 }
 
@@ -376,14 +380,18 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
   bool lineBreak = false;
 
   // Scan for \n and 0
-  const char * textScanner = text;
-  while (*textScanner != 0) {
-    textScanner++;
-    lineBreak |= *textScanner == '\n';
-  }
-  assert(*textScanner == 0);
-  m_text.insertText(text, textScanner - text, const_cast<char *>(location));
-  reloadRectFromPosition(location/*-1 TODO  LEA */, lineBreak);
+  const char * nullLocation = UTF8Helper::PerformAtCodePoints(
+      text, '\n',
+      [](char * codePointLocation, void * lineBreak, int indentation) {
+        *((bool *)lineBreak) = true;
+      },
+      [](char * c1, void * c2, int c3) { },
+      &lineBreak,
+      0);
+
+  assert(UTF8Helper::CodePointIs(nullLocation, 0));
+  m_text.insertText(text, nullLocation - text, const_cast<char *>(location));
+  reloadRectFromPosition(location, lineBreak);
   return true;
 }
 
@@ -416,7 +424,7 @@ bool TextArea::ContentView::removeStartOfLine() {
     assert(cursorLocation() == text());
     return false;
   }
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), -1); //TODO LEA Before : cursorLocation()-1
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), -1);
   if (removedLine > 0) {
     assert(cursorLocation() >= text() + removedLine);
     setCursorLocation(cursorLocation() - removedLine);
@@ -442,6 +450,7 @@ KDRect TextArea::ContentView::glyphFrameAtPosition(const char * position) const 
     y++;
   }
   assert(found);
+  (void) found;
 
   return KDRect(
     x,

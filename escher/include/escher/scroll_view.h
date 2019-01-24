@@ -36,11 +36,11 @@ public:
     void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
-    void setIndicatorThickness(KDCoordinate t) { m_indicatorThickness = t; }
+    void setBarsFrameBreadth(KDCoordinate t) { m_barsFrameBreadth = t; }
   private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
-    KDCoordinate m_indicatorThickness;
+    KDCoordinate m_barsFrameBreadth;
   };
 
   Decorator * decorator() { return &m_decorator; }

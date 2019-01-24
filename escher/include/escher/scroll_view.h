@@ -43,6 +43,22 @@ public:
     KDCoordinate m_barsFrameBreadth;
   };
 
+  class DecoratorV2 {
+  public:
+    DecoratorV2();
+    int numberOfIndicators() { return 4; }
+    View * indicatorAtIndex(int index) {
+      assert(0 < index && index <= numberOfIndicators());
+      return &m_topArrow + (index-1);
+    }
+    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame);
+  private:
+    ScrollViewArrow m_topArrow;
+    ScrollViewArrow m_rightArrow;
+    ScrollViewArrow m_bottomArrow;
+    ScrollViewArrow m_leftArrow;
+  };
+
   Decorator * decorator() { return &m_decorator; }
   void setShowsIndicators(bool s) { m_showsIndicators = s; }
   bool showsIndicators() const { return m_showsIndicators; }

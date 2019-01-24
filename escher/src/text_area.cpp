@@ -199,29 +199,17 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces, char * location)
   }
 }
 
-CodePoint TextArea::Text::removeCodePoint(const char * * position) {
+CodePoint TextArea::Text::removeCodePoint(char * * position) {
   assert(m_buffer != nullptr);
   assert(m_buffer <= *position && *position < m_buffer + m_bufferSize);
 
-  // Find the beginning of the previous code point
-  UTF8Decoder decoder(m_buffer, *position);
-  CodePoint deletedCodePoint = decoder.previousCodePoint();
-  const char * newCursorLocation = decoder.stringPosition();
-  assert(newCursorLocation < *position);
+  CodePoint removedCodePoint = 0;
+  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_buffer, *position, &removedCodePoint);
+  assert(removedSize > 0);
 
-  // Shift the buffer
-  int codePointSize = *position - newCursorLocation;
-  assert(codePointSize == UTF8Decoder::CharSizeOfCodePoint(deletedCodePoint));
-  assert(newCursorLocation >= m_buffer);
-  for (size_t i = newCursorLocation - m_buffer; i < m_bufferSize; i++) {
-    m_buffer[i] = m_buffer[i + codePointSize];
-    if (m_buffer[i] == 0) {
-      break;
-    }
-  }
   // Set the new cursor position
-  *position = newCursorLocation;
-  return deletedCodePoint;
+  *position = *position - removedSize;
+  return removedCodePoint;
 }
 
 size_t TextArea::Text::removeRemainingLine(const char * location, int direction) {
@@ -401,7 +389,7 @@ bool TextArea::TextArea::ContentView::removeCodePoint() {
     return false;
   }
   bool lineBreak = false;
-  const char * cursorLoc = cursorLocation();
+  char * cursorLoc = const_cast<char *>(cursorLocation());
   lineBreak = m_text.removeCodePoint(&cursorLoc) == '\n';
   setCursorLocation(cursorLoc); // Update the cursor
   layoutSubviews(); // Reposition the cursor

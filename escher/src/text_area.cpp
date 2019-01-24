@@ -117,10 +117,10 @@ bool TextArea::insertTextWithIndentation(const char * textBuffer, const char * l
   // Insert the indentation
   UTF8Helper::PerformAtCodePoints(
       textBuffer, '\n',
-      [](char * codePointLocation, void * text, int indentation) {
-        ((Text *)text)->insertSpacesAtLocation(indentation, codePointLocation);
+      [](int codePointOffset, void * text, int indentation) {
+        ((Text *)text)->insertSpacesAtLocation(indentation, const_cast<char *>(((Text *)text)->text() + codePointOffset + UTF8Decoder::CharSizeOfCodePoint('\n')));
       },
-      [](char * c1, void * c2, int c3) { },
+      [](int c1, void * c2, int c3) { },
       (void *)(contentView()->getText()),
       indentation);
   return true;
@@ -132,11 +132,11 @@ int TextArea::indentationBeforeCursor() const {
    * indentation size when encountering spaces, reset it to 0 when encountering
    * another code point, until reaching the beginning of the line. */
   UTF8Helper::PerformAtCodePoints(const_cast<TextArea *>(this)->contentView()->text(), ' ',
-      [](char * codePointLocation, void * indentationSize, int context){
+      [](int codePointOffset, void * indentationSize, int context){
         int * castedSize = (int *) indentationSize;
         *castedSize = *castedSize + 1;
       },
-      [](char * codePointLocation, void * indentationSize, int context){
+      [](int codePointOffset, void * indentationSize, int context){
         *((int *) indentationSize) = 0;
       },
       &indentationSize, 0, '\n', false, cursorLocation());
@@ -370,12 +370,11 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
   // Scan for \n and 0
   const char * nullLocation = UTF8Helper::PerformAtCodePoints(
       text, '\n',
-      [](char * codePointLocation, void * lineBreak, int indentation) {
+      [](int codePointOffset, void * lineBreak, int indentation) {
         *((bool *)lineBreak) = true;
       },
-      [](char * c1, void * c2, int c3) { },
-      &lineBreak,
-      0);
+      [](int c1, void * c2, int c3) { },
+      &lineBreak, 0);
 
   assert(UTF8Helper::CodePointIs(nullLocation, 0));
   m_text.insertText(text, nullLocation - text, const_cast<char *>(location));

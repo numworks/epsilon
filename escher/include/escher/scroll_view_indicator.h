@@ -43,4 +43,21 @@ private:
   KDCoordinate totalLength() const { return m_frame.height() - 2*m_margin; }
 };
 
+class ScrollViewArrow : public ScrollViewIndicator {
+public:
+  enum Side : char { //FIXME
+    Top = 't',
+    Right = '>',
+    Bottom = 'b',
+    Left = '<'
+  };
+  ScrollViewArrow(Side side);
+  bool update(bool visible);
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+private:
+  bool m_visible;
+  const char m_arrow;
+  KDColor m_backgroundColor;
+};
+
 #endif

@@ -75,7 +75,7 @@ protected:
     void insertText(const char * s, int textLength, char * location);
     void insertSpacesAtLocation(int numberOfSpaces, char * location);
 
-    CodePoint removeCodePoint(const char * * position);
+    CodePoint removeCodePoint(char * * position);
     size_t removeRemainingLine(const char * position, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);

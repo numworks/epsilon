@@ -43,6 +43,10 @@ const char *  PerformAtCodePoints(const char * string, CodePoint c, CodePointAct
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
 
+// Shift the buffer and return the number of bytes removed.
+int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c);
+
+
 };
 
 #endif

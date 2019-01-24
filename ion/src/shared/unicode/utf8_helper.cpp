@@ -169,4 +169,27 @@ bool CodePointIs(const char * location, CodePoint c) {
   return decoder.nextCodePoint() == c;
 }
 
+int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c) {
+  assert(c != nullptr);
+  if (location <= text) {
+    assert(location == text);
+    return 0;
+  }
+
+  // Find the previous code point
+  UTF8Decoder decoder(text, location);
+  *c = decoder.previousCodePoint();
+
+  // Shift the buffer
+  int codePointSize = UTF8Decoder::CharSizeOfCodePoint(*c);
+  char * iterator = location - codePointSize;
+  assert(iterator >= text);
+  do {
+    *iterator = *(iterator + codePointSize);
+    iterator++;
+  } while (*(iterator - 1) != 0); // Stop shifting after writing a null terminating char.
+
+  return codePointSize;
+}
+
 };

@@ -19,7 +19,7 @@ ScrollViewBar::ScrollViewBar() :
 {
 }
 
-void ScrollViewBar::update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength) {
+bool ScrollViewBar::update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength) {
   float offset = contentOffset;
   float visibleLength = visibleContentLength;
   offset = offset / totalContentLength;
@@ -29,6 +29,7 @@ void ScrollViewBar::update(KDCoordinate totalContentLength, KDCoordinate content
     m_visibleLength = visibleLength;
     markRectAsDirty(bounds());
   }
+  return visible();
 }
 
 void ScrollViewHorizontalBar::drawRect(KDContext * ctx, KDRect rect) const {

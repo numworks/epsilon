@@ -153,30 +153,26 @@ ScrollView::Decorator::Decorator() :
 }
 
 void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
-  m_horizontalBar.update(
+  KDCoordinate hBarFrameBreadth = m_indicatorThickness * m_horizontalBar.update(
     content.width(),
     offset.x(),
     frame.width()
   );
-  m_verticalBar.update(
+  KDCoordinate vBarFrameBreadth = m_indicatorThickness * m_verticalBar.update(
     content.height(),
     offset.y(),
     frame.height()
   );
   /* If the two indicators are visible, we leave an empty rectangle in the right
    * bottom corner. Otherwise, the only indicator uses all the height/width. */
-  if (m_verticalBar.visible()) {
-    m_verticalBar.setFrame(KDRect(
-      frame.width() - m_indicatorThickness, 0,
-      m_indicatorThickness, frame.height() - m_horizontalBar.visible() * m_indicatorThickness
-    ));
-  }
-  if (m_horizontalBar.visible()) {
-    m_horizontalBar.setFrame(KDRect(
-      0, frame.height() - m_indicatorThickness,
-      frame.width() - m_verticalBar.visible() * m_indicatorThickness, m_indicatorThickness
-    ));
-  }
+  m_verticalBar.setFrame(KDRect(
+    frame.width() - vBarFrameBreadth, 0,
+    vBarFrameBreadth, frame.height() - hBarFrameBreadth
+  ));
+  m_horizontalBar.setFrame(KDRect(
+    0, frame.height() - hBarFrameBreadth,
+    frame.width() - vBarFrameBreadth, hBarFrameBreadth
+  ));
 }
 
 #if ESCHER_VIEW_LOGGING

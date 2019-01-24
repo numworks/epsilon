@@ -72,6 +72,30 @@ void ScrollViewVerticalBar::drawRect(KDContext * ctx, KDRect rect) const {
   );
 }
 
+ScrollViewArrow::ScrollViewArrow(Side side) :
+  m_visible(false),
+  m_arrow(side)
+{
+}
+
+bool ScrollViewArrow::update(bool visible) {
+  if (m_visible != visible) {
+    markRectAsDirty(bounds());
+  }
+  m_visible = visible;
+  return visible;
+}
+
+void ScrollViewArrow::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(bounds(), m_backgroundColor);
+  KDSize arrowSize = KDFont::LargeFont->glyphSize();
+  const KDPoint arrowAlign = KDPoint(
+    (m_arrow == Top || m_arrow == Bottom) * (m_frame.width() - arrowSize.width()) / 2,
+    (m_arrow == Left || m_arrow == Right) * (m_frame.height() - arrowSize.height()) / 2
+  );
+  ctx->drawString(&m_arrow, arrowAlign, KDFont::LargeFont, m_color, m_backgroundColor, m_visible);
+}
+
 #if ESCHER_VIEW_LOGGING
 const char * ScrollViewIndicator::className() const {
   return "ScrollViewIndicator";

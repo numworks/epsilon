@@ -175,6 +175,38 @@ void ScrollView::Decorator::layoutIndicators(KDSize content, KDPoint offset, KDS
   ));
 }
 
+ScrollView::DecoratorV2::DecoratorV2() :
+  m_topArrow(ScrollViewArrow::Side::Top),
+  m_rightArrow(ScrollViewArrow::Side::Right),
+  m_bottomArrow(ScrollViewArrow::Side::Bottom),
+  m_leftArrow(ScrollViewArrow::Side::Left)
+{
+}
+
+void ScrollView::DecoratorV2::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
+  KDSize arrowSize = KDFont::LargeFont->glyphSize();
+  KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());
+  KDCoordinate rightArrowFrameBreadth = arrowSize.width() * m_rightArrow.update(offset.x() + frame.width() < content.width());
+  KDCoordinate bottomArrowFrameBreadth = arrowSize.height() * m_bottomArrow.update(offset.y() + frame.height() < content.height());
+  KDCoordinate leftArrowFrameBreadth = arrowSize.width() * m_leftArrow.update(0 < offset.x());
+  m_topArrow.setFrame(KDRect(
+    0, 0,
+    frame.width(), topArrowFrameBreadth
+  ));
+  m_rightArrow.setFrame(KDRect(
+    frame.width() - rightArrowFrameBreadth, 0,
+    rightArrowFrameBreadth, frame.height()
+  ));
+  m_bottomArrow.setFrame(KDRect(
+    0, frame.height() - bottomArrowFrameBreadth,
+    frame.width(), bottomArrowFrameBreadth
+  ));
+  m_leftArrow.setFrame(KDRect(
+    0, 0,
+    leftArrowFrameBreadth, frame.height()
+  ));
+}
+
 #if ESCHER_VIEW_LOGGING
 const char * ScrollView::className() const {
   return "ScrollView";

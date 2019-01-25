@@ -66,7 +66,7 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
 
 

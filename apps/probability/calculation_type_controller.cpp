@@ -22,7 +22,7 @@ CalculationTypeController::CalculationTypeController(Responder * parentResponder
   assert(m_calculation != nullptr);
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_selectableTableView.setColorsBackground(false);
 }
 

@@ -145,6 +145,11 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
 bool TextField::ContentView::removeCodePoint() {
   assert(m_isEditing);
 
+  if (m_horizontalAlignment > 0.0f) {
+    /* Reload the view. If we do it later, the text beins supposedly shorter, we
+     *  will not clean the first char. */
+    reloadRectFromPosition(m_draftTextBuffer);
+  }
   // Remove the code point if possible
   CodePoint removedCodePoint = 0;
   int removedSize = UTF8Helper::RemovePreviousCodePoint(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
@@ -157,10 +162,7 @@ bool TextField::ContentView::removeCodePoint() {
   m_currentDraftTextLength-= removedSize;
   assert(m_draftTextBuffer[m_currentDraftTextLength] == 0);
 
-  // Reload the view and set the cursor location
-  if (m_horizontalAlignment > 0.0f) {
-    reloadRectFromPosition(m_draftTextBuffer);
-  }
+  // Set the cursor location and reload the view
   assert(cursorLocation() - removedSize >= m_draftTextBuffer);
   setCursorLocation(cursorLocation() - removedSize);
   if (m_horizontalAlignment == 0.0f) {

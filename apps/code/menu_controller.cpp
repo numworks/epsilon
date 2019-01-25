@@ -350,9 +350,11 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 
 bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
-  const char * maxPointerLocation = textField->text() + textField->draftTextLength() - scriptExtensionLength;
-  if (textField->isEditing() && textField->cursorLocation() > maxPointerLocation) {
-    textField->setCursorLocation(maxPointerLocation);
+  if (textField->isEditing()) {
+    const char * maxPointerLocation = textField->text() + textField->draftTextLength() - scriptExtensionLength;
+    if (textField->cursorLocation() > maxPointerLocation) {
+      textField->setCursorLocation(maxPointerLocation);
+    }
   }
   return returnValue;
 }

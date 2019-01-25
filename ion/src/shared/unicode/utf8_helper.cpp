@@ -209,4 +209,53 @@ int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c) {
   return codePointSize;
 }
 
+
+const char * CodePointAtGlyphOffset(const char * buffer, int position) {
+  assert(buffer != nullptr);
+  if (position < 0) {
+    return buffer;
+  }
+
+  UTF8Decoder decoder(buffer);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.nextCodePoint();
+  int glyphIndex = 0;
+  while (codePoint != UCodePointNull) {
+    if (glyphIndex == position) {
+      assert(!codePoint.isCombining());
+      return codePointPointer;
+    }
+    if (!codePoint.isCombining()) {
+      glyphIndex++;
+    }
+    codePointPointer = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
+  }
+  assert(glyphIndex == position);
+  return codePointPointer;
+}
+
+size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {
+  assert(position >= buffer);
+
+  UTF8Decoder decoder(buffer);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.nextCodePoint();
+  size_t glyphIndex = 0;
+  while (codePoint != UCodePointNull) {
+    if (codePointPointer == position) {
+      assert(!codePoint.isCombining());
+      return glyphIndex;
+    }
+    if (!codePoint.isCombining()) {
+      glyphIndex++;
+    }
+    codePointPointer = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
+  }
+  assert(codePointPointer == position);
+  return glyphIndex;
+}
+
+
 };

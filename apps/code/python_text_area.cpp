@@ -18,7 +18,7 @@ constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
 
-static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
@@ -95,16 +95,18 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 #define LOG_DRAW(...)
 #endif
 
-void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const {
-  LOG_DRAW("Drawing \"%.*s\"\n", length, text);
+void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t byteLength, int fromColumn, int toColumn) const {
+  LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
   if (!m_pythonDelegate->isPythonUser(this)) {
+    const char * lineStart = UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
+    const char * lineEnd = UTF8Helper::CodePointAtGlyphOffset(text, toColumn);
     drawStringAt(
       ctx,
       line,
       fromColumn,
-      text + fromColumn,
-      minInt(length - fromColumn, toColumn - fromColumn),
+      lineStart,
+      minPointer(text + byteLength, lineEnd) - lineStart,
       StringColor,
       BackgroundColor
     );
@@ -117,29 +119,29 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
      * basis. This can work, however the MicroPython lexer won't accept a line
      * starting with a whitespace. So we're discarding leading whitespaces
      * beforehand. */
-    size_t whitespaceOffset = 0;
-    while (text[whitespaceOffset] == ' ' && whitespaceOffset < length) {
-      whitespaceOffset++;
+    UTF8Decoder decoder(text);
+    const char * p = decoder.stringPosition();
+    CodePoint c = decoder.nextCodePoint();
+    while (p < text + byteLength && c  == ' ') {
+        p = decoder.stringPosition();
+        c = decoder.nextCodePoint();
     }
 
-    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, text + whitespaceOffset, length - whitespaceOffset, 0);
+    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, p, byteLength - (p - text), 0);
     LOG_DRAW("Pop token %d\n", lex->tok_kind);
 
-    size_t tokenFrom = 0;
+    const char * tokenFrom = p;
     size_t tokenLength = 0;
-    KDColor tokenColor = KDColorBlack;
-
     while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
-      tokenFrom = whitespaceOffset + lex->tok_column - 1;
-      tokenLength = TokenLength(lex);
-      tokenColor = TokenColor(lex->tok_kind);
 
-      LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, text + tokenFrom, lex->tok_kind);
+      tokenFrom = p + lex->tok_column - 1;
+      tokenLength = TokenLength(lex);
+      LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
+        UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
         tokenFrom,
-        text + tokenFrom, // text
-        tokenLength, // length
-        tokenColor,
+        tokenLength,
+        TokenColor(lex->tok_kind),
         BackgroundColor
       );
 
@@ -147,16 +149,15 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       LOG_DRAW("Pop token %d\n", lex->tok_kind);
     }
 
-    tokenFrom = tokenFrom + tokenLength;
-    if (tokenFrom != length) {
-      LOG_DRAW("Draw comment \"%.*s\" from %d\n", length - tokenFrom, text + tokenFrom, tokenFrom);
+    tokenFrom += tokenLength;
+    if (tokenFrom < text + byteLength) {
+      LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), p, tokenFrom);
       drawStringAt(ctx, line,
+          UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
           tokenFrom,
-          text + tokenFrom, // text
-          length - tokenFrom, // length
+          text + byteLength - tokenFrom,
           CommentColor,
-          BackgroundColor
-        );
+          BackgroundColor);
     }
 
     mp_lexer_free(lex);

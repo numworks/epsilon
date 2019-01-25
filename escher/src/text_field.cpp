@@ -105,12 +105,12 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, const char 
 
   memmove(const_cast<char *>(location + textSize), location, (m_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
-  // Caution! One char will be overridden by the null-terminating char of strlcpy
-  char * overridenCharLocation = const_cast<char *>(location + strlen(text));
-  char overridenChar = *overridenCharLocation;
+  // Caution! One byte will be overridden by the null-terminating char of strlcpy
+  char * overridenByteLocation = const_cast<char *>(location + strlen(text));
+  char overridenByte = *overridenByteLocation;
   strlcpy(const_cast<char *>(location), text, (m_draftTextBuffer + m_textBufferSize) - location);
-  assert(overridenCharLocation < m_draftTextBuffer + m_textBufferSize);
-  *overridenCharLocation = overridenChar;
+  assert(overridenByteLocation < m_draftTextBuffer + m_textBufferSize);
+  *overridenByteLocation = overridenByte;
   m_currentDraftTextLength += textSize;
 
   UTF8Decoder decoder(m_draftTextBuffer);
@@ -120,6 +120,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, const char 
   while (codePoint != UCodePointNull) {
     assert(codePointPointer < m_draftTextBuffer + m_textBufferSize);
     if (codePoint == '\n') {
+      assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
       *(const_cast<char *>(codePointPointer)) = 0;
       m_currentDraftTextLength = codePointPointer - m_draftTextBuffer;
       break;

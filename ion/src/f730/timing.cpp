@@ -8,12 +8,12 @@ namespace Timing {
  * precision, we could use the controller cycle counter (Systick). */
 
 void msleep(uint32_t ms) {
-  for (volatile uint32_t i=0; i<28852*ms; i++) {
+  for (volatile uint32_t i=0; i<39343*ms; i++) {
       __asm volatile("nop");
   }
 }
 void usleep(uint32_t us) {
-  for (volatile uint32_t i=0; i<28*us; i++) {
+  for (volatile uint32_t i=0; i<39*us; i++) {
     __asm volatile("nop");
   }
 }

@@ -245,7 +245,6 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
         LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, KDFont::SmallFont, false));
   } else {
-    m_sumLayout = LayoutHelper::CodePointString(sigma, sigmaSize);
     constexpr size_t bufferSize = 2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
     char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
@@ -253,7 +252,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
     m_sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::CodePointString(sigma, sizeof(sigma)),
+        LayoutHelper::CodePointString(sigma, sigmaSize),
         start,
         end);
     strlcpy(buffer, "= ", bufferSize);

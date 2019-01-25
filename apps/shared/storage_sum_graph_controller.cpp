@@ -242,18 +242,17 @@ void StorageSumGraphController::LegendView::setSumSymbol(Step step, double start
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     m_sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::CodePointString(sigma, sizeof(sigma)),
+        LayoutHelper::CodePointString(sigma, sigmaLength),
         LayoutHelper::String(buffer, strlen(buffer), k_font),
         EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
-    m_sumLayout = LayoutHelper::CodePointString(sigma, sizeof(sigma));
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout start = LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
     m_sumLayout = CondensedSumLayout::Builder(
-        LayoutHelper::CodePointString(sigma, sizeof(sigma)),
+        LayoutHelper::CodePointString(sigma, sigmaLength),
         start,
         end);
     strlcpy(buffer, "= ", 3);

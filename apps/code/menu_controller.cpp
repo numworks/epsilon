@@ -26,7 +26,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   m_shouldDisplayAddScriptRow(true)
 {
   m_selectableTableView.setMargins(0);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);

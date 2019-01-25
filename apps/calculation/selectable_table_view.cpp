@@ -8,7 +8,7 @@ CalculationSelectableTableView::CalculationSelectableTableView(Responder * paren
 {
   setVerticalCellOverlap(0);
   setMargins(0);
-  setShowsIndicators(false);
+  setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 void CalculationSelectableTableView::scrollToCell(int i, int j) {

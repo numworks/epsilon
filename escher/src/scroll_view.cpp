@@ -18,7 +18,6 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   m_decorator(),
   m_barDecorator(),
   m_arrowDecorator(),
-  m_showsIndicators(true),
   m_colorsBackground(true),
   m_backgroundColor(Palette::WallScreen)
 {
@@ -42,24 +41,6 @@ ScrollView::Decorator * ScrollView::decorator() {
       assert(m_decoratorType == Decorator::Type::None);
       return &m_decorator;
   }
-}
-
-int ScrollView::numberOfSubviews() const {
-  int result = 1;
-  if (m_showsIndicators) {
-    result += const_cast<ScrollView *>(this)->decorator()->numberOfIndicators();
-  }
-  return result;
-}
-
-View * ScrollView::subviewAtIndex(int index) {
-  if (index == 0) {
-    return m_contentView;
-  }
-  if (m_showsIndicators) {
-    return decorator()->indicatorAtIndex(index);
-  }
-  return nullptr;
 }
 
 void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -133,13 +114,11 @@ void ScrollView::layoutSubviews() {
   KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
   KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
   m_contentView->setFrame(contentFrame);
-  if (m_showsIndicators) {
-    KDSize content(
-      m_contentView->bounds().width() + m_leftMargin + m_rightMargin,
-      m_contentView->bounds().height() + m_topMargin + m_bottomMargin
-    );
-    decorator()->layoutIndicators(content, contentOffset(), m_frame.size());
-  }
+  KDSize content(
+    m_contentView->bounds().width() + m_leftMargin + m_rightMargin,
+    m_contentView->bounds().height() + m_topMargin + m_bottomMargin
+  );
+  decorator()->layoutIndicators(content, contentOffset(), m_frame.size());
 }
 
 KDSize ScrollView::contentSize() {

@@ -94,7 +94,7 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_sender(nullptr)
 {
   m_selectableTableView.setMargins(0);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 bool NestedMenuController::handleEvent(Ion::Events::Event event) {

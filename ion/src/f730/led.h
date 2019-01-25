@@ -10,8 +10,8 @@ namespace Device {
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------
  *  PB0 | LED blue          | Alternate Function 2  | TIM3_CH3
- *  PB1 | LED green         | Alternate Function 2  | TIM3_CH4
- *  PC7 | LED red           | Alternate Function 2  | TIM3_CH2
+ *  PB5 | LED green         | Alternate Function 2  | TIM3_CH2
+ *  PB4 | LED red           | Alternate Function 2  | TIM3_CH1
  */
 
 enum class Mode {
@@ -35,7 +35,7 @@ void initTimer();
 void shutdownTimer();
 
 constexpr static GPIOPin RGBPins[] = {
-  GPIOPin(GPIOC, 7), GPIOPin(GPIOB, 1), GPIOPin(GPIOB, 0)
+  GPIOPin(GPIOB, 4), GPIOPin(GPIOB, 5), GPIOPin(GPIOB, 0)
 };
 
 

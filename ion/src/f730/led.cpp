@@ -16,8 +16,8 @@ void Ion::LED::setColor(KDColor c) {
   sLedColor = c;
 
   /* Active all RGB colors */
+  TIM3.CCMR()->setOC1M(TIM<Register16>::CCMR::OCM::PWM1);
   TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::PWM1);
   TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::PWM1);
 
   /* Set the PWM duty cycles to display the right color */
@@ -30,8 +30,8 @@ void Ion::LED::setBlinking(uint16_t period, float dutyCycle) {
    * Consequently, we do not use PWM to display the right color anymore but to
    * blink. We cannot use the PWM to display the exact color so we 'project the
    * color on 3 bits' : all colors have 2 states - active or not. */
-  TIM3.CCMR()->setOC2M(sLedColor.red() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC4M(sLedColor.green() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC1M(sLedColor.red() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC2M(sLedColor.green() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
   TIM3.CCMR()->setOC3M(sLedColor.blue() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
 
   Device::setPeriodAndDutyCycles(Device::Mode::Blink, dutyCycle, dutyCycle, dutyCycle, period);
@@ -56,7 +56,7 @@ void shutdown() {
 void initGPIO() {
   /* RED_LED(PC7), GREEN_LED(PB1), and BLUE_LED(PB0) are driven using a timer,
    * which is an alternate function. More precisely, we will use AF2, which maps
-   * PB0 to TIM3_CH2, PB1 to TIM3_CH4, and PC7 to TIM3_CH2. */
+   * PB0 to TIM3_CH3, PB5 to TIM3_CH2, and PB4 to TIM3_CH1. */
   for(const GPIOPin & g : RGBPins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
     g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF2);
@@ -71,18 +71,18 @@ void shutdownGPIO() {
 }
 
 void initTimer() {
-  // Output preload enable for channels 2-4
+  // Output preload enable for channels 1 to 3
+  TIM3.CCMR()->setOC1PE(true);
   TIM3.CCMR()->setOC2PE(true);
   TIM3.CCMR()->setOC3PE(true);
-  TIM3.CCMR()->setOC4PE(true);
 
   // Auto-reload preload enable
   TIM3.CR1()->setARPE(true);
 
-  // Enable Capture/Compare for channel 2 to 4
+  // Enable Capture/Compare for channel 1 to 3
+  TIM3.CCER()->setCC1E(true);
   TIM3.CCER()->setCC2E(true);
   TIM3.CCER()->setCC3E(true);
-  TIM3.CCER()->setCC4E(true);
 
   TIM3.BDTR()->setMOE(true);
 
@@ -90,8 +90,8 @@ void initTimer() {
 }
 
 void shutdownTimer() {
+  TIM3.CCMR()->setOC1M(TIM<Register16>::CCMR::OCM::ForceInactive);
   TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::ForceInactive);
   TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::ForceInactive);
 }
 
@@ -123,9 +123,9 @@ void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen,
       break;
   }
 
-  TIM3.CCR2()->set(dutyCycleRed*period);
+  TIM3.CCR1()->set(dutyCycleRed*period);
   TIM3.CCR3()->set(dutyCycleBlue*period);
-  TIM3.CCR4()->set(dutyCycleGreen*period);
+  TIM3.CCR2()->set(dutyCycleGreen*period);
 }
 
 }

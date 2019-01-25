@@ -23,7 +23,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_listController(list)
 {
   m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin, leftMargin);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 const char * TypeParameterController::title() {

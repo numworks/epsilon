@@ -73,8 +73,6 @@ public:
 
   Decorator * decorator();
   void setDecoratorType(Decorator::Type t) { m_decoratorType = t; }
-  void setShowsIndicators(bool s) { m_showsIndicators = s; }
-  bool showsIndicators() const { return m_showsIndicators; }
   void setColorsBackground(bool c) { m_colorsBackground = c; }
   bool colorsBackground() const { return m_colorsBackground; }
   virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
@@ -98,8 +96,8 @@ protected:
   View * m_contentView;
 private:
   ScrollViewDataSource * m_dataSource;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
+  View * subviewAtIndex(int index) override { return (index == 0) ? m_contentView : decorator()->indicatorAtIndex(index); }
 
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
@@ -110,7 +108,6 @@ private:
   Decorator m_decorator;
   BarDecorator m_barDecorator;
   ArrowDecorator m_arrowDecorator;
-  bool m_showsIndicators;
   bool m_colorsBackground;
   KDColor m_backgroundColor;
 };

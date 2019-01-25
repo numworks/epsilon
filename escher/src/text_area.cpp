@@ -8,9 +8,6 @@
 #include <assert.h>
 #include <limits.h>
 
-static inline size_t minSize(size_t a, size_t b) { return a < b ? a : b; }
-static inline size_t maxSize(size_t a, size_t b) { return a > b ? a : b; }
-
 /* TextArea */
 
 TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
@@ -153,7 +150,9 @@ const char * TextArea::Text::pointerAtPosition(Position p) {
   int y = 0;
   for (Line l : *this) {
     if (p.line() == y) {
-      return l.text() + minSize(l.charLength(), maxSize(p.column(), 0));
+      const char * result = UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
+      assert(result <= l.text() + l.charLength());
+      return result;
     }
     y++;
   }
@@ -166,7 +165,7 @@ TextArea::Text::Position TextArea::Text::positionAtPointer(const char * p) const
   size_t y = 0;
   for (Line l : *this) {
     if (l.contains(p)) {
-      size_t x = p - l.text();
+      size_t x = UTF8Helper::GlyphOffsetAtCodePoint(l.text(), p);
       return Position(x, y);
     }
     y++;
@@ -327,7 +326,7 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   for (Text::Line line : m_text) {
     KDCoordinate width = line.glyphWidth(m_font);
     if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)width) {
-      drawLine(ctx, y, line.text(), width, topLeft.column(), bottomRight.column());
+      drawLine(ctx, y, line.text(), line.charLength(), topLeft.column(), bottomRight.column());
     }
     y++;
   }

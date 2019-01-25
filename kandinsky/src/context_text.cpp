@@ -5,7 +5,7 @@
 
 constexpr static int k_tabCharacterWidth = 4;
 
-KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
+KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength) {
   KDPoint position = p;
   KDSize glyphSize = font->glyphSize();
   KDFont::RenderPalette palette = font->renderPalette(textColor, backgroundColor);
@@ -13,8 +13,10 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
   KDFont::GlyphBuffer glyphBuffer;
 
   UTF8Decoder decoder(text);
+  const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != UCodePointNull) {
+  while (codePoint != UCodePointNull && (maxByteLength < 0 || codePointPointer < text + maxByteLength)) {
+    codePointPointer = decoder.stringPosition();
     if (codePoint == UCodePointLineFeed) {
       position = KDPoint(0, position.y() + glyphSize.height());
       codePoint = decoder.nextCodePoint();
@@ -27,6 +29,7 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
       codePoint = decoder.nextCodePoint();
       while (codePoint.isCombining()) {
         font->accumulateGlyphGreyscalesForCodePoint(codePoint, &glyphBuffer);
+        codePointPointer = decoder.stringPosition();
         codePoint = decoder.nextCodePoint();
       }
       font->colorizeGlyphBuffer(&palette, &glyphBuffer);

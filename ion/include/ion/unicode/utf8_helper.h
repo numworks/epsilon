@@ -49,6 +49,10 @@ bool CodePointIs(const char * location, CodePoint c);
 // Shift the buffer and return the number of bytes removed.
 int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c);
 
+/* Return the pointer to the (non combining) code point whose glyph is displayed
+ * at the given position, and vice-versa */
+const char * CodePointAtGlyphOffset(const char * buffer, int position);
+size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position);
 
 };
 

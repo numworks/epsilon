@@ -8,6 +8,8 @@
 #include <assert.h>
 #include <limits.h>
 
+static inline const char * minPointer(const char * x, const char * y) { return x < y ? x : y; }
+
 /* TextArea */
 
 TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont * font) :
@@ -151,8 +153,7 @@ const char * TextArea::Text::pointerAtPosition(Position p) {
   for (Line l : *this) {
     if (p.line() == y) {
       const char * result = UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
-      assert(result <= l.text() + l.charLength());
-      return result;
+      return minPointer(result, l.text() + l.charLength());
     }
     y++;
   }

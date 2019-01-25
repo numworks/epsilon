@@ -231,7 +231,6 @@ const char * CodePointAtGlyphOffset(const char * buffer, int position) {
     codePointPointer = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
-  assert(glyphIndex == position);
   return codePointPointer;
 }
 
@@ -253,7 +252,6 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {
     codePointPointer = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
-  assert(codePointPointer == position);
   return glyphIndex;
 }
 

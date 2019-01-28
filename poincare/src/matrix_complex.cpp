@@ -38,7 +38,7 @@ bool MatrixComplexNode<T>::isUndefined() const {
 
 template<typename T>
 Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
-  Matrix matrix = Matrix::EmptyMatrix();
+  Matrix matrix = Matrix::Builder();
   int i = 0;
   for (EvaluationNode<T> * c : this->children()) {
     if (c->type() == EvaluationNode<T>::Type::Complex) {

@@ -88,10 +88,10 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   Rational r0 = static_cast<Rational&>(c0);
   Rational r1 = static_cast<Rational&>(c1);
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
-  Expression sqr = Power(r1, Rational(-1, 2));
-  Matrix matrix;
-  matrix.addChildAtIndexInPlace(Addition(r0.clone(), Multiplication(Rational(-1), sqr.clone())), 0, 0);
-  matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
+  Expression sqr = Power::Builder(r1, Rational(-1, 2));
+  Matrix matrix = Matrix::Builder();
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), Multiplication::Builder(Rational(-1), sqr.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
   matrix.deepReduceChildren(context, complexFormat, angleUnit, target);

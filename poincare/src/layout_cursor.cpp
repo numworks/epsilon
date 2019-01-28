@@ -74,15 +74,15 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout;
-  HorizontalLayout sibling = HorizontalLayout(
+  HorizontalLayout sibling = HorizontalLayout::Builder(
       CharLayout(Ion::Charset::Exponential),
-      VerticalOffsetLayout(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
 
 void LayoutCursor::addEmptyMatrixLayout() {
-  MatrixLayout matrixLayout = MatrixLayout(
+  MatrixLayout matrixLayout = MatrixLayout::Builder(
       EmptyLayout(EmptyLayoutNode::Color::Yellow),
       EmptyLayout(EmptyLayoutNode::Color::Grey),
       EmptyLayout(EmptyLayoutNode::Color::Grey),
@@ -93,31 +93,31 @@ void LayoutCursor::addEmptyMatrixLayout() {
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {
-  HorizontalLayout child1 = HorizontalLayout(EmptyLayout());
-  NthRootLayout newChild = NthRootLayout(child1);
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout());
+  NthRootLayout newChild = NthRootLayout::Builder(child1);
   m_layout.addSibling(this, newChild, false);
   m_layout = newChild.childAtIndex(0);
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(EmptyLayout(), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout(), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(CharLayout('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CharLayout('2'), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout;
-  HorizontalLayout sibling = HorizontalLayout(
+  HorizontalLayout sibling = HorizontalLayout::Builder(
       CharLayout(Ion::Charset::MiddleDot),
       CharLayout('1'),
       CharLayout('0'),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
         emptyLayout,
         VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
@@ -125,9 +125,9 @@ void LayoutCursor::addEmptyTenPowerLayout() {
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
-  HorizontalLayout child1 = HorizontalLayout(EmptyLayout());
-  HorizontalLayout child2 = HorizontalLayout(EmptyLayout());
-  FractionLayout newChild = FractionLayout(child1, child2);
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout());
+  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout());
+  FractionLayout newChild = FractionLayout::Builder(child1, child2);
   m_layout.addSibling(this, newChild, true);
   Layout(newChild.node()).collapseSiblings(this);
 }
@@ -150,12 +150,12 @@ void LayoutCursor::insertText(const char * text) {
     if (text[i] == Ion::Charset::MultiplicationSign) {
       newChild = CharLayout(Ion::Charset::MiddleDot);
     } else if (text[i] == '(') {
-      newChild = LeftParenthesisLayout();
+      newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
     } else if (text[i] == ')') {
-      newChild = RightParenthesisLayout();
+      newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
@@ -218,7 +218,7 @@ void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
   }
   // Else, add an empty base
   EmptyLayout e = EmptyLayout();
-  HorizontalLayout newChild = HorizontalLayout(e, v);
+  HorizontalLayout newChild = HorizontalLayout::Builder(e, v);
   m_layout.addSibling(this, newChild, true);
 }
 

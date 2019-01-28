@@ -19,7 +19,7 @@ Expression SumNode::replaceUnknown(const Symbol & symbol) {
 }
 
 Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
-  return SumLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+  return SumLayout::Builder(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
 }
 
 int SumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -216,11 +216,4 @@ void FractionLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize().width()-2*Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
 }
 
-FractionLayout::FractionLayout(Layout numerator, Layout denominator) :
-  Layout(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
-{
-  replaceChildAtIndexInPlace(0, numerator);
-  replaceChildAtIndexInPlace(1, denominator);
-}
-
 }

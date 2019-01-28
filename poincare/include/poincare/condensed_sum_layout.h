@@ -51,7 +51,15 @@ private:
 
 class CondensedSumLayout final : public Layout {
 public:
-  CondensedSumLayout(Layout base, Layout subscript, Layout superscript);
+  static CondensedSumLayout Builder(Layout base, Layout subscript, Layout superscript) { return CondensedSumLayout(base, subscript, superscript); }
+private:
+  CondensedSumLayout(Layout base, Layout subscript, Layout superscript) :
+    Layout(TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>())
+  {
+    replaceChildAtIndexInPlace(0, base);
+    replaceChildAtIndexInPlace(1, subscript);
+    replaceChildAtIndexInPlace(2, superscript);
+  }
 };
 
 }

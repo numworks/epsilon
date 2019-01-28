@@ -66,8 +66,9 @@ class Power final : public Expression {
   friend class PowerNode;
   friend class Round;
 public:
-  Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
+  static Power Builder(Expression base, Expression exponent) { return Power(base, exponent); }
+
   Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
@@ -76,6 +77,12 @@ public:
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
+
+  // Constructors
+  Power(Expression base, Expression exponent) : Expression(TreePool::sharedPool()->createTreeNode<PowerNode>()) {
+    replaceChildAtIndexInPlace(0, base);
+    replaceChildAtIndexInPlace(1, exponent);
+  }
 
   // Simplification
   Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

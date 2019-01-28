@@ -54,7 +54,7 @@ Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat 
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
-    Division d = Division(s, c);
+    Division d = Division::Builder(s, c);
     s.shallowReduce(context, complexFormat, angleUnit, target);
     c.shallowReduce(context, complexFormat, angleUnit, target);
     newExpression.replaceWithInPlace(d);

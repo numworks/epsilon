@@ -19,7 +19,7 @@ Expression ProductNode::replaceUnknown(const Symbol & symbol) {
 }
 
 Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
-  return ProductLayout(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+  return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
 }
 
 int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

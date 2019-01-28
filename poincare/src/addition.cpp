@@ -59,7 +59,6 @@ Expression AdditionNode::shallowBeautify(Context & context, Preferences::Complex
 }
 
 // Addition
-Addition::Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
 
 const Number Addition::NumeralFactor(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
@@ -94,7 +93,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
    * "a+(-r)*b" into "a-r*b" where r is a positive Rational.
    * Note: the process will slightly differ if the negative product occurs on
-   * the first term: we want to turn "AdditionNode(Multiplication(-1,b))" into
+   * the first term: we want to turn "Addition(Multiplication::Builder(-1,b))" into
    * "Opposite(b)".
    * Last but not least, special care must be taken when iterating over children
    * since we may remove some during the process. */
@@ -115,7 +114,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
     }
 
     if (i == 0) {
-      Opposite o = Opposite(subtractant);
+      Opposite o = Opposite::Builder(subtractant);
       replaceChildAtIndexInPlace(i, o);
     } else {
       Expression leftSibling = childAtIndex(i-1);
@@ -123,7 +122,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
       /* CAUTION: we removed a child. So we need to decrement i to make sure
        * the next iteration is actually on the next child. */
       i--;
-      Subtraction s = Subtraction(leftSibling, subtractant);
+      Subtraction s = Subtraction::Builder(leftSibling, subtractant);
       /* We stole subtractant from this which replaced it by a ghost. We thus
        * need to put the subtraction at the previous index of subtractant, which
        * is still i because we updated i after removing a child. */
@@ -262,7 +261,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::ComplexFormat
    *   We can bubble up ComplexCartesian nodes. */
   if (allChildrenAreReal(context) == 0) {
     /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
-    Addition imag; // we store all imaginary parts in 'imag'
+    Addition imag = Addition::Builder(); // we store all imaginary parts in 'imag'
     Addition real = *this; // we store all real parts in 'real'
     i = numberOfChildren() - 1;
     while (i >= 0) {
@@ -341,7 +340,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
 
   // Step 1: We want to compute the common denominator, b*d
-  Multiplication commonDenominator = Multiplication();
+  Multiplication commonDenominator;
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression currentDenominator = childAtIndex(i).denominator(context, complexFormat, angleUnit);
     if (!currentDenominator.isUninitialized()) {
@@ -356,16 +355,16 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
 
   /* Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
    * want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d = a*d + c*b + e*d */
-  Addition numerator = Addition();
+  Addition numerator = Addition::Builder();
   for (int i = 0; i < numberOfChildren(); i++) {
-    Multiplication m = Multiplication(childAtIndex(i), commonDenominator.clone());
+    Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
     m.privateShallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, true, false);
   }
 
   // Step 3: Add the denominator
-  Power inverseDenominator = Power(commonDenominator, Rational(-1));
-  Multiplication result = Multiplication(numerator, inverseDenominator);
+  Power inverseDenominator = Power::Builder(commonDenominator, Rational(-1));
+  Multiplication result = Multiplication::Builder(numerator, inverseDenominator);
 
   // Step 4: Simplify the numerator
   numerator.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
@@ -396,7 +395,7 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context
   removeChildAtIndexInPlace(index2);
 
   // Step 3: Create a multiplication
-  Multiplication m;
+  Multiplication m = Multiplication::Builder();
   if (e1.type() == ExpressionNode::Type::Multiplication) {
     m = static_cast<Multiplication&>(e1);
   } else {

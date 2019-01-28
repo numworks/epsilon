@@ -22,7 +22,7 @@ Layout LogarithmicModel::layout() {
       CharLayout('+', KDFont::SmallFont),
       CharLayout('b', KDFont::SmallFont)
     };
-    m_layout = HorizontalLayout(layoutChildren, 9);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 9);
   }
   return m_layout;
 }

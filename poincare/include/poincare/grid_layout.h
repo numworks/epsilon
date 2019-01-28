@@ -89,7 +89,7 @@ private:
 class GridLayout : public Layout {
 public:
   GridLayout(const GridLayoutNode * n) : Layout(n) {}
-  GridLayout() : Layout(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
+  static GridLayout Builder() { return GridLayout(); }
   void setDimensions(int rows, int columns);
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
     Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
@@ -97,6 +97,7 @@ public:
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
 private:
+  GridLayout() : Layout(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
   virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(Layout::node()); }
   void setNumberOfRows(int rows) {
     assert(rows >= 0);

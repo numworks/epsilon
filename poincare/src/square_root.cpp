@@ -19,7 +19,7 @@ constexpr Expression::FunctionHelper SquareRoot::s_functionHelper;
 int SquareRootNode::numberOfChildren() const { return SquareRoot::s_functionHelper.numberOfChildren(); }
 
 Layout SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return NthRootLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return NthRootLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -54,7 +54,7 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexForm
     return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
-  Power p = Power(childAtIndex(0), Rational(1, 2));
+  Power p = Power::Builder(childAtIndex(0), Rational(1, 2));
   replaceWithInPlace(p);
   return p.shallowReduce(context, complexFormat, angleUnit, target);
 }

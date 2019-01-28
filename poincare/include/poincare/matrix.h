@@ -62,14 +62,8 @@ class Matrix final : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:
-  static Matrix EmptyMatrix() {
-    return Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>());
-  }
-  Matrix() : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
   Matrix(const MatrixNode * node) : Expression(node) {}
-  explicit Matrix(Expression e) : Matrix() {
-    addChildAtIndexInPlace(e, 0, 0);
-  }
+  static Matrix Builder() { return Matrix(); }
 
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }
@@ -91,6 +85,7 @@ public:
   Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
+  Matrix() : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
 
@@ -98,7 +93,7 @@ private:
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   /* rowCanonize turns a matrix in its reduced row echelon form. */
-  Matrix rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication());
+  Matrix rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication::Builder());
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
 };

@@ -48,14 +48,14 @@ Expression MatrixDimension::shallowReduce() {
 #if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix &>(c);
-    Matrix result;
+    Matrix result = Matrix::Builder();
     result.addChildAtIndexInPlace(Rational(m.numberOfRows()), 0, 0);
     result.addChildAtIndexInPlace(Rational(m.numberOfColumns()), 1, 1);
     result.setDimensions(1, 2);
     return result;
   }
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    Matrix result;
+    Matrix result = Matrix::Builder();
     result.addChildAtIndexInPlace(Rational(1), 0, 0);
     result.addChildAtIndexInPlace(Rational(1), 1, 1);
     result.setDimensions(1, 2);
@@ -64,7 +64,7 @@ Expression MatrixDimension::shallowReduce() {
   return *this;
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
-    Matrix result;
+    Matrix result = Matrix::Builder();
     result.addChildAtIndexInPlace(Rational(1), 0, 0);
     result.addChildAtIndexInPlace(Rational(1), 1, 1);
     result.setDimensions(1, 2);

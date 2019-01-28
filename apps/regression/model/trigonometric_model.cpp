@@ -36,7 +36,7 @@ Layout TrigonometricModel::layout() {
       CharLayout('+', KDFont::SmallFont),
       CharLayout('d', KDFont::SmallFont)
     };
-    m_layout = HorizontalLayout(layoutChildren, 14);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 14);
   }
   return m_layout;
 }
@@ -48,12 +48,12 @@ Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, 
   double d = modelCoefficients[3];
   // a*sin(bx+c)+d
   Expression result =
-    Addition(
-      Multiplication(
+    Addition::Builder(
+      Multiplication::Builder(
         Number::DecimalNumber(a),
         Sine::Builder(
-          Addition(
-            Multiplication(
+          Addition::Builder(
+            Multiplication::Builder(
               Number::DecimalNumber(b),
               Symbol('x')),
             Number::DecimalNumber(c)))),

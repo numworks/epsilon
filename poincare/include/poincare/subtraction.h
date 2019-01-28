@@ -54,15 +54,20 @@ private:
 
 class Subtraction final : public Expression {
 public:
-  Subtraction();
   Subtraction(const SubtractionNode * n) : Expression(n) {}
-  Subtraction(Expression child0, Expression child1) : Subtraction() {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
+  static Subtraction Builder() { return Subtraction(); }
+  static Subtraction Builder(Expression child0, Expression child1) {
+    Subtraction s = Subtraction::Builder();
+    s.replaceChildAtIndexInPlace(0, child0);
+    s.replaceChildAtIndexInPlace(1, child1);
+    return s;
   }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+
+private:
+  Subtraction() : Expression(TreePool::sharedPool()->createTreeNode<SubtractionNode>()) {}
 };
 
 }

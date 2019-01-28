@@ -104,7 +104,7 @@ QUIZ_CASE(poincare_parser_memory_exhaustion) {
   {
     Poincare::ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      Addition a = Addition();
+      Addition a = Addition::Builder();
       while (true) {
         Expression e = Expression::Parse("1+2+3+4+5+6+7+8+9+10");
         a.addChildAtIndexInPlace(e, 0, a.numberOfChildren());
@@ -124,65 +124,65 @@ QUIZ_CASE(poincare_parser_memory_exhaustion) {
 
 QUIZ_CASE(poincare_parser_parse) {
   assert_parsed_expression_is("1", Rational(1));
-  assert_parsed_expression_is("(1)", Parenthesis(Rational(1)));
-  assert_parsed_expression_is("((1))", Parenthesis((Expression)Parenthesis(Rational(1))));
-  assert_parsed_expression_is("1+2", Addition(Rational(1),Rational(2)));
-  assert_parsed_expression_is("(1)+2", Addition(Parenthesis(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("(1+2)", Parenthesis(Addition(Rational(1),Rational(2))));
-  assert_parsed_expression_is("1+2+3", Addition(Addition(Rational(1),Rational(2)),Rational(3)));
-  assert_parsed_expression_is("1+2+(3+4)", Addition(Addition(Rational(1),Rational(2)),Parenthesis(Addition(Rational(3),Rational(4)))));
-  assert_parsed_expression_is("1*2", Multiplication(Rational(1),Rational(2)));
-  assert_parsed_expression_is("1*2*3", Multiplication(Multiplication(Rational(1),Rational(2)),Rational(3)));
-  assert_parsed_expression_is("1+2*3", Addition(Rational(1), Multiplication(Rational(2), Rational(3))));
-  assert_parsed_expression_is("1/2", Division(Rational(1),Rational(2)));
-  assert_parsed_expression_is("(1/2)", Parenthesis(Division(Rational(1),Rational(2))));
-  assert_parsed_expression_is("1/2/3", Division(Division(Rational(1),Rational(2)),Rational(3)));
-  assert_parsed_expression_is("1/2*3", Multiplication(Division(Rational(1),Rational(2)),Rational(3)));
-  assert_parsed_expression_is("(1/2*3)", Parenthesis(Multiplication(Division(Rational(1),Rational(2)),Rational(3))));
-  assert_parsed_expression_is("1*2/3", Multiplication(Rational(1),Division(Rational(2),Rational(3))));
-  assert_parsed_expression_is("(1*2/3)", Parenthesis(Multiplication(Rational(1),Division(Rational(2),Rational(3)))));
-  assert_parsed_expression_is("(1/2/3)", Parenthesis(Division(Division(Rational(1),Rational(2)),Rational(3))));
-  assert_parsed_expression_is("1^2", Power(Rational(1),Rational(2)));
-  assert_parsed_expression_is("1^2^3", Power(Rational(1),Power(Rational(2),Rational(3))));
+  assert_parsed_expression_is("(1)", Parenthesis::Builder(Rational(1)));
+  assert_parsed_expression_is("((1))", Parenthesis::Builder((Expression)Parenthesis::Builder(Rational(1))));
+  assert_parsed_expression_is("1+2", Addition::Builder(Rational(1),Rational(2)));
+  assert_parsed_expression_is("(1)+2", Addition::Builder(Parenthesis::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("(1+2)", Parenthesis::Builder(Addition::Builder(Rational(1),Rational(2))));
+  assert_parsed_expression_is("1+2+3", Addition::Builder(Addition::Builder(Rational(1),Rational(2)),Rational(3)));
+  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder(Addition::Builder(Rational(1),Rational(2)),Parenthesis::Builder(Addition::Builder(Rational(3),Rational(4)))));
+  assert_parsed_expression_is("1*2", Multiplication::Builder(Rational(1),Rational(2)));
+  assert_parsed_expression_is("1*2*3", Multiplication::Builder(Multiplication::Builder(Rational(1),Rational(2)),Rational(3)));
+  assert_parsed_expression_is("1+2*3", Addition::Builder(Rational(1), Multiplication::Builder(Rational(2), Rational(3))));
+  assert_parsed_expression_is("1/2", Division::Builder(Rational(1),Rational(2)));
+  assert_parsed_expression_is("(1/2)", Parenthesis::Builder(Division::Builder(Rational(1),Rational(2))));
+  assert_parsed_expression_is("1/2/3", Division::Builder(Division::Builder(Rational(1),Rational(2)),Rational(3)));
+  assert_parsed_expression_is("1/2*3", Multiplication::Builder(Division::Builder(Rational(1),Rational(2)),Rational(3)));
+  assert_parsed_expression_is("(1/2*3)", Parenthesis::Builder(Multiplication::Builder(Division::Builder(Rational(1),Rational(2)),Rational(3))));
+  assert_parsed_expression_is("1*2/3", Multiplication::Builder(Rational(1),Division::Builder(Rational(2),Rational(3))));
+  assert_parsed_expression_is("(1*2/3)", Parenthesis::Builder(Multiplication::Builder(Rational(1),Division::Builder(Rational(2),Rational(3)))));
+  assert_parsed_expression_is("(1/2/3)", Parenthesis::Builder(Division::Builder(Division::Builder(Rational(1),Rational(2)),Rational(3))));
+  assert_parsed_expression_is("1^2", Power::Builder(Rational(1),Rational(2)));
+  assert_parsed_expression_is("1^2^3", Power::Builder(Rational(1),Power::Builder(Rational(2),Rational(3))));
   assert_parsed_expression_is("1=2", Equal(Rational(1),Rational(2)));
   assert_raises_parsing_error("=5");
   assert_raises_parsing_error("1=2=3");
-  assert_parsed_expression_is("-1", Opposite(Rational(1)));
-  assert_parsed_expression_is("(-1)", Parenthesis(Opposite(Rational(1))));
-  assert_parsed_expression_is("1-2", Subtraction(Rational(1),Rational(2)));
-  assert_parsed_expression_is("-1-2", Subtraction(Opposite(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1-2-3", Subtraction(Subtraction(Rational(1),Rational(2)),Rational(3)));
-  assert_parsed_expression_is("(1-2)", Parenthesis(Subtraction(Rational(1),Rational(2))));
-  assert_parsed_expression_is("1+-2", Addition(Rational(1),Opposite(Rational(2))));
-  assert_parsed_expression_is("--1", Opposite((Expression)Opposite(Rational(1))));
-  assert_parsed_expression_is("(1+2)-3", Subtraction(Parenthesis(Addition(Rational(1),Rational(2))),Rational(3)));
-  assert_parsed_expression_is("(2*-3)", Parenthesis(Multiplication(Rational(2),Opposite(Rational(3)))));
-  assert_parsed_expression_is("1^(2)-3", Subtraction(Power(Rational(1),Parenthesis(Rational(2))),Rational(3)));
-  assert_parsed_expression_is("1^2-3", Subtraction(Power(Rational(1),Rational(2)),Rational(3)));
-  assert_parsed_expression_is("2^-3", Power(Rational(2),Opposite(Rational(3))));
-  assert_parsed_expression_is("2--2+-1", Addition(Subtraction(Rational(2),Opposite(Rational(2))),Opposite(Rational(1))));
-  assert_parsed_expression_is("2--2*-1", Subtraction(Rational(2),Opposite(Multiplication(Rational(2),Opposite(Rational(1))))));
-  assert_parsed_expression_is("-1^2", Opposite(Power(Rational(1),Rational(2))));
-  assert_parsed_expression_is("2/-3/-4", Division(Division(Rational(2),Opposite(Rational(3))),Opposite(Rational(4))));
-  assert_parsed_expression_is("1*2-3*4", Subtraction(Multiplication(Rational(1),Rational(2)),Multiplication(Rational(3),Rational(4))));
-  assert_parsed_expression_is("-1*2", Opposite(Multiplication(Rational(1), Rational(2))));
-  assert_parsed_expression_is("1!", Factorial(Rational(1)));
-  assert_parsed_expression_is("1+2!", Addition(Rational(1),Factorial(Rational(2))));
-  assert_parsed_expression_is("1!+2", Addition(Factorial(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1!+2!", Addition(Factorial(Rational(1)),Factorial(Rational(2))));
-  assert_parsed_expression_is("1*2!", Multiplication(Rational(1),Factorial(Rational(2))));
-  assert_parsed_expression_is("1!*2", Multiplication(Factorial(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1!*2!", Multiplication(Factorial(Rational(1)),Factorial(Rational(2))));
-  assert_parsed_expression_is("1-2!", Subtraction(Rational(1),Factorial(Rational(2))));
-  assert_parsed_expression_is("1!-2", Subtraction(Factorial(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1!-2!", Subtraction(Factorial(Rational(1)),Factorial(Rational(2))));
-  assert_parsed_expression_is("1/2!", Division(Rational(1),Factorial(Rational(2))));
-  assert_parsed_expression_is("1!/2", Division(Factorial(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1!/2!", Division(Factorial(Rational(1)),Factorial(Rational(2))));
-  assert_parsed_expression_is("1^2!", Power(Rational(1),Factorial(Rational(2))));
-  assert_parsed_expression_is("1!^2", Power(Factorial(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1!^2!", Power(Factorial(Rational(1)),Factorial(Rational(2))));
-  assert_parsed_expression_is("(1)!", Factorial(Parenthesis(Rational(1))));
+  assert_parsed_expression_is("-1", Opposite::Builder(Rational(1)));
+  assert_parsed_expression_is("(-1)", Parenthesis::Builder(Opposite::Builder(Rational(1))));
+  assert_parsed_expression_is("1-2", Subtraction::Builder(Rational(1),Rational(2)));
+  assert_parsed_expression_is("-1-2", Subtraction::Builder(Opposite::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1-2-3", Subtraction::Builder(Subtraction::Builder(Rational(1),Rational(2)),Rational(3)));
+  assert_parsed_expression_is("(1-2)", Parenthesis::Builder(Subtraction::Builder(Rational(1),Rational(2))));
+  assert_parsed_expression_is("1+-2", Addition::Builder(Rational(1),Opposite::Builder(Rational(2))));
+  assert_parsed_expression_is("--1", Opposite::Builder((Expression)Opposite::Builder(Rational(1))));
+  assert_parsed_expression_is("(1+2)-3", Subtraction::Builder(Parenthesis::Builder(Addition::Builder(Rational(1),Rational(2))),Rational(3)));
+  assert_parsed_expression_is("(2*-3)", Parenthesis::Builder(Multiplication::Builder(Rational(2),Opposite::Builder(Rational(3)))));
+  assert_parsed_expression_is("1^(2)-3", Subtraction::Builder(Power::Builder(Rational(1),Parenthesis::Builder(Rational(2))),Rational(3)));
+  assert_parsed_expression_is("1^2-3", Subtraction::Builder(Power::Builder(Rational(1),Rational(2)),Rational(3)));
+  assert_parsed_expression_is("2^-3", Power::Builder(Rational(2),Opposite::Builder(Rational(3))));
+  assert_parsed_expression_is("2--2+-1", Addition::Builder(Subtraction::Builder(Rational(2),Opposite::Builder(Rational(2))),Opposite::Builder(Rational(1))));
+  assert_parsed_expression_is("2--2*-1", Subtraction::Builder(Rational(2),Opposite::Builder(Multiplication::Builder(Rational(2),Opposite::Builder(Rational(1))))));
+  assert_parsed_expression_is("-1^2", Opposite::Builder(Power::Builder(Rational(1),Rational(2))));
+  assert_parsed_expression_is("2/-3/-4", Division::Builder(Division::Builder(Rational(2),Opposite::Builder(Rational(3))),Opposite::Builder(Rational(4))));
+  assert_parsed_expression_is("1*2-3*4", Subtraction::Builder(Multiplication::Builder(Rational(1),Rational(2)),Multiplication::Builder(Rational(3),Rational(4))));
+  assert_parsed_expression_is("-1*2", Opposite::Builder(Multiplication::Builder(Rational(1), Rational(2))));
+  assert_parsed_expression_is("1!", Factorial::Builder(Rational(1)));
+  assert_parsed_expression_is("1+2!", Addition::Builder(Rational(1),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1!+2", Addition::Builder(Factorial::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1!+2!", Addition::Builder(Factorial::Builder(Rational(1)),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1*2!", Multiplication::Builder(Rational(1),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1!*2", Multiplication::Builder(Factorial::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1!*2!", Multiplication::Builder(Factorial::Builder(Rational(1)),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1-2!", Subtraction::Builder(Rational(1),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1!-2", Subtraction::Builder(Factorial::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1!-2!", Subtraction::Builder(Factorial::Builder(Rational(1)),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1/2!", Division::Builder(Rational(1),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1!/2", Division::Builder(Factorial::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1!/2!", Division::Builder(Factorial::Builder(Rational(1)),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1^2!", Power::Builder(Rational(1),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("1!^2", Power::Builder(Factorial::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1!^2!", Power::Builder(Factorial::Builder(Rational(1)),Factorial::Builder(Rational(2))));
+  assert_parsed_expression_is("(1)!", Factorial::Builder(Parenthesis::Builder(Rational(1))));
   assert_raises_parsing_error("1+");
   assert_raises_parsing_error(")");
   assert_raises_parsing_error(")(");
@@ -202,7 +202,7 @@ QUIZ_CASE(poincare_parser_parse) {
 }
 
 Matrix BuildMatrix(int rows, int columns, Expression entries[]) {
-  Matrix m;
+  Matrix m = Matrix::Builder();
   int position = 0;
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < columns; j++) {
@@ -259,7 +259,7 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
   assert_parsed_expression_is("ab12AB_(1)", Function("ab12AB_", 7, Rational(1)));
   assert_parsed_expression_is("f(g(x))", Function("f", 1, Function("g", 1, Symbol("x",1))));
   assert_parsed_expression_is("f(g(1))", Function("f", 1, Function("g", 1, Rational(1))));
-  assert_parsed_expression_is("f((1))", Function("f", 1, Parenthesis(Rational(1))));
+  assert_parsed_expression_is("f((1))", Function("f", 1, Parenthesis::Builder(Rational(1))));
   assert_raises_parsing_error("f(1,2)");
   assert_raises_parsing_error("f(f)");
   assert_raises_parsing_error("abcdefgh(1)");
@@ -333,12 +333,13 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
 }
 
 QUIZ_CASE(poincare_parser_parse_store) {
-  assert_parsed_expression_is("1>a", Store(Rational(1),Symbol("a",1)));
-  assert_parsed_expression_is("1>e", Store(Rational(1),Symbol("e",1)));
-  assert_parsed_expression_is("1>f(x)", Store(Rational(1),Function("f",1,Symbol("x",1))));
-  assert_parsed_expression_is("x>f(x)", Store(Symbol("x",1),Function("f",1,Symbol("x",1))));
-  assert_parsed_expression_is("n>f(x)", Store(Symbol("n",1),Function("f",1,Symbol("x",1))));
-  assert_parsed_expression_is("[[x]]>f(x)", Store(Matrix(Symbol('x')), Function("f", 1, Symbol('x'))));
+  assert_parsed_expression_is("1>a", Store::Builder(Rational(1),Symbol("a",1)));
+  assert_parsed_expression_is("1>e", Store::Builder(Rational(1),Symbol("e",1)));
+  assert_parsed_expression_is("1>f(x)", Store::Builder(Rational(1),Function("f",1,Symbol("x",1))));
+  assert_parsed_expression_is("x>f(x)", Store::Builder(Symbol("x",1),Function("f",1,Symbol("x",1))));
+  assert_parsed_expression_is("n>f(x)", Store::Builder(Symbol("n",1),Function("f",1,Symbol("x",1))));
+  Expression m0[] = {Symbol('x')};
+  assert_parsed_expression_is("[[x]]>f(x)", Store::Builder(BuildMatrix(1,1,m0), Function("f", 1, Symbol('x'))));
   assert_raises_parsing_error("a>b>c");
   assert_raises_parsing_error("1>2");
   assert_raises_parsing_error("1>");
@@ -368,27 +369,27 @@ QUIZ_CASE(poincare_parser_parse_store) {
 QUIZ_CASE(poincare_parser_implicit_multiplication) {
   assert_raises_parsing_error(".1.2");
   assert_raises_parsing_error("1 2");
-  assert_parsed_expression_is("1x", Multiplication(Rational(1),Symbol("x", 1)));
-  assert_parsed_expression_is("1ans", Multiplication(Rational(1),Symbol("ans", 3)));
+  assert_parsed_expression_is("1x", Multiplication::Builder(Rational(1),Symbol("x", 1)));
+  assert_parsed_expression_is("1ans", Multiplication::Builder(Rational(1),Symbol("ans", 3)));
   assert_parsed_expression_is("x1", Symbol("x1", 2));
-  assert_parsed_expression_is("1x+2", Addition(Multiplication(Rational(1),Symbol("x", 1)),Rational(2)));
-  assert_parsed_expression_is("1P", Multiplication(Rational(1),Constant(Ion::Charset::SmallPi)));
-  assert_parsed_expression_is("1x-2", Subtraction(Multiplication(Rational(1),Symbol("x", 1)),Rational(2)));
-  assert_parsed_expression_is("-1x", Opposite(Multiplication(Rational(1),Symbol("x", 1))));
-  assert_parsed_expression_is("2*1x", Multiplication(Rational(2),Multiplication(Rational(1),Symbol("x", 1))));
-  assert_parsed_expression_is("2^1x", Multiplication(Power(Rational(2),Rational(1)),Symbol("x", 1)));
-  assert_parsed_expression_is("1x^2", Multiplication(Rational(1),Power(Symbol("x", 1),Rational(2))));
-  assert_parsed_expression_is("2/1x", Division(Rational(2),Multiplication(Rational(1),Symbol("x", 1))));
-  assert_parsed_expression_is("1x/2", Division(Multiplication(Rational(1),Symbol("x", 1)),Rational(2)));
-  assert_parsed_expression_is("(1)2", Multiplication(Parenthesis(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1(2)", Multiplication(Rational(1),Parenthesis(Rational(2))));
-  assert_parsed_expression_is("sin(1)2", Multiplication(Sine::Builder(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("1cos(2)", Multiplication(Rational(1),Cosine::Builder(Rational(2))));
-  assert_parsed_expression_is("1!2", Multiplication(Factorial(Rational(1)),Rational(2)));
-  assert_parsed_expression_is("2X^(3)", Multiplication(Rational(2),Power(Constant(Ion::Charset::Exponential),Parenthesis(Rational(3)))));
+  assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(Rational(1),Symbol("x", 1)),Rational(2)));
+  assert_parsed_expression_is("1P", Multiplication::Builder(Rational(1),Constant(Ion::Charset::SmallPi)));
+  assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(Rational(1),Symbol("x", 1)),Rational(2)));
+  assert_parsed_expression_is("-1x", Opposite::Builder(Multiplication::Builder(Rational(1),Symbol("x", 1))));
+  assert_parsed_expression_is("2*1x", Multiplication::Builder(Rational(2),Multiplication::Builder(Rational(1),Symbol("x", 1))));
+  assert_parsed_expression_is("2^1x", Multiplication::Builder(Power::Builder(Rational(2),Rational(1)),Symbol("x", 1)));
+  assert_parsed_expression_is("1x^2", Multiplication::Builder(Rational(1),Power::Builder(Symbol("x", 1),Rational(2))));
+  assert_parsed_expression_is("2/1x", Division::Builder(Rational(2),Multiplication::Builder(Rational(1),Symbol("x", 1))));
+  assert_parsed_expression_is("1x/2", Division::Builder(Multiplication::Builder(Rational(1),Symbol("x", 1)),Rational(2)));
+  assert_parsed_expression_is("(1)2", Multiplication::Builder(Parenthesis::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1(2)", Multiplication::Builder(Rational(1),Parenthesis::Builder(Rational(2))));
+  assert_parsed_expression_is("sin(1)2", Multiplication::Builder(Sine::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("1cos(2)", Multiplication::Builder(Rational(1),Cosine::Builder(Rational(2))));
+  assert_parsed_expression_is("1!2", Multiplication::Builder(Factorial::Builder(Rational(1)),Rational(2)));
+  assert_parsed_expression_is("2X^(3)", Multiplication::Builder(Rational(2),Power::Builder(Constant(Ion::Charset::Exponential),Parenthesis::Builder(Rational(3)))));
   Expression m1[] = {Rational(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {Rational(2)}; Matrix M2 = BuildMatrix(1,1,m2);
-  assert_parsed_expression_is("[[1]][[2]]", Multiplication(M1,M2));
+  assert_parsed_expression_is("[[1]][[2]]", Multiplication::Builder(M1,M2));
 }
 
 QUIZ_CASE(poincare_parser_expression_evaluation) {

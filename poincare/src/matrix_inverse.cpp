@@ -53,7 +53,7 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexF
 #if MATRIX_EXACT_REDUCING
 #if 0
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return Power(c, Rational(-1).shallowReduce(context, complexFormat, angleUnit, target);
+    return Power::Builder(c, Rational(-1).shallowReduce(context, complexFormat, angleUnit, target);
   }
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix mat = static_cast<Matrix&>(c);
@@ -65,7 +65,7 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexF
 #endif
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
-    Expression result = Power(c, Rational(-1));
+    Expression result = Power::Builder(c, Rational(-1));
     replaceWithInPlace(result);
     result = result.shallowReduce(context, complexFormat, angleUnit, target);
     return result;

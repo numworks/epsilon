@@ -56,10 +56,10 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
       replaceWithInPlace(result);
       return result;
     }
-    result = Division(result, denominatorDecomp.squashUnaryHierarchyInPlace());
+    result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
   }
   if (r.sign() == ExpressionNode::Sign::Negative) {
-    result = Opposite(result);
+    result = Opposite::Builder(result);
   }
   replaceWithInPlace(result);
   return result;
@@ -68,7 +68,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
 Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());
-  Multiplication m;
+  Multiplication m = Multiplication::Builder();
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
@@ -83,7 +83,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   for (int index = 0; index < numberOfPrimeFactors; index++) {
     Expression factor = Rational(factors[index]);
     if (!coefficients[index].isOne()) {
-      factor = Power(factor, Rational(coefficients[index]));
+      factor = Power::Builder(factor, Rational(coefficients[index]));
     }
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }

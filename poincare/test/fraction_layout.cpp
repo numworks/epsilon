@@ -25,8 +25,8 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
    * --- -> "BackSpace" -> 12|34
    * |34
    * */
-  HorizontalLayout layout1 = HorizontalLayout(
-      FractionLayout(
+  HorizontalLayout layout1 = HorizontalLayout::Builder(
+      FractionLayout::Builder(
         LayoutHelper::String("12", 2),
         LayoutHelper::String("34", 2)
       )
@@ -40,10 +40,10 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
    * 1 + --- -> "BackSpace" -> 1+|3
    *     |3
    * */
-  HorizontalLayout layout2 = HorizontalLayout(
+  HorizontalLayout layout2 = HorizontalLayout::Builder(
       CharLayout('1'),
       CharLayout('+'),
-      FractionLayout(
+      FractionLayout::Builder(
         EmptyLayout(),
         CharLayout('3')
       )
@@ -55,7 +55,7 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
 }
 
 QUIZ_CASE(poincare_fraction_layout_serialize) {
-  FractionLayout layout = FractionLayout(
+  FractionLayout layout = FractionLayout::Builder(
       CharLayout('1'),
       LayoutHelper::String("2+3", 3)
     );

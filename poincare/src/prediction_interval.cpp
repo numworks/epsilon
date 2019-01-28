@@ -95,11 +95,11 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Com
     return *this;
   }
   // Compute sqr = sqrt(r0*(1-r0)/r1)
-  Expression sqr = Power(Division(numerator, r1), Rational(1, 2));
-  Expression m = Multiplication(Rational(196, 100), sqr);
-  Matrix matrix;
-  matrix.addChildAtIndexInPlace(Addition(r0.clone(), Multiplication(Rational(-1), m.clone())), 0, 0);
-  matrix.addChildAtIndexInPlace(Addition(r0.clone(), m), 1, 1);
+  Expression sqr = Power::Builder(Division::Builder(numerator, r1), Rational(1, 2));
+  Expression m = Multiplication::Builder(Rational(196, 100), sqr);
+  Matrix matrix = Matrix::Builder();
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), Multiplication::Builder(Rational(-1), m.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
   matrix.deepReduceChildren(context, complexFormat, angleUnit, target);

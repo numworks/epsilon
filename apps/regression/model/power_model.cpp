@@ -16,12 +16,12 @@ Layout PowerModel::layout() {
       CharLayout('a', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
           CharLayout('b', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
       };
-    m_layout = HorizontalLayout(layoutChildren, 4);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 4);
   }
   return m_layout;
 }

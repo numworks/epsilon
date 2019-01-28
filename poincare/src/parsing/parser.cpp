@@ -155,7 +155,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Plus)) {
-    leftHandSide = Addition(leftHandSide, rightHandSide);
+    leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
   }
 }
 
@@ -173,41 +173,41 @@ void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
     if (m_status != Status::Progress) {
       return;
     }
-    leftHandSide = Opposite(rightHandSide);
+    leftHandSide = Opposite::Builder(rightHandSide);
   } else {
     Expression rightHandSide = parseUntil(Token::Minus); // Subtraction is left-associative
     if (m_status != Status::Progress) {
       return;
     }
-    leftHandSide = Subtraction(leftHandSide, rightHandSide);
+    leftHandSide = Subtraction::Builder(leftHandSide, rightHandSide);
   }
 }
 
 void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Times)) {
-    leftHandSide = Multiplication(leftHandSide, rightHandSide);
+    leftHandSide = Multiplication::Builder(leftHandSide, rightHandSide);
   }
 }
 
 void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
-    leftHandSide = Division(leftHandSide, rightHandSide);
+    leftHandSide = Division::Builder(leftHandSide, rightHandSide);
   }
 }
 
 void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
-    leftHandSide = Multiplication(leftHandSide, rightHandSide);
+    leftHandSide = Multiplication::Builder(leftHandSide, rightHandSide);
   }
 }
 
 void Parser::parseCaret(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::ImplicitTimes)) {
-    leftHandSide = Power(leftHandSide, rightHandSide);
+    leftHandSide = Power::Builder(leftHandSide, rightHandSide);
   }
 }
 
@@ -252,7 +252,7 @@ void Parser::parseStore(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error; // Store expects a single symbol or function.
     return;
   }
-  leftHandSide = Store(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
+  leftHandSide = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
 }
 
 void Parser::parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType) {
@@ -268,7 +268,7 @@ void Parser::parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppin
     m_status = Status::Error; // Right superscript marker missing.
     return;
   }
-  leftHandSide = Power(leftHandSide, rightHandSide);
+  leftHandSide = Power::Builder(leftHandSide, rightHandSide);
   isThereImplicitMultiplication();
 }
 
@@ -301,7 +301,7 @@ void Parser::parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppin
     m_status = Status::Error; // Right parenthesis missing.
     return;
   }
-  leftHandSide = Parenthesis(leftHandSide);
+  leftHandSide = Parenthesis::Builder(leftHandSide);
   isThereImplicitMultiplication();
 }
 
@@ -309,7 +309,7 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing
   } else {
-    leftHandSide = Factorial(leftHandSide);
+    leftHandSide = Factorial::Builder(leftHandSide);
   }
   isThereImplicitMultiplication();
 }
@@ -363,7 +363,7 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     } else if (rank.isIdenticalTo(Symbol("n",1))) {
       char sym[5] = {name, '(', 'n', ')', 0};
       leftHandSide = Symbol(sym, 4);
-    } else if (rank.isIdenticalTo(Addition(Symbol("n",1),Rational("1")))) {
+    } else if (rank.isIdenticalTo(Addition::Builder(Symbol("n",1),Rational("1")))) {
       char sym[7] = {name, '(', 'n', '+', '1', ')', 0};
       leftHandSide = Symbol(sym, 6);
     } else {
@@ -459,7 +459,7 @@ Expression Parser::parseFunctionParameters() {
     return Expression();
   }
   if (popTokenIfType(Token::RightParenthesis)) {
-    return Matrix(); // The function has no parameter.
+    return Matrix::Builder(); // The function has no parameter.
   }
   Expression commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
@@ -477,7 +477,7 @@ void Parser::parseMatrix(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error; //FIXME
     return;
   }
-  Matrix matrix;
+  Matrix matrix = Matrix::Builder();
   int numberOfRows = 0;
   int numberOfColumns = 0;
   while (!popTokenIfType(Token::RightBracket)) {
@@ -520,7 +520,7 @@ Expression Parser::parseVector() {
 }
 
 Expression Parser::parseCommaSeparatedList() {
-  Matrix commaSeparatedList;
+  Matrix commaSeparatedList = Matrix::Builder();
   int length = 0;
   do {
     Expression item = parseUntil(Token::Comma);

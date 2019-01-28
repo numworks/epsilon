@@ -46,13 +46,17 @@ public:
 
 class Opposite final : public Expression {
 public:
-  Opposite();
   Opposite(const OppositeNode * n) : Expression(n) {}
+  static Opposite Builder() { return Opposite(); }
+  static Opposite Builder(Expression child) { return Opposite(child); }
+
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+
+private:
+  Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
   explicit Opposite(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
     replaceChildAtIndexInPlace(0, child);
   }
-
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };
 
 }

@@ -184,7 +184,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     equation = polynomialCoefficients[0];
     index++;
   }
-  constant[0] = Opposite(equation.clone()).reduce(context, complexFormat, angleUnit);
+  constant[0] = Opposite::Builder(equation.clone()).reduce(context, complexFormat, angleUnit);
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
@@ -519,12 +519,12 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return Multiplication(*this, Rational(180), Power(Constant(Ion::Charset::SmallPi), Rational(-1)));
+  return Multiplication::Builder(*this, Rational(180), Power::Builder(Constant(Ion::Charset::SmallPi), Rational(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return Multiplication(*this, Rational(1, 180), Constant(Ion::Charset::SmallPi));
+  return Multiplication::Builder(*this, Rational(1, 180), Constant(Ion::Charset::SmallPi));
 }
 
 Expression Expression::reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -619,7 +619,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       Expression imag;
       if (!isZeroRa || isZeroTb) {
         if (isNegativeRa) {
-          real = Opposite(ra);
+          real = Opposite::Builder(ra);
         } else {
           real = ra;
         }
@@ -628,21 +628,21 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           imag = Constant(Ion::Charset::IComplex);
         } else {
-          imag = Multiplication(tb , Constant(Ion::Charset::IComplex));
+          imag = Multiplication::Builder(tb , Constant(Ion::Charset::IComplex));
         }
       }
       if (imag.isUninitialized()) {
         return real;
       } else if (real.isUninitialized()) {
         if (isNegativeTb) {
-          return Opposite(imag);
+          return Opposite::Builder(imag);
         } else {
           return imag;
         }
       } else if (isNegativeTb) {
-        return Subtraction(real, imag);
+        return Subtraction::Builder(real, imag);
       } else {
-        return Addition(real, imag);
+        return Addition::Builder(real, imag);
       }
     }
     default:
@@ -659,19 +659,19 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           arg = Constant(Ion::Charset::IComplex);
         } else {
-          arg = Multiplication(tb, Constant(Ion::Charset::IComplex));
+          arg = Multiplication::Builder(tb, Constant(Ion::Charset::IComplex));
         }
         if (isNegativeTb) {
-          arg = Opposite(arg);
+          arg = Opposite::Builder(arg);
         }
-        exp = Power(Constant(Ion::Charset::Exponential), arg);
+        exp = Power::Builder(Constant(Ion::Charset::Exponential), arg);
       }
       if (exp.isUninitialized()) {
         return norm;
       } else if (norm.isUninitialized()) {
         return exp;
       } else {
-        return Multiplication(norm, exp);
+        return Multiplication::Builder(norm, exp);
       }
     }
   }

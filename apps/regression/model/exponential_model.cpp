@@ -15,8 +15,8 @@ Layout ExponentialModel::layout() {
       CharLayout('a', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('e', KDFont::SmallFont),
-      VerticalOffsetLayout(
-          HorizontalLayout(
+      VerticalOffsetLayout::Builder(
+          HorizontalLayout::Builder(
             CharLayout('b', KDFont::SmallFont),
             CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
             CharLayout('X', KDFont::SmallFont)
@@ -24,7 +24,7 @@ Layout ExponentialModel::layout() {
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = HorizontalLayout(layoutChildren, 4);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 4);
   }
   return m_layout;
 }

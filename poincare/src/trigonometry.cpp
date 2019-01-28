@@ -105,12 +105,12 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   // These equalities are true on complexes
   if ((e.type() == ExpressionNode::Type::Cosine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine) || (e.type() == ExpressionNode::Type::Sine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcCosine)) {
     Expression sqrt =
-      Power(
-        Addition(
+      Power::Builder(
+        Addition::Builder(
           Rational(1),
-          Multiplication(
+          Multiplication::Builder(
             Rational(-1),
-            Power(e.childAtIndex(0).childAtIndex(0), Rational(2))
+            Power::Builder(e.childAtIndex(0).childAtIndex(0), Rational(2))
           )
         ),
         Rational(1,2)
@@ -134,10 +134,10 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     Expression x = e.childAtIndex(0).childAtIndex(0);
     // Build 1/sqrt(1+x^2)
     Expression res =
-      Power(
-        Addition(
+      Power::Builder(
+        Addition::Builder(
           Rational(1),
-          Power(
+          Power::Builder(
             e.type() == ExpressionNode::Type::Cosine ? x : x.clone(),
             Rational(2))
         ),
@@ -149,7 +149,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     // reduce 1+*x^2
     res.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
     if (e.type() == ExpressionNode::Type::Sine) {
-      res = Multiplication(x, res);
+      res = Multiplication::Builder(x, res);
       // reduce (1+x^2)^(-1/2)
       res.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
     }
@@ -167,7 +167,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
       return e.shallowReduce(context, complexFormat, angleUnit, target);
     } else {
       // sin(-a) = -sin(a) or tan(-a) = -tan(a)
-      Multiplication m(Rational(-1));
+      Multiplication m = Multiplication::Builder(Rational(-1));
       e.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(e, 1, 1);
       e.shallowReduce(context, complexFormat, angleUnit, target);
@@ -233,7 +233,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         unaryCoefficient *= -1;
       }
       Expression simplifiedCosine = e.shallowReduce(context, complexFormat, angleUnit, target); // recursive
-      Multiplication m = Multiplication(Rational(unaryCoefficient));
+      Multiplication m = Multiplication::Builder(Rational(unaryCoefficient));
       simplifiedCosine.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
       return m.shallowReduce(context, complexFormat, angleUnit, target);
@@ -278,12 +278,12 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
      *   reduced to undef) */
     if (target == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0(Rational(1,2), sign, Constant(Ion::Charset::SmallPi));
+      Multiplication m0 = Multiplication::Builder(Rational(1,2), sign, Constant(Ion::Charset::SmallPi));
       sign.shallowReduce(context, complexFormat, angleUnit, target);
       e.replaceChildAtIndexInPlace(0, x);
-      Addition a(m0);
+      Addition a = Addition::Builder(m0);
       e.replaceWithInPlace(a);
-      Multiplication m1(Rational(-1), e);
+      Multiplication m1 = Multiplication::Builder(Rational(-1), e);
       e.shallowReduce(context, complexFormat, angleUnit, target);
       a.addChildAtIndexInPlace(m1, 1, 1);
       return a.shallowReduce(context, complexFormat, angleUnit, target);
@@ -315,7 +315,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
       // acos(-x) = pi-acos(x)
       if (e.type() == ExpressionNode::Type::ArcCosine) {
         Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
-        Subtraction s;
+        Subtraction s = Subtraction::Builder();
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);
         s.replaceChildAtIndexInPlace(1, e);
@@ -323,7 +323,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
         return s.shallowReduce(context, complexFormat, angleUnit, target);
       } else {
         // asin(-x) = -asin(x) or atan(-x) = -atan(x)
-        Multiplication m(Rational(-1));
+        Multiplication m = Multiplication::Builder(Rational(-1));
         e.replaceWithInPlace(m);
         m.addChildAtIndexInPlace(e, 1, 1);
         e.shallowReduce(context, complexFormat, angleUnit, target);

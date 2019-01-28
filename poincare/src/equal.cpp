@@ -25,7 +25,7 @@ Expression EqualNode::shallowReduce(Context & context, Preferences::ComplexForma
 }
 
 Layout EqualNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout result;
+  HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CharLayout('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
@@ -42,7 +42,7 @@ Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::Com
 }
 
 Expression Equal::standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  Expression sub = Subtraction(childAtIndex(0).clone(), childAtIndex(1).clone());
+  Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
   return sub.reduce(context, complexFormat, angleUnit);
 }
 

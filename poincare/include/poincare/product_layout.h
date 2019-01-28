@@ -25,6 +25,8 @@ private:
 
 class ProductLayout final : public Layout {
 public:
+  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB) { return ProductLayout(argument, variable, lowerB, upperB); }
+private:
   ProductLayout(Layout argument, Layout variable, Layout lowerB, Layout upperB) :
     Layout(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
   {

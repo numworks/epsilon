@@ -105,7 +105,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
     value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
-      value = Parenthesis(value);
+      value = Parenthesis::Builder(value);
     }
     replaceWithInPlace(value);
     return value;

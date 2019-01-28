@@ -69,7 +69,7 @@ void TreeHandle::replaceChildAtIndexInPlace(int oldChildIndex, TreeHandle newChi
 }
 
 void TreeHandle::replaceChildWithGhostInPlace(TreeHandle t) {
-  Ghost ghost;
+  Ghost ghost = Ghost::Builder();
   return replaceChildInPlace(t, ghost);
 }
 

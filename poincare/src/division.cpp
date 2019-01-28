@@ -35,7 +35,7 @@ bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {
 Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const ExpressionNode * numerator = childAtIndex(0)->type() == Type::Parenthesis ? childAtIndex(0)->childAtIndex(0) : childAtIndex(0);
   const ExpressionNode * denominator = childAtIndex(1)->type() == Type::Parenthesis ? childAtIndex(1)->childAtIndex(0) : childAtIndex(1);
-  return FractionLayout(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -70,8 +70,6 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 // Division
 
-Division::Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
-
 Expression Division::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -79,9 +77,9 @@ Expression Division::shallowReduce(Context & context, Preferences::ComplexFormat
       return e;
     }
   }
-  Expression p = Power(childAtIndex(1), Rational(-1));
-  Multiplication m = Multiplication(childAtIndex(0), p);
-  p.shallowReduce(context, complexFormat, angleUnit, target); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
+  Expression p = Power::Builder(childAtIndex(1), Rational(-1));
+  Multiplication m = Multiplication::Builder(childAtIndex(0), p);
+  p.shallowReduce(context, complexFormat, angleUnit, target); // Imagine Division::Builder(2,1). p would be 1^(-1) which can be simplified
   replaceWithInPlace(m);
   return m.shallowReduce(context, complexFormat, angleUnit, target);
 }

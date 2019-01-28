@@ -20,7 +20,7 @@ Expression AbsoluteValueNode::setSign(Sign s, Context * context, Preferences::Co
 }
 
 Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return AbsoluteValueLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return AbsoluteValueLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -62,7 +62,7 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexF
     } else if (!std::isnan(app) &&
                ((c.isNumber() && app < 0.0f) || app <= -Expression::Epsilon<float>())) {
       // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
-      Multiplication m(Rational(-1), c);
+      Multiplication m = Multiplication::Builder(Rational(-1), c);
       replaceWithInPlace(m);
       return m.shallowReduce(context, complexFormat, angleUnit, target);
     }

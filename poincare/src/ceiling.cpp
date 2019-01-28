@@ -16,7 +16,7 @@ constexpr Expression::FunctionHelper Ceiling::s_functionHelper;
 int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
 
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return CeilingLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return CeilingLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -33,7 +33,7 @@ Expression IntegralNode::replaceUnknown(const Symbol & symbol) {
 }
 
 Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return IntegralLayout(
+  return IntegralLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),

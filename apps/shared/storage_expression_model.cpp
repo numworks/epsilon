@@ -60,7 +60,7 @@ Layout StorageExpressionModel::layout() {
   if (m_layout.isUninitialized()) {
     m_layout = PoincareHelpers::CreateLayout(expressionClone());
     if (m_layout.isUninitialized()) {
-      m_layout = HorizontalLayout();
+      m_layout = HorizontalLayout::Builder();
     }
   }
   return m_layout;

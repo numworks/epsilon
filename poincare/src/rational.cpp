@@ -111,7 +111,7 @@ Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
     return numeratorLayout;
   }
   HorizontalLayout denominatorLayout = denominator().createLayout();
-  return FractionLayout(numeratorLayout, denominatorLayout);
+  return FractionLayout::Builder(numeratorLayout, denominatorLayout);
 }
 
 // Approximation
@@ -266,7 +266,7 @@ Expression Rational::shallowReduce() {
 Expression Rational::shallowBeautify() {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
-    Opposite o;
+    Opposite o = Opposite::Builder();
     replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, abs);
     return o;

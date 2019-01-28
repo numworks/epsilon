@@ -23,7 +23,7 @@ Layout QuarticModel::layout() {
       CharLayout('a', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
           CharLayout('4', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
@@ -31,7 +31,7 @@ Layout QuarticModel::layout() {
       CharLayout('b', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
           CharLayout('3', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
@@ -39,7 +39,7 @@ Layout QuarticModel::layout() {
       CharLayout('c', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
           CharLayout('2', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
@@ -50,7 +50,7 @@ Layout QuarticModel::layout() {
       CharLayout('+', KDFont::SmallFont),
       CharLayout('e', KDFont::SmallFont),
     };
-    m_layout = HorizontalLayout(layoutChildren, 20);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 20);
   }
   return m_layout;
 }
@@ -63,31 +63,31 @@ Expression QuarticModel::simplifiedExpression(double * modelCoefficients, Poinca
   double e = modelCoefficients[4];
   Expression addChildren[] = {
     // a*x^4
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(a),
-      Power(
+      Power::Builder(
         Symbol('x'),
         Decimal(4.0))),
     // b*x^3
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(b),
-      Power(
+      Power::Builder(
         Symbol('x'),
         Decimal(3.0))),
     // c*x^2
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(c),
-      Power(
+      Power::Builder(
         Symbol('x'),
         Decimal(2.0))),
     // d*x
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(d),
       Symbol('x')),
     // e
     Number::DecimalNumber(e)
   };
-  Expression result = Addition(addChildren, 5);
+  Expression result = Addition::Builder(addChildren, 5);
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

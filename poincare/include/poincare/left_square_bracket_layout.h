@@ -29,7 +29,9 @@ protected:
 
 class LeftSquareBracketLayout final : public Layout {
 public:
-  LeftSquareBracketLayout();
+  static LeftSquareBracketLayout Builder() { return LeftSquareBracketLayout(); }
+private:
+  LeftSquareBracketLayout() : Layout(TreePool::sharedPool()->createTreeNode<LeftSquareBracketLayoutNode>()) {}
 };
 
 }

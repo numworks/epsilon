@@ -24,14 +24,14 @@ Layout LogisticModel::layout() {
       CharLayout('a', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('e', KDFont::SmallFont),
-      VerticalOffsetLayout(
-          HorizontalLayout(exponentLayoutChildren, 4),
+      VerticalOffsetLayout::Builder(
+          HorizontalLayout::Builder(exponentLayoutChildren, 4),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = FractionLayout(
+    m_layout = FractionLayout::Builder(
        CharLayout('c', KDFont::SmallFont),
-       HorizontalLayout(layoutChildren, 6)
+       HorizontalLayout::Builder(layoutChildren, 6)
       );
   }
   return m_layout;

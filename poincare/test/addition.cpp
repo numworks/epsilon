@@ -24,7 +24,7 @@ static inline void assert_parsed_expression_is_equal_to(const char * exp, Expres
 QUIZ_CASE(poincare_addition_cast_does_not_copy) {
   Rational i1(1);
   Rational i2(2);
-  Addition j(i1, i2);
+  Addition j = Addition::Builder(i1, i2);
   Expression k = j;
   quiz_assert(k.identifier() == (static_cast<Addition&>(k)).identifier());
   quiz_assert(i1.identifier() == (static_cast<Expression&>(i1)).identifier());
@@ -34,14 +34,14 @@ QUIZ_CASE(poincare_addition_cast_does_not_copy) {
 QUIZ_CASE(poincare_addition_without_parsing) {
   Rational i1(1);
   Rational i2(2);
-  Addition j(i1, i2);
+  Addition j = Addition::Builder(i1, i2);
   assert_approximation_equals(j, 3.0f);
 }
 
 QUIZ_CASE(poincare_addition_parsing) {
   Rational i1(1);
   Rational i2(2);
-  Addition j1(i1, i2);
+  Addition j1 = Addition::Builder(i1, i2);
   assert_parsed_expression_is_equal_to("1+2", j1);
 }
 

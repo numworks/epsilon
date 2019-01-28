@@ -56,6 +56,8 @@ private:
 
 class IntegralLayout final : public Layout {
 public:
+  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return IntegralLayout(integrand, differential, lowerBound, upperBound); }
+private:
   IntegralLayout(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) :
     Layout(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())
   {

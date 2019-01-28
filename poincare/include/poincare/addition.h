@@ -2,6 +2,7 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/array_builder.h>
 #include <poincare/n_ary_expression_node.h>
 #include <poincare/rational.h>
 
@@ -60,24 +61,23 @@ private:
 class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
-  Addition();
-  explicit Addition(Expression e1) : Addition() {
-    addChildAtIndexInPlace(e1, 0, 0);
-  }
-  Addition(Expression e1, Expression e2) : Addition() {
-    addChildAtIndexInPlace(e2, 0, 0);
-    addChildAtIndexInPlace(e1, 0, numberOfChildren());
-  }
-  Addition(Expression * children, size_t numberOfChildren) : Addition() {
+  static Addition Builder() { return Addition(); }
+  static Addition Builder(Expression e1) { return Addition::Builder(&e1, 1); }
+  static Addition Builder(Expression e1, Expression e2) { return Addition::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
+  static Addition Builder(Expression * children, size_t numberOfChildren) {
+    Addition a = Addition::Builder();
     for (size_t i = 0; i < numberOfChildren; i++) {
-      addChildAtIndexInPlace(children[i], i, i);
+      a.addChildAtIndexInPlace(children[i], i, i);
     }
+    return a;
   }
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 private:
+  Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
+
   static const Number NumeralFactor(const Expression & e);
   static inline int NumberOfNonNumeralFactors(const Expression & e);
   static inline const Expression FirstNonNumeralFactor(const Expression & e);

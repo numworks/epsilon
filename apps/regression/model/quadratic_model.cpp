@@ -23,7 +23,7 @@ Layout QuadraticModel::layout() {
       CharLayout('a', KDFont::SmallFont),
       CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
           CharLayout('2', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
@@ -34,7 +34,7 @@ Layout QuadraticModel::layout() {
       CharLayout('+', KDFont::SmallFont),
       CharLayout('c', KDFont::SmallFont),
     };
-    m_layout = HorizontalLayout(layoutChildren, 10);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 10);
   }
   return m_layout;
 }
@@ -45,17 +45,17 @@ Expression QuadraticModel::simplifiedExpression(double * modelCoefficients, Poin
   double c = modelCoefficients[2];
   // a*x^2+b*x+c
   Expression addChildren[] = {
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(a),
-      Power(
+      Power::Builder(
         Symbol('x'),
         Decimal(2.0))),
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(b),
       Symbol('x')),
     Number::DecimalNumber(c)
   };
-  Expression result = Addition(addChildren, 3);
+  Expression result = Addition::Builder(addChildren, 3);
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

@@ -115,9 +115,9 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
     font = KDFont::SmallFont;
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
-  m_layouts[j] = HorizontalLayout(
+  m_layouts[j] = HorizontalLayout::Builder(
         CharLayout(nextName[0], font),
-        VerticalOffsetLayout(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Type::Subscript)
       );
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setLayout(m_layouts[j]);

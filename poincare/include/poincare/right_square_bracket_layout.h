@@ -29,7 +29,10 @@ protected:
 
 class RightSquareBracketLayout final : public Layout {
 public:
-  RightSquareBracketLayout();
+  static RightSquareBracketLayout Builder() { return RightSquareBracketLayout(); }
+
+private:
+  RightSquareBracketLayout() : Layout(TreePool::sharedPool()->createTreeNode<RightSquareBracketLayoutNode>()) {}
 };
 
 }

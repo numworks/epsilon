@@ -83,7 +83,7 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFo
           return *this;
         }
         Expression sign = *this;
-        Multiplication m(Rational(-1));
+        Multiplication m = Multiplication::Builder(Rational(-1));
         replaceWithInPlace(m);
         m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because -x = NAN --> x = NAN
         return m; // m does not need to be shallowReduced, -1*sign cannot be reduced

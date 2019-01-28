@@ -59,6 +59,4 @@ void LeftParenthesisLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expre
   RenderWithChildHeight(ParenthesisLayoutNode::ChildHeightGivenLayoutHeight(layoutSize().height()), ctx, p, expressionColor, backgroundColor);
 }
 
-LeftParenthesisLayout::LeftParenthesisLayout() : Layout(TreePool::sharedPool()->createTreeNode<LeftParenthesisLayoutNode>()) {}
-
 }

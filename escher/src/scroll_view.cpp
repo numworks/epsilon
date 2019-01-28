@@ -83,15 +83,10 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   }
 
   /* Handle cases when the size of the view has decreased. */
-  KDCoordinate contentOffsetX = contentOffset().x();
-  KDCoordinate contentOffsetY = contentOffset().y();
-  if (maxContentHeightDisplayableWithoutScrolling() > contentSize().height()-contentOffsetY) {
-    contentOffsetY = contentSize().height() > maxContentHeightDisplayableWithoutScrolling() ? contentSize().height()-maxContentHeightDisplayableWithoutScrolling() : 0;
-  }
-  if (maxContentWidthDisplayableWithoutScrolling() > contentSize().width()-contentOffsetX) {
-    contentOffsetX = contentSize().width() > maxContentWidthDisplayableWithoutScrolling() ? contentSize().width()-maxContentWidthDisplayableWithoutScrolling() : 0;
-  }
-  setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
+  setContentOffset(KDPoint(
+    min(contentOffset().x(), max(contentSize().width() - maxContentWidthDisplayableWithoutScrolling(), 0)),
+    min(contentOffset().y(), max(contentSize().height() - maxContentHeightDisplayableWithoutScrolling(), 0))
+  ));
 }
 
 void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {

@@ -270,16 +270,4 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   }
 }
 
-NthRootLayout::NthRootLayout(Layout radicand) : NthRootLayout() {
-  replaceChildAtIndexInPlace(0, radicand);
-}
-
-NthRootLayout::NthRootLayout(Layout radicand, Layout index) : NthRootLayout() {
-  replaceChildAtIndexInPlace(0, radicand);
-  addChildAtIndexInPlace(index, 1, 1);
-  static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
-}
-
-NthRootLayout::NthRootLayout() : Layout(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {}
-
 }

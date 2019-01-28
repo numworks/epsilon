@@ -16,7 +16,7 @@ constexpr Expression::FunctionHelper Conjugate::s_functionHelper;
 int ConjugateNode::numberOfChildren() const { return Conjugate::s_functionHelper.numberOfChildren(); }
 
 Layout ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return ConjugateLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return ConjugateLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -51,7 +51,7 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
   }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
-    Multiplication m(Rational(-1), complexChild.imag());
+    Multiplication m = Multiplication::Builder(Rational(-1), complexChild.imag());
     complexChild.replaceChildAtIndexInPlace(1, m);
     m.shallowReduce(context, complexFormat, angleUnit, target);
     replaceWithInPlace(complexChild);

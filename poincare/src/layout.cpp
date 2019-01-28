@@ -97,7 +97,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
   if (!p.isHorizontal()) {
     /* One of the children to juxtapose might be "this", so we cannot just call
      * replaceWith. */
-    HorizontalLayout horizontalLayoutR;
+    HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
     p.replaceChild(*this, horizontalLayoutR, cursor);
     horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
     if (putCursorInTheMiddle) {
@@ -286,7 +286,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   if (node()->shouldCollapseSiblingsOnRight()) {
     Layout absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
-      Layout horRef = HorizontalLayout();
+      Layout horRef = HorizontalLayout::Builder();
       replaceChild(absorbingChild, horRef, cursor, true);
       horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
     }
@@ -295,7 +295,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   if (node()->shouldCollapseSiblingsOnLeft()) {
     Layout absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
-      Layout horRef = HorizontalLayout();
+      Layout horRef = HorizontalLayout::Builder();
       replaceChild(absorbingChild, horRef, cursor, true);
       horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
     }

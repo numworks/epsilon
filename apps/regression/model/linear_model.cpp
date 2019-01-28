@@ -18,7 +18,7 @@ Layout LinearModel::layout() {
       CharLayout('+', KDFont::SmallFont),
       CharLayout('b', KDFont::SmallFont),
     };
-    m_layout = HorizontalLayout(layoutChildren, 5);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 5);
   }
   return m_layout;
 }

@@ -23,7 +23,7 @@ int MatrixNode::polynomialDegree(Context & context, const char * symbolName) con
 
 Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(numberOfChildren() > 0);
-  MatrixLayout layout;
+  MatrixLayout layout = MatrixLayout::Builder();
   for (ExpressionNode * c : children()) {
     layout.addChildAtIndex(c->createLayout(floatDisplayMode, numberOfSignificantDigits), layout.numberOfChildren(), layout.numberOfChildren(), nullptr);
   }
@@ -196,7 +196,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
       if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(divisor.clone(), 0, determinant.numberOfChildren()); }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
-        Expression newOpHJ = Division(opHJ, divisor.clone());
+        Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h*n+j, newOpHJ);
         newOpHJ = newOpHJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
       }
@@ -208,7 +208,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
           Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j).clone(), factor.clone()));
+          Expression newOpIJ = Subtraction::Builder(opIJ, Multiplication::Builder(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
           newOpIJ.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
           newOpIJ = newOpIJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
@@ -305,7 +305,7 @@ Expression Matrix::inverse(Context & context, Preferences::ComplexFormat complex
   }
   int dim = m_numberOfRows;
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  Matrix AI;
+  Matrix AI = Matrix::Builder();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       AI.addChildAtIndexInPlace(matrixChild(i, j), i*2*dim+j, i*2*dim+j);

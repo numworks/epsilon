@@ -2,6 +2,7 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/array_builder.h>
 #include <poincare/n_ary_expression_node.h>
 
 namespace Poincare {
@@ -66,17 +67,10 @@ class Multiplication final : public NAryExpression {
   friend class Power;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
-  Multiplication();
-  explicit Multiplication(Expression e1) : Multiplication() {
-    addChildAtIndexInPlace(e1, 0, 0);
-  }
-  Multiplication(Expression e1, Expression e2) : Multiplication() {
-    addChildAtIndexInPlace(e2, 0, 0);
-    addChildAtIndexInPlace(e1, 0, numberOfChildren());
-  }
-  Multiplication(Expression e1, Expression e2, Expression e3) : Multiplication(e2, e3) {
-    addChildAtIndexInPlace(e1, 0, numberOfChildren());
-  }
+  static Multiplication Builder() { return Multiplication(); }
+  static Multiplication Builder(Expression e1) { return Multiplication(&e1, 1); }
+  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication(ArrayBuilder<Expression>(e1, e2).array(), 2); }
+  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
 
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Expression
@@ -86,6 +80,13 @@ public:
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 private:
+  // Constructors
+  Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
+  explicit Multiplication(Expression * children, size_t numberOfChildren) : Multiplication() {
+    for (size_t i = 0; i < numberOfChildren; i++) {
+      addChildAtIndexInPlace(children[i], i, i);
+    }
+  }
   // Simplification
   Expression privateShallowReduce(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool expand, bool canBeInterrupted);
   void mergeMultiplicationChildrenInPlace();

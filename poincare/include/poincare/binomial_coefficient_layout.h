@@ -43,6 +43,9 @@ private:
 
 class BinomialCoefficientLayout final : public Layout {
 public:
+  static BinomialCoefficientLayout Builder(Layout n, Layout k) { return BinomialCoefficientLayout(n, k); }
+
+private:
   BinomialCoefficientLayout(Layout n, Layout k) :
     Layout(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())
   {

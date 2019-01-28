@@ -160,7 +160,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
-    Multiplication mult(y);
+    Multiplication mult = Multiplication::Builder(y);
     replaceWithInPlace(mult);
     mult.addChildAtIndexInPlace(*this, 1, 1); // --> y*log(x,b)
     shallowReduce(context, complexFormat, angleUnit, target); // reduce log (ie log(e, e) = 1)
@@ -168,7 +168,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Multiplication) {
-    Addition a = Addition();
+    Addition a = Addition::Builder();
     for (int i = 0; i < c.numberOfChildren()-1; i++) {
       Expression factor = c.childAtIndex(i);
       if (factor.sign(&context) == ExpressionNode::Sign::Positive) {
@@ -190,7 +190,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
   // log(r) with r Rational
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational &>(c);
-    Addition a;
+    Addition a = Addition::Builder();
     // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
     if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().integerDenominator().isOne()) {
       Integer b = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
@@ -320,17 +320,17 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
     if (!isDenominator) {
       return e;
     }
-    Multiplication m = Multiplication(Rational(-1), e);
+    Multiplication m = Multiplication::Builder(Rational(-1), e);
     return m;
   }
-  Addition a;
+  Addition a = Addition::Builder();
   for (int index = 0; index < numberOfPrimeFactors; index++) {
     if (isDenominator) {
       coefficients[index].setNegative(true);
     }
     Logarithm e = clone().convert<Logarithm>();
     e.replaceChildAtIndexInPlace(0, Rational(factors[index]));
-    Multiplication m = Multiplication(Rational(coefficients[index]), e);
+    Multiplication m = Multiplication::Builder(Rational(coefficients[index]), e);
     e.simpleShallowReduce(context, complexFormat, angleUnit);
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(context, complexFormat, angleUnit, target);

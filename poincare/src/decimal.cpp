@@ -378,7 +378,7 @@ Expression Decimal::shallowReduce() {
 Expression Decimal::shallowBeautify() {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
-    Opposite o;
+    Opposite o = Opposite::Builder();
     replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, abs);
     return o;

@@ -19,7 +19,7 @@ constexpr Expression::FunctionHelper NthRoot::s_functionHelper;
 int NthRootNode::numberOfChildren() const { return NthRoot::s_functionHelper.numberOfChildren(); }
 
 Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return NthRootLayout(
+  return NthRootLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -75,8 +75,8 @@ Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat 
     return Undefined();
   }
 #endif
-  Expression invIndex = Power(childAtIndex(1), Rational(-1));
-  Power p = Power(childAtIndex(0), invIndex);
+  Expression invIndex = Power::Builder(childAtIndex(1), Rational(-1));
+  Power p = Power::Builder(childAtIndex(0), invIndex);
   invIndex.shallowReduce(context, complexFormat, angleUnit, target);
   replaceWithInPlace(p);
   return p.shallowReduce(context, complexFormat, angleUnit, target);

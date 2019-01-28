@@ -43,31 +43,37 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
 
 QUIZ_CASE(poincare_create_all_layouts) {
   EmptyLayout e0;
-  AbsoluteValueLayout e1(e0);
+  AbsoluteValueLayout e1 = AbsoluteValueLayout::Builder(e0);
   CharLayout e2('a');
-  BinomialCoefficientLayout e3(e1, e2);
-  CeilingLayout e4(e3);
-  RightParenthesisLayout e5;
-  RightSquareBracketLayout e6;
-  CondensedSumLayout e7(e4, e5, e6);
-  ConjugateLayout e8(e7);
-  LeftParenthesisLayout e10;
-  FloorLayout e11(e10);
-  FractionLayout e12(e8, e11);
-  HorizontalLayout e13;
-  LeftSquareBracketLayout e14;
-  IntegralLayout e15(e11, e12, e13, e14);
-  NthRootLayout e16(e15);
-  MatrixLayout e17;
+  BinomialCoefficientLayout e3 = BinomialCoefficientLayout::Builder(e1, e2);
+  CeilingLayout e4 = CeilingLayout::Builder(e3);
+  RightParenthesisLayout e5 = RightParenthesisLayout::Builder();
+  RightSquareBracketLayout e6 = RightSquareBracketLayout::Builder();
+  CondensedSumLayout e7 = CondensedSumLayout::Builder(e4, e5, e6);
+  ConjugateLayout e8 = ConjugateLayout::Builder(e7);
+  LeftParenthesisLayout e10 = LeftParenthesisLayout::Builder();
+  FloorLayout e11 = FloorLayout::Builder(e10);
+  FractionLayout e12 = FractionLayout::Builder(e8, e11);
+  HorizontalLayout e13 = HorizontalLayout::Builder();
+  LeftSquareBracketLayout e14 = LeftSquareBracketLayout::Builder();
+  IntegralLayout e15 = IntegralLayout::Builder(e11, e12, e13, e14);
+  NthRootLayout e16 = NthRootLayout::Builder(e15);
+  MatrixLayout e17 = MatrixLayout::Builder();
   EmptyLayout e18;
   EmptyLayout e19;
   EmptyLayout e20;
-  ProductLayout e21(e17, e18, e19, e20);
+  ProductLayout e21 = ProductLayout::Builder(e17, e18, e19, e20);
   EmptyLayout e22;
   EmptyLayout e23;
   EmptyLayout e24;
-  SumLayout e25(e21, e22, e23, e24);
-  VerticalOffsetLayout e26(e25, VerticalOffsetLayoutNode::Type::Superscript);
+  SumLayout e25 = SumLayout::Builder(e21, e22, e23, e24);
+  VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::Type::Superscript);
+}
+
+Matrix BuildOneChildMatrix(Expression entry) {
+  Matrix m = Matrix::Builder();
+  m.addChildAtIndexInPlace(entry, 0, 0);
+  return m;
 }
 
 QUIZ_CASE(poincare_parse_layouts) {
@@ -75,31 +81,31 @@ QUIZ_CASE(poincare_parse_layouts) {
   Expression e;
 
   // 1+2
-  l = HorizontalLayout(
+  l = HorizontalLayout::Builder(
       CharLayout('1'),
       CharLayout('+'),
       CharLayout('2'));
-  e = Addition(Rational(1), Rational(2));
+  e = Addition::Builder(Rational(1), Rational(2));
   assert_parsed_layout_is(l, e);
 
   // |3+3/6|
-  l = AbsoluteValueLayout(
-      HorizontalLayout(
+  l = AbsoluteValueLayout:: Builder(
+      HorizontalLayout::Builder(
         CharLayout('3'),
         CharLayout('+'),
-        FractionLayout(
+        FractionLayout::Builder(
           CharLayout('3'),
           CharLayout('6'))));
   e = AbsoluteValue::Builder(
-      Addition(
+      Addition::Builder(
         Rational(3),
-        Division(
+        Division::Builder(
           Rational(3),
           Rational(6))));
   assert_parsed_layout_is(l, e);
 
   // binCoef(4,5)
-  l = BinomialCoefficientLayout(
+  l = BinomialCoefficientLayout::Builder(
       CharLayout('4'),
       CharLayout('5'));
   e = BinomialCoefficient::Builder(
@@ -108,8 +114,8 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_layout_is(l, e);
 
   // ceil(4.6)
-  l = CeilingLayout(
-      HorizontalLayout(
+  l = CeilingLayout::Builder(
+      HorizontalLayout::Builder(
         CharLayout('4'),
         CharLayout('.'),
         CharLayout('6')));
@@ -118,8 +124,8 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_layout_is(l, e);
 
   // floor(7.2)
-  l = FloorLayout(
-      HorizontalLayout(
+  l = FloorLayout::Builder(
+      HorizontalLayout::Builder(
         CharLayout('7'),
         CharLayout('.'),
         CharLayout('2')));
@@ -128,30 +134,30 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_layout_is(l, e);
 
   // 2^(3+4)
-  l = HorizontalLayout(
+  l = HorizontalLayout::Builder(
       CharLayout('2'),
-      VerticalOffsetLayout(
-        HorizontalLayout(
+      VerticalOffsetLayout::Builder(
+        HorizontalLayout::Builder(
           CharLayout('3'),
           CharLayout('+'),
           CharLayout('4')),
         VerticalOffsetLayoutNode::Type::Superscript));
-  e = Power(
+  e = Power::Builder(
       Rational(2),
-      Addition(
+      Addition::Builder(
         Rational(3),
         Rational(4)));
   assert_parsed_layout_is(l, e);
 
   // log_3(2)
-  HorizontalLayout l1 = HorizontalLayout();
+  HorizontalLayout l1 = HorizontalLayout::Builder();
   l1.addChildAtIndex(CharLayout('l'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(CharLayout('o'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(CharLayout('g'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(VerticalOffsetLayout(CharLayout('3'), VerticalOffsetLayoutNode::Type::Subscript), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(LeftParenthesisLayout(), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
+  l1.addChildAtIndex(VerticalOffsetLayout::Builder(CharLayout('3'), VerticalOffsetLayoutNode::Type::Subscript), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
+  l1.addChildAtIndex(LeftParenthesisLayout::Builder(), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(CharLayout('2'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(RightParenthesisLayout(), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
+  l1.addChildAtIndex(RightParenthesisLayout::Builder(), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l = l1;
   e = Logarithm::Builder(
       Rational(2),
@@ -159,14 +165,14 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_layout_is(l, e);
 
   // root(5,3)
-  l = NthRootLayout(
+  l = NthRootLayout::Builder(
       CharLayout('5'),
       CharLayout('3'));
   e = NthRoot::Builder(Rational(5), Rational(3));
   assert_parsed_layout_is(l, e);
 
   // int(7, x, 4, 5)
-  l = IntegralLayout(
+  l = IntegralLayout::Builder(
       CharLayout('7'),
       CharLayout('x'),
       CharLayout('4'),
@@ -179,52 +185,52 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_layout_is(l, e);
 
   // 2^2 !
-  l = HorizontalLayout(
+  l = HorizontalLayout::Builder(
       CharLayout('2'),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
         CharLayout('2'),
         VerticalOffsetLayoutNode::Type::Superscript),
       CharLayout('!'));
-  e = Factorial(
-      Power(
+  e = Factorial::Builder(
+      Power::Builder(
         Rational(2),
         Rational(2)));
   assert_parsed_layout_is(l, e);
 
   // 5* 6/(7+5) *3
-  l = HorizontalLayout(
+  l = HorizontalLayout::Builder(
       CharLayout('5'),
-      FractionLayout(
+      FractionLayout::Builder(
         CharLayout('6'),
-        HorizontalLayout(
+        HorizontalLayout::Builder(
           CharLayout('7'),
           CharLayout('+'),
           CharLayout('5'))),
       CharLayout('3'));
-  e = Multiplication(
+  e = Multiplication::Builder(
       Rational(5),
-      Division(
+      Division::Builder(
         Rational(6),
-        Addition(
+        Addition::Builder(
           Rational(7),
           Rational(5))),
       Rational(3));
   assert_parsed_layout_is(l, e);
 
   // [[3^2!, 7][4,5]
-  l = MatrixLayout(
-      HorizontalLayout(
+  l = MatrixLayout::Builder(
+      HorizontalLayout::Builder(
         CharLayout('3'),
-        VerticalOffsetLayout(
+        VerticalOffsetLayout::Builder(
           CharLayout('2'),
           VerticalOffsetLayoutNode::Type::Superscript),
         CharLayout('!')),
       CharLayout('7'),
       CharLayout('4'),
       CharLayout('5'));
-  Matrix m = Matrix(
-      Factorial(
-        Power(
+  Matrix m = BuildOneChildMatrix(
+      Factorial::Builder(
+        Power::Builder(
           Rational(3),
           Rational(2))));
   m.addChildAtIndexInPlace(Rational(7), 1, 1);
@@ -235,35 +241,35 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_layout_is(l, e);
 
   // 2^det([[3!, 7][4,5])
-  l = HorizontalLayout(
+  l = HorizontalLayout::Builder(
       CharLayout('2'),
-      VerticalOffsetLayout(
-        MatrixLayout(
-          HorizontalLayout(
+      VerticalOffsetLayout::Builder(
+        MatrixLayout::Builder(
+          HorizontalLayout::Builder(
             CharLayout('3'),
             CharLayout('!')),
           CharLayout('7'),
           CharLayout('4'),
           CharLayout('5')),
         VerticalOffsetLayoutNode::Type::Superscript));
-  m = Matrix(
-      Factorial(
+  m = BuildOneChildMatrix(
+      Factorial::Builder(
         Rational(3)));
   m.addChildAtIndexInPlace(Rational(7), 1, 1);
   m.addChildAtIndexInPlace(Rational(4), 2, 2);
   m.addChildAtIndexInPlace(Rational(5), 3, 3);
   m.setDimensions(2,2);
-  e = Power(Rational(2), m);
+  e = Power::Builder(Rational(2), m);
   assert_parsed_layout_is(l, e);
 
   // 2e^3
-  l = HorizontalLayout(
+  l = HorizontalLayout::Builder(
       CharLayout('2'),
       CharLayout(Ion::Charset::Exponential),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
         CharLayout('3'),
         VerticalOffsetLayoutNode::Type::Superscript));
-  e = Multiplication(Rational(2),Power(Constant(Ion::Charset::Exponential),Parenthesis(Rational(3))));
-  assert_parsed_expression_is("2X^(3)", Multiplication(Rational(2),Power(Constant(Ion::Charset::Exponential),Parenthesis(Rational(3)))));
+  e = Multiplication::Builder(Rational(2),Power::Builder(Constant(Ion::Charset::Exponential),Parenthesis::Builder(Rational(3))));
+  assert_parsed_expression_is("2X^(3)", Multiplication::Builder(Rational(2),Power::Builder(Constant(Ion::Charset::Exponential),Parenthesis::Builder(Rational(3)))));
   assert_parsed_layout_is(l, e);
 }

@@ -80,30 +80,30 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
     return CharLayout(Symbol::k_unknownXReadableChar);
   }
   if (strcmp(m_name, "u(n)") == 0) {
-    return HorizontalLayout(
+    return HorizontalLayout::Builder(
         CharLayout('u'),
-        VerticalOffsetLayout(
+        VerticalOffsetLayout::Builder(
           CharLayout('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "u(n+1)") == 0) {
-    return HorizontalLayout(
+    return HorizontalLayout::Builder(
       CharLayout('u'),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "v(n)") == 0) {
-    return HorizontalLayout(
+    return HorizontalLayout::Builder(
         CharLayout('v'),
-        VerticalOffsetLayout(
+        VerticalOffsetLayout::Builder(
           CharLayout('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "v(n+1)") == 0) {
-    return HorizontalLayout(
+    return HorizontalLayout::Builder(
       CharLayout('v'),
-      VerticalOffsetLayout(
+      VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
@@ -173,7 +173,7 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
     Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
-      value = Parenthesis(value);
+      value = Parenthesis::Builder(value);
     }
     replaceWithInPlace(value);
     return value;

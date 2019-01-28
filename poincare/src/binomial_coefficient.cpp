@@ -19,7 +19,7 @@ Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return BinomialCoefficientLayout(
+  return BinomialCoefficientLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

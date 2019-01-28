@@ -59,7 +59,15 @@ private:
 
 class VerticalOffsetLayout final : public Layout {
 public:
-  VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type);
+  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Type type) { return VerticalOffsetLayout(l, type); }
+
+private:
+  VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type) :
+    Layout(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>())
+  {
+    static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
+    replaceChildAtIndexInPlace(0,l);
+  }
 };
 
 }

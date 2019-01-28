@@ -12,6 +12,8 @@ namespace Poincare {
 
 class Ghost final : public TreeHandle {
 public:
+  static Ghost Builder() { return Ghost(); }
+private:
   Ghost() : TreeHandle(TreePool::sharedPool()->createTreeNode<GhostNode>()) {}
 };
 

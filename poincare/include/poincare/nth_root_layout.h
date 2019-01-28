@@ -67,10 +67,17 @@ private:
 
 class NthRootLayout final : public Layout {
 public:
-  explicit NthRootLayout(Layout radicand);
-  NthRootLayout(Layout radicand, Layout index);
+  static NthRootLayout Builder(Layout radicand) { return NthRootLayout(radicand); }
+  static NthRootLayout Builder(Layout radicand, Layout index) {
+    NthRootLayout n(radicand);
+    n.addChildAtIndexInPlace(index, 1, 1);
+    static_cast<NthRootLayoutNode *>(n.node())->setNumberOfChildren(2);
+    return n;
+  }
 private:
-  NthRootLayout();
+  NthRootLayout(Layout radicand) : Layout(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {
+    replaceChildAtIndexInPlace(0, radicand);
+  }
 };
 
 }

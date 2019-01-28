@@ -59,7 +59,7 @@ Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences:
 }
 
 Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout result;
+  HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
   result.addChildAtIndex(CharLayout('!'), childrenCount, childrenCount, nullptr);
@@ -88,8 +88,6 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }
-
-Factorial::Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
 
 Expression Factorial::shallowReduce() {
   {
@@ -133,7 +131,7 @@ Expression Factorial::shallowBeautify() {
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication
       || childAtIndex(0).type() == ExpressionNode::Type::Power)
   {
-    Expression result = Factorial(Parenthesis(childAtIndex(0)));
+    Expression result = Factorial::Builder(Parenthesis::Builder(childAtIndex(0)));
     replaceWithInPlace(result);
     return result;
   }

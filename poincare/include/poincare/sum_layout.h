@@ -23,6 +23,8 @@ private:
 
 class SumLayout final : public Layout {
 public:
+  static SumLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB) { return SumLayout(argument, variable, lowerB, upperB); }
+private:
   SumLayout(Layout argument, Layout variable, Layout lowerB, Layout upperB) :
     Layout(TreePool::sharedPool()->createTreeNode<SumLayoutNode>())
   {

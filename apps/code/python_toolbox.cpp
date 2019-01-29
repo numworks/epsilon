@@ -330,9 +330,12 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
   }
-  if (event.hasText() && strlen(event.text()) == 1) {
-    scrollToLetter(event.text()[0]);
-    return true;
+  if (event.hasText() && strlen(event.text()) == 1 ) {
+    char c = event.text()[0];
+    if (UTF8Helper::CodePointIsLetter(c)) {
+      scrollToLetter(c);
+      return true;
+    }
   }
   return false;
 }
@@ -389,24 +392,24 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 }
 
 void PythonToolbox::scrollToLetter(char letter) {
+  assert(UTF8Helper::CodePointIsLetter(letter));
+  /* We look for a child MessageTree that starts with the wanted letter. If we
+   * do not find one, we scroll to the first child MessageTree that starts with
+   * a letter higher than the wanted letter. */
   char lowerLetter = tolower(letter);
-  // We look for a child MessageTree that starts with the wanted letter.
+  int index = -1;
   for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
-    char currentFirstLetterLowered = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
-    if (currentFirstLetterLowered == lowerLetter) {
-      scrollToAndSelectChild(i);
-      return;
+    char l = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
+    if (l == lowerLetter) {
+      index = i;
+      break;
+    }
+    if (index < 0 && l >= lowerLetter && UTF8Helper::CodePointIsLowerCaseLetter(l)) {
+      index = i;
     }
   }
-  // We did not find a child MessageTree that starts with the wanted letter.
-  // We scroll to the first child MessageTree that starts with a letter higher
-  // than the wanted letter.
-  for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
-    char currentFirstLetterLowered = tolower(I18n::translate(m_messageTreeModel->children(i)->label())[0]);
-    if (currentFirstLetterLowered >= lowerLetter && currentFirstLetterLowered <= 'z') {
-      scrollToAndSelectChild(i);
-      return;
-    }
+  if (index >= 0) {
+    scrollToAndSelectChild(index);
   }
 }
 

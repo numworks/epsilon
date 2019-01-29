@@ -14,12 +14,10 @@ ValuesFunctionParameterController::ValuesFunctionParameterController(char symbol
 
 const char * ValuesFunctionParameterController::title() {
   strlcpy(m_pageTitle, I18n::translate(I18n::Message::FunctionColumn), k_maxNumberOfCharsInTitle);
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle-1; currentChar++) {
-    if (m_pageTitle[currentChar] == '(') {
-      m_pageTitle[currentChar-1] = *m_function->name();
-      m_pageTitle[currentChar+1] = m_symbol;
-      break;
-    }
+  char * parenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(m_pageTitle, '('));
+  if (UTF8Helper::CodePointIs(parenthesis, '(') && parenthesis > m_pageTitle && parenthesis < m_pageTitle + k_maxNumberOfCharsInTitle) {
+    *(m_pageTitle - 1) = *m_function->name();
+    *(m_pageTitle + 1) = m_symbol;
   }
   return m_pageTitle;
 }

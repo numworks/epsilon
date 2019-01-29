@@ -169,8 +169,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
     if (i != 0) {
       // Write the comma
-      buffer[numberOfChar++] = ',';
-      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
+      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ',');
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
 

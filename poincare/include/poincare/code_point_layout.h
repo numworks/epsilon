@@ -4,6 +4,7 @@
 #include <ion/unicode/code_point.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -40,7 +41,10 @@ public:
     stream << "CodePointLayout";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    stream << " CodePoint=\"" << m_codePoint << "\"";
+    constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+    char buffer[bufferSize];
+    SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
+    stream << " CodePoint=\"" << buffer << "\"";
   }
 #endif
 

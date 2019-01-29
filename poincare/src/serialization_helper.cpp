@@ -184,8 +184,12 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
     }
   }
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  assert(size <= bufferSize - 1);
-  buffer[size] = 0;
+  if (size <= bufferSize - 1) {
+    buffer[size] = 0;
+  } else {
+    assert(size -1 == bufferSize - 1);
+    buffer[--size] = 0;
+  }
   return size;
 }
 

@@ -14,7 +14,8 @@ int CountOccurrences(const char * s, CodePoint c);
 const char * CodePointSearch(const char * s, CodePoint c);
 
 /* Copy src into dst while removing all code points c. Also update an index
- * that should be lower if code points where removed before it. */
+ * that should be lower if code points where removed before it. Ensure null-
+ * termination of dst. */
 void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * indexToDUpdate = nullptr);
 
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */

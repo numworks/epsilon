@@ -1,7 +1,10 @@
 #include "storage_function.h"
 #include "poincare_helpers.h"
+#include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include "poincare/src/parsing/parser.h"
+#include <ion/unicode/utf8_helper.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -14,7 +17,10 @@ constexpr char StorageFunction::k_parenthesedArgument[];
 
 bool StorageFunction::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
   assert(baseName[0] != 0);
-  if (baseName[0] >= '0' && baseName[0] <= '9') {
+
+  UTF8Decoder decoder(baseName);
+  CodePoint c = decoder.nextCodePoint();
+  if (UTF8Helper::CodePointIsNumber(c)) {
     // The name cannot start with a number
     if (error != nullptr) {
       *error = NameNotCompliantError::NameCannotStartWithNumber;
@@ -22,21 +28,19 @@ bool StorageFunction::BaseNameCompliant(const char * baseName, NameNotCompliantE
     return false;
   }
 
-  const char * currentChar = baseName;
-
   // The name should only have allowed characters
-  while (*currentChar != 0) {
-    if (!((*currentChar >= 'A' && *currentChar <= 'Z')
-        || (*currentChar >= 'a' && *currentChar <= 'z')
-        || (*currentChar >= '0' && *currentChar <= '9')
-        || *currentChar == '_'))
+  while (c != UCodePointNull) {
+    if (!(UTF8Helper::CodePointIsUpperCaseLetter(c)
+        || UTF8Helper::CodePointIsLowerCaseLetter(c)
+        || UTF8Helper::CodePointIsNumber(c))
+        || c == '_')
     {
       if (error != nullptr) {
         *error = NameNotCompliantError::CharacterNotAllowed;
       }
       return false;
     }
-    currentChar++;
+    c = decoder.nextCodePoint();
   }
 
   // The name should not be a reserved name
@@ -76,7 +80,9 @@ T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * conte
   if (isCircularlyDefined(context)) {
     return NAN;
   }
-  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, Poincare::Symbol::UnknownX);
   return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
 }
 

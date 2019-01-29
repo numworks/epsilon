@@ -54,6 +54,32 @@ const char * CodePointSearch(const char * s, CodePoint c) {
   return currentPointer;
 }
 
+const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {
+  if (goingLeft) {
+    assert(initialPosition != nullptr);
+    if (initialPosition == s) {
+      return s;
+    }
+    UTF8Decoder decoder(s, initialPosition);
+    CodePoint codePoint = decoder.previousCodePoint();
+    const char * codePointPointer = decoder.stringPosition();
+    while (codePointPointer > s && codePoint == c) {
+      codePoint = decoder.previousCodePoint();
+      codePointPointer = decoder.stringPosition();
+    }
+    return codePointPointer;
+  }
+  assert(!goingLeft && initialPosition == nullptr);
+  UTF8Decoder decoder(s);
+  const char * codePointPointer = decoder.stringPosition();
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull && codePoint == c) {
+    codePointPointer = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
+  }
+  return codePointPointer;
+}
+
 void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * pointerToUpdate) {
   if (dstSize <= 0) {
     return;
@@ -187,6 +213,22 @@ bool CodePointIs(const char * location, CodePoint c) {
   }
   UTF8Decoder decoder(location);
   return decoder.nextCodePoint() == c;
+}
+
+bool CodePointIsLetter(CodePoint c) {
+  return CodePointIsLowerCaseLetter(c) || CodePointIsUpperCaseLetter(c);
+}
+
+bool CodePointIsLowerCaseLetter(CodePoint c) {
+  return c >= 'a' && c <= 'z';
+}
+
+bool CodePointIsUpperCaseLetter(CodePoint c) {
+  return c >= 'A' && c <= 'Z';
+}
+
+bool CodePointIsNumber(CodePoint c) {
+  return c >= '0' && c <= '9';
 }
 
 int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c) {

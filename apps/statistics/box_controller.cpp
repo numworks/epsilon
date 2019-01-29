@@ -51,11 +51,13 @@ void BoxController::reloadBannerView() {
   m_view.editableBannerView()->setMessageAtIndex(calculationName[selectedQuantile], 1);
 
   // Set calculation result
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits) + 1];
+  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
+  constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits) + 1;
+  char buffer[bufferSize];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
-  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize - 1, Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ' ';
   buffer[numberOfChar] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 2);

@@ -23,6 +23,8 @@ using namespace Shared;
 
 namespace Probability {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation) :
   m_titleView(KDFont::SmallFont, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
   m_selectableTableView(selectableTableView),
@@ -285,17 +287,17 @@ void CalculationController::updateTitle() {
     if (currentChar >= k_maxNumberOfTitleCharacters) {
       break;
     }
-    const size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
+    constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
     char buffer[bufferSize];
-    PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     strlcpy(m_titleBuffer+currentChar, buffer, k_maxNumberOfTitleCharacters - currentChar);
     currentChar += strlen(buffer);
     if (currentChar >= k_maxNumberOfTitleCharacters) {
       break;
     }
-    m_titleBuffer[currentChar++] = ' ';
+    currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_maxNumberOfTitleCharacters - currentChar);
   }
-  m_titleBuffer[currentChar-1] = 0;
+  m_titleBuffer[minInt(currentChar, k_maxNumberOfTitleCharacters) - 1] = 0;
 }
 
 }

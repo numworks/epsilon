@@ -127,6 +127,7 @@ void GraphController::reloadBannerView() {
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
   }

@@ -200,11 +200,11 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
   if (m_currentPage == Page::Function) {
     // Add parentheses to a function name
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength++] = '(';
+    nameLength += UTF8Decoder::CodePointToChars('(', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
     nameLength+= UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
-    nameToHandle[nameLength++] = ')';
+    nameLength += UTF8Decoder::CodePointToChars(')', nameToHandle+nameLength, nameToHandleMaxSize - nameLength);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength] = 0;
   }

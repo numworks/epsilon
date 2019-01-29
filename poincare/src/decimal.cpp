@@ -195,11 +195,13 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     return currentChar;
   }
   /* Case 1: Decimal mode */
+  assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
   strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, maxInt(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
     for (int i = 0; i <= -exponent; i++) {
-      currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, i == 1 ? '.' : '0');
+      buffer[currentChar++] = i == 1 ? '.' : '0';
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
     }
   }

@@ -422,7 +422,7 @@ bool Storage::FullNameCompliant(const char * fullName) {
   if (*dotChar == 0) {
     return false;
   }
-  if (UTF8Helper::CodePointSearch(dotChar+1, k_dotChar) == 0) {
+  if (*(UTF8Helper::CodePointSearch(dotChar+1, k_dotChar)) == 0) {
     return true;
   }
   return false;

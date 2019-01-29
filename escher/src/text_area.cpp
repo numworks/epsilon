@@ -224,7 +224,7 @@ size_t TextArea::Text::removeRemainingLine(const char * location, int direction)
   }
   while (nextCodePoint != '\n'
       && ((direction > 0 && nextCodePoint != 0)
-        || (direction < 0 && codePointPosition >= m_buffer)))
+        || (direction < 0 && codePointPosition > m_buffer)))
   {
     if (direction > 0) {
       codePointPosition = decoder.stringPosition();
@@ -234,14 +234,15 @@ size_t TextArea::Text::removeRemainingLine(const char * location, int direction)
       codePointPosition = decoder.stringPosition();
     }
   }
-  size_t delta = direction > 0 ? codePointPosition - location : location - codePointPosition;
-  if (delta == 0) {
-    return 0;
-  }
 
   char * dst = const_cast<char* >(direction > 0 ? location : codePointPosition);
   char * src = const_cast<char* >(direction > 0 ? codePointPosition : location);
-  assert(src > dst);
+  assert(src >= dst);
+
+  size_t delta = src - dst;
+  if (delta == 0) {
+    return 0;
+  }
   for (size_t index = src - m_buffer; index < m_bufferSize; index++) {
     *dst = *src;
     if (*src == 0) {

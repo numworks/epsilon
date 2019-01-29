@@ -33,45 +33,49 @@ void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int buf
 }
 
 void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
-  int currentNewTextIndex = 0;
+  int index = 0;
   int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
   bool insideQuote = false;
   bool argumentAlreadyReplaced = false;
-  size_t commandLength = strlen(command);
-  for (size_t i = 0; i < commandLength; i++) {
-    if (command[i] == ')') {
+
+  UTF8Decoder decoder(command);
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull) {
+    if (codePoint == ')') {
       numberOfOpenParentheses--;
-    }
-    if (command[i] == ']') {
+    } else if (codePoint == ']') {
       numberOfOpenBrackets--;
     }
-    if (((numberOfOpenParentheses == 0 && numberOfOpenBrackets == 0)
-          || command[i] == ','
-          || (numberOfOpenBrackets > 0 && (command[i] == ',' || command[i] == '[' || command[i] == ']')))
-        && (!insideQuote || command[i] == '\'')) {
-      assert(currentNewTextIndex < bufferSize);
+    if ((!insideQuote || codePoint == '\'')
+        && ((numberOfOpenParentheses == 0 && numberOfOpenBrackets == 0)
+          || codePoint == ','
+          || (numberOfOpenBrackets > 0
+            && (codePoint == ','
+              || codePoint == '['
+              || codePoint == ']'))))
+    {
+      assert(index < bufferSize);
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      buffer[currentNewTextIndex++] = command[i];
+      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        currentNewTextIndex += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + currentNewTextIndex, bufferSize - currentNewTextIndex);
+        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
         argumentAlreadyReplaced = true;
       }
     }
-    if (command[i] == '(') {
+    if (codePoint == '(') {
       numberOfOpenParentheses++;
-    }
-    if (command[i] == '[') {
+    } else if (codePoint == '[') {
       numberOfOpenBrackets++;
-    }
-    if (command[i] == '\'') {
+    } else if (codePoint == '\'') {
       insideQuote = !insideQuote;
     }
+    codePoint = decoder.nextCodePoint();
   }
-  buffer[currentNewTextIndex] = 0;
+  buffer[index] = 0;
 }
 
 }

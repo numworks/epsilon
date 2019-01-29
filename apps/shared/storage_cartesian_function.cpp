@@ -4,6 +4,7 @@
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
 #include <escher/palette.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <float.h>
 #include <cmath>
 
@@ -64,16 +65,17 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
 }
 
 int StorageCartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {
-  // Fill buffer with f(x). Keep one char for derivative sign.
-  int numberOfChars = nameWithArgument(buffer, bufferSize-1, arg);
-  assert(numberOfChars + 1 < bufferSize);
-  char * lastChar = buffer+numberOfChars;
-  do {
-    *(lastChar+1) = *lastChar;
-    lastChar--;
-  } while (*(lastChar+1) != '(' && lastChar >= buffer);
-  *(lastChar+1) = '\'';
-  return numberOfChars+1;
+  // Fill buffer with f(x). Keep one char foderivativeSizer derivative sign.
+  int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
+  int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize, arg);
+  assert(numberOfChars + derivativeSize < bufferSize);
+  char * firstParenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
+  if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {
+    return numberOfChars;
+  }
+  memmove(firstParenthesis + derivativeSize, firstParenthesis, buffer + numberOfChars - firstParenthesis);
+  UTF8Decoder::CodePointToChars('\'', firstParenthesis, derivativeSize);
+  return numberOfChars + derivativeSize;
 }
 
 bool StorageCartesianFunction::displayDerivative() const {

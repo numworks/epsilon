@@ -192,10 +192,12 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces, char * location)
   assert(strlen(m_buffer) + numberOfSpaces < m_bufferSize);
 
   size_t sizeToMove = strlen(location) + 1;
-  assert(location + numberOfSpaces + sizeToMove <= m_buffer + m_bufferSize);
-  memmove(location + numberOfSpaces, location, sizeToMove);
+  size_t spaceCharSize = UTF8Decoder::CharSizeOfCodePoint(' ');
+  size_t spacesSize = numberOfSpaces * spaceCharSize;
+  assert(location + spacesSize + sizeToMove <= m_buffer + m_bufferSize);
+  memmove(location + spacesSize, location, sizeToMove);
   for (int i = 0; i < numberOfSpaces; i++) {
-    *(location+i) = ' ';
+    UTF8Decoder::CodePointToChars(' ', location+i*spaceCharSize, (m_buffer + m_bufferSize) - location);
   }
 }
 

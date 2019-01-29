@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <escher/buffer_text_view.h>
 #include <escher/palette.h>
+#include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
 namespace Code {
@@ -41,7 +42,7 @@ static bool shouldAddObject(const char * name, int maxLength) {
     return false;
   }
   assert(name != nullptr);
-  if (name[0] == '_') {
+  if (UTF8Helper::CodePointIs(name, '_')) {
     return false;
   }
   return true;

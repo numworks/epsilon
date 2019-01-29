@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <ion/events.h>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Code {
 
@@ -303,16 +304,18 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
   static constexpr int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
-
   char numberedDefaultName[bufferSize];
+
   if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
     newName = text;
   } else {
     // The user entered an empty name. Use a numbered default script name.
     bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
+    assert(defaultNameLength < bufferSize);
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberedDefaultName[defaultNameLength++] = '.';
-    strlcpy(&numberedDefaultName[defaultNameLength], ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
+    strlcpy(numberedDefaultName + defaultNameLength, ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
     /* If there are already scripts named script1.py, script2.py,... until
      * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
      * default name and let the user modify it. */

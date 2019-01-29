@@ -94,7 +94,7 @@ void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
   }
-  const size_t bufferSize = k_maxNumberOfCharacters+ PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2;
+  const size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2;
   char buffer[bufferSize];
   int numberOfChar = 0;
 
@@ -110,18 +110,18 @@ void HistogramController::reloadBannerView() {
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
 
-  buffer[numberOfChar++] = ';';
+  numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
-  buffer[numberOfChar++] = '[';
+  numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Padding
   for (int i = numberOfChar; i < k_maxIntervalLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
+    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxIntervalLegendLength] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 1);
@@ -139,7 +139,7 @@ void HistogramController::reloadBannerView() {
   }
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
+    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxLegendLength] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 3);
@@ -156,7 +156,7 @@ void HistogramController::reloadBannerView() {
   }
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
+    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxLegendLength] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 5);

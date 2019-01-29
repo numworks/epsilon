@@ -69,17 +69,10 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
   if (event == Ion::Events::Backspace) {
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */
-    char * text = const_cast<char *>(textArea->text());
-    const char * charBeforeCursorPointer = textArea->cursorLocation()-1;
-    int indentationSize = 0;
-    while (charBeforeCursorPointer >= text && *charBeforeCursorPointer == ' ') {
-      charBeforeCursorPointer--;
-      indentationSize++;
-    }
-    if (charBeforeCursorPointer >= text
-        && *charBeforeCursorPointer == '\n'
-        && indentationSize >= k_indentationSpacesNumber)
-    {
+    const char * text = textArea->text();
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
+    assert(firstNonSpace >= text);
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n') && ((text - firstNonSpace)/UTF8Decoder::CharSizeOfCodePoint(' ')) >= k_indentationSpacesNumber) {
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
         textArea->removeCodePoint();
       }
@@ -88,12 +81,11 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
   } else if (event == Ion::Events::Space) {
     /* If the cursor is on the left of the text of a line, a space triggers an
      * indentation. */
-    char * text = const_cast<char *>(textArea->text());
-    const char * charBeforeCursorPointer = textArea->cursorLocation()-1;
-    while (charBeforeCursorPointer >= text && *charBeforeCursorPointer == ' ') {
-      charBeforeCursorPointer--;
-    }
-    if (charBeforeCursorPointer >= text && *charBeforeCursorPointer == '\n') {
+    const char * text = textArea->text();
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
+    assert(firstNonSpace >= text);
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
+      assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
       char indentationBuffer[k_indentationSpacesNumber+1];
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
         indentationBuffer[i] = ' ';

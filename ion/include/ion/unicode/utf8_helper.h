@@ -13,6 +13,10 @@ int CountOccurrences(const char * s, CodePoint c);
  * null terminating char otherwise. */
 const char * CodePointSearch(const char * s, CodePoint c);
 
+/* Returns the first occurence of a code point that is not c in a string,
+ * stopping at the null-terminating char or the start of string. */
+const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition);
+
 /* Copy src into dst while removing all code points c. Also update an index
  * that should be lower if code points where removed before it. Ensure null-
  * termination of dst. */
@@ -28,24 +32,29 @@ size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoin
  * done for *(initial position) even if it matches c.
  * The return value is the first address for which we did not perform an action.
  *
+ *                                         r = return value
  *                                         x = actionCodePoint is performed
  *                                         o = actionOtherCodePoint is performed
  * Going right == true:                    s = stoppingCodePoint
  *     o  o  o  o  x  x  o  o  x  o
  *    |  |  |  |  |c |c |  |  |c |  |s |  |  |c |
- *    ^start of string
+ *    ^start of string              ^r
  *
  * Going right == false:
- *     o  o  o  o  x  x  o  o
- *    |  |c |  |s |c |c |  |  |c |  |  |c |  |  |
- *    ^start of string        ^initialPosition
+ *                          x  x  o  o
+ *    |  |c |  |  |c |  |s |c |c |  |  |c |  |  |
+ *    ^start of string  ^r             ^initialPosition
  *
  * */
 typedef void (*CodePointAction)(int codePointOffset, void * contextPointer, int contextInt);
-const char *  PerformAtCodePoints(const char * string, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt, CodePoint stoppingCodePoint = UCodePointNull, bool goingRight = true, const char * initialPosition = nullptr);
+const char * PerformAtCodePoints(const char * string, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt, CodePoint stoppingCodePoint = UCodePointNull, bool goingRight = true, const char * initialPosition = nullptr);
 
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);
+bool CodePointIsLetter(CodePoint c);
+bool CodePointIsLowerCaseLetter(CodePoint c);
+bool CodePointIsUpperCaseLetter(CodePoint c);
+bool CodePointIsNumber(CodePoint c);
 
 // Shift the buffer and return the number of bytes removed.
 int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c);

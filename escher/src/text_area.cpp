@@ -416,7 +416,7 @@ bool TextArea::ContentView::removeStartOfLine() {
   if (removedLine > 0) {
     assert(cursorLocation() >= text() + removedLine);
     setCursorLocation(cursorLocation() - removedLine);
-    reloadRectFromPosition(cursorLocation(), false);
+    reloadRectFromPosition(cursorLocation(), true);
     return true;
   }
   return false;

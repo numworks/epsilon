@@ -9,6 +9,7 @@ static inline int minInt(int x, int y) { return x < y ? x : y; }
 static inline size_t minSizeT(size_t x, size_t y) { return x < y ? x : y; }
 
 int CountOccurrences(const char * s, CodePoint c) {
+  assert(c != UCodePointNull);
   int count = 0;
   if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
     /* The code point is one char long, so it is equal to its char translation.
@@ -55,6 +56,7 @@ const char * CodePointSearch(const char * s, CodePoint c) {
 }
 
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {
+  // TODO LEA: optimize for one byte long c?
   if (goingLeft) {
     assert(initialPosition != nullptr);
     if (initialPosition == s) {

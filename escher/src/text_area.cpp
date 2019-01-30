@@ -57,10 +57,10 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     decoder.previousCodePoint();
     return setCursorLocation(decoder.stringPosition());
   } else if (event == Ion::Events::Right) {
-    if (*cursorLocation() == 0) {
+    if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
       return false;
     }
-    UTF8Decoder decoder(text(), cursorLocation());
+    UTF8Decoder decoder(cursorLocation());
     decoder.nextCodePoint();
     return setCursorLocation(decoder.stringPosition());
   } else if (event == Ion::Events::Up) {
@@ -216,7 +216,9 @@ CodePoint TextArea::Text::removeCodePoint(char * * position) {
 
 size_t TextArea::Text::removeRemainingLine(const char * location, int direction) {
   assert(m_buffer != nullptr);
-  assert(location >= m_buffer && location < m_buffer + m_bufferSize);
+  assert(location >= m_buffer && location <= m_buffer + m_bufferSize);
+  assert(direction > 0 || location > m_buffer);
+  assert(direction < 0 || location < m_buffer + m_bufferSize);
 
   UTF8Decoder decoder(m_buffer, location);
   const char * codePointPosition = decoder.stringPosition();

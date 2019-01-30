@@ -4,6 +4,7 @@
 static inline int leading_ones(uint8_t value) {
   for (int i=0; i<8; i++) {
     if (!(value & 0x80)) {
+      assert(i <= 4);
       return i;
     }
     value = value << 1;
@@ -17,7 +18,7 @@ static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
 }
 
 CodePoint UTF8Decoder::nextCodePoint() {
-  assert(m_stringPosition == m_stringPosition || *(m_stringPosition - 1) != 0);
+  assert(m_stringPosition == m_string || *(m_stringPosition - 1) != 0);
   int leadingOnes = leading_ones(*m_stringPosition);
   uint32_t result = last_k_bits(*m_stringPosition++, 8-leadingOnes-1);
   for (int i = 0; i < leadingOnes - 1; i++) {

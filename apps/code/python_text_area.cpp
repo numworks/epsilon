@@ -119,22 +119,20 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
      * basis. This can work, however the MicroPython lexer won't accept a line
      * starting with a whitespace. So we're discarding leading whitespaces
      * beforehand. */
-    UTF8Decoder decoder(text);
-    const char * p = decoder.stringPosition();
-    CodePoint c = decoder.nextCodePoint();
-    while (p < text + byteLength && c  == ' ') {
-        p = decoder.stringPosition();
-        c = decoder.nextCodePoint();
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
+    if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
+      nlr_pop();
+      return;
     }
 
-    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, p, byteLength - (p - text), 0);
+    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, firstNonSpace, byteLength - (firstNonSpace - text), 0);
     LOG_DRAW("Pop token %d\n", lex->tok_kind);
 
-    const char * tokenFrom = p;
+    const char * tokenFrom = firstNonSpace;
     size_t tokenLength = 0;
     while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
 
-      tokenFrom = p + lex->tok_column - 1;
+      tokenFrom = firstNonSpace + lex->tok_column - 1;
       tokenLength = TokenLength(lex);
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
@@ -151,7 +149,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
 
     tokenFrom += tokenLength;
     if (tokenFrom < text + byteLength) {
-      LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), p, tokenFrom);
+      LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
       drawStringAt(ctx, line,
           UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
           tokenFrom,

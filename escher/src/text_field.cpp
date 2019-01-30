@@ -440,7 +440,7 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Right && isEditing() && cursorLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
     assert(isEditing());
-    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
+    UTF8Decoder decoder(cursorLocation());
     decoder.nextCodePoint();
     return setCursorLocation(decoder.stringPosition());
   }

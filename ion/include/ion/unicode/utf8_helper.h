@@ -15,7 +15,7 @@ const char * CodePointSearch(const char * s, CodePoint c);
 
 /* Returns the first occurence of a code point that is not c in a string,
  * stopping at the null-terminating char or the start of string. */
-const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition);
+const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft = false, const char * initialPosition = nullptr);
 
 /* Copy src into dst while removing all code points c. Also update an index
  * that should be lower if code points where removed before it. Ensure null-

@@ -211,6 +211,10 @@ bool ButtonRowController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void ButtonRowController::initView() {
+  m_contentView.mainViewController()->initView();
+}
+
 void ButtonRowController::viewWillAppear() {
   /* We need to layout subviews at first appearance because the number of
    * buttons might have changed between 2 appearences. */

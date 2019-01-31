@@ -348,8 +348,8 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     const Rational b = childAtIndex(1).convert<Rational>();
     // x^0
     if (b.isZero()) {
-      // 0^0 = undef
-      if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(0).convert<Rational>().isZero()) {
+      // 0^0 = undef or (±inf)^0 = undef
+      if ((childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(0).convert<Rational>().isZero()) || childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
         Expression result = Undefined();
         replaceWithInPlace(result);
         return result;
@@ -376,19 +376,21 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     Rational a = childAtIndex(0).convert<Rational>();
     // 0^x
     if (a.isZero()) {
+      // 0^x with x > 0 = 0
       if (childAtIndex(1).sign(&context) == ExpressionNode::Sign::Positive) {
         Expression result = Rational(0);
         replaceWithInPlace(result);
         return result;
       }
+      // 0^x with x < 0 = undef
       if (childAtIndex(1).sign(&context) == ExpressionNode::Sign::Negative) {
         Expression result = Undefined();
         replaceWithInPlace(result);
         return result;
       }
     }
-    // 1^x
-    if (a.isOne()) {
+    // 1^x = 1 if x != ±inf
+    if (a.isOne() && !childAtIndex(1).recursivelyMatchesInfinity(context)) {
       Expression result = Rational(1);
       replaceWithInPlace(result);
       return result;

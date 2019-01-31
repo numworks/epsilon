@@ -45,7 +45,7 @@ void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
     backgroundColor = KDColorWhite;
   }
   ctx->fillRect(bounds(), backgroundColor);
-  ctx->drawString(text(), glyphFrameAtPosition(text()).origin(), m_font, m_textColor, backgroundColor);
+  ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor);
 }
 
 const char * TextField::ContentView::text() const {
@@ -207,14 +207,15 @@ void TextField::ContentView::layoutSubviews() {
   TextInput::ContentView::layoutSubviews();
 }
 
-KDRect TextField::ContentView::glyphFrameAtPosition(const char * position) const {
-  assert(position != nullptr);
+KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {
+  assert(buffer != nullptr && position != nullptr);
+  assert(position >= buffer);
   KDSize glyphSize = m_font->glyphSize();
   KDCoordinate cursorWidth = m_cursorView.minimalSizeForOptimalDisplay().width();
   KDCoordinate horizontalOffset = m_horizontalAlignment == 0.0f ? 0.0f :
-    m_horizontalAlignment * (m_frame.width() - m_font->stringSize(text()).width() - cursorWidth);
+    m_horizontalAlignment * (m_frame.width() - m_font->stringSize(buffer).width() - cursorWidth);
   return KDRect(
-      horizontalOffset + m_font->stringSizeUntil(text(), position).width(),
+      horizontalOffset + m_font->stringSizeUntil(buffer, position).width(),
       m_verticalAlignment * (m_frame.height() - glyphSize.height()),
       glyphSize);
 }

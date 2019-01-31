@@ -84,8 +84,12 @@ public:
   void scrollToContentPoint(KDPoint p, bool allowOverscroll = false);
   void scrollToContentRect(KDRect rect, bool allowOverscroll = false); // Minimal scrolling to make this rect visible
 protected:
-  KDCoordinate maxContentWidthDisplayableWithoutScrolling();
-  KDCoordinate maxContentHeightDisplayableWithoutScrolling();
+  KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
+    return m_frame.width() - m_leftMargin - m_rightMargin;
+  }
+  KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
+    return m_frame.height() - m_topMargin - m_bottomMargin;
+  }
   KDRect visibleContentRect();
   void layoutSubviews() override;
   KDSize contentSize();

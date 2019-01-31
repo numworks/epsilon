@@ -90,9 +90,12 @@ void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
 }
 
 void TextField::ContentView::reinitDraftTextBuffer() {
-  setCursorLocation(m_draftTextBuffer);
+  /* We first need to clear the buffer, otherwise setCursorLocation might do
+   * various operations on a buffer with maybe non-initialized content, such as
+   * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
   m_draftTextBuffer[0] = 0;
   m_currentDraftTextLength = 0;
+  setCursorLocation(m_draftTextBuffer);
 }
 
 bool TextField::ContentView::insertTextAtLocation(const char * text, const char * location) {

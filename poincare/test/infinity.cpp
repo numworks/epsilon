@@ -34,5 +34,7 @@ QUIZ_CASE(poincare_infinity) {
   assert_parsed_expression_simplify_to("(-inf)^R(2)", "inf*(-1)^R(2)");
   assert_parsed_expression_simplify_to("inf^x", "inf^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
+  assert_parsed_expression_simplify_to("X^(inf)/inf", "0*X^inf");
+  assert_parsed_expression_simplify_to("ln(inf)*0", "0*ln(inf)");
 
 }

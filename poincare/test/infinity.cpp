@@ -24,6 +24,9 @@ QUIZ_CASE(poincare_infinity) {
   assert_parsed_expression_simplify_to("1E-1000", "0");
   assert_parsed_expression_evaluates_to<double>("1*10^1000", "inf");
 
+  assert_parsed_expression_simplify_to("inf^0", "undef");
+  assert_parsed_expression_simplify_to("1^inf", "1^inf");
+  assert_parsed_expression_simplify_to("1^(X^inf)", "1^(X^inf)");
   assert_parsed_expression_simplify_to("inf^(-1)", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-1)", "0");
   assert_parsed_expression_simplify_to("inf^(-R(2))", "0");

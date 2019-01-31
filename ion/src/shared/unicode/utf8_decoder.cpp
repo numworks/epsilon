@@ -23,7 +23,13 @@ CodePoint UTF8Decoder::nextCodePoint() {
   uint32_t result = last_k_bits(*m_stringPosition++, 8-leadingOnes-1);
   for (int i = 0; i < leadingOnes - 1; i++) {
     result <<= 6;
-    result += (*m_stringPosition++ & 0x3F);
+    char nextChunk = *m_stringPosition++;
+    if (!nextChunk && 0x80) {
+      /* The code point is not properly written. This might be due to a code
+       * point being translated into chars in a too small buffer. */
+      return UCodePointNull;
+    }
+    result += (nextChunk & 0x3F);
   }
   return CodePoint(result);
 }

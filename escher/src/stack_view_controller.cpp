@@ -96,6 +96,7 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   Frame frame = Frame(vc, textColor, backgroundColor, separatorColor);
   /* Add the frame to the model */
   pushModel(frame);
+  frame.viewController()->initView();
   if (!m_isVisible) {
     return;
   }
@@ -154,6 +155,10 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
 
 View * StackViewController::view() {
   return &m_view;
+}
+
+void StackViewController::initView() {
+  m_childrenFrame[0].viewController()->initView();
 }
 
 void StackViewController::viewWillAppear() {

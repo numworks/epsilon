@@ -434,13 +434,24 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
 
    /* Step 5: If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
-    * of turning 0*inf into undef.
+    * of turning 0*inf into undef. We still have to check that no other child
+    * involves an inifity expression to avoid reducing 0*e^(inf) to 0.
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
     if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isZero()) {
-      replaceWithInPlace(c);
-      return c;
+      // Check that other children don't match inf
+      bool infiniteFactor = false;
+      for (int i = 1; i < numberOfChildren(); i++) {
+        infiniteFactor = childAtIndex(i).recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Infinity; }, context, true);
+        if (infiniteFactor) {
+          break;
+        }
+      }
+      if (!infiniteFactor) {
+        replaceWithInPlace(c);
+        return c;
+      }
     }
     if (c.type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
       removeChildAtIndexInPlace(0);

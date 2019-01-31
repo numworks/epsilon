@@ -21,7 +21,7 @@
  * kandinsky/fonts/code_points.h). To easily compute the index of a code point in
  * the CodePoints table, we use the m_table matching table: it contains the
  * CodePointIndexPairs of the first code point of each series of consecutive
- * code points in the CodePoints table. */
+ * code points in the CodePoints table. This table is create in rasterizer.c. */
 
 class KDFont {
 private:

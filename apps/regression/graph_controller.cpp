@@ -121,8 +121,8 @@ void GraphController::reloadBannerView() {
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    // \xCC\x84 represents the combining bar ' ̄'
-    legend = "x\xCC\x84=";
+    // \xCC\x85 represents the combining overline ' ̅'
+    legend = "x\xCC\x85=";
     x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
@@ -139,8 +139,8 @@ void GraphController::reloadBannerView() {
   legend = "y=";
   double y = m_cursor->y();
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    // \xCC\x84 represents the combining bar ' ̄'
-    legend = "y\xCC\x84=";
+    // \xCC\x85 represents the combining overline ' ̅'
+    legend = "y\xCC\x85=";
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);

@@ -122,7 +122,7 @@ uint32_t CodePoints[] = {
   0x301, //  ́ // COMBINING ACUTE ACCENT
   0x302, //  ̂ // COMBINING CIRCUMFLEX ACCENT
   0x303, //  ̃ // COMBINING TILDE
-  0x304, //  ̄ // COMBINING MACRON
+  0x305, //  ̅ // COMBINING OVERLINE
   0x308, //  ̈ // COMBINING DIAERESIS
   0x30a, //  ̊ // COMBINING RING ABOVE
   0x327, //  ̧ // COMBINING CEDILLA
@@ -142,6 +142,7 @@ uint32_t CodePoints[] = {
   0x2248,  // ≈ // ALMOST EQUAL TO
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO
   0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
+  0xFFFD,  // � // REPLACEMENT CHARACTER
   0x1d422, // 𝐢 // MATHEMATICAL BOLD SMALL I"
 };
 

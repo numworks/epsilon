@@ -92,7 +92,7 @@ protected:
   }
   KDRect visibleContentRect();
   void layoutSubviews() override;
-  KDSize contentSize();
+  virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;

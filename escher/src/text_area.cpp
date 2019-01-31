@@ -426,7 +426,8 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
-KDRect TextArea::ContentView::glyphFrameAtPosition(const char * position) const {
+KDRect TextArea::ContentView::glyphFrameAtPosition(const char * text, const char * position) const {
+  assert(text == m_text.text());
   KDSize glyphSize = m_font->glyphSize();
   Text::Position p = m_text.positionAtPointer(position);
 

@@ -67,7 +67,7 @@ protected:
     constexpr static int k_maxBufferSize = 152;
   private:
     void layoutSubviews() override;
-    KDRect glyphFrameAtPosition(const char * position) const override;
+    KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;
     bool m_isEditing;
     char * m_textBuffer;
     char * m_draftTextBuffer;

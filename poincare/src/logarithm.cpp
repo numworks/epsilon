@@ -136,6 +136,24 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
    */
   bool letLogAtRoot = parentIsAPowerOfSameBase();
 
+  // log(+inf, a) ?
+  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Infinity && c.sign(&context) == ExpressionNode::Sign::Positive) {
+    Expression base = childAtIndex(1);
+    // log(+inf, a) --> ±inf with a rational and a > 0
+    if (base.type() == ExpressionNode::Type::Rational && !static_cast<Rational&>(base).isNegative() && !static_cast<Rational&>(base).isZero()) {
+      // log(+inf,a) with a < 1 --> -inf
+      // log(+inf,a) with a > 1 --> inf
+      if (static_cast<Rational&>(base).signedIntegerNumerator().isLowerThan(static_cast<Rational&>(base).integerDenominator())) {
+        c = c.setSign(ExpressionNode::Sign::Negative, &context, complexFormat, angleUnit, target);
+      }
+      replaceWithInPlace(c);
+      return c;
+    } else if (base.type() == ExpressionNode::Type::Constant && (static_cast<Constant &>(base).isExponential() || static_cast<Constant &>(base).isPi())) {
+      replaceWithInPlace(c);
+      return c;
+    }
+  }
+
   // log(x^y, b)->y*log(x, b) if x>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive) {
     Power p = static_cast<Power &>(c);

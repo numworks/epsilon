@@ -21,8 +21,12 @@ extern "C" {
  * - viewWillDisappear
  * - willExitResponderChain
  * - willResignFirstResponder
- * Both methods are always called after setting a view and layouting it
- * subviews. */
+ *
+ * Both methods are always called after setting a view and laying its subwiews
+ * out.
+ *
+ * The method initView is called before setting a View (or often sets itself)
+ * and laying it out. */
 
 #include <escher/view.h>
 #include <escher/responder.h>
@@ -43,6 +47,7 @@ public:
   ViewController(Responder * parentResponder);
   virtual const char * title();
   virtual View * view() = 0;
+  virtual void initView() {}
   virtual void viewWillAppear();
   virtual void viewDidDisappear();
   virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }

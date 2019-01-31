@@ -156,12 +156,14 @@ const char * TabViewController::tabName(uint8_t index) {
   return m_children[index]->title();
 }
 
-void TabViewController::viewWillAppear() {
-  if (m_view.m_tabView.numberOfTabs() != m_numberOfChildren) {
-    for (int i=0; i<m_numberOfChildren; i++) {
-      m_view.m_tabView.addTab(m_children[i]);
-    }
+void TabViewController::initView() {
+  for (int i=0; i<m_numberOfChildren; i++) {
+    m_view.m_tabView.addTab(m_children[i]);
+    m_children[i]->initView();
   }
+}
+
+void TabViewController::viewWillAppear() {
   if (m_dataSource->activeTab() < 0) {
     m_dataSource->setActiveTab(0);
   }

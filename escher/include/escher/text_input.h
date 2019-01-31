@@ -36,7 +36,7 @@ protected:
   protected:
     virtual void layoutSubviews() override;
     void reloadRectFromPosition(const char * position, bool lineBreak = false);
-    virtual KDRect glyphFrameAtPosition(const char * position) const = 0;
+    virtual KDRect glyphFrameAtPosition(const char * buffer, const char * position) const = 0;
     TextCursorView m_cursorView;
     const KDFont * m_font;
     const char * m_cursorLocation;

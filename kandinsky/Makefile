@@ -47,13 +47,13 @@ RASTERIZER := $(BUILD_DIR)/kandinsky/fonts/rasterizer
 $(eval $(call rule_for, \
   RASTER, \
   kandinsky/fonts/SmallSourcePixel.cpp, \
-  kandinsky/fonts/SmallSourcePixel.ttf $$(RASTERIZER), \
+  kandinsky/fonts/SmallSourcePixel.otf $$(RASTERIZER), \
   $$(RASTERIZER) $$< 12 12 SmallFont $$@ \
 ))
 
 $(eval $(call rule_for, \
   RASTER, \
   kandinsky/fonts/LargeSourcePixel.cpp, \
-  kandinsky/fonts/LargeSourcePixel.ttf $$(RASTERIZER), \
+  kandinsky/fonts/LargeSourcePixel.otf $$(RASTERIZER), \
   $$(RASTERIZER) $$< 16 16 LargeFont $$@ \
 ))

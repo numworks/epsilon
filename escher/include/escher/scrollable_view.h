@@ -11,7 +11,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void reloadScroll(bool forceRelayout = false);
 protected:
-  void layoutSubviews() override;
+  KDSize contentSize() const override;
   KDPoint m_manualScrollingOffset;
 };
 

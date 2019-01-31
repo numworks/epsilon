@@ -104,20 +104,14 @@ KDRect ScrollView::visibleContentRect() {
 }
 
 void ScrollView::layoutSubviews() {
-  // Layout contentView
-  // We're only re-positionning the contentView, not modifying its size.
   KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
-  KDRect contentFrame = KDRect(absoluteOffset, m_contentView->bounds().size());
+  KDRect contentFrame = KDRect(absoluteOffset, contentSize());
   m_contentView->setFrame(contentFrame);
   KDSize content(
     m_contentView->bounds().width() + m_leftMargin + m_rightMargin,
     m_contentView->bounds().height() + m_topMargin + m_bottomMargin
   );
   decorator()->layoutIndicators(content, contentOffset(), m_frame.size());
-}
-
-KDSize ScrollView::contentSize() {
-  return m_contentView->minimalSizeForOptimalDisplay();
 }
 
 void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {

@@ -135,6 +135,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
    *   information on the parent which could later be a power of b.
    */
   bool letLogAtRoot = parentIsAPowerOfSameBase();
+
   // log(x^y, b)->y*log(x, b) if x>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive) {
     Power p = static_cast<Power &>(c);
@@ -190,37 +191,47 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
 
 Expression Logarithm::simpleShallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
+  Expression b = childAtIndex(1);
   // log(0,0)->Undefined
-  if (c.type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isZero() && static_cast<Rational &>(c).isZero()) {
+  if (c.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero() && static_cast<Rational &>(c).isZero()) {
     Expression result = Undefined();
     replaceWithInPlace(result);
     return result;
   }
   // log(x,1)->Undefined
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isOne()) {
+  if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isOne()) {
     Expression result = Undefined();
     replaceWithInPlace(result);
     return result;
   }
-  // log(x,x)->1
-  if (c.isIdenticalTo(childAtIndex(1))) {
-    Expression result = Rational(1);
+  bool infiniteArg = c.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Infinity; }, context, true);
+  // log(x,x)->1 with x != inf and log(inf,inf) = undef
+  if (c.isIdenticalTo(b)) {
+    Expression result = infiniteArg ? Undefined().convert<Expression>() : Rational(1).convert<Expression>();
     replaceWithInPlace(result);
     return result;
   }
-  // log(x,0)->0
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isZero()) {
-    Expression result = Rational(0);
+  // log(x,0)->0 with x != inf and log(inf,0) = undef
+  if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero()) {
+    Expression result = infiniteArg ? Undefined().convert<Expression>() : Rational(0).convert<Expression>();
     replaceWithInPlace(result);
     return result;
   }
+
   if (c.type() == ExpressionNode::Type::Rational) {
     const Rational r = static_cast<Rational &>(c);
-    // log(0, x) = -inf if x > 1 || inf x < 1 || undef if x < 0
+    // log(0, x) = -inf if x > 1 && x != inf || inf x < 1 || undef if x < 0
     if (r.isZero()) {
+      bool infiniteBase = b.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Infinity; }, context, true);
+      // Special case: log(0,inf) -> undef
+      if (infiniteBase) {
+        Expression result = Undefined();
+        replaceWithInPlace(result);
+        return result;
+      }
       bool isNegative = true;
       Expression result;
-      Evaluation<float> baseApproximation = childAtIndex(1).node()->approximate(1.0f, context, complexFormat, angleUnit);
+      Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit);
       std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
         result = Undefined();

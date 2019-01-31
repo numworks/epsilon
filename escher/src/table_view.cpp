@@ -38,12 +38,20 @@ const char * TableView::className() const {
 #endif
 
 void TableView::layoutSubviews() {
-  // We only have to layout our contentView.
-  // We will size it here, and ScrollView::layoutSubviews will position it.
-
-  m_contentView.resizeToFitContent();
-
   ScrollView::layoutSubviews();
+  m_contentView.layoutSubviews();
+  /* FIXME:
+   * On the one hand, ScrollView::layoutSubviews()
+   * calls setFrame(...) over m_contentView,
+   * which typically calls layoutSubviews() over m_contentView.
+   * However, if the frame happens to be unchanged,
+   * setFrame(...) does not call layoutSubviews.
+   * On the other hand, calling only m_contentView.layoutSubviews()
+   * does not relayout ScrollView when the offset
+   * or the content's size changes.
+   * For those reasons, we call both of them explicitly.
+   * Finally, this solution is not optimal at all since
+   * layoutSubviews is called twice over m_contentView. */
 }
 
 void TableView::reloadCellAtLocation(int i, int j) {
@@ -73,13 +81,6 @@ KDCoordinate TableView::ContentView::columnWidth(int i) const {
   int columnWidth = m_dataSource->columnWidth(i);
   columnWidth = columnWidth ? columnWidth : m_tableView->maxContentWidthDisplayableWithoutScrolling();
   return columnWidth;
-}
-
-void TableView::ContentView::resizeToFitContent() {
-  if (!(m_tableView->bounds() == KDRectZero)) {
-    layoutSubviews();
-    setSize(KDSize(width(), height()));
-  }
 }
 
 KDCoordinate TableView::ContentView::height() const {

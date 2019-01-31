@@ -44,6 +44,10 @@ QUIZ_CASE(poincare_infinity) {
   assert_parsed_expression_simplify_to("log(inf,inf)", "undef");
 
   assert_parsed_expression_simplify_to("ln(inf)", "inf");
+  assert_parsed_expression_simplify_to("log(inf,-3)", "log(inf,-3)");
+  assert_parsed_expression_simplify_to("log(inf,3)", "inf");
+  assert_parsed_expression_simplify_to("log(inf,0.3)", "-inf");
+  assert_parsed_expression_simplify_to("log(inf,x)", "log(inf,x)");
   assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 
 }

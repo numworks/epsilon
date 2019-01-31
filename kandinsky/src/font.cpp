@@ -6,7 +6,7 @@
 constexpr static int k_tabCharacterWidth = 4;
 
 KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
-  if (text == nullptr) {
+  if (text == nullptr || (limit != nullptr && text >= limit)) {
     return KDSizeZero;
   }
   KDSize stringSize = KDSize(0, m_glyphSize.height());

@@ -35,6 +35,15 @@ QUIZ_CASE(poincare_infinity) {
   assert_parsed_expression_simplify_to("inf^x", "inf^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
   assert_parsed_expression_simplify_to("X^(inf)/inf", "0*X^inf");
-  assert_parsed_expression_simplify_to("ln(inf)*0", "0*ln(inf)");
+
+  // Logarithm
+  assert_parsed_expression_simplify_to("log(inf,0)", "undef");
+  assert_parsed_expression_simplify_to("log(inf,1)", "undef");
+  assert_parsed_expression_simplify_to("log(0,inf)", "undef");
+  assert_parsed_expression_simplify_to("log(1,inf)", "0");
+  assert_parsed_expression_simplify_to("log(inf,inf)", "undef");
+
+  assert_parsed_expression_simplify_to("ln(inf)", "inf");
+  assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 
 }

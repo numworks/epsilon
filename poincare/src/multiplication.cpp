@@ -443,7 +443,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       // Check that other children don't match inf
       bool infiniteFactor = false;
       for (int i = 1; i < numberOfChildren(); i++) {
-        infiniteFactor = childAtIndex(i).recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Infinity; }, context, true);
+        infiniteFactor = childAtIndex(i).recursivelyMatchesInfinity(context);
         if (infiniteFactor) {
           break;
         }

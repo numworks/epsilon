@@ -126,14 +126,6 @@ void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
   }
 }
 
-KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {
-  return m_frame.width() - m_leftMargin - m_rightMargin;
-}
-
-KDCoordinate ScrollView::maxContentHeightDisplayableWithoutScrolling() {
-  return m_frame.height() - m_topMargin - m_bottomMargin;
-}
-
 ScrollView::BarDecorator::BarDecorator() :
   m_verticalBar(),
   m_horizontalBar(),

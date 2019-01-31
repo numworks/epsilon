@@ -20,7 +20,7 @@ void TextInput::ContentView::setFont(const KDFont * font) {
 }
 
 KDRect TextInput::ContentView::cursorRect() {
-  return glyphFrameAtPosition(m_cursorLocation);
+  return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
 void TextInput::ContentView::layoutSubviews() {
@@ -32,7 +32,7 @@ void TextInput::ContentView::reloadRectFromPosition(const char * position, bool 
 }
 
 KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool lineBreak) const {
-  KDRect glyphRect = glyphFrameAtPosition(position);
+  KDRect glyphRect = glyphFrameAtPosition(text(), position);
   KDRect dirtyRect = KDRect(
       glyphRect.x(),
       glyphRect.y(),

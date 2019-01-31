@@ -119,7 +119,7 @@ protected:
     bool removeEndOfLine() override;
     bool removeStartOfLine();
   protected:
-    KDRect glyphFrameAtPosition(const char * position) const override;
+    KDRect glyphFrameAtPosition(const char * text, const char * position) const override;
     Text m_text;
   };
 

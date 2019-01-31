@@ -331,7 +331,6 @@ void shutdownClocks(bool keepLEDAwake) {
   if (keepLEDAwake) {
     apb1enr.setTIM3EN(true);
     ahb1enr.setGPIOBEN(true);
-    ahb1enr.setGPIOCEN(true);
   }
   RCC.APB1ENR()->set(apb1enr);
   RCC.AHB1ENR()->set(ahb1enr);

@@ -15,24 +15,16 @@ static inline bool isDigit(const CodePoint c) {
 
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
   UTF8Decoder decoder(m_text);
-  CodePoint firstCodePoint = decoder.nextCodePoint();
+  CodePoint c = decoder.nextCodePoint();
   const char * nextTextPosition = decoder.stringPosition();
-  if (firstCodePoint != UCodePointNull) {
-    CodePoint codePoint = decoder.nextCodePoint();
-    while (codePoint.isCombining()) {
-      nextTextPosition = decoder.stringPosition();
-      codePoint = decoder.nextCodePoint();
-    }
-  }
-  // TODO handle combined code points? For now the combining codepoints get dropped.
-  bool shouldPop = popTest(firstCodePoint, context);
+  bool shouldPop = popTest(c, context);
   if (testResult != nullptr) {
     *testResult = shouldPop;
   }
   if (shouldPop) {
     m_text = nextTextPosition;
   }
-  return firstCodePoint;
+  return c;
 }
 
 const CodePoint Tokenizer::popCodePoint() {
@@ -60,6 +52,8 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
 }
 
 size_t Tokenizer::popIdentifier() {
+  /* TODO handle combined code points? For now combining code points will
+   * trigger a syntax error. */
   return popWhile([](CodePoint c, CodePoint context) { return isLetter(c) || isDigit(c) || c == context; }, '_');
 }
 

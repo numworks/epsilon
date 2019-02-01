@@ -1,5 +1,9 @@
-# This script gather all .i18n files and aggregates them as a pair of .h/.cpp file
-# In practice, it enforces a NFKD normalization
+# -*- coding: utf-8 -*-
+
+# This script gathers all .i18n files and aggregates them as a pair of .h/.cpp
+# file.
+# In practice, it enforces a NFKD normalization. Because Epsilon does not
+# properly draw upper case letters with accents, we remove them here.
 # It works with Python 2 and Python 3
 
 import sys
@@ -9,7 +13,25 @@ import argparse
 import io
 
 def source_definition(i18n_string):
-    return (u"\"" + unicodedata.normalize("NFKD", i18n_string) + u"\"").encode("utf-8")
+    s = unicodedata.normalize("NFKD", i18n_string)
+    result = u"\""
+    i = 0
+    length = len(s)
+    checkForCombining = False
+    while i < length:
+        copyCodePoint = True
+        if checkForCombining:
+            # We remove combining code points, which are between 0x300 and 0x36F
+            # (for the non-extended set)
+            copyCodePoint = (ord(s[i]) < 0x300) or (ord(s[i]) > 0x36F)
+            checkForCombining = False
+        if copyCodePoint:
+            # Remove the uppercase characters with combining chars
+            checkForCombining = s[i].isupper()
+            result = result + s[i]
+        i = i+1
+    result = result + u"\""
+    return result.encode("utf-8")
 
 def split_line(line):
     match = re.match(r"^(\w+)\s*=\s*\"(.*)\"$", line)

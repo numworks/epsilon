@@ -53,7 +53,6 @@ const char * TextField::ContentView::text() const {
 }
 
 void TextField::ContentView::setText(const char * text) {
-  reloadRectFromPosition(m_textBuffer);
   size_t textRealLength = strlen(text);
   int textLength = minInt(textRealLength, m_textBufferSize - 1);
   // Copy the text
@@ -62,7 +61,7 @@ void TextField::ContentView::setText(const char * text) {
   if (m_isEditing || m_textBuffer == m_draftTextBuffer) {
     m_currentDraftTextLength = textLength;
   }
-  reloadRectFromPosition(m_textBuffer);
+  markRectAsDirty(bounds());
 }
 
 void TextField::ContentView::setAlignment(float horizontalAlignment, float verticalAlignment) {

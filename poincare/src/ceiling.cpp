@@ -68,14 +68,14 @@ Expression Ceiling::shallowReduce() {
   }
   Rational r = c.convert<Rational>();
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.remainder.isInfinity());
+  assert(!div.remainder.isOverflow());
   if (div.remainder.isZero()) {
     Expression result = Rational(div.quotient);
     replaceWithInPlace(result);
     return result;
   }
   Integer result = Integer::Addition(div.quotient, Integer(1));
-  if (result.isInfinity()) {
+  if (result.isOverflow()) {
     return *this;
   }
   Expression rationalResult = Rational(result);

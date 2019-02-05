@@ -22,7 +22,7 @@ void removeZeroAtTheEnd(Integer * i) {
     *i = d.quotient;
     d = Integer::Division(*i, base);
   }
-  assert(!i->isInfinity());
+  assert(!i->isOverflow());
 }
 
 void DecimalNode::setValue(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative) {
@@ -283,7 +283,7 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
   // Cap the length of the integralPart
   integralPartLength = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits : integralPartLength;
   Integer numerator(integralPart, integralPartLength, false);
-  assert(!numerator.isInfinity());
+  assert(!numerator.isOverflow());
   // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
   if (fractionalPart != nullptr && integralPartLength == 1 && integralPart[0] == '0') {
     integralPartLength = 0;
@@ -366,7 +366,7 @@ Expression Decimal::shallowReduce() {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
   }
   Expression result;
-  if (numerator.isInfinity() || denominator.isInfinity()) {
+  if (numerator.isOverflow() || denominator.isOverflow()) {
     result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)exp));
   } else {
     result = Rational(numerator, denominator);

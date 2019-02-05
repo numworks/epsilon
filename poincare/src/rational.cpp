@@ -203,7 +203,7 @@ Rational::Rational(const char * iString, const char * jString) : Number() {
 }
 
 bool Rational::numeratorOrDenominatorIsInfinity() const {
-  return signedIntegerNumerator().isInfinity() || integerDenominator().isInfinity();
+  return signedIntegerNumerator().isOverflow() || integerDenominator().isOverflow();
 }
 
 // Basic operations
@@ -244,17 +244,17 @@ Expression Rational::shallowReduce() {
    * the right behaviour would be to find the right float to represent them.
    * However at that point, it is too late to find it. The issue is earlier... */
 #if 0
-  if (unsignedIntegerNumerator().isInfinity() && integerDenominator().isInfinity()) {
+  if (unsignedIntegerNumerator().isOverflow() && integerDenominator().isOverflow()) {
     assert(false);
     return Undefined();
   }
   // Turn into Infinite if the numerator is too big.
-  if (unsignedIntegerNumerator().isInfinity()) {
+  if (unsignedIntegerNumerator().isOverflow()) {
     assert(false);
     return Infinity(sign(&context) == ExpressionNode::Sign::Negative);
   }
   // Turn into 0 if the denominator is too big.
-  if (integerDenominator().isInfinity()) {
+  if (integerDenominator().isOverflow()) {
     assert(false);
     return Rational(0);
   }
@@ -279,7 +279,7 @@ Expression Rational::denominator(Context & context, Preferences::ComplexFormat c
   if (d.isOne()) {
     return Expression();
   }
-  if (d.isInfinity()) {
+  if (d.isOverflow()) {
     return Infinity(false);
   }
   return Rational(d);

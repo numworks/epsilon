@@ -151,7 +151,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  if (isInfinity()) {
+  if (isOverflow()) {
     return PrintFloat::convertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
 
@@ -217,7 +217,7 @@ T Integer::approximate() const {
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
 
-  if (isInfinity()) {
+  if (isOverflow()) {
     return m_negative ? -INFINITY : INFINITY;
   }
 
@@ -273,7 +273,7 @@ T Integer::approximate() const {
 // Properties
 
 int Integer::NumberOfBase10DigitsWithoutSign(const Integer & i) {
-  assert(!i.isInfinity());
+  assert(!i.isOverflow());
   int numberOfDigits = 1;
   Integer base(10);
   IntegerDivision d = udiv(i, base);

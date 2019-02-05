@@ -41,7 +41,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   // Integer
   if (exponentLength == 0 && decimalLenght == 0) {
     Integer i(integralPart, integralLength, false);
-    if (!i.isInfinity()) {
+    if (!i.isOverflow()) {
       return Rational(i);
     }
   }

@@ -68,7 +68,7 @@ Expression Floor::shallowReduce() {
   }
   Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.quotient.isInfinity());
+  assert(!div.quotient.isOverflow());
   Expression result = Rational(div.quotient);
   replaceWithInPlace(result);
   return result;

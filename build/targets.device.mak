@@ -48,7 +48,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 .PHONY: openocd
 openocd:
-	openocd -f build/$(PLATFORM)/openocd.cfg
+	openocd -f build/$(PLATFORM)/openocd.$(MODEL).cfg
 
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
 flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/usb/flasher.ld

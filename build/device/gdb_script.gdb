@@ -3,7 +3,6 @@
 define armex
   printf "SCB_CFSR        0x%x\n", *0xE000ED28
   printf "SCB_HFSR        0x%x\n", *0xE000ED2C
-  printf "SCB_HFSR        0x%x\n", *0xE000ED2C
   printf "SCB_MMAR        0x%x\n", *0xE000ED34
   printf "SCB_BFAR        0x%x\n", *0xE000ED38
   printf "xPSR            0x%x\n", *(int *)($msp+28)
@@ -33,13 +32,8 @@ set pagination off
 load
 
 # Tell OpenOCD to reset and halt
-monitor itm ports on
-monitor tpiu config internal swo.log.bin uart off 16000000
-monitor reset halt
+# monitor itm ports on
+# monitor tpiu config internal swo.log.bin uart off 16000000
+# monitor reset halt
 
-break init
-break abort
-break __assert
-watch *(int *)(&_stack_end)
-
-continue
+# continue

@@ -386,7 +386,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
-  if (force) {
+  if (!sandboxIsDisplayed() && force) {
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
     m_editCell.setEditing(true);

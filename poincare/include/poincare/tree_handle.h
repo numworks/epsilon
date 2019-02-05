@@ -107,6 +107,8 @@ protected:
   void setIdentifierAndRetain(int newId);
   void setTo(const TreeHandle & tr);
 
+  static bool hasNode(int identifier) { return identifier > TreeNode::NoNodeIdentifier; }
+
   /* Hierarchy operations */
   // Add
   void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren);

@@ -16,7 +16,7 @@ TreeHandle TreeHandle::clone() const {
 }
 
 /* Hierarchy operations */
-TreeNode * TreeHandle::node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
+TreeNode * TreeHandle::node() const { assert(hasNode(m_identifier)); return TreePool::sharedPool()->node(m_identifier); }
 
 size_t TreeHandle::size() const { return node()->deepSize(node()->numberOfChildren()); }
 
@@ -204,7 +204,7 @@ void TreeHandle::setTo(const TreeHandle & tr) {
 }
 
 void TreeHandle::release(int identifier) {
-  if (identifier == TreeNode::NoNodeIdentifier) {
+  if (!hasNode(identifier)) {
     return;
   }
   TreeNode * node = TreePool::sharedPool()->node(identifier);

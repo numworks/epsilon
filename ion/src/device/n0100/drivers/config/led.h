@@ -3,20 +3,15 @@
 
 #include <regs/regs.h>
 
-/*  Pin | Role              | Mode                  | Function
- * -----+-------------------+-----------------------+----------
- *  PB0 | LED blue          | Alternate Function 2  | TIM3_CH3
- *  PB1 | LED green         | Alternate Function 2  | TIM3_CH4
- *  PC7 | LED red           | Alternate Function 2  | TIM3_CH2
- */
-
 namespace Ion {
 namespace Device {
 namespace LED {
 namespace Config {
 
-constexpr static GPIOPin RGBPins[] = {
-  GPIOPin(GPIOC, 7), GPIOPin(GPIOB, 1), GPIOPin(GPIOB, 0)
+constexpr static AFGPIOPin RGBPins[] = {
+  AFGPIOPin(GPIOB, 0,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOB, 1,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOC, 7,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
 };
 
 }

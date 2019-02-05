@@ -115,4 +115,27 @@ private:
   uint8_t m_data;
 };
 
+class AFGPIOPin {
+public:
+  constexpr AFGPIOPin(GPIO group, uint8_t pin, GPIO::AFR::AlternateFunction af, GPIO::PUPDR::Pull pull, GPIO::OSPEEDR::OutputSpeed speed) :
+    m_data( ((static_cast<int>(speed)&0x3)<<14) | ((static_cast<int>(pull)&0x3)<<12) | ((static_cast<int>(af)&0xF)<<8) | (group&0xF)<<4 | (pin&0xF) ) {}
+  GPIO group() const { return GPIO((m_data>>4)&0xF); }
+  uint8_t pin() const { return m_data&0xF; }
+  GPIO::AFR::AlternateFunction alternateFunction() const { return static_cast<GPIO::AFR::AlternateFunction>((m_data>>8)&0xF); }
+  GPIO::PUPDR::Pull pull() const { return static_cast<GPIO::PUPDR::Pull>((m_data>>12)&0x3); }
+  GPIO::OSPEEDR::OutputSpeed outputSpeed() const { return static_cast<GPIO::OSPEEDR::OutputSpeed>((m_data>>14)&0x3); }
+  void init() const {
+    group().OSPEEDR()->setOutputSpeed(pin(), outputSpeed());
+    group().MODER()->setMode(pin(), GPIO::MODER::Mode::AlternateFunction);
+    group().AFR()->setAlternateFunction(pin(), alternateFunction());
+    // TODO: Configure pulls
+  }
+  void shutdown() const {
+    group().MODER()->setMode(pin(), GPIO::MODER::Mode::Analog);
+    group().PUPDR()->setPull(pin(), GPIO::PUPDR::Pull::None);
+  }
+private:
+  uint16_t m_data;
+};
+
 #endif

@@ -3,20 +3,15 @@
 
 #include <regs/regs.h>
 
-/*  Pin | Role              | Mode
- * -----+-------------------+---------------------
- * PA13 | SWDIO             | Alternate Function 0
- * PA14 | SWCLK             | Alternate Function 0
- *  PB3 | SWO               | Alternate Function 0
- */
-
 namespace Ion {
 namespace Device {
 namespace SWD {
 namespace Config {
 
-constexpr static GPIOPin Pins[] = {
-  GPIOPin(GPIOA, 13), GPIOPin(GPIOA, 14), GPIOPin(GPIOB, 3)
+constexpr static AFGPIOPin Pins[] = {
+  AFGPIOPin(GPIOA, 13, GPIO::AFR::AlternateFunction::AF0, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOA, 14, GPIO::AFR::AlternateFunction::AF0, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOB, 3,  GPIO::AFR::AlternateFunction::AF0, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
 };
 
 }

@@ -18,9 +18,13 @@ namespace Device {
 namespace ExternalFlash {
 namespace Config {
 
-constexpr static GPIOPin QSPIPins[] = {
-  GPIOPin(GPIOB, 2), GPIOPin(GPIOB, 6), GPIOPin(GPIOC, 9), GPIOPin(GPIOD,12),
-  GPIOPin(GPIOC, 8), GPIOPin(GPIOD,13)
+constexpr static AFGPIOPin Pins[] = {
+  AFGPIOPin(GPIOB, 2,  GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOB, 6,  GPIO::AFR::AlternateFunction::AF9,  GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOC, 9,  GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOD, 12, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOD, 13, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
+  AFGPIOPin(GPIOE, 2,  GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
 };
 
 }

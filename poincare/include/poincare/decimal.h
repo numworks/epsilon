@@ -39,7 +39,7 @@ public:
   virtual void logAttributes(std::ostream & stream) const override {
     stream << " negative=\"" << m_negative << "\"";
     stream << " mantissa=\"";
-    this->signedMantissa().log(stream);
+    this->signedMantissa().logInteger(stream);
     stream << "\"";
     stream << " exponent=\"" << m_exponent << "\"";
   }

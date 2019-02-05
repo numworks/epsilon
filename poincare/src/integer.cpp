@@ -34,119 +34,95 @@ static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
 
+void IntegerNode::initToMatchSize(size_t goalSize) {
+  assert(goalSize != sizeof(IntegerNode));
+  int digitsSize = goalSize - sizeof(IntegerNode);
+  assert(digitsSize%sizeof(native_uint_t) == 0);
+  /* We are initing the Integer to match a specific size. The built integer
+   * is dummy. */
+  m_numberOfDigits = digitsSize/sizeof(native_uint_t);
+  assert(size() == goalSize);
+}
+
+static size_t IntegerSize(uint8_t numberOfDigits) {
+  return sizeof(IntegerNode) + sizeof(native_uint_t)*(numberOfDigits);
+}
+
+size_t IntegerNode::size() const {
+  return IntegerSize(m_numberOfDigits);
+}
+
 #if POINCARE_TREE_LOG
 
-void Integer::log(std::ostream & stream) const {
-  if (m_numberOfDigits > k_maxNumberOfDigits) {
-    stream << "Integer: overflow";
+void IntegerNode::logAttributes(std::ostream & stream) const {
+  stream << " value=\"";
+  log(stream);
+  stream << "\"";
+}
+
+void IntegerNode::log(std::ostream & stream) const {
+  if (m_numberOfDigits > Integer::k_maxNumberOfDigits) {
+    stream << "overflow";
     return;
   }
   double d = 0.0;
   double base = 1.0;
   for (int i = 0; i < m_numberOfDigits; i++) {
-    d += digit(i)*base;
+    d += m_digits[i]*base;
     base *= std::pow(2.0,32.0);
   }
-  stream << "Integer: " << d;
+  stream << d;
 }
 
 #endif
 
-/* new operator */
-
-// This bit buffer indicates which cases of the sIntegerBuffer are already allocated
-static uint16_t sbusyIntegerBuffer = 0;
-static native_uint_t sIntegerBuffer[(Integer::k_maxNumberOfDigits+1)*Integer::k_maxNumberOfIntegerSimutaneously];
-
-void Integer::TidyIntegerBuffer() {
-  sbusyIntegerBuffer = 0;
-}
-
-native_uint_t * Integer::allocDigits(int numberOfDigits) {
-  assert(numberOfDigits <= k_maxNumberOfDigits+1);
-  uint16_t bitIndex = 1 << (16-1);
-  int index = 0;
-  while (sbusyIntegerBuffer & bitIndex) {
-    bitIndex >>= 1;
-    index++;
-  }
-  if (bitIndex == 0) { // we overflow the sIntegerBuffer
-    assert(false);
-    return nullptr;
-  }
-  sbusyIntegerBuffer |= bitIndex;
-  return sIntegerBuffer+index*(Integer::k_maxNumberOfDigits+1);
-}
-
-void Integer::freeDigits(native_uint_t * digits) {
-  int index = (digits - sIntegerBuffer)/(Integer::k_maxNumberOfDigits+1);
-  assert(index < 16);
-  sbusyIntegerBuffer &= ~((uint16_t)1 << (16-1-index));
+void IntegerNode::setDigits(const native_uint_t * digits, uint8_t numberOfDigits) {
+  m_numberOfDigits = numberOfDigits;
+  memcpy(m_digits, digits, numberOfDigits*sizeof(native_uint_t));
 }
 
 // Constructor
 
 Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) {
-  if ((!digits || !enableOverflow) && numberOfDigits == k_maxNumberOfDigits+1) {
+  if ((!digits || !enableOverflow) && numberOfDigits >= k_maxNumberOfDigits+1) {
     return Overflow(negative);
   }
-  native_uint_t * newDigits = allocDigits(numberOfDigits);
-  for (uint8_t i = 0; i < numberOfDigits; i++) {
-    newDigits[i] = digits[i];
+  // 0 can't be negative
+  negative = numberOfDigits == 0 ? false : negative;
+  if (numberOfDigits <= 1) {
+    Integer i(TreeNode::NoNodeIdentifier, negative);
+    i.m_digit = numberOfDigits == 0 ? 0 : digits[0];
+    return i;
   }
-  return Integer(newDigits, numberOfDigits, negative, enableOverflow);
+  return Integer(digits, numberOfDigits, negative);
 }
 
-/* WARNING: This constructor takes ownership of the digits array! */
-Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) :
-  m_negative(numberOfDigits == 0 ? false : negative),
-  m_numberOfDigits(!enableOverflow && numberOfDigits > k_maxNumberOfDigits ? k_maxNumberOfDigits+1 : numberOfDigits),
-  m_digits(digits)
+// Private constructor
+Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
+  TreeHandle(TreePool::sharedPool()->createTreeNode<IntegerNode>(IntegerSize(numberOfDigits))),
+  m_negative(negative)
 {
-  if ((m_numberOfDigits <= 1 || (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigits)) && m_digits) {
-    freeDigits(m_digits);
-    if (m_numberOfDigits == 1) {
-      m_digit = digits[0];
-    } else {
-      m_digits = nullptr;
-    }
-  }
-  m_negative = m_numberOfDigits == 0 ? false : m_negative;
+  node()->setDigits(digits, numberOfDigits);
 }
 
-Integer::Integer(native_int_t i) {
-  if (i == 0) {
-    m_digits = nullptr;
-    m_numberOfDigits = 0;
-    m_negative = false;
-    return;
-  }
-  m_numberOfDigits = 1;
+Integer::Integer(native_int_t i) : TreeHandle(TreeNode::NoNodeIdentifier) {
   m_digit = i > 0 ? i : -i;
   m_negative = i < 0;
 }
 
 Integer::Integer(double_native_int_t i) {
-  if (i == 0) {
-    m_digits = nullptr;
-    m_numberOfDigits = 0;
-    m_negative = false;
-    return;
-  }
   double_native_uint_t j = i < 0 ? -i : i;
   native_uint_t * d = (native_uint_t *)&j;
   native_uint_t leastSignificantDigit = *d;
   native_uint_t mostSignificantDigit = *(d+1);
-  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
-  if (m_numberOfDigits == 1) {
+  uint8_t numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
+  if (numberOfDigits == 1) {
+    m_identifier = TreeNode::NoNodeIdentifier;
+    m_negative = i < 0;
     m_digit = leastSignificantDigit;
   } else {
-    native_uint_t * digits = allocDigits(m_numberOfDigits);
-    digits[0] = leastSignificantDigit;
-    digits[1] = mostSignificantDigit;
-    m_digits = digits;
+    new (this) Integer(d, 2, i < 0);
   }
-  m_negative = i < 0;
 }
 
 Integer::Integer(const char * digits, size_t length, bool negative) :
@@ -165,88 +141,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
       digits++;
     }
   }
-
   setNegative(isZero() ? false : negative);
-}
-
-void Integer::releaseDynamicIvars() {
-  if (!usesImmediateDigit() && m_digits) {
-    freeDigits(m_digits);
-  }
-}
-
-Integer::~Integer() {
-  releaseDynamicIvars();
-}
-
-Integer::Integer(Integer && other) {
-  // Pilfer other's data
-  if (other.usesImmediateDigit()) {
-    m_digit = other.m_digit;
-  } else {
-    m_digits = other.m_digits;
-  }
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_negative = other.m_negative;
-
-  // Reset other
-  other.m_digits = nullptr;
-  other.m_numberOfDigits = 1;
-  other.m_negative = 0;
-}
-
-Integer::Integer(const Integer& other) {
-  // Copy other's data
-  if (other.usesImmediateDigit() || other.isOverflow()) {
-    m_digit = other.m_digit;
-  } else {
-    native_uint_t * newDigits = allocDigits(other.m_numberOfDigits);
-    for (uint8_t i = 0; i < other.m_numberOfDigits; i++) {
-      newDigits[i] = other.m_digits[i];
-    }
-    m_digits = newDigits;
-  }
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_negative = other.m_negative;
-}
-
-Integer& Integer::operator=(Integer && other) {
-  if (this != &other) {
-    releaseDynamicIvars();
-    // Pilfer other's ivars
-    if (other.usesImmediateDigit()) {
-      m_digit = other.m_digit;
-    } else {
-      m_digits = other.m_digits;
-    }
-    m_numberOfDigits = other.m_numberOfDigits;
-    m_negative = other.m_negative;
-
-    // Reset other
-    other.m_digits = nullptr;
-    other.m_numberOfDigits = 1;
-    other.m_negative = 0;
-  }
-  return *this;
-}
-
-Integer& Integer::operator=(const Integer& other) {
-  if (this != &other) {
-    releaseDynamicIvars();
-    // Copy other's ivars
-    if (other.usesImmediateDigit() || other.isOverflow()) {
-      m_digit = other.m_digit;
-    } else {
-      native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-      for (uint8_t i = 0; i < other.m_numberOfDigits; i++) {
-        digits[i] = other.m_digits[i];
-      }
-      m_digits = digits;
-    }
-    m_numberOfDigits = other.m_numberOfDigits;
-    m_negative = other.m_negative;
-  }
-  return *this;
 }
 
 // Serialization
@@ -306,7 +201,7 @@ HorizontalLayout Integer::createLayout() const {
 
 template<typename T>
 T Integer::approximate() const {
-  if (m_numberOfDigits == 0) {
+  if (numberOfDigits() == 0) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
@@ -326,17 +221,18 @@ T Integer::approximate() const {
     return m_negative ? -INFINITY : INFINITY;
   }
 
-  native_uint_t lastDigit = m_numberOfDigits > 0 ? digit(m_numberOfDigits-1) : 0;
+  assert(numberOfDigits() > 0);
+  native_uint_t lastDigit = digit(numberOfDigits()-1);
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
 
   bool sign = m_negative;
   uint16_t exponent = IEEE754<T>::exponentOffset();
   /* Escape case if the exponent is too big to be stored */
-  assert(m_numberOfDigits > 0);
-  if (((int)m_numberOfDigits-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
+  assert(numberOfDigits() > 0);
+  if (((int)numberOfDigits()-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
     return  m_negative ? -INFINITY : INFINITY;
   }
-  exponent += (m_numberOfDigits-1)*32;
+  exponent += (numberOfDigits()-1)*32;
   exponent += numberOfBitsInLastDigit-1;
 
   uint64_t mantissa = 0;
@@ -352,8 +248,8 @@ T Integer::approximate() const {
    * the mantissa is complete to avoid undefined right shifting (Shift operator
    * behavior is undefined if the right operand is negative, or greater than or
    * equal to the length in bits of the promoted left operand). */
-  while (m_numberOfDigits >= digitIndex && numberOfBits < IEEE754<T>::size()) {
-    lastDigit = digit(m_numberOfDigits-digitIndex);
+  while (numberOfDigits() >= digitIndex && numberOfBits < IEEE754<T>::size()) {
+    lastDigit = digit(numberOfDigits()-digitIndex);
     numberOfBits += 32;
     if (IEEE754<T>::size() > numberOfBits) {
       assert(IEEE754<T>::size()-numberOfBits > 0 && IEEE754<T>::size()-numberOfBits < 64);
@@ -473,16 +369,16 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
     return Integer::Overflow(a.m_negative != b.m_negative);
   }
 
-  uint8_t size = min(a.m_numberOfDigits + b.m_numberOfDigits, k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
+  uint8_t size = min(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
-  native_uint_t * digits = allocDigits(size);
+  native_uint_t digits[k_maxNumberOfDigits + 1];
   memset(digits, 0, size*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
-  for (uint8_t i = 0; i < a.m_numberOfDigits; i++) {
+  for (uint8_t i = 0; i < a.numberOfDigits(); i++) {
     double_native_uint_t aDigit = a.digit(i);
     carry = 0;
-    for (uint8_t j = 0; j < b.m_numberOfDigits; j++) {
+    for (uint8_t j = 0; j < b.numberOfDigits(); j++) {
       double_native_uint_t bDigit = b.digit(j);
       /* The fact that aDigit and bDigit are double_native is very important,
        * otherwise the product might end up being computed on single_native size
@@ -494,17 +390,16 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
       } else {
         if (l[0] != 0) {
           // Overflow the largest Integer
-          freeDigits(digits);
           return Integer::Overflow(a.m_negative != b.m_negative);
-        }      }
+        }
+      }
       carry = l[1];
     }
-    if (i+b.m_numberOfDigits < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
-      digits[i+b.m_numberOfDigits] += carry;
+    if (i+b.numberOfDigits() < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
+      digits[i+b.numberOfDigits()] += carry;
     } else {
       if (carry != 0) {
         // Overflow the largest Integer
-        freeDigits(digits);
         return Integer::Overflow(a.m_negative != b.m_negative);
       }
     }
@@ -512,13 +407,13 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
   while (size>0 && digits[size-1] == 0) {
     size--;
   }
-  return Integer(digits, size, a.m_negative != b.m_negative, oneDigitOverflow);
+  return BuildInteger(digits, size, a.m_negative != b.m_negative, oneDigitOverflow);
 }
 
 int8_t Integer::ucmp(const Integer & a, const Integer & b) {
-  if (a.m_numberOfDigits < b.m_numberOfDigits) {
+  if (a.numberOfDigits() < b.numberOfDigits()) {
     return -1;
-  } else if (a.m_numberOfDigits > b.m_numberOfDigits) {
+  } else if (a.numberOfDigits() > b.numberOfDigits()) {
     return 1;
   }
   if (a.isOverflow() && b.isOverflow()) {
@@ -526,10 +421,10 @@ int8_t Integer::ucmp(const Integer & a, const Integer & b) {
   }
   assert(!a.isOverflow());
   assert(!b.isOverflow());
-  for (uint16_t i = 0; i < a.m_numberOfDigits; i++) {
+  for (uint16_t i = 0; i < a.numberOfDigits(); i++) {
     // Digits are stored most-significant last
-    native_uint_t aDigit = a.digit(a.m_numberOfDigits-i-1);
-    native_uint_t bDigit = b.digit(b.m_numberOfDigits-i-1);
+    native_uint_t aDigit = a.digit(a.numberOfDigits()-i-1);
+    native_uint_t bDigit = b.digit(b.numberOfDigits()-i-1);
     if (aDigit < bDigit) {
       return -1;
     } else if (aDigit > bDigit) {
@@ -541,27 +436,26 @@ int8_t Integer::ucmp(const Integer & a, const Integer & b) {
 
 Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool oneDigitOverflow) {
   if (a.isOverflow() || b.isOverflow()) {
-    return Integer::Overflow(a.m_negative != b.m_negative);
+    return Overflow(a.m_negative != b.m_negative);
   }
 
-  uint8_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
+  uint8_t size = max(a.numberOfDigits(), b.numberOfDigits());
   if (!subtract) {
     // Addition can overflow
     size++;
   }
-  native_uint_t * digits = allocDigits(max(size, k_maxNumberOfDigits+oneDigitOverflow));
+  native_uint_t digits[k_maxNumberOfDigits+1];
   bool carry = false;
   for (uint8_t i = 0; i < size; i++) {
-    native_uint_t aDigit = (i >= a.m_numberOfDigits ? 0 : a.digit(i));
-    native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
+    native_uint_t aDigit = (i >= a.numberOfDigits() ? 0 : a.digit(i));
+    native_uint_t bDigit = (i >= b.numberOfDigits() ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
     if (i < (uint8_t) (k_maxNumberOfDigits + oneDigitOverflow)) {
       digits[i] = result;
     } else {
       if (result != 0) {
         // Overflow the largest Integer
-        freeDigits(digits);
-        return Integer::Overflow(false);
+        return Overflow(false);
       }
     }
     if (subtract) {
@@ -574,50 +468,53 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
   while (size>0 && digits[size-1] == 0) {
     size--;
   }
-  return Integer(digits, size, false, oneDigitOverflow);
+  return BuildInteger(digits, size, false, oneDigitOverflow);
 }
 
 Integer Integer::multiplyByPowerOf2(uint8_t pow) const {
   assert(pow < 32);
-  native_uint_t * digits = allocDigits(m_numberOfDigits+1);
+  native_uint_t digits[k_maxNumberOfDigits+1];
   native_uint_t carry = 0;
-  for (uint8_t i = 0; i < m_numberOfDigits; i++) {
+  for (uint8_t i = 0; i < numberOfDigits(); i++) {
     digits[i] = digit(i) << pow | carry;
     carry = pow == 0 ? 0 : digit(i) >> (32-pow);
   }
-  digits[m_numberOfDigits] = carry;
-  return Integer(digits, carry ? m_numberOfDigits + 1 : m_numberOfDigits, false, true);
+  digits[numberOfDigits()] = carry;
+  return BuildInteger(digits, carry ? numberOfDigits() + 1 : numberOfDigits(), false, true);
 }
 
 Integer Integer::divideByPowerOf2(uint8_t pow) const {
   assert(pow < 32);
-  native_uint_t * digits = allocDigits(m_numberOfDigits);
+  native_uint_t digits[k_maxNumberOfDigits+1];
   native_uint_t carry = 0;
-  for (int i = m_numberOfDigits - 1; i >= 0; i--) {
+  for (int i = numberOfDigits() - 1; i >= 0; i--) {
     digits[i] = digit(i) >> pow | carry;
     carry = pow == 0 ? 0 : digit(i) << (32-pow);
   }
-  return Integer(digits, digits[m_numberOfDigits-1] > 0 ? m_numberOfDigits : m_numberOfDigits-1, false, true);
+  return BuildInteger(digits, digits[numberOfDigits()-1] > 0 ? numberOfDigits() : numberOfDigits()-1, false, true);
 }
 
 // return this*(2^16)^pow
 Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
   int nbOfHalfDigits = numberOfHalfDigits();
-  half_native_uint_t * digits = (half_native_uint_t *)allocDigits(m_numberOfDigits+(pow+1)/2);
-  memset(digits, 0, sizeof(native_uint_t)*(m_numberOfDigits+(pow+1)/2));
+  half_native_uint_t digits[2*(k_maxNumberOfDigits+1)];
+  /* The number of half digits of the built integer is nbOfHalfDigits+pow.
+   * Still, we set an extra half digit to 0 to easily convert half digits to
+   * digits. */
+  memset(digits, 0, sizeof(half_native_uint_t)*(nbOfHalfDigits+pow+1));
   for (uint8_t i = 0; i < nbOfHalfDigits; i++) {
     digits[i+pow] = halfDigit(i);
   }
   nbOfHalfDigits += pow;
-  return Integer((native_uint_t *)digits, nbOfHalfDigits%2 == 1 ? nbOfHalfDigits/2+1 : nbOfHalfDigits/2, false, true);
+  return BuildInteger((native_uint_t *)digits, nbOfHalfDigits%2 == 1 ? nbOfHalfDigits/2+1 : nbOfHalfDigits/2, false, true);
 }
 
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
   if (denominator.isOverflow()) {
-    return {.quotient = Integer::Overflow(false), .remainder = Integer::Overflow(false)};
+    return {.quotient = Overflow(false), .remainder = Integer::Overflow(false)};
   }
   if (numerator.isOverflow()) {
-    return {.quotient = Integer::Overflow(false), .remainder = Integer::Overflow(false)};
+    return {.quotient = Overflow(false), .remainder = Integer::Overflow(false)};
   }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */
@@ -646,8 +543,9 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   int n = B.numberOfHalfDigits();
   int m = A.numberOfHalfDigits()-n;
   // qDigits is a half_native_uint_t array and enable one digit overflow
-  half_native_uint_t * qDigits = (half_native_uint_t *)allocDigits(m/2+1);
-  memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
+  half_native_uint_t qDigits[2*k_maxNumberOfDigits];
+  // The quotient q has at maximum m+1 half digits but we set an extra half digit to 0 to enable to easily convert it from half digits to digits
+  memset(qDigits, 0, max(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
   // betaMB = B*beta^m
   Integer betaMB = B.multiplyByPowerOfBase(m);
   if (Integer::NaturalOrder(A,betaMB) >= 0) { // A >= B*beta^m
@@ -660,10 +558,12 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     half_native_uint_t baseMinus1 = (1 << 16) -1; // beta-1
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // min(qj2, beta -1)
     A = Integer::addition(A, multiplication(qDigits[j], B.multiplyByPowerOfBase(j), true), true, true); // A-q[j]*beta^j*B
-    Integer betaJM = B.multiplyByPowerOfBase(j); // betaJM = B*beta^j
-    while (A.isNegative()) {
-      qDigits[j] = qDigits[j]-1; // q[j] = q[j]-1
-      A = addition(A, betaJM, false, true); // A = B*beta^j+A
+    if (A.isNegative()) {
+      Integer betaJM = B.multiplyByPowerOfBase(j); // betaJM = B*beta^j
+      while (A.isNegative()) {
+        qDigits[j] = qDigits[j]-1; // q[j] = q[j]-1
+        A = addition(A, betaJM, false, true); // A = B*beta^j+A
+      }
     }
   }
   int qNumberOfDigits = m+1;
@@ -671,7 +571,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     qNumberOfDigits--;
   }
   int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
-  IntegerDivision div = {.quotient = Integer((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
+  IntegerDivision div = {.quotient = BuildInteger((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
   if (pow > 0 && !div.remainder.isZero()) {
     div.remainder = div.remainder.divideByPowerOf2(pow);
   }

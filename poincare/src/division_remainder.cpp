@@ -80,7 +80,7 @@ Expression DivisionRemainder::shallowReduce() {
     return result;
   }
   Integer result = Integer::Division(a, b).remainder;
-  assert(!result.isInfinity());
+  assert(!result.isOverflow());
   Expression rationalResult = Rational(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;

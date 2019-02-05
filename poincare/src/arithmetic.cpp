@@ -13,7 +13,7 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
 }
 
 Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
-  if (a.isInfinity() || b.isInfinity()) {
+  if (a.isOverflow() || b.isOverflow()) {
     return Integer::Overflow(false);
   }
 
@@ -41,7 +41,7 @@ const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 
 
 // we can go to 7907*7907 = 62 520 649
 int Arithmetic::PrimeFactorization(const Integer & n, Integer outputFactors[], Integer outputCoefficients[], int outputLength) {
-  assert(!n.isInfinity());
+  assert(!n.isOverflow());
 
   // Compute the absolute value of n
   Integer m = n;

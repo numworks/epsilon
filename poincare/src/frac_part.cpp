@@ -49,7 +49,7 @@ Expression FracPart::shallowReduce() {
   }
   Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.remainder.isInfinity());
+  assert(!div.remainder.isOverflow());
   Integer rDenominator = r.integerDenominator();
   Expression result = Rational(div.remainder, rDenominator);
   replaceWithInPlace(result);

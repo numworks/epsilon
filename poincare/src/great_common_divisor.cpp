@@ -87,7 +87,7 @@ Expression GreatCommonDivisor::shallowReduce() {
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   Integer gcd = Arithmetic::GCD(a, b);
-  assert(!gcd.isInfinity());
+  assert(!gcd.isOverflow());
   Expression result = Rational(gcd);
   replaceWithInPlace(result);
   return result;

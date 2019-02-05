@@ -13,10 +13,6 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 {
 }
 
-KDSize TableView::minimalSizeForOptimalDisplay() const {
-  return m_contentView.minimalSizeForOptimalDisplay();
-}
-
 TableViewDataSource * TableView::dataSource() {
   return m_contentView.dataSource();
 }

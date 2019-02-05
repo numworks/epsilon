@@ -8,6 +8,7 @@
 class ScrollView : public View {
 public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
+  KDSize minimalSizeForOptimalDisplay() const override;
 
   void setTopMargin(KDCoordinate m) { m_topMargin = m; }
   KDCoordinate topMargin() const { return m_topMargin; }

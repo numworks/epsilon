@@ -16,7 +16,7 @@ void onChargingEvent() {
 
   /* Warning: pins with the same number in different groups cannot be set as
    * source input for EXTI at the same time. Here, EXTICR1 register is filled
-   * between position 0-3 (charging pin = 0) with
+   * between position 12-15 (charging pin = 3) with
    * 0000 (ChargingGPIO = group A). */
   SYSCFG.EXTICR1()->setEXTI(Battery::Device::ChargingPin.pin(), Battery::Device::ChargingPin.group());
 
@@ -28,15 +28,14 @@ void onChargingEvent() {
 }
 
 void onUSBPlugging() {
-  USB::Device::initGPIO();
+  USB::Device::VbusPin.group().MODER()->setMode(USB::Device::VbusPin.pin(), GPIO::MODER::Mode::Input);
+  USB::Device::VbusPin.group().PUPDR()->setPull(USB::Device::VbusPin.pin(), GPIO::PUPDR::Pull::Down);
   /* Here, EXTICR3 register is filled between position 4-7 (Vbus pin = 9) with
    * 0000 (Vbus GPIO = group A). */
   SYSCFG.EXTICR3()->setEXTI(USB::Device::VbusPin.pin(), USB::Device::VbusPin.group());
 
   EXTI.EMR()->set(USB::Device::VbusPin.pin(), true);
-#if EPSILON_LED_WHILE_CHARGING
   EXTI.FTSR()->set(USB::Device::VbusPin.pin(), true);
-#endif
   EXTI.RTSR()->set(USB::Device::VbusPin.pin(), true);
 }
 
@@ -54,7 +53,7 @@ void onPowerKeyDown() {
   Keyboard::Device::ColumnGPIO.MODER()->setMode(columnPin, GPIO::MODER::Mode::Input);
   Keyboard::Device::ColumnGPIO.PUPDR()->setPull(columnPin, GPIO::PUPDR::Pull::Up);
 
-  /* Here, EXTICR1 register is filled between position 4-7 (column pin = 1) with
+  /* Here, EXTICR1 register is filled between position 8-11 (column pin = 2) with
    * 0010 (ColumnGPIO = group C). */
 
   SYSCFG.EXTICR1()->setEXTI(columnPin, Keyboard::Device::ColumnGPIO);

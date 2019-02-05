@@ -181,6 +181,10 @@ void shutdownGPIO() {
   Config::TearingEffectPin.group().MODER()->setMode(Config::TearingEffectPin.pin(), GPIO::MODER::Mode::Analog);
 }
 
+static inline int nsToCycles(int nanoseconds) {
+  return (nanoseconds*Config::HCLKFrequencyInMHz)/1000 + 1;
+}
+
 void initFSMC() {
   /* Set up the FSMC control registers.
    * We address the LCD panel as if it were an SRAM module, using a 16bits wide
@@ -224,17 +228,17 @@ void initFSMC() {
    */
 
   // Read timing from the LCD
-  FSMC.BTR(FSMCMemoryBank)->setADDSET(2);
+  FSMC.BTR(FSMCMemoryBank)->setADDSET(nsToCycles(15));
   FSMC.BTR(FSMCMemoryBank)->setADDHLD(0);
-  FSMC.BTR(FSMCMemoryBank)->setDATAST(36);
-  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(10);
+  FSMC.BTR(FSMCMemoryBank)->setDATAST(nsToCycles(355+15));
+  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(nsToCycles(90+15));
   FSMC.BTR(FSMCMemoryBank)->setACCMOD(FSMC::BTR::ACCMOD::A);
 
   // Write timings for the LCD
-  FSMC.BWTR(FSMCMemoryBank)->setADDSET(2);
+  FSMC.BWTR(FSMCMemoryBank)->setADDSET(nsToCycles(15));
   FSMC.BWTR(FSMCMemoryBank)->setADDHLD(0);
-  FSMC.BWTR(FSMCMemoryBank)->setDATAST(3);
-  FSMC.BWTR(FSMCMemoryBank)->setBUSTURN(3);
+  FSMC.BWTR(FSMCMemoryBank)->setDATAST(nsToCycles(15+15));
+  FSMC.BWTR(FSMCMemoryBank)->setBUSTURN(nsToCycles(15+15));
   FSMC.BWTR(FSMCMemoryBank)->setACCMOD(FSMC::BWTR::ACCMOD::A);
 }
 

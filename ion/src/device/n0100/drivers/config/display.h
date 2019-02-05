@@ -52,6 +52,8 @@ constexpr static GPIOPin TearingEffectPin = GPIOPin(GPIOB, 10);
 constexpr static DMA DMAEngine = DMA2;
 constexpr static int DMAStream = 0;
 
+constexpr static int HCLKFrequencyInMHz = 96;
+
 }
 }
 }

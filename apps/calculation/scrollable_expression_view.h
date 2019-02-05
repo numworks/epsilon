@@ -10,7 +10,6 @@ public:
   ScrollableExpressionView(Responder * parentResponder);
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor) override;
-  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   ExpressionView m_expressionView;
 };

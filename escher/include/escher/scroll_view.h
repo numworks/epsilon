@@ -8,7 +8,6 @@
 class ScrollView : public View {
 public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
 
   void setTopMargin(KDCoordinate m) { m_topMargin = m; }
   KDCoordinate topMargin() const { return m_topMargin; }
@@ -99,13 +98,27 @@ protected:
 private:
   ScrollViewDataSource * m_dataSource;
   int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
-  View * subviewAtIndex(int index) override { return (index == 0) ? m_contentView : decorator()->indicatorAtIndex(index); }
+  View * subviewAtIndex(int index) override { return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index); }
+
+  class InnerView : public View {
+  public:
+    InnerView(ScrollView * scrollView) : View(), m_scrollView(scrollView) {}
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+  private:
+    int numberOfSubviews() const override { return 1; }
+    View * subviewAtIndex(int index) override {
+      assert(index == 0);
+      return m_scrollView->m_contentView;
+    }
+    const ScrollView * m_scrollView;
+  };
 
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
 
+  InnerView m_innerView;
   Decorator::Type m_decoratorType;
   Decorator m_decorator;
   BarDecorator m_barDecorator;

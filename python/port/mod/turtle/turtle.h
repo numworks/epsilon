@@ -115,7 +115,7 @@ private:
     KDColor m_color;
   };
 
-  void setHeadingPrivate(mp_float_t angle) { m_heading = angle; }
+  void setHeadingPrivate(mp_float_t angle);
   KDPoint position(mp_float_t x, mp_float_t y) const;
   KDPoint position() const { return position(m_x, m_y); }
 

@@ -1,6 +1,6 @@
-include ion/src/device/boot/Makefile
-include ion/src/device/bench/Makefile
-include ion/src/device/usb/Makefile
+# Makefile belows should augment $(ion_device_objs)
+include ion/src/device/shared/Makefile
+include ion/src/device/$(MODEL)/Makefile
 
 ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
@@ -12,27 +12,10 @@ objs += $(addprefix ion/src/shared/, \
 
 # If you need to profile execution, you can replace events_keyboard with
 # events_replay.o and dummy/events_modifier.o
+ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
-objs += $(addprefix ion/src/device/, \
-  backlight.o \
-  battery.o\
-  base64.o\
-  console.o \
-  device.o\
-  display.o\
-  events.o\
-  external_flash.o\
-  flash.o\
-  keyboard.o\
-  led.o\
-  power.o\
-  sd_card.o\
-  stack.o\
-  swd.o \
-  timing.o \
-  usb.o \
-  wakeup.o \
-)
+$(ion_device_objs): SFLAGS += $(ION_DEVICE_SFLAGS)
+objs += $(ion_device_objs)
 
 # When using the register.h C++ file in production mode, we expect the compiler
 # to completely inline all bit manipulations. For some reason, if we build using

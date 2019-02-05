@@ -31,6 +31,14 @@ static void close() {
   FLASH.CR()->setLOCK(true);
 
   // Purge Data and instruction cache
+#if REGS_FLASH_CONFIG_ART
+  if (FLASH.ACR()->getARTEN()) {
+    FLASH.ACR()->setARTEN(false);
+    FLASH.ACR()->setARTRST(true);
+    FLASH.ACR()->setARTRST(false);
+    FLASH.ACR()->setARTEN(true);
+  }
+#else
   if (FLASH.ACR()->getDCEN()) {
     FLASH.ACR()->setDCEN(false);
     FLASH.ACR()->setDCRST(true);
@@ -43,6 +51,7 @@ static void close() {
     FLASH.ACR()->setICRST(false);
     FLASH.ACR()->setICEN(true);
   }
+#endif
 }
 
 // Compile-time log2

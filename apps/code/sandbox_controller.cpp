@@ -20,6 +20,10 @@ void SandboxController::reset() {
   redrawWindow();
 }
 
+void SandboxController::hide() {
+  stackViewController()->pop();
+}
+
 void SandboxController::viewWillAppear() {
   assert(m_executionEnvironment != nullptr);
   m_executionEnvironment->setSandboxIsDisplayed(true);

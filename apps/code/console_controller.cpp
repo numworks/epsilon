@@ -332,6 +332,13 @@ void ConsoleController::displaySandbox() {
   stackViewController()->push(&m_sandboxController);
 }
 
+void ConsoleController::hideSandbox() {
+  if (!sandboxIsDisplayed()) {
+    return;
+  }
+  m_sandboxController.hide();
+}
+
 void ConsoleController::resetSandbox() {
   if (!sandboxIsDisplayed()) {
     return;
@@ -364,6 +371,12 @@ void ConsoleController::printText(const char * text, size_t length) {
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
+  if (sandboxIsDisplayed()) {
+    /* The sandbox might be displayed, for instance if we are auto-importing
+     * several scripts that draw at importation. In this case, we want to remove
+     * the sandbox. */
+    hideSandbox();
+  }
   if (script.importationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 

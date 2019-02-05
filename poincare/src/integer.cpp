@@ -15,6 +15,15 @@ namespace Poincare {
 
 static inline int max(int x, int y) { return (x>y ? x : y); }
 
+/* To compute operations between Integers, we need an array where to store the
+ * result digits. Instead of allocating it on the stack which would eventually
+ * lead to a stack overflow, we keep a static working buffer. We actually need
+ * two of them because division involves inner multiplications and additions
+ * (which would override the division digits if there were using the same
+ * buffer). */
+static native_uint_t s_workingBuffer[Integer::k_maxNumberOfDigits + 1];
+static native_uint_t s_workingBufferDivision[Integer::k_maxNumberOfDigits + 1];
+
 uint8_t log2(native_uint_t v) {
   constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(native_uint_t);
   static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a native_uint_t");
@@ -371,8 +380,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
 
   uint8_t size = min(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
-  native_uint_t digits[k_maxNumberOfDigits + 1];
-  memset(digits, 0, size*sizeof(native_uint_t));
+  memset(s_workingBuffer, 0, size*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
   for (uint8_t i = 0; i < a.numberOfDigits(); i++) {
@@ -383,10 +391,10 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
       /* The fact that aDigit and bDigit are double_native is very important,
        * otherwise the product might end up being computed on single_native size
        * and then zero-padded. */
-      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
+      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(s_workingBuffer[i+j]); // TODO: Prove it cannot overflow double_native type
       native_uint_t * l = (native_uint_t *)&p;
       if (i+j < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
-        digits[i+j] = l[0];
+        s_workingBuffer[i+j] = l[0];
       } else {
         if (l[0] != 0) {
           // Overflow the largest Integer
@@ -396,7 +404,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
       carry = l[1];
     }
     if (i+b.numberOfDigits() < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
-      digits[i+b.numberOfDigits()] += carry;
+      s_workingBuffer[i+b.numberOfDigits()] += carry;
     } else {
       if (carry != 0) {
         // Overflow the largest Integer
@@ -404,10 +412,10 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
       }
     }
   }
-  while (size>0 && digits[size-1] == 0) {
+  while (size>0 && s_workingBuffer[size-1] == 0) {
     size--;
   }
-  return BuildInteger(digits, size, a.m_negative != b.m_negative, oneDigitOverflow);
+  return BuildInteger(s_workingBuffer, size, a.m_negative != b.m_negative, oneDigitOverflow);
 }
 
 int8_t Integer::ucmp(const Integer & a, const Integer & b) {
@@ -444,14 +452,13 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     // Addition can overflow
     size++;
   }
-  native_uint_t digits[k_maxNumberOfDigits+1];
   bool carry = false;
   for (uint8_t i = 0; i < size; i++) {
     native_uint_t aDigit = (i >= a.numberOfDigits() ? 0 : a.digit(i));
     native_uint_t bDigit = (i >= b.numberOfDigits() ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
     if (i < (uint8_t) (k_maxNumberOfDigits + oneDigitOverflow)) {
-      digits[i] = result;
+      s_workingBuffer[i] = result;
     } else {
       if (result != 0) {
         // Overflow the largest Integer
@@ -465,39 +472,37 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     }
   }
   size = min(size, k_maxNumberOfDigits+oneDigitOverflow);
-  while (size>0 && digits[size-1] == 0) {
+  while (size>0 && s_workingBuffer[size-1] == 0) {
     size--;
   }
-  return BuildInteger(digits, size, false, oneDigitOverflow);
+  return BuildInteger(s_workingBuffer, size, false, oneDigitOverflow);
 }
 
 Integer Integer::multiplyByPowerOf2(uint8_t pow) const {
   assert(pow < 32);
-  native_uint_t digits[k_maxNumberOfDigits+1];
   native_uint_t carry = 0;
   for (uint8_t i = 0; i < numberOfDigits(); i++) {
-    digits[i] = digit(i) << pow | carry;
+    s_workingBuffer[i] = digit(i) << pow | carry;
     carry = pow == 0 ? 0 : digit(i) >> (32-pow);
   }
-  digits[numberOfDigits()] = carry;
-  return BuildInteger(digits, carry ? numberOfDigits() + 1 : numberOfDigits(), false, true);
+  s_workingBuffer[numberOfDigits()] = carry;
+  return BuildInteger(s_workingBuffer, carry ? numberOfDigits() + 1 : numberOfDigits(), false, true);
 }
 
 Integer Integer::divideByPowerOf2(uint8_t pow) const {
   assert(pow < 32);
-  native_uint_t digits[k_maxNumberOfDigits+1];
   native_uint_t carry = 0;
   for (int i = numberOfDigits() - 1; i >= 0; i--) {
-    digits[i] = digit(i) >> pow | carry;
+    s_workingBuffer[i] = digit(i) >> pow | carry;
     carry = pow == 0 ? 0 : digit(i) << (32-pow);
   }
-  return BuildInteger(digits, digits[numberOfDigits()-1] > 0 ? numberOfDigits() : numberOfDigits()-1, false, true);
+  return BuildInteger(s_workingBuffer, s_workingBuffer[numberOfDigits()-1] > 0 ? numberOfDigits() : numberOfDigits()-1, false, true);
 }
 
 // return this*(2^16)^pow
 Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
   int nbOfHalfDigits = numberOfHalfDigits();
-  half_native_uint_t digits[2*(k_maxNumberOfDigits+1)];
+  half_native_uint_t * digits = reinterpret_cast<half_native_uint_t *>(s_workingBuffer);
   /* The number of half digits of the built integer is nbOfHalfDigits+pow.
    * Still, we set an extra half digit to 0 to easily convert half digits to
    * digits. */
@@ -543,7 +548,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   int n = B.numberOfHalfDigits();
   int m = A.numberOfHalfDigits()-n;
   // qDigits is a half_native_uint_t array and enable one digit overflow
-  half_native_uint_t qDigits[2*k_maxNumberOfDigits];
+  half_native_uint_t * qDigits = reinterpret_cast<half_native_uint_t *>(s_workingBufferDivision);
   // The quotient q has at maximum m+1 half digits but we set an extra half digit to 0 to enable to easily convert it from half digits to digits
   memset(qDigits, 0, max(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
   // betaMB = B*beta^m

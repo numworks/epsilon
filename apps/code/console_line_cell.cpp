@@ -31,10 +31,6 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder 
 {
 }
 
-KDSize ConsoleLineCell::ScrollableConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return m_consoleLineView.minimalSizeForOptimalDisplay();
-}
-
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   HighlightCell(),
   Responder(parentResponder),

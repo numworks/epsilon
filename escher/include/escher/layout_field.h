@@ -43,12 +43,6 @@ public:
     return m_delegate->layoutFieldShouldFinishEditing(this, event);
   }
 
-  /* View */
-  KDSize minimalSizeForOptimalDisplay() const override {
-    KDSize contentViewSize = m_contentView.minimalSizeForOptimalDisplay();
-    return KDSize(contentViewSize.width(), contentViewSize.height());
-  }
-
 protected:
   void reload(KDSize previousSize);
   virtual bool privateHandleEvent(Ion::Events::Event event);

@@ -138,8 +138,4 @@ bool ScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event e
   return ScrollableView::handleEvent(event);
 }
 
-KDSize ScrollableExactApproximateExpressionsView::minimalSizeForOptimalDisplay() const {
-  return m_contentCell.minimalSizeForOptimalDisplay();
-}
-
 }

@@ -7,7 +7,6 @@ extern "C" {
 #include "../../helpers.h"
 #include "../../port.h"
 
-static inline mp_float_t maxF(mp_float_t x, mp_float_t y) { return x >= y ? x : y;}
 static inline mp_float_t absF(mp_float_t x) { return x >= 0 ? x : -x;}
 
 static constexpr KDCoordinate k_iconSize = 15;
@@ -45,6 +44,23 @@ void Turtle::reset() {
 }
 
 bool Turtle::forward(mp_float_t length) {
+  /* cos and sin use radians, we thus need to multiply m_heading by PI/180 to
+   * compute the new turtle position. This induces rounding errors that are
+   * really visible when one expects a horizontal/vertical line and it is not.
+   * We thus make special cases for angles in degrees creating vertical /
+   * horizontal lines. */
+  if (m_heading == 0) {
+    return goTo(m_x + length, m_y);
+  }
+  if (m_heading == 180 || m_heading == -180) {
+    return goTo(m_x - length, m_y);
+  }
+  if (m_heading == 90 || m_heading == -270) {
+    return goTo(m_x, m_y + length);
+  }
+  if (m_heading == 270 || m_heading == -90) {
+    return goTo(m_x, m_y - length);
+  }
   return goTo(
     m_x + length * std::cos(m_heading * k_headingScale),
     m_y + length * std::sin(m_heading * k_headingScale)

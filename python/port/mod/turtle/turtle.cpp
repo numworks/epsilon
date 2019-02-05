@@ -175,6 +175,13 @@ void Turtle::viewDidDisappear() {
 
 // Private functions
 
+void Turtle::setHeadingPrivate(mp_float_t angle) {
+  // Put the angle in [0; 360[
+  mp_float_t angleLimit = 360;
+  m_heading = angle - ((angle >= 0 && angle < angleLimit) ? 0 : std::floor(angle/angleLimit) * angleLimit);
+  assert(m_heading >= 0 && m_heading < angleLimit);
+}
+
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
   return KDPoint(floor(x + k_xOffset), floor(k_invertedYAxisCoefficient * y + k_yOffset));
 }

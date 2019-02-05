@@ -20,7 +20,6 @@ public:
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
   void reloadCellAtLocation(int i, int j);
-  KDSize minimalSizeForOptimalDisplay() const override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

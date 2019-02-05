@@ -25,7 +25,6 @@ public:
   }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  KDSize minimalSizeForOptimalDisplay() const override;
   Poincare::Layout layout() const {
     return m_contentCell.layout();
   }

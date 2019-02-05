@@ -24,6 +24,14 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   assert(m_dataSource != nullptr);
 }
 
+KDSize ScrollView::minimalSizeForOptimalDisplay() const {
+  KDSize contentSize = m_contentView->minimalSizeForOptimalDisplay();
+  return KDSize(
+    contentSize.width() + m_leftMargin + m_rightMargin,
+    contentSize.height() + m_topMargin + m_bottomMargin
+  );
+}
+
 void ScrollView::setCommonMargins() {
   setTopMargin(Metric::CommonTopMargin);
   setRightMargin(Metric::CommonRightMargin);
@@ -68,8 +76,8 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
 
   /* Handle cases when the size of the view has decreased. */
   setContentOffset(KDPoint(
-    min(contentOffset().x(), max(contentSize().width() - maxContentWidthDisplayableWithoutScrolling(), 0)),
-    min(contentOffset().y(), max(contentSize().height() - maxContentHeightDisplayableWithoutScrolling(), 0))
+    min(contentOffset().x(), max(minimalSizeForOptimalDisplay().width() - bounds().width(), 0)),
+    min(contentOffset().y(), max(minimalSizeForOptimalDisplay().height() - bounds().height(), 0))
   ));
 }
 
@@ -92,11 +100,7 @@ void ScrollView::layoutSubviews() {
   KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
   KDRect contentFrame = KDRect(absoluteOffset, contentSize());
   m_contentView->setFrame(contentFrame);
-  KDSize content(
-    m_contentView->bounds().width() + m_leftMargin + m_rightMargin,
-    m_contentView->bounds().height() + m_topMargin + m_bottomMargin
-  );
-  decorator()->layoutIndicators(content, contentOffset(), m_frame.size());
+  decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), m_frame.size());
 }
 
 void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {

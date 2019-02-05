@@ -48,7 +48,6 @@ private:
     };
 
     ScrollableConsoleLineView(Responder * parentResponder);
-    KDSize minimalSizeForOptimalDisplay() const override;
     ConsoleLineView * consoleLineView() { return &m_consoleLineView; }
   private:
     ConsoleLineView m_consoleLineView;

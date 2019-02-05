@@ -14,6 +14,7 @@ public:
   SandboxController(Responder * parentResponder, MicroPython::ExecutionEnvironment * executionEnvironment);
   StackViewController * stackViewController();
   void reset();
+  void hide();
 
   // ViewController
   View * view() override { return &m_solidColorView; }

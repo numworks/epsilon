@@ -71,10 +71,10 @@ size_t RationalNode::size() const {
 void RationalNode::logAttributes(std::ostream & stream) const {
   stream << " negative=\"" << m_negative << "\"";
   stream << " numerator=\"";
-  this->signedNumerator().log(stream);
+  this->signedNumerator().logInteger(stream);
   stream << "\"";
   stream << " denominator=\"";
-  this->denominator().log(stream);
+  this->denominator().logInteger(stream);
   stream << "\"";
 }
 #endif

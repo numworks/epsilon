@@ -256,6 +256,7 @@ template MatrixNode * Poincare::TreePool::createTreeNode<MatrixNode>(size_t size
 template FloatNode<double> * Poincare::TreePool::createTreeNode<FloatNode<double> >(size_t size);
 template GreatCommonDivisorNode * Poincare::TreePool::createTreeNode<GreatCommonDivisorNode>(size_t size);
 template ImaginaryPartNode * Poincare::TreePool::createTreeNode<ImaginaryPartNode>(size_t size);
+template IntegerNode * Poincare::TreePool::createTreeNode<IntegerNode>(size_t size);
 template IntegralNode * Poincare::TreePool::createTreeNode<IntegralNode>(size_t size);
 template LeastCommonMultipleNode * Poincare::TreePool::createTreeNode<LeastCommonMultipleNode>(size_t size);
 template MatrixDimensionNode * Poincare::TreePool::createTreeNode<MatrixDimensionNode>(size_t size);

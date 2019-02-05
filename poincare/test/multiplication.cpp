@@ -20,6 +20,7 @@ QUIZ_CASE(poincare_multiplication_evaluate) {
 }
 
 QUIZ_CASE(poincare_multiplication_simplify) {
+  assert_parsed_expression_simplify_to("undef*x", "undef");
   assert_parsed_expression_simplify_to("0*x+B", "B");
   assert_parsed_expression_simplify_to("0*x*0*32*cos(3)", "0");
   assert_parsed_expression_simplify_to("3*A^4*B^x*B^2*(A^2+2)*2*1.2", "(36*A^6*B^(x+2)+72*A^4*B^(x+2))/5");

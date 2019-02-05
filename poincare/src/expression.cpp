@@ -216,7 +216,7 @@ Expression Expression::defaultShallowReduce() {
       result = Unreal();
       break;
     } else if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
-      Expression result = Undefined();
+      result = Undefined();
     }
   }
   if (!result.isUninitialized()) {

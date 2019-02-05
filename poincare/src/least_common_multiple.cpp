@@ -92,7 +92,7 @@ Expression LeastCommonMultiple::shallowReduce() {
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   Integer lcm = Arithmetic::LCM(a, b);
-  if (lcm.isInfinity()) {
+  if (lcm.isOverflow()) {
     return *this;
   }
   Expression result = Rational(lcm);

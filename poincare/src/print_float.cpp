@@ -179,7 +179,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   /* Part III: print mantissa*10^exponent*/
   int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
   // Print mantissa
-  assert(!dividend.isInfinity());
+  assert(!dividend.isOverflow());
   if (numberOfCharsForMantissaWithSign >= PrintFloat::k_maxFloatBufferLength) {
     /* Exception 3: if we are about to overflow the buffer, we escape by
      * returning a big int. This will be caught by 'convertFloatToText' which

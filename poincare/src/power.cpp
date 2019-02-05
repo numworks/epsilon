@@ -37,7 +37,7 @@ ExpressionNode::Sign PowerNode::sign(Context * context) const {
   if (childAtIndex(0)->sign(context) == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
     if (r->denominator().isOne()) {
-      assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isInfinity());
+      assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isOverflow());
       if (Integer::Division(r->signedNumerator(), Integer(2)).remainder.isZero()) {
         return Sign::Positive;
       } else {
@@ -897,7 +897,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));
     r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
   }
-  if (r2.isInfinity() || r1.isInfinity()) {
+  if (r2.isOverflow() || r1.isOverflow()) {
     // we overflow Integer at one point: we abort
     return Power(Rational(i), r.clone());
   }
@@ -956,7 +956,7 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
     // We do nothing for terms of the form sqrt(p)
     if (!q.isOne() || castedChild1.isMinusHalf()) {
       Integer pq = Integer::Multiplication(p, q);
-      if (pq.isInfinity()) {
+      if (pq.isOverflow()) {
         return result;
       }
       Power sqrt = Power(Rational(pq), Rational(1, 2));
@@ -1031,7 +1031,7 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
     } else {
       numerator = Subtraction(m1, m2);
     }
-    if (denominator.isInfinity() || factor1.isInfinity() || factor2.isInfinity() || pq1.isInfinity() || pq2.isInfinity()) {
+    if (denominator.isOverflow() || factor1.isOverflow() || factor2.isOverflow() || pq1.isOverflow() || pq2.isOverflow()) {
       return result; // Escape
     }
     numerator = numerator.deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);

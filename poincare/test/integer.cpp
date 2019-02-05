@@ -68,9 +68,9 @@ QUIZ_CASE(poincare_integer_properties) {
   quiz_assert(Integer(1).isOne());
   quiz_assert(!Integer(-1).isOne());
   quiz_assert(!Integer(0).isOne());
-  quiz_assert(OverflowedInteger().isInfinity()); // 2^32^k_maxNumberOfDigits
-  quiz_assert(!MaxInteger().isInfinity()); // 2^32^k_maxNumberOfDigits-1
-  quiz_assert(!Integer(0).isInfinity());
+  quiz_assert(OverflowedInteger().isOverflow()); // 2^32^k_maxNumberOfDigits
+  quiz_assert(!MaxInteger().isOverflow()); // 2^32^k_maxNumberOfDigits-1
+  quiz_assert(!Integer(0).isOverflow());
   quiz_assert(Integer(8).isEven());
   quiz_assert(!Integer(7).isEven());
   quiz_assert(Integer(-8).isEven());

@@ -106,13 +106,16 @@ public:
   // Sign
 
   // Properties
+  /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
+   * overflow, or when we want to have one more digit than usual to compute a
+   * big division. */
+  bool isOverflow() const { return m_identifier == OverflowIdentifier; }
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };
   bool isTen() const { return (numberOfDigits() == 1 && digit(0) == 10 && !m_negative); };
   bool isMinusOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_negative); };
   bool isZero() const { return (numberOfDigits() == 0); };
-  bool isInfinity() const { return numberOfDigits() > k_maxNumberOfDigits; }
   bool isEven() const { return ((digit(0) & 1) == 0); }
 
   constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
@@ -180,10 +183,6 @@ private:
   }
 
   bool usesImmediateDigit() const { return m_identifier == TreeNode::NoNodeIdentifier; }
-  /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
-   * overflow, or when we want to have one more digit than usual to compute a
-   * big division. */
-  bool isOverflow() const { return m_identifier == OverflowIdentifier; }
 
   bool m_negative;
   native_uint_t m_digit;

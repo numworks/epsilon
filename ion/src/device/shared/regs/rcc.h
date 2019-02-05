@@ -57,6 +57,7 @@ public:
       AHBDividedBy16 = 7
     };
     void setPPRE1(APBPrescaler r) volatile { setBitRange(12, 10, (uint32_t)r); }
+    void setPPRE2(APBPrescaler r) volatile { setBitRange(15, 13, (uint32_t)r); }
   };
 
   class AHB1ENR : public Register32 {

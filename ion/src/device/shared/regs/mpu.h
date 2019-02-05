@@ -26,7 +26,7 @@ public:
 
   class RBAR : Register32 {
   public:
-    void setADDR(void * address) volatile { assert(((uint32_t)address & 0b11111) == 0); setBitRange(31, 5, (uint32_t)address >> 5); }
+    void setADDR(uint32_t address) volatile { /* assert((address & 0b11111) == 0);*/ setBitRange(31, 5, address >> 5); }
     REGS_BOOL_FIELD(VALID, 4);
     REGS_FIELD(REGION, uint8_t, 3, 0);
   };
@@ -34,11 +34,19 @@ public:
   class RASR : Register32 {
   public:
     REGS_BOOL_FIELD(XN, 28);
-    REGS_FIELD(AP, uint8_t, 26, 24);
+    enum class AccessPermission : uint8_t {
+      NoAccess = 0,
+      PrivilegedRO = 5,
+      PrivilegedRW = 1,
+      PrivilegedRWUnprivilegedRO = 2,
+      RO = 6,
+      RW = 3
+    };
+    REGS_FIELD(AP, AccessPermission, 26, 24);
     REGS_FIELD(TEX, uint8_t, 21, 19);
-    REGS_BOOL_FIELD(S, 18);
-    REGS_BOOL_FIELD(C, 17);
-    REGS_BOOL_FIELD(B, 16);
+    REGS_BOOL_FIELD(S, 18); // Shareable
+    REGS_BOOL_FIELD(C, 17); // Cacheable
+    REGS_BOOL_FIELD(B, 16); // Buffereable
     REGS_FIELD(SRD, uint8_t, 15, 8);
     enum class RegionSize : uint8_t {
       Bytes32 = 0b00100,
@@ -46,6 +54,8 @@ public:
       Bytes128 = 0b00110,
       KyloBytes1 = 0b01001,
       MegaBytes1 = 0b10011,
+      _1MB = 19,
+      _32MB = 24,
       GigaBytes1 = 0b11101,
       GigaBytes4 = 0b11111
     };

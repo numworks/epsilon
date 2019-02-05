@@ -1,6 +1,8 @@
 #ifndef ION_DEVICE_CACHE_H
 #define ION_DEVICE_CACHE_H
 
+#include <regs/regs.h>
+
 namespace Ion {
 namespace Device {
 namespace Cache {

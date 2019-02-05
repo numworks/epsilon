@@ -21,6 +21,8 @@ static inline int max(int x, int y) { return (x>y ? x : y); }
  * two of them because division involves inner multiplications and additions
  * (which would override the division digits if there were using the same
  * buffer). */
+// TODO: we might want to go back to allocating the native_uint_t arrays on the stack once we increase the stack size from 32k to?
+
 static native_uint_t s_workingBuffer[Integer::k_maxNumberOfDigits + 1];
 static native_uint_t s_workingBufferDivision[Integer::k_maxNumberOfDigits + 1];
 

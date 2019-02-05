@@ -3,21 +3,15 @@
 
 #include <regs/regs.h>
 
-/*  Pin | Role              | Mode
- * -----+-------------------+--------------------
- * PC11 | UART3 RX          | Alternate Function
- *  PD8 | UART3 TX          | Alternate Function
- */
-
 namespace Ion {
 namespace Device {
 namespace Console {
 namespace Config {
 
-constexpr static USART UARTPort = USART(3);
+constexpr static USART Port = USART(3);
 constexpr static GPIOPin RxPin = GPIOPin(GPIOC, 11);
 constexpr static GPIOPin TxPin = GPIOPin(GPIOD, 8);
-constexpr static GPIOPin Pins[] = { RxPin, TxPin };
+constexpr static GPIO::AFR::AlternateFunction AlternateFunction = GPIO::AFR::AlternateFunction::AF8;
 
 }
 }

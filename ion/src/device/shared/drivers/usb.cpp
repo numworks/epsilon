@@ -70,22 +70,16 @@ void initGPIO() {
   Config::VbusPin.group().MODER()->setMode(Config::VbusPin.pin(), GPIO::MODER::Mode::Input);
   Config::VbusPin.group().PUPDR()->setPull(Config::VbusPin.pin(), GPIO::PUPDR::Pull::Down);
 #else
-  Config::VbusPin.group().MODER()->setMode(Config::VbusPin.pin(), GPIO::MODER::Mode::AlternateFunction);
-  Config::VbusPin.group().AFR()->setAlternateFunction(Config::VbusPin.pin(), GPIO::AFR::AlternateFunction::AF10);
+  Config::VbusPin.init();
 #endif
-
-  Config::DmPin.group().MODER()->setMode(Config::DmPin.pin(), GPIO::MODER::Mode::AlternateFunction);
-  Config::DmPin.group().AFR()->setAlternateFunction(Config::DmPin.pin(), GPIO::AFR::AlternateFunction::AF10);
-
-  Config::DpPin.group().MODER()->setMode(Config::DpPin.pin(), GPIO::MODER::Mode::AlternateFunction);
-  Config::DpPin.group().AFR()->setAlternateFunction(Config::DpPin.pin(), GPIO::AFR::AlternateFunction::AF10);
+  Config::DmPin.init();
+  Config::DpPin.init();
 }
 
 void shutdownGPIO() {
-  constexpr static GPIOPin USBPins[] = {Config::DpPin, Config::DmPin, Config::VbusPin};
-  for (const GPIOPin & g : USBPins) {
-    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
-    g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
+  constexpr static AFGPIOPin Pins[] = {Config::DpPin, Config::DmPin, Config::VbusPin};
+  for (const AFGPIOPin & p : Pins) {
+    p.shutdown();
   }
 }
 

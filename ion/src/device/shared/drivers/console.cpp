@@ -12,15 +12,15 @@ namespace Console {
 using namespace Ion::Device::Console;
 
 char readChar() {
-  while (Config::UARTPort.SR()->getRXNE() == 0) {
+  while (Config::Port.SR()->getRXNE() == 0) {
   }
-  return (char)Config::UARTPort.DR()->get();
+  return (char)Config::Port.DR()->get();
 }
 
 void writeChar(char c) {
-  while (Config::UARTPort.SR()->getTXE() == 0) {
+  while (Config::Port.SR()->getTXE() == 0) {
   }
-  Config::UARTPort.DR()->set(c);
+  Config::Port.DR()->set(c);
 }
 
 }
@@ -30,17 +30,19 @@ namespace Ion {
 namespace Device {
 namespace Console {
 
+constexpr static GPIOPin Pins[] = { Config::RxPin, Config::TxPin };
+
 void init() {
   RCC.APB1ENR()->setUSART3EN(true);
 
-  for(const GPIOPin & g : Config::Pins) {
+  for(const GPIOPin & g : Pins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
-    g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF7);
+    g.group().AFR()->setAlternateFunction(g.pin(), Config::AlternateFunction);
   }
 
-  Config::UARTPort.CR1()->setUE(true);
-  Config::UARTPort.CR1()->setTE(true);
-  Config::UARTPort.CR1()->setRE(true);
+  Config::Port.CR1()->setUE(true);
+  Config::Port.CR1()->setTE(true);
+  Config::Port.CR1()->setRE(true);
 
   /* We need to set the baud rate of the UART port.
    * This is set relative to the APB1 clock, which runs at 48 MHz.
@@ -53,12 +55,12 @@ void init() {
    * DIV_MANTISSA = 26
    * DIV_FRAC = 16*0.0416667 = 1
    */
-  Config::UARTPort.BRR()->setDIV_MANTISSA(26);
-  Config::UARTPort.BRR()->setDIV_FRAC(1);
+  Config::Port.BRR()->setDIV_MANTISSA(26);
+  Config::Port.BRR()->setDIV_FRAC(1);
 }
 
 void shutdown() {
-  for(const GPIOPin & g : Config::Pins) {
+  for(const GPIOPin & g : Pins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }

@@ -59,16 +59,14 @@ void initGPIO() {
   /* RED_LED(PC7), GREEN_LED(PB1), and BLUE_LED(PB0) are driven using a timer,
    * which is an alternate function. More precisely, we will use AF2, which maps
    * PB0 to TIM3_CH2, PB1 to TIM3_CH4, and PC7 to TIM3_CH2. */
-  for(const GPIOPin & g : Config::RGBPins) {
-    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
-    g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF2);
+  for(const AFGPIOPin & p : Config::RGBPins) {
+    p.init();
   }
 }
 
 void shutdownGPIO() {
-  for(const GPIOPin & g : Config::RGBPins) {
-    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
-    g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
+  for(const AFGPIOPin & p : Config::RGBPins) {
+    p.shutdown();
   }
 }
 

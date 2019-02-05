@@ -207,10 +207,8 @@ void init() {
 }
 
 void initGPIO() {
-  for(const GPIOPin & g : Config::QSPIPins) {
-    g.group().OSPEEDR()->setOutputSpeed(g.pin(), GPIO::OSPEEDR::OutputSpeed::High);
-    g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
-    g.group().AFR()->setAlternateFunction(g.pin(), (g.pin() == 6 ? GPIO::AFR::AlternateFunction::AF10 : GPIO::AFR::AlternateFunction::AF9));
+  for(const AFGPIOPin & p : Config::Pins) {
+    p.init();
   }
 }
 

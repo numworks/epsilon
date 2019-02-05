@@ -215,7 +215,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
           unaryCoefficient *= -1;
         }
       }
-      if (div.remainder.isInfinity()) {
+      if (div.remainder.isOverflow()) {
         return e;
       }
       // Step 4.5. Build the new result.

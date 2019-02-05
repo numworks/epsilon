@@ -103,7 +103,7 @@ Expression PermuteCoefficient::shallowReduce() {
     Integer factor = Integer::Subtraction(n, Integer(i));
     result = Integer::Multiplication(result, factor);
   }
-  assert(!result.isInfinity()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
+  assert(!result.isOverflow()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
   Expression rationalResult = Rational(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;

@@ -2,6 +2,7 @@
 #define REGS_FLASH_H
 
 #include "register.h"
+#include <regs/config/flash.h>
 
 class FLASH {
 public:
@@ -9,10 +10,15 @@ public:
   public:
     REGS_FIELD(LATENCY, uint8_t, 3, 0);
     REGS_BOOL_FIELD(PRFTEN, 8);
+#if REGS_FLASH_CONFIG_ART
+    REGS_BOOL_FIELD(ARTEN, 9);
+    REGS_BOOL_FIELD(ARTRST, 9);
+#else
     REGS_BOOL_FIELD(ICEN, 9);
     REGS_BOOL_FIELD(DCEN, 10);
     REGS_BOOL_FIELD(ICRST, 11);
     REGS_BOOL_FIELD(DCRST, 12);
+#endif
   };
 
   class KEYR : public Register32 {

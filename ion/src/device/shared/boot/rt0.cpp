@@ -59,12 +59,7 @@ void start() {
 
   /* Initialize the FPU as early as possible.
    * For example, static C++ objects are very likely to manipulate float values */
-  // FIXME//TODO//Ion::Device::initFPU();
-#warning BOO
-
-#if 0
-  Ion::Device::initMPU();
-#endif
+  Ion::Device::Board::initFPU();
 
   /* Call static C++ object constructors
    * The C++ compiler creates an initialization function for each static object.

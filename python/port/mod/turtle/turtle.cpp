@@ -76,8 +76,8 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
 bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t oldx = m_x;
   mp_float_t oldy = m_y;
-  mp_float_t xLength = absF(floor(x) - floor(oldx));
-  mp_float_t yLength = absF(floor(y) - floor(oldy));
+  mp_float_t xLength = absF(std::floor(x) - std::floor(oldx));
+  mp_float_t yLength = absF(std::floor(y) - std::floor(oldy));
   bool principalDirectionIsX = xLength >= yLength;
   mp_float_t length = principalDirectionIsX ? xLength : yLength;
 
@@ -183,7 +183,7 @@ void Turtle::setHeadingPrivate(mp_float_t angle) {
 }
 
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
-  return KDPoint(floor(x + k_xOffset), floor(k_invertedYAxisCoefficient * y + k_yOffset));
+  return KDPoint(std::floor(x + k_xOffset), std::floor(k_invertedYAxisCoefficient * y + k_yOffset));
 }
 
 bool Turtle::hasUnderneathPixelBuffer() {

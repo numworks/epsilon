@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/display.h>
+#include <ion/src/device/shared/drivers/display.h>
 #include <poincare/integer.h>
 
 namespace Ion {
@@ -12,12 +12,12 @@ namespace Command {
 void Display(const char * input) {
 
   if (strcmp(input, sON) == 0) {
-    Ion::Display::Device::init();
+    Ion::Device::Display::init();
     reply(sOK);
     return;
   }
   if (strcmp(input, sOFF) == 0) {
-    Ion::Display::Device::shutdown();
+    Ion::Device::Display::shutdown();
     reply(sOK);
     return;
   }

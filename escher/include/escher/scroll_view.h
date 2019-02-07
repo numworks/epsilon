@@ -35,6 +35,7 @@ public:
     virtual int numberOfIndicators() { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
     virtual void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {}
+    virtual void setBackgroundColor(KDColor c) {}
   };
 
   class BarDecorator : public Decorator {
@@ -64,6 +65,7 @@ public:
       return &m_topArrow + (index-1);
     }
     void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) override;
+    void setBackgroundColor(KDColor c) override;
   private:
     ScrollViewArrow m_topArrow;
     ScrollViewArrow m_rightArrow;
@@ -73,7 +75,10 @@ public:
 
   Decorator * decorator();
   void setDecoratorType(Decorator::Type t) { m_decoratorType = t; }
-  virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  virtual void setBackgroundColor(KDColor c) {
+    m_backgroundColor = c;
+    decorator()->setBackgroundColor(m_backgroundColor);
+  }
   KDColor backgroundColor() const { return m_backgroundColor; }
 
   void setContentOffset(KDPoint offset, bool forceRelayout = false);

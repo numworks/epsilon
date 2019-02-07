@@ -53,6 +53,7 @@ public:
   };
   ScrollViewArrow(Side side);
   bool update(bool visible);
+  void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   bool m_visible;

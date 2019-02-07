@@ -184,6 +184,12 @@ void ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset
   ));
 }
 
+void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
+  for (int i = 0; i < numberOfIndicators(); i++) {
+    (&m_topArrow + i)->setBackgroundColor(c);
+  }
+}
+
 #if ESCHER_VIEW_LOGGING
 const char * ScrollView::className() const {
   return "ScrollView";

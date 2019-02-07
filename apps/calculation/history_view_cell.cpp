@@ -39,17 +39,18 @@ Shared::ScrollableExactApproximateExpressionsView * HistoryViewCell::outputView(
 void HistoryViewCell::setEven(bool even) {
   EvenOddCell::setEven(even);
   m_inputView.setBackgroundColor(backgroundColor());
+  m_scrollableOutputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setEven(even);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
   assert(m_dataSource);
   m_highlighted = highlight;
-  m_inputView.setBackgroundColor(backgroundColor());
+  m_inputView.setExpressionBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   if (isHighlighted()) {
     if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-      m_inputView.setBackgroundColor(Palette::Select);
+      m_inputView.setExpressionBackgroundColor(Palette::Select);
     } else {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
     }

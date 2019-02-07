@@ -19,4 +19,8 @@ void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
   ScrollableView::setBackgroundColor(backgroundColor);
 }
 
+void ScrollableExpressionView::setExpressionBackgroundColor(KDColor backgroundColor) {
+  m_expressionView.setBackgroundColor(backgroundColor);
+}
+
 }

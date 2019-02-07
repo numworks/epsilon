@@ -12,7 +12,6 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
 
 void ScrollableExpressionView::setLayout(Layout layout) {
   m_expressionView.setLayout(layout);
-  layoutSubviews();
 }
 
 void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {

@@ -2,6 +2,10 @@ products += $(patsubst %.$(EXE),%.hex,$(filter %.$(EXE),$(products)))
 products += $(patsubst %.$(EXE),%.bin,$(filter %.$(EXE),$(products)))
 products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
+%.dfu: %.$(EXE)
+	@echo "DFUSE   $@"
+	$(Q) $(PYTHON) build/device/elf2dfu.py $< $@
+
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
 	$(Q) $(OBJCOPY) -O ihex $< $@

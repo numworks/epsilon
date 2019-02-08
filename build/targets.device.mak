@@ -50,9 +50,12 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 openocd:
 	openocd -f build/$(PLATFORM)/openocd.$(MODEL).cfg
 
+# The flasher target is defined here because otherwise $(objs) has not been
+# fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
-flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/usb/flasher.ld
-flasher.$(EXE): $(objs) $(usb_objs) ion/src/$(PLATFORM)/usb/flasher.o
+ion/src/$(PLATFORM)/shared/usb/flasher.o: SFLAGS += $(ION_DEVICE_SFLAGS)
+flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/ram.ld
+flasher.$(EXE): $(objs) ion/src/$(PLATFORM)/shared/usb/flasher.o
 else
 flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"

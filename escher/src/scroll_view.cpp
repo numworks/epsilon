@@ -18,7 +18,6 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   m_decorator(),
   m_barDecorator(),
   m_arrowDecorator(),
-  m_colorsBackground(true),
   m_backgroundColor(Palette::WallScreen)
 {
   assert(m_dataSource != nullptr);
@@ -44,9 +43,6 @@ ScrollView::Decorator * ScrollView::decorator() {
 }
 
 void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (!m_colorsBackground) {
-    return;
-  }
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDCoordinate offsetX = contentOffset().x();

@@ -58,7 +58,7 @@ openocd:
 # fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
 ion/src/$(PLATFORM)/shared/usb/flasher.o: SFLAGS += $(ION_DEVICE_SFLAGS)
-flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/ram.ld
+flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 flasher.$(EXE): $(objs) ion/src/$(PLATFORM)/shared/usb/flasher.o
 else
 flasher.$(EXE):

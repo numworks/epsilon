@@ -1,4 +1,4 @@
-#include "../regs/regs.h"
+#include <regs/regs.h>
 #include "../usb/calculator.h"
 #include <ion.h>
 
@@ -8,6 +8,6 @@ void ion_main(int argc, char * argv[]) {
     Ion::USB::enable();
     while (!Ion::USB::isEnumerated()) {
     }
-    Ion::USB::Device::Calculator::PollAndReset(false);
+    Ion::Device::USB::Calculator::PollAndReset(false);
   }
 }

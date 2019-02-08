@@ -73,8 +73,6 @@ public:
 
   Decorator * decorator();
   void setDecoratorType(Decorator::Type t) { m_decoratorType = t; }
-  void setColorsBackground(bool c) { m_colorsBackground = c; }
-  bool colorsBackground() const { return m_colorsBackground; }
   virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   KDColor backgroundColor() const { return m_backgroundColor; }
 
@@ -112,7 +110,6 @@ private:
   Decorator m_decorator;
   BarDecorator m_barDecorator;
   ArrowDecorator m_arrowDecorator;
-  bool m_colorsBackground;
   KDColor m_backgroundColor;
 };
 

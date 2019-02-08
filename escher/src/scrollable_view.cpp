@@ -8,7 +8,6 @@ ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollV
   m_manualScrollingOffset(KDPointZero)
 {
   setDecoratorType(ScrollView::Decorator::Type::None);
-  setColorsBackground(false);
 }
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {

@@ -102,6 +102,8 @@ ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressions
   ScrollableView(parentResponder, &m_contentCell, this),
   m_contentCell()
 {
+  setDecoratorType(ScrollView::Decorator::Type::Arrows);
+  setMargins(0, Metric::HistoryHorizontalMargin, 0, Metric::HistoryHorizontalMargin);
 }
 
 void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout rightLayout, Poincare::Layout leftLayout) {

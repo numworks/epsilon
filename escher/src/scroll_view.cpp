@@ -96,11 +96,11 @@ KDRect ScrollView::visibleContentRect() {
 }
 
 void ScrollView::layoutSubviews() {
-  m_innerView.setFrame(bounds());
-  KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin, m_topMargin));
+  KDRect innerFrame = decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), bounds());
+  m_innerView.setFrame(innerFrame);
+  KDPoint absoluteOffset = contentOffset().opposite().translatedBy(KDPoint(m_leftMargin - innerFrame.x(), m_topMargin - innerFrame.y()));
   KDRect contentFrame = KDRect(absoluteOffset, contentSize());
   m_contentView->setFrame(contentFrame);
-  decorator()->layoutIndicators(minimalSizeForOptimalDisplay(), contentOffset(), m_frame.size());
 }
 
 void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
@@ -112,8 +112,8 @@ void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
 void ScrollView::InnerView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate offsetX = m_scrollView->contentOffset().x();
-  KDCoordinate offsetY = m_scrollView->contentOffset().y();
+  KDCoordinate offsetX = m_scrollView->contentOffset().x() + m_frame.x();
+  KDCoordinate offsetY = m_scrollView->contentOffset().y() + m_frame.y();
   KDCoordinate contentHeight = m_scrollView->m_contentView->bounds().height();
   KDCoordinate contentWidth = m_scrollView->m_contentView->bounds().width();
   ctx->fillRect(KDRect(0, 0, width, m_scrollView->m_topMargin-offsetY), m_scrollView->m_backgroundColor);
@@ -129,7 +129,7 @@ ScrollView::BarDecorator::BarDecorator() :
 {
 }
 
-void ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
+KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
   KDCoordinate hBarFrameBreadth = m_barsFrameBreadth * m_horizontalBar.update(
     content.width(),
     offset.x(),
@@ -150,6 +150,7 @@ void ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, 
     0, frame.height() - hBarFrameBreadth,
     frame.width() - vBarFrameBreadth, hBarFrameBreadth
   ));
+  return frame;
 }
 
 ScrollView::ArrowDecorator::ArrowDecorator() :
@@ -160,7 +161,7 @@ ScrollView::ArrowDecorator::ArrowDecorator() :
 {
 }
 
-void ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {
+KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
   KDSize arrowSize = KDFont::LargeFont->glyphSize();
   KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());
   KDCoordinate rightArrowFrameBreadth = arrowSize.width() * m_rightArrow.update(offset.x() + frame.width() < content.width());
@@ -182,6 +183,12 @@ void ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset
     0, 0,
     leftArrowFrameBreadth, frame.height()
   ));
+  return KDRect(
+    frame.x() + leftArrowFrameBreadth,
+    frame.y() + topArrowFrameBreadth,
+    frame.width() - leftArrowFrameBreadth - rightArrowFrameBreadth,
+    frame.height() - topArrowFrameBreadth - bottomArrowFrameBreadth
+  );
 }
 
 void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {

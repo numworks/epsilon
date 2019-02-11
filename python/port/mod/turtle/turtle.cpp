@@ -194,8 +194,13 @@ void Turtle::viewDidDisappear() {
 void Turtle::setHeadingPrivate(mp_float_t angle) {
   // Put the angle in [0; 360[
   mp_float_t angleLimit = 360;
-  m_heading = angle - ((angle >= 0 && angle < angleLimit) ? 0 : std::floor(angle/angleLimit) * angleLimit);
-  assert(m_heading >= 0 && m_heading < angleLimit);
+  mp_float_t angleBetween0And360 = angle - ((angle >= 0 && angle < angleLimit) ? 0 : std::floor(angle/angleLimit) * angleLimit);
+  if (angleBetween0And360 >= 0 && angleBetween0And360 < angleLimit) {
+    m_heading = angleBetween0And360;
+  } else {
+    // When angle is too big, our formula does not put it properly in [0; 360[
+    m_heading = 0;
+  }
 }
 
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {

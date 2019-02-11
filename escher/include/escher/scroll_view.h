@@ -34,7 +34,7 @@ public:
     };
     virtual int numberOfIndicators() { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
-    virtual void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) {}
+    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
   };
 
@@ -46,7 +46,7 @@ public:
       assert(0 < index && index <= numberOfIndicators());
       return &m_verticalBar + (index-1);
     }
-    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
     void setBarsFrameBreadth(KDCoordinate t) { m_barsFrameBreadth = t; }
@@ -64,7 +64,7 @@ public:
       assert(0 < index && index <= numberOfIndicators());
       return &m_topArrow + (index-1);
     }
-    void layoutIndicators(KDSize content, KDPoint offset, KDSize frame) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
     void setBackgroundColor(KDColor c) override;
   private:
     ScrollViewArrow m_topArrow;

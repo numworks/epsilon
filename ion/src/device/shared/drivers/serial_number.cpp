@@ -1,5 +1,4 @@
 #include "serial_number.h"
-#include <drivers/config/serial_number.h>
 #include "base64.h"
 
 namespace Ion {
@@ -21,7 +20,8 @@ namespace Device {
 namespace SerialNumber {
 
 void copy(char * buffer) {
-  Base64::encode((const unsigned char *)RawUniqueIDAddress, 12, buffer);
+  const unsigned char * rawUniqueID = (const unsigned char *)0x1FFF7A10;
+  Base64::encode(rawUniqueID, 12, buffer);
   buffer[Length] = 0;
 }
 

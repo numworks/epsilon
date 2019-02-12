@@ -5,6 +5,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/wakeup.h>
 #include <regs/regs.h>
+#include <regs/config/pwr.h>
 
 namespace Ion {
 namespace Power {
@@ -23,8 +24,14 @@ void suspend(bool checkIfPowerKeyReleased) {
   }
   Device::Board::shutdownPeripherals(isLEDActive);
 
+  // This is done differently on the models
   PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
   PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
+#if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
+  PWR.CR()->setLPUDS(true);
+  PWR.CR()->setUDEN(PWR::CR::UnderDrive::Enable);
+#endif
+
   CM4.SCR()->setSLEEPDEEP(!isLEDActive);
 
   while (1) {

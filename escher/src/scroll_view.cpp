@@ -2,6 +2,8 @@
 #include <escher/palette.h>
 #include <escher/metric.h>
 
+#include <new>
+
 extern "C" {
 #include <assert.h>
 }
@@ -15,13 +17,24 @@ ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   m_bottomMargin(0),
   m_leftMargin(0),
   m_innerView(this),
-  m_decoratorType(Decorator::Type::Bars),
-  m_decorator(),
-  m_barDecorator(),
-  m_arrowDecorator(),
+  m_decorators(),
   m_backgroundColor(Palette::WallScreen)
 {
   assert(m_dataSource != nullptr);
+  setDecoratorType(Decorator::Type::Bars);
+}
+
+ScrollView::ScrollView(ScrollView&& other) :
+  m_contentView(other.m_contentView),
+  m_dataSource(other.m_dataSource),
+  m_topMargin(other.m_topMargin),
+  m_rightMargin(other.m_rightMargin),
+  m_bottomMargin(other.m_bottomMargin),
+  m_leftMargin(other.m_leftMargin),
+  m_innerView(this),
+  m_backgroundColor(other.m_backgroundColor)
+{
+  setDecoratorType(other.m_decoratorType);
 }
 
 KDSize ScrollView::minimalSizeForOptimalDisplay() const {
@@ -37,18 +50,6 @@ void ScrollView::setCommonMargins() {
   setRightMargin(Metric::CommonRightMargin);
   setBottomMargin(Metric::CommonBottomMargin);
   setLeftMargin(Metric::CommonLeftMargin);
-}
-
-ScrollView::Decorator * ScrollView::decorator() {
-  switch (m_decoratorType) {
-    case Decorator::Type::Bars:
-      return &m_barDecorator;
-    case Decorator::Type::Arrows:
-      return &m_arrowDecorator;
-    default:
-      assert(m_decoratorType == Decorator::Type::None);
-      return &m_decorator;
-  }
 }
 
 void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
@@ -194,6 +195,21 @@ KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offs
 void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
   for (int i = 0; i < numberOfIndicators(); i++) {
     (&m_topArrow + i)->setBackgroundColor(c);
+  }
+}
+
+void ScrollView::Decorators::setActiveDecorator(Decorator::Type t) {
+  /* We do NOT need to destroy the previous decorator because they don't have a destructor */
+  switch (t) {
+    case Decorator::Type::Bars:
+      new (&m_bars) BarDecorator();
+      break;
+    case Decorator::Type::Arrows:
+      new (&m_arrows) ArrowDecorator();
+      break;
+    default:
+      assert(t == Decorator::Type::None);
+      new (&m_none) Decorator();
   }
 }
 

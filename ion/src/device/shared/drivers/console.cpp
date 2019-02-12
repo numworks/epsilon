@@ -14,13 +14,13 @@ using namespace Ion::Device::Console;
 char readChar() {
   while (Config::Port.SR()->getRXNE() == 0) {
   }
-  return (char)Config::Port.DR()->get();
+  return (char)Config::Port.RDR()->get();
 }
 
 void writeChar(char c) {
   while (Config::Port.SR()->getTXE() == 0) {
   }
-  Config::Port.DR()->set(c);
+  Config::Port.TDR()->set(c);
 }
 
 }

@@ -8,7 +8,7 @@ namespace Device {
 namespace Console {
 namespace Config {
 
-constexpr static USART Port = USART(6);
+constexpr static ::USART Port = ::USART(6);
 constexpr static GPIOPin RxPin = GPIOPin(GPIOC, 7);
 constexpr static GPIOPin TxPin = GPIOPin(GPIOC, 6);
 constexpr static GPIO::AFR::AlternateFunction AlternateFunction = GPIO::AFR::AlternateFunction::AF8;

@@ -131,6 +131,7 @@ void initClocks() {
   // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);
+  RCC.APB1ENR()->setUSART3EN(true);
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0x00008000); // Reset value

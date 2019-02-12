@@ -153,6 +153,7 @@ void initClocks() {
   class RCC::APB2ENR apb2enr(0); // Reset value
   apb2enr.setADC1EN(true);
   apb2enr.setSYSCFGEN(true);
+  apb2enr.setUSART6EN(true);
   RCC.APB2ENR()->set(apb2enr);
 }
 

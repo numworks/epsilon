@@ -33,8 +33,6 @@ namespace Console {
 constexpr static GPIOPin Pins[] = { Config::RxPin, Config::TxPin };
 
 void init() {
-  RCC.APB1ENR()->setUSART3EN(true);
-
   for(const GPIOPin & g : Pins) {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
     g.group().AFR()->setAlternateFunction(g.pin(), Config::AlternateFunction);

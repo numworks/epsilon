@@ -41,20 +41,7 @@ void init() {
   Config::Port.CR1()->setUE(true);
   Config::Port.CR1()->setTE(true);
   Config::Port.CR1()->setRE(true);
-
-  /* We need to set the baud rate of the UART port.
-   * This is set relative to the APB1 clock, which runs at 48 MHz.
-   *
-   * The baud rate is set by the following equation:
-   * BaudRate = fAPB1/(16*USARTDIV), where USARTDIV is a divider.
-   * In other words, USARDFIV = fAPB1/(16*BaudRate). All frequencies in Hz.
-   *
-   * In our case, fAPB1 = 48 MHz, so USARTDIV = 26.0416667
-   * DIV_MANTISSA = 26
-   * DIV_FRAC = 16*0.0416667 = 1
-   */
-  Config::Port.BRR()->setDIV_MANTISSA(26);
-  Config::Port.BRR()->setDIV_FRAC(1);
+  Config::Port.BRR()->set(Config::USARTDIVValue);
 }
 
 void shutdown() {

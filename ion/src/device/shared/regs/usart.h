@@ -29,9 +29,9 @@ public:
 
   class BRR : Register32 {
   public:
-    // TODO one value only on 0-15
-    REGS_FIELD(DIV_FRAC, uint8_t, 3, 0);
-    REGS_FIELD(DIV_MANTISSA, uint16_t, 15, 4);
+    void set(uint16_t v) volatile {
+      setBitRange(15, 0, v);
+    }
   };
 
   class CR1 : Register32 {

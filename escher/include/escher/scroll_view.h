@@ -8,6 +8,7 @@
 class ScrollView : public View {
 public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
+  ScrollView(ScrollView&& other);
   KDSize minimalSizeForOptimalDisplay() const override;
 
   void setTopMargin(KDCoordinate m) { m_topMargin = m; }
@@ -73,8 +74,11 @@ public:
     ScrollViewArrow m_leftArrow;
   };
 
-  Decorator * decorator();
-  void setDecoratorType(Decorator::Type t) { m_decoratorType = t; }
+  Decorator * decorator() { return m_decorators.activeDecorator(); }
+  void setDecoratorType(Decorator::Type t) {
+    m_decoratorType = t;
+    m_decorators.setActiveDecorator(t);
+  }
   virtual void setBackgroundColor(KDColor c) {
     m_backgroundColor = c;
     decorator()->setBackgroundColor(m_backgroundColor);
@@ -126,9 +130,19 @@ private:
 
   InnerView m_innerView;
   Decorator::Type m_decoratorType;
-  Decorator m_decorator;
-  BarDecorator m_barDecorator;
-  ArrowDecorator m_arrowDecorator;
+  union Decorators {
+  public:
+    /* Enforce trivial constructor and destructor that just leaves the memory unmodified. */
+    Decorators() {}
+    ~Decorators() {}
+    Decorator * activeDecorator() { return &m_none; }
+    void setActiveDecorator(Decorator::Type t);
+  private:
+    Decorator m_none;
+    BarDecorator m_bars;
+    ArrowDecorator m_arrows;
+  };
+  Decorators m_decorators;
   KDColor m_backgroundColor;
 };
 

@@ -40,18 +40,18 @@ public:
 
   class CR1 : Register32 {
   public:
-    REGS_BOOL_FIELD(UE, Ion::Device::USART::Config::UEOffset);
+    REGS_BOOL_FIELD(UE, REGS_USART_CR1_UE_BIT);
     REGS_BOOL_FIELD(TE, 3);
     REGS_BOOL_FIELD(RE, 2);
   };
 
   constexpr USART(int i) : m_index(i) {}
   constexpr operator int() const { return m_index; }
-  REGS_REGISTER_AT(SR, Ion::Device::USART::Config::SROffset);
-  REGS_REGISTER_AT(RDR, Ion::Device::USART::Config::RDROffset);
-  REGS_REGISTER_AT(TDR, Ion::Device::USART::Config::TDROffset);
-  REGS_REGISTER_AT(BRR, Ion::Device::USART::Config::BRROffset);
-  REGS_REGISTER_AT(CR1, Ion::Device::USART::Config::CR1Offset);
+  REGS_REGISTER_AT(SR, REGS_USART_SR_OFFSET);
+  REGS_REGISTER_AT(RDR, REGS_USART_RDR_OFFSET);
+  REGS_REGISTER_AT(TDR, REGS_USART_TDR_OFFSET);
+  REGS_REGISTER_AT(BRR, REGS_USART_BRR_OFFSET);
+  REGS_REGISTER_AT(CR1, REGS_USART_CR1_OFFSET);
 private:
   constexpr uint32_t Base() const {
     return ((uint32_t []){0x40011000, 0x40004400, 0x40004800, 0x40004C00, 0x40005000, 0x40011400})[m_index-1];

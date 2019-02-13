@@ -1,6 +1,6 @@
 #include "command.h"
 #include <ion.h>
-#include <ion/src/device/led.h>
+#include <ion/src/device/shared/drivers/led.h>
 
 namespace Ion {
 namespace Device {
@@ -10,12 +10,12 @@ namespace Command {
 // Input must be of the form "0xAABBCC" or "ON" or "OFF"
 void LED(const char * input) {
   if (strcmp(input, sON) == 0) {
-    Ion::LED::Device::init();
+    Ion::Device::LED::init();
     Ion::Console::writeLine(sOK);
     return;
   }
   if (strcmp(input, sOFF) == 0) {
-    Ion::LED::Device::shutdown();
+    Ion::Device::LED::shutdown();
     Ion::Console::writeLine(sOK);
     return;
   }

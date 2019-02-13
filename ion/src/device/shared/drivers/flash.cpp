@@ -5,6 +5,8 @@ namespace Ion {
 namespace Device {
 namespace Flash {
 
+using namespace Regs;
+
 static inline void wait() {
   // Wait for pending Flash operations to complete
   while (FLASH.SR()->getBSY()) {

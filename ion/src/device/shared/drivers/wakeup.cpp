@@ -11,6 +11,8 @@ namespace Ion {
 namespace Device {
 namespace WakeUp {
 
+using namespace Regs;
+
 void onChargingEvent() {
   Battery::initGPIO();
 

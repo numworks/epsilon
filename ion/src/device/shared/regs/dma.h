@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class DMA {
 public:
   class LIFCR : public Register32 {
@@ -59,5 +63,9 @@ private:
 
 constexpr DMA DMA1(0);
 constexpr DMA DMA2(1);
+
+}
+}
+}
 
 #endif

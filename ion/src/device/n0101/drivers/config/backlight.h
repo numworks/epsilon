@@ -13,6 +13,8 @@ namespace Device {
 namespace Backlight {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static GPIOPin BacklightPin = GPIOPin(GPIOE, 0);
 
 }

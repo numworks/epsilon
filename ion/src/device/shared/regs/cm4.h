@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class CM4 {
 public:
   // Vector table offset register
@@ -111,5 +115,9 @@ private:
 };
 
 constexpr CM4 CM4;
+
+}
+}
+}
 
 #endif

@@ -5,7 +5,8 @@
 namespace Ion {
 namespace USB {
 
-using namespace Ion::Device::USB;
+using namespace Device::USB;
+using namespace Device::Regs;
 
 bool isPlugged() {
   return Config::VbusPin.group().IDR()->get(Config::VbusPin.pin());
@@ -38,6 +39,8 @@ void disable() {
 namespace Ion {
 namespace Device {
 namespace USB {
+
+using namespace Regs;
 
 void init() {
   initGPIO();

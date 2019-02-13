@@ -5,6 +5,10 @@
 
 #include "gpio.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class SYSCFG {
 public:
   class MEMRMP : Register32 {
@@ -40,5 +44,9 @@ private:
 };
 
 constexpr SYSCFG SYSCFG;
+
+}
+}
+}
 
 #endif

@@ -18,7 +18,7 @@ void WriteMemory(uint8_t * source, uint8_t * destination, size_t length);
 
 /* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
  * Flash 32 bits at once. */
-constexpr FLASH::CR::PSIZE MemoryAccessWidth = FLASH::CR::PSIZE::X32;
+constexpr Regs::FLASH::CR::PSIZE MemoryAccessWidth = Regs::FLASH::CR::PSIZE::X32;
 typedef uint32_t MemoryAccessType;
 
 }

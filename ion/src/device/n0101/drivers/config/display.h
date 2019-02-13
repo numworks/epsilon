@@ -8,6 +8,8 @@ namespace Device {
 namespace Display {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static GPIOPin FSMCPins[] = {
   GPIOPin(GPIOD, 0), GPIOPin(GPIOD, 1), GPIOPin(GPIOD, 4), GPIOPin(GPIOD, 5),
   GPIOPin(GPIOD, 7), GPIOPin(GPIOD, 8), GPIOPin(GPIOD, 9), GPIOPin(GPIOD, 10),

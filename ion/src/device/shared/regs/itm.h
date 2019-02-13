@@ -4,6 +4,10 @@
 #include "register.h"
 
 // See ARM Cortex M4 TRM
+//
+namespace Ion {
+namespace Device {
+namespace Regs {
 
 class ITM {
 public:
@@ -28,5 +32,9 @@ private:
 };
 
 constexpr ITM ITM;
+
+}
+}
+}
 
 #endif

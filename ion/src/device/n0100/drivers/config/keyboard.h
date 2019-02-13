@@ -27,6 +27,8 @@ namespace Device {
 namespace Keyboard {
 namespace Config {
 
+using namespace Regs;
+
 constexpr GPIO RowGPIO = GPIOE;
 constexpr uint8_t numberOfRows = 9;
 constexpr uint8_t RowPins[numberOfRows] = {0, 1, 2, 3, 4, 5, 6, 7, 8};

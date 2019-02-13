@@ -11,6 +11,8 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
+using namespace Regs;
+
 void Endpoint0::setup() {
   // Setup the IN direction
 

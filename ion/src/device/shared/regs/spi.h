@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class SPI {
 public:
   class CR1 : Register16 {
@@ -41,5 +45,9 @@ private:
 };
 
 constexpr SPI SPI1(1);
+
+}
+}
+}
 
 #endif

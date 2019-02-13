@@ -18,6 +18,8 @@ namespace Device {
 namespace ExternalFlash {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static AFGPIOPin Pins[] = {
   AFGPIOPin(GPIOB, 2,  GPIO::AFR::AlternateFunction::AF9, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
   AFGPIOPin(GPIOB, 6,  GPIO::AFR::AlternateFunction::AF10,  GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),

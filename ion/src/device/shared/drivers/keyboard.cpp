@@ -77,6 +77,8 @@ namespace Ion {
 namespace Device {
 namespace Keyboard {
 
+using namespace Regs;
+
 void init() {
   for (uint8_t i=0; i<Config::numberOfRows; i++) {
     uint8_t pin = Config::RowPins[i];

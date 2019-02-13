@@ -8,6 +8,8 @@ namespace Device {
 namespace Console {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static USART Port = USART(6);
 constexpr static GPIOPin RxPin = GPIOPin(GPIOC, 7);
 constexpr static GPIOPin TxPin = GPIOPin(GPIOC, 6);

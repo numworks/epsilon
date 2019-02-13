@@ -4,6 +4,10 @@
 #include "register.h"
 #include <regs/config/flash.h>
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class FLASH {
 public:
   class ACR : public Register32 {
@@ -58,5 +62,9 @@ private:
 };
 
 constexpr FLASH FLASH;
+
+}
+}
+}
 
 #endif

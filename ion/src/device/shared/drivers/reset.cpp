@@ -5,6 +5,8 @@ namespace Ion {
 namespace Device {
 namespace Reset {
 
+using namespace Regs;
+
 void core() {
   // Perform a full core reset
   CM4.AIRCR()->requestReset();

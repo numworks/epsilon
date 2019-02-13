@@ -18,7 +18,7 @@
 namespace Ion {
 namespace Display {
 
-using namespace Ion::Device::Display;
+using namespace Device::Display;
 
 void pushRect(KDRect r, const KDColor * pixels) {
 #if USE_DMA
@@ -61,6 +61,8 @@ void waitForVBlank() {
 namespace Ion {
 namespace Device {
 namespace Display {
+
+using namespace Regs;
 
 static inline void send_data(uint16_t d) {
   *DataAddress = d;

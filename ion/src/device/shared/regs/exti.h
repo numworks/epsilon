@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class EXTI {
 public:
   class MaskRegister : Register32 {
@@ -30,5 +34,9 @@ private:
 };
 
 constexpr EXTI EXTI;
+
+}
+}
+}
 
 #endif

@@ -15,6 +15,8 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
+using namespace Regs;
+
 void initL1Cache() {
   Cache::enableICache();
   Cache::enableDCache();

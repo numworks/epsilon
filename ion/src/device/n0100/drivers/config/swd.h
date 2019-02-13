@@ -8,6 +8,8 @@ namespace Device {
 namespace SWD {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static AFGPIOPin Pins[] = {
   AFGPIOPin(GPIOA, 13, GPIO::AFR::AlternateFunction::AF0, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
   AFGPIOPin(GPIOA, 14, GPIO::AFR::AlternateFunction::AF0, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),

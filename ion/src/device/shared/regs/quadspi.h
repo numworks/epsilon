@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 // Quad-SPI register map on STM32 microcontroller
 // See section 12 of the STM32F412 reference manual
 
@@ -122,5 +126,9 @@ private:
 };
 
 constexpr QUADSPI QUADSPI;
+
+}
+}
+}
 
 #endif

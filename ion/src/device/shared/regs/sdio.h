@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class SDIO {
 public:
   class POWER : Register32 {
@@ -108,5 +112,9 @@ private:
 };
 
 constexpr SDIO SDIO;
+
+}
+}
+}
 
 #endif

@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class MPU {
 public:
   class TYPER : Register32 {
@@ -77,5 +81,9 @@ private:
 };
 
 constexpr MPU MPU;
+
+}
+}
+}
 
 #endif

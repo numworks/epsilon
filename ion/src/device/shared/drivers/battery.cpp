@@ -14,7 +14,8 @@
 namespace Ion {
 namespace Battery {
 
-using namespace Ion::Device::Battery;
+using namespace Device::Battery;
+using namespace Device::Regs;
 
 bool isCharging() {
   return !Config::ChargingPin.group().IDR()->get(Config::ChargingPin.pin());
@@ -49,6 +50,8 @@ float voltage() {
 namespace Ion {
 namespace Device {
 namespace Battery {
+
+using namespace Regs;
 
 void init() {
   initGPIO();

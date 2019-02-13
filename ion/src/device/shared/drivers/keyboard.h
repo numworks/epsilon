@@ -25,7 +25,7 @@ inline void activateRow(uint8_t row) {
   /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
    * the pin floating (Hi-Z). So we want to set the current row to zero and all
    * the others to 1. */
-  uint16_t rowState = ~(1<<row);
+  uint16_t rowState = ~(1 << static_cast<uint16_t>(Config::RowPins[row]));
 
   // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0
   Config::RowGPIO.ODR()->setBitRange(9, 0, rowState);
@@ -35,7 +35,8 @@ inline void activateRow(uint8_t row) {
 }
 
 inline bool columnIsActive(uint8_t column) {
-  return !(Config::ColumnGPIO.IDR()->getBitRange(column,column));
+  uint8_t pin = Config::ColumnPins[column];
+  return !(Config::ColumnGPIO.IDR()->getBitRange(pin,pin));
 }
 
 }

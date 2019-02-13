@@ -31,7 +31,7 @@ using namespace Regs;
 
 constexpr GPIO RowGPIO = GPIOA;
 constexpr uint8_t numberOfRows = 9;
-constexpr uint8_t RowPins[numberOfRows] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+constexpr uint8_t RowPins[numberOfRows] = {1, 0, 2, 3, 4, 5, 6, 7, 8};
 
 constexpr GPIO ColumnGPIO = GPIOC;
 constexpr uint8_t numberOfColumns = 6;

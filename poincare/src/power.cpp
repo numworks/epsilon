@@ -667,6 +667,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
   // Step 13: (a0+a1+...am)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
   if (!letPowerAtRoot
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
+      && !childAtIndex(1).convert<Rational>().signedIntegerNumerator().isZero()
       && childAtIndex(1).convert<Rational>().integerDenominator().isOne()
       && childAtIndex(0).type() == ExpressionNode::Type::Addition)
   {
@@ -679,6 +680,8 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return *this;
     }
     int clippedN = n.extractedInt(); // Authorized because n < k_maxNumberOfTermsInExpandedMultinome
+    assert(clippedN > 0);
+
     // Number of terms in addition m
     int m = childAtIndex(0).numberOfChildren();
     /* The multinome (a0+a2+...+a(m-1))^n has BinomialCoefficient(n+m-1,n) terms;

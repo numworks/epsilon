@@ -15,19 +15,19 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<double>("0^0", Undefined::Name());
   assert_parsed_expression_evaluates_to<double>("0^2", "0");
   assert_parsed_expression_evaluates_to<double>("0^(-2)", Undefined::Name());
-  assert_parsed_expression_evaluates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384*I", Radian, Cartesian, 12);
-  assert_parsed_expression_evaluates_to<double>("(-0.1)^4", "0.0001", Radian, Cartesian, 12);
+  assert_parsed_expression_evaluates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384*I", System, Radian, Cartesian, 12);
+  assert_parsed_expression_evaluates_to<double>("(-0.1)^4", "0.0001", System, Radian, Cartesian, 12);
 #if MATRICES_ARE_DEFINED
-  assert_parsed_expression_evaluates_to<float>("[[1,2][3,4]]^(-3)", "[[-14.75,6.75][10.125,-4.625]]", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("[[1,2][3,4]]^(-3)", "[[-14.75,6.75][10.125,-4.625]]", System, Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("[[1,2][3,4]]^3", "[[37,54][81,118]]");
 #endif
   assert_parsed_expression_evaluates_to<float>("0^2", "0");
   assert_parsed_expression_evaluates_to<double>("I^I", "2.0787957635076E-1");
-  assert_parsed_expression_evaluates_to<float>("1.0066666666667^60", "1.48985", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("1.0066666666667^60", "1.48985", System, Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("1.0066666666667^60", "1.4898457083046");
   assert_parsed_expression_evaluates_to<float>("X^(I*P)", "-1");
   assert_parsed_expression_evaluates_to<double>("X^(I*P)", "-1");
-  assert_parsed_expression_evaluates_to<float>("X^(I*P+2)", "-7.38906", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("X^(I*P+2)", "-7.38906", System, Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("X^(I*P+2)", "-7.3890560989307");
   assert_parsed_expression_evaluates_to<float>("(-1)^(1/3)", "0.5+0.8660254*I");
   assert_parsed_expression_evaluates_to<double>("(-1)^(1/3)", "0.5+8.6602540378444E-1*I");

@@ -407,18 +407,18 @@ QUIZ_CASE(poincare_parser_expression_evaluation) {
 
   assert_parsed_expression_evaluates_to<float>("-2-3", "-5");
   assert_parsed_expression_evaluates_to<float>("1.2*X^(1)", "3.261938");
-  assert_parsed_expression_evaluates_to<float>("2X^(3)", "40.1711", Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbos simulator
-  assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on simulator
+  assert_parsed_expression_evaluates_to<float>("2X^(3)", "40.1711", System, Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbos simulator
+  assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", System, Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on simulator
   assert_parsed_expression_evaluates_to<double>("X^2*X^(1)", "20.085536923188");
   assert_parsed_expression_evaluates_to<double>("2*3^4+2", "164");
   assert_parsed_expression_evaluates_to<float>("-2*3^4+2", "-160");
-  assert_parsed_expression_evaluates_to<double>("-sin(3)*2-3", "-3.2822400161197", Radian);
+  assert_parsed_expression_evaluates_to<double>("-sin(3)*2-3", "-3.2822400161197", System, Radian);
   assert_parsed_expression_evaluates_to<float>("-.003", "-0.003");
   assert_parsed_expression_evaluates_to<double>(".02E2", "2");
   assert_parsed_expression_evaluates_to<float>("5-2/3", "4.333333");
   assert_parsed_expression_evaluates_to<double>("2/3-5", "-4.3333333333333");
   assert_parsed_expression_evaluates_to<float>("-2/3-5", "-5.666667");
-  assert_parsed_expression_evaluates_to<double>("sin(3)2(4+2)", "1.6934400967184", Radian);
+  assert_parsed_expression_evaluates_to<double>("sin(3)2(4+2)", "1.6934400967184", System, Radian);
   assert_parsed_expression_evaluates_to<float>("4/2*(2+3)", "10");
   assert_parsed_expression_evaluates_to<double>("4/2*(2+3)", "10");
 }

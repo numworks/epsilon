@@ -170,7 +170,7 @@ tests += $(addprefix poincare/test/,\
   power.cpp\
   properties.cpp\
   rational.cpp\
-  simplify_mix.cpp\
+  simplify.cpp\
   store.cpp\
   subtraction.cpp\
   symbol.cpp\

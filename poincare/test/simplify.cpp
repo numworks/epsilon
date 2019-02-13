@@ -9,6 +9,38 @@ using namespace std;
 #endif
 
 using namespace Poincare;
+QUIZ_CASE(poincare_reduction_target) {
+  assert_parsed_expression_simplify_to("1/P+1/x", "1/x+1/P", System);
+  assert_parsed_expression_simplify_to("1/P+1/x", "(x+P)/(P*x)", User);
+
+  assert_parsed_expression_simplify_to("1/(1+I)", "1/(I+1)", System);
+  assert_parsed_expression_simplify_to("1/(1+I)", "1/2-1/2*I", User);
+
+  assert_parsed_expression_simplify_to("sin(x)/(cos(x)*cos(x))", "sin(x)/cos(x)^2", System);
+  assert_parsed_expression_simplify_to("sin(x)/(cos(x)*cos(x))", "tan(x)/cos(x)", User);
+
+  assert_parsed_expression_simplify_to("x^0", "x^0", System);
+  assert_parsed_expression_simplify_to("x^0", "1", User);
+
+  assert_parsed_expression_simplify_to("x^(2/3)", "root(x,3)^2", System);
+  assert_parsed_expression_simplify_to("x^(2/3)", "x^(2/3)", User);
+  assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", System);
+  assert_parsed_expression_simplify_to("x^(1/3)", "root(x,3)", System);
+  assert_parsed_expression_simplify_to("x^2", "x^2", System);
+  assert_parsed_expression_simplify_to("x^2", "x^2", User);
+
+  assert_parsed_expression_simplify_to("1/(R(2)+R(3))", "1/(R(3)+R(2))", System);
+  assert_parsed_expression_simplify_to("1/(R(2)+R(3))", "R(3)-R(2)", User);
+
+  assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))", System);
+  assert_parsed_expression_simplify_to("sign(abs(x))", "1", User);
+
+  assert_parsed_expression_simplify_to("atan(1/x)", "atan(1/x)", System);
+  assert_parsed_expression_simplify_to("atan(1/x)", "(P*sign(x)-2*atan(x))/2", User);
+
+  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "(x+1)^0", System);
+  assert_parsed_expression_simplify_to("(1+x)/(1+x)", "1", User);
+}
 
 QUIZ_CASE(poincare_simplify_mix) {
   // Root at denominator

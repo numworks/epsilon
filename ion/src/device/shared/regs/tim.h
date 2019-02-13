@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 template <typename RegisterWidth>
 class TIM {
 public:
@@ -96,5 +100,9 @@ private:
 };
 
 constexpr TIM<Register16> TIM3(3);
+
+}
+}
+}
 
 #endif

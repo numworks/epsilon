@@ -5,6 +5,8 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
+using namespace Regs;
+
 static inline uint16_t min(uint16_t x, uint16_t y) { return (x<y ? x : y); }
 
 void Device::poll() {

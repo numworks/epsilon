@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class USART {
 public:
   class SR : Register32 {
@@ -46,5 +50,9 @@ private:
   };
   int m_index;
 };
+
+}
+}
+}
 
 #endif

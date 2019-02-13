@@ -14,6 +14,8 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
+using namespace Regs;
+
 void init() {
   initClocks();
 

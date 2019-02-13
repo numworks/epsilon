@@ -1,7 +1,11 @@
 #include <ion.h>
 #include <regs/regs.h>
 
-uint32_t Ion::crc32(const uint32_t * data, size_t length) {
+namespace Ion {
+
+using namespace Device::Regs;
+
+uint32_t crc32(const uint32_t * data, size_t length) {
   bool initialCRCEngineState = RCC.AHB1ENR()->getCRCEN();
   RCC.AHB1ENR()->setCRCEN(true);
   CRC.CR()->setRESET(true);
@@ -14,4 +18,6 @@ uint32_t Ion::crc32(const uint32_t * data, size_t length) {
   uint32_t result = CRC.DR()->get();
   RCC.AHB1ENR()->setCRCEN(initialCRCEngineState);
   return result;
+}
+
 }

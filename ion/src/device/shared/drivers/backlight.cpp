@@ -33,6 +33,8 @@ namespace Ion {
 namespace Device {
 namespace Backlight {
 
+using namespace Regs;
+
 static uint8_t sLevel;
 
 void init() {

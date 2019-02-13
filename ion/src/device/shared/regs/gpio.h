@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class GPIO {
 public:
   class MODER : public Register32 {
@@ -137,5 +141,9 @@ public:
 private:
   uint16_t m_data;
 };
+
+}
+}
+}
 
 #endif

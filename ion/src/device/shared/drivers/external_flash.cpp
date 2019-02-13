@@ -5,6 +5,8 @@ namespace Ion {
 namespace Device {
 namespace ExternalFlash {
 
+using namespace Regs;
+
 /* The external flash and the Quad-SPI peripheral support
  * several operating modes, corresponding to different numbers of signals
  * used to communicate during each phase of the command sequence.

@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class ADC {
 public:
   class SR : Register32 {
@@ -69,5 +73,9 @@ private:
 };
 
 constexpr ADC ADC;
+
+}
+}
+}
 
 #endif

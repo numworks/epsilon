@@ -7,6 +7,8 @@ namespace Ion {
 namespace Device {
 namespace Cache {
 
+using namespace Regs;
+
 inline void dsb() {
   asm volatile("dsb 0xF":::"memory");
 }

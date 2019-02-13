@@ -4,7 +4,7 @@
 
 namespace Ion {
 
-using namespace Ion::Device::SerialNumber;
+using namespace Device::SerialNumber;
 
 const char * serialNumber() {
   static char serialNumber[Length + 1] = {0};

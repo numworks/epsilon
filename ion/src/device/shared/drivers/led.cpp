@@ -7,7 +7,8 @@ static KDColor sLedColor = KDColorBlack;
 namespace Ion {
 namespace LED {
 
-using namespace Ion::Device::LED;
+using namespace Device::LED;
+using namespace Device::Regs;
 
 KDColor getColor() {
   return sLedColor;
@@ -44,6 +45,8 @@ void setBlinking(uint16_t period, float dutyCycle) {
 namespace Ion {
 namespace Device {
 namespace LED {
+
+using namespace Regs;
 
 void init() {
   initGPIO();

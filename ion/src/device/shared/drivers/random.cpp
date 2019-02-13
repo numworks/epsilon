@@ -1,7 +1,11 @@
 #include <ion.h>
 #include <regs/regs.h>
 
-uint32_t Ion::random() {
+namespace Ion {
+
+using namespace Device::Regs;
+
+uint32_t random() {
   bool initialRNGEngineState = RCC.AHB2ENR()->getRNGEN();
   RCC.AHB2ENR()->setRNGEN(true);
 
@@ -15,4 +19,6 @@ uint32_t Ion::random() {
   RCC.AHB2ENR()->setRNGEN(initialRNGEngineState);
 
   return result;
+}
+
 }

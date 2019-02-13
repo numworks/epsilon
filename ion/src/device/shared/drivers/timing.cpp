@@ -5,7 +5,7 @@
 namespace Ion {
 namespace Timing {
 
-using namespace Ion::Device::Timing;
+using namespace Device::Timing;
 
 /* TODO: The delay methods 'msleep' and 'usleep' are currently dependent on the
  * optimizations chosen by the compiler. To prevent that and to gain in
@@ -32,6 +32,8 @@ uint64_t millis() {
 namespace Ion {
 namespace Device {
 namespace Timing {
+
+using namespace Regs;
 
 volatile uint64_t MillisElapsed = 0;
 

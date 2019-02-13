@@ -9,7 +9,7 @@
 namespace Ion {
 namespace Console {
 
-using namespace Ion::Device::Console;
+using namespace Device::Console;
 
 char readChar() {
   while (Config::Port.SR()->getRXNE() == 0) {
@@ -29,6 +29,8 @@ void writeChar(char c) {
 namespace Ion {
 namespace Device {
 namespace Console {
+
+using namespace Regs;
 
 constexpr static GPIOPin Pins[] = { Config::RxPin, Config::TxPin };
 

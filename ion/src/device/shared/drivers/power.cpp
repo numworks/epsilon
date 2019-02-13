@@ -9,6 +9,8 @@
 namespace Ion {
 namespace Power {
 
+using namespace Device::Regs;
+
 void suspend(bool checkIfPowerKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   if (checkIfPowerKeyReleased) {

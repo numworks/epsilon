@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class FSMC {
 public:
   class BCR : Register32 {
@@ -75,5 +79,9 @@ private:
 };
 
 constexpr FSMC FSMC;
+
+}
+}
+}
 
 #endif

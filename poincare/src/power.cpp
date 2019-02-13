@@ -785,11 +785,16 @@ Expression Power::shallowBeautify(Context & context, Preferences::ComplexFormat 
     return result;
   }
 
-  // Optional Step 3: if the ReductionTarget is the System, turn a^(p/q) into (root(a, q))^p
+  /* Optional Step 3: if the ReductionTarget is the System, turn a^(p/q) into
+   * (root(a, q))^p
+   * Indeed, root(a, q) can have a real root which is not the principale angle
+   * but that we want to return in real complex format. This special case is
+   * handled in NthRoot approximation but not in Power approximation. */
   if (target == ExpressionNode::ReductionTarget::System && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     Integer p = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
     Integer q = childAtIndex(1).convert<Rational>().integerDenominator();
-    Expression result = Power(NthRoot::Builder(childAtIndex(0), Rational(q)), Rational(p));
+    Expression nthRoot = q.isOne() ? childAtIndex(0) : NthRoot::Builder(childAtIndex(0), Rational(q));
+    Expression result = p.isOne() ? nthRoot : Power(nthRoot, Rational(p));
     replaceWithInPlace(result);
     return result;
   }

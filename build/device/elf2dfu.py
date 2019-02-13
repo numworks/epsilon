@@ -8,7 +8,7 @@ import subprocess
 import re
 import argparse
 
-# arm-none-eabi-objcopy -h -w file.elf
+# arm-none-eabi-objdump -h -w file.elf
 # arm-none-eabi-objcopy -O binary -j .data file.elf file.bin
 
 def loadable_sections(elf_file):

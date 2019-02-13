@@ -1,6 +1,8 @@
 #include <drivers/board.h>
+#include <drivers/console.h>
 #include <regs/regs.h>
 #include <ion.h>
+#include <ion/src/device/bench/bench.h>
 
 // Public Ion methods
 
@@ -133,6 +135,9 @@ void initClocks() {
   // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);
+#if EPSILON_DEVICE_BENCH
+  RCC.APB1ENR()->setUSART3EN(true);
+#endif
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0x00008000); // Reset value

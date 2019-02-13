@@ -7,6 +7,8 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
+using namespace Ion::Device::Regs;
+
 static inline uint32_t min(uint32_t x, uint32_t y) { return (x<y ? x : y); }
 
 void DFUInterface::StatusData::push(Channel * c) const {

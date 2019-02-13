@@ -3,6 +3,10 @@
 
 #include "register.h"
 
+namespace Ion {
+namespace Device {
+namespace Regs {
+
 class OTG {
 public:
   class GAHBCFG : public Register32 {
@@ -191,5 +195,9 @@ private:
 };
 
 constexpr OTG OTG;
+
+}
+}
+}
 
 #endif

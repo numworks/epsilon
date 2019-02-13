@@ -8,6 +8,8 @@ namespace Device {
 namespace LED {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static AFGPIOPin RGBPins[] = {
   AFGPIOPin(GPIOB, 4,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
   AFGPIOPin(GPIOB, 5,  GPIO::AFR::AlternateFunction::AF2, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),

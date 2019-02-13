@@ -14,6 +14,8 @@ namespace Device {
 namespace Battery {
 namespace Config {
 
+using namespace Regs;
+
 constexpr static GPIOPin ChargingPin = GPIOPin(GPIOA, 0);
 constexpr static GPIOPin ADCPin = GPIOPin(GPIOA, 1);
 constexpr uint8_t ADCChannel = 1;

@@ -6,17 +6,25 @@
  * written at a specific address (in Flash ROM) and the data at another. */
 
 /* Let's instruct the linker about our memory layout.
- * This will let us use shortcuts such as ">FLASH" to ask for a given section to
+ * This will let us use shortcuts such as ">INTERNAL_FLASH" to ask for a given section to
  * be stored in Flash. */
+
 MEMORY {
-  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 512K
-  SRAM (rw) : ORIGIN = 0x20000000, LENGTH = 256K
+  INTERNAL_FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 64K
+  SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
+  EXTERNAL_FLASH (rx) : ORIGIN = 0x90000000, LENGTH = 8M
+  /*
+  ITCM (rwx) : ORIGIN = 0x00000000, LENGTH = 16K
+  DTCM (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
+  SRAM1 (rwx) : ORIGIN = 0x20010000, LENGTH = 176K
+  SRAM2 (rwx) : ORIGIN = 0x2003C000, LENGTH = 16K
+   */
 }
 
 STACK_SIZE = 32K;
 
 SECTIONS {
-  .isr_vector_table ORIGIN(FLASH) : {
+  .isr_vector_table ORIGIN(INTERNAL_FLASH) : {
     /* When booting, the STM32F412 fetches the content of address 0x0, and
      * extracts from it various key infos: the initial value of the PC register
      * (program counter), the initial value of the stack pointer, and various
@@ -32,30 +40,50 @@ SECTIONS {
      * routine for each interrupt. */
 
     KEEP(*(.isr_vector_table))
-  } >FLASH
+  } >INTERNAL_FLASH
 
   .header : {
     KEEP(*(.header))
-  } >FLASH
+  } >INTERNAL_FLASH
 
-  .text : {
+  /* Internal flash memory */
+  /* Use boot routine and required dependencies */
+  /* We're relying on symbols being in their own sub-section. On GCC, this is
+   * done with -fdata-sections -ffunction-sections */
+  .text.internal : {
+    . = ALIGN(4);
+    *(.text.start)
+    *(.text.abort)
+    *(.text.isr_systick)
+    *(.text.memcpy)
+    *(.text.memset)
+    *(.text._ZN3Ion*)
+    *(.text._ZNV3Ion*)
+    *(.text._ZNK3Ion*)
+  } >INTERNAL_FLASH
+
+  .rodata.internal : {
+    . = ALIGN(4);
+    *(.rodata._ZN3Ion*)
+  } >INTERNAL_FLASH
+
+  .text.external : {
     . = ALIGN(4);
     *(.text)
     *(.text.*)
-  } >FLASH
+  } >EXTERNAL_FLASH
+
+  .rodata.external : {
+    *(.rodata)
+    *(.rodata.*)
+  } >EXTERNAL_FLASH
 
   .init_array : {
     . = ALIGN(4);
     _init_array_start = .;
     KEEP (*(.init_array*))
     _init_array_end = .;
-  } >FLASH
-
-  .rodata : {
-    . = ALIGN(4);
-    *(.rodata)
-    *(.rodata.*)
-  } >FLASH
+  } >INTERNAL_FLASH
 
   .data : {
     /* The data section is written to Flash but linked as if it were in RAM.
@@ -76,7 +104,7 @@ SECTIONS {
     *(.data)
     *(.data.*)
     _data_section_end_ram = .;
-  } >SRAM AT> FLASH
+  } >SRAM AT> INTERNAL_FLASH
 
   .bss : {
     /* The bss section contains data for all uninitialized variables

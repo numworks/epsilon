@@ -8,6 +8,9 @@ SIZE = arm-none-eabi-size
 # Always generate debug information
 SFLAGS += -ggdb3
 
+# Put data/code symbols in their own subsection
+# This allows the linker script to precisely place a given symbol
+SFLAGS += -fdata-sections -ffunction-sections
 
 # LTO ?= NOT(DEBUG)
 ifeq ($(DEBUG),1)
@@ -21,8 +24,10 @@ ifeq ($(LTO),1)
 SFLAGS += -flto
 else
 # Otherwise, just get rid of unused symbols
-SFLAGS += -fdata-sections -ffunction-sections
 LDFLAGS += -Wl,--gc-sections
 endif
 
 LDFLAGS += $(SFLAGS) -lgcc -Wl,-T,$(LDSCRIPT)
+
+# To debug linker scripts, add the following line
+# LDFLAGS += -Wl,-M

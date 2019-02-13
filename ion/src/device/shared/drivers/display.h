@@ -38,6 +38,8 @@ enum class Command : uint16_t {
   Reset = 0x01,
   SleepIn = 0x10,
   SleepOut = 0x11,
+  DisplayInversionOff = 0x20,
+  DisplayInversionOn = 0x21,
   DisplayOff = 0x28,
   DisplayOn = 0x29,
   ColumnAddressSet = 0x2A,

@@ -130,6 +130,16 @@ ScrollView::BarDecorator::BarDecorator() :
 {
 }
 
+View * ScrollView::BarDecorator::indicatorAtIndex(int index) {
+  switch(index) {
+    case 1:
+      return &m_verticalBar;
+    default:
+      assert(index == 2);
+      return &m_horizontalBar;
+  }
+}
+
 KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
   KDCoordinate hBarFrameBreadth = m_barsFrameBreadth * m_horizontalBar.update(
     content.width(),
@@ -160,6 +170,20 @@ ScrollView::ArrowDecorator::ArrowDecorator() :
   m_bottomArrow(ScrollViewArrow::Side::Bottom),
   m_leftArrow(ScrollViewArrow::Side::Left)
 {
+}
+
+View * ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
+  switch(index) {
+    case 1:
+      return &m_topArrow;
+    case 2:
+      return &m_rightArrow;
+    case 3:
+      return &m_bottomArrow;
+    default:
+      assert(index == 4);
+      return &m_leftArrow;
+  }
 }
 
 KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
@@ -193,8 +217,8 @@ KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offs
 }
 
 void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
-  for (int i = 0; i < numberOfIndicators(); i++) {
-    (&m_topArrow + i)->setBackgroundColor(c);
+  for (int index = 1; index <= numberOfIndicators(); index++) {
+    static_cast<ScrollViewArrow *>(indicatorAtIndex(index))->setBackgroundColor(c);
   }
 }
 

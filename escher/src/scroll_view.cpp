@@ -198,8 +198,20 @@ void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
   }
 }
 
+ScrollView::Decorators::Decorators() {
+  /* We need to initiate the Union at construction to avoid destructing an
+   * uninitialized object when changing the decorator type. */
+  new (this) Decorator();
+}
+
+ScrollView::Decorators::~Decorators() {
+  activeDecorator()->~Decorator();
+}
+
 void ScrollView::Decorators::setActiveDecorator(Decorator::Type t) {
-  /* We do NOT need to destroy the previous decorator because they don't have a destructor */
+  /* Decorator destructor is virtual so calling ~Decorator() on a Decorator
+   * pointer will call the appropriate destructor. */
+  activeDecorator()->~Decorator();
   switch (t) {
     case Decorator::Type::Bars:
       new (&m_bars) BarDecorator();

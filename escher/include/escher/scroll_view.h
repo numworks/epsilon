@@ -46,10 +46,7 @@ public:
   public:
     BarDecorator();
     int numberOfIndicators() const override { return 2; }
-    View * indicatorAtIndex(int index) override {
-      assert(0 < index && index <= numberOfIndicators());
-      return &m_verticalBar + (index-1);
-    }
+    View * indicatorAtIndex(int index) override;
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
@@ -64,10 +61,7 @@ public:
   public:
     ArrowDecorator();
     int numberOfIndicators() const override { return 4; }
-    View * indicatorAtIndex(int index) override {
-      assert(0 < index && index <= numberOfIndicators());
-      return &m_topArrow + (index-1);
-    }
+    View * indicatorAtIndex(int index) override;
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
     void setBackgroundColor(KDColor c) override;
   private:

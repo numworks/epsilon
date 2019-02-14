@@ -50,11 +50,10 @@ public:
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
     ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
-    void setBarsFrameBreadth(KDCoordinate t) { m_barsFrameBreadth = t; }
   private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
-    KDCoordinate m_barsFrameBreadth;
+    static constexpr KDCoordinate k_barsFrameBreadth = 13;
   };
 
   class ArrowDecorator : public Decorator {

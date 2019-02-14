@@ -33,6 +33,9 @@ public:
       Bars,
       Arrows
     };
+    /* We want (Decorator *)->~Decorator() to call ~BarDecorator() or ~ArrowDecorator()
+     * when required. */
+    virtual ~Decorator() = default;
     virtual int numberOfIndicators() const { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
     virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) { return frame; }
@@ -132,9 +135,8 @@ private:
   Decorator::Type m_decoratorType;
   union Decorators {
   public:
-    /* Enforce trivial constructor and destructor that just leaves the memory unmodified. */
-    Decorators() {}
-    ~Decorators() {}
+    Decorators();
+    ~Decorators();
     Decorator * activeDecorator() { return &m_none; }
     void setActiveDecorator(Decorator::Type t);
   private:

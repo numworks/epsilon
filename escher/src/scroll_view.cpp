@@ -125,8 +125,7 @@ void ScrollView::InnerView::drawRect(KDContext * ctx, KDRect rect) const {
 
 ScrollView::BarDecorator::BarDecorator() :
   m_verticalBar(),
-  m_horizontalBar(),
-  m_barsFrameBreadth(20)
+  m_horizontalBar()
 {
 }
 
@@ -141,12 +140,12 @@ View * ScrollView::BarDecorator::indicatorAtIndex(int index) {
 }
 
 KDRect ScrollView::BarDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame) {
-  KDCoordinate hBarFrameBreadth = m_barsFrameBreadth * m_horizontalBar.update(
+  KDCoordinate hBarFrameBreadth = k_barsFrameBreadth * m_horizontalBar.update(
     content.width(),
     offset.x(),
     frame.width()
   );
-  KDCoordinate vBarFrameBreadth = m_barsFrameBreadth * m_verticalBar.update(
+  KDCoordinate vBarFrameBreadth = k_barsFrameBreadth * m_verticalBar.update(
     content.height(),
     offset.y(),
     frame.height()

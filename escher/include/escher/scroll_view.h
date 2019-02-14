@@ -33,7 +33,7 @@ public:
       Bars,
       Arrows
     };
-    virtual int numberOfIndicators() { return 0; }
+    virtual int numberOfIndicators() const { return 0; }
     virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
     virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
@@ -42,7 +42,7 @@ public:
   class BarDecorator : public Decorator {
   public:
     BarDecorator();
-    int numberOfIndicators() override { return 2; }
+    int numberOfIndicators() const override { return 2; }
     View * indicatorAtIndex(int index) override {
       assert(0 < index && index <= numberOfIndicators());
       return &m_verticalBar + (index-1);
@@ -60,7 +60,7 @@ public:
   class ArrowDecorator : public Decorator {
   public:
     ArrowDecorator();
-    int numberOfIndicators() override { return 4; }
+    int numberOfIndicators() const override { return 4; }
     View * indicatorAtIndex(int index) override {
       assert(0 < index && index <= numberOfIndicators());
       return &m_topArrow + (index-1);

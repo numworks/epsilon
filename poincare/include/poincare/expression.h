@@ -187,11 +187,23 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
+  /* Simplification routines are divided in 2 groups:
+   * - ParseAndSimplify & simplify methods are used before approximating the
+   *   expression. We simplify beforehand to avoid precision error but the
+   *   simplified expression is never displayed. The ReductionTarget is
+   *   therefore the System for these methods.
+   * - ParseAndSimplifyAndApproximate & simplifyAndApproximate methods are used
+   *   to simplify and approximate the expression for the User. They take into
+   *   account the complex format required in the expression they return.
+   *   (For instance, in Polar mode, they return an expression of the form
+   *   r*e^(i*th) reduced and approximated.) */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+
+  static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Expression reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
   Expression radianToDegree();
   Expression degreeToRadian();

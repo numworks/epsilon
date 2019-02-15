@@ -9,7 +9,12 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
   m_expressionView()
 {
   setDecoratorType(ScrollView::Decorator::Type::Arrows);
-  setMargins(0, Metric::HistoryHorizontalMargin, 0, Metric::HistoryHorizontalMargin);
+  setMargins(
+    Metric::CommonSmallMargin,
+    Metric::CommonLargeMargin,
+    Metric::CommonSmallMargin,
+    Metric::CommonLargeMargin
+  );
 }
 
 void ScrollableExpressionView::setLayout(Layout layout) {

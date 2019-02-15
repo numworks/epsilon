@@ -54,7 +54,6 @@ private:
     Poincare::Layout layout() const override;
   private:
     View * subviewAtIndex(int index) override;
-    constexpr static KDCoordinate k_digitHorizontalMargin = 10;
     ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;
     ExpressionView m_leftExpressionView;

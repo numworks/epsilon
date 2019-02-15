@@ -510,10 +510,13 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return simplifyRationalRationalPower(context, complexFormat, angleUnit, target);
     }
   }
-  // Step 7: (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
-  // WARNING: this rule true only if a real (ex: (-1*i)^(1/2) != i*i^(1/2)
+  // Step 7: (a)^(1/2) --> i*(-a)^(1/2)
+  // WARNING: this rule true only if:
+  // - a real: (-1*i)^(1/2) != i*i^(1/2)
+  // - a is negative: (-(-2))^(1/2) != -2^(1/2)
+  // We apply this rule only when a is a negative numeral
   if (!letPowerAtRoot
-      && childAtIndex(0).isReal(context)
+      && childAtIndex(0).isNumber()
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
       && childAtIndex(1).convert<Rational>().isHalf())
   {

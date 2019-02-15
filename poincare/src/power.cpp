@@ -574,7 +574,15 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return result;
     }
   }
-  // Step 10: (a^b)^c -> a^(b*c) if a > 0 or c is integer
+  /* Step 10: (a^b)^c -> a^(b*c)
+   * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
+   * This rule is true if:
+   * - a > 0
+   * - in Real: when b and c are integers
+   * - in other modes: when c is integer
+   * (Warning: in real mode only c integer is not enough:
+   * ex: ((-2)^(1/2))^2 = unreal != -2)
+   */
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
     // Check if a > 0 or c is Integer
@@ -582,7 +590,10 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
         || (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne()))
     {
-      return simplifyPowerPower(context, complexFormat, angleUnit, target);
+      // Check that the complex format is not Real or that b is an integer
+      if (complexFormat != Preferences::ComplexFormat::Real || (p.childAtIndex(1).type() == ExpressionNode::Type::Rational && p.childAtIndex(1).convert<Rational>().integerDenominator().isOne())) {
+        return simplifyPowerPower(context, complexFormat, angleUnit, target);
+      }
     }
   }
   // Step 11: (a*b*c*...)^r ?

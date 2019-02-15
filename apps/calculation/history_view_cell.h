@@ -42,7 +42,6 @@ public:
   void layoutSubviews() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  constexpr static KDCoordinate k_digitVerticalMargin = 5;
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;

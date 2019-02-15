@@ -17,6 +17,7 @@ void ScrollableExactApproximateExpressionsCell::setHighlighted(bool highlight) {
 
 void ScrollableExactApproximateExpressionsCell::setEven(bool even) {
   EvenOddCell::setEven(even);
+  m_view.setBackgroundColor(backgroundColor());
   m_view.evenOddCell()->setEven(even);
 }
 

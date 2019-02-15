@@ -1,6 +1,5 @@
 #include <escher/scroll_view.h>
 #include <escher/palette.h>
-#include <escher/metric.h>
 
 #include <new>
 
@@ -45,12 +44,6 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   );
 }
 
-void ScrollView::setCommonMargins() {
-  setTopMargin(Metric::CommonTopMargin);
-  setRightMargin(Metric::CommonRightMargin);
-  setBottomMargin(Metric::CommonBottomMargin);
-  setLeftMargin(Metric::CommonLeftMargin);
-}
 
 void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
   if (!allowOverscroll && !m_contentView->bounds().contains(p)) {

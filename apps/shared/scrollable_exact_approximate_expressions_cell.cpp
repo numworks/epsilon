@@ -41,7 +41,7 @@ View * ScrollableExactApproximateExpressionsCell::subviewAtIndex(int index) {
 }
 
 void ScrollableExactApproximateExpressionsCell::layoutSubviews() {
-  m_view.setFrame(KDRect(k_margin,k_margin, bounds().width()-2*k_margin, bounds().height()-2*k_margin));
+  m_view.setFrame(bounds());
 }
 
 }

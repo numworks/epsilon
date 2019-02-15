@@ -1,5 +1,6 @@
 #include <escher/selectable_table_view.h>
 #include <escher/clipboard.h>
+#include <escher/metric.h>
 #include <assert.h>
 
 SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
@@ -8,8 +9,13 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
   m_selectionDataSource(selectionDataSource),
   m_delegate(delegate)
 {
-  setCommonMargins();
   assert(m_selectionDataSource != nullptr);
+  setMargins(
+    Metric::CommonTopMargin,
+    Metric::CommonRightMargin,
+    Metric::CommonBottomMargin,
+    Metric::CommonLeftMargin
+  );
 }
 
 int SelectableTableView::selectedRow() {

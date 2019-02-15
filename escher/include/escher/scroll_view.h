@@ -24,7 +24,6 @@ public:
     setTopMargin(top); setRightMargin(right); setBottomMargin(bottom); setLeftMargin(left);
   }
   void setMargins(KDCoordinate m) { setMargins(m, m, m, m); }
-  void setCommonMargins();
 
   class Decorator {
   public:

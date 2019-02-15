@@ -103,4 +103,6 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("X^(I*P/3)", "1/2+R(3)/2*I");
   assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+R(3)/2*I");
   assert_parsed_expression_simplify_to("R(-x)", "R(-x)");
+  assert_parsed_expression_simplify_to("R(x)^2", "x", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("R(x)^2", "R(x)^2", User, Radian, Real);
 }

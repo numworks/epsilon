@@ -38,7 +38,7 @@ public:
 
 private:
   constexpr static size_t k_extensionLength = 1+ScriptStore::k_scriptExtensionLength; // '.' + "py"
-  constexpr static KDCoordinate k_leftMargin = Metric::HistoryHorizontalMargin;
+  constexpr static KDCoordinate k_leftMargin = Metric::CommonLargeMargin;
 
   // View
   int numberOfSubviews() const override { return 1; }

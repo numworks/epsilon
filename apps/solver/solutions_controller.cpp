@@ -220,7 +220,7 @@ KDCoordinate SolutionsController::rowHeight(int j) {
   KDCoordinate exactLayoutHeight = exactLayout.layoutSize().height();
   KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize().height();
   KDCoordinate layoutHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactLayoutHeight-exactLayout.baseline(), approximateLayoutHeight-approximateLayout.baseline());
-  return layoutHeight+ScrollableExactApproximateExpressionsCell::k_margin*2;
+  return layoutHeight + 2 * Metric::CommonSmallMargin;
 }
 
 KDCoordinate SolutionsController::cumulatedWidthFromIndex(int i) {

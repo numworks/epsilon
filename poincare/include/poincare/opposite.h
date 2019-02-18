@@ -10,7 +10,7 @@ class Opposite;
 
 class OppositeNode /*final*/ : public ExpressionNode {
 public:
-  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>::Builder(-c); }
 
 
   // TreeNode
@@ -47,16 +47,10 @@ public:
 class Opposite final : public Expression {
 public:
   Opposite(const OppositeNode * n) : Expression(n) {}
-  static Opposite Builder() { return Opposite(); }
-  static Opposite Builder(Expression child) { return Opposite(child); }
+  static Opposite Builder();
+  static Opposite Builder(Expression child);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-
-private:
-  Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
-  explicit Opposite(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

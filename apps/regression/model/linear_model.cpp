@@ -12,11 +12,11 @@ namespace Regression {
 Layout LinearModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont),
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont),
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, 5);
   }

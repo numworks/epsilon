@@ -44,15 +44,11 @@ private:
 class FracPart final : public Expression {
 public:
   FracPart(const FracPartNode * n) : Expression(n) {}
-  static FracPart Builder(Expression child) { return FracPart(child); }
+  static FracPart Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, &UntypedBuilder);
 
   Expression shallowReduce();
-private:
-  explicit FracPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

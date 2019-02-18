@@ -57,8 +57,8 @@ private:
 class MatrixLayout /*final*/ : public GridLayout {
   friend class MatrixLayoutNode;
 public:
-  static MatrixLayout Builder() { return MatrixLayout(); }
   MatrixLayout(const MatrixLayoutNode * n) : GridLayout(n) {}
+  static MatrixLayout Builder();
   static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
     MatrixLayout m = MatrixLayout::Builder();
     m.addChildAtIndexInPlace(l1, 0, 0);
@@ -73,7 +73,6 @@ public:
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }
 private:
-  MatrixLayout() : GridLayout(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
   MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(Layout::node()); }
 };
 

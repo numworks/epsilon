@@ -32,7 +32,7 @@ private:
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-    return Complex<T>(std::real(c));
+    return Complex<T>::Builder(std::real(c));
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
@@ -45,15 +45,11 @@ private:
 class RealPart final : public Expression {
 public:
   RealPart(const RealPartNode * n) : Expression(n) {}
-  static RealPart Builder(Expression child) { return RealPart(child); }
+  static RealPart Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit RealPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

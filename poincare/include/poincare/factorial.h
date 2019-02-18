@@ -52,18 +52,13 @@ private:
 class Factorial final : public Expression {
 public:
   Factorial(const FactorialNode * n) : Expression(n) {}
-  static Factorial Builder() { return Factorial(); }
-  static Factorial Builder(Expression child) {
-    Factorial f;
-    f.replaceChildAtIndexInPlace(0, child);
-    return f;
-  }
+  static Factorial Builder();
+  static Factorial Builder(Expression child);
 
   Expression shallowReduce();
   Expression shallowBeautify();
 private:
   constexpr static int k_maxOperandValue = 100;
-  Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
 };
 
 }

@@ -84,7 +84,7 @@ Layout layoutForPreferences(I18n::Message message) {
     // Complex format
     case I18n::Message::Real:
     {
-      return CharLayout('x', KDFont::SmallFont);
+      return CharLayout::Builder('x', KDFont::SmallFont);
     }
     case I18n::Message::Cartesian:
     {

@@ -24,6 +24,13 @@ Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::Comp
   return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
+ImaginaryPart ImaginaryPart::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ImaginaryPartNode));
+  ImaginaryPartNode * node = new (bufferNode) ImaginaryPartNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<ImaginaryPart &>(h);
+}
+
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -38,7 +45,7 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
   }
 #endif
   if (c.isReal(context)) {
-    Expression result = Rational(0);
+    Expression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
   }

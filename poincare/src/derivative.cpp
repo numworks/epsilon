@@ -67,10 +67,10 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
     return Complex<T>::Undefined();
   }
   if (std::fabs(error) < min) {
-    return Complex<T>(result);
+    return Complex<T>::Builder(result);
   }
   error = std::pow((T)10, std::floor(std::log10(std::fabs(error)))+2);
-  return Complex<T>(std::round(result/error)*error);
+  return Complex<T>::Builder(std::round(result/error)*error);
 }
 
 template<typename T>
@@ -149,11 +149,18 @@ Expression Derivative::shallowReduce() {
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || || childAtIndex(1).type() == ExpressionNode::Type::Matrix || childAtIndex(2).type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   // TODO: to be implemented diff(+) -> +diff() etc
   return *this;
+}
+
+Derivative Derivative::Builder(Expression child0, Symbol child1, Expression child2) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DerivativeNode));
+  DerivativeNode * node = new (bufferNode) DerivativeNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2).array(), 3);
+  return static_cast<Derivative &>(h);
 }
 
 }

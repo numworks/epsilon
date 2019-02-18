@@ -43,13 +43,12 @@ class Random final : public Expression {
 friend class RandomNode;
 public:
   Random(const RandomNode * n) : Expression(n) {}
-  static Random Builder() { return Random(); }
+  static Random Builder();
   static Expression UntypedBuilder(Expression children) { return Builder(); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template<typename T> static T random();
 private:
-  Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
   Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 };
 

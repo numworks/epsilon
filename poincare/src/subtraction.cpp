@@ -44,7 +44,7 @@ int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::Print
 
 template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
   MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c, complexFormat);
-  MatrixComplex<T> result;
+  MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int i = 0; i < opposite.numberOfChildren(); i++) {
     result.addChildAtIndexInPlace(OppositeNode::compute(opposite.complexAtIndex(i), complexFormat), i, i);
   }
@@ -56,12 +56,26 @@ Expression SubtractionNode::shallowReduce(Context & context, Preferences::Comple
   return Subtraction(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
+Subtraction Subtraction::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SubtractionNode));
+  SubtractionNode * node = new (bufferNode) SubtractionNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Subtraction &>(h);
+}
+
+Subtraction Subtraction::Builder(Expression child0, Expression child1) {
+  Subtraction d = Subtraction::Builder();
+  d.replaceChildAtIndexInPlace(0, child0);
+  d.replaceChildAtIndexInPlace(1, child1);
+  return d;
+}
+
 Expression Subtraction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
-  Expression m = Multiplication::Builder(Rational(-1), childAtIndex(1));
+  Expression m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
   Addition a = Addition::Builder(childAtIndex(0), m);
   m = m.shallowReduce(context, complexFormat, angleUnit, target);
   replaceWithInPlace(a);

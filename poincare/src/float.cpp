@@ -8,7 +8,7 @@ Expression FloatNode<T>::setSign(Sign s, Context * context, Preferences::Complex
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   Sign currentSign = m_value < 0 ? Sign::Negative : Sign::Positive;
   Expression thisExpr = Number(this);
-  Expression result = Float<T>(s == currentSign ? m_value : -m_value);
+  Expression result = Float<T>::Builder(s == currentSign ? m_value : -m_value);
   thisExpr.replaceWithInPlace(result);
   return result;
 }
@@ -42,14 +42,17 @@ Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 template<typename T>
-Float<T>::Float(T value) : Number(TreePool::sharedPool()->createTreeNode<FloatNode<T>>()) {
-  node()->setFloat(value);
+Float<T> Float<T>::Builder(T value) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FloatNode<T>));
+  FloatNode<T> * node = new (bufferNode) FloatNode<T>(value);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Float &>(h);
 }
 
 template class FloatNode<float>;
 template class FloatNode<double>;
 
-template Float<float>::Float(float value);
-template Float<double>::Float(double value);
+template Float<float> Float<float>::Builder(float value);
+template Float<double> Float<double>::Builder(double value);
 
 }

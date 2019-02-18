@@ -31,6 +31,13 @@ Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::Comp
   return AbsoluteValue(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
+AbsoluteValue AbsoluteValue::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(AbsoluteValueNode));
+  AbsoluteValueNode * node = new (bufferNode) AbsoluteValueNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<AbsoluteValue &>(h);
+}
+
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
@@ -62,7 +69,7 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexF
     } else if (!std::isnan(app) &&
                ((c.isNumber() && app < 0.0f) || app <= -Expression::Epsilon<float>())) {
       // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
-      Multiplication m = Multiplication::Builder(Rational(-1), c);
+      Multiplication m = Multiplication::Builder(Rational::Builder(-1), c);
       replaceWithInPlace(m);
       return m.shallowReduce(context, complexFormat, angleUnit, target);
     }

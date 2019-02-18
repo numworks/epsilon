@@ -34,7 +34,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   } else {
     assert(input.type() == EvaluationNode<T>::Type::MatrixComplex);
     MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(input);
-    MatrixComplex<T> result;
+    MatrixComplex<T> result = MatrixComplex<T>::Builder();
     for (int i = 0; i < m.numberOfChildren(); i++) {
       result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), complexFormat, angleUnit), i, i);
     }
@@ -71,7 +71,7 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const Expressi
 }
 
 template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Poincare::Preferences::ComplexFormat complexFormat, ComplexAndComplexReduction<T> computeOnComplexes) {
-  MatrixComplex<T> matrix;
+  MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (int i = 0; i < m.numberOfChildren(); i++) {
     matrix.addChildAtIndexInPlace(computeOnComplexes(m.complexAtIndex(i), c, complexFormat), i, i);
   }
@@ -83,7 +83,7 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexM
   if (m.numberOfRows() != n.numberOfRows() || m.numberOfColumns() != n.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
   }
-  MatrixComplex<T> matrix;
+  MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (int i = 0; i < m.numberOfChildren(); i++) {
     matrix.addChildAtIndexInPlace(computeOnComplexes(m.complexAtIndex(i), n.complexAtIndex(i), complexFormat), i, i);
   }

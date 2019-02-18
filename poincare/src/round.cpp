@@ -35,7 +35,14 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Com
     return Complex<T>::Undefined();
   }
   T err = std::pow(10, std::floor(f2));
-  return Complex<T>(std::round(f1*err)/err);
+  return Complex<T>::Builder(std::round(f1*err)/err);
+}
+
+Round Round::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(RoundNode));
+  RoundNode * node = new (bufferNode) RoundNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<Round &>(h);
 }
 
 Expression Round::shallowReduce() {
@@ -47,7 +54,7 @@ Expression Round::shallowReduce() {
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   /* We reduce only round(Rational, Rational). We do not reduce
@@ -56,11 +63,11 @@ Expression Round::shallowReduce() {
     Rational r1 = childAtIndex(0).convert<Rational>();
     Rational r2 = childAtIndex(1).convert<Rational>();
     if (!r2.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
-    const Rational ten(10);
+    const Rational ten = Rational::Builder(10);
     if (Power::RationalExponentShouldNotBeReduced(ten, r2)) {
       return *this;
     }
@@ -69,10 +76,10 @@ Expression Round::shallowReduce() {
     IntegerDivision d = Integer::Division(mult.signedIntegerNumerator(), mult.integerDenominator());
     Integer rounding = d.quotient;
     Integer multDenominator = mult.integerDenominator();
-    if (Rational::NaturalOrder(Rational(d.remainder, multDenominator), Rational(1,2)) >= 0) {
+    if (Rational::NaturalOrder(Rational::Builder(d.remainder, multDenominator), Rational::Builder(1,2)) >= 0) {
       rounding = Integer::Addition(rounding, Integer(1));
     }
-    Rational result = Rational::Multiplication(rounding, Rational::IntegerPower(Rational(1,10), r2.signedIntegerNumerator()));
+    Rational result = Rational::Multiplication(Rational::Builder(rounding), Rational::IntegerPower(Rational::Builder(1,10), r2.signedIntegerNumerator()));
     if (result.numeratorOrDenominatorIsInfinity()) {
       return *this;
     }

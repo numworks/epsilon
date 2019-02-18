@@ -45,31 +45,22 @@ class ConfidenceInterval : public Expression {
   friend class SimplePredictionInterval;
 public:
   ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
-  static ConfidenceInterval Builder(Expression child0, Expression child1) { return ConfidenceInterval(child0, child1); }
+  static ConfidenceInterval Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("confidence", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
-  ConfidenceInterval(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
   constexpr static int k_maxNValue = 300;
 };
 
 class SimplePredictionInterval final : public ConfidenceInterval {
 public:
   SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}
-  static SimplePredictionInterval Builder(Expression child0, Expression child1) { return SimplePredictionInterval(child0, child1); }
+  static SimplePredictionInterval Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction", 2, &UntypedBuilder);
-private:
-  SimplePredictionInterval(Expression child0, Expression child1) : ConfidenceInterval(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

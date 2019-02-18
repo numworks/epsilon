@@ -25,10 +25,11 @@ void removeZeroAtTheEnd(Integer * i) {
   assert(!i->isOverflow());
 }
 
-void DecimalNode::setValue(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative) {
-  m_negative = negative;
-  m_exponent = exponent;
-  m_numberOfDigitsInMantissa = mantissaSize;
+DecimalNode::DecimalNode(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative) :
+  m_negative(negative),
+  m_exponent(exponent),
+  m_numberOfDigitsInMantissa(mantissaSize)
+{
   memcpy(m_mantissa, mantissaDigits, mantissaSize*sizeof(native_uint_t));
 }
 
@@ -38,14 +39,6 @@ Integer DecimalNode::signedMantissa() const {
 
 Integer DecimalNode::unsignedMantissa() const {
   return Integer::BuildInteger((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, false);
-}
-
-void DecimalNode::initToMatchSize(size_t goalSize) {
-  assert(goalSize != sizeof(DecimalNode));
-  int mantissaSize = goalSize - sizeof(DecimalNode);
-  assert(mantissaSize%sizeof(native_uint_t) == 0);
-  m_numberOfDigitsInMantissa = mantissaSize/sizeof(native_uint_t);
-  assert(size() == goalSize);
 }
 
 static size_t DecimalSize(uint8_t numberOfDigitsInMantissa) {
@@ -268,7 +261,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   return exp;
 }
 
-Decimal::Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent) : Number() {
+Decimal Decimal::Builder(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent) {
   /* Create a Decimal whose mantissa has less than
    * k_numberOfStoredSignificantDigits. We round exceeding number if necessary. */
   Integer zero(0);
@@ -301,11 +294,11 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
   }
   numerator = rounding ? Integer::Addition(numerator, Integer(1)) : numerator;
   exponent = numerator.isZero() ? 0 : exponent;
-  new (this) Decimal(numerator, exponent);
+  return Decimal::Builder(numerator, exponent);
 }
 
 template <typename T>
-Decimal::Decimal(T f) : Number() {
+Decimal Decimal::Builder(T f) {
   assert(!std::isnan(f) && !std::isinf(f));
   int exp = IEEE754<T>::exponentBase10(f);
   /* We keep 7 significant digits for if the the Decimal was built from a float
@@ -327,17 +320,20 @@ Decimal::Decimal(T f) : Number() {
   Integer m = Integer((int64_t)(std::round(mantissaf)));
   /* We get rid of extra 0 at the end of the mantissa. */
   removeZeroAtTheEnd(&m);
-  new (this) Decimal(m, exp);
+  return Decimal::Builder(m, exp);
 }
 
 /* We do not get rid of the useless 0s ending the mantissa here because we want
  * to keep them if they were entered by the user. */
-Decimal::Decimal(Integer m, int e) :
-  Decimal(DecimalSize(m.numberOfDigits()), m, e) {}
+Decimal Decimal::Builder(Integer m, int e) {
+  return Decimal::Builder(DecimalSize(m.numberOfDigits()), m, e);
+}
 
-
-Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
-  node()->setValue(m.digits(), m.numberOfDigits(), e, m.isNegative());
+Decimal Decimal::Builder(size_t size, const Integer & m, int e) {
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
+  DecimalNode * node = new (bufferNode) DecimalNode(m.digits(), m.numberOfDigits(), e, m.isNegative());
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Decimal &>(h);
 }
 
 Expression Decimal::setSign(ExpressionNode::Sign s) {
@@ -369,7 +365,7 @@ Expression Decimal::shallowReduce() {
   if (numerator.isOverflow() || denominator.isOverflow()) {
     result = Number::FloatNumber(node()->signedMantissa().template approximate<double>()*std::pow(10.0, (double)exp));
   } else {
-    result = Rational(numerator, denominator);
+    result = Rational::Builder(numerator, denominator);
   }
   replaceWithInPlace(result);
   return result;
@@ -386,7 +382,7 @@ Expression Decimal::shallowBeautify() {
   return *this;
 }
 
-template Decimal::Decimal(double);
-template Decimal::Decimal(float);
+template Decimal Decimal::Decimal::Builder(double);
+template Decimal Decimal::Decimal::Builder(float);
 
 }

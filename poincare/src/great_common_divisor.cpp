@@ -1,4 +1,5 @@
 #include <poincare/great_common_divisor.h>
+#include <poincare/array_builder.h>
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -45,7 +46,14 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
     a = b;
     b = r;
   }
-  return Complex<T>(std::round((T)a));
+  return Complex<T>::Builder(std::round((T)a));
+}
+
+GreatCommonDivisor GreatCommonDivisor::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(GreatCommonDivisorNode));
+  GreatCommonDivisorNode * node = new (bufferNode) GreatCommonDivisorNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<GreatCommonDivisor &>(h);
 }
 
 Expression GreatCommonDivisor::shallowReduce() {
@@ -59,13 +67,13 @@ Expression GreatCommonDivisor::shallowReduce() {
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -73,7 +81,7 @@ Expression GreatCommonDivisor::shallowReduce() {
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -88,7 +96,7 @@ Expression GreatCommonDivisor::shallowReduce() {
   Integer b = r1.signedIntegerNumerator();
   Integer gcd = Arithmetic::GCD(a, b);
   assert(!gcd.isOverflow());
-  Expression result = Rational(gcd);
+  Expression result = Rational::Builder(gcd);
   replaceWithInPlace(result);
   return result;
 }

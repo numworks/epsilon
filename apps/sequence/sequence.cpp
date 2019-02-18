@@ -147,8 +147,8 @@ int Sequence::numberOfElements() {
 Poincare::Layout Sequence::nameLayout() {
   if (m_nameLayout.isUninitialized()) {
     m_nameLayout = HorizontalLayout::Builder(
-        CharLayout(name()[0], KDFont::SmallFont),
-        VerticalOffsetLayout::Builder(CharLayout('n', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
+        CharLayout::Builder(name()[0], KDFont::SmallFont),
+        VerticalOffsetLayout::Builder(CharLayout::Builder('n', KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   return m_nameLayout;
@@ -158,16 +158,16 @@ Poincare::Layout Sequence::definitionName() {
   if (m_definitionName.isUninitialized()) {
     if (m_type == Type::Explicit) {
       m_definitionName = HorizontalLayout::Builder(
-          CharLayout(name()[0], k_layoutFont),
+          CharLayout::Builder(name()[0], k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
     } else if (m_type == Type::SingleRecurrence) {
       m_definitionName = HorizontalLayout::Builder(
-          CharLayout(name()[0], k_layoutFont),
+          CharLayout::Builder(name()[0], k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
     } else {
       assert(m_type == Type::DoubleRecurrence);
       m_definitionName = HorizontalLayout::Builder(
-          CharLayout(name()[0], k_layoutFont),
+          CharLayout::Builder(name()[0], k_layoutFont),
           VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
     }
   }
@@ -183,7 +183,7 @@ Poincare::Layout Sequence::firstInitialConditionName() {
   {
     Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
     m_firstInitialConditionName = HorizontalLayout::Builder(
-        CharLayout(name()[0], k_layoutFont),
+        CharLayout::Builder(name()[0], k_layoutFont),
         VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Type::Subscript));
   }
   return m_firstInitialConditionName;
@@ -196,7 +196,7 @@ Poincare::Layout Sequence::secondInitialConditionName() {
     if (m_type == Type::DoubleRecurrence) {
       Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
       m_secondInitialConditionName = HorizontalLayout::Builder(
-        CharLayout(name()[0], k_layoutFont),
+        CharLayout::Builder(name()[0], k_layoutFont),
         VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Type::Subscript));
     }
   }
@@ -247,10 +247,10 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
   T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
   T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
-  Poincare::Symbol vnSymbol("v(n)", 4);
-  Poincare::Symbol vn1Symbol("v(n+1)", 6);
-  Poincare::Symbol unSymbol("u(n)", 4);
-  Poincare::Symbol un1Symbol("u(n+1)", 6);
+  Poincare::Symbol vnSymbol = Symbol::Builder("v(n)", 4);
+  Poincare::Symbol vn1Symbol = Symbol::Builder("v(n+1)", 6);
+  Poincare::Symbol unSymbol = Symbol::Builder("u(n)", 4);
+  Poincare::Symbol un1Symbol = Symbol::Builder("u(n+1)", 6);
   switch (m_type) {
     case Type::Explicit:
     {

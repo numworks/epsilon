@@ -52,14 +52,14 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   if (m.numberOfColumns() != n.numberOfRows()) {
     return MatrixComplex<T>::Undefined();
   }
-  MatrixComplex<T> result;
+  MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int i = 0; i < m.numberOfRows(); i++) {
     for (int j = 0; j < n.numberOfColumns(); j++) {
       std::complex<T> c(0.0);
       for (int k = 0; k < m.numberOfColumns(); k++) {
         c += m.complexAtIndex(i*m.numberOfColumns()+k)*n.complexAtIndex(k*n.numberOfColumns()+j);
       }
-      result.addChildAtIndexInPlace(Complex<T>(c), i*n.numberOfColumns()+j, result.numberOfChildren());
+      result.addChildAtIndexInPlace(Complex<T>::Builder(c), i*n.numberOfColumns()+j, result.numberOfChildren());
     }
   }
   result.setDimensions(m.numberOfRows(), n.numberOfColumns());
@@ -107,6 +107,21 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Compl
 }
 
 /* Multiplication */
+
+Multiplication Multiplication::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(AdditionNode));
+  MultiplicationNode * node = new (bufferNode) MultiplicationNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Multiplication &>(h);
+}
+
+Multiplication Multiplication::Builder(Expression * children, size_t numberOfChildren) {
+  Multiplication m = Multiplication::Builder();
+  for (int i = 0; i < numberOfChildren; i++) {
+    m.addChildAtIndexInPlace(children[i], i, i);
+  }
+  return m;
+}
 
 template<typename T>
 void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
@@ -204,9 +219,9 @@ int Multiplication::getPolynomialCoefficients(Context & context, const char * sy
   }
   // Initialization of coefficients
   for (int i = 1; i <= deg; i++) {
-    coefficients[i] = Rational(0);
+    coefficients[i] = Rational::Builder(0);
   }
-  coefficients[0] = Rational(1);
+  coefficients[0] = Rational::Builder(1);
 
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
@@ -292,7 +307,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       int on = currentMatrix->numberOfRows();
       int om = currentMatrix->numberOfColumns();
       if (om != n) {
-        return replaceWith(new Undefined(), true);
+        return replaceWith(new Undefined::Builder(), true);
       }
       // Create the matrix resulting of the multiplication of the current matrix and the result matrix
      /*                        resultMatrix
@@ -316,7 +331,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       * */
       Expression ** newMatrixOperands = new Expression * [on*m];
       for (int e = 0; e < on*m; e++) {
-        newMatrixOperands[e] = new Addition();
+        newMatrixOperands[e] = new Addition::Builder();
         int i2 = e%m;
         int i1 = e/m;
         for (int j = 0; j < n; j++) {
@@ -622,10 +637,10 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
     assert(childAtIndex(0).convert<Rational>().integerDenominator().isOne());
     Integer lcm = Arithmetic::LCM(static_cast<Rational &>(factor).unsignedIntegerNumerator(), childAtIndex(0).convert<Rational>().unsignedIntegerNumerator());
     if (lcm.isOverflow()) {
-      addChildAtIndexInPlace(Rational(static_cast<Rational &>(factor).unsignedIntegerNumerator()), 1, numberOfChildren());
+      addChildAtIndexInPlace(Rational::Builder(static_cast<Rational &>(factor).unsignedIntegerNumerator()), 1, numberOfChildren());
       return;
     }
-    replaceChildAtIndexInPlace(0, Rational(lcm));
+    replaceChildAtIndexInPlace(0, Rational::Builder(lcm));
     return;
   }
   if (factor.type() != ExpressionNode::Type::Rational) {
@@ -683,7 +698,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
     childAtIndex(j).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
   } else {
     // Replace cos(x)^q by tan(x)^(-q)
-    Expression newPower = Power::Builder(tan, Number::Multiplication(q, Rational(-1)));
+    Expression newPower = Power::Builder(tan, Number::Multiplication(q, Rational::Builder(-1)));
     newPower.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
     replaceChildAtIndexInPlace(j, newPower);
     newPower.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
@@ -712,7 +727,7 @@ bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expr
 }
 
 const Expression Multiplication::CreateExponent(Expression e) {
-  Expression result = e.type() == ExpressionNode::Type::Power ? e.childAtIndex(1).clone() : Rational(1);
+  Expression result = e.type() == ExpressionNode::Type::Power ? e.childAtIndex(1).clone() : Rational::Builder(1);
   return result;
 }
 
@@ -747,11 +762,11 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::Co
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !childAtIndex(0).convert<Rational>().integerDenominator().isOne()) {
     Rational r = childAtIndex(0).convert<Rational>();
-    m.addChildAtIndexInPlace(Rational(r.integerDenominator()), 0, m.numberOfChildren());
+    m.addChildAtIndexInPlace(Rational::Builder(r.integerDenominator()), 0, m.numberOfChildren());
     if (r.signedIntegerNumerator().isOne()) {
       removeChildAtIndexInPlace(0);
     } else {
-      replaceChildAtIndexInPlace(0, Rational(r.signedIntegerNumerator()));
+      replaceChildAtIndexInPlace(0, Rational::Builder(r.signedIntegerNumerator()));
     }
   }
   int i = 0;
@@ -778,7 +793,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::Co
     return *this;
   }
   m.sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
-  Power p = Power::Builder(m.squashUnaryHierarchyInPlace(), Rational(-1));
+  Power p = Power::Builder(m.squashUnaryHierarchyInPlace(), Rational::Builder(-1));
   addChildAtIndexInPlace(p, 0, numberOfChildren());
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
   return squashUnaryHierarchyInPlace();

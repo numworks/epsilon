@@ -8,4 +8,11 @@ void LeftSquareBracketLayoutNode::render(KDContext * ctx, KDPoint p, KDColor exp
   ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y() + childHeight(), k_bracketWidth, k_lineThickness), expressionColor);
 }
 
+LeftSquareBracketLayout LeftSquareBracketLayout::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LeftSquareBracketLayoutNode));
+  LeftSquareBracketLayoutNode * node = new (bufferNode) LeftSquareBracketLayoutNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<LeftSquareBracketLayout &>(h);
+}
+
 }

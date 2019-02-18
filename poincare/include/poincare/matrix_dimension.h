@@ -35,15 +35,11 @@ private:
 class MatrixDimension final : public Expression {
 public:
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
-  static MatrixDimension Builder(Expression child) { return MatrixDimension(child); }
+  static MatrixDimension Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilder);
 
   Expression shallowReduce();
-private:
-  explicit MatrixDimension(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

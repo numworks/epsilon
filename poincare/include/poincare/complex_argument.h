@@ -41,15 +41,11 @@ private:
 class ComplexArgument final : public Expression {
 public:
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
-  static ComplexArgument Builder(Expression child) { return ComplexArgument(child); }
+  static ComplexArgument Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit ComplexArgument(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ComplexArgumentNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

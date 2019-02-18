@@ -82,7 +82,7 @@ void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * curso
 }
 
 void Layout::replaceChildWithEmpty(Layout oldChild, LayoutCursor * cursor) {
-  replaceChild(oldChild, EmptyLayout(), cursor);
+  replaceChild(oldChild, EmptyLayout::Builder(), cursor);
 }
 
 void Layout::replaceWith(Layout newChild, LayoutCursor * cursor) {

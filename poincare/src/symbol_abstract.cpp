@@ -8,24 +8,8 @@
 
 namespace Poincare {
 
-void SymbolAbstractNode::setName(const char * newName, int length) {
-  strlcpy(const_cast<char*>(name()), newName, length+1);
-}
-
 size_t SymbolAbstractNode::size() const {
   return SymbolAbstract::AlignedNodeSize(strlen(name()), nodeSize());
-}
-
-void SymbolAbstractNode::initToMatchSize(size_t goalSize) {
-  assert(goalSize != nodeSize());
-  assert(goalSize > nodeSize());
-  size_t nameSize = goalSize - nodeSize();
-  char * modifiableName = const_cast<char *>(name());
-  for (size_t i = 0; i < nameSize - 1; i++) {
-    modifiableName[i] = 'a';
-  }
-  modifiableName[nameSize-1] = 0;
-  assert(size() == goalSize);
 }
 
 ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
@@ -74,7 +58,7 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);
   if (!e.isUninitialized() && isFunction) {
-    e = e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
+    e = e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
   }
   return e;
 }

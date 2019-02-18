@@ -30,11 +30,18 @@ template<typename T>
 Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::tan(angleInput);
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
 Expression TangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Tangent(this).shallowReduce(context, complexFormat, angleUnit, target);
+}
+
+Tangent Tangent::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(TangentNode));
+  TangentNode * node = new (bufferNode) TangentNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Tangent &>(h);
 }
 
 Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

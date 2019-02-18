@@ -12,14 +12,14 @@ namespace Regression {
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('e', KDFont::SmallFont),
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('e', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(
-            CharLayout('b', KDFont::SmallFont),
-            CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-            CharLayout('X', KDFont::SmallFont)
+            CharLayout::Builder('b', KDFont::SmallFont),
+            CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+            CharLayout::Builder('X', KDFont::SmallFont)
           ),
           VerticalOffsetLayoutNode::Type::Superscript
         )

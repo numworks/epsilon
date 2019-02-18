@@ -9,6 +9,10 @@
 
 namespace Poincare {
 
+FunctionNode::FunctionNode(const char * newName, int length) : SymbolAbstractNode() {
+  strlcpy(const_cast<char*>(name()), newName, length+1);
+}
+
 bool FunctionNode::isReal(Context & context) const {
   Function f(this);
   return SymbolAbstract::isReal(f, context);
@@ -88,10 +92,13 @@ Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Function::Function(const char * name, size_t length) :
-  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(SymbolAbstract::AlignedNodeSize(length, sizeof(FunctionNode))))
-{
-  static_cast<FunctionNode *>(Expression::node())->setName(name, length);
+Function  Function::Builder(const char * name, size_t length, Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(SymbolAbstract::AlignedNodeSize(length, sizeof(FunctionNode)));
+  FunctionNode * node = new (bufferNode) FunctionNode(name, length);
+  Expression * childPointer = child.isUninitialized() ? nullptr : &child;
+  int numberOfChild = child.isUninitialized() ? 0 : 1;
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, childPointer, numberOfChild);
+  return static_cast<Function &>(h);
 }
 
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
@@ -100,7 +107,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     // Replace the unknown in the new expression by the function's child
-    Symbol xSymbol = Symbol(Symbol::SpecialSymbols::UnknownX);
+    Symbol xSymbol = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
     Expression xValue = childAtIndex(0);
     value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
@@ -128,7 +135,7 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
   if (e.isUninitialized()) {
     return *this;
   }
-  e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
+  e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
   replaceWithInPlace(e);
   return e;
 }
@@ -136,7 +143,7 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
 // TODO: should we avoid replacing unknown X in-place but use a context instead?
 #if 0
 VariableContext Function::unknownXContext(Context & parentContext) const {
-  Symbol unknownXSymbol(Symbol::SpecialSymbols::UnknownX);
+  Symbol unknownXSymbol = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
   Expression child = childAtIndex(0);
   const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
   /* COMMENT */

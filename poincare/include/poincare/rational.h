@@ -9,11 +9,7 @@ namespace Poincare {
 
 class RationalNode final : public NumberNode {
 public:
-  RationalNode() :
-    m_negative(false),
-    m_numberOfDigitsNumerator(0),
-    m_numberOfDigitsDenominator(0) {}
-  virtual void setDigits(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
+  RationalNode(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
 
   Integer signedNumerator() const;
   Integer unsignedNumerator() const;
@@ -22,7 +18,6 @@ public:
   void setNegative(bool negative) { m_negative = negative; }
 
   // TreeNode
-  void initToMatchSize(size_t goalSize) override;
   size_t size() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -42,8 +37,8 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>(templatedApproximate<float>()); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>(templatedApproximate<double>()); }
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
   template<typename T> T templatedApproximate() const;
 
   // Basic test
@@ -74,11 +69,11 @@ class Rational final : public Number {
 public:
   /* The constructor build a irreductible fraction */
   Rational(const RationalNode * node) : Number(node) {}
-  Rational(Integer & num, Integer & den);
-  Rational(const Integer & numerator);
-  Rational(native_int_t i);
-  Rational(native_int_t i, native_int_t j);
-  Rational(const char * iString, const char * jString);
+  static Rational Builder(Integer & num, Integer & den);
+  static Rational Builder(const Integer & numerator);
+  static Rational Builder(native_int_t i);
+  static Rational Builder(native_int_t i, native_int_t j);
+  static Rational Builder(const char * iString, const char * jString);
 
   // TreeNode
   RationalNode * node() const { return static_cast<RationalNode *>(Number::node()); }
@@ -111,7 +106,8 @@ public:
   Expression shallowReduce();
 
 private:
-  Rational(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
+  static Rational Builder(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative);
+
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */

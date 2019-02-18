@@ -33,7 +33,7 @@ private:
 
 class EmptyExpression final : public Expression {
 public:
-  EmptyExpression();
+  static EmptyExpression Builder();
   EmptyExpression(const EmptyExpressionNode * n) : Expression(n) {}
 };
 

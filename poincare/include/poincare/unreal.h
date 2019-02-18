@@ -39,7 +39,8 @@ private:
 
 class Unreal final : public Number {
 public:
-  Unreal() : Number(TreePool::sharedPool()->createTreeNode<UnrealNode>()) {}
+  static Unreal Builder();
+  Unreal() = delete;
   static const char * Name() {
     return "unreal";
   }

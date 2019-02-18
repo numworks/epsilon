@@ -29,7 +29,7 @@ Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::
     return Complex<T>::Undefined();
   }
   VariableContext nContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
-  Evaluation<T> result = Complex<T>((T)emptySequenceValue());
+  Evaluation<T> result = Complex<T>::Builder((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
     if (Expression::ShouldStopProcessing()) {
       return Complex<T>::Undefined();

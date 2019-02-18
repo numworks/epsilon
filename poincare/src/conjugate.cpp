@@ -29,7 +29,7 @@ Expression ConjugateNode::shallowReduce(Context & context, Preferences::ComplexF
 
 template<typename T>
 Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(std::conj(c));
+  return Complex<T>::Builder(std::conj(c));
 }
 
 Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -51,7 +51,7 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
   }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
-    Multiplication m = Multiplication::Builder(Rational(-1), complexChild.imag());
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), complexChild.imag());
     complexChild.replaceChildAtIndexInPlace(1, m);
     m.shallowReduce(context, complexFormat, angleUnit, target);
     replaceWithInPlace(complexChild);
@@ -62,6 +62,13 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
     return c;
   }
   return *this;
+}
+
+Conjugate Conjugate::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ConjugateNode));
+  ConjugateNode * node = new (bufferNode) ConjugateNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Conjugate &>(h);
 }
 
 }

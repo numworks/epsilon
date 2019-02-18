@@ -28,11 +28,18 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(std::floor(c.real()));
+  return Complex<T>::Builder(std::floor(c.real()));
 }
 
 Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Floor(this).shallowReduce();
+}
+
+Floor Floor::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FloorNode));
+  FloorNode * node = new (bufferNode) FloorNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Floor &>(h);
 }
 
 Expression Floor::shallowReduce() {
@@ -52,10 +59,10 @@ Expression Floor::shallowReduce() {
     Constant s = static_cast<Constant &>(c);
     Expression result;
     if (s.isPi()) {
-      result = Rational(3);
+      result = Rational::Builder(3);
     }
     if (s.isExponential()) {
-      result = Rational(2);
+      result = Rational::Builder(2);
     }
     if (!result.isUninitialized()) {
       replaceWithInPlace(result);
@@ -69,7 +76,7 @@ Expression Floor::shallowReduce() {
   Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.quotient.isOverflow());
-  Expression result = Rational(div.quotient);
+  Expression result = Rational::Builder(div.quotient);
   replaceWithInPlace(result);
   return result;
 }

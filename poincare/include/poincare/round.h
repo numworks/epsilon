@@ -38,16 +38,11 @@ private:
 class Round final : public Expression {
 public:
   Round(const RoundNode * n) : Expression(n) {}
-  static Round Builder(Expression child0, Expression child1) { return Round(child0, child1); }
+  static Round Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilder);
 
   Expression shallowReduce();
-private:
-  Round(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

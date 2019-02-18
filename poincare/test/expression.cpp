@@ -7,7 +7,7 @@ using namespace Poincare;
 QUIZ_CASE(expression_can_start_uninitialized) {
   Expression e;
   {
-    Rational i(1);
+    Rational i = Rational::Builder(1);
     e = i;
   }
 }

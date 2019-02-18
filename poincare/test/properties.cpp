@@ -76,19 +76,19 @@ void assert_expression_has_characteristic_range(Expression e, float range, Prefe
 }
 
 QUIZ_CASE(poincare_characteristic_range) {
-  assert_expression_has_characteristic_range(Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)), 360.0f);
-  assert_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
-  assert_expression_has_characteristic_range(Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)), 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_expression_has_characteristic_range(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational(9),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational(10))), 40.0f);
-  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational(9),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational(10))),Cosine::Builder(Division::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX),Rational(2)))), 720.0f);
-  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational(9),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational(10))),Cosine::Builder(Division::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX),Rational(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_expression_has_characteristic_range(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX), NAN);
-  assert_expression_has_characteristic_range(Addition::Builder(Cosine::Builder(Rational(3)),Rational(2)), 0.0f);
-  assert_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(Multiplication::Builder(Rational(40),Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)))), 9.0f);
-  assert_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)), 360.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)), 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX))), 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational::Builder(10))), 40.0f);
+  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX),Rational::Builder(2)))), 720.0f);
+  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX),Rational::Builder(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX), NAN);
+  assert_expression_has_characteristic_range(Addition::Builder(Cosine::Builder(Rational::Builder(3)),Rational::Builder(2)), 0.0f);
+  assert_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(Multiplication::Builder(Rational::Builder(40),Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)))), 9.0f);
+  assert_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX))), 360.0f);
   assert_simplify("cos(x)>f(x)");
-  assert_expression_has_characteristic_range(Function("f",1,Symbol(Poincare::Symbol::SpecialSymbols::UnknownX)), 360.0f);
+  assert_expression_has_characteristic_range(Function::Builder("f",1,Symbol::Builder(Poincare::Symbol::SpecialSymbols::UnknownX)), 360.0f);
 }
 
 void assert_parsed_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {

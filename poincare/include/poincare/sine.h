@@ -48,15 +48,11 @@ private:
 class Sine final : public Expression {
 public:
   Sine(const SineNode * n) : Expression(n) {}
-  static Sine Builder(Expression child) { return Sine(child); }
+  static Sine Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sin", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit Sine(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

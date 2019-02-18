@@ -35,15 +35,11 @@ private:
 class Determinant final : public Expression {
 public:
   Determinant(const DeterminantNode * n) : Expression(n) {}
-  static Determinant Builder(Expression child) { return Determinant(child); }
+  static Determinant Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context);
-private:
-  explicit Determinant(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<DeterminantNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

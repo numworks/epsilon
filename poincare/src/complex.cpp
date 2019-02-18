@@ -22,12 +22,13 @@ extern "C" {
 namespace Poincare {
 
 template<typename T>
-void ComplexNode<T>::setComplex(std::complex<T> c) {
+ComplexNode<T>::ComplexNode(std::complex<T> c) :
+  EvaluationNode<T>(),
+  std::complex<T>(c.real(), c.imag())
+{
   if (!std::isnan(c.imag()) && c.imag() != 0.0) {
     Expression::SetEncounteredComplex(true);
   }
-  this->real(c.real());
-  this->imag(c.imag());
   if (this->real() == -0) {
     this->real(0);
   }
@@ -47,7 +48,7 @@ T ComplexNode<T>::toScalar() const {
 template<typename T>
 Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   if (complexFormat == Preferences::ComplexFormat::Real && Expression::EncounteredComplex()) {
-    return Unreal();
+    return Unreal::Builder();
   }
   T ra, tb;
   if (complexFormat == Preferences::ComplexFormat::Polar) {
@@ -67,17 +68,18 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
 }
 
 template <typename T>
-Complex<T>::Complex(std::complex<T> c) :
-  Evaluation<T>(TreePool::sharedPool()->createTreeNode<ComplexNode<T>>())
-{
-  node()->setComplex(c);
+Complex<T> Complex<T>::Builder(std::complex<T> c) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ComplexNode<T>));
+  ComplexNode<T> * node = new (bufferNode) ComplexNode<T>(c);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Complex<T> &>(h);
 }
 
 template class ComplexNode<float>;
 template class ComplexNode<double>;
-template Complex<float>::Complex(float a, float b);
-template Complex<double>::Complex(double a, double b);
-template Complex<float>::Complex(std::complex<float> c);
-template Complex<double>::Complex(std::complex<double> c);
+template Complex<float> Complex<float>::Builder(float a, float b);
+template Complex<double> Complex<double>::Builder(double a, double b);
+template Complex<float> Complex<float>::Builder(std::complex<float> c);
+template Complex<double> Complex<double>::Builder(std::complex<double> c);
 
 }

@@ -34,15 +34,11 @@ private:
 class MatrixInverse final : public Expression {
 public:
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
-  static MatrixInverse Builder(Expression child) { return MatrixInverse(child); }
+  static MatrixInverse Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("inverse", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit MatrixInverse(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

@@ -30,10 +30,17 @@ Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFo
   return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
+Factor Factor::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FactorNode));
+  FactorNode * node = new (bufferNode) FactorNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Factor &>(h);
+}
+
 Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
@@ -44,7 +51,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
   }
   Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, complexFormat, angleUnit);
   if (numeratorDecomp.numberOfChildren() == 0) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
@@ -52,7 +59,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
   if (!r.integerDenominator().isOne()) {
     Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, complexFormat, angleUnit);
     if (denominatorDecomp.numberOfChildren() == 0) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -73,7 +80,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
   if (numberOfPrimeFactors == 0) {
-    m.addChildAtIndexInPlace(Rational(i), 0, 0);
+    m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
     return m;
   }
   if (numberOfPrimeFactors < 0) {
@@ -81,9 +88,9 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
     return m;
   }
   for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational(factors[index]);
+    Expression factor = Rational::Builder(factors[index]);
     if (!coefficients[index].isOne()) {
-      factor = Power::Builder(factor, Rational(coefficients[index]));
+      factor = Power::Builder(factor, Rational::Builder(coefficients[index]));
     }
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }

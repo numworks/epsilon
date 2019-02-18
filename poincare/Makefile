@@ -3,6 +3,7 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
 objs += $(addprefix poincare/src/,\
+  absolute_value_layout.o\
   binomial_coefficient_layout.o\
   bracket_layout.o\
   bracket_pair_layout.o\
@@ -11,6 +12,7 @@ objs += $(addprefix poincare/src/,\
   condensed_sum_layout.o\
   conjugate_layout.o\
   empty_layout.o\
+  floor_layout.o\
   fraction_layout.o\
   grid_layout.o\
   horizontal_layout.o\

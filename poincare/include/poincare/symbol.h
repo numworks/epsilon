@@ -7,6 +7,8 @@ namespace Poincare {
 
 class SymbolNode final : public SymbolAbstractNode {
 public:
+  SymbolNode(const char * newName, int length);
+
   const char * name() const override { return m_name; }
 
   // TreeNode
@@ -61,13 +63,13 @@ public:
      * characters but events as 'end of text', 'backspace'... */
     UnknownX = 1,
   };
-  Symbol(const char * name, int length);
-  Symbol(char name);
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
-  static Symbol Ans() { return Symbol(k_ans, k_ansLength); }
+  static Symbol Builder(const char * name, int length);
+  static Symbol Builder(char name);
+  static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
   static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
     // create an expression only if it is not in the context or defined as a symbol
-    Symbol s(name, length);
+    Symbol s = Symbol::Builder(name, length);
     if (SymbolAbstract::ValidInContext(s, context)) {
       return s;
     }

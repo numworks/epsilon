@@ -22,6 +22,13 @@ Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::
   return NaperianLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
+NaperianLogarithm NaperianLogarithm::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NaperianLogarithmNode));
+  NaperianLogarithmNode * node = new (bufferNode) NaperianLogarithmNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<NaperianLogarithm &>(h);
+}
+
 Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -34,7 +41,7 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Comp
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant(Ion::Charset::Exponential));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(Ion::Charset::Exponential));
   replaceWithInPlace(l);
   return l.shallowReduce(context, complexFormat, angleUnit, target);
 }

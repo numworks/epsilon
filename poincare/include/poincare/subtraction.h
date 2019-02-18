@@ -25,7 +25,7 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Approximation
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>(c - d); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<float>(this, context, complexFormat, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
@@ -55,19 +55,12 @@ private:
 class Subtraction final : public Expression {
 public:
   Subtraction(const SubtractionNode * n) : Expression(n) {}
-  static Subtraction Builder() { return Subtraction(); }
-  static Subtraction Builder(Expression child0, Expression child1) {
-    Subtraction s = Subtraction::Builder();
-    s.replaceChildAtIndexInPlace(0, child0);
-    s.replaceChildAtIndexInPlace(1, child1);
-    return s;
-  }
+  static Subtraction Builder();
+  static Subtraction Builder(Expression child0, Expression child1);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 
-private:
-  Subtraction() : Expression(TreePool::sharedPool()->createTreeNode<SubtractionNode>()) {}
 };
 
 }

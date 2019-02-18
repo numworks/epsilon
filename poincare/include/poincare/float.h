@@ -20,10 +20,8 @@ namespace Poincare {
 template<typename T>
 class FloatNode final : public NumberNode {
 public:
-  FloatNode() : m_value(0.0) {}
+  FloatNode(T value = 0.0) : m_value(value) {}
 
-
-  void setFloat(T a) { m_value = a; }
   T value() const { return m_value; }
 
   // TreeNode
@@ -52,7 +50,7 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 private:
   template<typename U> Evaluation<U> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-    return Complex<U>((U)m_value);
+    return Complex<U>::Builder((U)m_value);
   }
   T m_value;
 };
@@ -60,7 +58,7 @@ private:
 template<typename T>
 class Float final : public Number {
 public:
-  Float(T value);
+  static Float Builder(T value);
 private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };

@@ -29,7 +29,7 @@ public:
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Evaluation
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>(c+d); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c+d); }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, complexFormat, compute<T>);
   }
@@ -61,23 +61,15 @@ private:
 class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
-  static Addition Builder() { return Addition(); }
+  static Addition Builder();
   static Addition Builder(Expression e1) { return Addition::Builder(&e1, 1); }
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static Addition Builder(Expression * children, size_t numberOfChildren) {
-    Addition a = Addition::Builder();
-    for (size_t i = 0; i < numberOfChildren; i++) {
-      a.addChildAtIndexInPlace(children[i], i, i);
-    }
-    return a;
-  }
+  static Addition Builder(Expression * children, size_t numberOfChildren);
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
 private:
-  Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
-
   static const Number NumeralFactor(const Expression & e);
   static inline int NumberOfNonNumeralFactors(const Expression & e);
   static inline const Expression FirstNonNumeralFactor(const Expression & e);

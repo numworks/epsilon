@@ -38,8 +38,8 @@ class ComplexCartesian final : public Expression {
 public:
   ComplexCartesian() : Expression() {}
   ComplexCartesian(const ComplexCartesianNode * node) : Expression(node) {}
-  static ComplexCartesian Builder() { ComplexCartesianNode * node = TreePool::sharedPool()->createTreeNode<ComplexCartesianNode>(); return ComplexCartesian(node); }
-  static ComplexCartesian Builder(Expression child0, Expression child1) { return ComplexCartesian(child0, child1); }
+  static ComplexCartesian Builder();
+  static ComplexCartesian Builder(Expression child0, Expression child1);
 
   // Getters
   Expression real() { return childAtIndex(0); }
@@ -60,10 +60,6 @@ public:
   ComplexCartesian power(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
   static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
-  ComplexCartesian(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<ComplexCartesianNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
   void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   ComplexCartesian interruptComputationIfManyNodes();
   static Multiplication squareRootHelper(Expression e, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);

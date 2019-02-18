@@ -31,8 +31,8 @@ public:
     return m_nodeForIdentifier[identifier];
   }
 
-  template <typename T>
-  T * createTreeNode(size_t size = sizeof(T));
+  // Pool memory
+  void * alloc(size_t size);
   void move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren);
   void moveChildren(TreeNode * destination, TreeNode * sourceParent);
   void removeChildren(TreeNode * node, int nodeNumberOfChildren);
@@ -54,7 +54,6 @@ private:
   static TreePool * SharedStaticPool;
 
   // TreeNode
-  void addGhostChildrenAndRename(TreeNode * node);
   void discardTreeNode(TreeNode * node);
   void registerNode(TreeNode * node);
   void unregisterNode(TreeNode * node) {
@@ -106,7 +105,6 @@ private:
   RootNodes roots() { return RootNodes(first()); }
 
   // Pool memory
-  void * alloc(size_t size);
   void dealloc(TreeNode * ptr, size_t size);
   void moveNodes(TreeNode * destination, TreeNode * source, size_t moveLength);
 

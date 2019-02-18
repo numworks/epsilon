@@ -28,8 +28,15 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 template<typename T>
 Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  Complex<T> result = Complex<T>(input.trace());
+  Complex<T> result = Complex<T>::Builder(input.trace());
   return result;
+}
+
+MatrixTrace MatrixTrace::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixTraceNode));
+  MatrixTraceNode * node = new (bufferNode) MatrixTraceNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<MatrixTrace &>(h);
 }
 
 Expression MatrixTrace::shallowReduce() {
@@ -45,10 +52,10 @@ Expression MatrixTrace::shallowReduce() {
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix&>(c);
     if (m.numberOfRows() != m.numberOfColumns()) {
-      return Undefined();
+      return Undefined::Builder();
     }
     int n = m.numberOfRows();
-    Addition a = Addition();
+    Addition a = Addition::Builder();
     for (int i = 0; i < n; i++) {
       a.addChildAtIndexInPlace(m.childAtIndex(i+n*i), i, a.numberOfChildren());
     }

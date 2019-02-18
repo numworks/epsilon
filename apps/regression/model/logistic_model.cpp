@@ -13,24 +13,24 @@ namespace Regression {
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout exponentLayoutChildren[] = {
-      CharLayout('-', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont)
+      CharLayout::Builder('-', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont)
     };
     const Layout layoutChildren[] = {
-      CharLayout('1', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('e', KDFont::SmallFont),
+      CharLayout::Builder('1', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('e', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(exponentLayoutChildren, 4),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
     m_layout = FractionLayout::Builder(
-       CharLayout('c', KDFont::SmallFont),
+       CharLayout::Builder('c', KDFont::SmallFont),
        HorizontalLayout::Builder(layoutChildren, 6)
       );
   }

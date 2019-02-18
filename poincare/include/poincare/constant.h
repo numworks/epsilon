@@ -7,6 +7,8 @@ namespace Poincare {
 
 class ConstantNode final : public SymbolAbstractNode {
 public:
+  ConstantNode(const char * newName, int length);
+
   const char * name() const override { return m_name; }
 
   // TreeNode
@@ -52,8 +54,8 @@ private:
 
 class Constant final : public SymbolAbstract {
 public:
-  Constant(char name);
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
+  static Constant Builder(char name);
 
   // Constant properties
   bool isPi() const { return node()->isPi(); }

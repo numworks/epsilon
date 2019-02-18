@@ -35,16 +35,11 @@ private:
 class NthRoot final : public Expression {
 public:
   NthRoot(const NthRootNode * n) : Expression(n) {}
-  static NthRoot Builder(Expression child0, Expression child1) { return NthRoot(child0, child1); }
+  static NthRoot Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("root", 2, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  NthRoot(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

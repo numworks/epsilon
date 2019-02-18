@@ -96,11 +96,11 @@ bool CharLayoutNode::isMultiplicationChar() const {
     || m_char == Ion::Charset::MiddleDot;
 }
 
-CharLayout::CharLayout(char c, const KDFont * font) :
-  Layout(TreePool::sharedPool()->createTreeNode<CharLayoutNode>())
-{
-  node()->setChar(c);
-  node()->setFont(font);
+CharLayout CharLayout::Builder(char c, const KDFont * font) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CharLayoutNode));
+  CharLayoutNode * node = new (bufferNode) CharLayoutNode(c, font);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<CharLayout &>(h);
 }
 
 }

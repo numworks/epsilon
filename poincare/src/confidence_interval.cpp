@@ -41,7 +41,7 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
   std::complex<T> operands[2];
   operands[0] = std::complex<T>(f - 1/std::sqrt(n));
   operands[1] = std::complex<T>(f + 1/std::sqrt(n));
-  return MatrixComplex<T>(operands, 1, 2);
+  return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
 Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -50,6 +50,13 @@ Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode fl
 
 int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
+}
+
+ConfidenceInterval ConfidenceInterval::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ConfidenceIntervalNode));
+  ConfidenceIntervalNode * node = new (bufferNode) ConfidenceIntervalNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<ConfidenceInterval &>(h);
 }
 
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -63,13 +70,13 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -77,7 +84,7 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -88,14 +95,21 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   Rational r0 = static_cast<Rational&>(c0);
   Rational r1 = static_cast<Rational&>(c1);
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
-  Expression sqr = Power::Builder(r1, Rational(-1, 2));
+  Expression sqr = Power::Builder(r1, Rational::Builder(-1, 2));
   Matrix matrix = Matrix::Builder();
-  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), Multiplication::Builder(Rational(-1), sqr.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), Multiplication::Builder(Rational::Builder(-1), sqr.clone())), 0, 0);
   matrix.addChildAtIndexInPlace(Addition::Builder(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
   matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
   return matrix;
+}
+
+SimplePredictionInterval SimplePredictionInterval::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SimplePredictionIntervalNode));
+  SimplePredictionIntervalNode * node = new (bufferNode) SimplePredictionIntervalNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<SimplePredictionInterval &>(h);
 }
 
 }

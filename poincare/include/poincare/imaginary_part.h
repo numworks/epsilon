@@ -32,7 +32,7 @@ private:
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-    return Complex<T>(std::imag(c));
+    return Complex<T>::Builder(std::imag(c));
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
@@ -45,15 +45,11 @@ private:
 class ImaginaryPart final : public Expression {
 public:
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
-  static ImaginaryPart Builder(Expression child) { return ImaginaryPart(child); }
+  static ImaginaryPart Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit ImaginaryPart(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ImaginaryPartNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

@@ -30,11 +30,8 @@ protected:
 
 class CeilingLayout final : public Layout {
 public:
-  static CeilingLayout Builder(Layout l) { return CeilingLayout(l); }
-private:
-  explicit CeilingLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>()) {
-    replaceChildAtIndexInPlace(0, l);
-  }
+  static CeilingLayout Builder(Layout l);
+  CeilingLayout() = delete;
 };
 
 }

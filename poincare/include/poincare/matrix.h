@@ -63,7 +63,7 @@ class Matrix final : public Expression {
   friend class GlobalContext;
 public:
   Matrix(const MatrixNode * node) : Expression(node) {}
-  static Matrix Builder() { return Matrix(); }
+  static Matrix Builder();
 
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }
@@ -85,7 +85,6 @@ public:
   Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
-  Matrix() : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
 

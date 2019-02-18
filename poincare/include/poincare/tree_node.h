@@ -42,7 +42,6 @@ public:
   static constexpr int NoNodeIdentifier = -1;
 
   // Constructor and destructor
-  virtual void initToMatchSize(size_t goalSize) { assert(false); }
   virtual ~TreeNode() {}
 
   // Attributes

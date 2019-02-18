@@ -35,10 +35,7 @@ private:
 class Equal final : public Expression {
 public:
   Equal(const EqualNode * n) : Expression(n) {}
-  Equal(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<EqualNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
+  static Equal Builder(Expression child0, Expression child1);
 
   // For the equation A = B, create the reduced expression A-B
   Expression standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

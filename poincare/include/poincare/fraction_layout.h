@@ -58,14 +58,8 @@ private:
 
 class FractionLayout final : public Layout {
 public:
-  static FractionLayout Builder(Layout numerator, Layout denominator) { return FractionLayout(numerator, denominator); }
-private:
-  FractionLayout(Layout numerator, Layout denominator) :
-    Layout(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, numerator);
-    replaceChildAtIndexInPlace(1, denominator);
-  }
+  static FractionLayout Builder(Layout numerator, Layout denominator);
+  FractionLayout() = delete;
 };
 
 }

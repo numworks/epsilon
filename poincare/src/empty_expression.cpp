@@ -11,13 +11,18 @@ int EmptyExpressionNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 Layout EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return EmptyLayout();
+  return EmptyLayout::Builder();
 }
 
 template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Complex<T>::Undefined();
 }
 
-EmptyExpression::EmptyExpression() : Expression(TreePool::sharedPool()->createTreeNode<EmptyExpressionNode>()) {}
+EmptyExpression  EmptyExpression::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EmptyExpressionNode));
+  EmptyExpressionNode * node = new (bufferNode) EmptyExpressionNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<EmptyExpression &>(h);
+}
 
 }

@@ -8,6 +8,8 @@ namespace Poincare {
 
 class FunctionNode : public SymbolAbstractNode  {
 public:
+  FunctionNode(const char * newName, int length);
+
   // SymbolAbstractNode
   const char * name() const override { return m_name; }
 
@@ -49,15 +51,12 @@ private:
 class Function : public SymbolAbstract {
 friend class FunctionNode;
 public:
-  Function(const char * name, size_t length);
   Function(const FunctionNode * n) : SymbolAbstract(n) {}
-  Function(const char * name, size_t length, Expression child) : Function(name, length) {
-    replaceChildAtIndexInPlace(0, child);
-  }
+  static Function Builder(const char * name, size_t length, Expression child = Expression());
   static Expression UntypedBuilder(const char * name, size_t length, Expression child, Context * context) {
     /* Create an expression only if it is not in the context or defined as a
      * function */
-    Function f(name, length, child);
+    Function f = Function::Builder(name, length, child);
     if (SymbolAbstract::ValidInContext(f, context)) {
       return f;
     }

@@ -37,17 +37,12 @@ private:
 class PredictionInterval final : public Expression {
 public:
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
-  static PredictionInterval Builder(Expression child0, Expression child1) { return PredictionInterval(child0, child1); }
+  static PredictionInterval Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  PredictionInterval(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

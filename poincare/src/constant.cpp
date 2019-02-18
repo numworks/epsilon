@@ -11,6 +11,10 @@
 
 namespace Poincare {
 
+ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNode() {
+  strlcpy(const_cast<char*>(name()), newName, length+1);
+}
+
 ExpressionNode::Sign ConstantNode::sign(Context * context) const {
   if (isPi() || isExponential()) {
     return Sign::Positive;
@@ -59,29 +63,32 @@ template<typename T>
 Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (isIComplex()) {
     assert(m_name[1] == 0);
-    return Complex<T>(0.0, 1.0);
+    return Complex<T>::Builder(0.0, 1.0);
   }
   if (isPi()) {
-    return Complex<T>(M_PI);
+    return Complex<T>::Builder(M_PI);
   }
   assert(isExponential());
-  return Complex<T>(M_E);
+  return Complex<T>::Builder(M_E);
 }
 
 Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Constant(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Constant::Constant(char name) : SymbolAbstract(TreePool::sharedPool()->createTreeNode<ConstantNode>(SymbolAbstract::AlignedNodeSize(1, sizeof(ConstantNode)))) {
-  node()->setName(&name, 1);
+Constant Constant::Builder(char name) {
+  void * bufferNode = TreePool::sharedPool()->alloc(SymbolAbstract::AlignedNodeSize(1, sizeof(ConstantNode)));
+  ConstantNode * node = new (bufferNode) ConstantNode(&name, 1);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Constant &>(h);
 }
 
 Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression result;
   if (complexFormat == Preferences::ComplexFormat::Real && isIComplex()) {
-    result = Unreal();
+    result = Unreal::Builder();
   } else if (target == ExpressionNode::ReductionTarget::User && isIComplex()) {
-    result = ComplexCartesian::Builder(Rational(0), Rational(1));
+    result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
   }
   if (!result.isUninitialized()) {
     replaceWithInPlace(result);

@@ -34,12 +34,19 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     inverse = static_cast<MatrixComplex<T>&>(input).inverse();
   } else if (input.type() == EvaluationNode<T>::Type::Complex) {
-    inverse = Complex<T>(std::complex<T>(1)/(static_cast<Complex<T>&>(input).stdComplex()));
+    inverse = Complex<T>::Builder(std::complex<T>(1)/(static_cast<Complex<T>&>(input).stdComplex()));
   }
   if (inverse.isUninitialized()) {
     inverse = Complex<T>::Undefined();
   }
   return inverse;
+}
+
+MatrixInverse MatrixInverse::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixInverseNode));
+  MatrixInverseNode * node = new (bufferNode) MatrixInverseNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<MatrixInverse &>(h);
 }
 
 Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -53,19 +60,19 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexF
 #if MATRIX_EXACT_REDUCING
 #if 0
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return Power::Builder(c, Rational(-1).shallowReduce(context, complexFormat, angleUnit, target);
+    return Power::Builder(c, Rational::Builder(-1).shallowReduce(context, complexFormat, angleUnit, target);
   }
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix mat = static_cast<Matrix&>(c);
     if (mat.numberOfRows() != mat.numberOfColumns()) {
-      return Undefined();
+      return Undefined::Builder();
     }
   }
   return *this;
 #endif
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
-    Expression result = Power::Builder(c, Rational(-1));
+    Expression result = Power::Builder(c, Rational::Builder(-1));
     replaceWithInPlace(result);
     result = result.shallowReduce(context, complexFormat, angleUnit, target);
     return result;

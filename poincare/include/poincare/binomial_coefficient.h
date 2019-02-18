@@ -39,17 +39,13 @@ private:
 class BinomialCoefficient final : public Expression {
 public:
   BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
-  static BinomialCoefficient Builder(Expression child0, Expression child1) { return BinomialCoefficient(child0, child1); }
+  static BinomialCoefficient Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce();
 private:
-  BinomialCoefficient(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<BinomialCoefficientNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
   constexpr static int k_maxNValue = 300;
 };
 

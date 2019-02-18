@@ -40,11 +40,8 @@ private:
 
 class ConjugateLayout final : public Layout {
 public:
-  static ConjugateLayout Builder(Layout l) { return ConjugateLayout(l); }
-private:
-  explicit ConjugateLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>()) {
-    replaceChildAtIndexInPlace(0, l);
-  }
+  static ConjugateLayout Builder(Layout child);
+  ConjugateLayout() = delete;
 };
 
 }

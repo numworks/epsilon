@@ -45,7 +45,14 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
     }
   }
   result = Trigonometry::RoundToMeaningfulDigits(result, c);
-  return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+  return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+}
+
+ArcCosine ArcCosine::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ArcCosineNode));
+  ArcCosineNode * node = new (bufferNode) ArcCosineNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<ArcCosine &>(h);
 }
 
 Expression ArcCosine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

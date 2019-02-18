@@ -35,7 +35,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
     return Complex<T>::Undefined();
   }
   if (f1 == 0.0f || f2 == 0.0f) {
-    return Complex<T>(0.0);
+    return Complex<T>::Builder(0.0);
   }
   int a = (int)f2;
   int b = (int)f1;
@@ -50,7 +50,14 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
     a = b;
     b = r;
   }
-  return Complex<T>(product/a);
+  return Complex<T>::Builder(product/a);
+}
+
+LeastCommonMultiple LeastCommonMultiple::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LeastCommonMultipleNode));
+  LeastCommonMultipleNode * node = new (bufferNode) LeastCommonMultipleNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<LeastCommonMultiple &>(h);
 }
 
 Expression LeastCommonMultiple::shallowReduce() {
@@ -64,13 +71,13 @@ Expression LeastCommonMultiple::shallowReduce() {
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == Type::Matrix || c1.type() == Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -78,7 +85,7 @@ Expression LeastCommonMultiple::shallowReduce() {
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -95,7 +102,7 @@ Expression LeastCommonMultiple::shallowReduce() {
   if (lcm.isOverflow()) {
     return *this;
   }
-  Expression result = Rational(lcm);
+  Expression result = Rational::Builder(lcm);
   replaceWithInPlace(result);
   return result;
 }

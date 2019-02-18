@@ -45,15 +45,11 @@ private:
 class SignFunction final : public Expression {
 public:
   SignFunction(const SignFunctionNode * n) : Expression(n) {}
-  static SignFunction Builder(Expression child) { return SignFunction(child); }
+  static SignFunction Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit SignFunction(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SignFunctionNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

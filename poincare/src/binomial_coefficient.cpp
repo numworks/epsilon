@@ -1,4 +1,5 @@
 #include <poincare/binomial_coefficient.h>
+#include <poincare/array_builder.h>
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
@@ -34,7 +35,7 @@ Complex<T> BinomialCoefficientNode::templatedApproximate(Context& context, Prefe
   Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();
   T k = kInput.toScalar();
-  return Complex<T>(compute(k, n));
+  return Complex<T>::Builder(compute(k, n));
 }
 
 template<typename T>
@@ -53,6 +54,13 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return std::round(result);
 }
 
+BinomialCoefficient BinomialCoefficient::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BinomialCoefficientNode));
+  BinomialCoefficientNode * node = new (bufferNode) BinomialCoefficientNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<BinomialCoefficient &>(h);
+}
+
 Expression BinomialCoefficient::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -64,13 +72,13 @@ Expression BinomialCoefficient::shallowReduce() {
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (!r0.integerDenominator().isOne() || r0.isNegative()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -78,7 +86,7 @@ Expression BinomialCoefficient::shallowReduce() {
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.isNegative()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -92,7 +100,7 @@ Expression BinomialCoefficient::shallowReduce() {
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
@@ -101,21 +109,20 @@ Expression BinomialCoefficient::shallowReduce() {
   if (Integer(k_maxNValue).isLowerThan(n)) {
     return *this;
   }
-  Rational result(1);
+  Rational result = Rational::Builder(1);
   Integer kBis = Integer::Subtraction(n, k);
   k = kBis.isLowerThan(k) ? kBis : k;
   int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
   for (int i = 0; i < clippedK; i++) {
     Integer nMinusI = Integer::Subtraction(n, Integer(i));
     Integer kMinusI = Integer::Subtraction(k, Integer(i));
-    Rational factor = Rational(nMinusI, kMinusI);
+    Rational factor = Rational::Builder(nMinusI, kMinusI);
     result = Rational::Multiplication(result, factor);
   }
   // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
   assert(!result.numeratorOrDenominatorIsInfinity());
-  Expression rationalResult = Rational(result);
-  replaceWithInPlace(rationalResult);
-  return rationalResult;
+  replaceWithInPlace(result);
+  return result;
 }
 
 template double BinomialCoefficientNode::compute(double k, double n);

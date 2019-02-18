@@ -164,7 +164,7 @@ void Parser::parseEmpty(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error; //FIXME
     return;
   }
-  leftHandSide = EmptyExpression();
+  leftHandSide = EmptyExpression::Builder();
 }
 
 void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
@@ -220,7 +220,7 @@ void Parser::parseEqual(Expression & leftHandSide, Token::Type stoppingType) {
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Equal)) {
     /* We parse until finding a token of lesser precedence than Equal. The next
      * token is thus either EndOfStream or Store. */
-    leftHandSide = Equal(leftHandSide, rightHandSide);
+    leftHandSide = Equal::Builder(leftHandSide, rightHandSide);
   }
   if (!m_nextToken.is(Token::EndOfStream)) {
     m_status = Status::Error; // Equal should be top-most expression in Tree
@@ -323,7 +323,7 @@ bool Parser::currentTokenIsSpecialIdentifier() const {
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {
-  leftHandSide = Constant(m_currentToken.text()[0]);
+  leftHandSide = Constant::Builder(m_currentToken.text()[0]);
   isThereImplicitMultiplication();
 }
 
@@ -360,12 +360,12 @@ void Parser::parseSequence(Expression & leftHandSide, const char name, Token::Ty
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(rightDelimiter)) {
       m_status = Status::Error; // Right delimiter missing.
-    } else if (rank.isIdenticalTo(Symbol("n",1))) {
+    } else if (rank.isIdenticalTo(Symbol::Builder("n",1))) {
       char sym[5] = {name, '(', 'n', ')', 0};
-      leftHandSide = Symbol(sym, 4);
-    } else if (rank.isIdenticalTo(Addition::Builder(Symbol("n",1),Rational("1")))) {
+      leftHandSide = Symbol::Builder(sym, 4);
+    } else if (rank.isIdenticalTo(Addition::Builder(Symbol::Builder("n",1),Rational::Builder("1")))) {
       char sym[7] = {name, '(', 'n', '+', '1', ')', 0};
-      leftHandSide = Symbol(sym, 6);
+      leftHandSide = Symbol::Builder(sym, 6);
     } else {
       m_status = Status::Error; // Unexpected parameter.
     }
@@ -376,11 +376,11 @@ void Parser::parseSpecialIdentifier(Expression & leftHandSide) {
   if (m_currentToken.compareTo(Symbol::k_ans) == 0) {
     leftHandSide = Symbol::Ans();
   } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
-    leftHandSide = Infinity(false);
+    leftHandSide = Infinity::Builder(false);
   } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
-    leftHandSide = Undefined();
+    leftHandSide = Undefined::Builder();
   } else if (m_currentToken.compareTo(Unreal::Name()) == 0) {
-    leftHandSide = Unreal();
+    leftHandSide = Unreal::Builder();
   } else if (m_currentToken.compareTo("u_") == 0 || m_currentToken.compareTo("v_") == 0) { // Special case for sequences (e.g. "u_{n}")
     parseSequence(leftHandSide, m_currentToken.text()[0], Token::LeftBrace, Token::RightBrace);
   } else if (m_currentToken.compareTo("u") == 0 || m_currentToken.compareTo("v") == 0) { // Special case for sequences (e.g. "u(n)")
@@ -412,7 +412,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     return;
   }
   if (!popTokenIfType(Token::LeftParenthesis)) {
-    leftHandSide = Symbol(name, length);
+    leftHandSide = Symbol::Builder(name, length);
     return;
   }
   Expression parameter = parseCommaSeparatedList();
@@ -430,7 +430,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   } else if (!popTokenIfType(Token::RightParenthesis)) {
     m_status = Status::Error; // Right parenthesis missing.
   } else {
-    leftHandSide = Function(name, length, parameter);
+    leftHandSide = Function::Builder(name, length, parameter);
   }
 }
 

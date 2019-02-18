@@ -55,7 +55,7 @@ private:
 class Integral final : public Expression {
 public:
   Integral(const IntegralNode * n) : Expression(n) {}
-  static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return Integral(child0, child1, child2, child3); }
+  static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3);
   static Expression UntypedBuilder(Expression children) {
     if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
       // Second parameter must be a Symbol.
@@ -67,14 +67,6 @@ public:
 
   // Expression
   Expression shallowReduce();
-private:
-  Integral(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {
-    assert(child1.type() == ExpressionNode::Type::Symbol);
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-    replaceChildAtIndexInPlace(2, child2);
-    replaceChildAtIndexInPlace(3, child3);
-  }
 };
 
 }

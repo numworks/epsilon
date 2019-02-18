@@ -7,8 +7,8 @@ namespace Poincare {
 
 class InfinityNode final : public NumberNode {
 public:
+  InfinityNode(bool negative) : NumberNode(), m_negative(negative) {}
 
-  void setNegative(bool negative) { m_negative = negative; }
   Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // TreeNode
@@ -45,9 +45,7 @@ private:
 class Infinity final : public Number {
 public:
   Infinity(InfinityNode * n) : Number(n) {}
-  Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {
-    node()->setNegative(negative);
-  }
+  static Infinity Builder(bool negative);
   Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   static const char * Name() {
     return "inf";

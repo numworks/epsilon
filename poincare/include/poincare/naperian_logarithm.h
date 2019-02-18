@@ -31,7 +31,7 @@ private:
     /* ln has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
      * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
      * (warning: ln takes the other side of the cut values on ]-inf-0i, 0-0i]). */
-    return Complex<T>(std::log(c));
+    return Complex<T>::Builder(std::log(c));
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
@@ -44,15 +44,11 @@ private:
 class NaperianLogarithm final : public Expression {
 public:
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
-  static NaperianLogarithm Builder(Expression child) { return NaperianLogarithm(child); }
+  static NaperianLogarithm Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit NaperianLogarithm(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

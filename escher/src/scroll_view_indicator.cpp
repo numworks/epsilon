@@ -3,6 +3,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <cmath>
 
 ScrollViewIndicator::ScrollViewIndicator() :
   View(),
@@ -46,7 +47,7 @@ void ScrollViewHorizontalBar::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(
     KDRect(
       m_margin+m_offset*totalLength(), (m_frame.height() - k_indicatorThickness)/2,
-      m_visibleLength*totalLength(), k_indicatorThickness
+      std::ceil(m_visibleLength*totalLength()), k_indicatorThickness
     ),
     m_color
   );
@@ -66,7 +67,7 @@ void ScrollViewVerticalBar::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(
     KDRect(
       (m_frame.width() - k_indicatorThickness)/2, m_margin+m_offset*totalLength(),
-      k_indicatorThickness, m_visibleLength*totalLength()
+      k_indicatorThickness, std::ceil(m_visibleLength*totalLength())
     ),
     m_color
   );

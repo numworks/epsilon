@@ -37,16 +37,23 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
     return Complex<T>::Undefined();
   }
   if (k > n) {
-    return Complex<T>(0.0);
+    return Complex<T>::Builder(0.0);
   }
   T result = 1;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
     if (std::isinf(result) || std::isnan(result)) {
-      return Complex<T>(result);
+      return Complex<T>::Builder(result);
     }
   }
-  return Complex<T>(std::round(result));
+  return Complex<T>::Builder(std::round(result));
+}
+
+PermuteCoefficient PermuteCoefficient::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PermuteCoefficientNode));
+  PermuteCoefficientNode * node = new (bufferNode) PermuteCoefficientNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<PermuteCoefficient &>(h);
 }
 
 Expression PermuteCoefficient::shallowReduce() {
@@ -60,13 +67,13 @@ Expression PermuteCoefficient::shallowReduce() {
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return replaceWith(new Undefined(), true);
+    return replaceWith(new Undefined::Builder(), true);
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne() || r0.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -74,7 +81,7 @@ Expression PermuteCoefficient::shallowReduce() {
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -88,7 +95,7 @@ Expression PermuteCoefficient::shallowReduce() {
   Integer n = r0.unsignedIntegerNumerator();
   Integer k = r1.unsignedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Rational(0);
+    Expression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
   }
@@ -104,7 +111,7 @@ Expression PermuteCoefficient::shallowReduce() {
     result = Integer::Multiplication(result, factor);
   }
   assert(!result.isOverflow()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
-  Expression rationalResult = Rational(result);
+  Expression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 

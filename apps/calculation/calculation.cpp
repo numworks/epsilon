@@ -125,7 +125,7 @@ Expression Calculation::exactOutput() {
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
   Expression exactOutput = Expression::Parse(m_exactOutputText);
   if (exactOutput.isUninitialized()) {
-    return Undefined();
+    return Undefined::Builder();
   }
   return exactOutput;
 }
@@ -178,7 +178,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   Preferences * preferences = Preferences::sharedPreferences();
   Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context);
   if (exactOutputExpression.isUninitialized()) {
-    exactOutputExpression = Undefined();
+    exactOutputExpression = Undefined::Builder();
   }
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
   m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;

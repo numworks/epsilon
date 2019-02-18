@@ -20,7 +20,6 @@ public:
 
   // VerticalOffsetLayoutNode
   Type type() const { return m_type; }
-  void setType(Type type) { m_type = type; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -59,15 +58,8 @@ private:
 
 class VerticalOffsetLayout final : public Layout {
 public:
-  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Type type) { return VerticalOffsetLayout(l, type); }
-
-private:
-  VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type) :
-    Layout(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>())
-  {
-    static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
-    replaceChildAtIndexInPlace(0,l);
-  }
+  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Type type);
+  VerticalOffsetLayout() = delete;
 };
 
 }

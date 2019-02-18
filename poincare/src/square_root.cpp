@@ -35,11 +35,18 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
    * weird results as sqrt(-1) = 6E-16+i, we compute the argument of the result
    * of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary part and
    * if arg ~ Pi/2 [Pi], we discard the residual real part.*/
-  return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
+  return Complex<T>::Builder(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
 Expression SquareRootNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return SquareRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
+}
+
+SquareRoot SquareRoot::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SquareRootNode));
+  SquareRootNode * node = new (bufferNode) SquareRootNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<SquareRoot &>(h);
 }
 
 Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -54,7 +61,7 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexForm
     return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
-  Power p = Power::Builder(childAtIndex(0), Rational(1, 2));
+  Power p = Power::Builder(childAtIndex(0), Rational::Builder(1, 2));
   replaceWithInPlace(p);
   return p.shallowReduce(context, complexFormat, angleUnit, target);
 }

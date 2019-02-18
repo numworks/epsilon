@@ -15,30 +15,17 @@ namespace Poincare {
 
 /* Rational Node */
 
-void RationalNode::setDigits(const native_uint_t * numeratorDigits, uint8_t numeratorSize, const native_uint_t * denominatorDigits, uint8_t denominatorSize, bool negative) {
-  m_negative = negative;
-  m_numberOfDigitsNumerator = numeratorSize;
-  m_numberOfDigitsDenominator = denominatorSize;
+RationalNode::RationalNode(const native_uint_t * numeratorDigits, uint8_t numeratorSize, const native_uint_t * denominatorDigits, uint8_t denominatorSize, bool negative) :
+  m_negative(negative),
+  m_numberOfDigitsNumerator(numeratorSize),
+  m_numberOfDigitsDenominator(denominatorSize)
+{
   if (numeratorDigits) {
     memcpy(m_digits, numeratorDigits, numeratorSize*sizeof(native_uint_t));
   }
   if (denominatorDigits) {
     memcpy(m_digits + numeratorSize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
   }
-}
-
-void RationalNode::initToMatchSize(size_t goalSize) {
-  assert(goalSize != sizeof(RationalNode));
-  int digitsSize = goalSize - sizeof(RationalNode);
-  assert(digitsSize%sizeof(native_uint_t) == 0);
-  /* We are initing the Rational to match a specific size. The built rational
-   * is dummy. However, we cannot assign to m_numberOfDigitsNumerator (or
-   * m_numberOfDigitsDenominator) values that are aboce k_maxNumberOfDigits.
-   * To prevent that, we evenly separe digits between numerator and denominator. */
-  size_t numberOfDigits = digitsSize/sizeof(native_uint_t);
-  m_numberOfDigitsNumerator = numberOfDigits/2;
-  m_numberOfDigitsDenominator = numberOfDigits-m_numberOfDigitsNumerator;
-  assert(size() == goalSize);
 }
 
 Integer RationalNode::signedNumerator() const {
@@ -163,7 +150,7 @@ Expression RationalNode::denominator(Context & context, Preferences::ComplexForm
 
 // Constructors
 
-Rational::Rational(Integer & num, Integer & den) : Number() {
+Rational Rational::Builder(Integer & num, Integer & den) {
   assert(!den.isZero());
   if (!num.isOne() && !den.isOne()) {
     // Avoid computing GCD if possible
@@ -172,34 +159,33 @@ Rational::Rational(Integer & num, Integer & den) : Number() {
     den = Integer::Division(den, gcd).quotient;
   }
   bool negative = (!num.isNegative() && den.isNegative()) || (!den.isNegative() && num.isNegative());
-  new (this) Rational(num.digits(), num.numberOfDigits(), den.digits(), den.numberOfDigits(), negative);
+  return Rational::Builder(num.digits(), num.numberOfDigits(), den.digits(), den.numberOfDigits(), negative);
 }
 
-Rational::Rational(const Integer & numerator) : Number() {
+Rational Rational::Builder(const Integer & numerator) {
   native_uint_t one = 1;
-  new (this) Rational(numerator.digits(), numerator.numberOfDigits(), &one, 1, numerator.isNegative());
+  return Rational::Builder(numerator.digits(), numerator.numberOfDigits(), &one, 1, numerator.isNegative());
 }
 
-Rational::Rational(native_int_t i) : Number()  {
+Rational Rational::Builder(native_int_t i) {
   native_uint_t one = 1;
   if (i == 0) {
-    new (this) Rational(nullptr, 0, &one, 1, false);
-    return;
+    return Rational::Builder(nullptr, 0, &one, 1, false);
   }
   native_uint_t absI = i < 0 ? -i : i;
-  new (this) Rational(&absI, 1, &one, 1, i < 0);
+  return Rational::Builder(&absI, 1, &one, 1, i < 0);
 }
 
-Rational::Rational(native_int_t i, native_int_t j) : Number() {
+Rational Rational::Builder(native_int_t i, native_int_t j) {
   Integer iInteger(i);
   Integer jInteger(j);
-  new (this) Rational(iInteger, jInteger);
+  return Rational::Builder(iInteger, jInteger);
 }
 
-Rational::Rational(const char * iString, const char * jString) : Number() {
+Rational Rational::Builder(const char * iString, const char * jString) {
   Integer iInteger(iString);
   Integer jInteger(jString);
-  new (this) Rational(iInteger, jInteger);
+  return Rational::Builder(iInteger, jInteger);
 }
 
 bool Rational::numeratorOrDenominatorIsInfinity() const {
@@ -211,13 +197,13 @@ bool Rational::numeratorOrDenominatorIsInfinity() const {
 Rational Rational::Addition(const Rational & i, const Rational & j) {
   Integer newNumerator = Integer::Addition(Integer::Multiplication(i.signedIntegerNumerator(), j.integerDenominator()), Integer::Multiplication(j.signedIntegerNumerator(), i.integerDenominator()));
   Integer newDenominator = Integer::Multiplication(i.integerDenominator(), j.integerDenominator());
-  return Rational(newNumerator, newDenominator);
+  return Rational::Builder(newNumerator, newDenominator);
 }
 
 Rational Rational::Multiplication(const Rational & i, const Rational & j) {
   Integer newNumerator = Integer::Multiplication(i.signedIntegerNumerator(), j.signedIntegerNumerator());
   Integer newDenominator = Integer::Multiplication(i.integerDenominator(), j.integerDenominator());
-  return Rational(newNumerator, newDenominator);
+  return Rational::Builder(newNumerator, newDenominator);
 }
 
 Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
@@ -226,15 +212,16 @@ Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
   Integer newNumerator = Integer::Power(i.signedIntegerNumerator(), absJ);
   Integer newDenominator = Integer::Power(i.integerDenominator(), absJ);
   if (j.isNegative()) {
-    return Rational(newDenominator, newNumerator);
+    return Rational::Builder(newDenominator, newNumerator);
   }
-  return Rational(newNumerator, newDenominator);
+  return Rational::Builder(newNumerator, newDenominator);
 }
 
-Rational::Rational(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative) :
-  Number(TreePool::sharedPool()->createTreeNode<RationalNode>(RationalSize(numeratorSize, denominatorSize)))
-{
-  static_cast<RationalNode *>(node())->setDigits(i, numeratorSize, j, denominatorSize, negative);
+Rational Rational::Builder(const native_uint_t * i, uint8_t numeratorSize, const native_uint_t * j, uint8_t denominatorSize, bool negative) {
+  void * bufferNode = TreePool::sharedPool()->alloc(RationalSize(numeratorSize, denominatorSize));
+  RationalNode * node = new (bufferNode) RationalNode(i, numeratorSize, j, denominatorSize, negative);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Rational &>(h);
 }
 
 Expression Rational::shallowReduce() {
@@ -246,17 +233,17 @@ Expression Rational::shallowReduce() {
 #if 0
   if (unsignedIntegerNumerator().isOverflow() && integerDenominator().isOverflow()) {
     assert(false);
-    return Undefined();
+    return Undefined::Builder();
   }
   // Turn into Infinite if the numerator is too big.
   if (unsignedIntegerNumerator().isOverflow()) {
     assert(false);
-    return Infinity(sign(&context) == ExpressionNode::Sign::Negative);
+    return Infinity::Builder(sign(&context) == ExpressionNode::Sign::Negative);
   }
   // Turn into 0 if the denominator is too big.
   if (integerDenominator().isOverflow()) {
     assert(false);
-    return Rational(0);
+    return Rational::Builder(0);
   }
 #endif
   assert(!numeratorOrDenominatorIsInfinity());
@@ -280,9 +267,9 @@ Expression Rational::denominator(Context & context, Preferences::ComplexFormat c
     return Expression();
   }
   if (d.isOverflow()) {
-    return Infinity(false);
+    return Infinity::Builder(false);
   }
-  return Rational(d);
+  return Rational::Builder(d);
 }
 
 Expression Rational::setSign(ExpressionNode::Sign s) {

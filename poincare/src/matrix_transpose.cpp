@@ -37,6 +37,13 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
   return transpose;
 }
 
+MatrixTranspose MatrixTranspose::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixTransposeNode));
+  MatrixTransposeNode * node = new (bufferNode) MatrixTransposeNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<MatrixTranspose &>(h);
+}
+
 Expression MatrixTranspose::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();

@@ -31,8 +31,8 @@ struct IntegerDivision;
 
 class IntegerNode final : public TreeNode {
 public:
+  IntegerNode(const native_uint_t * digits, uint8_t numberOfDigits);
   // TreeNode
-  void initToMatchSize(size_t goalSize) override;
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
@@ -43,7 +43,6 @@ public:
   virtual void logAttributes(std::ostream & stream) const override;
 #endif
 
-  virtual void setDigits(const native_uint_t * digits, uint8_t numberOfDigits);
   const native_uint_t * digits() const { return m_digits; }
   uint8_t numberOfDigits() const { return m_numberOfDigits; }
 private:

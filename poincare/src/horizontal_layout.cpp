@@ -258,7 +258,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
    * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
 
   if (!force && index == 0 && numberOfChildren() > 0 && childAtIndex(0)->mustHaveLeftSibling()) {
-    Layout(this).addChildAtIndex(EmptyLayout(), 0, numberOfChildren(), cursor);
+    Layout(this).addChildAtIndex(EmptyLayout::Builder(), 0, numberOfChildren(), cursor);
   }
 }
 
@@ -352,6 +352,13 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 }
 
 // HorizontalLayout
+
+HorizontalLayout HorizontalLayout::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(HorizontalLayoutNode));
+  HorizontalLayoutNode * node = new (bufferNode) HorizontalLayoutNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<HorizontalLayout &>(h);
+}
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   if (l.isHorizontal()) {

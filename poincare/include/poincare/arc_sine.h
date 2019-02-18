@@ -40,15 +40,11 @@ private:
 class ArcSine final : public Expression {
 public:
   ArcSine(const ArcSineNode * n) : Expression(n) {}
-  static ArcSine Builder(Expression child) { return ArcSine(child); }
+  static ArcSine Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asin", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit ArcSine(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ArcSineNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

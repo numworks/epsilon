@@ -15,7 +15,14 @@ int HyperbolicSineNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
 template<typename T>
 Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(std::sinh(c), c));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::sinh(c), c));
+}
+
+HyperbolicSine HyperbolicSine::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(HyperbolicSineNode));
+  HyperbolicSineNode * node = new (bufferNode) HyperbolicSineNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<HyperbolicSine &>(h);
 }
 
 template Complex<float> Poincare::HyperbolicSineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);

@@ -34,7 +34,7 @@ int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayout(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CharLayout::Builder(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }
@@ -69,13 +69,20 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
   return storedExpression;
 }
 
+Store Store::Builder(Expression value, SymbolAbstract symbol) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StoreNode));
+  StoreNode * node = new (bufferNode) StoreNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(value, symbol).array(), 2);
+  return static_cast<Store &>(h);
+}
+
 Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
+    Symbol xUnknown = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
     finalValue = childAtIndex(0).replaceSymbolWithExpression(static_cast<Symbol &>(userDefinedUnknown), xUnknown);
   } else {
     assert(symbol().type() == ExpressionNode::Type::Symbol);
@@ -86,13 +93,13 @@ Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexForm
   Expression storedExpression = context.expressionForSymbol(symbol(), true);
 
   if (storedExpression.isUninitialized()) {
-    return Undefined();
+    return Undefined::Builder();
   }
   if (symbol().type() == ExpressionNode::Type::Function) {
     // Replace the xUnknown symbol with the variable initially used
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
+    Symbol xUnknown = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
     storedExpression = storedExpression.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
   return storedExpression;

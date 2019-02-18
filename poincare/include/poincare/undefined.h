@@ -41,8 +41,8 @@ protected:
 
 class Undefined final : public Number {
 public:
-  Undefined() : Number(TreePool::sharedPool()->createTreeNode<UndefinedNode>()) {}
   Undefined(const UndefinedNode * n) : Number(n) {}
+  static Undefined Builder();
   static const char * Name() {
     return "undef";
   }

@@ -42,15 +42,11 @@ private:
 class Ceiling final : public Expression {
 public:
   Ceiling(const CeilingNode * n) : Expression(n) {}
-  static Ceiling Builder(Expression child) { return Ceiling(child); }
+  static Ceiling Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, &UntypedBuilder);
 
   Expression shallowReduce();
-private:
-  explicit Ceiling(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

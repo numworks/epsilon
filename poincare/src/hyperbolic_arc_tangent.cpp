@@ -27,7 +27,14 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, P
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag()); // other side of the cut
   }
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result, c));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(result, c));
+}
+
+HyperbolicArcTangent HyperbolicArcTangent::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(HyperbolicArcTangentNode));
+  HyperbolicArcTangentNode * node = new (bufferNode) HyperbolicArcTangentNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<HyperbolicArcTangent &>(h);
 }
 
 template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);

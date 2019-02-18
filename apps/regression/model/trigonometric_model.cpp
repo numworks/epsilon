@@ -21,20 +21,20 @@ namespace Regression {
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('s', KDFont::SmallFont),
-      CharLayout('i', KDFont::SmallFont),
-      CharLayout('n', KDFont::SmallFont),
-      CharLayout('(', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('c', KDFont::SmallFont),
-      CharLayout(')', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('d', KDFont::SmallFont)
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('s', KDFont::SmallFont),
+      CharLayout::Builder('i', KDFont::SmallFont),
+      CharLayout::Builder('n', KDFont::SmallFont),
+      CharLayout::Builder('(', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('c', KDFont::SmallFont),
+      CharLayout::Builder(')', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('d', KDFont::SmallFont)
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, 14);
   }
@@ -55,7 +55,7 @@ Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, 
           Addition::Builder(
             Multiplication::Builder(
               Number::DecimalNumber(b),
-              Symbol('x')),
+              Symbol::Builder('x')),
             Number::DecimalNumber(c)))),
       Number::DecimalNumber(d));
   PoincareHelpers::Simplify(&result, *context);

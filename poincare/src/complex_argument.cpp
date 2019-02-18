@@ -30,7 +30,14 @@ Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::Co
 
 template<typename T>
 Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(std::arg(c));
+  return Complex<T>::Builder(std::arg(c));
+}
+
+ComplexArgument ComplexArgument::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ComplexArgumentNode));
+  ComplexArgumentNode * node = new (bufferNode) ComplexArgumentNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<ComplexArgument &>(h);
 }
 
 Expression ComplexArgument::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -51,18 +58,18 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
     float app = c.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
       // arg(x) = 0 if x > 0
-      Expression result = Rational(0);
+      Expression result = Rational::Builder(0);
       replaceWithInPlace(result);
       return result;
     } else if (!std::isnan(app) && app <= -Expression::Epsilon<float>()) {
       // arg(x) = Pi if x < 0
-      Expression result = Constant(Ion::Charset::SmallPi);
+      Expression result = Constant::Builder(Ion::Charset::SmallPi);
       replaceWithInPlace(result);
       return result;
     }
   }
   if (real || c.type() == ExpressionNode::Type::ComplexCartesian) {
-    ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational(0)) : static_cast<ComplexCartesian &>(c);
+    ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational::Builder(0)) : static_cast<ComplexCartesian &>(c);
     Expression childArg = complexChild.argument(context, complexFormat, angleUnit, target);
     replaceWithInPlace(childArg);
     return childArg.shallowReduce(context, complexFormat, angleUnit, target);

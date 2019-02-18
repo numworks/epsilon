@@ -38,14 +38,9 @@ private:
 class Parenthesis final : public Expression {
 public:
   Parenthesis(const ParenthesisNode * n) : Expression(n) {}
-  static Parenthesis Builder(Expression child) { return Parenthesis(child); }
+  static Parenthesis Builder(Expression child);
   // Expression
   Expression shallowReduce();
-
-private:
-  Parenthesis(Expression exp) : Expression(TreePool::sharedPool()->createTreeNode<ParenthesisNode>()) {
-    replaceChildAtIndexInPlace(0, exp);
-  }
 };
 
 }

@@ -1,4 +1,5 @@
 #include <poincare/integral.h>
+#include <poincare/array_builder.h>
 #include <poincare/complex.h>
 #include <poincare/integral_layout.h>
 #include <poincare/parametered_expression_helper.h>
@@ -62,7 +63,7 @@ Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences:
 #else
   T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, context, complexFormat, angleUnit);
 #endif
-  return Complex<T>(result);
+  return Complex<T>::Builder(result);
 }
 
 template<typename T>
@@ -209,6 +210,13 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 }
 #endif
 
+Integral Integral::Builder(Expression child0, Symbol child1, Expression child2, Expression child3) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(IntegralNode));
+  IntegralNode * node = new (bufferNode) IntegralNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2, child3).array(), 4);
+  return static_cast<Integral &>(h);
+}
+
 Expression Integral::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -222,7 +230,7 @@ Expression Integral::shallowReduce() {
       || childAtIndex(2).type() == ExpressionNode::Type::Matrix
       || childAtIndex(3).type() == ExpressionNode::Type::Matrix)
   {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   return *this;

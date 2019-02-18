@@ -85,7 +85,7 @@ void StorageCartesianFunction::setDisplayDerivative(bool display) {
 }
 
 double StorageCartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>(x)); // derivative takes ownership of Poincare::Float<double>(x) and the clone of expression
+  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
@@ -94,7 +94,7 @@ double StorageCartesianFunction::approximateDerivative(double x, Poincare::Conte
 
 double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
   // TODO: this does not work yet because integral does not understand UnknownX
-  Poincare::Integral integral = Poincare::Integral::Builder(expressionReduced(context).clone(), Symbol(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>(start), Poincare::Float<double>(end)); // Integral takes ownership of args
+  Poincare::Integral integral = Poincare::Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */

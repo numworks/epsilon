@@ -71,7 +71,7 @@ void GlobalContext::setExpressionForSymbol(const Expression & expression, const 
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
   Expression e = ExpressionFromRecord(record);
   if (e.isUninitialized()) {
-    e = Undefined();
+    e = Undefined::Builder();
   }
   Expression finalExpression = expression.clone().replaceSymbolWithExpression(symbol, e);
 

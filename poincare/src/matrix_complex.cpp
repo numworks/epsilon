@@ -44,7 +44,7 @@ Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat 
     if (c->type() == EvaluationNode<T>::Type::Complex) {
       matrix.addChildAtIndexInPlace(c->complexToExpression(complexFormat), i, i);
     } else {
-      matrix.addChildAtIndexInPlace(Undefined(), i, i);
+      matrix.addChildAtIndexInPlace(Undefined::Builder(), i, i);
     }
     i++;
   }
@@ -100,7 +100,7 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
   if (result == 0) {
     /* Intentionally swapping dimensions for inverse, although it doesn't make a
      * difference because it is square. */
-    return MatrixComplex<T>(operandsCopy, m_numberOfColumns, m_numberOfRows);
+    return MatrixComplex<T>::Builder(operandsCopy, m_numberOfColumns, m_numberOfRows);
   }
   return MatrixComplex<T>::Undefined();
 }
@@ -108,10 +108,10 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
 template<typename T>
 MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
   // Intentionally swapping dimensions for transpose
-  MatrixComplex<T> result;
+  MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int j = 0; j < numberOfColumns(); j++) {
     for (int i = 0; i < numberOfRows(); i++) {
-      result.addChildAtIndexInPlace(Complex<T>(complexAtIndex(i*numberOfColumns()+j)), result.numberOfChildren(), result.numberOfChildren());
+      result.addChildAtIndexInPlace(Complex<T>::Builder(complexAtIndex(i*numberOfColumns()+j)), result.numberOfChildren(), result.numberOfChildren());
     }
   }
   result.setDimensions(numberOfColumns(), numberOfRows());
@@ -121,30 +121,35 @@ MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
 // MATRIX COMPLEX REFERENCE
 
 template<typename T>
-MatrixComplex<T>::MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns) :
-  MatrixComplex<T>()
-{
+MatrixComplex<T> MatrixComplex<T>::Builder(std::complex<T> * operands, int numberOfRows, int numberOfColumns) {
+  MatrixComplex<T> m = MatrixComplex<T>::Builder();
   for (int i=0; i<numberOfRows*numberOfColumns; i++) {
-    addChildAtIndexInPlace(Complex<T>(operands[i]), i, i);
+    m.addChildAtIndexInPlace(Complex<T>::Builder(operands[i]), i, i);
   }
-  setDimensions(numberOfRows, numberOfColumns);
+  m.setDimensions(numberOfRows, numberOfColumns);
+  return m;
 }
 
 template<typename T>
-MatrixComplex<T>::MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
+MatrixComplex<T> MatrixComplex<T>::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixComplexNode<T>));
+  MatrixComplexNode<T> * node = new (bufferNode) MatrixComplexNode<T>();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<MatrixComplex<T> &>(h);
+}
 
 template<typename T>
 MatrixComplex<T> MatrixComplex<T>::Undefined() {
   std::complex<T> undef = std::complex<T>(NAN, NAN);
-  return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
+  return MatrixComplex<T>::Builder((std::complex<T> *)&undef, 1, 1);
 }
 
 template<typename T>
 MatrixComplex<T> MatrixComplex<T>::createIdentity(int dim) {
-  MatrixComplex<T> result;
+  MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      Complex<T> c = i == j ? Complex<T>(1.0) : Complex<T>(0.0);
+      Complex<T> c = i == j ? Complex<T>::Builder(1.0) : Complex<T>::Builder(0.0);
       result.addChildAtIndexInPlace(c, i*dim+j, i*dim+j);
     }
   }

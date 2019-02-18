@@ -39,17 +39,12 @@ private:
 class DivisionRemainder final : public Expression {
 public:
   DivisionRemainder(const DivisionRemainderNode * n) : Expression(n) {}
-  static DivisionRemainder Builder(Expression child0, Expression child1) { return DivisionRemainder(child0, child1); }
+  static DivisionRemainder Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce();
-private:
-  DivisionRemainder(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<DivisionRemainderNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

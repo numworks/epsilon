@@ -37,17 +37,12 @@ private:
 class LeastCommonMultiple final : public Expression {
 public:
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : Expression(n) {}
-  static LeastCommonMultiple Builder(Expression child0, Expression child1) { return LeastCommonMultiple(child0, child1); }
+  static LeastCommonMultiple Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce();
-private:
-  LeastCommonMultiple(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

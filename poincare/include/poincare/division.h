@@ -61,18 +61,10 @@ private:
 class Division final : public Expression {
 public:
   Division(const DivisionNode * n) : Expression(n) {}
-  static Division Builder() { return Division(); }
-  static Division Builder(Expression numerator, Expression denominator) {
-    Division d;
-    d.replaceChildAtIndexInPlace(0, numerator);
-    d.replaceChildAtIndexInPlace(1, denominator);
-    return d;
-  }
+  static Division Builder();
+  static Division Builder(Expression numerator, Expression denominator);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-
-private:
-  Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
 };
 
 }

@@ -52,17 +52,17 @@ Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences:
   for (int i = 1; i <= (int)n; i++) {
     result *= (T)i;
     if (std::isinf(result)) {
-      return Complex<T>(result);
+      return Complex<T>::Builder(result);
     }
   }
-  return Complex<T>(std::round(result));
+  return Complex<T>::Builder(std::round(result));
 }
 
 Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
-  result.addChildAtIndex(CharLayout('!'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndex(CharLayout::Builder('!'), childrenCount, childrenCount, nullptr);
   return result;
 }
 
@@ -89,6 +89,13 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return numberOfChar;
 }
 
+Factorial Factorial::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FactorialNode));
+  FactorialNode * node = new (bufferNode) FactorialNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Factorial &>(h);
+}
+
 Expression Factorial::shallowReduce() {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -104,21 +111,21 @@ Expression Factorial::shallowReduce() {
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational r = childAtIndex(0).convert<Rational>();
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
       return *this;
     }
-    Rational fact = Rational(Integer::Factorial(r.unsignedIntegerNumerator()));
+    Rational fact = Rational::Builder(Integer::Factorial(r.unsignedIntegerNumerator()));
     assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
     replaceWithInPlace(fact);
     return fact;
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }

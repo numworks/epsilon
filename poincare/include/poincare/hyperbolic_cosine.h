@@ -36,13 +36,9 @@ private:
 class HyperbolicCosine final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicCosine(const HyperbolicCosineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  static HyperbolicCosine Builder(Expression child) { return HyperbolicCosine(child); }
+  static HyperbolicCosine Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cosh", 1, &UntypedBuilder);
-private:
-  explicit HyperbolicCosine(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicCosineNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

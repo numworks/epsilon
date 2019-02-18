@@ -41,16 +41,13 @@ private:
 class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
-  static SquareRoot Builder(Expression child) { return SquareRoot(child); }
+  static SquareRoot Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static_assert('\x91' == Ion::Charset::Root, "Charset error");
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
-  explicit SquareRoot(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
   static const char k_name[2];
 };
 

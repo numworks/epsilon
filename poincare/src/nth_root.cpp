@@ -54,13 +54,20 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::C
         Complex<T> absBasePowIndex = PowerNode::compute(absBasec, std::complex<T>(1.0)/(indexc), complexFormat);
         // q odd if (-1)^q = -1
         if (std::pow((T)-1.0, (T)indexc.real()) < 0.0) {
-          return basec.real() < 0 ? Complex<T>(-absBasePowIndex.stdComplex()) : absBasePowIndex;
+          return basec.real() < 0 ? Complex<T>::Builder(-absBasePowIndex.stdComplex()) : absBasePowIndex;
         }
       }
     }
     result = PowerNode::compute(basec, std::complex<T>(1.0)/(indexc), complexFormat);
   }
   return result;
+}
+
+NthRoot NthRoot::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NthRootNode));
+  NthRootNode * node = new (bufferNode) NthRootNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<NthRoot &>(h);
 }
 
 Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -72,10 +79,10 @@ Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat 
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode:Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
-  Expression invIndex = Power::Builder(childAtIndex(1), Rational(-1));
+  Expression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Power p = Power::Builder(childAtIndex(0), invIndex);
   invIndex.shallowReduce(context, complexFormat, angleUnit, target);
   replaceWithInPlace(p);

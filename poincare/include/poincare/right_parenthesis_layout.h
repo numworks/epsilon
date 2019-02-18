@@ -36,9 +36,8 @@ protected:
 
 class RightParenthesisLayout final : public Layout {
 public:
-  static RightParenthesisLayout Builder() { return RightParenthesisLayout(); }
-private:
-  RightParenthesisLayout() : Layout(TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>()) {}
+  static RightParenthesisLayout Builder();
+  RightParenthesisLayout() = delete;
 };
 
 }

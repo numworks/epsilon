@@ -87,7 +87,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char 
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c);
     if (!expressionToStore.isUninitialized()) {
-      expressionToStore = expressionToStore.replaceUnknown(Symbol('x')); //TODO Beware of non x unknowns! (for instance whe sequences are in the storage)
+      expressionToStore = expressionToStore.replaceUnknown(Symbol::Builder('x')); //TODO Beware of non x unknowns! (for instance whe sequences are in the storage)
     }
   }
   return setExpressionContent(expressionToStore);

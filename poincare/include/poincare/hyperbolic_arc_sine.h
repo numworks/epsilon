@@ -36,13 +36,9 @@ private:
 class HyperbolicArcSine final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcSine(const HyperbolicArcSineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  static HyperbolicArcSine Builder(Expression child) { return HyperbolicArcSine(child); }
+  static HyperbolicArcSine Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("asinh", 1, &UntypedBuilder);
-private:
-  explicit HyperbolicArcSine(Expression child) : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcSineNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

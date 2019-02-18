@@ -34,7 +34,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
   if (numberOfChildren > 0) {
     args.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfChildren; i++) {
-      args.addChildAtIndex(CharLayout(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
+      args.addChildAtIndex(CharLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
       args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
   }
@@ -57,7 +57,7 @@ HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const 
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {
-    resultLayout.addChildAtIndex(CharLayout(buffer[i], font), i, i, nullptr);
+    resultLayout.addChildAtIndex(CharLayout::Builder(buffer[i], font), i, i, nullptr);
   }
   return resultLayout;
 }

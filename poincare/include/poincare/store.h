@@ -40,7 +40,7 @@ class Store final : public Expression {
 friend class StoreNode;
 public:
   Store(const StoreNode * n) : Expression(n) {}
-  static Store Builder(Expression value, SymbolAbstract symbol) { return Store(value, symbol); }
+  static Store Builder(Expression value, SymbolAbstract symbol);
 
   // Store
   const SymbolAbstract symbol() const {
@@ -54,12 +54,8 @@ public:
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  Store(Expression value, SymbolAbstract symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {
-    replaceChildAtIndexInPlace(0, value);
-    replaceChildAtIndexInPlace(1, symbol);
-  }
 
+private:
   Expression storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   StoreNode * node() const { return static_cast<StoreNode *>(Expression::node()); }
 };

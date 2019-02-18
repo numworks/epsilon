@@ -28,11 +28,18 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::C
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(std::ceil(c.real()));
+  return Complex<T>::Builder(std::ceil(c.real()));
 }
 
 Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Ceiling(this).shallowReduce();
+}
+
+Ceiling Ceiling::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CeilingNode));
+  CeilingNode * node = new (bufferNode) CeilingNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Ceiling &>(h);
 }
 
 Expression Ceiling::shallowReduce() {
@@ -52,10 +59,10 @@ Expression Ceiling::shallowReduce() {
     Constant s = static_cast<Constant&>(c);
     Expression result;
     if (s.isPi()) {
-      result = Rational(4);
+      result = Rational::Builder(4);
     }
     if (s.isExponential()) {
-      result = Rational(3);
+      result = Rational::Builder(3);
     }
     if (!result.isUninitialized()) {
       replaceWithInPlace(result);
@@ -70,7 +77,7 @@ Expression Ceiling::shallowReduce() {
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isOverflow());
   if (div.remainder.isZero()) {
-    Expression result = Rational(div.quotient);
+    Expression result = Rational::Builder(div.quotient);
     replaceWithInPlace(result);
     return result;
   }
@@ -78,7 +85,7 @@ Expression Ceiling::shallowReduce() {
   if (result.isOverflow()) {
     return *this;
   }
-  Expression rationalResult = Rational(result);
+  Expression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }

@@ -31,7 +31,7 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   if (a.type() == EvaluationNode<T>::Type::Complex && b.type() == EvaluationNode<T>::Type::Complex) {
     Complex<T> c = static_cast<Complex<T>&>(a);
     Complex<T> d = static_cast<Complex<T>&>(b);
-    return Complex<T>(c.stdComplex()*d.stdComplex());
+    return Complex<T>::Builder(c.stdComplex()*d.stdComplex());
   }
   if (a.type() == EvaluationNode<T>::Type::Complex) {
     Complex<T> c = static_cast<Complex<T> &>(a);
@@ -44,6 +44,13 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   MatrixComplex<T> m = static_cast<MatrixComplex<T>&>(a);
   MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
   return MultiplicationNode::computeOnMatrices<T>(m, n, complexFormat);
+}
+
+Product Product::Builder(Expression child0, Symbol child1, Expression child2, Expression child3) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ProductNode));
+  ProductNode * node = new (bufferNode) ProductNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2, child3).array(), 4);
+  return static_cast<Product &>(h);
 }
 
 }

@@ -19,7 +19,7 @@ template<typename T>
 Complex<T> SineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::sin(angleInput);
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
 Layout SineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -32,6 +32,13 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
 
 Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Sine(this).shallowReduce(context, complexFormat, angleUnit, target);
+}
+
+Sine Sine::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SineNode));
+  SineNode * node = new (bufferNode) SineNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Sine &>(h);
 }
 
 Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

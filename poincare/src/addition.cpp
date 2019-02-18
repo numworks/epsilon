@@ -65,7 +65,7 @@ const Number Addition::NumeralFactor(const Expression & e) {
     Number result = e.childAtIndex(0).convert<Number>();
     return result;
   }
-  return Rational(1);
+  return Rational::Builder(1);
 }
 
 int Addition::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
@@ -74,7 +74,7 @@ int Addition::getPolynomialCoefficients(Context & context, const char * symbolNa
     return -1;
   }
   for (int k = 0; k < deg+1; k++) {
-    coefficients[k] = Addition();
+    coefficients[k] = Addition::Builder();
   }
   Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   for (int i = 0; i < numberOfChildren(); i++) {
@@ -85,6 +85,21 @@ int Addition::getPolynomialCoefficients(Context & context, const char * symbolNa
     }
   }
   return deg;
+}
+
+Addition Addition::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(AdditionNode));
+  AdditionNode * node = new (bufferNode) AdditionNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Addition &>(h);
+}
+
+Addition Addition::Builder(Expression * children, size_t numberOfChildren) {
+  Addition a = Addition::Builder();
+  for (int i = 0; i < numberOfChildren; i++) {
+    a.addChildAtIndexInPlace(children[i], i, i);
+  }
+  return a;
 }
 
 Expression Addition::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
@@ -182,7 +197,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::ComplexFormat
       int on = currentMatrix->numberOfRows();
       int om = currentMatrix->numberOfColumns();
       if (on != n || om != m) {
-        return replaceWith(new Undefined(), true);
+        return replaceWith(new Undefined::Builder(), true);
       }
       // Dispatch the current matrix children in the created additions matrix
       for (int j = 0; j < n*m; j++) {
@@ -340,7 +355,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
 
   // Step 1: We want to compute the common denominator, b*d
-  Multiplication commonDenominator;
+  Multiplication commonDenominator = Multiplication::Builder();
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression currentDenominator = childAtIndex(i).denominator(context, complexFormat, angleUnit);
     if (!currentDenominator.isUninitialized()) {
@@ -363,7 +378,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   }
 
   // Step 3: Add the denominator
-  Power inverseDenominator = Power::Builder(commonDenominator, Rational(-1));
+  Power inverseDenominator = Power::Builder(commonDenominator, Rational::Builder(-1));
   Multiplication result = Multiplication::Builder(numerator, inverseDenominator);
 
   // Step 4: Simplify the numerator

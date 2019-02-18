@@ -15,6 +15,10 @@ namespace Poincare {
 
 constexpr char Symbol::k_ans[];
 
+SymbolNode::SymbolNode(const char * newName, int length) : SymbolAbstractNode() {
+  strlcpy(const_cast<char*>(name()), newName, length+1);
+}
+
 Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
@@ -77,32 +81,32 @@ bool SymbolNode::isReal(Context & context) const {
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name[0] == Symbol::SpecialSymbols::UnknownX) {
     assert(m_name[1] == 0);
-    return CharLayout(Symbol::k_unknownXReadableChar);
+    return CharLayout::Builder(Symbol::k_unknownXReadableChar);
   }
   if (strcmp(m_name, "u(n)") == 0) {
     return HorizontalLayout::Builder(
-        CharLayout('u'),
+        CharLayout::Builder('u'),
         VerticalOffsetLayout::Builder(
-          CharLayout('n'),
+          CharLayout::Builder('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "u(n+1)") == 0) {
     return HorizontalLayout::Builder(
-      CharLayout('u'),
+      CharLayout::Builder('u'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "v(n)") == 0) {
     return HorizontalLayout::Builder(
-        CharLayout('v'),
+        CharLayout::Builder('v'),
         VerticalOffsetLayout::Builder(
-          CharLayout('n'),
+          CharLayout::Builder('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (strcmp(m_name, "v(n+1)") == 0) {
     return HorizontalLayout::Builder(
-      CharLayout('v'),
+      CharLayout::Builder('v'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
           VerticalOffsetLayoutNode::Type::Subscript));
@@ -135,11 +139,14 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::Co
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Symbol::Symbol(const char * name, int length) : SymbolAbstract(TreePool::sharedPool()->createTreeNode<SymbolNode>(SymbolAbstract::AlignedNodeSize(length, sizeof(SymbolNode)))) {
-  node()->setName(name, length);
+Symbol Symbol::Builder(const char * name, int length) {
+  void * bufferNode = TreePool::sharedPool()->alloc(SymbolAbstract::AlignedNodeSize(length, sizeof(SymbolNode)));
+  SymbolNode * node = new (bufferNode) SymbolNode(name, length);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Symbol &>(h);
 }
 
-Symbol::Symbol(char name) : Symbol(&name, 1) {}
+Symbol Symbol::Builder(char name) { return Symbol::Builder(&name, 1); }
 
 bool Symbol::isSeriesSymbol(const char * c) {
   // [NV][1-3]
@@ -184,13 +191,13 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
 Expression Symbol::replaceUnknown(const Symbol & symbol) {
   assert(!symbol.isUninitialized());
   assert(symbol.type() == ExpressionNode::Type::Symbol);
-  return replaceSymbolWithExpression(symbol, Symbol(SpecialSymbols::UnknownX));
+  return replaceSymbolWithExpression(symbol, Symbol::Builder(SpecialSymbols::UnknownX));
 }
 
 int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
   if (strcmp(name(), symbolName) == 0) {
-    coefficients[0] = Rational(0);
-    coefficients[1] = Rational(1);
+    coefficients[0] = Rational::Builder(0);
+    coefficients[1] = Rational::Builder(1);
     return 1;
   }
   coefficients[0] = clone();

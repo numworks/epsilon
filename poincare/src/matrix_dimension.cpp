@@ -34,7 +34,14 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
     operands[0] = std::complex<T>(1.0);
     operands[1] = std::complex<T>(1.0);
   }
-  return MatrixComplex<T>(operands, 1, 2);
+  return MatrixComplex<T>::Builder(operands, 1, 2);
+}
+
+MatrixDimension MatrixDimension::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixDimensionNode));
+  MatrixDimensionNode * node = new (bufferNode) MatrixDimensionNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<MatrixDimension &>(h);
 }
 
 Expression MatrixDimension::shallowReduce() {
@@ -49,15 +56,15 @@ Expression MatrixDimension::shallowReduce() {
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix &>(c);
     Matrix result = Matrix::Builder();
-    result.addChildAtIndexInPlace(Rational(m.numberOfRows()), 0, 0);
-    result.addChildAtIndexInPlace(Rational(m.numberOfColumns()), 1, 1);
+    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
     result.setDimensions(1, 2);
     return result;
   }
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
     Matrix result = Matrix::Builder();
-    result.addChildAtIndexInPlace(Rational(1), 0, 0);
-    result.addChildAtIndexInPlace(Rational(1), 1, 1);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
     result.setDimensions(1, 2);
     return result;
   }
@@ -65,8 +72,8 @@ Expression MatrixDimension::shallowReduce() {
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
     Matrix result = Matrix::Builder();
-    result.addChildAtIndexInPlace(Rational(1), 0, 0);
-    result.addChildAtIndexInPlace(Rational(1), 1, 1);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
     result.setDimensions(1, 2);
     replaceWithInPlace(result);
     return result;

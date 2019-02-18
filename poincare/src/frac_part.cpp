@@ -28,7 +28,14 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(c.real()-std::floor(c.real()));
+  return Complex<T>::Builder(c.real()-std::floor(c.real()));
+}
+
+FracPart FracPart::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FracPartNode));
+  FracPartNode * node = new (bufferNode) FracPartNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<FracPart &>(h);
 }
 
 Expression FracPart::shallowReduce() {
@@ -51,7 +58,7 @@ Expression FracPart::shallowReduce() {
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isOverflow());
   Integer rDenominator = r.integerDenominator();
-  Expression result = Rational(div.remainder, rDenominator);
+  Expression result = Rational::Builder(div.remainder, rDenominator);
   replaceWithInPlace(result);
   return result;
 }

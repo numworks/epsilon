@@ -28,7 +28,7 @@ public:
 
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-    return Complex<T>(std::abs(c));
+    return Complex<T>::Builder(std::abs(c));
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, computeOnComplex<float>);
@@ -49,15 +49,12 @@ class AbsoluteValue final : public Expression {
 friend class AbsoluteValueNode;
 public:
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  static AbsoluteValue Builder(Expression child) { return AbsoluteValue(child); }
+  static AbsoluteValue Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("abs", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:
-  explicit AbsoluteValue(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
   Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 };
 

@@ -20,27 +20,27 @@ namespace Regression {
 Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
     const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
-          CharLayout('3', KDFont::SmallFont),
+          CharLayout::Builder('3', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
-          CharLayout('2', KDFont::SmallFont),
+          CharLayout::Builder('2', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('c', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('d', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('c', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('d', KDFont::SmallFont),
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, 15);
   }
@@ -56,16 +56,16 @@ Expression CubicModel::simplifiedExpression(double * modelCoefficients, Poincare
     Multiplication::Builder(
       Number::DecimalNumber(a),
       Power::Builder(
-        Symbol('x'),
-        Decimal(3.0))),
+        Symbol::Builder('x'),
+        Decimal::Builder(3.0))),
     Multiplication::Builder(
       Number::DecimalNumber(b),
       Power::Builder(
-        Symbol('x'),
-        Decimal(2.0))),
+        Symbol::Builder('x'),
+        Decimal::Builder(2.0))),
     Multiplication::Builder(
       Number::DecimalNumber(c),
-      Symbol('x')),
+      Symbol::Builder('x')),
     Number::DecimalNumber(d)
     };
   // a*x^3+b*x^2+c*x+d

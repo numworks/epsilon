@@ -19,7 +19,7 @@ template<typename T>
 Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::cos(angleInput);
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
 Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -48,6 +48,13 @@ Expression Cosine::shallowReduce(Context & context, Preferences::ComplexFormat c
   }
 #endif
   return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
+}
+
+Cosine Cosine::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CosineNode));
+  CosineNode * node = new (bufferNode) CosineNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Cosine &>(h);
 }
 
 }

@@ -27,7 +27,7 @@ public:
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
 
   // Approximation
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>(c*d); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c*d); }
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
   }
@@ -67,10 +67,10 @@ class Multiplication final : public NAryExpression {
   friend class Power;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
-  static Multiplication Builder() { return Multiplication(); }
-  static Multiplication Builder(Expression e1) { return Multiplication(&e1, 1); }
-  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
+  static Multiplication Builder();
+  static Multiplication Builder(Expression e1) { return Multiplication::Builder(&e1, 1); }
+  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
+  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
 
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Expression
@@ -81,12 +81,8 @@ public:
   Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 private:
   // Constructors
-  Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
-  explicit Multiplication(Expression * children, size_t numberOfChildren) : Multiplication() {
-    for (size_t i = 0; i < numberOfChildren; i++) {
-      addChildAtIndexInPlace(children[i], i, i);
-    }
-  }
+  static Multiplication Builder(Expression * children, size_t numberOfChildren);
+
   // Simplification
   Expression privateShallowReduce(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool expand, bool canBeInterrupted);
   void mergeMultiplicationChildrenInPlace();

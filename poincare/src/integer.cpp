@@ -45,14 +45,10 @@ static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
 
-void IntegerNode::initToMatchSize(size_t goalSize) {
-  assert(goalSize != sizeof(IntegerNode));
-  int digitsSize = goalSize - sizeof(IntegerNode);
-  assert(digitsSize%sizeof(native_uint_t) == 0);
-  /* We are initing the Integer to match a specific size. The built integer
-   * is dummy. */
-  m_numberOfDigits = digitsSize/sizeof(native_uint_t);
-  assert(size() == goalSize);
+IntegerNode::IntegerNode(const native_uint_t * digits, uint8_t numberOfDigits) :
+  m_numberOfDigits(numberOfDigits)
+{
+  memcpy(m_digits, digits, numberOfDigits*sizeof(native_uint_t));
 }
 
 static size_t IntegerSize(uint8_t numberOfDigits) {
@@ -87,11 +83,6 @@ void IntegerNode::log(std::ostream & stream) const {
 
 #endif
 
-void IntegerNode::setDigits(const native_uint_t * digits, uint8_t numberOfDigits) {
-  m_numberOfDigits = numberOfDigits;
-  memcpy(m_digits, digits, numberOfDigits*sizeof(native_uint_t));
-}
-
 // Constructor
 
 Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow) {
@@ -109,11 +100,17 @@ Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, b
 }
 
 // Private constructor
-Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
-  TreeHandle(TreePool::sharedPool()->createTreeNode<IntegerNode>(IntegerSize(numberOfDigits))),
-  m_negative(negative)
-{
-  node()->setDigits(digits, numberOfDigits);
+
+Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) {
+  void * bufferNode = TreePool::sharedPool()->alloc(IntegerSize(numberOfDigits));
+  IntegerNode * node = new (bufferNode) IntegerNode(digits, numberOfDigits);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  /* Integer is a TreeHandle that keeps an extra integer. We cannot just cast
+   * the TreeHandle in Integer, we have to build a new Integer. To do so, we
+   * pilfer the TreeHandle identifier. We thus have to increment the node
+   * reference counter to prevent its destruction when we leave this scope. */
+  node->retain();
+  new (this) Integer(h.identifier(), negative);
 }
 
 Integer::Integer(native_int_t i) : TreeHandle(TreeNode::NoNodeIdentifier) {

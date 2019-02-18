@@ -37,17 +37,12 @@ private:
 class GreatCommonDivisor final : public Expression {
 public:
   GreatCommonDivisor(const GreatCommonDivisorNode * n) : Expression(n) {}
-  static GreatCommonDivisor Builder(Expression child0, Expression child1) { return GreatCommonDivisor(child0, child1); }
+  static GreatCommonDivisor Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce();
-private:
-  GreatCommonDivisor(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<GreatCommonDivisorNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

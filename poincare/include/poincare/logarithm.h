@@ -34,7 +34,7 @@ public:
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
      * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
      * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
-    return Complex<U>(std::log10(c));
+    return Complex<U>::Builder(std::log10(c));
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
@@ -44,7 +44,7 @@ public:
 class Logarithm final : public Expression {
 public:
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  static Logarithm Builder(Expression child0, Expression child1) { return Logarithm(child0, child1); }
+  static Logarithm Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, &UntypedBuilder);
 
@@ -52,10 +52,6 @@ public:
   Expression shallowBeautify();
 
 private:
-  Logarithm(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
   Expression simpleShallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
@@ -65,15 +61,11 @@ private:
 class CommonLogarithm : public Expression {
 public:
   CommonLogarithm(const LogarithmNode<1> * n) : Expression(n) {}
-  static CommonLogarithm Builder(Expression child) { return CommonLogarithm(child); }
+  static CommonLogarithm Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit CommonLogarithm(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

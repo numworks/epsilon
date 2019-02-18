@@ -38,17 +38,12 @@ private:
 class DivisionQuotient final : public Expression {
 public:
   DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}
-  static DivisionQuotient Builder(Expression child0, Expression child1) { return DivisionQuotient(child0, child1); }
+  static DivisionQuotient Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce();
-private:
-  DivisionQuotient(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<DivisionQuotientNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

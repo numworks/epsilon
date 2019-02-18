@@ -166,7 +166,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
     int degree = equation.getPolynomialReducedCoefficients(&variables[index*maxVariableSize], polynomialCoefficients, context, complexFormat, angleUnit);
     switch (degree) {
       case 0:
-        coefficients[index] = Rational(0);
+        coefficients[index] = Rational::Builder(0);
         break;
       case 1:
         coefficients[index] = polynomialCoefficients[1];
@@ -213,10 +213,10 @@ Expression Expression::defaultShallowReduce() {
     // - the result is unreal is at least one child is unreal
     // - the result is undefined is at least one child is undefined but no child is unreal
     if (childAtIndex(i).type() == ExpressionNode::Type::Unreal) {
-      result = Unreal();
+      result = Unreal::Builder();
       break;
     } else if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
-      result = Undefined();
+      result = Undefined::Builder();
     }
   }
   if (!result.isUninitialized()) {
@@ -369,7 +369,7 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, char 
    * to re-serialize it because the number of stored significative
    * numbers and the number of displayed significative numbers might not be
    * identical. (For example, 0.000025 might be displayed "0.00003" and stored
-   * as Decimal(0.000025) and isEqualToItsApproximationLayout should return
+   * as Decimal::Builder(0.000025) and isEqualToItsApproximationLayout should return
    * false) */
   Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, complexFormat, angleUnit);
   bool equal = isIdenticalTo(approximateOutput);
@@ -389,7 +389,7 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression exp = Parse(text);
   if (exp.isUninitialized()) {
-    return Undefined();
+    return Undefined::Builder();
   }
   exp = exp.simplify(context, complexFormat, angleUnit);
   /* simplify might have been interrupted, in which case the resulting
@@ -404,8 +404,8 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   assert(simplifiedExpression);
   Expression exp = Parse(text);
   if (exp.isUninitialized()) {
-    *simplifiedExpression = Undefined();
-    *approximateExpression = Undefined();
+    *simplifiedExpression = Undefined::Builder();
+    *approximateExpression = Undefined::Builder();
     return;
   }
   exp.simplifyAndApproximate(simplifiedExpression, approximateExpression, context, complexFormat, angleUnit);
@@ -449,14 +449,14 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
     /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
      * take into account the complex format to display a+i*b or r*e^(i*th) */
     if (e.type() == ExpressionNode::Type::ComplexCartesian || e.isReal(context)) {
-      ComplexCartesian ecomplex = e.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(e) : ComplexCartesian::Builder(e, Rational(0));
+      ComplexCartesian ecomplex = e.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(e) : ComplexCartesian::Builder(e, Rational::Builder(0));
       if (approximateExpression) {
         /* Step 2: Approximation
          * We compute the approximate expression from the Cartesian form to avoid
-         * unprecision. For example, if the result is the ComplexCartesian(a,b),
+         * unprecision. For example, if the result is the ComplexCartesian::Builder(a,b),
          * the final expression is goind to be sqrt(a^2+b^2)*exp(i*arctan(b/a)...
          * in Polar ComplexFormat. If we approximate this expression instead of
-         * ComplexCartesian(a,b), we are going to loose precision on the resulting
+         * ComplexCartesian::Builder(a,b), we are going to loose precision on the resulting
          * complex.*/
         // Clone the ComplexCartesian to use it to compute the approximation
         ComplexCartesian ecomplexClone = ecomplex.clone().convert<ComplexCartesian>();
@@ -519,12 +519,12 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return Multiplication::Builder(*this, Rational(180), Power::Builder(Constant(Ion::Charset::SmallPi), Rational(-1)));
+  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(Ion::Charset::SmallPi), Rational::Builder(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return Multiplication::Builder(*this, Rational(1, 180), Constant(Ion::Charset::SmallPi));
+  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(Ion::Charset::SmallPi));
 }
 
 Expression Expression::reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -566,7 +566,7 @@ Expression Expression::setSign(ExpressionNode::Sign s, Context * context, Prefer
 
 template<typename U>
 Expression Expression::approximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return isUninitialized() ? Undefined() : approximateToEvaluation<U>(context, complexFormat, angleUnit).complexToExpression(complexFormat);
+  return isUninitialized() ? Undefined::Builder() : approximateToEvaluation<U>(context, complexFormat, angleUnit).complexToExpression(complexFormat);
 }
 
 
@@ -609,7 +609,7 @@ bool Expression::IsMinusOne(const Expression e) {
 
 Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb) {
   if (undefined) {
-    return Undefined();
+    return Undefined::Builder();
   }
   switch (complexFormat) {
     case Preferences::ComplexFormat::Real:
@@ -626,9 +626,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       }
       if (!isZeroTb) {
         if (isOneTb) {
-          imag = Constant(Ion::Charset::IComplex);
+          imag = Constant::Builder(Ion::Charset::IComplex);
         } else {
-          imag = Multiplication::Builder(tb , Constant(Ion::Charset::IComplex));
+          imag = Multiplication::Builder(tb , Constant::Builder(Ion::Charset::IComplex));
         }
       }
       if (imag.isUninitialized()) {
@@ -657,14 +657,14 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa && !isZeroTb) {
         Expression arg;
         if (isOneTb) {
-          arg = Constant(Ion::Charset::IComplex);
+          arg = Constant::Builder(Ion::Charset::IComplex);
         } else {
-          arg = Multiplication::Builder(tb, Constant(Ion::Charset::IComplex));
+          arg = Multiplication::Builder(tb, Constant::Builder(Ion::Charset::IComplex));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
         }
-        exp = Power::Builder(Constant(Ion::Charset::Exponential), arg);
+        exp = Power::Builder(Constant::Builder(Ion::Charset::Exponential), arg);
       }
       if (exp.isUninitialized()) {
         return norm;

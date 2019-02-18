@@ -1,4 +1,5 @@
 #include <poincare/logarithm.h>
+#include <poincare/array_builder.h>
 #include <poincare/addition.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
@@ -82,7 +83,14 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
     std::complex<U> nc = (static_cast<Complex<U>&>(n)).stdComplex();
     result = DivisionNode::compute<U>(computeOnComplex(xc, complexFormat, angleUnit).stdComplex(), computeOnComplex(nc, complexFormat, angleUnit).stdComplex(), complexFormat).stdComplex();
   }
-  return Complex<U>(result);
+  return Complex<U>::Builder(result);
+}
+
+CommonLogarithm CommonLogarithm::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LogarithmNode<1>));
+  LogarithmNode<1> * node = new (bufferNode) LogarithmNode<1>();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<CommonLogarithm &>(h);
 }
 
 Expression CommonLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
@@ -100,9 +108,16 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::Comple
   }
 #endif
 #endif
-  Logarithm log = Logarithm::Builder(childAtIndex(0), Rational(10));
+  Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
   replaceWithInPlace(log);
   return log.shallowReduce(context, complexFormat, angleUnit, target);
+}
+
+Logarithm Logarithm::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LogarithmNode<2>));
+  LogarithmNode<2> * node = new (bufferNode) LogarithmNode<2>();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<Logarithm &>(h);
 }
 
 Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
@@ -116,7 +131,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
 #if MATRIX_EXACT_REDUCING
 #if 0
   if (c.type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
 #endif
@@ -196,7 +211,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
       Integer b = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
       Integer newNumerator = simplifyLogarithmIntegerBaseInteger(r.signedIntegerNumerator(), b, a, false);
       Integer newDenomitor = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);
-      r = Rational(newNumerator, newDenomitor);
+      r = Rational::Builder(newNumerator, newDenomitor);
     }
     // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
     a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(), false, context, complexFormat, angleUnit, target), a.numberOfChildren(), a.numberOfChildren());
@@ -212,26 +227,26 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
   Expression b = childAtIndex(1);
   // log(0,0)->Undefined
   if (c.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero() && static_cast<Rational &>(c).isZero()) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
   // log(x,1)->Undefined
   if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isOne()) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
   bool infiniteArg = c.recursivelyMatchesInfinity(context);
   // log(x,x)->1 with x != inf and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
-    Expression result = infiniteArg ? Undefined().convert<Expression>() : Rational(1).convert<Expression>();
+    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
     replaceWithInPlace(result);
     return result;
   }
   // log(x,0)->0 with x != inf and log(inf,0) = undef
   if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero()) {
-    Expression result = infiniteArg ? Undefined().convert<Expression>() : Rational(0).convert<Expression>();
+    Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(0).convert<Expression>();
     replaceWithInPlace(result);
     return result;
   }
@@ -243,7 +258,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
       bool infiniteBase = b.recursivelyMatchesInfinity(context);
       // Special case: log(0,inf) -> undef
       if (infiniteBase) {
-        Expression result = Undefined();
+        Expression result = Undefined::Builder();
         replaceWithInPlace(result);
         return result;
       }
@@ -252,16 +267,16 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
       Evaluation<float> baseApproximation = b.node()->approximate(1.0f, context, complexFormat, angleUnit);
       std::complex<float> logDenominator = std::log10(static_cast<Complex<float>&>(baseApproximation).stdComplex());
       if (logDenominator.imag() != 0.0f || logDenominator.real() == 0.0f) {
-        result = Undefined();
+        result = Undefined::Builder();
       }
       isNegative = logDenominator.real() > 0.0;
-      result = result.isUninitialized() ? Infinity(isNegative) : result;
+      result = result.isUninitialized() ? Infinity::Builder(isNegative) : result;
       replaceWithInPlace(result);
       return result;
     }
     // log(1) = 0;
     if (r.isOne()) {
-      Expression result = Rational(0);
+      Expression result = Rational::Builder(0);
       replaceWithInPlace(result);
       return result;
     }
@@ -297,7 +312,7 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   IntegerDivision div = Integer::Division(i, base);
   while (!div.quotient.isOverflow() && div.remainder.isZero()) {
     i = div.quotient;
-    a.addChildAtIndexInPlace(isDenominator ? Rational(-1) : Rational(1), a.numberOfChildren(), a.numberOfChildren()); // a++
+    a.addChildAtIndexInPlace(isDenominator ? Rational::Builder(-1) : Rational::Builder(1), a.numberOfChildren(), a.numberOfChildren()); // a++
     div = Integer::Division(i, base);
   }
   return i;
@@ -310,17 +325,17 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
   if (numberOfPrimeFactors == 0) {
-    return Rational(0);
+    return Rational::Builder(0);
   }
   if (numberOfPrimeFactors < 0) {
     /* We could not break i in prime factor (either it might take too many
      * factors or too much time). */
     Expression e = clone();
-    e.replaceChildAtIndexInPlace(0, Rational(i));
+    e.replaceChildAtIndexInPlace(0, Rational::Builder(i));
     if (!isDenominator) {
       return e;
     }
-    Multiplication m = Multiplication::Builder(Rational(-1), e);
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
     return m;
   }
   Addition a = Addition::Builder();
@@ -329,8 +344,8 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
       coefficients[index].setNegative(true);
     }
     Logarithm e = clone().convert<Logarithm>();
-    e.replaceChildAtIndexInPlace(0, Rational(factors[index]));
-    Multiplication m = Multiplication::Builder(Rational(coefficients[index]), e);
+    e.replaceChildAtIndexInPlace(0, Rational::Builder(factors[index]));
+    Multiplication m = Multiplication::Builder(Rational::Builder(coefficients[index]), e);
     e.simpleShallowReduce(context, complexFormat, angleUnit);
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(context, complexFormat, angleUnit, target);
@@ -340,13 +355,13 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
 
 Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
-  Constant e = Constant(Ion::Charset::Exponential);
+  Constant e = Constant::Builder(Ion::Charset::Exponential);
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);
     return np;
   }
-  Rational ten(10);
+  Rational ten = Rational::Builder(10);
   if (childAtIndex(1).isIdenticalTo(ten)) {
     CommonLogarithm l = CommonLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(l);

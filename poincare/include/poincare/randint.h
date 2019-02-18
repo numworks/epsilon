@@ -41,14 +41,9 @@ class Randint final : public Expression {
 friend class RandintNode;
 public:
   Randint(const RandintNode * n) : Expression(n) {}
-  static Randint Builder(Expression child0, Expression child1) { return Randint(child0, child1); }
+  static Randint Builder(Expression child0, Expression child1);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilder);
-private:
-  Randint(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<RandintNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
 };
 
 }

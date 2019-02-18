@@ -185,6 +185,32 @@ TreeHandle::TreeHandle(const TreeNode * node) : TreeHandle() {
   }
 }
 
+TreeHandle TreeHandle::BuildWithBasicChildren(TreeNode * node, TreeHandle * children, int numberOfChildren) {
+  assert(node != nullptr);
+  TreePool * pool = TreePool::sharedPool();
+  int expectedNumberOfChildren = node->numberOfChildren();
+  /* Ensure the pool is syntaxically correct by creating ghost children for
+   * nodes that have a fixed, non-zero number of children. */
+  for (int i = 0; i < expectedNumberOfChildren; i++) {
+    GhostNode * ghost = new (pool->alloc(sizeof(GhostNode))) GhostNode();
+    ghost->rename(pool->generateIdentifier(), false);
+    ghost->retain();
+    pool->move(node->next(), ghost, 0);
+  }
+  node->rename(pool->generateIdentifier(), false);
+  TreeHandle h = TreeHandle(node);
+  /* Add or replace ghost children by the children given as arguments if
+   * possible. */
+  for (int i = 0; i < numberOfChildren; i++) {
+    if (i < expectedNumberOfChildren) {
+      h.replaceChildAtIndexInPlace(i, children[i]);
+    } else {
+      h.addChildAtIndexInPlace(children[i], i, i);
+    }
+  }
+  return h;
+}
+
 void TreeHandle::setIdentifierAndRetain(int newId) {
   m_identifier = newId;
   if (!isUninitialized()) {

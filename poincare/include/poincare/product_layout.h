@@ -25,16 +25,8 @@ private:
 
 class ProductLayout final : public Layout {
 public:
-  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB) { return ProductLayout(argument, variable, lowerB, upperB); }
-private:
-  ProductLayout(Layout argument, Layout variable, Layout lowerB, Layout upperB) :
-    Layout(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, argument);
-    replaceChildAtIndexInPlace(1, variable);
-    replaceChildAtIndexInPlace(2, lowerB);
-    replaceChildAtIndexInPlace(3, upperB);
-  }
+  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB);
+  ProductLayout() = delete;
 };
 
 }

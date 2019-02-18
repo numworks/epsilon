@@ -27,9 +27,7 @@ class SymbolAbstractNode : public ExpressionNode {
   friend class Store;
 public:
   virtual const char * name() const = 0;
-  void setName(const char * newName, int length);
   size_t size() const override;
-  void initToMatchSize(size_t goalSize) override;
 
   // ExpressionNode
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;

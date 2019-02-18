@@ -243,7 +243,7 @@ void StorageSumGraphController::LegendView::setSumSymbol(Step step, double start
     m_sumLayout = CondensedSumLayout::Builder(
         LayoutHelper::String(sigma, sizeof(sigma)),
         LayoutHelper::String(buffer, strlen(buffer), k_font),
-        EmptyLayout(EmptyLayoutNode::Color::Yellow, false, k_font, false));
+        EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, k_font, false));
   } else {
     m_sumLayout = LayoutHelper::String(sigma, sizeof(sigma));
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

@@ -23,7 +23,14 @@ Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Pr
    * on this cut. We followed the convention chosen by the lib c++ of llvm on
    * ]-inf+0i, 1+0i] (warning: atanh takes the other side of the cut values on
    * ]-inf-0i, 1-0i[).*/
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result, c));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(result, c));
+}
+
+HyperbolicArcCosine HyperbolicArcCosine::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(HyperbolicArcCosineNode));
+  HyperbolicArcCosineNode * node = new (bufferNode) HyperbolicArcCosineNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<HyperbolicArcCosine &>(h);
 }
 
 template Complex<float> Poincare::HyperbolicArcCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);

@@ -257,20 +257,20 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   /* Equation ax^2+bx+c = 0 */
   assert(degree == 2);
   // Compute delta = b*b-4ac
-  Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational(2)), Multiplication::Builder(Rational(4), coefficients[0].clone(), coefficients[2].clone()));
+  Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
   delta = delta.simplify(*context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
   if (delta.isUninitialized()) {
-    delta = Poincare::Undefined();
+    delta = Poincare::Undefined::Builder();
   }
   if (delta.isRationalZero()) {
     // if delta = 0, x0=x1= -b/(2a)
-    exactSolutions[0] = Division::Builder(Opposite::Builder(coefficients[1]), Multiplication::Builder(Rational(2), coefficients[2]));
+    exactSolutions[0] = Division::Builder(Opposite::Builder(coefficients[1]), Multiplication::Builder(Rational::Builder(2), coefficients[2]));
     m_numberOfSolutions = 2;
   } else {
     // x0 = (-b-sqrt(delta))/(2a)
-    exactSolutions[0] = Division::Builder(Subtraction::Builder(Opposite::Builder(coefficients[1].clone()), SquareRoot::Builder(delta.clone())), Multiplication::Builder(Rational(2), coefficients[2].clone()));
+    exactSolutions[0] = Division::Builder(Subtraction::Builder(Opposite::Builder(coefficients[1].clone()), SquareRoot::Builder(delta.clone())), Multiplication::Builder(Rational::Builder(2), coefficients[2].clone()));
     // x1 = (-b+sqrt(delta))/(2a)
-    exactSolutions[1] = Division::Builder(Addition::Builder(Opposite::Builder(coefficients[1]), SquareRoot::Builder(delta.clone())), Multiplication::Builder(Rational(2), coefficients[2]));
+    exactSolutions[1] = Division::Builder(Addition::Builder(Opposite::Builder(coefficients[1]), SquareRoot::Builder(delta.clone())), Multiplication::Builder(Rational::Builder(2), coefficients[2]));
     m_numberOfSolutions = 3;
   }
   exactSolutions[m_numberOfSolutions-1] = delta;
@@ -285,47 +285,47 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
     Expression * c = coefficients[1];
     Expression * d = coefficients[0];
     // Delta = b^2*c^2+18abcd-27a^2*d^2-4ac^3-4db^3
-    Expression * mult0Operands[2] = {new Power::Builder(b->clone(), new Rational(2), false), new Power::Builder(c->clone(), new Rational(2), false)};
-    Expression * mult1Operands[5] = {new Rational(18), a->clone(), b->clone(), c->clone(), d->clone()};
-    Expression * mult2Operands[3] = {new Rational(-27), new Power::Builder(a->clone(), new Rational(2), false), new Power::Builder(d->clone(), new Rational(2), false)};
-    Expression * mult3Operands[3] = {new Rational(-4), a->clone(), new Power::Builder(c->clone(), new Rational(3), false)};
-    Expression * mult4Operands[3] = {new Rational(-4), d->clone(), new Power::Builder(b->clone(), new Rational(3), false)};
+    Expression * mult0Operands[2] = {new Power::Builder(b->clone(), new Rational::Builder(2), false), new Power::Builder(c->clone(), new Rational::Builder(2), false)};
+    Expression * mult1Operands[5] = {new Rational::Builder(18), a->clone(), b->clone(), c->clone(), d->clone()};
+    Expression * mult2Operands[3] = {new Rational::Builder(-27), new Power::Builder(a->clone(), new Rational::Builder(2), false), new Power::Builder(d->clone(), new Rational::Builder(2), false)};
+    Expression * mult3Operands[3] = {new Rational::Builder(-4), a->clone(), new Power::Builder(c->clone(), new Rational::Builder(3), false)};
+    Expression * mult4Operands[3] = {new Rational::Builder(-4), d->clone(), new Power::Builder(b->clone(), new Rational::Builder(3), false)};
     Expression * add0Operands[5] = {new Multiplication::Builder(mult0Operands, 2, false), new Multiplication::Builder(mult1Operands, 5, false), new Multiplication::Builder(mult2Operands, 3, false), new Multiplication::Builder(mult3Operands, 3, false), new Multiplication::Builder(mult4Operands, 3, false)};
     Expression * delta = new Addition(add0Operands, 5, false);
     PoincareHelpers::Simplify(&delta, *context);
     // Delta0 = b^2-3ac
-    Expression * mult5Operands[3] = {new Rational(3), a->clone(), c->clone()};
-    Expression * delta0 = new Subtraction::Builder(new Power::Builder(b->clone(), new Rational(2), false), new Multiplication::Builder(mult5Operands, 3, false), false);
+    Expression * mult5Operands[3] = {new Rational::Builder(3), a->clone(), c->clone()};
+    Expression * delta0 = new Subtraction::Builder(new Power::Builder(b->clone(), new Rational::Builder(2), false), new Multiplication::Builder(mult5Operands, 3, false), false);
     Reduce(&delta0, *context);
     if (delta->isRationalZero()) {
       if (delta0->isRationalZero()) {
         // delta0 = 0 && delta = 0 --> x0 = -b/(3a)
         delete delta0;
-        m_exactSolutions[0] = new Opposite::Builder(new Division::Builder(b, new Multiplication::Builder(new Rational(3), a, false), false), false);
+        m_exactSolutions[0] = new Opposite::Builder(new Division::Builder(b, new Multiplication::Builder(new Rational::Builder(3), a, false), false), false);
         m_numberOfSolutions = 1;
         delete c;
         delete d;
       } else {
         // delta = 0 --> x0 = (9ad-bc)/(2delta0)
         //           --> x1 = (4abc-9a^2d-b^3)/(a*delta0)
-        Expression * mult6Operands[3] = {new Rational(9), a, d};
-        m_exactSolutions[0] = new Division::Builder(new Subtraction::Builder(new Multiplication::Builder(mult6Operands, 3, false), new Multiplication::Builder(b, c, false), false), new Multiplication::Builder(new Rational(2), delta0, false), false);
-        Expression * mult7Operands[4] = {new Rational(4), a->clone(), b->clone(), c->clone()};
-        Expression * mult8Operands[3] = {new Rational(-9), new Power::Builder(a->clone(), new Rational(2), false), d->clone()};
-        Expression * add1Operands[3] = {new Multiplication::Builder(mult7Operands, 4, false), new Multiplication::Builder(mult8Operands,3, false), new Opposite::Builder(new Power::Builder(b->clone(), new Rational(3), false), false)};
+        Expression * mult6Operands[3] = {new Rational::Builder(9), a, d};
+        m_exactSolutions[0] = new Division::Builder(new Subtraction::Builder(new Multiplication::Builder(mult6Operands, 3, false), new Multiplication::Builder(b, c, false), false), new Multiplication::Builder(new Rational::Builder(2), delta0, false), false);
+        Expression * mult7Operands[4] = {new Rational::Builder(4), a->clone(), b->clone(), c->clone()};
+        Expression * mult8Operands[3] = {new Rational::Builder(-9), new Power::Builder(a->clone(), new Rational::Builder(2), false), d->clone()};
+        Expression * add1Operands[3] = {new Multiplication::Builder(mult7Operands, 4, false), new Multiplication::Builder(mult8Operands,3, false), new Opposite::Builder(new Power::Builder(b->clone(), new Rational::Builder(3), false), false)};
         m_exactSolutions[1] = new Division::Builder(new Addition(add1Operands, 3, false), new Multiplication::Builder(a->clone(), delta0, false), false);
         m_numberOfSolutions = 2;
       }
     } else {
       // delta1 = 2b^3-9abc+27a^2*d
-      Expression * mult9Operands[4] = {new Rational(-9), a, b, c};
-      Expression * mult10Operands[3] = {new Rational(27), new Power::Builder(a->clone(), new Rational(2), false), d};
-      Expression * add2Operands[3] = {new Multiplication::Builder(new Rational(2), new Power::Builder(b->clone(), new Rational(3), false), false), new Multiplication::Builder(mult9Operands, 4, false), new Multiplication::Builder(mult10Operands, 3, false)};
+      Expression * mult9Operands[4] = {new Rational::Builder(-9), a, b, c};
+      Expression * mult10Operands[3] = {new Rational::Builder(27), new Power::Builder(a->clone(), new Rational::Builder(2), false), d};
+      Expression * add2Operands[3] = {new Multiplication::Builder(new Rational::Builder(2), new Power::Builder(b->clone(), new Rational::Builder(3), false), false), new Multiplication::Builder(mult9Operands, 4, false), new Multiplication::Builder(mult10Operands, 3, false)};
       Expression * delta1 = new Addition(add2Operands, 3, false);
       // C = Root((delta1+sqrt(-27a^2*delta))/2, 3)
-      Expression * mult11Operands[3] = {new Rational(-27), new Power::Builder(a->clone(), new Rational(2), false), (*delta)->clone()};
-      Expression * c = new Power::Builder(new Division::Builder(new Addition(delta1, new SquareRoot(new Multiplication::Builder(mult11Operands, 3, false), false), false), new Rational(2), false), new Rational(1,3), false);
-      Expression * unary3roots[2] = {new Addition(new Rational(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational(3), false), new Constant(Ion::Charset::IComplex), false), new Rational(2), false), false), new Subtraction::Builder(new Rational(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational(3), false), new Constant(Ion::Charset::IComplex), false), new Rational(2), false), false)};
+      Expression * mult11Operands[3] = {new Rational::Builder(-27), new Power::Builder(a->clone(), new Rational::Builder(2), false), (*delta)->clone()};
+      Expression * c = new Power::Builder(new Division::Builder(new Addition(delta1, new SquareRoot(new Multiplication::Builder(mult11Operands, 3, false), false), false), new Rational::Builder(2), false), new Rational::Builder(1,3), false);
+      Expression * unary3roots[2] = {new Addition(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(Ion::Charset::IComplex), false), new Rational::Builder(2), false), false), new Subtraction::Builder(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(Ion::Charset::IComplex), false), new Rational::Builder(2), false), false)};
       // x_k = -1/(3a)*(b+C*z+delta0/(zC)) with z = unary cube root
       for (int k = 0; k < 3; k++) {
         Expression * ccopy = c;
@@ -335,7 +335,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
           delta0copy = delta0->clone();
         }
         Expression * add3Operands[3] = {b->clone(), ccopy, new Division::Builder(delta0copy, ccopy->clone(), false)};
-        m_exactSolutions[k] = new Multiplication::Builder(new Division::Builder(new Rational(-1), new Multiplication::Builder(new Rational(3), a->clone(), false), false), new Addition(add3Operands, 3, false), false);
+        m_exactSolutions[k] = new Multiplication::Builder(new Division::Builder(new Rational::Builder(-1), new Multiplication::Builder(new Rational::Builder(3), a->clone(), false), false), new Addition(add3Operands, 3, false), false);
       }
       m_numberOfSolutions = 3;
     }

@@ -68,7 +68,7 @@ class HorizontalLayout final : public Layout {
 public:
   // Constructors
   HorizontalLayout(HorizontalLayoutNode * n) : Layout(n) {}
-  static HorizontalLayout Builder() { return HorizontalLayout(); }
+  static HorizontalLayout Builder();
   static HorizontalLayout Builder(Layout l) { return HorizontalLayout::Builder(&l, 1); }
   static HorizontalLayout Builder(Layout l1, Layout l2) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2).array(), 2); }
   static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2, l3).array(), 3); }
@@ -93,7 +93,6 @@ public:
   void mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
 
 private:
-  HorizontalLayout() : Layout(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
   void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };
 

@@ -42,7 +42,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   if (exponentLength == 0 && decimalLenght == 0) {
     Integer i(integralPart, integralLength, false);
     if (!i.isOverflow()) {
-      return Rational(i);
+      return Rational::Builder(i);
     }
   }
   int exp;
@@ -55,32 +55,32 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   // Avoid Decimal with exponent > k_maxExponentLength
   if (exponentLength >= Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
     if (exp < 0) {
-      return Decimal(0.0);
+      return Decimal::Builder(0.0);
     } else {
-      return Infinity(false);
+      return Infinity::Builder(false);
     }
   }
-  return Decimal(integralPart, integralLength, decimalPart, decimalLenght, exp);
+  return Decimal::Builder(integralPart, integralLength, decimalPart, decimalLenght, exp);
 }
 
 template <typename T>
 Number Number::DecimalNumber(T f) {
   if (std::isnan(f)) {
-    return Undefined();
+    return Undefined::Builder();
   }
   if (std::isinf(f)) {
-    return Infinity(f < 0.0);
+    return Infinity::Builder(f < 0.0);
   }
-  return Decimal(f);
+  return Decimal::Builder(f);
 }
 
 Number Number::FloatNumber(double d) {
   if (std::isnan(d)) {
-    return Undefined();
+    return Undefined::Builder();
   } else if (std::isinf(d)) {
-    return Infinity(d < 0.0);
+    return Infinity::Builder(d < 0.0);
   } else {
-    return Float<double>(d);
+    return Float<double>::Builder(d);
   }
 }
 
@@ -112,7 +112,7 @@ Number Number::Power(const Number & i, const Number & j) {
       [](const Rational & i, const Rational & j) {
         if (!j.integerDenominator().isOne()) {
           // We return an overflown result to reach the escape case Float+Float
-          return Rational(Integer::Overflow(false));
+          return Rational::Builder(Integer::Overflow(false));
         }
         return Rational::IntegerPower(i, j.signedIntegerNumerator());
       },

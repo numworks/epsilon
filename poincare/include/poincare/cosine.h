@@ -46,15 +46,11 @@ private:
 class Cosine final : public Expression {
 public:
   Cosine(const CosineNode * n) : Expression(n) {}
-  static Cosine Builder(Expression child) { return Cosine(child); }
+  static Cosine Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("cos", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit Cosine(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<CosineNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

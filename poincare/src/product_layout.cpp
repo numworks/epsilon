@@ -30,4 +30,11 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   SequenceLayoutNode::render(ctx, p, expressionColor, backgroundColor);
 }
 
+ProductLayout ProductLayout::Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ProductLayoutNode));
+  ProductLayoutNode * node = new (bufferNode) ProductLayoutNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(argument, variable, lowerB, upperB).array(), 4);
+  return static_cast<ProductLayout &>(h);
+}
+
 }

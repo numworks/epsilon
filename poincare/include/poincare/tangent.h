@@ -46,15 +46,11 @@ private:
 class Tangent final : public Expression {
 public:
   Tangent(const TangentNode * n) : Expression(n) {}
-  static Tangent Builder(Expression child) { return Tangent(child); }
+  static Tangent Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, &UntypedBuilder);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit Tangent(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<TangentNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

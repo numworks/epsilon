@@ -41,15 +41,11 @@ private:
 class Conjugate final : public Expression {
 public:
   Conjugate(const ConjugateNode * n) : Expression(n) {}
-  static Conjugate Builder(Expression child) { return Conjugate(child); }
+  static Conjugate Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("conj", 1, &UntypedBuilder);;
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  explicit Conjugate(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

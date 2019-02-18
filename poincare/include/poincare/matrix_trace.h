@@ -34,15 +34,11 @@ private:
 class MatrixTrace final : public Expression {
 public:
   MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
-  static MatrixTrace Builder(Expression child) { return MatrixTrace(child); }
+  static MatrixTrace Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("trace", 1, &UntypedBuilder);
 
   Expression shallowReduce();
-private:
-  explicit MatrixTrace(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

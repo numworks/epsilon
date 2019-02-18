@@ -45,4 +45,11 @@ void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
   SequenceLayoutNode::render(ctx, p, expressionColor, backgroundColor);
 }
 
+SumLayout SumLayout::Builder(Layout child0, Layout child1, Layout child2, Layout child3) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SumLayoutNode));
+  SumLayoutNode * node = new (bufferNode) SumLayoutNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(child0, child1, child2, child3).array(), 4);
+  return static_cast<SumLayout &>(h);
+}
+
 }

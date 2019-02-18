@@ -27,7 +27,7 @@ Expression EqualNode::shallowReduce(Context & context, Preferences::ComplexForma
 Layout EqualNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayout('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CharLayout::Builder('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }
@@ -39,6 +39,13 @@ int EqualNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 template<typename T>
 Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Complex<T>::Undefined();
+}
+
+Equal Equal::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EqualNode));
+  EqualNode * node = new (bufferNode) EqualNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<Equal &>(h);
 }
 
 Expression Equal::standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
@@ -54,7 +61,7 @@ Expression Equal::shallowReduce() {
     }
   }
   if (childAtIndex(0).isIdenticalTo(childAtIndex(1))) {
-    Expression result = Rational(1);
+    Expression result = Rational::Builder(1);
     replaceWithInPlace(result);
     return result;
   }

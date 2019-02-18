@@ -35,7 +35,7 @@ class Sum final : public Expression {
 friend class SumNode;
 public:
   Sum(const SumNode * n) : Expression(n) {}
-  static Sum Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return Sum(child0, child1, child2, child3); }
+  static Sum Builder(Expression child0, Symbol child1, Expression child2, Expression child3);
   static Expression UntypedBuilder(Expression children) {
     if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
       // Second parameter must be a Symbol.
@@ -44,14 +44,6 @@ public:
     return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
   }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sum", 4, &UntypedBuilder);
-private:
-  Sum(Expression child0, Expression child1, Expression child2, Expression child3) : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {
-    assert(child1.type() == ExpressionNode::Type::Symbol);
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-    replaceChildAtIndexInPlace(2, child2);
-    replaceChildAtIndexInPlace(3, child3);
-  }
 };
 
 }

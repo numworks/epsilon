@@ -32,7 +32,14 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(std::floor(f1/f2));
+  return Complex<T>::Builder(std::floor(f1/f2));
+}
+
+DivisionQuotient DivisionQuotient::Builder(Expression child0, Expression child1) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DivisionQuotientNode));
+  DivisionQuotientNode * node = new (bufferNode) DivisionQuotientNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
+  return static_cast<DivisionQuotient &>(h);
 }
 
 Expression DivisionQuotient::shallowReduce() {
@@ -46,7 +53,7 @@ Expression DivisionQuotient::shallowReduce() {
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
@@ -54,7 +61,7 @@ Expression DivisionQuotient::shallowReduce() {
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -62,7 +69,7 @@ Expression DivisionQuotient::shallowReduce() {
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -76,13 +83,13 @@ Expression DivisionQuotient::shallowReduce() {
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   if (b.isZero()) {
-    Expression result = Infinity(a.isNegative());
+    Expression result = Infinity::Builder(a.isNegative());
     replaceWithInPlace(result);
     return result;
   }
   Integer result = Integer::Division(a, b).quotient;
   assert(!result.isOverflow());
-  Expression rationalResult = Rational(result);
+  Expression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }

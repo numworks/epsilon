@@ -41,7 +41,7 @@ bool OppositeNode::childNeedsParenthesis(const TreeNode * child) const {
 }
 
 Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout result = HorizontalLayout::Builder(CharLayout('-'));
+  HorizontalLayout result = HorizontalLayout::Builder(CharLayout::Builder('-'));
   if (childAtIndex(0)->type() == Type::Opposite) {
     result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {
@@ -69,6 +69,19 @@ Expression OppositeNode::shallowReduce(Context & context, Preferences::ComplexFo
 
 /* Simplification */
 
+Opposite Opposite::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(OppositeNode));
+  OppositeNode * node = new (bufferNode) OppositeNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Opposite &>(h);
+}
+
+Opposite Opposite::Builder(Expression child) {
+  Opposite d = Opposite::Builder();
+  d.replaceChildAtIndexInPlace(0, child);
+  return d;
+}
+
 Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression result = Expression::defaultShallowReduce();
   if (result.isUndefined()) {
@@ -77,7 +90,7 @@ Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat
   Expression child = result.childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #endif
-  result = Multiplication::Builder(Rational(-1), child);
+  result = Multiplication::Builder(Rational::Builder(-1), child);
   replaceWithInPlace(result);
   return result.shallowReduce(context, complexFormat, angleUnit, target);
 }

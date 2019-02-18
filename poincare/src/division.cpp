@@ -50,7 +50,7 @@ template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, c
   if (d.real() == 0.0 && d.imag() == 0.0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(c/d);
+  return Complex<T>::Builder(c/d);
 }
 
 template<typename T> MatrixComplex<T> DivisionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
@@ -70,6 +70,20 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 // Division
 
+Division Division::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DivisionNode));
+  DivisionNode * node = new (bufferNode) DivisionNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Division &>(h);
+}
+
+Division Division::Builder(Expression numerator, Expression denominator) {
+  Division d = Division::Builder();
+  d.replaceChildAtIndexInPlace(0, numerator);
+  d.replaceChildAtIndexInPlace(1, denominator);
+  return d;
+}
+
 Expression Division::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce();
@@ -77,7 +91,7 @@ Expression Division::shallowReduce(Context & context, Preferences::ComplexFormat
       return e;
     }
   }
-  Expression p = Power::Builder(childAtIndex(1), Rational(-1));
+  Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Multiplication m = Multiplication::Builder(childAtIndex(0), p);
   p.shallowReduce(context, complexFormat, angleUnit, target); // Imagine Division::Builder(2,1). p would be 1^(-1) which can be simplified
   replaceWithInPlace(m);

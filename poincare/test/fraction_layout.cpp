@@ -41,11 +41,11 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
    *     |3
    * */
   HorizontalLayout layout2 = HorizontalLayout::Builder(
-      CharLayout('1'),
-      CharLayout('+'),
+      CharLayout::Builder('1'),
+      CharLayout::Builder('+'),
       FractionLayout::Builder(
-        EmptyLayout(),
-        CharLayout('3')
+        EmptyLayout::Builder(),
+        CharLayout::Builder('3')
       )
     );
   LayoutCursor cursor2(layout2.childAtIndex(2).childAtIndex(1), LayoutCursor::Position::Left);
@@ -56,7 +56,7 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
 
 QUIZ_CASE(poincare_fraction_layout_serialize) {
   FractionLayout layout = FractionLayout::Builder(
-      CharLayout('1'),
+      CharLayout::Builder('1'),
       LayoutHelper::String("2+3", 3)
     );
   assert_expression_layout_serialize_to(layout, "(1)/(2+3)");

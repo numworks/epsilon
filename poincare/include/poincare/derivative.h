@@ -51,7 +51,7 @@ private:
 class Derivative final : public Expression {
 public:
   Derivative(const DerivativeNode * n) : Expression(n) {}
-  static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return Derivative(child0, child1, child2); }
+  static Derivative Builder(Expression child0, Symbol child1, Expression child2);
   static Expression UntypedBuilder(Expression children) {
     if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
       // Second parameter must be a Symbol.
@@ -62,13 +62,6 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
 
   Expression shallowReduce();
-private:
-  Derivative(Expression child0, Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {
-    assert(child1.type() == ExpressionNode::Type::Symbol);
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-    replaceChildAtIndexInPlace(2, child2);
-  }
 };
 
 }

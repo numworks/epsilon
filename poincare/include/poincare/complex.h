@@ -9,9 +9,9 @@ template<typename T>
 class Complex;
 
 template<typename T>
-class ComplexNode final : public std::complex<T>, public EvaluationNode<T> {
+class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
 public:
-  ComplexNode() : std::complex<T>(NAN, NAN) {}
+  ComplexNode(std::complex<T> c);
 
   // TreeNode
   size_t size() const override { return sizeof(ComplexNode<T>); }
@@ -26,7 +26,6 @@ public:
   }
 #endif
 
-  virtual void setComplex(std::complex<T> c);
   typename Poincare::EvaluationNode<T>::Type type() const override { return Poincare::EvaluationNode<T>::Type::Complex; }
   bool isUndefined() const override {
     return (std::isnan(this->real()) && std::isnan(this->imag()));
@@ -41,10 +40,10 @@ template<typename T>
 class Complex final : public Evaluation<T> {
 public:
   Complex(ComplexNode<T> * n) : Evaluation<T>(n) {}
-  explicit Complex(T a, T b = 0.0) : Complex(std::complex<T>(a, b)) {}
-  explicit Complex(std::complex<T> c);
+  static Complex<T> Builder(std::complex<T> c);
+  static Complex<T> Builder(T a, T b = 0.0) { return Complex<T>::Builder(std::complex<T>(a, b)); }
   static Complex<T> Undefined() {
-    return Complex<T>(NAN, NAN);
+    return Complex<T>::Builder(NAN, NAN);
   }
   std::complex<T> stdComplex() { return *node(); }
   T real() { return node()->real(); }

@@ -37,16 +37,12 @@ private:
 class Factor final : public Expression {
 public:
   Factor(const FactorNode * n) : Expression(n) {}
-  static Factor Builder(Expression child) { return Factor(child); }
+  static Factor Builder(Expression child);
   static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilder);
 
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-private:
-  explicit Factor(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<FactorNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
 };
 
 }

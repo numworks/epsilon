@@ -25,11 +25,18 @@ int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::Print
 template<typename T>
 Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  return Complex<T>(input.determinant());
+  return Complex<T>::Builder(input.determinant());
 }
 
 Expression DeterminantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
   return Determinant(this).shallowReduce(context);
+}
+
+Determinant Determinant::Builder(Expression child) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DeterminantNode));
+  DeterminantNode * node = new (bufferNode) DeterminantNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  return static_cast<Determinant &>(h);
 }
 
 Expression Determinant::shallowReduce(Context & context) {

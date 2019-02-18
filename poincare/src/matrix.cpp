@@ -79,7 +79,7 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 template<typename T>
 Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  MatrixComplex<T> matrix;
+  MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (ExpressionNode * c : children()) {
     matrix.addChildAtIndexInPlace(c->approximate(T(), context, complexFormat, angleUnit), matrix.numberOfChildren(), matrix.numberOfChildren());
   }
@@ -88,6 +88,13 @@ Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::Co
 }
 
 // MATRIX
+
+Matrix Matrix::Builder() {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixNode));
+  MatrixNode * node = new (bufferNode) MatrixNode();
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<Matrix &>(h);
+}
 
 void Matrix::setDimensions(int rows, int columns) {
   assert(rows * columns == numberOfChildren());
@@ -180,7 +187,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational(0), 0, determinant.numberOfChildren()); }
+      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational::Builder(0), 0, determinant.numberOfChildren()); }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -188,7 +195,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
           swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
-        if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational(-1), 0, determinant.numberOfChildren()); }
+        if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational::Builder(-1), 0, determinant.numberOfChildren()); }
       }
       /* Set to 1 M[h][k] by linear combination */
       Expression divisor = matrixChild(h, k);
@@ -200,7 +207,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
         replaceChildAtIndexInPlace(h*n+j, newOpHJ);
         newOpHJ = newOpHJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
       }
-      replaceChildInPlace(divisor, Rational(1));
+      replaceChildInPlace(divisor, Rational::Builder(1));
 
       /* Set to 0 all M[i][j] i != h, j > k by linear combination */
       for (int i = 0; i < m; i++) {
@@ -213,7 +220,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
           newOpIJ.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
           newOpIJ = newOpIJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
         }
-        replaceChildAtIndexInPlace(i*n+k, Rational(0));
+        replaceChildAtIndexInPlace(i*n+k, Rational::Builder(0));
       }
       h++;
       k++;
@@ -292,7 +299,7 @@ Matrix Matrix::createIdentity(int dim) {
   Matrix matrix();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      matrix.addChildAtIndexInPlace(i == j ? Rational(1) : Rational(0), i*dim+j, i*dim+j);
+      matrix.addChildAtIndexInPlace(i == j ? Rational::Builder(1) : Rational::Builder(0), i*dim+j, i*dim+j);
     }
   }
   matrix.setDimensions(dim, dim);
@@ -301,7 +308,7 @@ Matrix Matrix::createIdentity(int dim) {
 
 Expression Matrix::inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (m_numberOfRows != m_numberOfColumns) {
-    return Undefined();
+    return Undefined::Builder();
   }
   int dim = m_numberOfRows;
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
@@ -311,7 +318,7 @@ Expression Matrix::inverse(Context & context, Preferences::ComplexFormat complex
       AI.addChildAtIndexInPlace(matrixChild(i, j), i*2*dim+j, i*2*dim+j);
     }
     for (int j = dim; j < 2*dim; j++) {
-      AI.addChildAtIndexInPlace(j-dim == i ? Rational(1) : Rational(0), i*2*dim+j, i*2*dim+j);
+      AI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);
     }
   }
   AI.setDimensions(dim, 2*dim);
@@ -319,7 +326,7 @@ Expression Matrix::inverse(Context & context, Preferences::ComplexFormat complex
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     if (AI.matrixChild(i, i)->type() != ExpressionNode::Type::Rational || !static_cast<RationalNode *>(AI.matrixChild(i, i)->node())->isOne()) {
-      return Undefined();
+      return Undefined::Builder();
     }
   }
   Matrix inverse();

@@ -73,10 +73,14 @@ TableViewDataSource * TableView::ContentView::dataSource() {
   return m_dataSource;
 }
 
-KDCoordinate TableView::ContentView::columnWidth(int i) const {
-  int columnWidth = m_dataSource->columnWidth(i);
+KDRect TableView::ContentView::cellFrame(int i, int j) const {
+  KDCoordinate columnWidth = m_dataSource->columnWidth(i);
   columnWidth = columnWidth ? columnWidth : m_tableView->maxContentWidthDisplayableWithoutScrolling();
-  return columnWidth;
+  return KDRect(
+    m_dataSource->cumulatedWidthFromIndex(i), m_dataSource->cumulatedHeightFromIndex(j),
+    columnWidth + m_horizontalCellOverlap,
+    m_dataSource->rowHeight(j) + m_verticalCellOverlap
+  );
 }
 
 KDCoordinate TableView::ContentView::height() const {
@@ -90,8 +94,7 @@ KDCoordinate TableView::ContentView::width() const {
 }
 
 void TableView::ContentView::scrollToCell(int x, int y) const {
-  KDRect cellRect = KDRect(m_dataSource->cumulatedWidthFromIndex(x), m_dataSource->cumulatedHeightFromIndex(y), columnWidth(x), m_dataSource->rowHeight(y));
-  m_tableView->scrollToContentRect(cellRect, true);
+  m_tableView->scrollToContentRect(cellFrame(x, y), true);
 }
 
 void TableView::ContentView::reloadCellAtLocation(int i, int j) {
@@ -172,14 +175,7 @@ void TableView::ContentView::layoutSubviews() {
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
-
-    KDCoordinate rowHeight = m_dataSource->rowHeight(j);
-    KDCoordinate columnWidth = this->columnWidth(i);
-    KDCoordinate verticalOffset = m_dataSource->cumulatedHeightFromIndex(j);
-    KDCoordinate horizontalOffset = m_dataSource->cumulatedWidthFromIndex(i);
-    KDRect cellFrame(horizontalOffset, verticalOffset,
-      columnWidth+m_horizontalCellOverlap, rowHeight+m_verticalCellOverlap);
-    cell->setFrame(cellFrame);
+    cell->setFrame(cellFrame(i,j));
   }
 }
 

@@ -56,7 +56,7 @@ protected:
 
     /* realCellWidth enables to handle list view for which
      * TableViewDataSource->cellWidht = 0 */
-    KDCoordinate columnWidth(int x) const;
+    KDRect cellFrame(int i, int j) const;
     /* These two methods transform an index (of subview for instance) into
      * coordinates that refer to the data source entire table */
     int absoluteColumnNumberFromSubviewIndex(int index) const;

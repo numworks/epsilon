@@ -42,8 +42,7 @@ friend class RandintNode;
 public:
   Randint(const RandintNode * n) : Expression(n) {}
   static Randint Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("randint", 2, &UntypedBuilderTwoChildren<Randint>);
 };
 
 }

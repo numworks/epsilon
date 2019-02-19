@@ -38,8 +38,7 @@ class PredictionInterval final : public Expression {
 public:
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
   static PredictionInterval Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilderTwoChildren<PredictionInterval>);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);

@@ -46,8 +46,7 @@ class ConfidenceInterval : public Expression {
 public:
   ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
   static ConfidenceInterval Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("confidence", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("confidence", 2, &UntypedBuilderTwoChildren<ConfidenceInterval>);
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
@@ -59,8 +58,7 @@ class SimplePredictionInterval final : public ConfidenceInterval {
 public:
   SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}
   static SimplePredictionInterval Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction", 2, &UntypedBuilderTwoChildren<SimplePredictionInterval>);
 };
 
 }

@@ -38,8 +38,7 @@ class LeastCommonMultiple final : public Expression {
 public:
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : Expression(n) {}
   static LeastCommonMultiple Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, &UntypedBuilderTwoChildren<LeastCommonMultiple>);
 
   // Expression
   Expression shallowReduce();

@@ -42,9 +42,9 @@ class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   static SquareRoot Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
+
   static_assert('\x91' == Ion::Charset::Root, "Charset error");
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilderOneChild<SquareRoot>);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 private:

@@ -93,7 +93,8 @@ Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::
 }
 
 Function  Function::Builder(const char * name, size_t length, Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(SymbolAbstract::AlignedNodeSize(length, sizeof(FunctionNode)));
+  size_t size = sizeof(FunctionNode) + length + 1;
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
   FunctionNode * node = new (bufferNode) FunctionNode(name, length);
   Expression * childPointer = child.isUninitialized() ? nullptr : &child;
   int numberOfChild = child.isUninitialized() ? 0 : 1;

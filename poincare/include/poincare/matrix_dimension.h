@@ -36,8 +36,8 @@ class MatrixDimension final : public Expression {
 public:
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
   static MatrixDimension Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<MatrixDimension>);
 
   Expression shallowReduce();
 };

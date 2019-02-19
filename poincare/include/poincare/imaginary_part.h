@@ -46,8 +46,8 @@ class ImaginaryPart final : public Expression {
 public:
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
   static ImaginaryPart Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("im", 1, &UntypedBuilderOneChild<ImaginaryPart>);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

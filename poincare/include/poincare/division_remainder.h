@@ -40,8 +40,7 @@ class DivisionRemainder final : public Expression {
 public:
   DivisionRemainder(const DivisionRemainderNode * n) : Expression(n) {}
   static DivisionRemainder Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("rem", 2, &UntypedBuilderTwoChildren<DivisionRemainder>);
 
   // Expression
   Expression shallowReduce();

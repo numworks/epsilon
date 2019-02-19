@@ -140,7 +140,8 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::Co
 }
 
 Symbol Symbol::Builder(const char * name, int length) {
-  void * bufferNode = TreePool::sharedPool()->alloc(SymbolAbstract::AlignedNodeSize(length, sizeof(SymbolNode)));
+  size_t size = sizeof(SymbolNode) + length + 1;
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
   SymbolNode * node = new (bufferNode) SymbolNode(name, length);
   TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
   return static_cast<Symbol &>(h);

@@ -37,8 +37,8 @@ class HyperbolicArcTangent final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
   static HyperbolicArcTangent Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atanh", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("atanh", 1, &UntypedBuilderOneChild<HyperbolicArcTangent>);
 };
 
 }

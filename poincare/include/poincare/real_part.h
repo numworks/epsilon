@@ -46,8 +46,8 @@ class RealPart final : public Expression {
 public:
   RealPart(const RealPartNode * n) : Expression(n) {}
   static RealPart Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("re", 1, &UntypedBuilderOneChild<RealPart>);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

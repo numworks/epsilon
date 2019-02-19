@@ -46,8 +46,8 @@ class SignFunction final : public Expression {
 public:
   SignFunction(const SignFunctionNode * n) : Expression(n) {}
   static SignFunction Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sign", 1, &UntypedBuilderOneChild<SignFunction>);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

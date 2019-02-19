@@ -37,8 +37,8 @@ class HyperbolicSine final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicSine(const HyperbolicSineNode * n) : HyperbolicTrigonometricFunction(n) {}
   static HyperbolicSine Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sinh", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sinh", 1, &UntypedBuilderOneChild<HyperbolicSine>);
 };
 
 }

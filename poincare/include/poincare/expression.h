@@ -248,6 +248,17 @@ public:
 protected:
   static bool SimplificationHasBeenInterrupted();
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
+  template<typename U>
+  static Expression UntypedBuilderOneChild(Expression children) {
+    assert(children.type() == ExpressionNode::Type::Matrix);
+    return U::Builder(children.childAtIndex(0));
+  }
+  template<typename U>
+  static Expression UntypedBuilderTwoChildren(Expression children) {
+    assert(children.type() == ExpressionNode::Type::Matrix);
+    return U::Builder(children.childAtIndex(0), children.childAtIndex(1));
+  }
+
 
   template<class T> T convert() const {
     /* This function allows to convert Expression to derived Expressions.

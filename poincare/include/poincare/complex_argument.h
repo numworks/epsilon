@@ -42,8 +42,8 @@ class ComplexArgument final : public Expression {
 public:
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
   static ComplexArgument Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("arg", 1, &UntypedBuilderOneChild<ComplexArgument>);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

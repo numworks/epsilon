@@ -39,8 +39,7 @@ class Round final : public Expression {
 public:
   Round(const RoundNode * n) : Expression(n) {}
   static Round Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilderTwoChildren<Round>);
 
   Expression shallowReduce();
 };

@@ -44,7 +44,7 @@ friend class RandomNode;
 public:
   Random(const RandomNode * n) : Expression(n) {}
   static Random Builder();
-  static Expression UntypedBuilder(Expression children) { return Builder(); }
+  static Expression UntypedBuilder(Expression children) { assert(children.type() == ExpressionNode::Type::Matrix); return Builder(); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template<typename T> static T random();

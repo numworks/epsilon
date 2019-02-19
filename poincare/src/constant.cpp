@@ -76,14 +76,6 @@ Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFo
   return Constant(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Constant Constant::Builder(char name) {
-  size_t size = sizeof(ConstantNode) + 1 + 1;
-  void * bufferNode = TreePool::sharedPool()->alloc(size);
-  ConstantNode * node = new (bufferNode) ConstantNode(&name, 1);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Constant &>(h);
-}
-
 Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression result;
   if (complexFormat == Preferences::ComplexFormat::Real && isIComplex()) {

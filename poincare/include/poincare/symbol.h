@@ -64,8 +64,8 @@ public:
     UnknownX = 1,
   };
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
-  static Symbol Builder(const char * name, int length);
-  static Symbol Builder(char name);
+  static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
+  static Symbol Builder(char name) { return Symbol::Builder(&name, 1); }
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
   static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
     // create an expression only if it is not in the context or defined as a symbol

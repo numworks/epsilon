@@ -1,5 +1,7 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/constant.h>
+#include <poincare/function.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/expression.h>
@@ -32,6 +34,15 @@ Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, Context * context
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
   assert(type() == e->type());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
+}
+
+template <typename T, typename U>
+T SymbolAbstract::Builder(const char * name, int length) {
+  size_t size = sizeof(U) + length + 1;
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
+  U * node = new (bufferNode) U(name, length);
+  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  return static_cast<T &>(h);
 }
 
 size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
@@ -70,5 +81,9 @@ bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context) {
   }
   return e.isReal(context);
 }
+
+template Constant SymbolAbstract::Builder<Constant, ConstantNode>(char const*, int);
+template Function SymbolAbstract::Builder<Function, FunctionNode>(char const*, int);
+template Symbol SymbolAbstract::Builder<Symbol, SymbolNode>(char const*, int);
 
 }

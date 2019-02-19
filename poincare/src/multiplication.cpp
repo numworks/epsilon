@@ -117,7 +117,7 @@ Multiplication Multiplication::Builder() {
 
 Multiplication Multiplication::Builder(Expression * children, size_t numberOfChildren) {
   Multiplication m = Multiplication::Builder();
-  for (int i = 0; i < numberOfChildren; i++) {
+  for (size_t i = 0; i < numberOfChildren; i++) {
     m.addChildAtIndexInPlace(children[i], i, i);
   }
   return m;

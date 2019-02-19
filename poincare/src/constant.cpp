@@ -77,7 +77,8 @@ Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFo
 }
 
 Constant Constant::Builder(char name) {
-  void * bufferNode = TreePool::sharedPool()->alloc(SymbolAbstract::AlignedNodeSize(1, sizeof(ConstantNode)));
+  size_t size = sizeof(ConstantNode) + 1 + 1;
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
   ConstantNode * node = new (bufferNode) ConstantNode(&name, 1);
   TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
   return static_cast<Constant &>(h);

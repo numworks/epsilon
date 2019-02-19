@@ -248,6 +248,7 @@ public:
 protected:
   static bool SimplificationHasBeenInterrupted();
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
+  Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
   template<typename U>
   static Expression UntypedBuilderOneChild(Expression children) {
     assert(children.type() == ExpressionNode::Type::Matrix);
@@ -284,7 +285,6 @@ protected:
   }
 
   /* Hierarchy */
-  Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
   Expression parent() const; // TODO try to inline
   void defaultSetChildrenInPlace(Expression other);
   void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren) = delete;

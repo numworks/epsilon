@@ -195,7 +195,7 @@ TreeHandle TreeHandle::BuildWithBasicChildren(TreeNode * node, TreeHandle * chil
     GhostNode * ghost = new (pool->alloc(sizeof(GhostNode))) GhostNode();
     ghost->rename(pool->generateIdentifier(), false);
     ghost->retain();
-    pool->move(node->next(), ghost, 0);
+    assert((char *)ghost == (char *)node->next() + i*sizeof(GhostNode));
   }
   node->rename(pool->generateIdentifier(), false);
   TreeHandle h = TreeHandle(node);

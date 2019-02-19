@@ -103,7 +103,11 @@ public:
 protected:
   /* Constructor */
   TreeHandle(const TreeNode * node);
-  TreeHandle(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
+  TreeHandle(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {
+    if (hasNode(nodeIndentifier)) {
+      node()->retain();
+    }
+  }
   // WARNING: if the children table is the result of a cast, the object downcasted has to be the same size as a TreeHandle.
   static TreeHandle BuildWithBasicChildren(TreeNode * node, TreeHandle * children = nullptr, int numberOfChildren = 0);
 

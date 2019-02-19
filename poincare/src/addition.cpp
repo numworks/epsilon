@@ -96,7 +96,7 @@ Addition Addition::Builder() {
 
 Addition Addition::Builder(Expression * children, size_t numberOfChildren) {
   Addition a = Addition::Builder();
-  for (int i = 0; i < numberOfChildren; i++) {
+  for (size_t i = 0; i < numberOfChildren; i++) {
     a.addChildAtIndexInPlace(children[i], i, i);
   }
   return a;

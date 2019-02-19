@@ -45,8 +45,8 @@ class NaperianLogarithm final : public Expression {
 public:
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
   static NaperianLogarithm Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ln", 1, &UntypedBuilderOneChild<NaperianLogarithm>);
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

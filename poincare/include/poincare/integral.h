@@ -57,6 +57,7 @@ public:
   Integral(const IntegralNode * n) : Expression(n) {}
   static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3);
   static Expression UntypedBuilder(Expression children) {
+    assert(children.type() == ExpressionNode::Type::Matrix);
     if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
       // Second parameter must be a Symbol.
       return Expression();

@@ -43,8 +43,8 @@ class Ceiling final : public Expression {
 public:
   Ceiling(const CeilingNode * n) : Expression(n) {}
   static Ceiling Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("ceil", 1, &UntypedBuilderOneChild<Ceiling>);
 
   Expression shallowReduce();
 };

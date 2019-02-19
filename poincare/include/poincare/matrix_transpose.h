@@ -35,8 +35,8 @@ class MatrixTranspose final : public Expression {
 public:
   MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
   static MatrixTranspose Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, &UntypedBuilderOneChild<MatrixTranspose>);
 
   Expression shallowReduce();
 };

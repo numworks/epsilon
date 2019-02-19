@@ -37,8 +37,8 @@ class HyperbolicArcCosine final : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcCosine(const HyperbolicArcCosineNode * n) : HyperbolicTrigonometricFunction(n) {}
   static HyperbolicArcCosine Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acosh", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("acosh", 1, &UntypedBuilderOneChild<HyperbolicArcCosine>);
 };
 
 }

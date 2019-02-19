@@ -36,8 +36,8 @@ class Determinant final : public Expression {
 public:
   Determinant(const DeterminantNode * n) : Expression(n) {}
   static Determinant Builder(Expression child);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilder);
+
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilderOneChild<Determinant>);
 
   Expression shallowReduce(Context & context);
 };

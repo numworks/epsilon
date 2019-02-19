@@ -42,8 +42,7 @@ class PermuteCoefficient final : public Expression {
 public:
   PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}
   static PermuteCoefficient Builder(Expression child0, Expression child1);
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, &UntypedBuilder);
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, &UntypedBuilderTwoChildren<PermuteCoefficient>);
 
   // Expression
   Expression shallowReduce();

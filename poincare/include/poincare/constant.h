@@ -55,7 +55,7 @@ private:
 class Constant final : public SymbolAbstract {
 public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
-  static Constant Builder(char name);
+  static Constant Builder(char name) { return SymbolAbstract::Builder<Constant, ConstantNode>(&name, 1); }
 
   // Constant properties
   bool isPi() const { return node()->isPi(); }

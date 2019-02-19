@@ -92,14 +92,12 @@ Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Function  Function::Builder(const char * name, size_t length, Expression child) {
-  size_t size = sizeof(FunctionNode) + length + 1;
-  void * bufferNode = TreePool::sharedPool()->alloc(size);
-  FunctionNode * node = new (bufferNode) FunctionNode(name, length);
-  Expression * childPointer = child.isUninitialized() ? nullptr : &child;
-  int numberOfChild = child.isUninitialized() ? 0 : 1;
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, childPointer, numberOfChild);
-  return static_cast<Function &>(h);
+Function Function::Builder(const char * name, size_t length, Expression child) {
+  Function f = SymbolAbstract::Builder<Function, FunctionNode>(name, length);
+  if (!child.isUninitialized()) {
+    f.replaceChildAtIndexInPlace(0, child);
+  }
+  return f;
 }
 
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

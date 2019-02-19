@@ -75,6 +75,9 @@ public:
 
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
+  template <typename T, typename U>
+  static T Builder(const char * name, int length);
+
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);

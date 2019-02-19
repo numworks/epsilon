@@ -139,16 +139,6 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::Co
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Symbol Symbol::Builder(const char * name, int length) {
-  size_t size = sizeof(SymbolNode) + length + 1;
-  void * bufferNode = TreePool::sharedPool()->alloc(size);
-  SymbolNode * node = new (bufferNode) SymbolNode(name, length);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Symbol &>(h);
-}
-
-Symbol Symbol::Builder(char name) { return Symbol::Builder(&name, 1); }
-
 bool Symbol::isSeriesSymbol(const char * c) {
   // [NV][1-3]
   if (c[2] == 0 && (c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {

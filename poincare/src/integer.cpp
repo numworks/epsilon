@@ -107,9 +107,7 @@ Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative)
   TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
   /* Integer is a TreeHandle that keeps an extra integer. We cannot just cast
    * the TreeHandle in Integer, we have to build a new Integer. To do so, we
-   * pilfer the TreeHandle identifier. We thus have to increment the node
-   * reference counter to prevent its destruction when we leave this scope. */
-  node->retain();
+   * pilfer the TreeHandle identifier. */
   new (this) Integer(h.identifier(), negative);
 }
 

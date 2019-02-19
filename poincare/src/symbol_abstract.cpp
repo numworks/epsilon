@@ -9,7 +9,7 @@
 namespace Poincare {
 
 size_t SymbolAbstractNode::size() const {
-  return SymbolAbstract::AlignedNodeSize(strlen(name()), nodeSize());
+  return nodeSize() + strlen(name()) + 1;
 }
 
 ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
@@ -69,12 +69,6 @@ bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context) {
     return true;
   }
   return e.isReal(context);
-}
-
-/* TreePool uses adresses and sizes that are multiples of 4 in order to make
- * node moves faster.*/
-size_t SymbolAbstract::AlignedNodeSize(size_t nameLength, size_t nodeSize) {
-  return Helpers::AlignedSize(nodeSize+nameLength+1, 4);
 }
 
 }

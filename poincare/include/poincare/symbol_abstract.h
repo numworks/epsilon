@@ -79,7 +79,6 @@ protected:
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);
   static bool isReal(const SymbolAbstract & symbol, Context & context);
-  static size_t AlignedNodeSize(size_t nameLength, size_t nodeSize);
 };
 
 }

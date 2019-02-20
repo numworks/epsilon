@@ -8,9 +8,9 @@ namespace Graph {
 class BannerView : public Shared::BannerView {
 public:
   BannerView();
-  void setNumberOfSubviews(int numberOfSubviews);
+  void setNumberOfSubviews(int numberOfSubviews) { m_numberOfSubviews = numberOfSubviews; }
 private:
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override { return m_numberOfSubviews; }
   TextView * textViewAtIndex(int i) const override;
   MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_abscissaView;

@@ -29,10 +29,6 @@ KDSize BannerView::minimalSizeForOptimalDisplay() const {
   return KDSize(0, HeightGivenNumberOfLines(numberOfLines()));
 }
 
-int BannerView::numberOfSubviews() const {
-  return 0;
-}
-
 void BannerView::layoutSubviews() {
   /* We iterate on subviews, adding their width until we exceed the view bound.
   * The last subview that exceeds the bound is recorded as the first subview of

@@ -12,7 +12,7 @@ public:
   void setMessageAtIndex(I18n::Message text, int index);
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   int numberOfLines() const;

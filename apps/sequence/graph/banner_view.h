@@ -10,7 +10,8 @@ class BannerView : public Shared::BannerView {
 public:
   BannerView();
 private:
-  int numberOfSubviews() const override;
+  static constexpr int k_numberOfSubviews = 2;
+  int numberOfSubviews() const override { return k_numberOfSubviews; }
   TextView * textViewAtIndex(int i) const override;
   BufferTextView m_abscissaView;
   BufferTextView m_sequenceView;

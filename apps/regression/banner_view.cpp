@@ -18,12 +18,8 @@ BannerView::BannerView() :
 {
 }
 
-int BannerView::numberOfSubviews() const {
-  return k_numberOfTextViews;
-}
-
 TextView * BannerView::textViewAtIndex(int i) const {
-  const TextView * textViews[k_numberOfTextViews] = {&m_dotNameView, &m_xView, &m_yView, &m_regressionTypeView, &m_subText1, &m_subText2, &m_subText3, &m_subText4, &m_subText5};
+  const TextView * textViews[k_numberOfSubviews] = {&m_dotNameView, &m_xView, &m_yView, &m_regressionTypeView, &m_subText1, &m_subText2, &m_subText3, &m_subText4, &m_subText5};
   return (TextView *)textViews[i];
 }
 

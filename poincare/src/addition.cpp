@@ -93,7 +93,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::ComplexForm
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
    * "a+(-r)*b" into "a-r*b" where r is a positive Rational.
    * Note: the process will slightly differ if the negative product occurs on
-   * the first term: we want to turn "Addition(Multiplication::Builder(-1,b))" into
+   * the first term: we want to turn "Addition(Multiplication(-1,b))" into
    * "Opposite(b)".
    * Last but not least, special care must be taken when iterating over children
    * since we may remove some during the process. */

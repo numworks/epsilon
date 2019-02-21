@@ -268,11 +268,4 @@ void GridLayout::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-GridLayout GridLayout::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(GridLayoutNode));
-  GridLayoutNode * node = new (bufferNode) GridLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<GridLayout &>(h);
-}
-
 }

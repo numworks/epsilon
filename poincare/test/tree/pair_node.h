@@ -3,7 +3,7 @@
 
 #include <poincare/tree_node.h>
 #include <poincare/tree_handle.h>
-#include <poincare/array_builder.h>
+
 
 namespace Poincare {
 
@@ -24,7 +24,9 @@ public:
     void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PairNode));
     PairNode * node = new (bufferNode) PairNode();
     TreeHandle children[2] = {t1, t2};
-    TreeHandle h = TreeHandle::BuildWithBasicChildren(node, children, 2);
+    TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+    h.replaceChildAtIndexInPlace(0, t1);
+    h.replaceChildAtIndexInPlace(1, t2);
     return static_cast<PairByReference &>(h);
   }
   PairByReference() = delete;

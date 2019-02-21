@@ -34,12 +34,6 @@ Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat
   return Sine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Sine Sine::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SineNode));
-  SineNode * node = new (bufferNode) SineNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Sine &>(h);
-}
 
 Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

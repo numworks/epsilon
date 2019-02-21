@@ -34,7 +34,7 @@ template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
 Infinity Infinity::Builder(bool negative) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(InfinityNode));
   InfinityNode * node = new (bufferNode) InfinityNode(negative);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Infinity &>(h);
 }
 

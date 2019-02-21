@@ -269,7 +269,8 @@ LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
 VerticalOffsetLayout VerticalOffsetLayout::Builder(Layout l, VerticalOffsetLayoutNode::Type type) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(VerticalOffsetLayoutNode));
   VerticalOffsetLayoutNode * node = new (bufferNode) VerticalOffsetLayoutNode(type);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &l, 1);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  h.replaceChildAtIndexInPlace(0, l);
   return static_cast<VerticalOffsetLayout &>(h);
 }
 

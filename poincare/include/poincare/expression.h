@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
+#include <poincare/array_builder.h>
 #include <poincare/tree_handle.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>

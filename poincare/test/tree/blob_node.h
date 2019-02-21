@@ -26,7 +26,7 @@ public:
   static BlobByReference Builder(int data = 0) {
     void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BlobNode));
     BlobNode * node = new (bufferNode) BlobNode(data);
-    TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+    TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
     return static_cast<BlobByReference &>(h);
   }
   BlobByReference() = delete;

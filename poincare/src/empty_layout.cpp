@@ -99,7 +99,7 @@ EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
 EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, bool visible, const KDFont * font, bool margins) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EmptyLayoutNode));
   EmptyLayoutNode * node = new (bufferNode) EmptyLayoutNode(color, visible, font, margins);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<EmptyLayout &>(h);
 }
 

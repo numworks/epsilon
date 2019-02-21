@@ -51,12 +51,6 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
   return Complex<T>::Builder(1.0);
 }
 
-SignFunction SignFunction::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SignFunctionNode));
-  SignFunctionNode * node = new (bufferNode) SignFunctionNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<SignFunction &>(h);
-}
 
 Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

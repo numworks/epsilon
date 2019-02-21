@@ -31,12 +31,6 @@ Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::Comp
   return AbsoluteValue(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-AbsoluteValue AbsoluteValue::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(AbsoluteValueNode));
-  AbsoluteValueNode * node = new (bufferNode) AbsoluteValueNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<AbsoluteValue &>(h);
-}
 
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);

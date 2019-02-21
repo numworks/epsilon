@@ -8,11 +8,4 @@ void RightSquareBracketLayoutNode::render(KDContext * ctx, KDPoint p, KDColor ex
   ctx->fillRect(KDRect(p.x()+k_widthMargin-k_bracketWidth+1, p.y() + childHeight(), k_bracketWidth, k_lineThickness), expressionColor);
 }
 
-RightSquareBracketLayout RightSquareBracketLayout::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(RightSquareBracketLayoutNode));
-  RightSquareBracketLayoutNode * node = new (bufferNode) RightSquareBracketLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<RightSquareBracketLayout &>(h);
-}
-
 }

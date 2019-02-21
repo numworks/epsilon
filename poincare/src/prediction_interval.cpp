@@ -46,12 +46,6 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
-PredictionInterval PredictionInterval::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PredictionIntervalNode));
-  PredictionIntervalNode * node = new (bufferNode) PredictionIntervalNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<PredictionInterval &>(h);
-}
 
 Expression PredictionInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

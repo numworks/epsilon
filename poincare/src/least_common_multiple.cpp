@@ -53,12 +53,6 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
   return Complex<T>::Builder(product/a);
 }
 
-LeastCommonMultiple LeastCommonMultiple::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LeastCommonMultipleNode));
-  LeastCommonMultipleNode * node = new (bufferNode) LeastCommonMultipleNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<LeastCommonMultiple &>(h);
-}
 
 Expression LeastCommonMultiple::shallowReduce() {
   {

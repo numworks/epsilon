@@ -24,12 +24,6 @@ Expression RealPartNode::shallowReduce(Context & context, Preferences::ComplexFo
   return RealPart(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-RealPart RealPart::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(RealPartNode));
-  RealPartNode * node = new (bufferNode) RealPartNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<RealPart &>(h);
-}
 
 Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

@@ -39,7 +39,7 @@ private:
 
 class Unreal final : public Number {
 public:
-  static Unreal Builder();
+  static Unreal Builder() { return TreeHandle::FixedArityBuilder<Unreal, UnrealNode>(); }
   Unreal() = delete;
   static const char * Name() {
     return "unreal";

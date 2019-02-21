@@ -70,20 +70,6 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 // Division
 
-Division Division::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DivisionNode));
-  DivisionNode * node = new (bufferNode) DivisionNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Division &>(h);
-}
-
-Division Division::Builder(Expression numerator, Expression denominator) {
-  Division d = Division::Builder();
-  d.replaceChildAtIndexInPlace(0, numerator);
-  d.replaceChildAtIndexInPlace(1, denominator);
-  return d;
-}
-
 Expression Division::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
     Expression e = Expression::defaultShallowReduce();

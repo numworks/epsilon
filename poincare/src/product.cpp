@@ -46,11 +46,13 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   return MultiplicationNode::computeOnMatrices<T>(m, n, complexFormat);
 }
 
-Product Product::Builder(Expression child0, Symbol child1, Expression child2, Expression child3) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ProductNode));
-  ProductNode * node = new (bufferNode) ProductNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2, child3).array(), 4);
-  return static_cast<Product &>(h);
+Expression Product::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::Matrix);
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+    // Second parameter must be a Symbol.
+    return Expression();
+  }
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
 }

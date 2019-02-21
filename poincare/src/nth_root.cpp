@@ -63,12 +63,6 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::C
   return result;
 }
 
-NthRoot NthRoot::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NthRootNode));
-  NthRootNode * node = new (bufferNode) NthRootNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<NthRoot &>(h);
-}
 
 Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

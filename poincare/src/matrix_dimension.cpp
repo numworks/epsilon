@@ -37,12 +37,6 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
   return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
-MatrixDimension MatrixDimension::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixDimensionNode));
-  MatrixDimensionNode * node = new (bufferNode) MatrixDimensionNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<MatrixDimension &>(h);
-}
 
 Expression MatrixDimension::shallowReduce() {
   {

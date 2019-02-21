@@ -131,14 +131,6 @@ MatrixComplex<T> MatrixComplex<T>::Builder(std::complex<T> * operands, int numbe
 }
 
 template<typename T>
-MatrixComplex<T> MatrixComplex<T>::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixComplexNode<T>));
-  MatrixComplexNode<T> * node = new (bufferNode) MatrixComplexNode<T>();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<MatrixComplex<T> &>(h);
-}
-
-template<typename T>
 MatrixComplex<T> MatrixComplex<T>::Undefined() {
   std::complex<T> undef = std::complex<T>(NAN, NAN);
   return MatrixComplex<T>::Builder((std::complex<T> *)&undef, 1, 1);

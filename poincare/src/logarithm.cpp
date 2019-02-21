@@ -1,5 +1,5 @@
 #include <poincare/logarithm.h>
-#include <poincare/array_builder.h>
+
 #include <poincare/addition.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
@@ -86,13 +86,6 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
   return Complex<U>::Builder(result);
 }
 
-CommonLogarithm CommonLogarithm::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LogarithmNode<1>));
-  LogarithmNode<1> * node = new (bufferNode) LogarithmNode<1>();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<CommonLogarithm &>(h);
-}
-
 Expression CommonLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
   {
     Expression e = Expression::defaultShallowReduce();
@@ -111,13 +104,6 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::Comple
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
   replaceWithInPlace(log);
   return log.shallowReduce(context, complexFormat, angleUnit, target);
-}
-
-Logarithm Logarithm::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(LogarithmNode<2>));
-  LogarithmNode<2> * node = new (bufferNode) LogarithmNode<2>();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<Logarithm &>(h);
 }
 
 Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){

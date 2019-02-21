@@ -2,7 +2,6 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/array_builder.h>
 #include <poincare/n_ary_expression_node.h>
 #include <poincare/rational.h>
 
@@ -61,10 +60,10 @@ private:
 class Addition final : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
-  static Addition Builder();
+  static Addition Builder() { return TreeHandle::NAryBuilder<Addition, AdditionNode>(); }
   static Addition Builder(Expression e1) { return Addition::Builder(&e1, 1); }
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static Addition Builder(Expression * children, size_t numberOfChildren);
+  static Addition Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<Addition, AdditionNode>(children, numberOfChildren); }
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);

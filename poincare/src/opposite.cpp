@@ -69,19 +69,6 @@ Expression OppositeNode::shallowReduce(Context & context, Preferences::ComplexFo
 
 /* Simplification */
 
-Opposite Opposite::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(OppositeNode));
-  OppositeNode * node = new (bufferNode) OppositeNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Opposite &>(h);
-}
-
-Opposite Opposite::Builder(Expression child) {
-  Opposite d = Opposite::Builder();
-  d.replaceChildAtIndexInPlace(0, child);
-  return d;
-}
-
 Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression result = Expression::defaultShallowReduce();
   if (result.isUndefined()) {

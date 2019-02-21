@@ -63,7 +63,7 @@ class Matrix final : public Expression {
   friend class GlobalContext;
 public:
   Matrix(const MatrixNode * node) : Expression(node) {}
-  static Matrix Builder();
+  static Matrix Builder() { return TreeHandle::NAryBuilder<Matrix, MatrixNode>(); }
 
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }

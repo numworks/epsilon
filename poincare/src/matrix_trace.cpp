@@ -32,12 +32,6 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
   return result;
 }
 
-MatrixTrace MatrixTrace::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixTraceNode));
-  MatrixTraceNode * node = new (bufferNode) MatrixTraceNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<MatrixTrace &>(h);
-}
 
 Expression MatrixTrace::shallowReduce() {
   {

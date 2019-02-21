@@ -1,5 +1,5 @@
 #include <poincare/integral.h>
-#include <poincare/array_builder.h>
+
 #include <poincare/complex.h>
 #include <poincare/integral_layout.h>
 #include <poincare/parametered_expression_helper.h>
@@ -210,11 +210,13 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 }
 #endif
 
-Integral Integral::Builder(Expression child0, Symbol child1, Expression child2, Expression child3) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(IntegralNode));
-  IntegralNode * node = new (bufferNode) IntegralNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2, child3).array(), 4);
-  return static_cast<Integral &>(h);
+Expression Integral::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::Matrix);
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+    // Second parameter must be a Symbol.
+    return Expression();
+  }
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
 Expression Integral::shallowReduce() {

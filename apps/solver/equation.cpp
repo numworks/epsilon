@@ -1,4 +1,5 @@
 #include "equation.h"
+#include <poincare/constant.h>
 #include <poincare/equal.h>
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
@@ -6,29 +7,27 @@
 #include <ion/unicode/utf8_helper.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Solver {
 
-Equation::Equation() :
-  Shared::ExpressionModel(),
+constexpr char Equation::extension[];
+
+Equation::Equation(Ion::Storage::Record record) :
+  ExpressionModelHandle(record),
   m_standardForm()
 {
 }
 
-void Equation::setContent(const char * c) {
-  /* ExpressionModel::setContent takes care of tidying m_expression and m_layout. */
-  tidyStandardForm();
-  ExpressionModel::setContent(c);
-}
-
-void Equation::tidy() {
-  ExpressionModel::tidy();
-  tidyStandardForm();
+void Equation::tidyExpressionModel() {
+  ExpressionModelHandle::tidyExpressionModel();
+  // Free the pool of the m_standardForm
+  m_standardForm = Expression();
 }
 
 Expression Equation::standardForm(Context * context) const {
   if (m_standardForm.isUninitialized()) {
-    const Expression e = expression(context);
+    const Expression e = expressionReduced(context);
     if (e.type() == ExpressionNode::Type::Unreal) {
       m_standardForm = Unreal::Builder();
       return m_standardForm;
@@ -39,7 +38,7 @@ Expression Equation::standardForm(Context * context) const {
     }
     if (e.type() == ExpressionNode::Type::Equal) {
       Preferences * preferences = Preferences::sharedPreferences();
-      m_standardForm = static_cast<const Equal&>(e).standardEquation(*context, Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), text()), preferences->angleUnit());
+      m_standardForm = static_cast<const Equal&>(e).standardEquation(*context, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionClone(), *context), preferences->angleUnit());
     } else {
       assert(e.type() == ExpressionNode::Type::Rational && static_cast<const Rational&>(e).isOne());
       // The equality was reduced which means the equality was always true.
@@ -49,13 +48,8 @@ Expression Equation::standardForm(Context * context) const {
   return m_standardForm;
 }
 
-bool Equation::containsIComplex() const {
-  return *(UTF8Helper::CodePointSearch(text(), UCodePointMathematicalBoldSmallI)) != 0;
-}
-
-void Equation::tidyStandardForm() {
-  // Free the pool of the m_standardForm
-  m_standardForm = Expression();
+bool Equation::containsIComplex(Context * context) const {
+  return expressionClone().recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, *context, true);
 }
 
 }

@@ -26,7 +26,13 @@ public:
   virtual bool isDefined();
   virtual bool isEmpty();
   virtual bool shouldBeClearedBeforeRemove() { return !isEmpty(); }
+  /* tidy is responsible to tidy the whole model whereas tidyExpressionModel
+   * tidies only the members associated with the ExpressionModel. In
+   * ExpressionModelHandle, tidy and tidyExpressionModel trigger the same
+   * behaviour but it is not true for its child classes (for example, in
+   * Sequence). */
   virtual void tidy();
+  virtual void tidyExpressionModel();
   virtual Ion::Storage::Record::ErrorStatus setContent(const char * c);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Poincare::Expression & e);
 protected:

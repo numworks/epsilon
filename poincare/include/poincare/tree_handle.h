@@ -105,6 +105,7 @@ public:
 protected:
   /* Constructor */
   TreeHandle(const TreeNode * node);
+  // Un-inlining this constructor actually inscreases the firmware size
   TreeHandle(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {
     if (hasNode(nodeIndentifier)) {
       node()->retain();

@@ -139,6 +139,15 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::Co
   return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
+Expression Symbol::UntypedBuilder(const char * name, size_t length, Context * context) {
+  // create an expression only if it is not in the context or defined as a symbol
+  Symbol s = Symbol::Builder(name, length);
+  if (SymbolAbstract::ValidInContext(s, context)) {
+    return s;
+  }
+  return Expression();
+}
+
 bool Symbol::isSeriesSymbol(const char * c) {
   // [NV][1-3]
   if (c[2] == 0 && (c[0] == 'N' || c[0] == 'V') && c[1] >= '1' && c[1] <= '3') {

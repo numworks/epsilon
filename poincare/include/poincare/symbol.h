@@ -67,14 +67,8 @@ public:
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
   static Symbol Builder(char name) { return Symbol::Builder(&name, 1); }
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
-  static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
-    // create an expression only if it is not in the context or defined as a symbol
-    Symbol s = Symbol::Builder(name, length);
-    if (SymbolAbstract::ValidInContext(s, context)) {
-      return s;
-    }
-    return Expression();
-  }
+  static Expression UntypedBuilder(const char * name, size_t length, Context * context);
+
   // Symbol properties
   bool isSystemSymbol() const { return name()[0] == SpecialSymbols::UnknownX && name()[1] == 0; }
   static bool isSeriesSymbol(const char * c);

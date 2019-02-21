@@ -74,10 +74,14 @@ bool ExpressionModelHandle::isEmpty() {
   return value().size <= metaDataSize();
 }
 
-void ExpressionModelHandle::tidy() {
+void ExpressionModelHandle::tidyExpressionModel() {
   m_layout = Layout();
   m_expression = Expression();
   m_circular = 0;
+}
+
+void ExpressionModelHandle::tidy() {
+  tidyExpressionModel();
 }
 
 Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setContent(const char * c) {
@@ -113,10 +117,8 @@ Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setExpressionContent(Ex
   }
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
-   * the m_layout and m_expression. */
-  m_layout = Layout();
-  m_expression = Expression();
-  m_circular = 0;
+   * the elements relative to the ExpressionModel. */
+  tidyExpressionModel();
   return error;
 }
 

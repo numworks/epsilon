@@ -50,11 +50,5 @@ Expression Cosine::shallowReduce(Context & context, Preferences::ComplexFormat c
   return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
 }
 
-Cosine Cosine::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CosineNode));
-  CosineNode * node = new (bufferNode) CosineNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Cosine &>(h);
-}
 
 }

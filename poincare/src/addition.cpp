@@ -87,21 +87,6 @@ int Addition::getPolynomialCoefficients(Context & context, const char * symbolNa
   return deg;
 }
 
-Addition Addition::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(AdditionNode));
-  AdditionNode * node = new (bufferNode) AdditionNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Addition &>(h);
-}
-
-Addition Addition::Builder(Expression * children, size_t numberOfChildren) {
-  Addition a = Addition::Builder();
-  for (size_t i = 0; i < numberOfChildren; i++) {
-    a.addChildAtIndexInPlace(children[i], i, i);
-  }
-  return a;
-}
-
 Expression Addition::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   /* Beautifying AdditionNode essentially consists in adding Subtractions if
    * needed.

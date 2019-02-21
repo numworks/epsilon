@@ -20,6 +20,8 @@ namespace Poincare {
  * equivalent to Logarithm l = Logarithm(clone())). */
 
 class TreeHandle {
+  template<class T>
+  friend class ArrayBuilder;
   friend class TreeNode;
   friend class TreePool;
 public:
@@ -108,8 +110,14 @@ protected:
       node()->retain();
     }
   }
+
   // WARNING: if the children table is the result of a cast, the object downcasted has to be the same size as a TreeHandle.
-  static TreeHandle BuildWithBasicChildren(TreeNode * node, TreeHandle * children = nullptr, int numberOfChildren = 0);
+  template <class T, class U>
+  static T NAryBuilder(TreeHandle * children = nullptr, size_t numberOfChildren = 0);
+  template <class T, class U>
+  static T FixedArityBuilder(TreeHandle * children = nullptr, size_t numberOfChildren = 0);
+
+  static TreeHandle BuildWithGhostChildren(TreeNode * node);
 
   void setIdentifierAndRetain(int newId);
   void setTo(const TreeHandle & tr);
@@ -127,6 +135,9 @@ protected:
   int m_identifier;
 
 private:
+  template <class U>
+  static TreeHandle Builder();
+
   void detachFromParent();
   // Add ghost children on layout construction
   void buildGhostChildren();

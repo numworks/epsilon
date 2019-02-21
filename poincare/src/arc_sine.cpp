@@ -48,12 +48,6 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-ArcSine ArcSine::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ArcSineNode));
-  ArcSineNode * node = new (bufferNode) ArcSineNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<ArcSine &>(h);
-}
 
 Expression ArcSine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

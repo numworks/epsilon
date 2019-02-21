@@ -234,13 +234,6 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
 
 // Power
 
-Power Power::Builder(Expression base, Expression exponent) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PowerNode));
-  PowerNode * node = new (bufferNode) PowerNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(base, exponent).array(), 2);
-  return static_cast<Power &>(h);
-}
-
 Expression Power::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   assert(s == ExpressionNode::Sign::Positive);
   if (childAtIndex(0).sign(context) == ExpressionNode::Sign::Negative) {

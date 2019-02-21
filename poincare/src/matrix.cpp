@@ -89,13 +89,6 @@ Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::Co
 
 // MATRIX
 
-Matrix Matrix::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixNode));
-  MatrixNode * node = new (bufferNode) MatrixNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Matrix &>(h);
-}
-
 void Matrix::setDimensions(int rows, int columns) {
   assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);

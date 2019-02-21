@@ -89,12 +89,6 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return numberOfChar;
 }
 
-Factorial Factorial::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FactorialNode));
-  FactorialNode * node = new (bufferNode) FactorialNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Factorial &>(h);
-}
 
 Expression Factorial::shallowReduce() {
   {

@@ -156,11 +156,13 @@ Expression Derivative::shallowReduce() {
   return *this;
 }
 
-Derivative Derivative::Builder(Expression child0, Symbol child1, Expression child2) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DerivativeNode));
-  DerivativeNode * node = new (bufferNode) DerivativeNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2).array(), 3);
-  return static_cast<Derivative &>(h);
+Expression Derivative::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::Matrix);
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+    // Second parameter must be a Symbol.
+    return Expression();
+  }
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2));
 }
 
 }

@@ -104,7 +104,7 @@ Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, b
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) {
   void * bufferNode = TreePool::sharedPool()->alloc(IntegerSize(numberOfDigits));
   IntegerNode * node = new (bufferNode) IntegerNode(digits, numberOfDigits);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   /* Integer is a TreeHandle that keeps an extra integer. We cannot just cast
    * the TreeHandle in Integer, we have to build a new Integer. To do so, we
    * pilfer the TreeHandle identifier. */

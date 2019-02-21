@@ -36,12 +36,6 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
   return Complex<T>::Builder(std::round(f1-f2*std::floor(f1/f2)));
 }
 
-DivisionRemainder DivisionRemainder::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DivisionRemainderNode));
-  DivisionRemainderNode * node = new (bufferNode) DivisionRemainderNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<DivisionRemainder &>(h);
-}
 
 Expression DivisionRemainder::shallowReduce() {
   {

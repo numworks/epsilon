@@ -18,12 +18,6 @@ Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Prefe
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(std::cosh(c), c));
 }
 
-HyperbolicCosine HyperbolicCosine::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(HyperbolicCosineNode));
-  HyperbolicCosineNode * node = new (bufferNode) HyperbolicCosineNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<HyperbolicCosine &>(h);
-}
 
 template Complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);

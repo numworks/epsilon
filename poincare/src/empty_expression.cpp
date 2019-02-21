@@ -18,11 +18,4 @@ template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(Con
   return Complex<T>::Undefined();
 }
 
-EmptyExpression  EmptyExpression::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EmptyExpressionNode));
-  EmptyExpressionNode * node = new (bufferNode) EmptyExpressionNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<EmptyExpression &>(h);
-}
-
 }

@@ -29,7 +29,7 @@ protected:
 
 class FloorLayout final : public Layout {
 public:
-  static FloorLayout Builder(Layout child);
+  static FloorLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(&child, 1); }
   FloorLayout() = delete;
 };
 

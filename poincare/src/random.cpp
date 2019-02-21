@@ -29,13 +29,6 @@ template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
   return Complex<T>::Builder(Random::random<T>());
 }
 
-Random Random::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(RandomNode));
-  RandomNode * node = new (bufferNode) RandomNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Random &>(h);
-}
-
 Expression Random::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;

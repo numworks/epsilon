@@ -46,11 +46,13 @@ Evaluation<T> SumNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluat
   return AdditionNode::computeOnMatrices<T>(m, n, complexFormat);
 }
 
-Sum Sum::Builder(Expression child0, Symbol child1, Expression child2, Expression child3) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SumNode));
-  SumNode * node = new (bufferNode) SumNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1, child2, child3).array(), 4);
-  return static_cast<Sum &>(h);
+Expression Sum::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::Matrix);
+  if (children.childAtIndex(1).type() != ExpressionNode::Type::Symbol) {
+    // Second parameter must be a Symbol.
+    return Expression();
+  }
+  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
 }

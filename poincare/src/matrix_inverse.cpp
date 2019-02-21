@@ -42,12 +42,6 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
   return inverse;
 }
 
-MatrixInverse MatrixInverse::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixInverseNode));
-  MatrixInverseNode * node = new (bufferNode) MatrixInverseNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<MatrixInverse &>(h);
-}
 
 Expression MatrixInverse::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

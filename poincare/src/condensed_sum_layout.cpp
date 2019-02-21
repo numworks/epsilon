@@ -37,11 +37,4 @@ KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child) {
   return KDPoint(x,y);
 }
 
-CondensedSumLayout CondensedSumLayout::Builder(Layout base, Layout subscript, Layout superscript) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CondensedSumLayoutNode));
-  CondensedSumLayoutNode * node = new (bufferNode) CondensedSumLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(base, subscript, superscript).array(), 3);
-  return static_cast<CondensedSumLayout &>(h);
-}
-
 }

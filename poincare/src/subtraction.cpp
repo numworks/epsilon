@@ -56,20 +56,6 @@ Expression SubtractionNode::shallowReduce(Context & context, Preferences::Comple
   return Subtraction(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Subtraction Subtraction::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SubtractionNode));
-  SubtractionNode * node = new (bufferNode) SubtractionNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Subtraction &>(h);
-}
-
-Subtraction Subtraction::Builder(Expression child0, Expression child1) {
-  Subtraction d = Subtraction::Builder();
-  d.replaceChildAtIndexInPlace(0, child0);
-  d.replaceChildAtIndexInPlace(1, child1);
-  return d;
-}
-
 Expression Subtraction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {

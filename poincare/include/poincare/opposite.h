@@ -47,8 +47,8 @@ public:
 class Opposite final : public Expression {
 public:
   Opposite(const OppositeNode * n) : Expression(n) {}
-  static Opposite Builder();
-  static Opposite Builder(Expression child);
+  static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
+  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(&child, 1); }
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

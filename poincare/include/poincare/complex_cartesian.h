@@ -38,8 +38,8 @@ class ComplexCartesian final : public Expression {
 public:
   ComplexCartesian() : Expression() {}
   ComplexCartesian(const ComplexCartesianNode * node) : Expression(node) {}
-  static ComplexCartesian Builder();
-  static ComplexCartesian Builder(Expression child0, Expression child1);
+  static ComplexCartesian Builder() { return TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(); }
+  static ComplexCartesian Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
 
   // Getters
   Expression real() { return childAtIndex(0); }

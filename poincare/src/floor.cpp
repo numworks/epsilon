@@ -35,12 +35,6 @@ Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexForma
   return Floor(this).shallowReduce();
 }
 
-Floor Floor::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FloorNode));
-  FloorNode * node = new (bufferNode) FloorNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Floor &>(h);
-}
 
 Expression Floor::shallowReduce() {
   {

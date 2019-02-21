@@ -247,11 +247,4 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   ctx->drawString("d", dPosition, k_font, expressionColor, backgroundColor);
 }
 
-IntegralLayout IntegralLayout::Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(IntegralLayoutNode));
-  IntegralLayoutNode * node = new (bufferNode) IntegralLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(integrand, differential, lowerBound, upperBound).array(), 4);
-  return static_cast<IntegralLayout &>(h);
-}
-
 }

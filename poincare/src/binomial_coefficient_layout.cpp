@@ -1,5 +1,4 @@
 #include <poincare/binomial_coefficient.h>
-#include <poincare/array_builder.h>
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
@@ -105,13 +104,6 @@ void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor e
   KDCoordinate rightParenthesisPointX = max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()) + LeftParenthesisLayoutNode::ParenthesisWidth();
   LeftParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p, expressionColor, backgroundColor);
   RightParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
-}
-
-BinomialCoefficientLayout BinomialCoefficientLayout::Builder(Layout n, Layout k) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BinomialCoefficientLayoutNode));
-  BinomialCoefficientLayoutNode * node = new (bufferNode) BinomialCoefficientLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(n,k).array(), 2);
-  return static_cast<BinomialCoefficientLayout &>(h);
 }
 
 }

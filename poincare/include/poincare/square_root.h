@@ -41,7 +41,7 @@ private:
 class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
-  static SquareRoot Builder(Expression child);
+  static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(&child, 1); }
 
   static_assert('\x91' == Ion::Charset::Root, "Charset error");
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilderOneChild<SquareRoot>);

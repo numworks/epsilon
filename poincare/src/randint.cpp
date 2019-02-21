@@ -37,11 +37,5 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   return Complex<T>::Builder(result);
 }
 
-Randint Randint::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(RandintNode));
-  RandintNode * node = new (bufferNode) RandintNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<Randint &>(h);
-}
 
 }

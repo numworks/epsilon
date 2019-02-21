@@ -51,7 +51,7 @@ private:
 
 class CondensedSumLayout final : public Layout {
 public:
-  static CondensedSumLayout Builder(Layout base, Layout subscript, Layout superscript);
+  static CondensedSumLayout Builder(Layout base, Layout subscript, Layout superscript) { return TreeHandle::FixedArityBuilder<CondensedSumLayout, CondensedSumLayoutNode>(ArrayBuilder<TreeHandle>(base, subscript, superscript).array(), 3); }
   CondensedSumLayout() = delete;
 };
 

@@ -99,7 +99,7 @@ bool CharLayoutNode::isMultiplicationChar() const {
 CharLayout CharLayout::Builder(char c, const KDFont * font) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CharLayoutNode));
   CharLayoutNode * node = new (bufferNode) CharLayoutNode(c, font);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<CharLayout &>(h);
 }
 

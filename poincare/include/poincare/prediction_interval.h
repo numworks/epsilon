@@ -37,7 +37,7 @@ private:
 class PredictionInterval final : public Expression {
 public:
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
-  static PredictionInterval Builder(Expression child0, Expression child1);
+  static PredictionInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilderTwoChildren<PredictionInterval>);
 
   // Expression

@@ -53,15 +53,7 @@ friend class FunctionNode;
 public:
   Function(const FunctionNode * n) : SymbolAbstract(n) {}
   static Function Builder(const char * name, size_t length, Expression child = Expression());
-  static Expression UntypedBuilder(const char * name, size_t length, Expression child, Context * context) {
-    /* Create an expression only if it is not in the context or defined as a
-     * function */
-    Function f = Function::Builder(name, length, child);
-    if (SymbolAbstract::ValidInContext(f, context)) {
-      return f;
-    }
-    return Expression();
-  }
+  static Expression UntypedBuilder(const char * name, size_t length, Expression child, Context * context);
 
   // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);

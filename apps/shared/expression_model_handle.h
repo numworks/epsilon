@@ -1,5 +1,5 @@
-#ifndef SHARED_STORAGE_EXPRESSION_MODEL_H
-#define SHARED_STORAGE_EXPRESSION_MODEL_H
+#ifndef SHARED_EXPRESSION_MODEL_HANDLE_H
+#define SHARED_EXPRESSION_MODEL_HANDLE_H
 
 #include <poincare/context.h>
 #include <poincare/expression.h>
@@ -8,12 +8,12 @@
 
 namespace Shared {
 
-// StorageExpressionModel is a handle to Ion::Record
+// ExpressionModelHandle is a handle to Ion::Record
 
-class StorageExpressionModel : public Ion::Storage::Record {
+class ExpressionModelHandle : public Ion::Storage::Record {
   // TODO find better name (once we remove ExpressionModel?)
 public:
-  StorageExpressionModel(Ion::Storage::Record record);
+  ExpressionModelHandle(Ion::Storage::Record record);
   void text(char * buffer, size_t bufferSize) const;
   Poincare::Expression expressionReduced(Poincare::Context * context) const;
   Poincare::Expression expressionClone() const;

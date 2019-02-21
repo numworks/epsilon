@@ -15,14 +15,14 @@ Ion::Storage::Record StorageExpressionModelStore::recordAtIndex(int i) const {
   return Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(modelExtension(), i);
 }
 
-StorageExpressionModel * StorageExpressionModelStore::privateModelForRecord(Ion::Storage::Record record) const {
+ExpressionModelHandle * StorageExpressionModelStore::privateModelForRecord(Ion::Storage::Record record) const {
   for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
     if (!memoizedModelAtIndex(i)->isNull() && *memoizedModelAtIndex(i) == record) {
       return memoizedModelAtIndex(i);
     }
   }
   setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
-  StorageExpressionModel * result = memoizedModelAtIndex(m_oldestMemoizedIndex);
+  ExpressionModelHandle * result = memoizedModelAtIndex(m_oldestMemoizedIndex);
   m_oldestMemoizedIndex = (m_oldestMemoizedIndex+1) % k_maxNumberOfMemoizedModels;
   return result;
 }
@@ -44,7 +44,7 @@ void StorageExpressionModelStore::tidy() {
 int StorageExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test) const {
   int result = 0;
   int i = 0;
-  StorageExpressionModel * m = privateModelForRecord(recordAtIndex(i++));
+  ExpressionModelHandle * m = privateModelForRecord(recordAtIndex(i++));
   while (!m->isNull()) {
     if (test(m)) {
       result++;
@@ -59,7 +59,7 @@ Ion::Storage::Record StorageExpressionModelStore::recordStatifyingTestAtIndex(in
   int index = 0;
   int currentModelIndex = 0;
   Ion::Storage::Record r = recordAtIndex(currentModelIndex++);
-  StorageExpressionModel * m = privateModelForRecord(r);
+  ExpressionModelHandle * m = privateModelForRecord(r);
   while (!m->isNull()) {
     assert(currentModelIndex <= numberOfModels());
     if (test(m)) {

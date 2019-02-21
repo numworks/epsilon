@@ -1,4 +1,4 @@
-#include "storage_expression_model.h"
+#include "expression_model_handle.h"
 #include "global_context.h"
 #include "poincare_helpers.h"
 #include <poincare/horizontal_layout.h>
@@ -11,7 +11,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
+ExpressionModelHandle::ExpressionModelHandle(Storage::Record record) :
   Storage::Record(record),
   m_expression(),
   m_layout(),
@@ -19,7 +19,7 @@ StorageExpressionModel::StorageExpressionModel(Storage::Record record) :
 {
 }
 
-void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
+void ExpressionModelHandle::text(char * buffer, size_t bufferSize) const {
   Expression e = expressionClone();
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
@@ -28,14 +28,14 @@ void StorageExpressionModel::text(char * buffer, size_t bufferSize) const {
   }
 }
 
-bool StorageExpressionModel::isCircularlyDefined(Poincare::Context * context) const {
+bool ExpressionModelHandle::isCircularlyDefined(Poincare::Context * context) const {
   if (m_circular == -1) {
     m_circular = Expression::ExpressionWithoutSymbols(expressionClone(), *context).isUninitialized();
   }
   return m_circular;
 }
 
-Expression StorageExpressionModel::expressionReduced(Poincare::Context * context) const {
+Expression ExpressionModelHandle::expressionReduced(Poincare::Context * context) const {
   if (m_expression.isUninitialized()) {
     assert(!isNull());
     Ion::Storage::Record::Data recordData = value();
@@ -49,14 +49,14 @@ Expression StorageExpressionModel::expressionReduced(Poincare::Context * context
   return m_expression;
 }
 
-Expression StorageExpressionModel::expressionClone() const {
+Expression ExpressionModelHandle::expressionClone() const {
   assert(!isNull());
   Ion::Storage::Record::Data recordData = value();
   /* A new Expression has to be created at each call (because it might be tempered with after calling) */
   return Expression::ExpressionFromAddress(expressionAddressForValue(recordData), expressionSizeForValue(recordData));
 }
 
-Layout StorageExpressionModel::layout() {
+Layout ExpressionModelHandle::layout() {
   if (m_layout.isUninitialized()) {
     m_layout = PoincareHelpers::CreateLayout(expressionClone());
     if (m_layout.isUninitialized()) {
@@ -66,21 +66,21 @@ Layout StorageExpressionModel::layout() {
   return m_layout;
 }
 
-bool StorageExpressionModel::isDefined() {
+bool ExpressionModelHandle::isDefined() {
   return !isEmpty();
 }
 
-bool StorageExpressionModel::isEmpty() {
+bool ExpressionModelHandle::isEmpty() {
   return value().size <= metaDataSize();
 }
 
-void StorageExpressionModel::tidy() {
+void ExpressionModelHandle::tidy() {
   m_layout = Layout();
   m_expression = Expression();
   m_circular = 0;
 }
 
-Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char * c) {
+Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setContent(const char * c) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
@@ -93,7 +93,7 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setContent(const char 
   return setExpressionContent(expressionToStore);
 }
 
-Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(Expression & expressionToStore) {
+Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setExpressionContent(Expression & expressionToStore) {
   assert(!isNull());
   // Prepare the new data to store
   Ion::Storage::Record::Data newData = value();
@@ -120,11 +120,11 @@ Ion::Storage::Record::ErrorStatus StorageExpressionModel::setExpressionContent(E
   return error;
 }
 
-void * StorageExpressionModel::expressionAddressForValue(Ion::Storage::Record::Data recordData) const {
+void * ExpressionModelHandle::expressionAddressForValue(Ion::Storage::Record::Data recordData) const {
   return (char *)recordData.buffer+metaDataSize();
 }
 
-size_t StorageExpressionModel::expressionSizeForValue(Ion::Storage::Record::Data recordData) const {
+size_t ExpressionModelHandle::expressionSizeForValue(Ion::Storage::Record::Data recordData) const {
   return recordData.size-metaDataSize();
 }
 

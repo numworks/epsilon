@@ -13,10 +13,9 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   int numberOfSubviews() const override = 0;
-  View * subviewAtIndex(int index) override;
+  View * subviewAtIndex(int index) override = 0;
   void layoutSubviews() override;
   int numberOfLines() const;
-  virtual TextView * textViewAtIndex(int i) const = 0;
   virtual MessageTextView * messageTextViewAtIndex(int i) const;
 };
 

@@ -1,4 +1,5 @@
 #include "banner_view.h"
+#include <assert.h>
 #include <apps/i18n.h>
 
 namespace Graph {
@@ -14,9 +15,10 @@ BannerView::BannerView() :
 {
 }
 
-TextView * BannerView::textViewAtIndex(int i) const {
-  const TextView * textViews[6] = {&m_abscissaView, &m_functionView, &m_derivativeView, &m_tangentEquationView, &m_aView, &m_bView};
-  return (TextView *)textViews[i];
+View * BannerView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  View * subviews[] = {&m_abscissaView, &m_functionView, &m_derivativeView, &m_tangentEquationView, &m_aView, &m_bView};
+  return subviews[index];
 }
 
 MessageTextView * BannerView::messageTextViewAtIndex(int i) const {

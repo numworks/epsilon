@@ -34,7 +34,7 @@ private:
 class MatrixTrace final : public Expression {
 public:
   MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
-  static MatrixTrace Builder(Expression child);
+  static MatrixTrace Builder(Expression child) { return TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(&child, 1); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("trace", 1, &UntypedBuilderOneChild<MatrixTrace>);
 

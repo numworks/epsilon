@@ -32,12 +32,6 @@ Expression DeterminantNode::shallowReduce(Context & context, Preferences::Comple
   return Determinant(this).shallowReduce(context);
 }
 
-Determinant Determinant::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DeterminantNode));
-  DeterminantNode * node = new (bufferNode) DeterminantNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Determinant &>(h);
-}
 
 Expression Determinant::shallowReduce(Context & context) {
   {

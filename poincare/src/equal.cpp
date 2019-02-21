@@ -41,12 +41,6 @@ Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::Com
   return Complex<T>::Undefined();
 }
 
-Equal Equal::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EqualNode));
-  EqualNode * node = new (bufferNode) EqualNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<Equal &>(h);
-}
 
 Expression Equal::standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());

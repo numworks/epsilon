@@ -266,11 +266,10 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   }
 }
 
-MatrixLayout MatrixLayout::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(MatrixLayoutNode));
-  MatrixLayoutNode * node = new (bufferNode) MatrixLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<MatrixLayout &>(h);
+MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
+  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(ArrayBuilder<TreeHandle>(l1,l2,l3,l4).array(), 4);
+  m.setDimensions(2, 2);
+  return m;
 }
 
 }

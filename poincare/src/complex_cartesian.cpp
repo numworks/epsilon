@@ -52,20 +52,6 @@ Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferen
   return Complex<T>::Builder(a.real(), b.real());
 }
 
-ComplexCartesian ComplexCartesian::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ComplexCartesianNode));
-  ComplexCartesianNode * node = new (bufferNode) ComplexCartesianNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<ComplexCartesian &>(h);
-}
-
-ComplexCartesian ComplexCartesian::Builder(Expression real, Expression imag) {
-  ComplexCartesian c = ComplexCartesian::Builder();
-  c.replaceChildAtIndexInPlace(0, real);
-  c.replaceChildAtIndexInPlace(1, imag);
-  return c;
-}
-
 Expression ComplexCartesian::shallowReduce() {
   if (imag().isRationalZero()) {
     Expression r = real();

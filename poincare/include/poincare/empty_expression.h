@@ -33,7 +33,7 @@ private:
 
 class EmptyExpression final : public Expression {
 public:
-  static EmptyExpression Builder();
+  static EmptyExpression Builder() { return TreeHandle::FixedArityBuilder<EmptyExpression, EmptyExpressionNode>(); }
   EmptyExpression(const EmptyExpressionNode * n) : Expression(n) {}
 };
 

@@ -35,7 +35,7 @@ private:
 class Determinant final : public Expression {
 public:
   Determinant(const DeterminantNode * n) : Expression(n) {}
-  static Determinant Builder(Expression child);
+  static Determinant Builder(Expression child) { return TreeHandle::FixedArityBuilder<Determinant, DeterminantNode>(&child, 1); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilderOneChild<Determinant>);
 

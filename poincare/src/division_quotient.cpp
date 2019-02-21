@@ -35,12 +35,6 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
   return Complex<T>::Builder(std::floor(f1/f2));
 }
 
-DivisionQuotient DivisionQuotient::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(DivisionQuotientNode));
-  DivisionQuotientNode * node = new (bufferNode) DivisionQuotientNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<DivisionQuotient &>(h);
-}
 
 Expression DivisionQuotient::shallowReduce() {
   {

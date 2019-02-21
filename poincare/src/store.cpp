@@ -69,13 +69,6 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
   return storedExpression;
 }
 
-Store Store::Builder(Expression value, SymbolAbstract symbol) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StoreNode));
-  StoreNode * node = new (bufferNode) StoreNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(value, symbol).array(), 2);
-  return static_cast<Store &>(h);
-}
-
 Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {

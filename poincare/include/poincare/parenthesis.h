@@ -38,7 +38,7 @@ private:
 class Parenthesis final : public Expression {
 public:
   Parenthesis(const ParenthesisNode * n) : Expression(n) {}
-  static Parenthesis Builder(Expression child);
+  static Parenthesis Builder(Expression child) { return TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(&child, 1); }
   // Expression
   Expression shallowReduce();
 };

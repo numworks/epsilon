@@ -48,7 +48,7 @@ private:
 class Sine final : public Expression {
 public:
   Sine(const SineNode * n) : Expression(n) {}
-  static Sine Builder(Expression child);
+  static Sine Builder(Expression child) { return TreeHandle::FixedArityBuilder<Sine, SineNode>(&child, 1); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sin", 1, &UntypedBuilderOneChild<Sine>);
 

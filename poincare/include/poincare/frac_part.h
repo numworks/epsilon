@@ -44,7 +44,7 @@ private:
 class FracPart final : public Expression {
 public:
   FracPart(const FracPartNode * n) : Expression(n) {}
-  static FracPart Builder(Expression child);
+  static FracPart Builder(Expression child) { return TreeHandle::FixedArityBuilder<FracPart, FracPartNode>(&child, 1); }
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, &UntypedBuilderOneChild<FracPart>);
 

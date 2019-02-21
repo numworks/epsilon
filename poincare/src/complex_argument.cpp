@@ -33,12 +33,6 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>::Builder(std::arg(c));
 }
 
-ComplexArgument ComplexArgument::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ComplexArgumentNode));
-  ComplexArgumentNode * node = new (bufferNode) ComplexArgumentNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<ComplexArgument &>(h);
-}
 
 Expression ComplexArgument::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

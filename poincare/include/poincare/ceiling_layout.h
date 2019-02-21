@@ -30,7 +30,7 @@ protected:
 
 class CeilingLayout final : public Layout {
 public:
-  static CeilingLayout Builder(Layout l);
+  static CeilingLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(&child, 1); }
   CeilingLayout() = delete;
 };
 

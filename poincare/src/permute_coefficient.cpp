@@ -49,12 +49,6 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
   return Complex<T>::Builder(std::round(result));
 }
 
-PermuteCoefficient PermuteCoefficient::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PermuteCoefficientNode));
-  PermuteCoefficientNode * node = new (bufferNode) PermuteCoefficientNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<PermuteCoefficient &>(h);
-}
 
 Expression PermuteCoefficient::shallowReduce() {
   {

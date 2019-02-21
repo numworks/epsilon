@@ -104,11 +104,4 @@ bool ConjugateLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * n
   return true;
 }
 
-ConjugateLayout ConjugateLayout::Builder(Layout child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ConjugateLayoutNode));
-  ConjugateLayoutNode * node = new (bufferNode) ConjugateLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<ConjugateLayout &>(h);
-}
-
 }

@@ -273,14 +273,17 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
 NthRootLayout NthRootLayout::Builder(Layout child) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode * node = new (bufferNode) NthRootLayoutNode(false);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  h.replaceChildAtIndexInPlace(0, child);
   return static_cast<NthRootLayout &>(h);
 }
 
 NthRootLayout NthRootLayout::Builder(Layout child, Layout index) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode * node = new (bufferNode) NthRootLayoutNode(true);
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(child, index).array(), 2);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  h.replaceChildAtIndexInPlace(0, child);
+  h.replaceChildAtIndexInPlace(1, index);
   return static_cast<NthRootLayout &>(h);
 }
 

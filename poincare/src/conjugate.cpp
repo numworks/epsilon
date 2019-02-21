@@ -64,11 +64,5 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
   return *this;
 }
 
-Conjugate Conjugate::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ConjugateNode));
-  ConjugateNode * node = new (bufferNode) ConjugateNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Conjugate &>(h);
-}
 
 }

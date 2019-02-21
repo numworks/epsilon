@@ -30,12 +30,6 @@ Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFo
   return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
-Factor Factor::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FactorNode));
-  FactorNode * node = new (bufferNode) FactorNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Factor &>(h);
-}
 
 Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);

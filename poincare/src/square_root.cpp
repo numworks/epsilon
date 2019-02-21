@@ -42,12 +42,6 @@ Expression SquareRootNode::shallowReduce(Context & context, Preferences::Complex
   return SquareRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-SquareRoot SquareRoot::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SquareRootNode));
-  SquareRootNode * node = new (bufferNode) SquareRootNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<SquareRoot &>(h);
-}
 
 Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

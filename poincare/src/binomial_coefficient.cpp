@@ -1,5 +1,4 @@
 #include <poincare/binomial_coefficient.h>
-#include <poincare/array_builder.h>
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
@@ -54,12 +53,6 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return std::round(result);
 }
 
-BinomialCoefficient BinomialCoefficient::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BinomialCoefficientNode));
-  BinomialCoefficientNode * node = new (bufferNode) BinomialCoefficientNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<BinomialCoefficient &>(h);
-}
 
 Expression BinomialCoefficient::shallowReduce() {
   {

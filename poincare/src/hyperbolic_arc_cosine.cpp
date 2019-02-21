@@ -26,12 +26,6 @@ Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Pr
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
-HyperbolicArcCosine HyperbolicArcCosine::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(HyperbolicArcCosineNode));
-  HyperbolicArcCosineNode * node = new (bufferNode) HyperbolicArcCosineNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<HyperbolicArcCosine &>(h);
-}
 
 template Complex<float> Poincare::HyperbolicArcCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);

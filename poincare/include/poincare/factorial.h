@@ -52,8 +52,7 @@ private:
 class Factorial final : public Expression {
 public:
   Factorial(const FactorialNode * n) : Expression(n) {}
-  static Factorial Builder();
-  static Factorial Builder(Expression child);
+  static Factorial Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factorial, FactorialNode>(&child, 1); }
 
   Expression shallowReduce();
   Expression shallowBeautify();

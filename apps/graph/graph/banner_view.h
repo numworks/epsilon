@@ -11,7 +11,7 @@ public:
   void setNumberOfSubviews(int numberOfSubviews) { m_numberOfSubviews = numberOfSubviews; }
 private:
   int numberOfSubviews() const override { return m_numberOfSubviews; }
-  TextView * textViewAtIndex(int i) const override;
+  View * subviewAtIndex(int index) override;
   MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_abscissaView;
   BufferTextView m_functionView;

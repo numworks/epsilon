@@ -1,6 +1,5 @@
 #include "banner_view.h"
 #include <string.h>
-#include <assert.h>
 
 namespace Shared {
 
@@ -14,7 +13,7 @@ void BannerView::setLegendAtIndex(char * text, int index) {
    * So changing a legend implies two things
    *  - First, we need to update the textView to ensure it has the new content
    *  - Second, we need to relayout *all* of our subviews. */
-  TextView * textView = textViewAtIndex(index);
+  TextView * textView = static_cast<TextView *>(subviewAtIndex(index));
   textView->setText(text);
   layoutSubviews();
 }
@@ -37,15 +36,15 @@ void BannerView::layoutSubviews() {
   * line and iterate the process. */
   KDCoordinate totalWidth = bounds().width();
   KDCoordinate lineWidth = 0;
-  TextView * textViewPreviousLine = textViewAtIndex(0);
+  View * textViewPreviousLine = subviewAtIndex(0);
   int indexOfFirstViewOfCurrentLine = 0;
   KDCoordinate y = 0;
   /* We do a last iteration of the loop to layout the last line. */
   for (int i = 0; i <= numberOfSubviews(); i++) {
-    TextView * textView = nullptr;
+    View * textView = nullptr;
     KDCoordinate currentViewWidth = totalWidth;
     if (i < numberOfSubviews()) {
-      textView = textViewAtIndex(i);
+      textView = subviewAtIndex(i);
       currentViewWidth = textView->minimalSizeForOptimalDisplay().width();
     }
     // The subview exceed the total width
@@ -54,7 +53,7 @@ void BannerView::layoutSubviews() {
       int nbOfTextViewInLine = i > indexOfFirstViewOfCurrentLine ? i-indexOfFirstViewOfCurrentLine : 1;
       KDCoordinate roundingError = totalWidth-lineWidth-nbOfTextViewInLine*(int)((totalWidth-lineWidth)/nbOfTextViewInLine);
       for (int j = indexOfFirstViewOfCurrentLine; j < i; j++) {
-        textViewPreviousLine = textViewAtIndex(j);
+        textViewPreviousLine = subviewAtIndex(j);
         KDCoordinate textWidth = textViewPreviousLine->minimalSizeForOptimalDisplay().width() + (totalWidth - lineWidth)/nbOfTextViewInLine;
         // For the last text view, avoid letting a 1-pixel-wide empty vertical due to rounding error:
         textWidth = j == i-1 ? textWidth + roundingError : textWidth;
@@ -71,17 +70,12 @@ void BannerView::layoutSubviews() {
   }
 }
 
-View * BannerView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < numberOfSubviews());
-  return textViewAtIndex(index);
-}
-
 int BannerView::numberOfLines() const {
   KDCoordinate width = bounds().width();
   KDCoordinate usedWidth = 0;
   KDCoordinate lineNumber = 0;
   for (int i = 0; i < numberOfSubviews(); i++) {
-    KDCoordinate textWidth = KDFont::SmallFont->stringSize(textViewAtIndex(i)->text()).width();
+    KDCoordinate textWidth = const_cast<Shared::BannerView *>(this)->subviewAtIndex(i)->minimalSizeForOptimalDisplay().width();
     if (usedWidth+textWidth > width) {
       usedWidth = textWidth;
       lineNumber++;

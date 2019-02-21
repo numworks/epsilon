@@ -20,9 +20,4 @@ View * HistogramBannerView::subviewAtIndex(int index) {
   return subviews[index];
 }
 
-MessageTextView * HistogramBannerView::messageTextViewAtIndex(int index) const {
-  const MessageTextView * textViews[k_numberOfSubviews] = {&m_intervalLegendView, nullptr, &m_sizeLegendView, nullptr, &m_frequencyLegendView, nullptr};
-  return (MessageTextView *)textViews[index];
-}
-
 }

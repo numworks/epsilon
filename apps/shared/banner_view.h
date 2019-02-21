@@ -16,7 +16,6 @@ private:
   View * subviewAtIndex(int index) override = 0;
   void layoutSubviews() override;
   int numberOfLines() const;
-  virtual MessageTextView * messageTextViewAtIndex(int i) const;
 };
 
 }

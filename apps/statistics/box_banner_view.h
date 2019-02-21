@@ -14,7 +14,6 @@ private:
   static constexpr int k_numberOfSubviews = 3;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   View * subviewAtIndex(int index) override;
-  MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_seriesName;
   MessageTextView m_calculationName;
   BufferTextView m_calculationValue;

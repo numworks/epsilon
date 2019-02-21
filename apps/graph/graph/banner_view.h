@@ -12,7 +12,6 @@ public:
 private:
   int numberOfSubviews() const override { return m_numberOfSubviews; }
   View * subviewAtIndex(int index) override;
-  MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_derivativeView;
   MessageTextView m_tangentEquationView;
   BufferTextView m_aView;

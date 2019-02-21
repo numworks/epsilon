@@ -23,11 +23,4 @@ View * BannerView::subviewAtIndex(int index) {
   return subviews[index - Shared::XYBannerView::k_numberOfSubviews];
 }
 
-MessageTextView * BannerView::messageTextViewAtIndex(int i) const {
-  if (i == 3) {
-    return (MessageTextView *)&m_tangentEquationView;
-  }
-  return nullptr;
-}
-
 }

@@ -14,8 +14,8 @@ public:
   StorageFunctionStore() : StorageExpressionModelStore() {}
   uint32_t storeChecksum();
   // An active function must be defined to be counted
-  int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest([](StorageExpressionModel * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
-  Ion::Storage::Record activeRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](StorageExpressionModel * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
+  int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest([](ExpressionModelHandle * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
+  Ion::Storage::Record activeRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](ExpressionModelHandle * m) { return m->isDefined() && static_cast<StorageFunction *>(m)->isActive(); }); }
 
   ExpiringPointer<StorageFunction> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<StorageFunction>(static_cast<StorageFunction *>(privateModelForRecord(record))); }
 

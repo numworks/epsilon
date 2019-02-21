@@ -20,7 +20,7 @@ namespace Regression {
 
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout layoutChildren[] = {
+    Layout layoutChildren[] = {
       CharLayout::Builder('a', KDFont::SmallFont),
       CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout::Builder('s', KDFont::SmallFont),

@@ -38,12 +38,6 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Com
   return Complex<T>::Builder(std::round(f1*err)/err);
 }
 
-Round Round::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(RoundNode));
-  RoundNode * node = new (bufferNode) RoundNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<Round &>(h);
-}
 
 Expression Round::shallowReduce() {
   {

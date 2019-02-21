@@ -108,21 +108,6 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Compl
 
 /* Multiplication */
 
-Multiplication Multiplication::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(AdditionNode));
-  MultiplicationNode * node = new (bufferNode) MultiplicationNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Multiplication &>(h);
-}
-
-Multiplication Multiplication::Builder(Expression * children, size_t numberOfChildren) {
-  Multiplication m = Multiplication::Builder();
-  for (size_t i = 0; i < numberOfChildren; i++) {
-    m.addChildAtIndexInPlace(children[i], i, i);
-  }
-  return m;
-}
-
 template<typename T>
 void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
   for (int i = 0; i < mNumberOfRows; i++) {

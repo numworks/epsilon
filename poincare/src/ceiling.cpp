@@ -35,12 +35,6 @@ Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFor
   return Ceiling(this).shallowReduce();
 }
 
-Ceiling Ceiling::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(CeilingNode));
-  CeilingNode * node = new (bufferNode) CeilingNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Ceiling &>(h);
-}
 
 Expression Ceiling::shallowReduce() {
   {

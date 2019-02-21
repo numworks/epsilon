@@ -48,12 +48,6 @@ Expression ArcTangentNode::shallowReduce(Context & context, Preferences::Complex
   return ArcTangent(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-ArcTangent ArcTangent::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ArcTangentNode));
-  ArcTangentNode * node = new (bufferNode) ArcTangentNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<ArcTangent &>(h);
-}
 
 Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

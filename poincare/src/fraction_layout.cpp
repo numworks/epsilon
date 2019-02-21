@@ -216,11 +216,4 @@ void FractionLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize().width()-2*Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
 }
 
-FractionLayout FractionLayout::Builder(Layout numerator, Layout denominator) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FractionLayoutNode));
-  FractionLayoutNode * node = new (bufferNode) FractionLayoutNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Layout>(numerator, denominator).array(), 2);
-  return static_cast<FractionLayout &>(h);
-}
-
 }

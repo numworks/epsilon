@@ -12,13 +12,13 @@ namespace Regression {
 
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout exponentLayoutChildren[] = {
+    Layout exponentLayoutChildren[] = {
       CharLayout::Builder('-', KDFont::SmallFont),
       CharLayout::Builder('b', KDFont::SmallFont),
       CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
       CharLayout::Builder('X', KDFont::SmallFont)
     };
-    const Layout layoutChildren[] = {
+    Layout layoutChildren[] = {
       CharLayout::Builder('1', KDFont::SmallFont),
       CharLayout::Builder('+', KDFont::SmallFont),
       CharLayout::Builder('a', KDFont::SmallFont),

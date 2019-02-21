@@ -2,7 +2,6 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/array_builder.h>
 #include <poincare/n_ary_expression_node.h>
 
 namespace Poincare {
@@ -67,7 +66,7 @@ class Multiplication final : public NAryExpression {
   friend class Power;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
-  static Multiplication Builder();
+  static Multiplication Builder() { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(); }
   static Multiplication Builder(Expression e1) { return Multiplication::Builder(&e1, 1); }
   static Multiplication Builder(Expression e1, Expression e2) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
   static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
@@ -81,7 +80,7 @@ public:
   Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 private:
   // Constructors
-  static Multiplication Builder(Expression * children, size_t numberOfChildren);
+  static Multiplication Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(children, numberOfChildren); }
 
   // Simplification
   Expression privateShallowReduce(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool expand, bool canBeInterrupted);

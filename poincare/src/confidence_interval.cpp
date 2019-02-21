@@ -52,12 +52,6 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
-ConfidenceInterval ConfidenceInterval::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ConfidenceIntervalNode));
-  ConfidenceIntervalNode * node = new (bufferNode) ConfidenceIntervalNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<ConfidenceInterval &>(h);
-}
 
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
@@ -105,11 +99,5 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   return matrix;
 }
 
-SimplePredictionInterval SimplePredictionInterval::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(SimplePredictionIntervalNode));
-  SimplePredictionIntervalNode * node = new (bufferNode) SimplePredictionIntervalNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<SimplePredictionInterval &>(h);
-}
 
 }

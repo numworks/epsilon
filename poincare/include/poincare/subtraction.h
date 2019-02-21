@@ -55,8 +55,8 @@ private:
 class Subtraction final : public Expression {
 public:
   Subtraction(const SubtractionNode * n) : Expression(n) {}
-  static Subtraction Builder();
-  static Subtraction Builder(Expression child0, Expression child1);
+  static Subtraction Builder() { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(); }
+  static Subtraction Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
 
   // Expression
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);

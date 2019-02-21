@@ -31,12 +31,6 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
   return Complex<T>::Builder(c.real()-std::floor(c.real()));
 }
 
-FracPart FracPart::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FracPartNode));
-  FracPartNode * node = new (bufferNode) FracPartNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<FracPart &>(h);
-}
 
 Expression FracPart::shallowReduce() {
   {

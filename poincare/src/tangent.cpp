@@ -37,12 +37,6 @@ Expression TangentNode::shallowReduce(Context & context, Preferences::ComplexFor
   return Tangent(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Tangent Tangent::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(TangentNode));
-  TangentNode * node = new (bufferNode) TangentNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Tangent &>(h);
-}
 
 Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

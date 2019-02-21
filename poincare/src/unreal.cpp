@@ -20,11 +20,4 @@ int UnrealNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return min(Unreal::NameSize(), bufferSize) - 1;
 }
 
-Unreal Unreal::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(UnrealNode));
-  UnrealNode * node = new (bufferNode) UnrealNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node);
-  return static_cast<Unreal &>(h);
-}
-
 }

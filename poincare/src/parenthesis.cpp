@@ -25,12 +25,6 @@ Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preference
   return childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Parenthesis Parenthesis::Builder(Expression child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ParenthesisNode));
-  ParenthesisNode * node = new (bufferNode) ParenthesisNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, &child, 1);
-  return static_cast<Parenthesis &>(h);
-}
 
 Expression Parenthesis::shallowReduce() {
   Expression e = Expression::defaultShallowReduce();

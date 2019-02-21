@@ -33,7 +33,7 @@ private:
 
 class AbsoluteValueLayout final : public Layout {
 public:
-  static AbsoluteValueLayout Builder(Layout l);
+  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(&child, 1); }
   AbsoluteValueLayout() = delete;
 };
 

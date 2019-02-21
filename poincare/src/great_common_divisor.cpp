@@ -1,5 +1,5 @@
 #include <poincare/great_common_divisor.h>
-#include <poincare/array_builder.h>
+
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -49,12 +49,6 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
   return Complex<T>::Builder(std::round((T)a));
 }
 
-GreatCommonDivisor GreatCommonDivisor::Builder(Expression child0, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(GreatCommonDivisorNode));
-  GreatCommonDivisorNode * node = new (bufferNode) GreatCommonDivisorNode();
-  TreeHandle h = TreeHandle::BuildWithBasicChildren(node, ArrayBuilder<Expression>(child0, child1).array(), 2);
-  return static_cast<GreatCommonDivisor &>(h);
-}
 
 Expression GreatCommonDivisor::shallowReduce() {
   {

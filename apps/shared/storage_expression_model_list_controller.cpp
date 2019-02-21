@@ -109,7 +109,7 @@ KDCoordinate StorageExpressionModelListController::expressionRowHeight(int j) {
   if (isAddEmptyRow(j)) {
     return Metric::StoreRowHeight;
   }
-  ExpiringPointer<StorageExpressionModel> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<ExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   if (m->layout().isUninitialized()) {
     return Metric::StoreRowHeight;
   }
@@ -120,7 +120,7 @@ KDCoordinate StorageExpressionModelListController::expressionRowHeight(int j) {
 
 void StorageExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
-  ExpiringPointer<StorageExpressionModel> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<ExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   myCell->setLayout(m->layout());
 }
 
@@ -140,7 +140,7 @@ bool StorageExpressionModelListController::handleEventOnExpression(Ion::Events::
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<StorageExpressionModel> model =  modelStore()->modelForRecord(record);
+    ExpiringPointer<ExpressionModelHandle> model =  modelStore()->modelForRecord(record);
     if (model->shouldBeClearedBeforeRemove()) {
       reinitExpression(model);
     } else {
@@ -170,7 +170,7 @@ void StorageExpressionModelListController::addEmptyModel() {
   editExpression(Ion::Events::OK);
 }
 
-void StorageExpressionModelListController::reinitExpression(ExpiringPointer<StorageExpressionModel> model) {
+void StorageExpressionModelListController::reinitExpression(ExpiringPointer<ExpressionModelHandle> model) {
   model->setContent("");
   resetMemoization();
   selectableTableView()->reloadData();
@@ -182,7 +182,7 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
   char initialTextContent[initialTextContentMaxSize];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<StorageExpressionModel> model = modelStore()->modelForRecord(record);
+    ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
     model->text(initialTextContent, initialTextContentMaxSize);
     initialText = initialTextContent;
     // Replace Poincare::Symbol::SpecialSymbols::UnknownX with 'x'
@@ -208,7 +208,7 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
 
 bool StorageExpressionModelListController::editSelectedRecordWithText(const char * text) {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  ExpiringPointer<StorageExpressionModel> model = modelStore()->modelForRecord(record);
+  ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
   return (model->setContent(text) == Ion::Storage::Record::ErrorStatus::None);
 }
 

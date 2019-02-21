@@ -11,6 +11,7 @@ app_src += $(addprefix apps/shared/,\
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
   expression_model.cpp \
+  expression_model_handle.cpp \
   expression_model_list_controller.cpp \
   expression_model_store.cpp \
   float_parameter_controller.cpp \
@@ -52,7 +53,6 @@ app_src += $(addprefix apps/shared/,\
   separator_even_odd_buffer_text_cell.cpp \
   simple_interactive_curve_view_controller.cpp \
   storage_cartesian_function.cpp \
-  storage_expression_model.cpp \
   storage_expression_model_list_controller.cpp \
   storage_expression_model_store.cpp \
   storage_function.cpp \

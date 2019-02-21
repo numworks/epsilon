@@ -32,11 +32,4 @@ View * BannerView::subviewAtIndex(int index) {
   return subviews[index];
 }
 
-MessageTextView * BannerView::messageTextViewAtIndex(int i) const {
-  if (i == 3) {
-    return (MessageTextView *)&m_regressionTypeView;
-  }
-  return nullptr;
-}
-
 }

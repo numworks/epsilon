@@ -17,7 +17,6 @@ private:
   static constexpr int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 7;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   View * subviewAtIndex(int index) override;
-  MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_dotNameView;
   MessageTextView m_regressionTypeView;
   BufferTextView m_subText1;

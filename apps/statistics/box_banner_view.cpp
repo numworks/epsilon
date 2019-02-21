@@ -16,8 +16,4 @@ View * BoxBannerView::subviewAtIndex(int index) {
   return subviews[index];
 }
 
-MessageTextView * BoxBannerView::messageTextViewAtIndex(int index) const {
-  return index == 1 ? (MessageTextView *)&m_calculationName : nullptr;
-}
-
 }

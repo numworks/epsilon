@@ -369,7 +369,7 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, char 
    * to re-serialize it because the number of stored significative
    * numbers and the number of displayed significative numbers might not be
    * identical. (For example, 0.000025 might be displayed "0.00003" and stored
-   * as Decimal::Builder(0.000025) and isEqualToItsApproximationLayout should return
+   * as Decimal(0.000025) and isEqualToItsApproximationLayout should return
    * false) */
   Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, complexFormat, angleUnit);
   bool equal = isIdenticalTo(approximateOutput);
@@ -453,10 +453,10 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       if (approximateExpression) {
         /* Step 2: Approximation
          * We compute the approximate expression from the Cartesian form to avoid
-         * unprecision. For example, if the result is the ComplexCartesian::Builder(a,b),
+         * unprecision. For example, if the result is the ComplexCartesian(a,b),
          * the final expression is goind to be sqrt(a^2+b^2)*exp(i*arctan(b/a)...
          * in Polar ComplexFormat. If we approximate this expression instead of
-         * ComplexCartesian::Builder(a,b), we are going to loose precision on the resulting
+         * ComplexCartesian(a,b), we are going to loose precision on the resulting
          * complex.*/
         // Clone the ComplexCartesian to use it to compute the approximation
         ComplexCartesian ecomplexClone = ecomplex.clone().convert<ComplexCartesian>();

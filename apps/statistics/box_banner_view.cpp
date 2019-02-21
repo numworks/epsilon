@@ -1,4 +1,5 @@
 #include "box_banner_view.h"
+#include <assert.h>
 
 namespace Statistics {
 
@@ -9,9 +10,10 @@ BoxBannerView::BoxBannerView() :
 {
 }
 
-TextView * BoxBannerView::textViewAtIndex(int index) const {
-  const TextView * textViews[3] = {&m_seriesName, &m_calculationName, &m_calculationValue};
-  return (TextView *)textViews[index];
+View * BoxBannerView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  View * subviews[] = {&m_seriesName, &m_calculationName, &m_calculationValue};
+  return subviews[index];
 }
 
 MessageTextView * BoxBannerView::messageTextViewAtIndex(int index) const {

@@ -1,4 +1,5 @@
 #include "banner_view.h"
+#include <assert.h>
 
 namespace Sequence {
 
@@ -8,9 +9,10 @@ BannerView::BannerView() :
 {
 }
 
-TextView * BannerView::textViewAtIndex(int i) const {
-  const TextView * views[2] = {&m_abscissaView, &m_sequenceView};
-  return (TextView *)views[i];
+View * BannerView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  View * subviews[] = {&m_abscissaView, &m_sequenceView};
+  return subviews[index];
 }
 
 }

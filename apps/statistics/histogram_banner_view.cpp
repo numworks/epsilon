@@ -14,9 +14,10 @@ HistogramBannerView::HistogramBannerView() :
 {
 }
 
-TextView * HistogramBannerView::textViewAtIndex(int i) const {
-  const TextView * textViews[k_numberOfSubviews] = {&m_intervalLegendView, &m_intervalView, &m_sizeLegendView, &m_sizeView, &m_frequencyLegendView, &m_frequencyView};
-  return (TextView *)textViews[i];
+View * HistogramBannerView::subviewAtIndex(int index) {
+  assert(0 <= index && index < numberOfSubviews());
+  View * subviews[] = {&m_intervalLegendView, &m_intervalView, &m_sizeLegendView, &m_sizeView, &m_frequencyLegendView, &m_frequencyView};
+  return subviews[index];
 }
 
 MessageTextView * HistogramBannerView::messageTextViewAtIndex(int index) const {

@@ -17,7 +17,7 @@ private:
   static constexpr KDColor k_backgroundColor = Palette::GreyMiddle;
   static constexpr int k_numberOfSubviews = 9;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
-  TextView * textViewAtIndex(int i) const override;
+  View * subviewAtIndex(int index) override;
   MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_dotNameView;
   BufferTextView m_xView;

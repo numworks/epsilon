@@ -4,6 +4,8 @@
 
 namespace Shared {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 /* Table Data Source */
 
 StorageExpressionModelListController::StorageExpressionModelListController(Responder * parentResponder, I18n::Message text) :
@@ -50,7 +52,7 @@ KDCoordinate StorageExpressionModelListController::memoizedRowHeight(int j) {
   if (j < 0) {
     return 0;
   }
-  int currentSelectedRow = selectedRow();
+  int currentSelectedRow = selectedRow() < 0 ? 0 : selectedRow();
   constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
   if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
     int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
@@ -66,7 +68,7 @@ KDCoordinate StorageExpressionModelListController::memoizedCumulatedHeightFromIn
   if (j <= 0) {
     return 0;
   }
-  int currentSelectedRow = selectedRow();
+  int currentSelectedRow = selectedRow() < 0 ? 0 : selectedRow();
   constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
   /* If j is not easily computable from the memoized values, compute it the hard
    * way. */
@@ -97,7 +99,45 @@ KDCoordinate StorageExpressionModelListController::memoizedCumulatedHeightFromIn
   return result;
 }
 
+int StorageExpressionModelListController::memoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
+  if (offsetY == 0) {
+    return 0;
+  }
+  /* We use memoization to speed up this method: if offsetY is "around" the
+   * memoized cumulatedHeightForIndex, we can compute its value easily by
+   * adding/substracting memoized row heights. */
+
+  int currentSelectedRow = selectedRow() < 0 ? 0 : selectedRow();
+  int rowsCount = numberOfExpressionRows();
+  if (rowsCount <= 1 || currentSelectedRow < 1) {
+    return notMemoizedIndexFromCumulatedHeight(offsetY);
+  }
+
+  KDCoordinate currentCumulatedHeight = memoizedCumulatedHeightFromIndex(currentSelectedRow);
+  if (offsetY > currentCumulatedHeight) {
+    int iMax = minInt(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
+    for (int i = 0; i < iMax; i++) {
+      currentCumulatedHeight+= memoizedRowHeight(currentSelectedRow + i);
+      if (offsetY <= currentCumulatedHeight) {
+        return currentSelectedRow + i;
+      }
+    }
+  } else {
+    int iMax = minInt(k_memoizedCellsCount/2, currentSelectedRow);
+    for (int i = 1; i <= iMax; i++) {
+      currentCumulatedHeight-= memoizedRowHeight(currentSelectedRow-i);
+      if (offsetY > currentCumulatedHeight) {
+        return currentSelectedRow - i;
+      }
+    }
+  }
+  return notMemoizedIndexFromCumulatedHeight(offsetY);
+}
+
 int StorageExpressionModelListController::numberOfExpressionRows() {
+  if (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()) {
+    return modelStore()->numberOfModels();
+  }
   return 1 + modelStore()->numberOfModels();
 }
 
@@ -195,8 +235,6 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
         StorageExpressionModelListController * myController = static_cast<StorageExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
-        // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
-        myController->resetMemoizationForIndex(k_memoizedCellsCount/2);
         return myController->editSelectedRecordWithText(textBody);
       },
       [](void * context, void * sender){
@@ -205,6 +243,8 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
 }
 
 bool StorageExpressionModelListController::editSelectedRecordWithText(const char * text) {
+  // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
+  resetMemoizationForIndex(k_memoizedCellsCount/2);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
   return (model->setContent(text) == Ion::Storage::Record::ErrorStatus::None);

@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class StorageFunctionListController : public StorageExpressionModelListController, public ButtonRowDelegate, public TableViewDataSource, public SelectableTableViewDelegate {
+class StorageFunctionListController : public StorageExpressionModelListController, public ButtonRowDelegate, public TableViewDataSource {
 public:
   StorageFunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text);
 

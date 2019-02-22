@@ -47,10 +47,14 @@ void EquationModelsParameterController::didBecomeFirstResponder() {
 
 bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    Equation * newEquation = static_cast<Equation *>(m_equationStore->addEmptyModel());
-    newEquation->setContent(k_models[selectedRow()]);
+    Ion::Storage::Record::ErrorStatus error = m_equationStore->addEmptyModel();
+    if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
+      return false;
+    }
+    assert(error == Ion::Storage::Record::ErrorStatus::None);
+    m_listController->editSelectedRecordWithText(k_models[selectedRow()]);
     app()->dismissModalViewController();
-    m_listController->editExpression(newEquation, Ion::Events::OK);
+    m_listController->editExpression(Ion::Events::OK);
     return true;
   }
   return false;

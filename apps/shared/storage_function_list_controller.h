@@ -20,13 +20,13 @@ public:
 
   /* TableViewDataSource */
   int numberOfRows() override { return this->numberOfExpressionRows(); }
+  KDCoordinate rowHeight(int j) override { return StorageExpressionModelListController::memoizedRowHeight(j); }
+  KDCoordinate cumulatedHeightFromIndex(int j) override { return StorageExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return StorageExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int numberOfColumns() override { return 2; }
-  KDCoordinate rowHeight(int j) override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -66,7 +66,12 @@ private:
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
-  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override;
+  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
+    return TableViewDataSource::cumulatedHeightFromIndex(j);
+  }
+  int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override {
+    return TableViewDataSource::indexFromCumulatedHeight(offsetY);
+  }
   virtual StorageListParameterController * parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual FunctionTitleCell * titleCells(int index) = 0;

@@ -22,10 +22,10 @@ EquationListView::EquationListView(Responder * parentResponder, TableViewDataSou
 }
 
 void EquationListView::setBraceStyle(BraceStyle style) {
-  if (m_braceStyle != style) {
-    m_braceStyle = style;
-    layoutSubviews();
-  }
+  /* Even if the brace style does not change, we want to relayout in case the
+   * size of the braced object has changed. */
+  m_braceStyle = style;
+  layoutSubviews();
 }
 
 void EquationListView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {

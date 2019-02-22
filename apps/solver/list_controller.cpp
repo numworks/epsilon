@@ -224,7 +224,6 @@ bool ListController::removeModelRow(ExpressionModel * model) {
 void ListController::reloadBrace() {
   EquationListView::BraceStyle braceStyle = m_equationStore->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (m_equationStore->numberOfModels() == m_equationStore->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
-  m_equationListView.layoutSubviews();
 }
 
 SelectableTableView * ListController::selectableTableView() {

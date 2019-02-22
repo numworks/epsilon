@@ -15,11 +15,7 @@ StorageExpressionModelListController::StorageExpressionModelListController(Respo
 }
 
 void StorageExpressionModelListController::tableSelectionDidChange(int previousSelectedRow) {
-  constexpr int currentSelectedMemoizedIndex = k_memoizedCellsCount/2 + 1; // Needs k_memoizedCellsCount to be odd, which is static asserted in the header file
   int currentSelectedRow = selectedRow();
-
-  // The previously selected cell's height might have changed.
-  resetMemoizationForIndex(currentSelectedMemoizedIndex);
 
   // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
   if (previousSelectedRow >= 0 && currentSelectedRow == previousSelectedRow + 1) {
@@ -172,7 +168,8 @@ void StorageExpressionModelListController::addEmptyModel() {
 
 void StorageExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   model->setContent("");
-  resetMemoization();
+  // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
+  resetMemoizationForIndex(k_memoizedCellsCount/2);
   selectableTableView()->reloadData();
 }
 
@@ -198,7 +195,8 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
         StorageExpressionModelListController * myController = static_cast<StorageExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
-        myController->resetMemoization();
+        // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
+        myController->resetMemoizationForIndex(k_memoizedCellsCount/2);
         return myController->editSelectedRecordWithText(textBody);
       },
       [](void * context, void * sender){

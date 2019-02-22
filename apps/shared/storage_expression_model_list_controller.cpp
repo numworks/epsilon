@@ -22,7 +22,7 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
   resetMemoizationForIndex(currentSelectedMemoizedIndex);
 
   // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
-  if (currentSelectedRow == previousSelectedRow + 1) {
+  if (previousSelectedRow >= 0 && currentSelectedRow == previousSelectedRow + 1) {
     /* We selected the cell under the previous cell. Shift the memoized cell
      * heights. */
     shiftMemoization(true);
@@ -34,7 +34,7 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
       assert(currentSelectedRow == 0);
       m_cumulatedHeightForSelectedIndex = 0;
     }
-  } else if (currentSelectedRow == previousSelectedRow - 1) {
+  } else if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedRow - 1) {
     /* We selected the cell above the previous cell. Shift the memoized cell
      * heights. */
     shiftMemoization(false);
@@ -45,7 +45,7 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
     } else {
       m_cumulatedHeightForSelectedIndex = 0;
     }
-  } else if (previousSelectedRow != currentSelectedRow) {
+  } else if (previousSelectedCellY != currentSelectedRow || previousSelectedCellY < 0) {
     resetMemoization();
   }
 }

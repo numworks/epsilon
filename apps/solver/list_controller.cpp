@@ -8,10 +8,10 @@ using namespace Shared;
 namespace Solver {
 
 ListController::ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer) :
-  ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
+  StorageExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationStore(equationStore),
-  m_equationListView(this, this, this),
+  m_equationListView(this),
   m_expressionCells{},
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
@@ -214,8 +214,8 @@ void ListController::addEmptyModel() {
   app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
-bool ListController::removeModelRow(ExpressionModel * model) {
-  ExpressionModelListController::removeModelRow(model);
+bool ListController::removeModelRow(Ion::Storage::Record record) {
+  StorageExpressionModelListController::removeModelRow(record);
   reloadButtonMessage();
   reloadBrace();
   return true;

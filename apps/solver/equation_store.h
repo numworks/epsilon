@@ -2,13 +2,13 @@
 #define SOLVER_EQUATION_STORE_H
 
 #include "equation.h"
-#include "../shared/expression_model_store.h"
+#include "../shared/storage_expression_model_store.h"
 #include <poincare/symbol_abstract.h>
 #include <stdint.h>
 
 namespace Solver {
 
-class EquationStore : public Shared::ExpressionModelStore {
+class EquationStore : public Shared::StorageExpressionModelStore {
 public:
   enum class Type {
     LinearSystem,
@@ -23,14 +23,14 @@ public:
     NonLinearSystem = -4,
     RequireApproximateSolution = -5,
   };
-  /* EquationStore */
   EquationStore();
-  Equation * modelAtIndex(int i) override {
-    assert(i>=0 && i<m_numberOfModels);
-    return &m_equations[i];
-  }
-  Equation * definedModelAtIndex(int i) override { return static_cast<Equation *>(Shared::ExpressionModelStore::definedModelAtIndex(i)); }
+
+  /* StorageExpressionModelStore */
   int maxNumberOfModels() const override { return k_maxNumberOfEquations; }
+  Shared::ExpiringPointer<Equation> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Equation>(static_cast<Equation *>(privateModelForRecord(record))); }
+  Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+
+  /* EquationStore */
   Type type() const {
     return m_type;
   }
@@ -69,24 +69,28 @@ public:
   bool haveMoreApproximationSolutions(Poincare::Context * context);
 
   void tidy() override;
+
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
   static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
 private:
   static constexpr double k_precision = 0.01;
   static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
-  Equation * emptyModel() override;
-  Equation * nullModel() override {
-    return emptyModel();
-  }
-  void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
+
+  // StorageExpressionModelStore
+  const char * modelExtension() const override { return Equation::extension; }
+  /* We don't really use model memoization as the number of Equation is limited
+   * and we keep enough Equations to store them all. */
+  void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
+
   Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
   Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
   void tidySolution();
-  bool isExplictlyComplex();
-  Poincare::Preferences::ComplexFormat updatedComplexFormat();
+  bool isExplictlyComplex(Poincare::Context * context);
+  Poincare::Preferences::ComplexFormat updatedComplexFormat(Poincare::Context * context);
 
-  Equation m_equations[k_maxNumberOfEquations];
+  mutable Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables][Poincare::SymbolAbstract::k_maxNameSize];
   int m_numberOfSolutions;

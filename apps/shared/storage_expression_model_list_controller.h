@@ -35,8 +35,6 @@ protected:
   virtual SelectableTableView * selectableTableView() = 0;
   virtual StorageExpressionModelStore * modelStore() = 0;
   virtual InputViewController * inputController() = 0;
-  EvenOddMessageTextCell m_addNewModel;
-protected:
   // Memoization
   static constexpr int k_memoizedCellsCount = 7;
   /* We use memoization to speed up indexFromHeight(offset) in the children
@@ -57,11 +55,14 @@ protected:
    *   || j > selectedRow + halfMemoizationCount) { ... } */
   virtual void resetMemoizationForIndex(int index);
   virtual void shiftMemoization(bool newCellIsUnder);
+  EvenOddMessageTextCell m_addNewModel;
 private:
   // Memoization
   static constexpr int k_resetedMemoizedValue = -1;
   void resetMemoization();
+  // TableViewDataSource
   virtual KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) = 0;
+  virtual int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) = 0;
   KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_cumulatedHeightForSelectedIndex;
 };

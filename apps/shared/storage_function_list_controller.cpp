@@ -260,7 +260,7 @@ void StorageFunctionListController::willExitResponderChain(Responder * nextFirst
 
 void StorageFunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   // Update memoization of cell heights
-  StorageExpressionModelListController::tableSelectionDidChange(previousSelectedCellY);
+  StorageExpressionModelListController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY);
   // Do not select the cell left of the "addEmptyFunction" cell
   if (isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
     t->selectCellAtLocation(1, numberOfRows()-1);

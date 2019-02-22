@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 StorageFunctionParameterController::StorageFunctionParameterController(StorageValuesController * valuesController) :
-  StorageValuesFunctionParameterController(StorageCartesianFunctionStore::Symbol()),
+  StorageValuesFunctionParameterController(StorageCartesianFunction::Symbol()),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
   m_valuesController(valuesController)
 {

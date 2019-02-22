@@ -142,7 +142,7 @@ bool StorageExpressionModelListController::handleEventOnExpression(Ion::Events::
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
     ExpiringPointer<ExpressionModelHandle> model =  modelStore()->modelForRecord(record);
     if (model->shouldBeClearedBeforeRemove()) {
-      reinitExpression(model);
+      reinitSelectedExpression(model);
     } else {
       if (removeModelRow(record)) {
         int newSelectedRow = selectedRow() >= numberOfExpressionRows() ? numberOfExpressionRows()-1 : selectedRow();
@@ -170,7 +170,7 @@ void StorageExpressionModelListController::addEmptyModel() {
   editExpression(Ion::Events::OK);
 }
 
-void StorageExpressionModelListController::reinitExpression(ExpiringPointer<ExpressionModelHandle> model) {
+void StorageExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   model->setContent("");
   resetMemoization();
   selectableTableView()->reloadData();

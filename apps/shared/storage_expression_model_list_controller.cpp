@@ -14,23 +14,23 @@ StorageExpressionModelListController::StorageExpressionModelListController(Respo
   m_addNewModel.setMessage(text);
 }
 
-void StorageExpressionModelListController::tableSelectionDidChange(int previousSelectedRow) {
+void StorageExpressionModelListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   int currentSelectedRow = selectedRow();
 
   // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
-  if (previousSelectedRow >= 0 && currentSelectedRow == previousSelectedRow + 1) {
+  if (previousSelectedCellY >= 0 && previousSelectedCellY == previousSelectedCellY + 1) {
     /* We selected the cell under the previous cell. Shift the memoized cell
      * heights. */
     shiftMemoization(true);
     resetMemoizationForIndex(k_memoizedCellsCount-1);
     // Update m_cumulatedHeightForSelectedIndex
-    if (previousSelectedRow >= 0) {
-      m_cumulatedHeightForSelectedIndex+= memoizedRowHeight(previousSelectedRow);
+    if (previousSelectedCellY >= 0) {
+      m_cumulatedHeightForSelectedIndex+= memoizedRowHeight(previousSelectedCellY);
     } else {
       assert(currentSelectedRow == 0);
       m_cumulatedHeightForSelectedIndex = 0;
     }
-  } else if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedRow - 1) {
+  } else if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedCellY - 1) {
     /* We selected the cell above the previous cell. Shift the memoized cell
      * heights. */
     shiftMemoization(false);

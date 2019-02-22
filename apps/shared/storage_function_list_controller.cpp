@@ -41,14 +41,6 @@ void StorageFunctionListController::viewWillAppear() {
   computeTitlesColumnWidth();
 }
 
-KDCoordinate StorageFunctionListController::rowHeight(int j) {
-  return StorageExpressionModelListController::memoizedRowHeight(j);
-}
-
-KDCoordinate StorageFunctionListController::cumulatedHeightFromIndex(int j) {
-  return StorageExpressionModelListController::memoizedCumulatedHeightFromIndex(j);
-}
-
 KDCoordinate StorageFunctionListController::columnWidth(int i) {
   switch (i) {
     case 0:
@@ -85,42 +77,6 @@ int StorageFunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX)
       return 2;
     }
   }
-}
-
-int StorageFunctionListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  if (offsetY == 0) {
-    return 0;
-  }
-
-  /* We use memoization to speed up this method: if offsetY is "around" the
-   * memoized cumulatedHeightForIndex, we can compute its value easily by
-   * adding/substracting memoized row heights. */
-
-  int currentSelectedRow = selectedRow();
-  int rowsCount = numberOfRows();
-  if (rowsCount <= 1 || currentSelectedRow < 1) {
-    return TableViewDataSource::indexFromCumulatedHeight(offsetY);
-  }
-
-  KDCoordinate currentCumulatedHeight = cumulatedHeightFromIndex(currentSelectedRow);
-  if (offsetY > currentCumulatedHeight) {
-    int iMax = minInt(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
-    for (int i = 0; i < iMax; i++) {
-      currentCumulatedHeight+= rowHeight(currentSelectedRow + i);
-      if (offsetY <= currentCumulatedHeight) {
-        return currentSelectedRow + i;
-      }
-    }
-  } else {
-    int iMax = minInt(k_memoizedCellsCount/2, currentSelectedRow);
-    for (int i = 1; i <= iMax; i++) {
-      currentCumulatedHeight-= rowHeight(currentSelectedRow-i);
-      if (offsetY > currentCumulatedHeight) {
-        return currentSelectedRow - i;
-      }
-    }
-  }
-  return TableViewDataSource::indexFromCumulatedHeight(offsetY);
 }
 
 int StorageFunctionListController::typeAtLocation(int i, int j) {
@@ -318,10 +274,6 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
 void StorageFunctionListController::didChangeModelsList() {
   StorageExpressionModelListController::didChangeModelsList();
   computeTitlesColumnWidth();
-}
-
-KDCoordinate StorageFunctionListController::notMemoizedCumulatedHeightFromIndex(int j) {
-  return TableViewDataSource::cumulatedHeightFromIndex(j);
 }
 
 KDCoordinate StorageFunctionListController::baseline(int j) {

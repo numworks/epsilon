@@ -16,12 +16,12 @@ Ion::Storage::Record::ErrorStatus StorageCartesianFunctionStore::addEmptyModel()
 }
 
 void StorageCartesianFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
-  assert(cacheIndex >= 0 && cacheIndex < k_maxNumberOfMemoizedModels);
+  assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   m_functions[cacheIndex] = StorageCartesianFunction(record);
 }
 
 ExpressionModelHandle * StorageCartesianFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
-  assert(cacheIndex >= 0 && cacheIndex < k_maxNumberOfMemoizedModels);
+  assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_functions[cacheIndex];
 }
 

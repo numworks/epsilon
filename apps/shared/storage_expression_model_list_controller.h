@@ -7,17 +7,18 @@
 
 namespace Shared {
 
-class StorageExpressionModelListController : public ViewController, public SelectableTableViewDataSource {
+class StorageExpressionModelListController : public ViewController, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
 public:
   StorageExpressionModelListController(Responder * parentResponder, I18n::Message text);
 protected:
   static constexpr KDCoordinate k_expressionMargin = 5;
-  // Memoization of cell heights
-  void tableSelectionDidChange(int previousSelectedRow);
-  KDCoordinate memoizedRowHeight(int j);
-  KDCoordinate memoizedCumulatedHeightFromIndex(int j);
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
   // TableViewDataSource
   virtual int numberOfExpressionRows();
+  KDCoordinate memoizedRowHeight(int j);
+  KDCoordinate memoizedCumulatedHeightFromIndex(int j);
+  int memoizedIndexFromCumulatedHeight(KDCoordinate offsetY);
   virtual KDCoordinate expressionRowHeight(int j);
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j);
   // Responder

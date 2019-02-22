@@ -23,7 +23,7 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
-  int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize, StorageCartesianFunctionStore::Symbol());
+  int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize, StorageCartesianFunction::Symbol());
   const char * legend = "=";
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   double y = function->approximateDerivative(cursor->x(), app->localContext());

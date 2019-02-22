@@ -14,6 +14,7 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   // TODO find better name (once we remove ExpressionModel?)
 public:
   ExpressionModelHandle(Ion::Storage::Record record);
+  virtual char symbol() const { return 0; };
   void text(char * buffer, size_t bufferSize) const;
   Poincare::Expression expressionReduced(Poincare::Context * context) const;
   Poincare::Expression expressionClone() const;

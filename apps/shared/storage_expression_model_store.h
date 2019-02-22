@@ -16,6 +16,8 @@ public:
   StorageExpressionModelStore();
 
   // Getters
+  // By default, the number of models is not bounded
+  virtual int maxNumberOfModels() const { return -1; }
   int numberOfModels() const;
   int numberOfDefinedModels() const { return numberOfModelsSatisfyingTest([](ExpressionModelHandle * m) { return m->isDefined(); }); }
   Ion::Storage::Record recordAtIndex(int i) const;
@@ -28,10 +30,11 @@ public:
   void removeModel(Ion::Storage::Record record);
 
   // Other
-  void tidy();
+  virtual void tidy();
   void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
 protected:
   constexpr static int k_maxNumberOfMemoizedModels = 10;
+  int maxNumberOfMemoizedModels() const { return maxNumberOfModels() < 0 ? k_maxNumberOfMemoizedModels : maxNumberOfModels(); }
   typedef bool (*ModelTest)(ExpressionModelHandle * model);
   int numberOfModelsSatisfyingTest(ModelTest test) const;
   Ion::Storage::Record recordStatifyingTestAtIndex(int i, ModelTest test) const;

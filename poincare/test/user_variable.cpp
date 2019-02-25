@@ -39,7 +39,7 @@ QUIZ_CASE(poincare_user_variable_simple) {
   Ion::Storage::sharedStorage()->recordNamed("Adadas.exp").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f1.func").destroy();
   Ion::Storage::sharedStorage()->recordNamed("f2.func").destroy();
-  Ion::Storage::sharedStorage()->recordNamed("funcBoth.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("fBoth.func").destroy();
 }
 
 QUIZ_CASE(poincare_user_variable_2_circular_variables) {

@@ -2,11 +2,11 @@
 #define SHARED_STORAGE_FUNCTION_H
 
 #include <poincare/function.h>
-#include "expression_model_handle.h"
+#include "single_expression_model_handle.h"
 
 namespace Shared {
 
-class StorageFunction : public ExpressionModelHandle {
+class StorageFunction : public SingleExpressionModelHandle {
 public:
   enum class NameNotCompliantError {
     None = 0,
@@ -20,7 +20,7 @@ public:
   static bool BaseNameCompliant(const char * baseName, NameNotCompliantError * error = nullptr);
 
   // Constructors
-  StorageFunction(Ion::Storage::Record record) : ExpressionModelHandle(record){}
+  StorageFunction(Ion::Storage::Record record) : SingleExpressionModelHandle(record){}
 
   // Properties
   bool isActive() const;

@@ -52,6 +52,7 @@ app_src += $(addprefix apps/shared/,\
   scrollable_exact_approximate_expressions_view.cpp \
   separator_even_odd_buffer_text_cell.cpp \
   simple_interactive_curve_view_controller.cpp \
+  single_expression_model_handle.cpp\
   storage_cartesian_function.cpp \
   storage_expression_model_list_controller.cpp \
   storage_expression_model_store.cpp \

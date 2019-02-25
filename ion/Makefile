@@ -35,3 +35,7 @@ tests += $(addprefix ion/test/,\
   storage.cpp\
   utf8_decoder.cpp\
 )
+
+ifdef ION_STORAGE_LOG
+SFLAGS += -DION_STORAGE_LOG=1
+endif

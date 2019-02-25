@@ -20,7 +20,7 @@ void StorageCartesianFunctionStore::setMemoizedModelAtIndex(int cacheIndex, Ion:
   m_functions[cacheIndex] = StorageCartesianFunction(record);
 }
 
-ExpressionModelHandle * StorageCartesianFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
+SingleExpressionModelHandle * StorageCartesianFunctionStore::memoizedModelAtIndex(int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_functions[cacheIndex];
 }

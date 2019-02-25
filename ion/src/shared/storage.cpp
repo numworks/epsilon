@@ -2,6 +2,9 @@
 #include <string.h>
 #include <assert.h>
 #include <new>
+#if ION_STORAGE_LOG
+#include<iostream>
+#endif
 
 namespace Ion {
 
@@ -49,6 +52,15 @@ Storage::Record::Record(const char * baseName, const char * extension) {
   new (this) Record(baseName, strlen(baseName), extension, strlen(extension));
 }
 
+
+#if ION_STORAGE_LOG
+
+void Storage::Record::log() {
+  std::cout << "Name: " << fullName() << std::endl;
+  std::cout << "        Value (" << value().size << "): " << (char *)value().buffer << "\n\n" << std::endl;
+}
+#endif
+
 uint32_t Storage::Record::checksum() {
   uint32_t crc32Results[2];
   crc32Results[0] = m_fullNameCRC32;
@@ -81,6 +93,15 @@ Storage::Storage() :
   // Set the size of the first record to 0
   overrideSizeAtPosition(m_buffer, 0);
 }
+
+#if ION_STORAGE_LOG
+void Storage::log() {
+  for (char * p : *this) {
+    const char * currentName = fullNameOfRecordStarting(p);
+    Record(currentName).log();
+  }
+}
+#endif
 
 size_t Storage::availableSize() {
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);

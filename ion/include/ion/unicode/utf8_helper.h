@@ -22,6 +22,10 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft = fa
  * termination of dst. */
 void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * indexToDUpdate = nullptr);
 
+/* Remove all code points c. and update an index that should be lower if code
+ * points where removed before it. Ensure null-termination of dst. */
+void RemoveCodePoint(char * buffer, CodePoint c, const char * * indexToDUpdate = nullptr);
+
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);
 

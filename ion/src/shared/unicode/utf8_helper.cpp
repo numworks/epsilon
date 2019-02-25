@@ -110,6 +110,30 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   *(dst + minInt(bufferIndex, dstSize - 1)) = 0;
 }
 
+void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate) {
+  UTF8Decoder decoder(buffer);
+  const char * currentPointer = buffer;
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
+  size_t bufferIndex = 0;
+  size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+
+  while (codePoint != UCodePointNull) {
+    if (codePoint != c) {
+      int copySize = nextPointer - currentPointer;
+      memmove(buffer + bufferIndex, currentPointer, copySize);
+      bufferIndex+= copySize;
+    } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {
+      assert(*pointerToUpdate - buffer >= codePointCharSize);
+      *pointerToUpdate = *pointerToUpdate - codePointCharSize;
+    }
+    currentPointer = nextPointer;
+    codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
+  }
+  *(buffer + bufferIndex) = 0;
+}
+
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
   UTF8Decoder decoder(src);
   const char * codePointPointer = decoder.stringPosition();

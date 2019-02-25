@@ -17,7 +17,6 @@ public:
 
 protected:
   int indentationBeforeCursor() const;
-  bool insertTextWithIndentation(const char * textBuffer, const char * location);
 
   class Text {
   public:

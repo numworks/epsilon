@@ -16,16 +16,21 @@ public:
   StorageCartesianFunction(Ion::Storage::Record record = Record()) :
     StorageFunction(record)
   {}
+
+  // Derivative
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg);
   double approximateDerivative(double x, Poincare::Context * context) const;
+  // Integral
   double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
+  // Extremum
   Poincare::Expression::Coordinate2D nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
+  // Roots
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression expression) const;
-protected:
+private:
   class CartesianFunctionRecordData : public FunctionRecordData {
   public:
     CartesianFunctionRecordData(KDColor color) :
@@ -40,9 +45,16 @@ protected:
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];
   };
-private:
+  class Handle : public ExpressionModelHandle {
+  public:
+    void * expressionAddress(const Ion::Storage::Record * record) const override;
+  private:
+    size_t expressionSize(const Ion::Storage::Record * record) const override;
+  };
   size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordData); }
+  const ExpressionModelHandle * handle() const override { return &m_handle; }
   CartesianFunctionRecordData * recordData() const;
+  Handle m_handle;
 };
 
 }

@@ -123,6 +123,14 @@ Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double s
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, *context, e);
 }
 
+void * StorageCartesianFunction::Handle::expressionAddress(const Ion::Storage::Record * record) const {
+  return (char *)record->value().buffer+sizeof(CartesianFunctionRecordData);
+}
+
+size_t StorageCartesianFunction::Handle::expressionSize(const Ion::Storage::Record * record) const {
+  return record->value().size-sizeof(CartesianFunctionRecordData);
+}
+
 StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();

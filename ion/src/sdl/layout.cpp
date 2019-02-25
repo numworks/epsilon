@@ -7,24 +7,27 @@ namespace Layout {
 #define X(x) ((x)/(1250.0f))
 #define Y(y) ((y)/(2100.0f))
 
-static int sWidth = 0;
-static int sHeight = 0;
+static SDL_Rect sFrame;
 
 static void makeAbsolute(SDL_FRect * f, SDL_Rect * r) {
-  r->x = f->x * sWidth;
-  r->y = f->y * sHeight;
-  r->w = f->w * sWidth;
-  r->h = f->h * sHeight;
+  r->x = f->x * sFrame.w + sFrame.x;
+  r->y = f->y * sFrame.h + sFrame.y;
+  r->w = f->w * sFrame.w;
+  r->h = f->h * sFrame.h;
 }
 
-static void makeAbsolute(SDL_FPoint * f, SDL_Point * p) {
-  p->x = f->x * sWidth;
-  p->y = f->y * sHeight;
+void setFrame(SDL_Rect * rect) {
+  sFrame.x = rect->x;
+  sFrame.y = rect->y;
+  sFrame.w = rect->w;
+  sFrame.h = rect->h;
 }
 
-void setSize(int width, int height) {
-  sWidth = width;
-  sHeight = height;
+void getAreaOfInterest(SDL_FRect * fRect) {
+  fRect->x = X(237);
+  fRect->y = Y(83);
+  fRect->w = X(776);
+  fRect->h = Y(1733);
 }
 
 void getScreenRect(SDL_Rect * rect) {
@@ -34,12 +37,6 @@ void getScreenRect(SDL_Rect * rect) {
   fRect.w = X(640);
   fRect.h = Y(485);
   makeAbsolute(&fRect, rect);
-}
-
-Keyboard::Key keyAtF(SDL_FPoint * f) {
-  SDL_Point p;
-  makeAbsolute(f, &p);
-  return keyAt(&p);
 }
 
 Keyboard::Key keyAt(SDL_Point * p) {

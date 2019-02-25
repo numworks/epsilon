@@ -23,11 +23,11 @@ Event getEvent(int * timeout) {
     return None;
   }
 
-  if (event.type == SDL_FINGERDOWN) {
-    SDL_FPoint fp;
-    fp.x = event.tfinger.x;
-    fp.y = event.tfinger.y;
-    Keyboard::Key key = SDL::Layout::keyAtF(&fp);
+  if (event.type == SDL_MOUSEBUTTONDOWN) {
+    SDL_Point p;
+    p.x = event.button.x;
+    p.y = event.button.y;
+    Keyboard::Key key = SDL::Layout::keyAt(&p);
     if (key == Keyboard::Key::None) {
       return None;
     }

@@ -27,6 +27,7 @@ namespace Main {
 static SDL_Window * sWindow = nullptr;
 static SDL_Surface * sSurface = nullptr;
 static SDL_Surface * sBackgroundSurface = nullptr;
+static SDL_Rect sLayoutRect;
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -55,7 +56,29 @@ void relayout() {
   int windowWidth = 0;
   int windowHeight = 0;
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
-  Layout::setSize(windowWidth, windowHeight);
+
+  SDL_FRect areaOfInterest;
+  Layout::getAreaOfInterest(&areaOfInterest);
+
+  float aoiRatio = areaOfInterest.w / areaOfInterest.h;
+  float windowRatio = static_cast<float>(windowWidth)/static_cast<float>(windowHeight);
+
+  if (aoiRatio < windowRatio) {
+    // Area of interest is wider than the window (aoe is 16:9, window is 4:3)
+    // There will be "black bars" above and below
+    sLayoutRect.w = static_cast<float>(windowWidth) / areaOfInterest.w;
+    sLayoutRect.x = - areaOfInterest.x * sLayoutRect.w; // Compensate the
+    sLayoutRect.h = sLayoutRect.w / windowRatio;
+    sLayoutRect.y = - areaOfInterest.y * sLayoutRect.h / 2; // Center vertically
+  } else {
+    sLayoutRect.h = static_cast<float>(windowHeight) / areaOfInterest.h;
+    sLayoutRect.y = - areaOfInterest.y * sLayoutRect.h; // Compensate, align left
+    sLayoutRect.w = sLayoutRect.h * windowRatio;
+    sLayoutRect.x = - areaOfInterest.x * sLayoutRect.w / 2; // Center horizontally
+    // Area of interest is taller than the window
+  }
+
+  Layout::setFrame(&sLayoutRect);
 }
 
 static void blitBackground(SDL_Rect * rect) {
@@ -68,7 +91,7 @@ void refresh() {
   SDL_Rect screenRect;
   Layout::getScreenRect(&screenRect);
 
-  blitBackground(nullptr);
+  blitBackground(&sLayoutRect);
   Display::blit(sSurface, &screenRect);
   SDL_UpdateWindowSurface(sWindow);
 }

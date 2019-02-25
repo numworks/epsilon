@@ -11,22 +11,31 @@ using namespace Poincare;
 
 namespace Solver {
 
+void addEquationWithText(EquationStore * equationStore, const char * text) {
+  Ion::Storage::Record::ErrorStatus err = equationStore->addEmptyModel();
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  Ion::Storage::Record record = equationStore->recordAtIndex(equationStore->numberOfModels()-1);
+  Shared::ExpiringPointer<Equation> model = equationStore->modelForRecord(record);
+  model->setContent(text);
+}
+
 void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables[], const char * solutions[], int numberOfSolutions) {
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
-    Shared::ExpressionModel * e = equationStore.addEmptyModel();
-    e->setContent(equations[index++]);
+    addEquationWithText(&equationStore, equations[index++]);
   }
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   quiz_assert(err == error);
   if (err != EquationStore::Error::NoError) {
+    equationStore.removeAll();
     return;
   }
   quiz_assert(equationStore.type() == type);
   quiz_assert(equationStore.numberOfSolutions() == numberOfSolutions);
   if (numberOfSolutions == INT_MAX) {
+    equationStore.removeAll();
     return;
   }
   if (type == EquationStore::Type::LinearSystem) {
@@ -42,13 +51,13 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
     equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, bufferSize);
     quiz_assert(strcmp(buffer, solutions[i]) == 0);
   }
+  equationStore.removeAll();
 }
 
 void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char * variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
   Shared::GlobalContext globalContext;
   EquationStore equationStore;
-  Shared::ExpressionModel * e = equationStore.addEmptyModel();
-  e->setContent(equations);
+  addEquationWithText(&equationStore, equations);
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   quiz_assert(err == EquationStore::Error::RequireApproximateSolution);
   equationStore.setIntervalBound(0, xMin);
@@ -60,6 +69,7 @@ void assert_equation_approximate_solve_to(const char * equations, double xMin, d
     quiz_assert(std::fabs(equationStore.approximateSolutionAtIndex(i) - solutions[i]) < 1E-5);
   }
   quiz_assert(equationStore.haveMoreApproximationSolutions(&globalContext) == hasMoreSolutions);
+  equationStore.removeAll();
 }
 
 QUIZ_CASE(equation_solve) {

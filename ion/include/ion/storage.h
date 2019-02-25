@@ -48,6 +48,9 @@ public:
     bool operator!=(const Record & other) const {
       return !(*this == other);
     }
+#if ION_STORAGE_LOG
+    void log();
+#endif
     uint32_t checksum();
     bool isNull() const {
       return m_fullNameCRC32 == 0;
@@ -76,6 +79,11 @@ public:
   };
 
   Storage();
+
+#if ION_STORAGE_LOG
+  void log();
+#endif
+
   size_t availableSize();
   uint32_t checksum();
 

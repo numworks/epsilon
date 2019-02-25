@@ -19,27 +19,62 @@ TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont
 {
 }
 
+static inline void InsertSpacesAtLocation(int spacesCount, char * buffer, int bufferSize) {
+  assert(buffer != nullptr);
+  assert(strlen(buffer) + spacesCount < bufferSize);
+
+  size_t sizeToMove = strlen(buffer) + 1;
+  size_t spaceCharSize = UTF8Decoder::CharSizeOfCodePoint(' ');
+  size_t spacesLength = spacesCount * spaceCharSize;
+  memmove(buffer + spacesLength, buffer, sizeToMove);
+  for (int i = 0; i < spacesCount; i++) {
+    int spaceOffset = i * spaceCharSize;
+    UTF8Decoder::CodePointToChars(' ', buffer + spaceOffset, bufferSize - spaceOffset);
+  }
+}
+
 bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
-  const char * nextCursorLocation = cursorLocation();
-
-  const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(text);
-
   constexpr int bufferSize = TextField::maxBufferSize();
   char buffer[bufferSize];
 
+  size_t textLength = strlcpy(buffer, text, bufferSize);
+
+  // Add indentation spaces
+  if (indentation) {
+    // Compute the indentation
+    int spacesCount = indentationBeforeCursor();
+    const char * teaxtAreaBuffer = contentView()->text();
+    if (cursorLocation() > teaxtAreaBuffer && UTF8Helper::PreviousCodePointIs(teaxtAreaBuffer, cursorLocation(), ':')) {
+      spacesCount += k_indentationSpaces;
+    }
+
+    // Check the text will not overflow the buffer
+    int totalIndentationSize = UTF8Helper::CountOccurrences(text, '\n') * spacesCount;
+    if (contentView()->getText()->textLength() + textLength + totalIndentationSize >= contentView()->getText()->bufferSize() || textLength == 0) {
+      return false;
+    }
+
+    UTF8Helper::PerformAtCodePoints(
+        buffer, '\n',
+        [](int codePointOffset, void * text, int indentation) {
+          int offset = codePointOffset + UTF8Decoder::CharSizeOfCodePoint('\n');
+          InsertSpacesAtLocation(indentation, (char *)text + offset, TextField::maxBufferSize() - offset); //TODO
+        },
+        [](int c1, void * c2, int c3) {},
+        (void *)buffer,
+        spacesCount);
+  }
+  const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(buffer);
+
   // Remove the Empty code points
-  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, text, UCodePointEmpty, &cursorPositionInCommand);
+  UTF8Helper::RemoveCodePoint(buffer, UCodePointEmpty, &cursorPositionInCommand);
 
   // Insert the text
-  if ((indentation && insertTextWithIndentation(buffer, cursorLocation())) || insertTextAtLocation(buffer, cursorLocation())) {
+  if (insertTextAtLocation(buffer, cursorLocation())) {
     // Set the cursor location
-    if (forceCursorRightOfText) {
-      nextCursorLocation += strlen(buffer);
-    } else {
-      nextCursorLocation += cursorPositionInCommand - text;
-    }
+    const char * nextCursorLocation = cursorLocation() + (forceCursorRightOfText ? strlen(buffer) : cursorPositionInCommand - text);
+    setCursorLocation(nextCursorLocation);
   }
-  setCursorLocation(nextCursorLocation);
   return true;
 }
 
@@ -93,36 +128,6 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
 void TextArea::setText(char * textBuffer, size_t textBufferSize) {
   contentView()->setText(textBuffer, textBufferSize);
   contentView()->moveCursorGeo(0, 0);
-}
-
-bool TextArea::insertTextWithIndentation(const char * textBuffer, const char * location) {
-  // Compute the indentation
-  int indentation = indentationBeforeCursor();
-  const char * buffer = contentView()->text();
-  if (cursorLocation() > buffer && UTF8Helper::PreviousCodePointIs(buffer, cursorLocation(), ':')) {
-    indentation += k_indentationSpaces;
-  }
-
-  // Check the text will not overflow the buffer
-  int totalIndentationSize = UTF8Helper::CountOccurrences(textBuffer, '\n') * indentation;
-  int textSize = strlen(textBuffer);
-  if (contentView()->getText()->textLength() + textSize + totalIndentationSize >= contentView()->getText()->bufferSize() || textSize == 0) {
-    return false;
-  }
-
-  // Insert the text
-  insertTextAtLocation(textBuffer, location);
-
-  // Insert the indentation
-  UTF8Helper::PerformAtCodePoints(
-      textBuffer, '\n',
-      [](int codePointOffset, void * text, int indentation) {
-        ((Text *)text)->insertSpacesAtLocation(indentation, const_cast<char *>(((Text *)text)->text() + codePointOffset + UTF8Decoder::CharSizeOfCodePoint('\n')));
-      },
-      [](int c1, void * c2, int c3) { },
-      (void *)(contentView()->getText()),
-      indentation);
-  return true;
 }
 
 int TextArea::indentationBeforeCursor() const {

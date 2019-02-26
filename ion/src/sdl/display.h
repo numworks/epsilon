@@ -8,10 +8,10 @@ namespace Ion {
 namespace SDL {
 namespace Display {
 
-void init();
+void init(SDL_Renderer * renderer);
 void quit();
 
-void blit(SDL_Surface * dst, SDL_Rect * rect);
+void draw(SDL_Renderer * renderer, SDL_Rect * rect);
 
 }
 }

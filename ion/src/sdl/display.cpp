@@ -33,25 +33,36 @@ namespace SDL {
 namespace Display {
 
 static SDL_Surface * sFramebufferSurface = nullptr;
+static SDL_Texture * sFramebufferTexture = nullptr;
 
-void init() {
-  sFramebufferSurface = SDL_CreateRGBSurfaceWithFormatFrom(
-    sPixels,
+void init(SDL_Renderer * renderer) {
+  sFramebufferTexture = SDL_CreateTexture(
+    renderer,
+    SDL_PIXELFORMAT_RGB565,
+    SDL_TEXTUREACCESS_STREAMING,
     Ion::Display::Width,
-    Ion::Display::Height,
-    16,
-    Ion::Display::Width * 2,
-    SDL_PIXELFORMAT_RGB565
+    Ion::Display::Height
   );
 }
 
 void quit() {
-  SDL_FreeSurface(sFramebufferSurface);
-  sFramebufferSurface = nullptr;
+  SDL_DestroyTexture(sFramebufferTexture);
+  sFramebufferTexture = nullptr;
 }
 
-void blit(SDL_Surface * dst, SDL_Rect * rect) {
-  SDL_BlitScaled(sFramebufferSurface, NULL, dst, rect);
+void draw(SDL_Renderer * renderer, SDL_Rect * rect) {
+#if 1
+  int pitch = 0;
+  void * pixels = nullptr;
+  SDL_LockTexture(sFramebufferTexture, nullptr, &pixels, &pitch);
+  assert(pitch == 2*Ion::Display::Width);
+  memcpy(pixels, sPixels, sizeof(sPixels));
+  SDL_UnlockTexture(sFramebufferTexture);
+
+  SDL_RenderCopy(renderer, sFramebufferTexture, nullptr, rect);
+#else
+  SDL_UpdateTexture(sFramebufferTexture, nullptr, sPixels, 2*Ion::Display::Width);
+#endif
 }
 
 }

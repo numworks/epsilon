@@ -9,8 +9,8 @@
 
 #include <SDL.h>
 
-void Ion::Timing::msleep(unsigned int) {
-  // Do nothing!
+void Ion::Timing::msleep(uint32_t ms) {
+//TODO  SDL_Delay(ms);
 }
 
 int main(int argc, char * argv[]) {
@@ -25,8 +25,8 @@ namespace SDL {
 namespace Main {
 
 static SDL_Window * sWindow = nullptr;
-static SDL_Surface * sSurface = nullptr;
-static SDL_Surface * sBackgroundSurface = nullptr;
+static SDL_Renderer * sRenderer = nullptr;
+static SDL_Texture * sBackgroundTexture = nullptr;
 static SDL_Rect sLayoutRect;
 
 void init() {
@@ -45,11 +45,15 @@ void init() {
 
   SDL_SetWindowFullscreen(sWindow, 0);
 
-  sSurface = SDL_GetWindowSurface(sWindow);
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-  Display::init();
+  sRenderer = SDL_CreateRenderer(sWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  sBackgroundSurface = loadImage("background.jpg");
+  Display::init(sRenderer);
+
+  sBackgroundTexture = loadImage(sRenderer, "background.jpg");
+
+  relayout();
 }
 
 void relayout() {
@@ -79,21 +83,24 @@ void relayout() {
   }
 
   Layout::setFrame(&sLayoutRect);
-}
 
-static void blitBackground(SDL_Rect * rect) {
-  SDL_BlitScaled(sBackgroundSurface, NULL, sSurface, rect);
+  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &sLayoutRect);
+  SDL_RenderPresent(sRenderer);
+
+  refresh();
+
+  //SDL_UpdateWindowSurface(sWindow);
 }
 
 void refresh() {
-  relayout();
-
   SDL_Rect screenRect;
   Layout::getScreenRect(&screenRect);
 
-  blitBackground(&sLayoutRect);
-  Display::blit(sSurface, &screenRect);
-  SDL_UpdateWindowSurface(sWindow);
+  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &sLayoutRect);
+
+  Display::draw(sRenderer, &screenRect);
+  SDL_RenderPresent(sRenderer);
+  //SDL_UpdateWindowSurface(sWindow);
 }
 
 }

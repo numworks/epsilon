@@ -4,7 +4,7 @@
 #include <jni.h>
 #include <android/bitmap.h>
 
-SDL_Surface * loadImage(const char * identifier) {
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
@@ -26,28 +26,22 @@ SDL_Surface * loadImage(const char * identifier) {
   AndroidBitmap_lockPixels(env, j_bitmap, &bitmapPixels);
   // TODO: Handle the case where lockPixels fails
 
-  SDL_Surface * inputSurface = SDL_CreateRGBSurfaceWithFormatFrom(
-    bitmapPixels,
+  SDL_Texture * texture = SDL_CreateTexture(
+    renderer,
+    SDL_PIXELFORMAT_ABGR8888,
+    SDL_TEXTUREACCESS_STATIC,
     bitmapInfo.width,
-    bitmapInfo.height,
-    32, // BPP. TODO: Infer from pixel format
-    4 * bitmapInfo.width, // Pitch. TODO: Infer from pixel format
-    SDL_PIXELFORMAT_ABGR8888
+    bitmapInfo.height
   );
 
-  SDL_Surface * outputSurface = SDL_CreateRGBSurface(
-    0, // Flags. Unused.
-    bitmapInfo.width, // Width
-    bitmapInfo.height, // Height
-    32, // Bits per pixel
-    0, 0, 0, 0 // Default masks for the given depth
+  SDL_UpdateTexture(
+      texture,
+      nullptr,
+      bitmapPixels,
+      4 * bitmapInfo.width
   );
-
-  SDL_BlitSurface(inputSurface, NULL, outputSurface, NULL);
-
-  SDL_FreeSurface(inputSurface);
 
   AndroidBitmap_unlockPixels(env, j_bitmap);
 
-  return outputSurface;
+  return texture;
 }

@@ -1,39 +1,35 @@
 #ifndef SEQUENCE_SEQUENCE_STORE_H
 #define SEQUENCE_SEQUENCE_STORE_H
 
-#include "../shared/function_store.h"
+#include "../shared/storage_function_store.h"
 #include "sequence.h"
 #include <stdint.h>
 #include <escher.h>
 
 namespace Sequence {
 
-class SequenceStore : public Shared::FunctionStore {
+class SequenceStore : public Shared::StorageFunctionStore {
 public:
-  using Shared::FunctionStore::FunctionStore;
-  uint32_t storeChecksum() override;
-  Sequence * modelAtIndex(int i) override {
-    assert(i>=0 && i<m_numberOfModels);
-    return &m_sequences[i];
-  }
-  Sequence * activeFunctionAtIndex(int i) override { return (Sequence *)Shared::FunctionStore::activeFunctionAtIndex(i); }
-  Sequence * definedFunctionAtIndex(int i) override { return (Sequence *)Shared::FunctionStore::definedFunctionAtIndex(i); }
+  using Shared::StorageFunctionStore::StorageFunctionStore;
+  char symbol() const override { return Sequence::Symbol(); }
+  Shared::ExpiringPointer<Sequence> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Sequence>(static_cast<Sequence *>(privateModelForRecord(record))); }
   /* WARNING: after calling removeModel or removeAll, the sequence context
    * need to invalidate its cache as the sequences evaluations might have
    * changed */
   int maxNumberOfModels() const override { return MaxNumberOfSequences; }
-  char symbol() const override;
+
   static constexpr const char * k_sequenceNames[MaxNumberOfSequences] = {
     "u", "v"//, "w"
   };
-  const char * firstAvailableName() override {
-    return firstAvailableAttribute(k_sequenceNames, FunctionStore::name);
-  }
+
 private:
-  Sequence * emptyModel() override;
-  Sequence * nullModel() override;
-  void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
-  Sequence m_sequences[MaxNumberOfSequences];
+  const char * modelExtension() const override { return Sequence::extension; }
+  Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+  /* We don't really use model memoization as the number of Sequence is limited
+   * and we keep enough Sequences to store them all. */
+  void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  Shared::SingleExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
+  mutable Sequence m_sequences[MaxNumberOfSequences];
 };
 
 }

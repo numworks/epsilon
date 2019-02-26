@@ -2,4 +2,4 @@
 //
 #include <SDL.h>
 
-SDL_Surface * loadImage(const char * identifier);
+SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier);

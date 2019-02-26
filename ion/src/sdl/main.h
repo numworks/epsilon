@@ -9,6 +9,7 @@ void init();
 void quit();
 
 void refresh();
+void relayout();
 
 }
 }

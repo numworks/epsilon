@@ -12,6 +12,7 @@ public:
   bool updateIsChargingState();
   bool updatePluggedState();
   void refreshPreferences();
+  void reloadTitleBarView();
   bool updateAlphaLock();
   void hideTitleBarView(bool hide);
 private:

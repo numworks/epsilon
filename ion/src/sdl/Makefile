@@ -16,7 +16,7 @@ objs += $(addprefix ion/src/shared/, \
   dummy/usb.o \
 )
 
-objs += $(addprefix ion/src/sdl/, \
+objs += $(addprefix ion/src/sdl/shared/, \
   display.o \
   events.o \
   main.o \
@@ -24,10 +24,12 @@ objs += $(addprefix ion/src/sdl/, \
   layout.o \
 )
 
-objs += $(addprefix ion/src/sdl/android/, \
-  images.o \
-)
+include ion/src/sdl/$(MODEL)/Makefile
 
-SFLAGS += -I/Users/romain/Sources/SDL/include
+#objs += $(addprefix ion/src/sdl/android/, \
+#  images.o \
+#)
 
-include ion/src/sdl/external/Makefile
+#SFLAGS += -I/Users/romain/Sources/SDL/include
+
+#include ion/src/sdl/external/Makefile

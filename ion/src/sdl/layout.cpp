@@ -7,6 +7,8 @@ namespace Layout {
 #define X(x) ((x)/(1250.0f))
 #define Y(y) ((y)/(2100.0f))
 
+constexpr SDL_FRect areaOfInterest = {X(237), Y(83), X(776), Y(1733)};
+
 static SDL_Rect sFrame;
 
 static void makeAbsolute(SDL_FRect * f, SDL_Rect * r) {
@@ -16,18 +18,50 @@ static void makeAbsolute(SDL_FRect * f, SDL_Rect * r) {
   r->h = f->h * sFrame.h;
 }
 
-void setFrame(SDL_Rect * rect) {
-  sFrame.x = rect->x;
-  sFrame.y = rect->y;
-  sFrame.w = rect->w;
-  sFrame.h = rect->h;
-}
+void recompute(int width, int height) {
+  float windowWidth = static_cast<float>(width);
+  float windowHeight = static_cast<float>(height);
 
-void getAreaOfInterest(SDL_FRect * fRect) {
-  fRect->x = X(237);
-  fRect->y = Y(83);
-  fRect->w = X(776);
-  fRect->h = Y(1733);
+  float aoiRatio = (areaOfInterest.w / areaOfInterest.h) * (1250.0f/2100.0f);
+  float windowRatio = windowWidth/windowHeight;
+
+  if (aoiRatio > windowRatio) {
+    // Area of interest is wider than the window (e.g. aoe 16:9, window 4:3)
+    // There will be "black bars" above and below
+    // We want the areaOfInterest's rect in pixels to be
+    // aoiInPixels.w = windowWidth
+    // aoiInPixels.x = 0
+    // aoiInPixels.h = windowWidth / (aoiRatio*deviceRatio)
+    // aoiInPixels.y = (windowHeight - aoiInPixels.h)/2;
+    // But we also know that
+    // aoiInPixels.x = sFrame.x + areaOfInterest.x*sFrame.w
+    // aoiInPixels.y = sFrame.y + areaOfInterest.y*sFrame.h
+    // aoiInPixels.w = sFrame.w * areaOfInterest.w
+    // aoiInPixels.h = sFrame.h * areaOfInterest*h
+
+    sFrame.w = windowWidth / areaOfInterest.w;
+    sFrame.h = (windowWidth / aoiRatio) / areaOfInterest.h;
+    sFrame.x = - areaOfInterest.x * sFrame.w;
+    sFrame.y = (windowHeight - windowWidth/aoiRatio)/2 - areaOfInterest.y * sFrame.h;
+  } else {
+    // Area of interest is taller than the window (e.g. window 16:9, aoe 4:3)
+    // There will be "black bars" on the sides
+    // We want the areaOfInterest's rect in pixels to be
+    // aoiInPixels.h = windowHeight
+    // aoiInPixels.y = 0
+    // aoiInPixels.x = windowHeight * aoiRatio
+    // aoiInPixels.w = (windowWidth - aoiInPixels.w)/2;
+    // But we also know that
+    // aoiInPixels.x = sFrame.x + areaOfInterest.x*sFrame.w
+    // aoiInPixels.y = sFrame.y + areaOfInterest.y*sFrame.h
+    // aoiInPixels.w = sFrame.w * areaOfInterest.w
+    // aoiInPixels.h = sFrame.h * areaOfInterest*h
+
+    sFrame.h = windowHeight / areaOfInterest.h;
+    sFrame.w = (windowHeight * aoiRatio) / areaOfInterest.w;
+    sFrame.y = - areaOfInterest.y * sFrame.h;
+    sFrame.x = (windowWidth - windowHeight*aoiRatio)/2 - areaOfInterest.x * sFrame.w;
+  }
 }
 
 void getScreenRect(SDL_Rect * rect) {
@@ -37,6 +71,13 @@ void getScreenRect(SDL_Rect * rect) {
   fRect.w = X(640);
   fRect.h = Y(485);
   makeAbsolute(&fRect, rect);
+}
+
+void getBackgroundRect(SDL_Rect * rect) {
+  rect->x = sFrame.x;
+  rect->y = sFrame.y;
+  rect->w = sFrame.w;
+  rect->h = sFrame.h;
 }
 
 Keyboard::Key keyAt(SDL_Point * p) {

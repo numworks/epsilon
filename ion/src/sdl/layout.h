@@ -8,14 +8,13 @@ namespace Ion {
 namespace SDL {
 namespace Layout {
 
-void setFrame(SDL_Rect * rect);
-void getAreaOfInterest(SDL_FRect * fRect);
+void recompute(int width, int height);
 
 void getScreenRect(SDL_Rect * rect);
-Ion::Keyboard::Key keyAt(SDL_Point * p);
-//Ion::Keyboard::Key keyAtF(SDL_FPoint * p);
-
+void getBackgroundRect(SDL_Rect * rect);
 void getKeyRect(int validKeyIndex, SDL_Rect * rect);
+
+Ion::Keyboard::Key keyAt(SDL_Point * p);
 
 }
 }

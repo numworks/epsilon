@@ -10,7 +10,7 @@
 #include <SDL.h>
 
 void Ion::Timing::msleep(uint32_t ms) {
-//TODO  SDL_Delay(ms);
+  SDL_Delay(ms);
 }
 
 int main(int argc, char * argv[]) {

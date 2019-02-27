@@ -5,7 +5,7 @@
 
 class Window : public View {
 public:
-  Window();
+  Window() : m_contentView(nullptr) {}
   void redraw(bool force = false);
   void setContentView(View * contentView);
 protected:

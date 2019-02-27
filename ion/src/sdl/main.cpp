@@ -27,7 +27,6 @@ namespace Main {
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
 static SDL_Texture * sBackgroundTexture = nullptr;
-static SDL_Rect sLayoutRect;
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -60,31 +59,11 @@ void relayout() {
   int windowWidth = 0;
   int windowHeight = 0;
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
+  Layout::recompute(windowWidth, windowHeight);
+  SDL_Rect backgroundRect;
+  Layout::getBackgroundRect(&backgroundRect);
 
-  SDL_FRect areaOfInterest;
-  Layout::getAreaOfInterest(&areaOfInterest);
-
-  float aoiRatio = areaOfInterest.w / areaOfInterest.h;
-  float windowRatio = static_cast<float>(windowWidth)/static_cast<float>(windowHeight);
-
-  if (aoiRatio < windowRatio) {
-    // Area of interest is wider than the window (aoe is 16:9, window is 4:3)
-    // There will be "black bars" above and below
-    sLayoutRect.w = static_cast<float>(windowWidth) / areaOfInterest.w;
-    sLayoutRect.x = - areaOfInterest.x * sLayoutRect.w; // Compensate the
-    sLayoutRect.h = sLayoutRect.w / windowRatio;
-    sLayoutRect.y = - areaOfInterest.y * sLayoutRect.h / 2; // Center vertically
-  } else {
-    sLayoutRect.h = static_cast<float>(windowHeight) / areaOfInterest.h;
-    sLayoutRect.y = - areaOfInterest.y * sLayoutRect.h; // Compensate, align left
-    sLayoutRect.w = sLayoutRect.h * windowRatio;
-    sLayoutRect.x = - areaOfInterest.x * sLayoutRect.w / 2; // Center horizontally
-    // Area of interest is taller than the window
-  }
-
-  Layout::setFrame(&sLayoutRect);
-
-  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &sLayoutRect);
+  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   SDL_RenderPresent(sRenderer);
 
   refresh();
@@ -95,12 +74,12 @@ void relayout() {
 void refresh() {
   SDL_Rect screenRect;
   Layout::getScreenRect(&screenRect);
+  SDL_Rect backgroundRect;
+  Layout::getBackgroundRect(&backgroundRect);
 
-  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &sLayoutRect);
-
+  SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   Display::draw(sRenderer, &screenRect);
   SDL_RenderPresent(sRenderer);
-  //SDL_UpdateWindowSurface(sWindow);
 }
 
 }

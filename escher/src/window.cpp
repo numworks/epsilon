@@ -4,11 +4,6 @@ extern "C" {
 #include <assert.h>
 }
 
-Window::Window() :
-  m_contentView(nullptr)
-{
-}
-
 void Window::redraw(bool force) {
   if (force) {
     markRectAsDirty(bounds());

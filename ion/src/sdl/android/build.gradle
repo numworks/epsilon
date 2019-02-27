@@ -40,7 +40,7 @@ android {
       res.srcDir 'src/res'
       java.srcDir 'src'
       jniLibs.srcDir 'libs'
-      assets.srcDir '../../../assets'
+      assets.srcDir '../assets'
     }
   }
 

@@ -1,4 +1,7 @@
 # Quiz output
 quiz/src/symbols.c
 
-build
+# Ignore SDL files
+ion/src/sdl/android/build
+ion/src/sdl/android/libs
+ion/src/sdl/android/src/java/org

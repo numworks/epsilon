@@ -12,7 +12,6 @@ void recompute(int width, int height);
 
 void getScreenRect(SDL_Rect * rect);
 void getBackgroundRect(SDL_Rect * rect);
-void getKeyRect(int validKeyIndex, SDL_Rect * rect);
 
 Ion::Keyboard::Key keyAt(SDL_Point * p);
 

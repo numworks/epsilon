@@ -300,6 +300,10 @@ void AppsContainer::refreshPreferences() {
   m_window.refreshPreferences();
 }
 
+void AppsContainer::reloadTitleBarView() {
+  m_window.reloadTitleBarView();
+}
+
 void AppsContainer::displayExamModePopUp(bool activate) {
   m_examPopUpController.setActivatingExamMode(activate);
   activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);

@@ -82,6 +82,7 @@ void KDFont::colorizeGlyphBuffer(const RenderPalette * renderPalette, GlyphBuffe
 
 KDFont::GlyphIndex KDFont::indexForCodePoint(CodePoint c) const {
   int defaultIndex = NumberOfCodePoints - 2;
+  assert(defaultIndex == 132); // If not, change kandinsky/test/font.cpp
   assert(CodePoints[defaultIndex] == 0xFFFD);
 #define USE_BINARY_SEARCH 0
 #if USE_BINARY_SEARCH

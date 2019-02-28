@@ -16,6 +16,7 @@ public:
   BufferTextView * aView() { return &m_aView; }
   BufferTextView * bView() { return &m_bView; }
   void setNumberOfSubviews(int numberOfSubviews) { m_numberOfSubviews = numberOfSubviews; }
+  static constexpr int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 4;
 private:
   int numberOfSubviews() const override { return m_numberOfSubviews; }
   View * subviewAtIndex(int index) override;

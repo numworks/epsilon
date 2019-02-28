@@ -30,7 +30,7 @@ const char * ListController::title() {
 int ListController::numberOfExpressionRows() {
   int numberOfRows = 0;
   for (int i = 0; i < modelStore()->numberOfModels(); i++) {
-    ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(i));
+    Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(i));
     numberOfRows += sequence->numberOfElements();
   }
   if (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()) {
@@ -45,7 +45,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     // Add sequence row
     return defaultHeight;
   }
-  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
+  Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
   Layout layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
@@ -70,7 +70,7 @@ Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textIn
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
+  Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -88,7 +88,7 @@ void ListController::selectPreviousNewSequenceCell() {
 
 void ListController::editExpression(int sequenceDefinition, Ion::Events::Event event) {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
+  Sequence * sequence = modelStore()->modelForRecord(record);
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -152,7 +152,7 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
   // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
   resetMemoizationForIndex(k_memoizedCellsCount/2);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
+  Sequence * sequence = modelStore()->modelForRecord(record);
   Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text) : sequence->setSecondInitialConditionContent(text);
   return (error == Ion::Storage::Record::ErrorStatus::None);
 }
@@ -195,7 +195,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   myCell->setBaseline(baseline(j));
   // Set the layout
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
-  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
+  Sequence * sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setLayout(sequence->definitionName());
   }
@@ -213,7 +213,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
-  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
+  Sequence * sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setLayout(sequence->layout());
   }
@@ -239,7 +239,7 @@ int ListController::modelIndexForRow(int j) {
   int sequenceIndex = -1;
   do {
     sequenceIndex++;
-    ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
+    Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
   return sequenceIndex;
@@ -258,13 +258,13 @@ int ListController::sequenceDefinitionForRow(int j) {
   }
   int rowIndex = 0;
   int sequenceIndex = -1;
-  ExpiringPointer<Sequence> sequence(nullptr);
+  Sequence * sequence;
   do {
     sequenceIndex++;
     sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
-  assert(!sequence.isNull());
+  assert(sequence);
   return sequence->numberOfElements()-rowIndex+j;
 }
 
@@ -279,7 +279,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 void ListController::reinitSelectedExpression(ExpiringPointer<SingleExpressionModelHandle> model) {
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
-  ExpiringPointer<Sequence> sequence = static_cast<ExpiringPointer<Sequence>>(model);
+  Sequence * sequence = static_cast<Sequence *>(model.pointer());
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
       if (sequence->firstInitialConditionExpressionClone().isUninitialized()) {

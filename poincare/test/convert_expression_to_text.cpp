@@ -269,8 +269,8 @@ QUIZ_CASE(poincare_approximation_to_text) {
   assert_expression_prints_to(Float<double>::Builder(1.2345E3), "1234.5", DecimalMode);
   assert_expression_prints_to(Float<double>::Builder(-1.2345E3), "-1234.5", DecimalMode);
   assert_expression_prints_to(Float<double>::Builder(0.99999999999995), "9.9999999999995ᴇ-1", ScientificMode, 14);
-  assert_expression_prints_to(Float<double>::Builder(0.00000099999999999995), "9.9999999999995ᴇ-7", DecimalMode, 14);
-  assert_expression_prints_to(Float<double>::Builder(0.0000009999999999901200121020102010201201201021099995), "9.9999999999012ᴇ-7", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>::Builder(0.00000000099999999999995), "9.9999999999995ᴇ-10", DecimalMode, 14);
+  assert_expression_prints_to(Float<double>::Builder(0.0000000009999999999901200121020102010201201201021099995), "9.9999999999012ᴇ-10", DecimalMode, 14);
   assert_expression_prints_to(Float<float>::Builder(1.2345E-1), "0.12345", DecimalMode);
   assert_expression_prints_to(Float<float>::Builder(1), "1", DecimalMode);
   assert_expression_prints_to(Float<float>::Builder(0.9999999999999995), "1", DecimalMode);

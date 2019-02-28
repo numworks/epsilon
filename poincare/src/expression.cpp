@@ -110,6 +110,22 @@ bool Expression::isApproximate(Context & context) const {
         }, context, true);
 }
 
+bool Expression::IsRandom(const Expression e, Context & context, bool replaceSymbols) {
+  return e.isRandom()
+    || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
+        && replaceSymbols
+        && SymbolAbstract::matches(
+            static_cast<const Symbol&>(e),
+            [](const Expression e, Context & context, bool replaceSymbols) {
+              return e.recursivelyMatches(
+                  [](const Expression e, Context & context, bool replaceSymbols) {
+                    return Expression::IsRandom(e, context, replaceSymbols);
+                  },
+                  context, replaceSymbols);
+            },
+            context));
+}
+
 bool Expression::IsMatrix(const Expression e, Context & context, bool replaceSymbols) {
   return e.type() == ExpressionNode::Type::Matrix
     || e.type() == ExpressionNode::Type::ConfidenceInterval

@@ -224,7 +224,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::ComplexFormat
       removeChildAtIndexInPlace(i+1);
       continue;
     }
-    if (TermsHaveIdenticalNonNumeralFactors(e1, e2)) {
+    if (TermsHaveIdenticalNonNumeralFactors(e1, e2, context)) {
       factorizeChildrenAtIndexesInPlace(i, i+1, context, complexFormat, angleUnit, target);
       continue;
     }
@@ -316,9 +316,10 @@ const Expression Addition::FirstNonNumeralFactor(const Expression & e) {
   return e.childAtIndex(0);
 }
 
-bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2) {
+bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2, Context & context) {
   /* Return true if two expressions differ only by a rational factor. For
-   * example, 2*pi and pi do, 2*pi and 2*ln(2) don't. */
+   * example, 2*pi and pi do, 2*pi and 2*ln(2) don't. We do not want to
+   * factorize random(). */
 
   int numberOfNonNumeralFactorsInE1 = NumberOfNonNumeralFactors(e1);
   int numberOfNonNumeralFactorsInE2 = NumberOfNonNumeralFactors(e2);
@@ -329,6 +330,10 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
 
   int numberOfNonNumeralFactors = numberOfNonNumeralFactorsInE1;
   if (numberOfNonNumeralFactors == 1) {
+    Expression nonNumeralFactor = FirstNonNumeralFactor(e1);
+    if (nonNumeralFactor.recursivelyMatches(Expression::IsRandom, context, true)) {
+      return false;
+    }
     return FirstNonNumeralFactor(e1).isIdenticalTo(FirstNonNumeralFactor(e2));
   } else {
     assert(numberOfNonNumeralFactors > 1);
@@ -337,19 +342,37 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
 }
 
 Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
+  /* We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d), except if one of
+   * the denominators contains random, in which case the factors with random
+   * should stay appart. */
+
+  /* a will store the random factors, which should not be put to the same
+   * denominator. */
+  Addition a = Addition::Builder();
 
   // Step 1: We want to compute the common denominator, b*d
   Multiplication commonDenominator = Multiplication::Builder();
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression currentDenominator = childAtIndex(i).denominator(context, complexFormat, angleUnit);
+    Expression childI = childAtIndex(i);
+    Expression currentDenominator = childI.denominator(context, complexFormat, angleUnit);
     if (!currentDenominator.isUninitialized()) {
+      if (currentDenominator.recursivelyMatches(Expression::IsRandom, context, true)) {
+        // Remove "random" factors
+        removeChildInPlace(childI, childI.numberOfChildren());
+        a.addChildAtIndexInPlace(childI, a.numberOfChildren(), a.numberOfChildren());
+        i--;
+        continue;
+      }
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
       commonDenominator.addMissingFactors(currentDenominator, context, complexFormat, angleUnit);
     }
   }
   if (commonDenominator.numberOfChildren() == 0) {
     // If commonDenominator is empty this means that no child was a fraction.
+    while (a.numberOfChildren() > 0) {
+      // Put back the "random" children
+      addChildAtIndexInPlace(a.childAtIndex(0), numberOfChildren(), numberOfChildren());
+    }
     return *this;
   }
 
@@ -373,9 +396,17 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   inverseDenominator.deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
-   * distribution of multiplication on additions (to avoid an infinite loop). */
-  replaceWithInPlace(result);
-  return result.privateShallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, false, true);
+   * distribution of multiplication on additions (to avoid an infinite loop).
+   * Handle the removed random factors. */
+  int aChildrenCount = a.numberOfChildren();
+  if (aChildrenCount == 0) {
+    replaceWithInPlace(result);
+    return result.privateShallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, false, true);
+  }
+  a.addChildAtIndexInPlace(result, aChildrenCount, aChildrenCount);
+  result.privateShallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, false, true);
+  replaceWithInPlace(a);
+  return a;
 }
 
 void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {

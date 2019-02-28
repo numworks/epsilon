@@ -19,7 +19,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-  Shared::FunctionApp::Snapshot::Snapshot(),
+  Shared::StorageFunctionApp::Snapshot::Snapshot(),
   m_sequenceStore(),
   m_graphRange(&m_cursor)
 {
@@ -30,19 +30,17 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  FunctionApp::Snapshot::reset();
+  StorageFunctionApp::Snapshot::reset();
   /* reset might be called when activating the exam mode from the settings or
    * when a memory exception occurs. In both cases, we do not want to
    * computeYAuto in GraphRange::setDefault, so we need to set its delegate to
    * nullptr. */
   m_graphRange.setDelegate(nullptr);
-  m_graphRange.setDefault();
   /* We do not need to invalidate the sequence context cache here:
    * - The context is not allocated yet when reset is call from the application
    *   settings.
    * - The cache will be destroyed if the reset call comes from a memory
    *   exception. */
-  m_sequenceStore.removeAll();
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -56,17 +54,17 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  FunctionApp(container, snapshot, &m_inputViewController),
-  m_sequenceContext(((AppsContainer *)container)->globalContext(), snapshot->sequenceStore()),
-  m_listController(&m_listFooter, this, snapshot->sequenceStore(), &m_listHeader, &m_listFooter),
+  StorageFunctionApp(container, snapshot, &m_inputViewController),
+  m_sequenceContext(((AppsContainer *)container)->globalContext(), snapshot->functionStore()),
+  m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(nullptr, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
-  m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->sequenceStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->angleUnitVersion(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->functionStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->angleUnitVersion(), &m_graphHeader),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),
-  m_valuesController(&m_valuesAlternateEmptyViewController, this, snapshot->sequenceStore(), snapshot->interval(), &m_valuesHeader),
+  m_valuesController(&m_valuesAlternateEmptyViewController, this, snapshot->interval(), &m_valuesHeader),
   m_valuesAlternateEmptyViewController(&m_valuesHeader, &m_valuesController, &m_valuesController),
   m_valuesHeader(nullptr, &m_valuesAlternateEmptyViewController, &m_valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader),

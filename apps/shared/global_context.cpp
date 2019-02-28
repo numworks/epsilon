@@ -12,7 +12,7 @@ namespace Shared {
 
 constexpr char GlobalContext::expExtension[];
 constexpr char GlobalContext::funcExtension[];
-//constexpr char GlobalContext::seqExtension[];
+constexpr char GlobalContext::seqExtension[];
 constexpr const char * GlobalContext::k_extensions[];
 
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {

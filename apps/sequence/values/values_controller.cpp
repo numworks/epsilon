@@ -6,11 +6,10 @@ using namespace Shared;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
-  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
+ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
+  Shared::StorageValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
-  m_sequenceStore(sequenceStore),
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
@@ -22,7 +21,7 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
+  Shared::StorageValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
@@ -32,14 +31,14 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-    Sequence * sequence = m_sequenceStore->activeFunctionAtIndex(i-1);
+    Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());
     myCell->setColor(sequence->color());
   }
 }
 
 I18n::Message ValuesController::emptyMessage() {
-  if (m_sequenceStore->numberOfDefinedModels() == 0) {
+  if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
@@ -53,7 +52,7 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
   if (floatBody < 0) {
       return false;
   }
-  return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
+  return Shared::StorageValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
 int ValuesController::maxNumberOfCells() {
@@ -74,11 +73,7 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
-SequenceStore * ValuesController::functionStore() const {
-  return m_sequenceStore;
-}
-
-Shared::ValuesFunctionParameterController * ValuesController::functionParameterController() {
+Shared::StorageValuesFunctionParameterController * ValuesController::functionParameterController() {
 #if COPY_COLUMN
   return &m_sequenceParameterController;
 #else

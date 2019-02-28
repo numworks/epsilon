@@ -31,16 +31,6 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(container, this);
 }
 
-void App::Snapshot::reset() {
-  StorageFunctionApp::Snapshot::reset();
-  *(modelVersion()) = 0;
-  *(rangeVersion()) = 0;
-}
-
-void App::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
-  m_functionStore.storageDidChangeForRecord(record);
-}
-
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;

@@ -22,10 +22,8 @@ public:
   public:
     Snapshot();
     App * unpack(Container * container) override;
-    void reset() override;
-    void storageDidChangeForRecord(const Ion::Storage::Record record) override;
     Descriptor * descriptor() override;
-    StorageCartesianFunctionStore * functionStore();
+    StorageCartesianFunctionStore * functionStore() override;
     Shared::InteractiveCurveViewRange * graphRange();
   private:
     void tidy() override;
@@ -35,7 +33,7 @@ public:
   InputViewController * inputViewController() override;
   char XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
-  StorageCartesianFunctionStore * functionStore() override { return static_cast<Snapshot *>(snapshot())->functionStore(); }
+  StorageCartesianFunctionStore * functionStore() override { return static_cast<StorageCartesianFunctionStore *>(Shared::StorageFunctionApp::functionStore()); }
 private:
   App(Container * container, Snapshot * snapshot);
   StorageListController m_listController;

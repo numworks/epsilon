@@ -28,6 +28,10 @@ void StorageFunctionApp::Snapshot::reset() {
   setActiveTab(0);
 }
 
+void StorageFunctionApp::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
+  functionStore()->storageDidChangeForRecord(record);
+}
+
 void StorageFunctionApp::willBecomeInactive() {
   if (m_modalViewController.isDisplayingModal()) {
     m_modalViewController.dismissModalViewController();

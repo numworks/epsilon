@@ -13,7 +13,10 @@ class SequenceStore : public Shared::StorageFunctionStore {
 public:
   using Shared::StorageFunctionStore::StorageFunctionStore;
   char symbol() const override { return Sequence::Symbol(); }
-  Shared::ExpiringPointer<Sequence> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Sequence>(static_cast<Sequence *>(privateModelForRecord(record))); }
+  /* Sequence Store hold all its Sequences in an array. The Sequence pointers
+   * return by modelForRecord are therefore non-expirable. We choose to return
+   * Sequence * instead of ExpiringPointer<Sequence>. */
+  Sequence * modelForRecord(Ion::Storage::Record record) const { return static_cast<Sequence *>(privateModelForRecord(record)); }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   /* WARNING: after calling removeModel or removeAll, the sequence context
    * need to invalidate its cache as the sequences evaluations might have

@@ -167,6 +167,7 @@ tests += $(addprefix poincare/test/,\
   power.cpp\
   properties.cpp\
   rational.cpp\
+  random.cpp\
   simplify.cpp\
   store.cpp\
   subtraction.cpp\

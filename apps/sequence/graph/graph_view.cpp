@@ -7,15 +7,16 @@ namespace Sequence {
 
 GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
-  FunctionGraphView(graphRange, cursor, bannerView, cursorView),
+  StorageFunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_sequenceStore(sequenceStore)
 {
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  FunctionGraphView::drawRect(ctx, rect);
+  StorageFunctionGraphView::drawRect(ctx, rect);
   for (int i = 0; i < m_sequenceStore->numberOfActiveFunctions(); i++) {
-    Sequence * s = m_sequenceStore->activeFunctionAtIndex(i);
+    Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
+    ExpiringPointer<Sequence> s = m_sequenceStore->modelForRecord(record);;
     float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
     rectXMin = rectXMin < 0 ? 0 : rectXMin;
     float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
@@ -29,7 +30,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         continue;
       }
       drawDot(ctx, rect, x, y, s->color());
-      if (x >= m_highlightedStart && x <= m_highlightedEnd && s == m_selectedFunction) {
+      if (x >= m_highlightedStart && x <= m_highlightedEnd && record == m_selectedRecord) {
         KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
         if (y >= 0.0f) {
           drawSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);

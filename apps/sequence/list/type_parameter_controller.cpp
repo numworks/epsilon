@@ -7,10 +7,11 @@
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list, TableCell::Layout cellLayout,
+TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
   m_expliciteCell(I18n::Message::Explicit, cellLayout),
@@ -18,8 +19,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
   m_layouts{},
   m_selectableTableView(this),
-  m_sequenceStore(sequenceStore),
-  m_sequence(nullptr),
+  m_record(),
   m_listController(list)
 {
   m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin, leftMargin);
@@ -27,10 +27,10 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
 }
 
 const char * TypeParameterController::title() {
-  if (m_sequence) {
-    return I18n::translate(I18n::Message::SequenceType);
+  if (m_record.isNull()) {
+    return I18n::translate(I18n::Message::ChooseSequenceType);
   }
-  return I18n::translate(I18n::Message::ChooseSequenceType);
+  return I18n::translate(I18n::Message::SequenceType);
 }
 
 View * TypeParameterController::view() {
@@ -54,16 +54,16 @@ void TypeParameterController::didBecomeFirstResponder() {
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (m_sequence) {
+    if (!m_record.isNull()) {
       Sequence::Type sequenceType = (Sequence::Type)selectedRow();
-      if (m_sequence->type() != sequenceType) {
+      if (sequence()->type() != sequenceType) {
         m_listController->selectPreviousNewSequenceCell();
-        m_sequence->setType(sequenceType);
+        sequence()->setType(sequenceType);
         // Invalidate sequence context cache when changing sequence type
         static_cast<App *>(app())->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Sequence::Type::Explicit) {
-          m_sequence->setInitialRank(0);
+          sequence()->setInitialRank(0);
         }
       }
       StackViewController * stack = stackController();
@@ -72,13 +72,20 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
       stack->pop();
       return true;
     }
-    Sequence * newSequence = static_cast<Sequence *>(m_sequenceStore->addEmptyModel());
+
+    Ion::Storage::Record::ErrorStatus error = sequenceStore()->addEmptyModel();
+    if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
+      return false;
+    }
+    assert(error == Ion::Storage::Record::ErrorStatus::None);
+    Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
+    ExpiringPointer<Sequence> newSequence = sequenceStore()->modelForRecord(record);
     newSequence->setType((Sequence::Type)selectedRow());
     app()->dismissModalViewController();
-    m_listController->editExpression(newSequence, 0, Ion::Events::OK);
+    m_listController->editExpression(0, Ion::Events::OK);
     return true;
   }
-  if (event == Ion::Events::Left && m_sequence) {
+  if (event == Ion::Events::Left && !m_record.isNull()) {
     stackController()->pop();
     return true;
   }
@@ -101,17 +108,17 @@ int TypeParameterController::reusableCellCount() {
 }
 
 KDCoordinate TypeParameterController::cellHeight() {
-  if (m_sequence) {
-    return Metric::ParameterCellHeight;
+  if (m_record.isNull()) {
+    return 50;
   }
-  return 50;
+  return Metric::ParameterCellHeight;
 }
 
 void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  const char * nextName = m_sequenceStore->firstAvailableName();
+  const char * nextName = sequenceStore()->firstAvailableName();
   const KDFont * font = KDFont::LargeFont;
-  if (m_sequence) {
-    nextName = m_sequence->name();
+  if (!m_record.isNull()) {
+    nextName = sequence()->fullName();
     font = KDFont::SmallFont;
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
@@ -123,8 +130,13 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
   myCell->setLayout(m_layouts[j]);
 }
 
-void TypeParameterController::setSequence(Sequence * sequence) {
-  m_sequence = sequence;
+void TypeParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
+}
+
+SequenceStore * TypeParameterController::sequenceStore() {
+  App * a = static_cast<App *>(app());
+  return a->functionStore();
 }
 
 StackViewController * TypeParameterController::stackController() const {

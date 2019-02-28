@@ -14,9 +14,6 @@ namespace Sequence {
 class Sequence : public Shared::StorageFunction {
 friend class SequenceStore;
 public:
-  static constexpr char extension[] = "seq"; // TODO: store this elsewhere?
-
-
   enum class Type {
     Explicit = 0,
     SingleRecurrence = 1,

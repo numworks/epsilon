@@ -318,7 +318,7 @@ KDCoordinate StorageFunctionListController::nameWidth(int nameLength) const {
 }
 
 KDCoordinate StorageFunctionListController::privateBaseline(int j) const {
-  assert(j >= 0 && j < const_cast<StorageFunctionListController *>(this)->modelStore()->numberOfModels());
+  assert(j >= 0 && j < const_cast<StorageFunctionListController *>(this)->numberOfExpressionRows());
   FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {

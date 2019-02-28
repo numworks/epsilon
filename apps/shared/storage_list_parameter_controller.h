@@ -31,11 +31,11 @@ protected:
     return 2;
 #endif
   }
+  StorageFunctionStore * functionStore();
+  ExpiringPointer<StorageFunction> function();
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-  ExpiringPointer<StorageFunction> function();
-  StorageFunctionStore * functionStore();
 #if FUNCTION_COLOR_CHOICE
   MessageTableCellWithChevron m_colorCell;
 #endif

@@ -189,14 +189,4 @@ void StorageListController::setFunctionNameInTextField(ExpiringPointer<StorageFu
   textField->setText(bufferName);
 }
 
-KDCoordinate StorageListController::privateBaseline(int j) const {
-  assert(j >= 0 && j < const_cast<StorageListController *>(this)->modelStore()->numberOfModels());
-  Shared::FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
-  Poincare::Layout layout = cell->layout();
-  if (layout.isUninitialized()) {
-    return -1;
-  }
-  return 0.5*(const_cast<StorageListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
-}
-
 }

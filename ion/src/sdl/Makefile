@@ -20,7 +20,6 @@ objs += $(addprefix ion/src/sdl/shared/, \
   display.o \
   events.o \
   main.o \
-  keyboard.o \
   layout.o \
 )
 

@@ -17,8 +17,7 @@ const char * IntersectionGraphController::title() {
 }
 
 void IntersectionGraphController::reloadBannerView() {
-  m_bannerView->setNumberOfSubviews(2);
-  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), CartesianFunction::Symbol());
+  CalculationGraphController::reloadBannerView();
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";

@@ -47,12 +47,12 @@ protected:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns();
   virtual StorageFunctionStore * functionStore() const;
+  virtual Ion::Storage::Record recordAtColumn(int i);
   Interval * m_interval;
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
   static constexpr const KDFont * k_font = KDFont::SmallFont;
-  virtual Ion::Storage::Record recordAtColumn(int i);
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void configureAbscissa();

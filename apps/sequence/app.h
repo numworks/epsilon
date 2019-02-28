@@ -8,11 +8,11 @@
 #include "graph/curve_view_range.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../shared/function_app.h"
+#include "../shared/storage_function_app.h"
 
 namespace Sequence {
 
-class App : public Shared::FunctionApp {
+class App : public Shared::StorageFunctionApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
@@ -20,13 +20,13 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public Shared::FunctionApp::Snapshot {
+  class Snapshot : public Shared::StorageFunctionApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    SequenceStore * sequenceStore() { return &m_sequenceStore; }
+    SequenceStore * functionStore() override { return &m_sequenceStore; }
     CurveViewRange * graphRange() { return &m_graphRange; }
   private:
     void tidy() override;
@@ -34,8 +34,11 @@ public:
     CurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
-  SequenceContext * localContext() override;
+  // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
+  // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   char XNT() override;
+  SequenceContext * localContext() override;
+  SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::StorageFunctionApp::functionStore()); }
 private:
   App(Container * container, Snapshot * snapshot);
   SequenceContext m_sequenceContext;

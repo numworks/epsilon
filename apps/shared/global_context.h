@@ -11,15 +11,13 @@
 
 namespace Shared {
 
-class Integer;
-
 class GlobalContext final : public Poincare::Context {
 public:
   static constexpr int k_numberOfExtensions = 2;
   static constexpr char expExtension[] = "exp"; // TODO: store this elsewhere?
   static constexpr char funcExtension[] = "func"; // TODO: store this elsewhere?
   static constexpr const char * k_extensions[] = {expExtension, funcExtension};
-  //static constexpr char seqExtension[] = "seq";
+  static constexpr char seqExtension[] = "seq";
 
   // Storage information
   static bool SymbolAbstractNameIsFree(const char * baseName);

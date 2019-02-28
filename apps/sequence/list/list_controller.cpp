@@ -9,13 +9,12 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 
 namespace Sequence {
 
-ListController::ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::FunctionListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
-  m_sequenceStore(sequenceStore),
+ListController::ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer) :
+  Shared::StorageFunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
   m_sequenceTitleCells{},
   m_expressionCells{},
-  m_parameterController(inputEventHandlerDelegate, this, sequenceStore),
-  m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
+  m_parameterController(inputEventHandlerDelegate, this),
+  m_typeParameterController(this, this, TableCell::Layout::Vertical),
   m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()
 {
@@ -28,29 +27,13 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  return toolboxForSender(textInput);
-}
-
-TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return (App *)app();
-}
-
-ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return (App *)app();
-}
-
-InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
-  return (App *)app();
-}
-
 int ListController::numberOfExpressionRows() {
   int numberOfRows = 0;
-  for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
-    Sequence * sequence = m_sequenceStore->modelAtIndex(i);
+  for (int i = 0; i < modelStore()->numberOfModels(); i++) {
+    ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(i));
     numberOfRows += sequence->numberOfElements();
   }
-  if (m_sequenceStore->numberOfModels() == m_sequenceStore->maxNumberOfModels()) {
+  if (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()) {
     return numberOfRows;
   }
   return 1 + numberOfRows;
@@ -58,11 +41,11 @@ int ListController::numberOfExpressionRows() {
 
 KDCoordinate ListController::expressionRowHeight(int j) {
   KDCoordinate defaultHeight = Metric::StoreRowHeight;
-  if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() && j == numberOfRows() - 1) {
+  if (modelStore()->numberOfModels() < modelStore()->maxNumberOfModels() && j == numberOfRows() - 1) {
     // Add sequence row
     return defaultHeight;
   }
-  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
+  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
   Layout layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
@@ -78,9 +61,23 @@ KDCoordinate ListController::expressionRowHeight(int j) {
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::FunctionListController::willDisplayCellAtLocation(cell, i, j);
+  Shared::StorageFunctionListController::willDisplayCellAtLocation(cell, i, j);
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(modelIndexForRow(j)%2 == 0);
+}
+
+Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
+  // Set extra cells
+  int recurrenceDepth = -1;
+  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
+  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
+  if (sequenceDefinition == 0) {
+    recurrenceDepth = sequence->numberOfElements()-1;
+  }
+  m_sequenceToolbox.buildExtraCellsLayouts(sequence->fullName(), recurrenceDepth);
+  // Set sender
+  m_sequenceToolbox.setSender(textInput);
+  return &m_sequenceToolbox;
 }
 
 void ListController::selectPreviousNewSequenceCell() {
@@ -89,33 +86,21 @@ void ListController::selectPreviousNewSequenceCell() {
   }
 }
 
-Toolbox * ListController::toolboxForSender(InputEventHandler * sender) {
-  // Set extra cells
-  int recurrenceDepth = -1;
-  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(selectedRow()));
-  if (sequenceDefinition == 0) {
-    recurrenceDepth = sequence->numberOfElements()-1;
-  }
-  m_sequenceToolbox.buildExtraCellsLayouts(sequence->name(), recurrenceDepth);
-  // Set sender
-  m_sequenceToolbox.setSender(sender);
-  return &m_sequenceToolbox;
-}
-
-void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
+void ListController::editExpression(int sequenceDefinition, Ion::Events::Event event) {
+  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
   char * initialText = nullptr;
   char initialTextContent[TextField::maxBufferSize()];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     switch (sequenceDefinition) {
       case 0:
-        strlcpy(initialTextContent, sequence->text(), sizeof(initialTextContent));
+        sequence->text(initialTextContent, sizeof(initialTextContent));
         break;
       case 1:
-        strlcpy(initialTextContent, sequence->firstInitialConditionText(), sizeof(initialTextContent));
+        sequence->firstInitialConditionText(initialTextContent, sizeof(initialTextContent));
         break;
       default:
-        strlcpy(initialTextContent, sequence->secondInitialConditionText(), sizeof(initialTextContent));
+        sequence->secondInitialConditionText(initialTextContent, sizeof(initialTextContent));
         break;
     }
     initialText = initialTextContent;
@@ -126,39 +111,36 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   static_cast<App *>(app())->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
-      inputController->edit(this, event, sequence, initialText,
+      inputController->edit(this, event, this, initialText,
         [](void * context, void * sender){
-        Sequence * mySequence = (Sequence *)context;
+        ListController * myController = static_cast<ListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
-        mySequence->setContent(textBody);
-        return true; //TODO should return result of mySequence->setContent
+        return myController->editSelectedRecordWithText(textBody);
         },
         [](void * context, void * sender){
         return true;
       });
       break;
   case 1:
-    inputController->edit(this, event, sequence, initialText,
+    inputController->edit(this, event, this, initialText,
       [](void * context, void * sender){
-      Sequence * mySequence = (Sequence *)context;
+      ListController * myController = static_cast<ListController *>(context);
       InputViewController * myInputViewController = (InputViewController *)sender;
       const char * textBody = myInputViewController->textBody();
-      mySequence->setFirstInitialConditionContent(textBody);
-      return true; //TODO should return result of mySequence->setFirstInitialConditionContent
+      return myController->editInitialConditionOfSelectedRecordWithText(textBody, true);
       },
       [](void * context, void * sender){
       return true;
     });
     break;
   default:
-    inputController->edit(this, event, sequence, initialText,
+    inputController->edit(this, event, this, initialText,
       [](void * context, void * sender){
-      Sequence * mySequence = (Sequence *)context;
+      ListController * myController = static_cast<ListController *>(context);
       InputViewController * myInputViewController = (InputViewController *)sender;
       const char * textBody = myInputViewController->textBody();
-      mySequence->setSecondInitialConditionContent(textBody);
-      return true; //TODO should return the result of mySequence->setSecondInitialConditionContent
+      return myController->editInitialConditionOfSelectedRecordWithText(textBody, false);
       },
       [](void * context, void * sender){
       return true;
@@ -166,18 +148,32 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   }
 }
 
-bool ListController::removeModelRow(ExpressionModel * model) {
-  Shared::FunctionListController::removeModelRow(model);
-  // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
-  return true;
+bool ListController::editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition) {
+  // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
+  resetMemoizationForIndex(k_memoizedCellsCount/2);
+  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
+  Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text) : sequence->setSecondInitialConditionContent(text);
+  return (error == Ion::Storage::Record::ErrorStatus::None);
+}
+
+TextFieldDelegateApp * ListController::textFieldDelegateApp() {
+  return (App *)app();
+}
+
+ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
+  return (App *)app();
+}
+
+InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
+  return (App *)app();
 }
 
 ListParameterController * ListController::parameterController() {
   return &m_parameterController;
 }
 
-int ListController::maxNumberOfRows() {
+int ListController::maxNumberOfDisplayableRows() {
   return k_maxNumberOfRows;
 }
 
@@ -198,7 +194,8 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
   myCell->setBaseline(baseline(j));
   // Set the layout
-  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
+  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
+  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setLayout(sequence->definitionName());
   }
@@ -215,7 +212,8 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
+  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
+  ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setLayout(sequence->layout());
   }
@@ -241,14 +239,14 @@ int ListController::modelIndexForRow(int j) {
   int sequenceIndex = -1;
   do {
     sequenceIndex++;
-    Sequence * sequence = m_sequenceStore->modelAtIndex(sequenceIndex);
+    ExpiringPointer<Sequence> sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
   return sequenceIndex;
 }
 
 bool ListController::isAddEmptyRow(int j) {
-  return m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() && j == numberOfRows() - 1;
+  return modelStore()->numberOfModels() < modelStore()->maxNumberOfModels() && j == numberOfRows() - 1;
 }
 
 int ListController::sequenceDefinitionForRow(int j) {
@@ -260,12 +258,13 @@ int ListController::sequenceDefinitionForRow(int j) {
   }
   int rowIndex = 0;
   int sequenceIndex = -1;
-  Sequence * sequence = nullptr;
+  ExpiringPointer<Sequence> sequence(nullptr);
   do {
     sequenceIndex++;
-    sequence = m_sequenceStore->modelAtIndex(sequenceIndex);
+    sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(sequenceIndex));
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
+  assert(!sequence.isNull());
   return sequence->numberOfElements()-rowIndex+j;
 }
 
@@ -273,30 +272,29 @@ void ListController::addEmptyModel() {
   app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
 }
 
-void ListController::editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) {
-  Sequence * sequence = static_cast<Sequence *>(model);
-  editExpression(sequence, sequenceDefinitionForRow(selectedRow()), event);
+void ListController::editExpression(Ion::Events::Event event) {
+  editExpression(sequenceDefinitionForRow(selectedRow()), event);
 }
 
-void ListController::reinitExpression(Shared::ExpressionModel * model) {
+void ListController::reinitSelectedExpression(ExpiringPointer<SingleExpressionModelHandle> model) {
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
-  Sequence * sequence = static_cast<Sequence *>(model);
+  ExpiringPointer<Sequence> sequence = static_cast<ExpiringPointer<Sequence>>(model);
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
-      if (strlen(sequence->firstInitialConditionText()) == 0) {
+      if (sequence->firstInitialConditionExpressionClone().isUninitialized()) {
         return;
       }
       sequence->setFirstInitialConditionContent("");
       break;
     case 2:
-      if (strlen(sequence->secondInitialConditionText()) == 0) {
+      if (sequence->secondInitialConditionExpressionClone().isUninitialized()) {
         return;
       }
       sequence->setSecondInitialConditionContent("");
       break;
     default:
-      if (strlen(sequence->text()) == 0) {
+      if (sequence->expressionClone().isUninitialized()) {
         return;
       }
       sequence->setContent("");
@@ -305,15 +303,11 @@ void ListController::reinitExpression(Shared::ExpressionModel * model) {
   selectableTableView()->reloadData();
 }
 
-KDCoordinate ListController::baseline(int j) const {
-  //TODO copied from Graph::StorageListController, will be refactored when Sequence is a StorageApp
-  assert(j>=0 && j<k_maxNumberOfRows);
-  Shared::FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
-  Poincare::Layout layout = cell->layout();
-  if (layout.isUninitialized()) {
-    return 0.5*const_cast<ListController *>(this)->rowHeight(j);
-  }
-  return 0.5*(const_cast<ListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
+bool ListController::removeModelRow(Ion::Storage::Record record) {
+  Shared::StorageFunctionListController::removeModelRow(record);
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
+  return true;
 }
 
 }

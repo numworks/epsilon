@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_LIST_PARAM_CONTROLLER_H
 #define SEQUENCE_LIST_PARAM_CONTROLLER_H
 
-#include "../../shared/list_parameter_controller.h"
+#include "../../shared/storage_list_parameter_controller.h"
 #include "../../shared/parameter_text_field_delegate.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
@@ -11,15 +11,12 @@ namespace Sequence {
 
 class ListController;
 
-class ListParameterController : public Shared::ListParameterController, public SelectableTableViewDelegate, public Shared::ParameterTextFieldDelegate {
+class ListParameterController : public Shared::StorageListParameterController, public SelectableTableViewDelegate, public Shared::ParameterTextFieldDelegate {
 public:
-  ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list, SequenceStore * sequenceStore);
+  ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setFunction(Shared::Function * function) override;
-  int numberOfRows() override;
   HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
@@ -32,12 +29,13 @@ private:
 #else
   constexpr static int k_totalNumberOfCell = 4;
 #endif
-  bool hasInitialRankRow();
+  int totalNumberOfCells() const override;
+  Shared::ExpiringPointer<Sequence> sequence() { return static_cast<Shared::ExpiringPointer<Sequence>>(function()); }
+  bool hasInitialRankRow() const;
   MessageTableCellWithChevronAndExpression m_typeCell;
   MessageTableCellWithEditableText m_initialRankCell;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   TypeParameterController m_typeParameterController;
-  Sequence * m_sequence;
 };
 
 }

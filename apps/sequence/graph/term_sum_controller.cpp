@@ -49,7 +49,7 @@ double TermSumController::cursorNextStep(double x, int direction) {
 }
 
 Layout TermSumController::createFunctionLayout(Shared::ExpiringPointer<Shared::StorageFunction> function) {
-  Shared::ExpiringPointer<Sequence> sequence = static_cast<Shared::ExpiringPointer<Sequence>>(function);
+  Sequence * sequence = static_cast<Sequence *>(function.pointer());
   return sequence->nameLayout();
 }
 

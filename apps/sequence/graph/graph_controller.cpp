@@ -32,7 +32,7 @@ float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    ExpiringPointer<Sequence> s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     nmin = minInt(nmin, s->initialRank());
   }
   assert(nmin < INT_MAX);
@@ -45,7 +45,7 @@ float GraphController::interestingXHalfRange() const {
   int nmax = 0;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    ExpiringPointer<Sequence> s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     int firstInterestingIndex = s->initialRank();
     nmin = minInt(nmin, firstInterestingIndex);
     nmax = maxInt(nmax, firstInterestingIndex + standardRange);
@@ -75,7 +75,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (x < 0.0) {
     return false;
   }
-  ExpiringPointer<Sequence> s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);

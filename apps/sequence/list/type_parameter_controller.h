@@ -28,7 +28,7 @@ public:
   void setRecord(Ion::Storage::Record record);
 private:
   StackViewController * stackController() const;
-  Shared::ExpiringPointer<Sequence> sequence() {
+  Sequence * sequence() {
     assert(!m_record.isNull());
     return sequenceStore()->modelForRecord(m_record);
   }

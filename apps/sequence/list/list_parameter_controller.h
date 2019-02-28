@@ -30,7 +30,7 @@ private:
   constexpr static int k_totalNumberOfCell = 4;
 #endif
   int totalNumberOfCells() const override;
-  Shared::ExpiringPointer<Sequence> sequence() { return static_cast<Shared::ExpiringPointer<Sequence>>(function()); }
+  Sequence * sequence() { return static_cast<Sequence *>(function().pointer()); }
   bool hasInitialRankRow() const;
   MessageTableCellWithChevronAndExpression m_typeCell;
   MessageTableCellWithEditableText m_initialRankCell;

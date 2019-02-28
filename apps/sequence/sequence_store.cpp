@@ -9,23 +9,32 @@ namespace Sequence {
 
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 
-Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
+const char * SequenceStore::firstAvailableName(int * nameIndex) {
   // Choose available name
-  const char * name;
   int currentNameIndex = 0;
   while (currentNameIndex < MaxNumberOfSequences) {
-    name = k_sequenceNames[currentNameIndex];
-    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Sequence::extension).isNull()) {
-      break;
+    const char * name = k_sequenceNames[currentNameIndex];
+    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Shared::GlobalContext::seqExtension).isNull()) {
+      if (nameIndex) {
+        *nameIndex = currentNameIndex;
+      }
+      return name;
     }
     currentNameIndex++;
   }
-  assert(currentNameIndex < MaxNumberOfSequences);
+  return nullptr;
+}
+
+Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
+  // Choose available name
+  int nameIndex;
+  const char * name = firstAvailableName(&nameIndex);
+  assert(name);
   // Choose the corresponding color
-  KDColor color = Palette::DataColor[currentNameIndex];
+  KDColor color = Palette::DataColor[nameIndex];
   Sequence::SequenceRecordData data(color);
   // m_sequences
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Sequence::extension, &data, sizeof(data));
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
 }
 
 void SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {

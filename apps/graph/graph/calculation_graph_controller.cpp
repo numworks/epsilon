@@ -28,6 +28,7 @@ void CalculationGraphController::viewWillAppear() {
     m_isActive = true;
     m_cursor->moveTo(pointOfInterest.abscissa, pointOfInterest.value);
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+    m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
   }
   m_graphView->setOkView(nullptr);
@@ -40,7 +41,6 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void CalculationGraphController::reloadBannerView() {
-  m_bannerView->setNumberOfSubviews(2);
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), CartesianFunction::Symbol());
 }
 

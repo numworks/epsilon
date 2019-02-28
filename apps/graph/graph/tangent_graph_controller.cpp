@@ -25,6 +25,7 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->drawTangent(true);
   m_graphView->setOkView(nullptr);
   m_graphView->selectMainView(true);
+  m_bannerView->setNumberOfSubviews(BannerView::k_numberOfSubviews);
   reloadBannerView();
   m_graphView->reload();
 }
@@ -35,7 +36,6 @@ void TangentGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void TangentGraphController::reloadBannerView() {
-  m_bannerView->setNumberOfSubviews(6);
   if (m_record.isNull()) {
     return;
   }

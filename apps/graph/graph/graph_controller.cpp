@@ -28,6 +28,7 @@ I18n::Message GraphController::emptyMessage() {
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
   m_view.setCursorView(&m_cursorView);
+  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + m_displayDerivativeInBanner);
   FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
 }
@@ -69,7 +70,6 @@ BannerView * GraphController::bannerView() {
 
 void GraphController::reloadBannerView() {
   FunctionGraphController::reloadBannerView();
-  m_bannerView.setNumberOfSubviews(2+m_displayDerivativeInBanner);
   if (functionStore()->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
     return;
   }

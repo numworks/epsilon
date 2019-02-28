@@ -19,9 +19,11 @@ public:
     uint32_t * modelVersion() { return &m_modelVersion; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
     Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
+    virtual StorageFunctionStore * functionStore() = 0;
     Interval * interval() { return &m_interval; }
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
+    void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   protected:
     CurveViewCursor m_cursor;
     Interval m_interval;
@@ -32,7 +34,7 @@ public:
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
  };
   virtual ~StorageFunctionApp() = default;
-  virtual StorageFunctionStore * functionStore() = 0;
+  virtual StorageFunctionStore * functionStore() { return static_cast<StorageFunctionApp::Snapshot *>(snapshot())->functionStore(); }
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 

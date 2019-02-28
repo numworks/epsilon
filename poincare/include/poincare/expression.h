@@ -126,6 +126,8 @@ public:
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   bool isRationalOne() const;
+  bool isRandom() const { return node()->isRandom(); }
+  static bool IsRandom(const Expression e, Context & context, bool replaceSymbols);
   typedef bool (*ExpressionTest)(const Expression e, Context & context, bool replaceSymbols);
   bool recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols) const;
   bool isApproximate(Context & context) const;

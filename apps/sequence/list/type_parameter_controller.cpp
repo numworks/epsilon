@@ -79,7 +79,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
-    ExpiringPointer<Sequence> newSequence = sequenceStore()->modelForRecord(record);
+    Sequence * newSequence = sequenceStore()->modelForRecord(record);
     newSequence->setType((Sequence::Type)selectedRow());
     app()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);

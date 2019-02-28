@@ -356,6 +356,11 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
     Expression oi1 = childAtIndex(i+1);
+    if (oi.recursivelyMatches(Expression::IsRandom, context, true)) {
+      // Do not factorize random or randint
+      i++;
+      continue;
+    }
     if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
       if (TermHasNumeralBase(oi)) {
@@ -377,7 +382,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   }
 
   /* Step 4: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
-   *opposite signs. We replace them by either:
+   * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
   if (target == ExpressionNode::ReductionTarget::User) {
@@ -465,9 +470,14 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * the parent is a multiplication or if the reduction is done bottom up to
    * avoid missing factorization such as (x+y)^(-1)*((a+b)*(x+y)).
    * Note: This step must be done after Step 4, otherwise we wouldn't be able to
-   * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
+   * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
+   * If there is a random somewhere, do not expand. */
   Expression p = parent();
-  if (shouldExpand && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)) {
+  bool hasRandom = recursivelyMatches(Expression::IsRandom, context, true);
+  if (shouldExpand
+      && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
+      && !hasRandom)
+  {
     for (int i = 0; i < numberOfChildren(); i++) {
       if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
         return distributeOnOperandAtIndex(i, context, complexFormat, angleUnit, target);
@@ -488,8 +498,9 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    *   complex expression could not be resolved as a ComplexCartesian, we cannot
    *   do anything about it now (allChildrenAreReal == -1)
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
-   *   We can bubble up ComplexCartesian nodes. */
-  if (allChildrenAreReal(context) == 0) {
+   *   We can bubble up ComplexCartesian nodes.
+   * Do not simplify if there are randoms !*/
+  if (!hasRandom && allChildrenAreReal(context) == 0) {
     int nbChildren = numberOfChildren();
     int i = nbChildren-1;
     // Children are sorted so ComplexCartesian nodes are at the end
@@ -708,7 +719,10 @@ bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expr
   int firstNonNumeralOperand1 = e1.childAtIndex(0).isNumber() ? 1 : 0;
   int firstNonNumeralOperand2 = e2.childAtIndex(0).isNumber() ? 1 : 0;
   for (int i = 0; i < numberOfNonNumeralFactors1; i++) {
-    if (!(e1.childAtIndex(firstNonNumeralOperand1+i).isIdenticalTo(e2.childAtIndex(firstNonNumeralOperand2+i)))) {
+    Expression currentChild1 = e1.childAtIndex(firstNonNumeralOperand1+i);
+    if (currentChild1.isRandom()
+        || !(currentChild1.isIdenticalTo(e2.childAtIndex(firstNonNumeralOperand2+i))))
+    {
       return false;
     }
   }

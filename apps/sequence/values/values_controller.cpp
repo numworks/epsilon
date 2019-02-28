@@ -31,7 +31,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-    Shared::ExpiringPointer<Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(i));
+    Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());
     myCell->setColor(sequence->color());
   }

@@ -66,6 +66,7 @@ private:
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
+  virtual KDCoordinate privateBaseline(int j) const;
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
     return TableViewDataSource::cumulatedHeightFromIndex(j);
   }
@@ -77,7 +78,6 @@ private:
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
-  virtual KDCoordinate privateBaseline(int j) const = 0;
   KDCoordinate nameWidth(int nameLength) const;
   EvenOddCell m_emptyCell;
   Button m_plotButton;

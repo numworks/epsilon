@@ -1,5 +1,6 @@
 #include "storage_function_list_controller.h"
 #include "storage_function_app.h"
+#include "function_expression_cell.h"
 
 namespace Shared {
 
@@ -314,6 +315,16 @@ void StorageFunctionListController::shiftMemoization(bool newCellIsUnder) {
 KDCoordinate StorageFunctionListController::nameWidth(int nameLength) const {
   assert(nameLength >= 0);
   return nameLength * const_cast<StorageFunctionListController *>(this)->titleCells(0)->font()->glyphSize().width();
+}
+
+KDCoordinate StorageFunctionListController::privateBaseline(int j) const {
+  assert(j >= 0 && j < const_cast<StorageFunctionListController *>(this)->modelStore()->numberOfModels());
+  FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
+  Poincare::Layout layout = cell->layout();
+  if (layout.isUninitialized()) {
+    return -1; // Baseline < 0 triggers default behaviour (centered alignment)
+  }
+  return 0.5*(const_cast<StorageFunctionListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
 }
 
 }

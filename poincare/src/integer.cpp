@@ -1,7 +1,9 @@
 #include <poincare/integer.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <utility>
@@ -202,9 +204,14 @@ int Integer::serialize(char * buffer, int bufferSize) const {
 
 // Layout
 
-HorizontalLayout Integer::createLayout() const {
+Layout Integer::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
+  assert(numberOfChars >= 1);
+  if ((int)UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
+    UTF8Decoder decoder = UTF8Decoder(buffer);
+    return CodePointLayout::Builder(decoder.nextCodePoint());
+  }
   return LayoutHelper::String(buffer, numberOfChars);
 }
 

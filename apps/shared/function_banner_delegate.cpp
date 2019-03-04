@@ -11,20 +11,17 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   constexpr int bufferSize = k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
-  const char * legend = "0=";
-  int legendLength = strlen(legend);
   int numberOfChar = 0;
-  strlcpy(buffer, legend, bufferSize);
-  numberOfChar += legendLength;
-  buffer[0] = symbol;
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
-  bannerView()->abscissaView()->setText(buffer);
+  buffer[numberOfChar++] = symbol;
+  strlcpy(buffer + numberOfChar, "=", bufferSize - numberOfChar);
+  bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = 0;
-  numberOfChar += function->nameWithArgument(buffer, bufferSize, symbol);
-  legend = "=";
-  numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(cursor->x(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
+  bannerView()->abscissaValue()->setText(buffer);
+
+  numberOfChar = function->nameWithArgument(buffer, bufferSize, symbol);
+  numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
   bannerView()->ordinateView()->setText(buffer);

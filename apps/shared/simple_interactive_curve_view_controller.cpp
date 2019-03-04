@@ -29,6 +29,18 @@ bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event)
   return false;
 }
 
+bool SimpleInteractiveCurveViewController::textFieldDidAbortEditing(TextField * textField) {
+  reloadBannerView();
+  return true;
+}
+
+bool SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
+    return handleEnter();
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
 bool SimpleInteractiveCurveViewController::handleZoom(Ion::Events::Event event) {
   float ratio = event == Ion::Events::Plus ? 2.0f/3.0f : 3.0f/2.0f;
   interactiveCurveViewRange()->zoom(ratio, m_cursor->x(), m_cursor->y());

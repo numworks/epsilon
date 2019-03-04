@@ -17,6 +17,8 @@ public:
   SimpleInteractiveCurveViewController(Responder * parentResponder, CurveViewCursor * cursor);
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   TextFieldDelegateApp * textFieldDelegateApp() override {
     return static_cast<TextFieldDelegateApp *>(app());

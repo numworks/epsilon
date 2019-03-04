@@ -102,18 +102,6 @@ bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const 
   return handleEnter();
 }
 
-bool SumGraphController::textFieldDidAbortEditing(TextField * textField) {
-  m_legendView.setEditableZone(m_cursor->x());
-  return true;
-}
-
-bool SumGraphController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
-    return handleEnter();
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
 bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
   if (m_step == Step::Result) {
     return false;

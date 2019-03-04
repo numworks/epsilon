@@ -16,6 +16,7 @@ public:
   FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
   bool isEmpty() const override;
   ViewController * initialisationParameterController() override;
+  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
 protected:
@@ -26,6 +27,12 @@ protected:
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorAbscissa();
   virtual FunctionStore * functionStore() const;
+
+  // Closest vertical curve helper
+  bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
+  int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
+  double yValue(int curveIndex, double x, Poincare::Context * context) const override;
+  int numberOfCurves() const override;
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;
@@ -40,10 +47,6 @@ private:
   CurveView * curveView() override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
-  int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
-  bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
-  double yValue(int curveIndex, double x, Poincare::Context * context) const override;
-  int numberOfCurves() const override;
 
   InitialisationParameterController m_initialisationParameterController;
   Poincare::Preferences::AngleUnit * m_angleUnitVersion;

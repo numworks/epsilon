@@ -21,6 +21,7 @@ public:
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
   float interestingXHalfRange() const override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool handleEnter() override;

@@ -19,8 +19,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
   enum class Step {

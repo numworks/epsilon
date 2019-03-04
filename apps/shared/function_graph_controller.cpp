@@ -27,6 +27,16 @@ ViewController * FunctionGraphController::initialisationParameterController() {
   return &m_initialisationParameterController;
 }
 
+void FunctionGraphController::didBecomeFirstResponder() {
+  if (curveView()->isMainViewSelected()) {
+    bannerView()->abscissaValue()->setParentResponder(this);
+    bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    app()->setFirstResponder(bannerView()->abscissaValue());
+  } else {
+    InteractiveCurveViewController::didBecomeFirstResponder();
+  }
+}
+
 void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setBannerView(bannerView());
   functionGraphView()->setAreaHighlight(NAN,NAN);

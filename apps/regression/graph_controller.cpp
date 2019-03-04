@@ -124,7 +124,6 @@ void GraphController::reloadBannerView() {
   m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
-  numberOfChar = 0;
   legend = "x=";
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
@@ -133,14 +132,15 @@ void GraphController::reloadBannerView() {
     legend = "x\xCC\x85=";
     x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   }
-  numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  m_bannerView.abscissaSymbol()->setText(legend);
+
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.abscissaView()->setText(buffer);
+  m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
   numberOfChar = 0;

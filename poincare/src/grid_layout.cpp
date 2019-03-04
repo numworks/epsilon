@@ -43,7 +43,8 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
     cursor->setLayoutNode(childAtIndex(0));
     return;
   }
-  int childIndex = indexOfChild(cursor->layoutNode());
+  LayoutNode * cursorNode = cursor->layoutNode();
+  int childIndex = indexOfChild(cursorNode);
   if (childIndex >= 0 && cursor->position() == LayoutCursor::Position::Right) {
     // Case: The cursor points to a grid's child.
     if (childIsRightOfGrid(childIndex)) {
@@ -52,7 +53,7 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
       return;
     }
     // Case: Right of another child. Go Left of its sibling on the right.
-    cursor->setLayoutNode(childAtIndex(childIndex + 1));
+    cursor->setLayoutNode(static_cast<LayoutNode *>(cursorNode->nextSibling()));
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
@@ -66,10 +67,10 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
 
 void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   /* If the cursor is child that is not on the top row, move it inside its upper
-   * neighbour.*/
+   * neighbour. */
   int childIndex = m_numberOfColumns;
-  while (childIndex < numberOfChildren()) {
-    if (cursor->layoutNode()->hasAncestor(childAtIndex(childIndex), true)) {
+  for (LayoutNode * l : childrenFromIndex(childIndex)) {
+    if (cursor->layoutNode()->hasAncestor(l, true)) {
       childAtIndex(childIndex - m_numberOfColumns)->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
       return;
     }
@@ -80,12 +81,16 @@ void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeL
 
 void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   int childIndex = 0;
-  while (childIndex < numberOfChildren() - m_numberOfColumns) {
-    if (cursor->layoutNode()->hasAncestor(childAtIndex(childIndex), true)) {
+  int maxIndex = numberOfChildren() - m_numberOfColumns;
+  for (LayoutNode * l : children()) {
+    if (cursor->layoutNode()->hasAncestor(l, true)) {
       childAtIndex(childIndex + m_numberOfColumns)->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
       return;
     }
     childIndex++;
+    if (childIndex >= maxIndex) {
+      break;
+    }
   }
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
@@ -191,17 +196,9 @@ KDCoordinate GridLayoutNode::computeBaseline() {
 }
 
 KDPoint GridLayoutNode::positionOfChild(LayoutNode * l) {
-  int rowIndex = 0;
-  int columnIndex = 0;
-  for (int i = 0; i < m_numberOfRows; i++) {
-    for (int j = 0; j < m_numberOfColumns; j++) {
-      if (l == childAtIndex(i*m_numberOfColumns+j)) {
-        rowIndex = i;
-        columnIndex = j;
-        break;
-      }
-    }
-  }
+  int childIndex = indexOfChild(l);
+  int rowIndex = rowAtChildIndex(childIndex);
+  int columnIndex = columnAtChildIndex(childIndex);
   KDCoordinate x = 0;
   for (int j = 0; j < columnIndex; j++) {
     x += columnWidth(j);
@@ -218,21 +215,33 @@ KDPoint GridLayoutNode::positionOfChild(LayoutNode * l) {
 // Private
 
 KDCoordinate GridLayoutNode::rowBaseline(int i) {
+  assert(m_numberOfColumns > 0);
   KDCoordinate rowBaseline = 0;
-  for (int j = 0; j < m_numberOfColumns; j++) {
-    rowBaseline = maxCoordinate(rowBaseline, childAtIndex(i*m_numberOfColumns+j)->baseline());
+  int j = 0;
+  for (LayoutNode * l : childrenFromIndex(i*m_numberOfColumns)) {
+    rowBaseline = maxCoordinate(rowBaseline, l->baseline());
+    j++;
+    if (j >= m_numberOfColumns) {
+      break;
+    }
   }
   return rowBaseline;
 }
 
 KDCoordinate GridLayoutNode::rowHeight(int i) const {
-  KDCoordinate rowHeight = 0;
-  KDCoordinate baseline = const_cast<GridLayoutNode *>(this)->rowBaseline(i);
-  for (int j = 0; j < m_numberOfColumns; j++) {
-    LayoutNode * currentChild = const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j);
-    rowHeight = maxCoordinate(rowHeight, currentChild->layoutSize().height() - currentChild->baseline());
+  KDCoordinate underBaseline = 0;
+  KDCoordinate aboveBaseline = 0;
+  int j = 0;
+  for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(i*m_numberOfColumns)) {
+    KDCoordinate b = l->baseline();
+    underBaseline = maxCoordinate(underBaseline, l->layoutSize().height() - b);
+    aboveBaseline = maxCoordinate(aboveBaseline, b);
+    j++;
+    if (j >= m_numberOfColumns) {
+      break;
+    }
   }
-  return baseline+rowHeight;
+  return aboveBaseline+underBaseline;
 }
 
 KDCoordinate GridLayoutNode::height() const {
@@ -240,14 +249,22 @@ KDCoordinate GridLayoutNode::height() const {
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i);
   }
-  totalHeight += maxCoordinate((m_numberOfRows-1)*k_gridEntryMargin, 0);
+  totalHeight += m_numberOfRows > 0 ? (m_numberOfRows-1)*k_gridEntryMargin : 0;
   return totalHeight;
 }
 
 KDCoordinate GridLayoutNode::columnWidth(int j) const {
   KDCoordinate columnWidth = 0;
-  for (int i = 0; i < m_numberOfRows; i++) {
-    columnWidth = maxCoordinate(columnWidth, const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->layoutSize().width());
+  int childIndex = j;
+  int lastIndex = (m_numberOfRows-1)*m_numberOfColumns + j;
+  for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(j)) {
+    if (childIndex%m_numberOfColumns == j) {
+      columnWidth = maxCoordinate(columnWidth, l->layoutSize().width());
+      if (childIndex >= lastIndex) {
+        break;
+      }
+    }
+    childIndex++;
   }
   return columnWidth;
 }
@@ -257,7 +274,7 @@ KDCoordinate GridLayoutNode::width() const {
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j);
   }
-  totalWidth += maxCoordinate(0, (m_numberOfColumns-1)*k_gridEntryMargin);
+  totalWidth += m_numberOfColumns > 0 ? (m_numberOfColumns-1)*k_gridEntryMargin : 0;
   return totalWidth;
 }
 

@@ -63,8 +63,11 @@ protected:
      * lengths can reach 70 (ie
      * [[1.234567e-123*e^(1.234567e-123*i), 1.234567e-123*e^(1.234567e-123*i)]]).
      * In order to be able to record those output text, k_maxBufferSize must be
-     * over 70. */
-    constexpr static int k_maxBufferSize = 152;
+     * over 70.
+     * Furthermore, we want ot be able to write an adjacency matrix of size 10
+     * so we need at least 2 brackets + 10 * (2 brackets + 10 digits + 9 commas)
+     * = 212 characters. */
+    constexpr static int k_maxBufferSize = 220;
   private:
     void layoutSubviews() override;
     KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;

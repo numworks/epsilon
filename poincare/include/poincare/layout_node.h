@@ -124,6 +124,7 @@ protected:
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
+  Direct<LayoutNode> childrenFromIndex(int i) { return Direct<LayoutNode>(this, i); }
 
   // Sizing and positioning
   virtual KDSize computeSize() = 0;

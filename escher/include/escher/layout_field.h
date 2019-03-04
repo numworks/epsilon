@@ -49,7 +49,7 @@ protected:
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
 
 private:
-  constexpr static int k_maxNumberOfLayouts = 152;
+  constexpr static int k_maxNumberOfLayouts = 220;
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);

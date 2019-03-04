@@ -98,7 +98,7 @@ public:
   template <typename T>
   class Direct final {
   public:
-    Direct(const T * node) : m_node(const_cast<T *>(node)) {}
+    Direct(const T * node, int firstIndex = 0) : m_node(const_cast<T *>(node)), m_firstIndex(firstIndex) {}
     class Iterator : public TreeNode::Iterator<T> {
     public:
       using TreeNode::Iterator<T>::Iterator;
@@ -107,10 +107,17 @@ public:
         return *this;
       }
     };
-    Iterator begin() const { return Iterator(static_cast<T *>(m_node->next())); }
+    Iterator begin() const {
+      TreeNode * n = m_node->next();
+      for (int i = 0; i < m_firstIndex; i++) {
+        n = n->nextSibling();
+      }
+      return Iterator(static_cast<T *>(n));
+    }
     Iterator end() const { return Iterator(static_cast<T *>(m_node->nextSibling())); }
   private:
     T * m_node;
+    int m_firstIndex;
   };
 
   template <typename T>
@@ -155,6 +162,7 @@ protected:
     m_parentIdentifier(NoNodeIdentifier),
     m_referenceCounter(0)
   {}
+
 private:
   void updateParentIdentifierInChildren() const {
     changeParentIdentifierInChildren(m_identifier);

@@ -96,11 +96,11 @@ Expression RationalNode::setSign(Sign s, Context * context, Preferences::Complex
 // Layout
 
 Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout numeratorLayout = signedNumerator().createLayout();
+  Layout numeratorLayout = signedNumerator().createLayout();
   if (denominator().isOne()) {
     return numeratorLayout;
   }
-  HorizontalLayout denominatorLayout = denominator().createLayout();
+  Layout denominatorLayout = denominator().createLayout();
   return FractionLayout::Builder(numeratorLayout, denominatorLayout);
 }
 

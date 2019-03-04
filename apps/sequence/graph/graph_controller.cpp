@@ -59,6 +59,20 @@ float GraphController::interestingXHalfRange() const {
   return nmax - nmin;
 }
 
+bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
+  }
+  floatBody = std::round(floatBody);
+  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, y);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  reloadBannerView();
+  m_view.reload();
+  return true;
+}
+
 bool GraphController::handleEnter() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   m_termSumController.setRecord(record);

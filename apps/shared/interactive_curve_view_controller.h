@@ -29,6 +29,8 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   Responder * tabController() const;
   virtual StackViewController * stackController() const;

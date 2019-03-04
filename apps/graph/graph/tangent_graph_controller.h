@@ -15,6 +15,8 @@ public:
   TangentGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
   void viewWillAppear() override;
+  void didBecomeFirstResponder() override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
 private:
   float cursorBottomMarginRatio() override { return 0.22f; }

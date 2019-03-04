@@ -182,6 +182,26 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
   }
 }
 
+bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
+  }
+  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, y);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  reloadBannerView();
+  curveView()->reload();
+  return true;
+}
+
+bool InteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if ((event == Ion::Events::Plus || event == Ion::Events::Minus) && !textField->isEditing()) {
+    return handleEvent(event);
+  }
+  return SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(textField, event);
+}
+
 Responder * InteractiveCurveViewController::tabController() const{
   return (stackController()->parentResponder());
 }

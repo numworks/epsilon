@@ -30,6 +30,29 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->reload();
 }
 
+void TangentGraphController::didBecomeFirstResponder() {
+  if (curveView()->isMainViewSelected()) {
+    m_bannerView->abscissaValue()->setParentResponder(this);
+    m_bannerView->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    app()->setFirstResponder(m_bannerView->abscissaValue());
+  }
+}
+
+bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
+  }
+  App * myApp = static_cast<App *>(app());
+  ExpiringPointer<CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  double y = function->evaluateAtAbscissa(floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, y);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  reloadBannerView();
+  curveView()->reload();
+  return true;
+}
+
 void TangentGraphController::setRecord(Ion::Storage::Record record) {
   m_graphView->selectRecord(record);
   m_record = record;

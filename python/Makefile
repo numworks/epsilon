@@ -1,6 +1,6 @@
 SFLAGS += -Ipython/src
 SFLAGS += -Ipython/port
-SFLAGS += -I$(build_dir)/python/port
+SFLAGS += -I$(BUILD_DIR)/python/port
 
 # How to maintain this Makefile
 # - Copy PY_CORE_O_BASENAME from py.mk into py_objs
@@ -177,6 +177,6 @@ $(eval $(call rule_for, \
   $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@ \
 ))
 
-$(call object_for,$(python_src)): $(build_dir)/python/port/genhdr/qstrdefs.generated.h
+$(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
 src += $(python_src)

@@ -1,13 +1,13 @@
-app_objs += $(addprefix apps/home/,\
-  app.o\
-  app_cell.o\
-  controller.o\
+app_src += $(addprefix apps/home/,\
+  app.cpp \
+  app_cell.cpp \
+  controller.cpp \
 )
 
 i18n_files += $(addprefix apps/home/,\
-  base.de.i18n\
-  base.en.i18n\
-  base.es.i18n\
-  base.fr.i18n\
-  base.pt.i18n\
+  base.de.i18n \
+  base.en.i18n \
+  base.es.i18n \
+  base.fr.i18n \
+  base.pt.i18n \
 )

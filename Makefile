@@ -1,6 +1,28 @@
 include build/config.mak
 
-default: epsilon.$(EXE)
+# Disable default Make rules
+.SUFFIXES:
+
+OUTPUT_DIRECTORY = outputs
+object_for = $(addprefix $(OUTPUT_DIRECTORY)/,$(addsuffix .o,$(basename $(1))))
+
+default: $(OUTPUT_DIRECTORY)/epsilon.$(EXE)
+
+# Define a standard rule helper
+# If passed a last parameter value of with_local_version, we also define an
+# extra rule that can build source files within the $(OUTPUT_DIRECTORY). This is
+# useful for rules that can be applied for intermediate objects (for example,
+# when going .png -> .cpp -> .o).
+define rule_for
+$(addprefix $$(OUTPUT_DIRECTORY)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(OUTPUT_DIRECTORY)/%=%)"
+	$(Q) $(4)
+ifeq ($(strip $(5)),with_local_version)
+$(addprefix $$(OUTPUT_DIRECTORY)/,$(strip $(2))): $(addprefix $$(OUTPUT_DIRECTORY)/,$(strip $(3)))
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(OUTPUT_DIRECTORY)/%=%)"
+	$(Q) $(4)
+endif
+endef
 
 .PHONY: info
 info:
@@ -10,16 +32,22 @@ info:
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
 
-# Each sub-Makefile can either add objects to the $(objs) variable or define a
-# new executable target. The $(objs) variable lists the objects that will be
-# linked to every executable being generated. Each Makefile is also responsible
-# for keeping the $(product) variable updated. This variable lists all files
-# that could be generated during the build and that needs to be cleaned up
-# afterwards.
+# Since we're building out-of-tree, we need to make sure the output directories
+# are created, otherwise the receipes will fail (e.g. gcc will fail to create
+# "output/foo/bar.o" because the directory "output/foo" doesn't exist).
+# We need to mark those directories as precious, otherwise Make will try to get
+# rid of them upon completion (and fail, since those folders won't be empty).
+.PRECIOUS: $(OUTPUT_DIRECTORY)/. $(OUTPUT_DIRECTORY)%/.
+$(OUTPUT_DIRECTORY)/. $(OUTPUT_DIRECTORY)%/.:
+	$(Q) mkdir -p $(dir $@)
 
-products :=
+# To make objects dependent on their directory, we need a second expansion
+.SECONDEXPANSION:
 
-# Library Makefiles
+# Each sub-Makefile can either add sources to the $(src) variable or define a
+# new executable target. The $(src) variable lists the sources that will be
+# built and linked to every executable being generated.
+
 ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
 else
@@ -38,39 +66,46 @@ include build/struct_layout/Makefile
 include build/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-products += $(objs)
+objs = $(call object_for,$(src))
 
-all_objs = $(filter %.o, $(products))
-dependencies = $(all_objs:.o=.d)
--include $(dependencies)
-products += $(dependencies)
-
-$(all_objs): $(generated_headers)
-
-epsilon.$(EXE): $(objs)
-test.$(EXE): $(objs)
+# Load source-based dependencies
+# Compilers can generate Makefiles that states the dependencies of a given
+# objet to other source and headers. This serve no purpose for a clean build,
+# but allows correct yet optimal incremental builds.
+-include $(objs:.o=.d)
 
 .SECONDARY: $(objs)
-%.$(EXE):
-	@echo "LD      $@"
-	$(Q) $(LD) $^ $(LDFLAGS) -o $@
+$(OUTPUT_DIRECTORY)/epsilon.$(EXE): $(objs)
+$(OUTPUT_DIRECTORY)/test.$(EXE): $(objs)
 
-%.o: %.c
-	@echo "CC      $@"
-	$(Q) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
+# Define standard compilation rules
 
-%.o: %.s
-	@echo "AS      $@"
-	$(Q) $(CC) $(SFLAGS) -c $< -o $@
+$(eval $(call rule_for, \
+  AS, %.o, %.s, \
+  $$(CC) $$(SFLAGS) -c $$< -o $$@ \
+))
 
-%.o: %.cpp
-	@echo "CXX     $@"
-	$(Q) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
+$(eval $(call rule_for, \
+  CC, %.o, %.c, \
+  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@, \
+  with_local_version \
+))
+
+$(eval $(call rule_for, \
+  CXX, %.o, %.cpp, \
+  $$(CC) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
+  with_local_version \
+))
+
+$(eval $(call rule_for, \
+  LD, %.$$(EXE), , \
+  $$(LD) $$^ $$(LDFLAGS) -o $$@ \
+))
 
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	$(Q) rm -f $(products)
+	$(Q) rm -rf $(OUTPUT_DIRECTORY)
 
 .PHONY: cowsay_%
 cowsay_%:

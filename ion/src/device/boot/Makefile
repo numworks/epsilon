@@ -1,2 +1,2 @@
-objs += $(addprefix ion/src/device/boot/, isr.o rt0.o)
+src += $(addprefix ion/src/device/boot/, isr.c rt0.cpp)
 LDSCRIPT = ion/src/device/boot/flash.ld

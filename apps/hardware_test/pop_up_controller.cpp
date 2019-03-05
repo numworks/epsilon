@@ -1,5 +1,5 @@
 #include "pop_up_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 #include <assert.h>
 

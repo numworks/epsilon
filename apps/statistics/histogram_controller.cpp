@@ -124,7 +124,7 @@ void HistogramController::reloadBannerView() {
     numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxIntervalLegendLength] = 0;
-  m_view.bannerView()->setLegendAtIndex(buffer, 1);
+  m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
   numberOfChar = 0;
@@ -142,7 +142,7 @@ void HistogramController::reloadBannerView() {
     numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxLegendLength] = 0;
-  m_view.bannerView()->setLegendAtIndex(buffer, 3);
+  m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
   numberOfChar = 0;
@@ -159,7 +159,9 @@ void HistogramController::reloadBannerView() {
     numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxLegendLength] = 0;
-  m_view.bannerView()->setLegendAtIndex(buffer, 5);
+  m_view.bannerView()->frequencyView()->setText(buffer);
+
+  m_view.bannerView()->reload();
 }
 
 bool HistogramController::moveSelectionHorizontally(int deltaIndex) {

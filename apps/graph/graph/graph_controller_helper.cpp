@@ -30,7 +30,8 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   double y = function->approximateDerivative(cursor->x(), app->localContext());
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Constant::ShortNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
-  bannerView()->setLegendAtIndex(buffer, 2);
+  bannerView()->derivativeView()->setText(buffer);
+  bannerView()->reload();
 }
 
 }

@@ -69,5 +69,6 @@ app_src += $(addprefix apps/shared/,\
   values_function_parameter_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
+  xy_banner_view.cpp\
   zoom_parameter_controller.cpp \
 )

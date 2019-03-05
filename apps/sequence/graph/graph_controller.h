@@ -2,7 +2,7 @@
 #define SEQUENCE_GRAPH_CONTROLLER_H
 
 #include "graph_view.h"
-#include "banner_view.h"
+#include "../../shared/xy_banner_view.h"
 #include "curve_parameter_controller.h"
 #include "curve_view_range.h"
 #include "term_sum_controller.h"
@@ -21,7 +21,7 @@ public:
   float interestingXMin() const override;
   float interestingXHalfRange() const override;
 private:
-  BannerView * bannerView() override { return &m_bannerView; }
+  Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction) override;
   double defaultCursorAbscissa() override;
@@ -33,7 +33,7 @@ private:
   }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   Shared::CursorView m_cursorView;
-  BannerView m_bannerView;
+  Shared::XYBannerView m_bannerView;
   GraphView m_view;
   CurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;

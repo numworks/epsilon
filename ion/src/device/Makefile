@@ -41,10 +41,10 @@ src += $(addprefix ion/src/device/, \
 
 ifneq ($(DEBUG),1)
 ifneq ($(COMPILER),llvm)
-$(OUTPUT_DIRECTORY)/ion/src/device/led.o: SFLAGS+=-O3
-$(OUTPUT_DIRECTORY)/ion/src/device/console.o: SFLAGS+=-O3
-$(OUTPUT_DIRECTORY)/ion/src/device/display.o: SFLAGS+=-O3
-$(OUTPUT_DIRECTORY)/ion/src/device/swd.o: SFLAGS+=-O3
+$(build_dir)/ion/src/device/led.o: SFLAGS+=-O3
+$(build_dir)/ion/src/device/console.o: SFLAGS+=-O3
+$(build_dir)/ion/src/device/display.o: SFLAGS+=-O3
+$(build_dir)/ion/src/device/swd.o: SFLAGS+=-O3
 endif
 endif
 

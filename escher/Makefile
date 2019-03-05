@@ -95,9 +95,9 @@ $(eval $(call rule_for, \
   $$(HOSTCC) -std=c99 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@ \
 ))
 
-INLINER := $(OUTPUT_DIRECTORY)/escher/image/inliner
+INLINER := $(build_dir)/escher/image/inliner
 
-.PRECIOUS: $(OUTPUT_DIRECTORY)/%.h $(OUTPUT_DIRECTORY)/%.cpp
+.PRECIOUS: $(build_dir)/%.h $(build_dir)/%.cpp
 $(eval $(call rule_for, \
   INLINER, \
   %.h %.cpp, \

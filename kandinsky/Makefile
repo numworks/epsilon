@@ -41,7 +41,7 @@ $(eval $(call rule_for, \
   $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@ \
 ))
 
-RASTERIZER := $(OUTPUT_DIRECTORY)/kandinsky/fonts/rasterizer
+RASTERIZER := $(build_dir)/kandinsky/fonts/rasterizer
 
 $(eval $(call rule_for, \
   RASTER, \

@@ -43,6 +43,12 @@ epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
 $(call object_for,apps/apps_container_storage.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
 
 
+
+# I18n file generation
+
+# The header is refered to as <apps/i18n.h> so make sure it's findable this way
+SFLAGS += -I$(OUTPUT_DIRECTORY)
+
 i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
 i18n_files += $(addprefix apps/,\
   shared.de.i18n\
@@ -63,14 +69,23 @@ i18n_files += $(addprefix apps/,\
   variables.pt.i18n\
 )
 
-apps/i18n.h: apps/i18n.cpp
-apps/i18n.cpp: $(i18n_files)
-	@echo "I18N    $@"
-	$(Q) $(PYTHON) apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N) --files $^
+$(eval $(call rule_for, \
+  I18N, \
+  apps/i18n.cpp, \
+  $(i18n_files), \
+  $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ \
+))
 
-#$(app_objs): apps/i18n.h
+# Make sure apps/i18n.o is built
+# The extension added to app_src doesn't really matter since it'll be processed
+# by the object_for function.
+app_src += apps/i18n.py
 
-products += apps/i18n.h apps/i18n.cpp
+$(OUTPUT_DIRECTORY)/apps/i18n.h: $(OUTPUT_DIRECTORY)/apps/i18n.cpp
+
+$(call object_for,$(app_src)): $(OUTPUT_DIRECTORY)/apps/i18n.h
+
+# Handle PNG files
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 

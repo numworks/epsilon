@@ -6,7 +6,7 @@
 #include <escher.h>
 #include "shared/global_context.h"
 #include "variable_box_empty_controller.h"
-#include "i18n.h"
+#include <apps/i18n.h>
 
 class VariableBoxController : public NestedMenuController {
 public:

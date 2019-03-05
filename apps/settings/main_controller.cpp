@@ -1,6 +1,6 @@
 #include "main_controller.h"
 #include "../global_preferences.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include <assert.h>
 
 using namespace Poincare;

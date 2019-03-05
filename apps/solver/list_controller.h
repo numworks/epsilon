@@ -8,7 +8,7 @@
 #include "equation_store.h"
 #include "equation_list_view.h"
 #include "equation_models_parameter_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Solver {
 

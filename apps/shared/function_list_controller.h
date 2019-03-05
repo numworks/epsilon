@@ -6,7 +6,7 @@
 #include "function_app.h"
 #include "list_parameter_controller.h"
 #include "expression_model_list_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

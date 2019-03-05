@@ -1,5 +1,5 @@
 #include "usb_connected_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace USB {
 

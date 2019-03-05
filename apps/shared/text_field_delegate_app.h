@@ -4,7 +4,7 @@
 #include <poincare/context.h>
 #include <escher.h>
 #include "input_event_handler_delegate_app.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 class AppsContainer;
 

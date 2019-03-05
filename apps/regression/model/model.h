@@ -2,7 +2,7 @@
 #define REGRESSION_MODEL_H
 
 #include <stdint.h>
-#include "../../i18n.h"
+#include <apps/i18n.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>

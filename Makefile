@@ -3,23 +3,22 @@ include scripts/config.mak
 # Disable default Make rules
 .SUFFIXES:
 
-build_dir = build
-object_for = $(addprefix $(build_dir)/,$(addsuffix .o,$(basename $(1))))
+object_for = $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 
-default: $(build_dir)/epsilon.$(EXE)
+default: $(BUILD_DIR)/epsilon.$(EXE)
 
 # Define a standard rule helper
 # If passed a last parameter value of with_local_version, we also define an
-# extra rule that can build source files within the $(build_dir). This is useful
+# extra rule that can build source files within the $(BUILD_DIR). This is useful
 # for rules that can be applied for intermediate objects (for example, when
 # going .png -> .cpp -> .o).
 define rule_for
-$(addprefix $$(build_dir)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(build_dir)/%=%)"
+$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
 	$(Q) $(4)
 ifeq ($(strip $(5)),with_local_version)
-$(addprefix $$(build_dir)/,$(strip $(2))): $(addprefix $$(build_dir)/,$(strip $(3)))
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(build_dir)/%=%)"
+$(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(3)))
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
 	$(Q) $(4)
 endif
 endef
@@ -37,8 +36,8 @@ info:
 # "output/foo/bar.o" because the directory "output/foo" doesn't exist).
 # We need to mark those directories as precious, otherwise Make will try to get
 # rid of them upon completion (and fail, since those folders won't be empty).
-.PRECIOUS: $(build_dir)/. $(build_dir)%/.
-$(build_dir)/. $(build_dir)%/.:
+.PRECIOUS: $(BUILD_DIR)/. $(BUILD_DIR)%/.
+$(BUILD_DIR)/. $(BUILD_DIR)%/.:
 	$(Q) mkdir -p $(dir $@)
 
 # To make objects dependent on their directory, we need a second expansion
@@ -75,8 +74,8 @@ objs = $(call object_for,$(src))
 -include $(objs:.o=.d)
 
 .SECONDARY: $(objs)
-$(build_dir)/epsilon.$(EXE): $(objs)
-$(build_dir)/test.$(EXE): $(objs)
+$(BUILD_DIR)/epsilon.$(EXE): $(objs)
+$(BUILD_DIR)/test.$(EXE): $(objs)
 
 # Define standard compilation rules
 
@@ -105,7 +104,7 @@ $(eval $(call rule_for, \
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	$(Q) rm -rf $(build_dir)
+	$(Q) rm -rf $(BUILD_DIR)
 
 .PHONY: cowsay_%
 cowsay_%:

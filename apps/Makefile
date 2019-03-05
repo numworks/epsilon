@@ -47,7 +47,7 @@ $(call object_for,apps/apps_container_storage.cpp apps/main.cpp): CXXFLAGS += $(
 # I18n file generation
 
 # The header is refered to as <apps/i18n.h> so make sure it's findable this way
-SFLAGS += -I$(build_dir)
+SFLAGS += -I$(BUILD_DIR)
 
 i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
 i18n_files += $(addprefix apps/,\
@@ -81,9 +81,9 @@ $(eval $(call rule_for, \
 # by the object_for function.
 app_src += apps/i18n.py
 
-$(build_dir)/apps/i18n.h: $(build_dir)/apps/i18n.cpp
+$(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
-$(call object_for,$(app_src)): $(build_dir)/apps/i18n.h
+$(call object_for,$(app_src)): $(BUILD_DIR)/apps/i18n.h
 
 # Handle PNG files
 
@@ -96,8 +96,8 @@ $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 # As a shortcut, we simply say that every app file depends on every image. In
 # practice, this forces all the images to be before the app.
 
-#app_image_objs := $(build_dir)/$(app_images:.png=.o)
-#.SECONDARY: $(build_dir)/$(app_images:.png=.cpp)
+#app_image_objs := $(BUILD_DIR)/$(app_images:.png=.o)
+#.SECONDARY: $(BUILD_DIR)/$(app_images:.png=.cpp)
 #$(app_objs): $(app_image_objs)
 #app_image_src := $(app_images:.png=.cpp)
 

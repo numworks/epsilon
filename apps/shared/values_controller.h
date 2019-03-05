@@ -9,7 +9,7 @@
 #include "values_parameter_controller.h"
 #include "values_function_parameter_controller.h"
 #include "interval_parameter_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

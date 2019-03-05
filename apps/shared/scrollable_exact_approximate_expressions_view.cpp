@@ -1,5 +1,5 @@
 #include "scrollable_exact_approximate_expressions_view.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include <assert.h>
 using namespace Poincare;
 

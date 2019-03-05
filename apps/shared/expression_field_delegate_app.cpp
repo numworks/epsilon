@@ -1,6 +1,6 @@
 #include "expression_field_delegate_app.h"
 #include <escher.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 
 using namespace Poincare;

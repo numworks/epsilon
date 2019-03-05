@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "interactive_curve_view_range.h"
 #include "curve_view.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

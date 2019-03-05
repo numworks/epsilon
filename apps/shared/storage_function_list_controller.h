@@ -7,7 +7,7 @@
 #include "function_title_cell.h"
 #include "storage_list_parameter_controller.h"
 #include "storage_expression_model_list_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

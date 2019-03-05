@@ -25,7 +25,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 .PHONY: %_run
 %_run: %.$(EXE)
-	$(GDB) -x build/device/gdb_script.gdb $<
+	$(GDB) -x scripts/device/gdb_script.gdb $<
 
 %.map: %.elf
 	@echo "LDMAP   $@"
@@ -34,7 +34,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 .PHONY: %_memory_map
 %_memory_map: %.map
 	@echo "========== MEMORY MAP ========="
-	$(Q) awk -f build/device/memory_map.awk < $<
+	$(Q) awk -f scripts/device/memory_map.awk < $<
 	@echo "==============================="
 
 .PHONY: %_flash
@@ -48,7 +48,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 .PHONY: openocd
 openocd:
-	openocd -f build/device/openocd.cfg
+	openocd -f scripts/device/openocd.cfg
 
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
 flasher.$(EXE): LDFLAGS = --gc-sections -T ion/src/device/usb/flasher.ld

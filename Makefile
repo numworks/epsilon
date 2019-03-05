@@ -1,4 +1,4 @@
-include build/config.mak
+include scripts/config.mak
 
 # Disable default Make rules
 .SUFFIXES:
@@ -62,8 +62,8 @@ include python/Makefile
 include escher/Makefile
 # Executable Makefiles
 include apps/Makefile
-include build/struct_layout/Makefile
-include build/scenario/Makefile
+include scripts/struct_layout/Makefile
+include scripts/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
 objs = $(call object_for,$(src))
@@ -121,4 +121,4 @@ cowsay_%:
 .PHONY: clena
 clena: cowsay_CLENA clean
 
--include build/targets.$(PLATFORM).mak
+-include scripts/targets.$(PLATFORM).mak

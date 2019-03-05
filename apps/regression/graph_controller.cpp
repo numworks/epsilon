@@ -113,7 +113,7 @@ void GraphController::reloadBannerView() {
   legend = ")  ";
   strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 0);
+  m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
   numberOfChar = 0;
@@ -132,7 +132,7 @@ void GraphController::reloadBannerView() {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 1);
+  m_bannerView.abscissaView()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
   numberOfChar = 0;
@@ -149,12 +149,12 @@ void GraphController::reloadBannerView() {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 2);
+  m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
   Model * model = m_store->modelForSeries(selectedSeriesIndex());
   I18n::Message formula = model->formulaMessage();
-  m_bannerView.setMessageAtIndex(formula, 3);
+  m_bannerView.regressionTypeView()->setMessage(formula);
 
   // Get the coefficients
   double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
@@ -173,13 +173,12 @@ void GraphController::reloadBannerView() {
       buffer[numberOfChar++] = ' ';
     }
     buffer[numberOfChar] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 4);
+    m_bannerView.subTextAtIndex(0)->setText(buffer);
 
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-    m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 5);
-    for (int i = 6; i < m_bannerView.numberOfTextviews(); i++) {
-      char empty[] = {0};
-      m_bannerView.setLegendAtIndex(empty, i);
+    m_bannerView.subTextAtIndex(1)->setText(const_cast<char *>(dataNotSuitableMessage));
+    for (int i = 2; i < m_bannerView.numberOfsubTexts(); i++) {
+      m_bannerView.subTextAtIndex(i)->setText("");
     }
     return;
   }
@@ -191,7 +190,7 @@ void GraphController::reloadBannerView() {
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 4 + i);
+    m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
 
@@ -203,7 +202,7 @@ void GraphController::reloadBannerView() {
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength+10] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 6);
+    m_bannerView.subTextAtIndex(2)->setText(buffer);
 
     // Set "r2=..."
     numberOfChar = 0;
@@ -212,19 +211,20 @@ void GraphController::reloadBannerView() {
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 7);
+    m_bannerView.subTextAtIndex(3)->setText(buffer);
 
     // Clean the last subview
     buffer[0] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 8);
+    m_bannerView.subTextAtIndex(4)->setText(buffer);
 
   } else {
     // Empty all non used subviews
-    for (int i = 4+model->numberOfCoefficients(); i < m_bannerView.numberOfTextviews(); i++) {
+    for (int i = model->numberOfCoefficients(); i < m_bannerView.numberOfsubTexts(); i++) {
       buffer[0] = 0;
-      m_bannerView.setLegendAtIndex(buffer, i);
+      m_bannerView.subTextAtIndex(i)->setText(buffer);
     }
   }
+  m_bannerView.reload();
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {

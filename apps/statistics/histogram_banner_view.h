@@ -10,6 +10,9 @@ namespace Statistics {
 class HistogramBannerView : public Shared::BannerView {
 public:
   HistogramBannerView();
+  BufferTextView * intervalView() { return &m_intervalView; }
+  BufferTextView * sizeView() { return &m_sizeView; }
+  BufferTextView * frequencyView() { return &m_frequencyView; }
 private:
   static constexpr int k_numberOfSubviews = 6;
   int numberOfSubviews() const override { return k_numberOfSubviews; }

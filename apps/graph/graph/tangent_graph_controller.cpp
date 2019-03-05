@@ -49,13 +49,14 @@ void TangentGraphController::reloadBannerView() {
   ExpiringPointer<CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  m_bannerView->setLegendAtIndex(buffer, 4);
+  m_bannerView->aView()->setText(buffer);
 
   legend = "b=";
   legendLength = strlcpy(buffer, legend, bufferSize);
   y = -y*m_cursor->x()+function->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  m_bannerView->setLegendAtIndex(buffer, 5);
+  m_bannerView->bView()->setText(buffer);
+  m_bannerView->reload();
 }
 
 bool TangentGraphController::moveCursorHorizontally(int direction) {

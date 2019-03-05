@@ -1,88 +1,88 @@
-app_objs += $(addprefix apps/shared/,\
-  banner_view.o\
-  buffer_function_title_cell.o\
-  buffer_text_view_with_text_field.o\
-  button_with_separator.o\
-  cursor_view.o\
-  curve_view.o\
-  curve_view_cursor.o\
-  curve_view_range.o\
-  double_pair_store.o\
-  editable_cell_table_view_controller.o\
-  expression_field_delegate_app.o\
-  expression_model.o\
-  expression_model_list_controller.o\
-  expression_model_store.o\
-  float_parameter_controller.o\
-  function.o\
-  function_app.o\
-  function_banner_delegate.o\
-  function_curve_parameter_controller.o\
-  function_expression_cell.o\
-  function_go_to_parameter_controller.o\
-  function_graph_view.o\
-  function_graph_controller.o\
-  function_list_controller.o\
-  function_store.o\
-  function_title_cell.o\
-  global_context.o\
-  go_to_parameter_controller.o\
-  hideable_even_odd_cell.o\
-  hideable_even_odd_editable_text_cell.o\
-  initialisation_parameter_controller.o\
-  input_event_handler_delegate_app.o\
-  interactive_curve_view_controller.o\
-  interactive_curve_view_range.o\
-  interactive_curve_view_range_delegate.o\
-  interval.o\
-  interval_parameter_controller.o\
-  language_controller.o\
-  layout_field_delegate.o\
-  list_parameter_controller.o\
-  margin_even_odd_message_text_cell.o\
-  memoized_curve_view_range.o\
-  message_view.o\
-  ok_view.o\
-  parameter_text_field_delegate.o\
-  range_parameter_controller.o\
-  regular_table_view_data_source.o\
-  round_cursor_view.o\
-  scrollable_exact_approximate_expressions_cell.o\
-  scrollable_exact_approximate_expressions_view.o\
-  separator_even_odd_buffer_text_cell.o\
-  simple_interactive_curve_view_controller.o\
-  storage_cartesian_function.o\
-  storage_expression_model.o\
-  storage_expression_model_store.o\
-  storage_expression_model_list_controller.o\
-  storage_function.o\
-  storage_function_app.o\
-  storage_function_banner_delegate.o\
-  storage_function_curve_parameter_controller.o\
-  storage_function_go_to_parameter_controller.o\
-  storage_function_graph_controller.o\
-  storage_function_graph_view.o\
-  storage_function_list_controller.o\
-  storage_function_store.o\
-  storage_list_parameter_controller.o\
-  storage_sum_graph_controller.o\
-  storage_values_function_parameter_controller.o\
-  storage_values_controller.o\
-  store_cell.o\
-  store_context.o\
-  store_controller.o\
-  store_parameter_controller.o\
-  store_selectable_table_view.o\
-  store_title_cell.o\
-  sum_graph_controller.o\
-  tab_table_controller.o\
-  text_field_delegate.o\
-  text_field_delegate_app.o\
-  text_field_with_extension.o\
-  toolbox_helpers.o\
-  values_function_parameter_controller.o\
-  values_parameter_controller.o\
-  values_controller.o\
-  vertical_cursor_view.o\
-  zoom_parameter_controller.o\
+app_src += $(addprefix apps/shared/,\
+  banner_view.cpp \
+  buffer_function_title_cell.cpp \
+  buffer_text_view_with_text_field.cpp \
+  button_with_separator.cpp \
+  cursor_view.cpp \
+  curve_view.cpp \
+  curve_view_cursor.cpp \
+  curve_view_range.cpp \
+  double_pair_store.cpp \
+  editable_cell_table_view_controller.cpp \
+  expression_field_delegate_app.cpp \
+  expression_model.cpp \
+  expression_model_list_controller.cpp \
+  expression_model_store.cpp \
+  float_parameter_controller.cpp \
+  function.cpp \
+  function_app.cpp \
+  function_banner_delegate.cpp \
+  function_curve_parameter_controller.cpp \
+  function_expression_cell.cpp \
+  function_go_to_parameter_controller.cpp \
+  function_graph_controller.cpp \
+  function_graph_view.cpp \
+  function_list_controller.cpp \
+  function_store.cpp \
+  function_title_cell.cpp \
+  global_context.cpp \
+  go_to_parameter_controller.cpp \
+  hideable_even_odd_cell.cpp \
+  hideable_even_odd_editable_text_cell.cpp \
+  initialisation_parameter_controller.cpp \
+  input_event_handler_delegate_app.cpp \
+  interactive_curve_view_controller.cpp \
+  interactive_curve_view_range.cpp \
+  interactive_curve_view_range_delegate.cpp \
+  interval.cpp \
+  interval_parameter_controller.cpp \
+  language_controller.cpp \
+  layout_field_delegate.cpp \
+  list_parameter_controller.cpp \
+  margin_even_odd_message_text_cell.cpp \
+  memoized_curve_view_range.cpp \
+  message_view.cpp \
+  ok_view.cpp \
+  parameter_text_field_delegate.cpp \
+  range_parameter_controller.cpp \
+  regular_table_view_data_source.cpp \
+  round_cursor_view.cpp \
+  scrollable_exact_approximate_expressions_cell.cpp \
+  scrollable_exact_approximate_expressions_view.cpp \
+  separator_even_odd_buffer_text_cell.cpp \
+  simple_interactive_curve_view_controller.cpp \
+  storage_cartesian_function.cpp \
+  storage_expression_model.cpp \
+  storage_expression_model_list_controller.cpp \
+  storage_expression_model_store.cpp \
+  storage_function.cpp \
+  storage_function_app.cpp \
+  storage_function_banner_delegate.cpp \
+  storage_function_curve_parameter_controller.cpp \
+  storage_function_go_to_parameter_controller.cpp \
+  storage_function_graph_controller.cpp \
+  storage_function_graph_view.cpp \
+  storage_function_list_controller.cpp \
+  storage_function_store.cpp \
+  storage_list_parameter_controller.cpp \
+  storage_sum_graph_controller.cpp \
+  storage_values_controller.cpp \
+  storage_values_function_parameter_controller.cpp \
+  store_cell.cpp \
+  store_context.cpp \
+  store_controller.cpp \
+  store_parameter_controller.cpp \
+  store_selectable_table_view.cpp \
+  store_title_cell.cpp \
+  sum_graph_controller.cpp \
+  tab_table_controller.cpp \
+  text_field_delegate.cpp \
+  text_field_delegate_app.cpp \
+  text_field_with_extension.cpp \
+  toolbox_helpers.cpp \
+  values_controller.cpp \
+  values_function_parameter_controller.cpp \
+  values_parameter_controller.cpp \
+  vertical_cursor_view.cpp \
+  zoom_parameter_controller.cpp \
 )

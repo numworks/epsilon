@@ -33,7 +33,8 @@ void IntersectionGraphController::reloadBannerView() {
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
-  bannerView()->setLegendAtIndex(buffer, 1);
+  bannerView()->ordinateView()->setText(buffer);
+  bannerView()->reload();
 }
 
 Poincare::Expression::Coordinate2D IntersectionGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {

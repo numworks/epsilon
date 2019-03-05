@@ -8,6 +8,8 @@ namespace Shared {
 class XYBannerView : public BannerView {
 public:
   XYBannerView();
+  BufferTextView * abscissaView() { return &m_abscissaView; }
+  BufferTextView * ordinateView() { return &m_ordinateView; }
   static constexpr int k_numberOfSubviews = 2;
 protected:
   View * subviewAtIndex(int index) override;

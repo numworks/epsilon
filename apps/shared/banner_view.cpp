@@ -7,22 +7,6 @@ KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
   return KDFont::SmallFont->glyphSize().height()*linesCount;
 }
 
-void BannerView::setLegendAtIndex(char * text, int index) {
-  /* The layout of the banner's subviews depends on their content.
-   * Indeed, we're using a "centered text" algorithm to layout the subviews.
-   * So changing a legend implies two things
-   *  - First, we need to update the textView to ensure it has the new content
-   *  - Second, we need to relayout *all* of our subviews. */
-  TextView * textView = static_cast<TextView *>(subviewAtIndex(index));
-  textView->setText(text);
-  layoutSubviews();
-}
-
-void BannerView::setMessageAtIndex(I18n::Message text, int index) {
-  static_cast<MessageTextView *>(subviewAtIndex(index))->setMessage(text);
-  layoutSubviews();
-}
-
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
   return KDSize(0, HeightGivenNumberOfLines(numberOfLines()));
 }

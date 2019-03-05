@@ -19,7 +19,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   buffer[0] = symbol;
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
-  bannerView()->setLegendAtIndex(buffer, 0);
+  bannerView()->abscissaView()->setText(buffer);
 
   numberOfChar = 0;
   numberOfChar += function->nameWithArgument(buffer, bufferSize, symbol);
@@ -27,7 +27,9 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
-  bannerView()->setLegendAtIndex(buffer, 1);
+  bannerView()->ordinateView()->setText(buffer);
+
+  bannerView()->reload();
 }
 
 }

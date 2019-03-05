@@ -10,6 +10,9 @@ namespace Statistics {
 class BoxBannerView : public Shared::BannerView {
 public:
   BoxBannerView();
+  BufferTextView * seriesName() { return &m_seriesName; }
+  MessageTextView * calculationName() { return &m_calculationName; }
+  BufferTextView * calculationValue() { return &m_calculationValue; }
 private:
   static constexpr int k_numberOfSubviews = 3;
   int numberOfSubviews() const override { return k_numberOfSubviews; }

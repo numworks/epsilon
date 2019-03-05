@@ -8,6 +8,9 @@ namespace Graph {
 class BannerView : public Shared::XYBannerView {
 public:
   BannerView();
+  BufferTextView * derivativeView() { return &m_derivativeView; }
+  BufferTextView * aView() { return &m_aView; }
+  BufferTextView * bView() { return &m_bView; }
   void setNumberOfSubviews(int numberOfSubviews) { m_numberOfSubviews = numberOfSubviews; }
 private:
   int numberOfSubviews() const override { return m_numberOfSubviews; }

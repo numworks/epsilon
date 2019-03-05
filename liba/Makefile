@@ -1,126 +1,125 @@
 SFLAGS += -Iliba/include
 
-liba/src/external/sqlite/mem5.o: CFLAGS += -w
-
-objs += $(addprefix liba/src/, \
-  armv7m/setjmp.o \
-  armv7m/longjmp.o \
-  assert.o \
-  bzero.o \
-  ctype.o \
-  errno.o \
-  fpclassify.o \
-  fpclassifyf.o \
-  ieee754.o \
-  malloc.o \
-  memcmp.o \
-  memcpy.o \
-  memmove.o \
-  memset.o \
-  nearbyint.o \
-  nearbyintf.o \
-  strcmp.o \
-  strchr.o \
-  strlcpy.o \
-  strlen.o \
-  external/sqlite/mem5.o \
+src += $(addprefix liba/src/, \
+  armv7m/setjmp.s \
+  armv7m/longjmp.s \
+  assert.c \
+  bzero.c \
+  ctype.c \
+  errno.c \
+  fpclassify.c \
+  fpclassifyf.c \
+  ieee754.c \
+  malloc.c \
+  memcmp.c \
+  memcpy.c \
+  memmove.c \
+  memset.c \
+  nearbyint.c \
+  nearbyintf.c \
+  strcmp.c \
+  strchr.c \
+  strlcpy.c \
+  strlen.c \
+  external/sqlite/mem5.c \
 )
 
-objs += $(addprefix liba/src/external/openbsd/, \
-  b_exp__D.o \
-  b_log__D.o \
-  b_tgamma.o \
-  e_acosf.o \
-  e_acoshf.o \
-  e_asinf.o \
-  e_atanhf.o \
-  e_atan2f.o \
-  e_coshf.o \
-  e_expf.o \
-  e_fmodf.o \
-  e_hypotf.o \
-  e_lgammaf_r.o \
-  e_log10f.o \
-  e_log2.o \
-  e_logf.o \
-  e_powf.o \
-  e_rem_pio2f.o \
-  e_scalb.o \
-  e_sinhf.o \
-  e_sqrtf.o \
-  k_cosf.o \
-  k_rem_pio2f.o \
-  k_sinf.o \
-  k_tanf.o \
+src += $(addprefix liba/src/external/openbsd/, \
+  b_exp__D.c \
+  b_log__D.c \
+  b_tgamma.c \
+  e_acosf.c \
+  e_acoshf.c \
+  e_asinf.c \
+  e_atanhf.c \
+  e_atan2f.c \
+  e_coshf.c \
+  e_expf.c \
+  e_fmodf.c \
+  e_hypotf.c \
+  e_lgammaf_r.c \
+  e_log10f.c \
+  e_log2.c \
+  e_logf.c \
+  e_powf.c \
+  e_rem_pio2f.c \
+  e_scalb.c \
+  e_sinhf.c \
+  e_sqrtf.c \
+  k_cosf.c \
+  k_rem_pio2f.c \
+  k_sinf.c \
+  k_tanf.c \
   s_asinhf.o\
-  s_atanf.o \
-  s_ceilf.o \
-  s_copysignf.o \
-  s_cosf.o \
-  s_erf.o \
+  s_atanf.c \
+  s_ceilf.c \
+  s_copysignf.c \
+  s_cosf.c \
+  s_erf.c \
   s_expm1f.o\
-  s_fabsf.o \
-  s_fmaxf.o \
-  s_floorf.o \
-  s_frexpf.o \
-  s_frexp.o \
-  s_log1pf.o \
-  s_logb.o \
-  s_modf.o \
-  s_modff.o \
-  s_rint.o \
-  s_roundf.o \
-  s_scalbnf.o \
-  s_signgam.o \
-  s_sinf.o \
-  s_tanf.o \
-  s_tanhf.o \
-  s_trunc.o \
-  s_truncf.o \
-  w_lgammaf.o \
+  s_fabsf.c \
+  s_fmaxf.c \
+  s_floorf.c \
+  s_frexpf.c \
+  s_frexp.c \
+  s_log1pf.c \
+  s_logb.c \
+  s_modf.c \
+  s_modff.c \
+  s_rint.c \
+  s_roundf.c \
+  s_scalbnf.c \
+  s_signgam.c \
+  s_sinf.c \
+  s_tanf.c \
+  s_tanhf.c \
+  s_trunc.c \
+  s_truncf.c \
+  w_lgammaf.c \
 )
 
-objs += $(addprefix liba/src/external/openbsd/, \
-  e_acos.o \
-  e_acosh.o \
-  e_asin.o \
-  e_atanh.o \
-  e_atan2.o \
-  e_cosh.o \
-  e_exp.o \
-  e_fmod.o \
-  e_hypot.o \
-  e_lgamma_r.o \
-  e_log.o \
-  e_log10.o \
-  e_pow.o \
-  e_rem_pio2.o \
-  e_sinh.o \
-  e_sqrt.o \
-  k_cos.o \
-  k_rem_pio2.o \
-  k_sin.o \
-  k_tan.o \
-  s_asinh.o \
-  s_atan.o \
-  s_ceil.o \
-  s_copysign.o \
-  s_cos.o \
-  s_expm1.o \
-  s_fabs.o \
-  s_fmax.o \
-  s_floor.o \
-  s_log1p.o \
-  s_round.o \
-  s_scalbn.o \
-  s_sin.o \
-  s_tan.o \
-  s_tanh.o \
-  w_lgamma.o \
+src += $(addprefix liba/src/external/openbsd/, \
+  e_acos.c \
+  e_acosh.c \
+  e_asin.c \
+  e_atanh.c \
+  e_atan2.c \
+  e_cosh.c \
+  e_exp.c \
+  e_fmod.c \
+  e_hypot.c \
+  e_lgamma_r.c \
+  e_log.c \
+  e_log10.c \
+  e_pow.c \
+  e_rem_pio2.c \
+  e_sinh.c \
+  e_sqrt.c \
+  k_cos.c \
+  k_rem_pio2.c \
+  k_sin.c \
+  k_tan.c \
+  s_asinh.c \
+  s_atan.c \
+  s_ceil.c \
+  s_copysign.c \
+  s_cos.c \
+  s_expm1.c \
+  s_fabs.c \
+  s_fmax.c \
+  s_floor.c \
+  s_log1p.c \
+  s_round.c \
+  s_scalbn.c \
+  s_sin.c \
+  s_tan.c \
+  s_tanh.c \
+  w_lgamma.c \
 )
 
-liba/src/external/openbsd/%.o: SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
-liba/src/external/openbsd/%.o: CFLAGS += -w
+$(call object_for,liba/src/external/sqlite/mem5.c): CFLAGS += -w
+$(call object_for,liba/src/external/openbsd/%.c): SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
+$(call object_for,liba/src/external/openbsd/%.c): CFLAGS += -w
 
 tests += $(addprefix liba/test/, \
   aeabi.c \
@@ -136,6 +135,6 @@ tests += $(addprefix liba/test/, \
 
 # The use of aeabi-rt could be made conditional to an AEABI target.
 # In practice we're always using liba on such a target.
-objs += $(addprefix liba/src/aeabi-rt/, \
-  atexit.o \
+src += $(addprefix liba/src/aeabi-rt/, \
+  atexit.c \
 )

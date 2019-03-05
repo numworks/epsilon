@@ -1,26 +1,26 @@
 apps += Sequence::App
 app_headers += apps/sequence/app.h
 
-app_objs += $(addprefix apps/sequence/,\
-  app.o\
-  graph/banner_view.o\
-  graph/curve_parameter_controller.o\
-  graph/curve_view_range.o\
-  graph/go_to_parameter_controller.o\
-  graph/graph_controller.o\
-  graph/graph_view.o\
-  graph/term_sum_controller.o\
-  list/list_controller.o\
-  list/list_parameter_controller.o\
-  list/sequence_toolbox.o\
-  list/type_parameter_controller.o\
-  values/interval_parameter_controller.o\
-  values/values_controller.o\
-  cache_context.o\
-  sequence.o\
-  sequence_context.o\
-  sequence_store.o\
-  sequence_title_cell.o\
+app_src += $(addprefix apps/sequence/,\
+  app.cpp \
+  graph/banner_view.cpp \
+  graph/curve_parameter_controller.cpp \
+  graph/curve_view_range.cpp \
+  graph/go_to_parameter_controller.cpp \
+  graph/graph_controller.cpp \
+  graph/graph_view.cpp \
+  graph/term_sum_controller.cpp \
+  list/list_controller.cpp \
+  list/list_parameter_controller.cpp \
+  list/sequence_toolbox.cpp \
+  list/type_parameter_controller.cpp \
+  values/interval_parameter_controller.cpp \
+  values/values_controller.cpp \
+  cache_context.cpp \
+  sequence.cpp \
+  sequence_context.cpp \
+  sequence_store.cpp \
+  sequence_title_cell.cpp \
 )
 
 i18n_files += $(addprefix apps/sequence/,\
@@ -35,4 +35,4 @@ tests += $(addprefix apps/sequence/test/,\
   sequence.cpp\
 )
 
-app_images += apps/sequence/sequence_icon.png
+$(eval $(call depends_on_image,apps/sequence/app.cpp,apps/sequence/sequence_icon.png))

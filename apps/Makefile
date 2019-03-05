@@ -10,26 +10,26 @@ apps =
 # (path to the apps header).
 $(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 
-app_objs += $(addprefix apps/,\
-  apps_container.o\
-  apps_container_storage.o\
-  apps_window.o\
-  battery_timer.o\
-  battery_view.o\
-  constant.o\
-  backlight_dimming_timer.o\
-  empty_battery_window.o\
-  exam_pop_up_controller.o\
-  global_preferences.o\
-  i18n.o\
-  lock_view.o\
-  main.o\
-  math_toolbox.o\
-  shift_alpha_lock_view.o\
-  suspend_timer.o\
-  title_bar_view.o\
-  variable_box_controller.o\
-  variable_box_empty_controller.o\
+app_src += $(addprefix apps/,\
+  apps_container.cpp \
+  apps_container_storage.cpp \
+  apps_window.cpp \
+  backlight_dimming_timer.cpp \
+  battery_timer.cpp \
+  battery_view.cpp \
+  constant.cpp \
+  empty_battery_window.cpp \
+  exam_pop_up_controller.cpp \
+  global_preferences.cpp \
+  i18n.cpp \
+  lock_view.cpp \
+  main.cpp \
+  math_toolbox.cpp \
+  shift_alpha_lock_view.cpp \
+  suspend_timer.cpp \
+  title_bar_view.cpp \
+  variable_box_controller.cpp \
+  variable_box_empty_controller.cpp \
 )
 
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
@@ -40,7 +40,7 @@ snapshots_count = $(words $(apps))
 snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
 epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
 
-apps/apps_container_storage.o apps/main.o: CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
+$(call object_for,apps/apps_container_storage.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
 
 
 i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
@@ -68,11 +68,12 @@ apps/i18n.cpp: $(i18n_files)
 	@echo "I18N    $@"
 	$(Q) $(PYTHON) apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N) --files $^
 
-$(app_objs): apps/i18n.h
+#$(app_objs): apps/i18n.h
 
 products += apps/i18n.h apps/i18n.cpp
 
-app_images += apps/exam_icon.png
+$(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
+
 
 # Tracking which source file uses which image is painful. But we need to ensure
 # that a .png file has been inlined before building any source file that uses
@@ -80,15 +81,20 @@ app_images += apps/exam_icon.png
 # As a shortcut, we simply say that every app file depends on every image. In
 # practice, this forces all the images to be before the app.
 
-app_image_objs := $(app_images:.png=.o)
-.SECONDARY: $(app_images:.png=.cpp)
-$(app_objs): $(app_image_objs)
+#app_image_objs := $(OUTPUT_DIRECTORY)/$(app_images:.png=.o)
+#.SECONDARY: $(OUTPUT_DIRECTORY)/$(app_images:.png=.cpp)
+#$(app_objs): $(app_image_objs)
+#app_image_src := $(app_images:.png=.cpp)
 
-epsilon.$(EXE): $(app_objs) $(app_image_objs)
+#epsilon.$(EXE): $(app_objs) $(app_image_objs)
+#app_objs = $(call object_for,$(app_src))
+
+#epsilon.$(EXE): $(app_objs)
+
+src += $(app_src)
+#$(app_image_src)
 
 TO_REMOVE := apps/main.o apps/i18n.o
 TMP := $(app_objs) $(app_image_objs)
 VAR := $(filter-out $(TO_REMOVE), $(TMP))
 test.$(EXE): $(VAR)
-
-products += epsilon.$(EXE) $(app_objs) $(call INLINER_PRODUCTS,$(app_images))

@@ -1,9 +1,9 @@
-app_objs += $(addprefix apps/on_boarding/,\
-  app.o\
-  language_controller.o\
-  logo_controller.o\
-  logo_view.o\
-  pop_up_controller.o\
+app_src += $(addprefix apps/on_boarding/,\
+  app.cpp \
+  language_controller.cpp \
+  logo_controller.cpp \
+  logo_view.cpp \
+  pop_up_controller.cpp \
 )
 
 i18n_files += $(addprefix apps/on_boarding/,\
@@ -14,5 +14,4 @@ i18n_files += $(addprefix apps/on_boarding/,\
   base.pt.i18n\
 )
 
-app_images += apps/on_boarding/logo_icon.png
-
+$(eval $(call depends_on_image,apps/on_boarding/logo_view.cpp,apps/on_boarding/logo_icon.png))

@@ -2,7 +2,7 @@
 #define CODE_SCRIPT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "script_store.h"
 
 namespace Code {

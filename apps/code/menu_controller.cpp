@@ -1,6 +1,6 @@
 #include "menu_controller.h"
 #include "app.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 #include <assert.h>
 #include <escher/metric.h>

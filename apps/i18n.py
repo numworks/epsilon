@@ -116,7 +116,7 @@ def print_header(data, path, locales):
 def print_implementation(data, path, locales):
     f = open(path, 'w')
     f.write("#include \"i18n.h\"\n")
-    f.write("#include \"global_preferences.h\"\n")
+    f.write("#include <apps/global_preferences.h>\n")
     f.write("#include <assert.h>\n\n");
     f.write("namespace I18n {\n\n")
 

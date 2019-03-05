@@ -2,7 +2,7 @@
 #define ON_BOARDING_POP_UP_CONTROLLER_H
 
 #include <escher.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../shared/message_view.h"
 #include "../shared/ok_view.h"
 

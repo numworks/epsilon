@@ -52,8 +52,8 @@ dfu_src += ion/src/device/base64.cpp
 dfu_src += ion/src/device/flash.cpp
 dfu_src += ion/src/device/timing.cpp
 
-$(OUTPUT_DIRECTORY)/ion/src/device/usb/dfu.elf: LDSCRIPT = ion/src/device/usb/dfu.ld
-$(OUTPUT_DIRECTORY)/ion/src/device/usb/dfu.elf: $(call object_for,$(usb_src)) $(call object_for,$(dfu_src))
+$(build_dir)/ion/src/device/usb/dfu.elf: LDSCRIPT = ion/src/device/usb/dfu.ld
+$(build_dir)/ion/src/device/usb/dfu.elf: $(call object_for,$(usb_src)) $(call object_for,$(dfu_src))
 
 # This command embeds a binary file into an object one.
 # This allows us to embed standalone code (the dfu routines) into the final
@@ -62,7 +62,7 @@ $(OUTPUT_DIRECTORY)/ion/src/device/usb/dfu.elf: $(call object_for,$(usb_src)) $(
 # and end), but prefixes them with a mangled file path. To have consistent names
 # we simply "cd" into the directory. This assumes input and output lives in the
 # same directory.
-$(OUTPUT_DIRECTORY)/ion/src/device/usb/dfu.o: $(OUTPUT_DIRECTORY)/ion/src/device/usb/dfu.bin
+$(build_dir)/ion/src/device/usb/dfu.o: $(build_dir)/ion/src/device/usb/dfu.bin
 	@echo "OBJCOPY $@"
 	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
 

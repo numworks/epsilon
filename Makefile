@@ -3,23 +3,23 @@ include scripts/config.mak
 # Disable default Make rules
 .SUFFIXES:
 
-OUTPUT_DIRECTORY = outputs
-object_for = $(addprefix $(OUTPUT_DIRECTORY)/,$(addsuffix .o,$(basename $(1))))
+build_dir = build
+object_for = $(addprefix $(build_dir)/,$(addsuffix .o,$(basename $(1))))
 
-default: $(OUTPUT_DIRECTORY)/epsilon.$(EXE)
+default: $(build_dir)/epsilon.$(EXE)
 
 # Define a standard rule helper
 # If passed a last parameter value of with_local_version, we also define an
-# extra rule that can build source files within the $(OUTPUT_DIRECTORY). This is
-# useful for rules that can be applied for intermediate objects (for example,
-# when going .png -> .cpp -> .o).
+# extra rule that can build source files within the $(build_dir). This is useful
+# for rules that can be applied for intermediate objects (for example, when
+# going .png -> .cpp -> .o).
 define rule_for
-$(addprefix $$(OUTPUT_DIRECTORY)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(OUTPUT_DIRECTORY)/%=%)"
+$(addprefix $$(build_dir)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(build_dir)/%=%)"
 	$(Q) $(4)
 ifeq ($(strip $(5)),with_local_version)
-$(addprefix $$(OUTPUT_DIRECTORY)/,$(strip $(2))): $(addprefix $$(OUTPUT_DIRECTORY)/,$(strip $(3)))
-	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(OUTPUT_DIRECTORY)/%=%)"
+$(addprefix $$(build_dir)/,$(strip $(2))): $(addprefix $$(build_dir)/,$(strip $(3)))
+	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(build_dir)/%=%)"
 	$(Q) $(4)
 endif
 endef
@@ -37,8 +37,8 @@ info:
 # "output/foo/bar.o" because the directory "output/foo" doesn't exist).
 # We need to mark those directories as precious, otherwise Make will try to get
 # rid of them upon completion (and fail, since those folders won't be empty).
-.PRECIOUS: $(OUTPUT_DIRECTORY)/. $(OUTPUT_DIRECTORY)%/.
-$(OUTPUT_DIRECTORY)/. $(OUTPUT_DIRECTORY)%/.:
+.PRECIOUS: $(build_dir)/. $(build_dir)%/.
+$(build_dir)/. $(build_dir)%/.:
 	$(Q) mkdir -p $(dir $@)
 
 # To make objects dependent on their directory, we need a second expansion
@@ -75,8 +75,8 @@ objs = $(call object_for,$(src))
 -include $(objs:.o=.d)
 
 .SECONDARY: $(objs)
-$(OUTPUT_DIRECTORY)/epsilon.$(EXE): $(objs)
-$(OUTPUT_DIRECTORY)/test.$(EXE): $(objs)
+$(build_dir)/epsilon.$(EXE): $(objs)
+$(build_dir)/test.$(EXE): $(objs)
 
 # Define standard compilation rules
 
@@ -105,7 +105,7 @@ $(eval $(call rule_for, \
 .PHONY: clean
 clean:
 	@echo "CLEAN"
-	$(Q) rm -rf $(OUTPUT_DIRECTORY)
+	$(Q) rm -rf $(build_dir)
 
 .PHONY: cowsay_%
 cowsay_%:

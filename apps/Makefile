@@ -40,8 +40,6 @@ epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
 
 $(call object_for,apps/apps_container_storage.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
 
-
-
 # I18n file generation
 
 # The header is refered to as <apps/i18n.h> so make sure it's findable this way
@@ -76,8 +74,6 @@ $(eval $(call rule_for, \
 
 $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
-$(call object_for,$(app_src)): $(BUILD_DIR)/apps/i18n.h
-
 # Handle PNG files
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
@@ -92,6 +88,8 @@ epsilon_src += $(addprefix apps/, \
   main.cpp \
   i18n.py \
 )
+
+$(call object_for,$(app_src) $(epsilon_src)): $(BUILD_DIR)/apps/i18n.h
 
 $(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(epsilon_src))
 

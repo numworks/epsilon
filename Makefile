@@ -88,8 +88,6 @@ $$(BUILD_DIR)/$(1).$$(EXE): $$(objs)
 $(1).$$(EXE): $$(BUILD_DIR)/$(1).$$(EXE)
 endef
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(app_src))
-
 $(foreach executable,$(executables),$(eval $(call rules_for_executable,$(executable))))
 
 # Define standard compilation rules

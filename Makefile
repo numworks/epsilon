@@ -114,6 +114,11 @@ $(eval $(call rule_for, \
 ))
 
 $(eval $(call rule_for, \
+  OCC, %.o, %.m, \
+  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
+))
+
+$(eval $(call rule_for, \
   LD, %.$$(EXE), , \
   $$(LD) $$^ $$(LDFLAGS) -o $$@ \
 ))

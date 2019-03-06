@@ -20,4 +20,4 @@ runner_src += $(symbols_file)
 runner_objs = $(call object_for,$(runner_src))
 $(runner_objs): SFLAGS += -Iquiz/src
 
-test.$(EXE): $(runner_objs) $(call object_for,$(tests))
+$(BUILD_DIR)/test.$(EXE): $(runner_objs) $(call object_for,$(tests))

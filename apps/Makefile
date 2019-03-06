@@ -21,9 +21,7 @@ app_src += $(addprefix apps/,\
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   global_preferences.cpp \
-  i18n.cpp \
   lock_view.cpp \
-  main.cpp \
   math_toolbox.cpp \
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
@@ -76,11 +74,6 @@ $(eval $(call rule_for, \
   $$(PYTHON) apps/i18n.py --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --files $$^ \
 ))
 
-# Make sure apps/i18n.o is built
-# The extension added to app_src doesn't really matter since it'll be processed
-# by the object_for function.
-app_src += apps/i18n.py
-
 $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 
 $(call object_for,$(app_src)): $(BUILD_DIR)/apps/i18n.h
@@ -89,27 +82,17 @@ $(call object_for,$(app_src)): $(BUILD_DIR)/apps/i18n.h
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
+# Handle epsilon-only sources
+# Other executables may want to do their own i18n and main. That's the case for
+# the test runner. Let's add those files to a specific epsilon-only src. When
+# building apps/i18n.o, the extension doesn't really matter since it'll be
+# processed by the object_for function.
 
-# Tracking which source file uses which image is painful. But we need to ensure
-# that a .png file has been inlined before building any source file that uses
-# said image (because it will expect the ".h" file to be there).
-# As a shortcut, we simply say that every app file depends on every image. In
-# practice, this forces all the images to be before the app.
+epsilon_src += $(addprefix apps/, \
+  main.cpp \
+  i18n.py \
+)
 
-#app_image_objs := $(BUILD_DIR)/$(app_images:.png=.o)
-#.SECONDARY: $(BUILD_DIR)/$(app_images:.png=.cpp)
-#$(app_objs): $(app_image_objs)
-#app_image_src := $(app_images:.png=.cpp)
-
-#epsilon.$(EXE): $(app_objs) $(app_image_objs)
-#app_objs = $(call object_for,$(app_src))
-
-#epsilon.$(EXE): $(app_objs)
+$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(epsilon_src))
 
 src += $(app_src)
-#$(app_image_src)
-
-TO_REMOVE := apps/main.o apps/i18n.o
-TMP := $(app_objs) $(app_image_objs)
-VAR := $(filter-out $(TO_REMOVE), $(TMP))
-test.$(EXE): $(VAR)

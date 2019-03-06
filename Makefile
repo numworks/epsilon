@@ -66,6 +66,7 @@ include scripts/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
 objs = $(call object_for,$(src))
+.SECONDARY: $(objs)
 
 # Load source-based dependencies
 # Compilers can generate Makefiles that states the dependencies of a given
@@ -73,9 +74,19 @@ objs = $(call object_for,$(src))
 # but allows correct yet optimal incremental builds.
 -include $(objs:.o=.d)
 
-.SECONDARY: $(objs)
-$(BUILD_DIR)/epsilon.$(EXE): $(objs)
-$(BUILD_DIR)/test.$(EXE): $(objs)
+# Define rules for executables
+# Those can be built directly with make executable.exe as a shortcut. They also
+# depends on $(objs)
+
+executables = epsilon test
+
+define rules_for_executable
+$$(BUILD_DIR)/$(1).$$(EXE): $$(objs)
+.PHONY: $(1).$$(EXE)
+$(1).$$(EXE): $$(BUILD_DIR)/$(1).$$(EXE)
+endef
+
+$(foreach executable,$(executables),$(eval $(call rules_for_executable,$(executable))))
 
 # Define standard compilation rules
 

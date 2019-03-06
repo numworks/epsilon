@@ -69,6 +69,4 @@ $(BUILD_DIR)/ion/src/device/usb/dfu.o: $(BUILD_DIR)/ion/src/device/usb/dfu.bin
 src += ion/src/device/usb/dfu.cpp
 src += ion/src/device/usb/dfu_relocated.cpp
 
-#products += $(usb_objs) $(addprefix ion/src/device/usb/dfu, .elf .bin)
-
 endif

@@ -1,20 +1,18 @@
 # Compare
 
-products += $(wildcard ion/src/blackbox/library_*.o)
-
-ion/src/blackbox/library_%.o: SFLAGS += -D EPSILON_LIB_PREFIX=$(*F)
-ion/src/blackbox/library_%.o: ion/src/blackbox/library.cpp
+$(BUILD_DIR)/ion/src/blackbox/library_%.o: SFLAGS += -D EPSILON_LIB_PREFIX=$(*F)
+$(BUILD_DIR)/ion/src/blackbox/library_%.o: ion/src/blackbox/library.cpp
 	@echo "CXX     $@"
 	$(Q) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
-libepsilon_objs = $(filter-out $(addprefix ion/src/blackbox/,boot.o events.o),$(objs))
+libepsilon_src = $(filter-out $(addprefix ion/src/blackbox/,boot.cpp events.cpp),$(src))
 
-libepsilon_%.o: LDFLAGS += -exported_symbols_list ion/src/blackbox/lib_export_list.txt
-libepsilon_%.o: $(libepsilon_objs) $(app_objs) $(app_image_objs) ion/src/blackbox/library_%.o
+$(BUILD_DIR)/libepsilon_%.o: LDFLAGS += -exported_symbols_list ion/src/blackbox/lib_export_list.txt
+$(BUILD_DIR)/libepsilon_%.o: $(call object_for,$(libepsilon_src)) $(call object_for,$(app_src)) $(BUILD_DIR)/ion/src/blackbox/library_%.o
 	@echo "LD      $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -r -s -o $@
 
-compare: ion/src/blackbox/compare.o
+$(BUILD_DIR)/compare: $(call object_for,ion/src/blackbox/compare.cpp)
 	@echo "LD      $@"
 	$(Q) $(LD) $^ libepsilon_first.o libepsilon_second.o $(LDFLAGS) -L. -o $@
 
@@ -41,9 +39,9 @@ integration_tests: $(scenarios:.esc=.run)
 # Fuzzing
 .PHONY: epsilon_fuzz
 ifeq ($(TOOLCHAIN),afl)
-epsilon_fuzz: epsilon.$(EXE)
+epsilon_fuzz: $(BUILD_DIR)/epsilon.$(EXE)
 	@echo "FUZZ    $<"
-	@afl-fuzz -i tests -o afl ./epsilon.$(EXE)
+	@afl-fuzz -i tests -o afl $(BUILD_DIR)/epsilon.$(EXE)
 else
 epsilon_fuzz:
 	@echo "Fuzzing requires TOOLCHAIN=afl"
@@ -51,9 +49,9 @@ endif
 
 .PHONY: compare_fuzz
 ifeq ($(TOOLCHAIN),afl)
-compare_fuzz: compare
+compare_fuzz: $(BUILD_DIR)/compare
 	@echo "FUZZ    $<"
-	@afl-fuzz -t 3000 -i tests -o afl ./compare
+	@afl-fuzz -t 3000 -i tests -o afl $(BUILD_DIR)/compare
 else
 compare_fuzz:
 	@echo "Fuzzing requires TOOLCHAIN=afl"

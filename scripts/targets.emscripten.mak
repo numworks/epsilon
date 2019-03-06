@@ -1,7 +1,7 @@
-epsilon.packed.js: LDFLAGS += --memory-init-file 0
-epsilon.packed.js: $(objs) $(app_objs) $(app_image_objs)
+$(BUILD_DIR)/epsilon.packed.js: LDFLAGS += --memory-init-file 0
+$(BUILD_DIR)epsilon.packed.js: $(objs) $(app_objs) $(app_image_objs)
 
-simulator.zip: epsilon.packed.js
+$(BUILD_DIR)/simulator.zip: epsilon.packed.js
 	@rm -rf $(basename $@)
 	@mkdir $(basename $@)
 	@cp epsilon.packed.js $(basename $@)/epsilon.js
@@ -10,5 +10,3 @@ simulator.zip: epsilon.packed.js
 	@echo "ZIP     $@"
 	@zip -r -9 $@ $(basename $@) > /dev/null
 	@rm -rf $(basename $@)
-
-products += $(addprefix epsilon,.js .js.mem) epsilon.packed.js simulator.zip

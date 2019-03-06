@@ -1,7 +1,3 @@
-products += $(patsubst %.$(EXE),%.hex,$(filter %.$(EXE),$(products)))
-products += $(patsubst %.$(EXE),%.bin,$(filter %.$(EXE),$(products)))
-products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
-
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
 	$(Q) $(OBJCOPY) -O ihex $< $@
@@ -51,11 +47,9 @@ openocd:
 	openocd -f scripts/device/openocd.cfg
 
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
-flasher.$(EXE): LDFLAGS = --gc-sections -T ion/src/device/usb/flasher.ld
-flasher.$(EXE): $(objs) $(usb_objs) ion/src/device/usb/flasher.o
+$(BUILD_DIR)/flasher.$(EXE): LDFLAGS = --gc-sections -T ion/src/device/usb/flasher.ld
+$(BUILD_DIR)/flasher.$(EXE): $(objs) $(usb_objs) ion/src/device/usb/flasher.o
 else
-flasher.$(EXE):
+$(BUILD_DIR)/flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"
 endif
-
-products += flasher.$(EXE) flasher.bin

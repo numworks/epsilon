@@ -1,6 +1,8 @@
-objs += $(addprefix ion/src/sdl/android/src/cpp/, \
-  images.o \
+src += $(addprefix ion/src/sdl/android/src/cpp/, \
+  images.cpp \
 )
+
+LDFLAGS += -ljnigraphics -llog
 
 ANDROID_LIB_PATH = ion/src/sdl/android/libs
 

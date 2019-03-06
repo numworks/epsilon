@@ -1,1 +1,1 @@
-include build/targets.sdl.$(MODEL).mak
+include scripts/targets.sdl.$(MODEL).mak

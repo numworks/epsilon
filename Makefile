@@ -76,6 +76,10 @@ objs = $(call object_for,$(src))
 # but allows correct yet optimal incremental builds.
 -include $(objs:.o=.d)
 
+# Load platform-specific targets
+# We include them before the standard ones to give them precedence.
+-include scripts/targets.$(PLATFORM).mak
+
 # Define rules for executables
 # Those can be built directly with make executable.exe as a shortcut. They also
 # depends on $(objs)
@@ -133,4 +137,3 @@ cowsay_%:
 .PHONY: clena
 clena: cowsay_CLENA clean
 
--include scripts/targets.$(PLATFORM).mak

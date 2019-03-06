@@ -109,7 +109,7 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   CXX, %.o, %.cpp, \
-  $$(CC) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
+  $$(CXX) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
   with_local_version \
 ))
 

@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "settings_message_tree.h"
 #include "sub_menu/about_controller.h"
+#include "sub_menu/brightness_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
@@ -34,7 +35,7 @@ private:
 #else
   constexpr static int k_totalNumberOfCell = 8;
 #endif
-  constexpr static int k_numberOfSimpleChevronCells = 7;
+  constexpr static int k_numberOfSimpleChevronCells = 8;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
   SelectableTableView m_selectableTableView;
@@ -44,6 +45,7 @@ private:
   LanguageController m_languageController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
+  BrightnessController m_brightnessController;
 
 };
 

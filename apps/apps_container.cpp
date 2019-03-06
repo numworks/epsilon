@@ -297,6 +297,8 @@ bool AppsContainer::updateBatteryState() {
 }
 
 void AppsContainer::refreshPreferences() {
+  m_suspendTimer.reset(GlobalPreferences::sharedGlobalPreferences()->idleBeforeSuspendSeconds()*1000/Timer::TickDuration);
+  m_backlightDimmingTimer.reset(GlobalPreferences::sharedGlobalPreferences()->idleBeforeDimmingSeconds()*1000/Timer::TickDuration);
   m_window.refreshPreferences();
 }
 

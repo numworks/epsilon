@@ -13,6 +13,7 @@ const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18
 const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+const SettingsMessageTree brightnessChildren[4] = {SettingsMessageTree(I18n::Message::Normal), SettingsMessageTree(I18n::Message::Dim), SettingsMessageTree(I18n::Message::IdleTimeBeforeDimming), SettingsMessageTree(I18n::Message::IdleTimeBeforeSuspend)};
 
 #ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree menu[9] =
@@ -23,7 +24,7 @@ const SettingsMessageTree menu[8] =
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
     SettingsMessageTree(I18n::Message::EditionMode, editionModeChildren, 2),
     SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 3),
-    SettingsMessageTree(I18n::Message::Brightness),
+  SettingsMessageTree(I18n::Message::Brightness, brightnessChildren, 4),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
 #if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
@@ -43,14 +44,14 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
 #ifdef EPSILON_BOOT_PROMPT
   m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
 #endif
-  m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
   m_examModeController(this),
-  m_aboutController(this)
+  m_aboutController(this),
+  m_brightnessController(this, inputEventHandlerDelegate)
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFont(KDFont::LargeFont);
@@ -85,16 +86,6 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       return false;
     }
 #endif
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Brightness) {
-      if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
-        int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
-        int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
-        globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
-        m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-        return true;
-      }
-      return false;
-    }
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Language) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         stackController()->push(&m_languageController);
@@ -110,6 +101,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         subController = &m_displayModeController;
         break;
       case 4:
+        subController = &m_brightnessController;
+        break;
       case 5:
         assert(false);
       case 6:
@@ -161,8 +154,6 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_popUpCell;
   }
 #endif
-  assert(type == 1);
-  return &m_brightnessCell;
 }
 
 int MainController::reusableCellCount(int type) {
@@ -173,9 +164,6 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 4) {
-    return 1;
-  }
 #ifdef EPSILON_BOOT_PROMPT
   if (j == 7) {
     return 2;
@@ -189,12 +177,6 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_messageTreeModel->children(index)->label());
-  if (index == 4) {
-    MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
-    GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
-    myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
-    return;
-  }
   if (index == 5) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);

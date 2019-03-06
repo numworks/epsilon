@@ -16,6 +16,9 @@ bool Timer::tick() {
   return false;
 }
 
-void Timer::reset() {
+void Timer::reset(int time) {
+  if (time != 0) {
+    m_period = time;
+  }
   m_numberOfTicksBeforeFire = m_period;
 }

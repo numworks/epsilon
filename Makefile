@@ -37,7 +37,9 @@ info:
 # We need to mark those directories as precious, otherwise Make will try to get
 # rid of them upon completion (and fail, since those folders won't be empty).
 .PRECIOUS: $(BUILD_DIR)/. $(BUILD_DIR)%/.
-$(BUILD_DIR)/. $(BUILD_DIR)%/.:
+$(BUILD_DIR)/.:
+	$(Q) mkdir -p $(dir $@)
+$(BUILD_DIR)%/.:
 	$(Q) mkdir -p $(dir $@)
 
 # To make objects dependent on their directory, we need a second expansion

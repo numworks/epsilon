@@ -1,5 +1,6 @@
 // This shall be implemented per-platform
 //
+#include "../../../shared/images.h"
 #include <SDL.h>
 #include <jni.h>
 #include <android/bitmap.h>

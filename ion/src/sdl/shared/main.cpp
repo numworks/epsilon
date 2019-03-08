@@ -37,7 +37,7 @@ void init() {
     "Epsilon",
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
-    800, 600,
+    290, 555,
     SDL_WINDOW_ALLOW_HIGHDPI
 #if EPSILON_SDL_FULLSCREEN
     | SDL_WINDOW_FULLSCREEN
@@ -79,6 +79,8 @@ void refresh() {
   SDL_Rect backgroundRect;
   Layout::getBackgroundRect(&backgroundRect);
 
+  SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
+  SDL_RenderClear(sRenderer);
   SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   Display::draw(sRenderer, &screenRect);
   SDL_RenderPresent(sRenderer);

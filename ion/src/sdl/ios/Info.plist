@@ -49,31 +49,9 @@
     <array>
       <string>armv7</string>
     </array>
+    <key>UILaunchStoryboardName</key>
+    <string>launch</string>
     <key>UISupportedInterfaceOrientations</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>FOO-UILaunchImages</key>
-    <array>
-      <dict>
-        <key>UILaunchImageMinimumOSVersion</key>
-        <string>8.0</string>
-        <key>UILaunchImageName</key>
-        <string>Default</string>
-        <key>UILaunchImageOrientation</key>
-        <string>Portrait</string>
-        <key>UILaunchImageSize</key>
-        <string>{828, 1792}</string>
-      </dict>
-    </array>
+    <array/>
   </dict>
 </plist>

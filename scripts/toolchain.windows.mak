@@ -6,7 +6,7 @@ EXE = exe
 SFLAGS += -D_USE_MATH_DEFINES
 LDFLAGS += -static
 
-ifeq ($(DEBUG),1)
+ifeq ($(DEBUG),0)
 # Defining "-mwindows" prevents the app from launching an instance of cmd.exe
 # when running the app. That terminal will receive stderr and stdout. The
 # downside of not defining "-mwindows" is that you lose stdout and stderr.

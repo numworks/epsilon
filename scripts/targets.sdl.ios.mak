@@ -17,5 +17,5 @@ $(BUILD_DIR)/app/Epsilon.app: $(patsubst %,$(BUILD_DIR)/%/epsilon.bin,$(ARCHS))
 	cp ion/src/sdl/assets/* $@/
 	ibtool --compile $@/launch.storyboardc ion/src/sdl/ios/launch.storyboard
 
-epsilon_run:
-	xcrun simctl install C75D15A1-45F7-4F94-8DBD-6D02A95C9514 $(BUILD_DIR)/app/Epsilon.app
+epsilon_run: $(BUILD_DIR)/app/Epsilon.app
+	xcrun simctl install booted $(BUILD_DIR)/app/Epsilon.app

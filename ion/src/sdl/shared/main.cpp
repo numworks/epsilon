@@ -58,6 +58,8 @@ void relayout() {
   int windowWidth = 0;
   int windowHeight = 0;
   SDL_GetWindowSize(sWindow, &windowWidth, &windowHeight);
+  SDL_RenderSetLogicalSize(sRenderer, windowWidth, windowHeight);
+
   Layout::recompute(windowWidth, windowHeight);
   SDL_Rect backgroundRect;
   Layout::getBackgroundRect(&backgroundRect);

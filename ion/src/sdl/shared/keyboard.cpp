@@ -12,7 +12,7 @@ State scan() {
   SDL_PumpEvents();
 
   // Grab this opportunity to refresh the display if needed
-  Ion::SDL::Main::refresh();
+  SDL::Main::refresh();
 
   // Start with a "clean" state
   State state;

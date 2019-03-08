@@ -26,6 +26,7 @@ namespace Main {
 static SDL_Window * sWindow = nullptr;
 static SDL_Renderer * sRenderer = nullptr;
 static SDL_Texture * sBackgroundTexture = nullptr;
+static bool sNeedsRefresh = false;
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -70,10 +71,17 @@ void relayout() {
   SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   SDL_RenderPresent(sRenderer);
 
-  refresh();
+  setNeedsRefresh();
+}
+
+void setNeedsRefresh() {
+  sNeedsRefresh = true;
 }
 
 void refresh() {
+  if (!sNeedsRefresh) {
+    return;
+  }
   SDL_Rect screenRect;
   Layout::getScreenRect(&screenRect);
   SDL_Rect backgroundRect;

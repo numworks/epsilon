@@ -7,8 +7,6 @@ namespace Ion {
 namespace Events {
 
 Event getPlatformEvent() {
-  Ion::SDL::Main::refresh();
-
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     // The while is important: it'll do a fast-pass over all useless SDL events

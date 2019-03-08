@@ -1,12 +1,11 @@
 #include "main.h"
 #include "display.h"
-#include <ion.h>
 #include "images.h"
 #include "layout.h"
 
+#include <ion.h>
 #include <ion/timing.h>
 #include <ion/events.h>
-
 #include <SDL.h>
 
 void Ion::Timing::msleep(uint32_t ms) {
@@ -16,7 +15,7 @@ void Ion::Timing::msleep(uint32_t ms) {
 int main(int argc, char * argv[]) {
   Ion::SDL::Main::init();
   ion_main(argc, argv);
-  //Ion::SDL::Main::quit();
+  Ion::SDL::Main::quit();
   return 0;
 }
 
@@ -30,7 +29,7 @@ static SDL_Texture * sBackgroundTexture = nullptr;
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    // Error...
+    SDL_Log("Could not init video");
     return;
   }
 
@@ -67,8 +66,6 @@ void relayout() {
   SDL_RenderPresent(sRenderer);
 
   refresh();
-
-  //SDL_UpdateWindowSurface(sWindow);
 }
 
 void refresh() {
@@ -80,6 +77,11 @@ void refresh() {
   SDL_RenderCopy(sRenderer, sBackgroundTexture, nullptr, &backgroundRect);
   Display::draw(sRenderer, &screenRect);
   SDL_RenderPresent(sRenderer);
+}
+
+void quit() {
+  SDL_DestroyWindow(sWindow);
+  SDL_Quit();
 }
 
 }

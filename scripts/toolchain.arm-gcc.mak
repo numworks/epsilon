@@ -8,8 +8,6 @@ SIZE = arm-none-eabi-size
 # Always generate debug information
 SFLAGS += -ggdb3
 
-
-# LTO ?= NOT(DEBUG)
 ifeq ($(DEBUG),1)
 LTO ?= 0
 else

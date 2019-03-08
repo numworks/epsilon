@@ -24,11 +24,8 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {

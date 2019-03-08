@@ -41,6 +41,15 @@ bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   return isAcceptableExpression(exp);
 }
 
+bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) {
+  value = PoincareHelpers::ApproximateToScalar<double>(text, *localContext());
+  bool isUndefined = std::isnan(value) || std::isinf(value);
+  if (isUndefined) {
+    displayWarning(I18n::Message::UndefinedValue);
+  }
+  return isUndefined;
+}
+
 /* Protected */
 
 TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :

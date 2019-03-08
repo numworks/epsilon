@@ -11,7 +11,7 @@
 HRESULT CreateStreamOnResource(const char * name, LPSTREAM * stream) {
   HINSTANCE hInstance = GetModuleHandle(0);
   *stream = nullptr;
-  HRSRC hResource = FindResource(hInstance, name, RT_RCDATA);
+  HRSRC hC = FindResource(hInstance, name, RT_RCDATA);
   if (!hC) {
     SDL_Log("Could not find resource %s", name);
     return E_INVALIDARG;

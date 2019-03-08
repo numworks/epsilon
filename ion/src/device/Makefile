@@ -7,6 +7,7 @@ $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION=
 src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   crc32_padded.cpp \
+  events_keyboard.cpp \
   events_modifier.cpp \
 )
 
@@ -20,7 +21,7 @@ src += $(addprefix ion/src/device/, \
   console.cpp \
   device.cpp \
   display.cpp \
-  events.cpp \
+  events_keyboard_platform.cpp \
   flash.cpp \
   keyboard.cpp \
   led.cpp \

@@ -1,4 +1,5 @@
-#include <ion.h>
+#include <ion/events.h>
+#include <ion/timing.h>
 #include <assert.h>
 
 namespace Ion {
@@ -18,15 +19,15 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 
 Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState;
-bool sLastUSBPlugged = false;
-bool sLastUSBEnumerated = false;
 bool sEventIsRepeating = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
 
-bool canRepeatEvent(Event e) {
+static bool canRepeatEvent(Event e) {
   return (e == Events::Left || e == Events::Up || e == Events::Down || e == Events::Right || e == Events::Backspace);
 }
+
+Event getPlatformEvent();
 
 Event getEvent(int * timeout) {
   assert(*timeout > delayBeforeRepeat);
@@ -35,20 +36,9 @@ Event getEvent(int * timeout) {
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
-    // First, check if the USB plugged status has changed
-    bool usbPlugged = USB::isPlugged();
-    if (usbPlugged != sLastUSBPlugged) {
-      sLastUSBPlugged = usbPlugged;
-      return Events::USBPlug;
-    }
-
-    // Second, check if the USB device has been connected to an USB host
-    bool usbEnumerated = USB::isEnumerated();
-    if (usbEnumerated != sLastUSBEnumerated) {
-      sLastUSBEnumerated = usbEnumerated;
-      if (usbEnumerated) {
-        return Events::USBEnumeration;
-      }
+    Event platformEvent = getPlatformEvent();
+    if (platformEvent != None) {
+      return platformEvent;
     }
 
     Keyboard::State state = Keyboard::scan();

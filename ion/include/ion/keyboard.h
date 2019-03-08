@@ -19,6 +19,7 @@ enum class Key : uint8_t {
   G1=36, G2=37, G3=38, G4=39, G5=40, // G6=41,
   H1=42, H2=43, H3=44, H4=45, H5=46, // H6=47,
   I1=48, I2=49, I3=50, I4=51, I5=52, // I6=53,
+  None = 54
 };
 
 constexpr Key ValidKeys[] = {

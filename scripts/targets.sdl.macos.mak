@@ -1,4 +1,6 @@
-$(BUILD_DIR)/%/epsilon.bin:
+.PHONY: force_rebuild_libepsilon
+
+$(BUILD_DIR)/%/epsilon.bin: force_rebuild_libepsilon
 	$(Q) echo "MAKE    ARCH=$*"
 	$(Q) $(MAKE) ARCH=$*
 

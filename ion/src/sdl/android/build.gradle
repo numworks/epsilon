@@ -1,3 +1,5 @@
+def BUILD_DIR = '../../../../build/sdl/android/app'
+
 buildscript {
   repositories {
     jcenter()
@@ -15,6 +17,7 @@ allprojects {
     jcenter()
     google()
   }
+  buildDir = BUILD_DIR
 }
 
 apply plugin: 'com.android.application'
@@ -39,7 +42,7 @@ android {
       manifest.srcFile 'src/AndroidManifest.xml'
       res.srcDir 'src/res'
       java.srcDir 'src'
-      jniLibs.srcDir 'libs'
+      jniLibs.srcDir BUILD_DIR + '/libs'
       assets.srcDir '../assets'
     }
   }

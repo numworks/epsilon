@@ -37,11 +37,14 @@ void init() {
     "Epsilon",
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
-    0, 0,
-    SDL_WINDOW_RESIZABLE
+    800, 600,
+    SDL_WINDOW_ALLOW_HIGHDPI
+#if EPSILON_SDL_FULLSCREEN
+    | SDL_WINDOW_FULLSCREEN
+#else
+    | SDL_WINDOW_RESIZABLE
+#endif
   );
-
-  SDL_SetWindowFullscreen(sWindow, 0);
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 

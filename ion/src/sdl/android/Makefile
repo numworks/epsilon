@@ -2,6 +2,8 @@ src += $(addprefix ion/src/sdl/android/src/cpp/, \
   images.cpp \
 )
 
+$(call object_for,ion/src/sdl/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
+
 LDFLAGS += -ljnigraphics -llog
 
 ANDROID_LIB_PATH = ion/src/sdl/android/libs

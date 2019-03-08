@@ -43,7 +43,6 @@ namespace Ion {
 namespace SDL {
 namespace Display {
 
-static SDL_Surface * sFramebufferSurface = nullptr;
 static SDL_Texture * sFramebufferTexture = nullptr;
 
 void init(SDL_Renderer * renderer) {

@@ -11,7 +11,6 @@ import org.libsdl.app.SDLActivity;
 public class EpsilonActivity extends SDLActivity {
   protected String[] getLibraries() {
     return new String[] {
-      "SDL2",
       "epsilon"
     };
   }

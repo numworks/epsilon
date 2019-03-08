@@ -3,6 +3,7 @@ src += $(addprefix ion/src/shared/, \
   crc32.cpp \
   crc32_padded.cpp \
   events.cpp \
+  events_keyboard.cpp \
   events_modifier.cpp \
   power.cpp \
   random.cpp \
@@ -18,7 +19,8 @@ src += $(addprefix ion/src/shared/, \
 
 src += $(addprefix ion/src/sdl/shared/, \
   display.cpp \
-  events.cpp \
+  events_keyboard_platform.cpp \
+  keyboard.cpp \
   main.cpp \
   layout.cpp \
 )

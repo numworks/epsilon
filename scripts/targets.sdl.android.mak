@@ -4,7 +4,7 @@
 
 .PHONY: force_rebuild_libepsilon
 
-$(BUILD_DIR)/app/libs/%/libepsilon.so: force_rebuild_libepsilon
+$(BUILD_DIR)/app/libs/%/libepsilon.so: force_rebuild_libepsilon $$(@D)/.
 	$(Q) echo "MAKE    NDK_ABI=$*"
 	$(Q) $(MAKE) NDK_ABI=$* epsilon.so
 	$(Q) cp $(BUILD_DIR)/$*/epsilon.so $@

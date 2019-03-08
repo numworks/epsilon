@@ -51,6 +51,31 @@ public:
     REGS_TYPE_FIELD(OC3M, 38, 36);
     REGS_BOOL_FIELD(OC4PE, 43);
     REGS_TYPE_FIELD(OC4M, 46, 44);
+
+    void setOCM(int channel, OCM v) volatile {
+      assert(channel >= 1 && channel <= 4);
+      if (channel == 1) {
+        setOC1M(v);
+      } else if (channel == 2) {
+        setOC2M(v);
+      } else if (channel == 3) {
+        setOC3M(v);
+      } else {
+        setOC4M(v);
+      }
+    }
+    void setOCPE(int channel, uint16_t v) volatile {
+      assert(channel >= 1 && channel <= 4);
+      if (channel == 1) {
+        setOC1PE(v);
+      } else if (channel == 2) {
+        setOC2PE(v);
+      } else if (channel == 3) {
+        setOC3PE(v);
+      } else {
+        setOC4PE(v);
+      }
+    }
   };
 
   class CCER : Register16 {
@@ -59,6 +84,18 @@ public:
     REGS_BOOL_FIELD(CC2E, 4);
     REGS_BOOL_FIELD(CC3E, 8);
     REGS_BOOL_FIELD(CC4E, 12);
+    void setCCE(int channel, uint16_t v) volatile {
+      assert(channel >= 1 && channel <= 4);
+      if (channel == 1) {
+        setCC1E(v);
+      } else if (channel == 2) {
+        setCC2E(v);
+      } else if (channel == 3) {
+        setCC3E(v);
+      } else {
+        setCC4E(v);
+      }
+    }
   };
 
   class BDTR : Register16 {
@@ -84,6 +121,13 @@ public:
   REGS_REGISTER_AT(CCR3, 0x3C);
   REGS_REGISTER_AT(CCR4, 0x40);
   REGS_REGISTER_AT(BDTR, 0x44);
+  RegisterWidth * CCR(int channel) const {
+    return (channel == 1 ? (RegisterWidth *)CCR1() :
+            (channel == 2 ? (RegisterWidth *)CCR2() :
+             (channel == 3 ? (RegisterWidth *)CCR3() :
+              (channel == 4 ? (RegisterWidth *)CCR4() :
+               nullptr))));
+  }
 private:
   constexpr uint32_t Base() const {
     return (m_index == 1 ? 0x40010000 :

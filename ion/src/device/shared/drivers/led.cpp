@@ -18,9 +18,9 @@ void setColor(KDColor c) {
   sLedColor = c;
 
   /* Active all RGB colors */
-  TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::RedChannel, TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::GreenChannel, TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::BlueChannel, TIM<Register16>::CCMR::OCM::PWM1);
 
   /* Set the PWM duty cycles to display the right color */
   constexpr float maxColorValue = (float)((1 << 8) -1);
@@ -32,9 +32,9 @@ void setBlinking(uint16_t period, float dutyCycle) {
    * Consequently, we do not use PWM to display the right color anymore but to
    * blink. We cannot use the PWM to display the exact color so we 'project the
    * color on 3 bits' : all colors have 2 states - active or not. */
-  TIM3.CCMR()->setOC2M(sLedColor.red() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC4M(sLedColor.green() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC3M(sLedColor.blue() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::RedChannel, sLedColor.red() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::GreenChannel, sLedColor.green() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::BlueChannel, sLedColor.blue() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
 
   setPeriodAndDutyCycles(Mode::Blink, dutyCycle, dutyCycle, dutyCycle, period);
 }
@@ -59,9 +59,9 @@ void shutdown() {
 }
 
 void initGPIO() {
-  /* RED_LED(PC7), GREEN_LED(PB1), and BLUE_LED(PB0) are driven using a timer,
-   * which is an alternate function. More precisely, we will use AF2, which maps
-   * PB0 to TIM3_CH2, PB1 to TIM3_CH4, and PC7 to TIM3_CH2. */
+  /* RED_LED, GREEN_LED, and BLUE_LED are driven using a timer, which is an
+   * alternate function. More precisely, we will use AF2, which maps each GPIO
+   * to a TIM3_CH. */
   for(const AFGPIOPin & p : Config::RGBPins) {
     p.init();
   }
@@ -74,18 +74,18 @@ void shutdownGPIO() {
 }
 
 void initTimer() {
-  // Output preload enable for channels 2-4
-  TIM3.CCMR()->setOC2PE(true);
-  TIM3.CCMR()->setOC3PE(true);
-  TIM3.CCMR()->setOC4PE(true);
+  // Output preload enable
+  TIM3.CCMR()->setOCPE(Ion::Device::LED::Config::RedChannel, true);
+  TIM3.CCMR()->setOCPE(Ion::Device::LED::Config::GreenChannel, true);
+  TIM3.CCMR()->setOCPE(Ion::Device::LED::Config::BlueChannel, true);
 
   // Auto-reload preload enable
   TIM3.CR1()->setARPE(true);
 
   // Enable Capture/Compare for channel 2 to 4
-  TIM3.CCER()->setCC2E(true);
-  TIM3.CCER()->setCC3E(true);
-  TIM3.CCER()->setCC4E(true);
+  TIM3.CCER()->setCCE(Ion::Device::LED::Config::RedChannel, true);
+  TIM3.CCER()->setCCE(Ion::Device::LED::Config::GreenChannel, true);
+  TIM3.CCER()->setCCE(Ion::Device::LED::Config::BlueChannel, true);
 
   TIM3.BDTR()->setMOE(true);
 
@@ -93,9 +93,9 @@ void initTimer() {
 }
 
 void shutdownTimer() {
-  TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::RedChannel, TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::GreenChannel, TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOCM(Ion::Device::LED::Config::BlueChannel, TIM<Register16>::CCMR::OCM::ForceInactive);
 }
 
 /* Pulse width modulation mode allows you to generate a signal with a
@@ -126,9 +126,9 @@ void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen,
       break;
   }
 
-  TIM3.CCR2()->set(dutyCycleRed*period);
-  TIM3.CCR3()->set(dutyCycleBlue*period);
-  TIM3.CCR4()->set(dutyCycleGreen*period);
+  TIM3.CCR(Ion::Device::LED::Config::RedChannel)->set(dutyCycleRed*period);
+  TIM3.CCR(Ion::Device::LED::Config::GreenChannel)->set(dutyCycleBlue*period);
+  TIM3.CCR(Ion::Device::LED::Config::BlueChannel)->set(dutyCycleGreen*period);
 }
 
 }

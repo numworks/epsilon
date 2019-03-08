@@ -8,6 +8,7 @@ namespace Main {
 void init();
 void quit();
 
+void setNeedsRefresh();
 void refresh();
 void relayout();
 

@@ -7,8 +7,6 @@
 namespace Ion {
 namespace Events {
 
-
-
 static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   if (event.keysym.mod & KMOD_CTRL) {
     switch (event.keysym.sym) {
@@ -88,11 +86,6 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
     case SDLK_BACKSPACE:
       return Backspace;
   }
-  /*
-  if (event.keysym.unicode >= 32 && event.keysym.unicode < 127) {
-    return sEventForASCIICharAbove32[event.keysym.unicode-32];
-  }
-  */
   return None;
 }
 
@@ -121,7 +114,6 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
   }
   return None;
 }
-
 
 Event getPlatformEvent() {
   SDL_Event event;

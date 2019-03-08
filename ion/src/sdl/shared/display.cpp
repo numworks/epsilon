@@ -13,7 +13,6 @@
  * rather expensive. */
 
 static KDColor sPixels[Ion::Display::Width * Ion::Display::Height];
-static bool sFramebufferNeedsRedraw = false;
 
 namespace Ion {
 namespace Display {
@@ -21,12 +20,12 @@ namespace Display {
 static KDFrameBuffer sFrameBuffer = KDFrameBuffer(sPixels, KDSize(Ion::Display::Width, Ion::Display::Height));
 
 void pushRect(KDRect r, const KDColor * pixels) {
-  sFramebufferNeedsRedraw = true;
+  SDL::Main::setNeedsRefresh();
   sFrameBuffer.pushRect(r, pixels);
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
-  sFramebufferNeedsRedraw = true;
+  SDL::Main::setNeedsRefresh();
   sFrameBuffer.pushRectUniform(r, c);
 }
 
@@ -63,15 +62,12 @@ void quit() {
 }
 
 void draw(SDL_Renderer * renderer, SDL_Rect * rect) {
-  if (sFramebufferNeedsRedraw) {
-    int pitch = 0;
-    void * pixels = nullptr;
-    SDL_LockTexture(sFramebufferTexture, nullptr, &pixels, &pitch);
-    assert(pitch == 2*Ion::Display::Width);
-    memcpy(pixels, sPixels, sizeof(sPixels));
-    SDL_UnlockTexture(sFramebufferTexture);
-  }
-  sFramebufferNeedsRedraw = false;
+  int pitch = 0;
+  void * pixels = nullptr;
+  SDL_LockTexture(sFramebufferTexture, nullptr, &pixels, &pitch);
+  assert(pitch == 2*Ion::Display::Width);
+  memcpy(pixels, sPixels, sizeof(sPixels));
+  SDL_UnlockTexture(sFramebufferTexture);
 
   SDL_RenderCopy(renderer, sFramebufferTexture, nullptr, rect);
 }

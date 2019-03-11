@@ -14,7 +14,7 @@ const char * SequenceStore::firstAvailableName(int * nameIndex) {
   int currentNameIndex = 0;
   while (currentNameIndex < MaxNumberOfSequences) {
     const char * name = k_sequenceNames[currentNameIndex];
-    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Shared::GlobalContext::seqExtension).isNull()) {
+    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
       if (nameIndex) {
         *nameIndex = currentNameIndex;
       }

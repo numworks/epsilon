@@ -22,6 +22,11 @@ namespace Ion {
 
 uint32_t staticStorageArea[sizeof(Storage)/sizeof(uint32_t)] = {0};
 
+constexpr char Storage::expExtension[];
+constexpr char Storage::funcExtension[];
+constexpr char Storage::seqExtension[];
+constexpr char Storage::eqExtension[];
+
 Storage * Storage::sharedStorage() {
   static Storage * storage = nullptr;
   if (storage == nullptr) {
@@ -220,7 +225,7 @@ Storage::Record Storage::recordBaseNamedWithExtension(const char * baseName, con
   return recordBaseNamedWithExtensions(baseName, extensions, 1);
 }
 
-Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * extensions[], size_t numberOfExtensions) {
+Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
   size_t nameLength = strlen(baseName);
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);

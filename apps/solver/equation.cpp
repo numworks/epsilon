@@ -21,7 +21,7 @@ bool Equation::containsIComplex(Context * context) const {
   return expressionClone().recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, *context, true);
 }
 
-Expression Equation::Handle::standardForm(const Storage::Record * record, Context * context) const {
+Expression Equation::Model::standardForm(const Storage::Record * record, Context * context) const {
   if (m_standardForm.isUninitialized()) {
     const Expression e = expressionReduced(record, context);
     if (e.type() == ExpressionNode::Type::Unreal) {
@@ -44,17 +44,17 @@ Expression Equation::Handle::standardForm(const Storage::Record * record, Contex
   return m_standardForm;
 }
 
-void Equation::Handle::tidy() const {
+void Equation::Model::tidy() const {
   ExpressionModel::tidy();
   // Free the pool of the m_standardForm
   m_standardForm = Expression();
 }
 
-void * Equation::Handle::expressionAddress(const Ion::Storage::Record * record) const {
+void * Equation::Model::expressionAddress(const Ion::Storage::Record * record) const {
   return (char *)record->value().buffer;
 }
 
-size_t Equation::Handle::expressionSize(const Ion::Storage::Record * record) const {
+size_t Equation::Model::expressionSize(const Ion::Storage::Record * record) const {
   return record->value().size;
 }
 

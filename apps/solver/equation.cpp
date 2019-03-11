@@ -13,7 +13,7 @@ using namespace Shared;
 namespace Solver {
 
 Equation::Equation(Ion::Storage::Record record) :
-  SingleExpressionModelHandle(record)
+  ExpressionModelHandle(record)
 {
 }
 
@@ -45,7 +45,7 @@ Expression Equation::Handle::standardForm(const Storage::Record * record, Contex
 }
 
 void Equation::Handle::tidy() const {
-  ExpressionModelHandle::tidy();
+  ExpressionModel::tidy();
   // Free the pool of the m_standardForm
   m_standardForm = Expression();
 }

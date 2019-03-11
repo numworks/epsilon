@@ -1,5 +1,5 @@
 #include "global_context.h"
-#include "storage_cartesian_function.h"
+#include "cartesian_function.h"
 #include <poincare/helpers.h>
 #include <poincare/undefined.h>
 #include <poincare/preferences.h>
@@ -45,7 +45,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
   }
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
-  StorageCartesianFunction f = StorageCartesianFunction(record);
+  CartesianFunction f = CartesianFunction(record);
   return f.expressionClone();
 }
 
@@ -116,13 +116,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunctionRecord(
   if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
-    StorageCartesianFunction newModel = StorageCartesianFunction::NewModel(&error, baseName);
+    CartesianFunction newModel = CartesianFunction::NewModel(&error, baseName);
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     recordToSet = newModel;
   }
-  error = StorageCartesianFunction(recordToSet).setExpressionContent(expressionToStore);
+  error = CartesianFunction(recordToSet).setExpressionContent(expressionToStore);
   return error;
 }
 

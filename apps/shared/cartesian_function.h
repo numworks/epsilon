@@ -1,19 +1,19 @@
-#ifndef SHARED_STORAGE_CARTESIAN_FUNCTION_H
-#define SHARED_STORAGE_CARTESIAN_FUNCTION_H
+#ifndef SHARED_CARTESIAN_FUNCTION_H
+#define SHARED_CARTESIAN_FUNCTION_H
 
 #include "global_context.h"
-#include "storage_function.h"
+#include "function.h"
 #include <poincare/symbol.h>
 
 namespace Shared {
 
-class StorageCartesianFunction : public StorageFunction {
+class CartesianFunction : public Function {
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
   static char Symbol() { return 'x'; }
-  static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
-  StorageCartesianFunction(Ion::Storage::Record record = Record()) :
-    StorageFunction(record)
+  static CartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
+  CartesianFunction(Ion::Storage::Record record = Record()) :
+    Function(record)
   {}
   Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableHandle()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownX); }
 
@@ -45,16 +45,16 @@ private:
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];
   };
-  class Handle : public ExpressionModelHandle {
+  class Model : public ExpressionModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
   size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordData); }
-  const ExpressionModelHandle * handle() const override { return &m_handle; }
+  const ExpressionModel * handle() const override { return &m_model; }
   CartesianFunctionRecordData * recordData() const;
-  Handle m_handle;
+  Model m_model;
 };
 
 }

@@ -41,16 +41,16 @@ void StorageValuesController::willDisplayCellAtLocation(HighlightCell * cell, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
-    const size_t bufferNameSize = Shared::StorageFunction::k_maxNameWithArgumentSize + 1;
+    const size_t bufferNameSize = Shared::Function::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
     bool isDerivative = isDerivativeColumn(i);
     /* isDerivativeColumn uses expiring pointers, so "function" must be created
      * after the isDerivativeColumn call, else it will expire. */
-    Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(i));
+    Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(i));
     if (isDerivative) {
-      function->derivativeNameWithArgument(bufferName, bufferNameSize, StorageCartesianFunction::Symbol());
+      function->derivativeNameWithArgument(bufferName, bufferNameSize, CartesianFunction::Symbol());
     } else {
-      function->nameWithArgument(bufferName, bufferNameSize, StorageCartesianFunction::Symbol());
+      function->nameWithArgument(bufferName, bufferNameSize, CartesianFunction::Symbol());
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());
@@ -73,7 +73,7 @@ Ion::Storage::Record StorageValuesController::recordAtColumn(int i) {
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
     Ion::Storage::Record record = functionStore()->definedRecordAtIndex(k);
-    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(record);
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(record);
     if (f->isActive()) {
       if (i == index) {
         return record;
@@ -95,7 +95,7 @@ bool StorageValuesController::isDerivativeColumn(int i) {
   assert(i >= 1);
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
-    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->definedRecordAtIndex(k));
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->definedRecordAtIndex(k));
     if (f->isActive()) {
       if (i == index) {
         return false;
@@ -137,7 +137,7 @@ EvenOddBufferTextCell * StorageValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
-StorageFunctionParameterController * StorageValuesController::functionParameterController() {
+FunctionParameterController * StorageValuesController::functionParameterController() {
   return &m_functionParameterController;
 }
 
@@ -146,7 +146,7 @@ double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, in
   bool isDerivative = isDerivativeColumn(columnIndex);
   /* isDerivativeColumn uses expiring pointers, so "function" must be created
    * after the isDerivativeColumn call, else it will expire. */
-  Shared::ExpiringPointer<StorageCartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   if (isDerivative) {
     return function->approximateDerivative(abscissa, myApp->localContext());
   }
@@ -156,7 +156,7 @@ double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, in
 void StorageValuesController::updateNumberOfColumns() {
   int result = 1;
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     if (f->isActive()) {
       result += 1 + f->displayDerivative();
     }

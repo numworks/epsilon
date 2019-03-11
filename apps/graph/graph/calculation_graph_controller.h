@@ -12,7 +12,7 @@ namespace Graph {
 
 class App;
 
-class CalculationGraphController : public ViewController, public Shared::StorageFunctionBannerDelegate {
+class CalculationGraphController : public ViewController, public Shared::FunctionBannerDelegate {
 public:
   CalculationGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, I18n::Message defaultMessage);
   View * view() override;

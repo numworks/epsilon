@@ -30,11 +30,11 @@ private:
   StorageCartesianFunctionStore * functionStore() const override { return static_cast<StorageCartesianFunctionStore *>(Shared::StorageValuesController::functionStore()); }
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * floatCells(int j) override;
-  StorageFunctionParameterController * functionParameterController() override;
+  FunctionParameterController * functionParameterController() override;
 
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
-  StorageFunctionParameterController m_functionParameterController;
+  FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   StorageDerivativeParameterController m_derivativeParameterController;
 };

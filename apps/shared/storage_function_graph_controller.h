@@ -11,9 +11,9 @@
 
 namespace Shared {
 
-class StorageFunctionGraphController : public InteractiveCurveViewController, public StorageFunctionBannerDelegate {
+class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
-  StorageFunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
+  FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion);
   bool isEmpty() const override;
   ViewController * initialisationParameterController() override;
   void viewWillAppear() override;
@@ -26,14 +26,14 @@ protected:
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   virtual void selectFunctionWithCursor(int functionIndex);
   virtual double defaultCursorAbscissa();
-  virtual StorageFunctionStore * functionStore() const;
+  virtual FunctionStore * functionStore() const;
 
 private:
   constexpr static float k_viewHeight = 174.0f; // TODO Taken from Regresssion/graph_controller. Maybe we should compute and/or put in common ?
 
-  virtual StorageFunctionGraphView * functionGraphView() = 0;
+  virtual FunctionGraphView * functionGraphView() = 0;
   virtual View * cursorView() = 0;
-  virtual StorageFunctionCurveParameterController * curveParameterController() = 0;
+  virtual FunctionCurveParameterController * curveParameterController() = 0;
 
   // InteractiveCurveViewController
   /* When y auto is ticked, we use a display margin to be ensure that the user

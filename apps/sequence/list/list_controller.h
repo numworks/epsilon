@@ -15,7 +15,7 @@
 
 namespace Sequence {
 
-class ListController : public Shared::StorageFunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::FunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
@@ -41,10 +41,10 @@ private:
   bool isAddEmptyRow(int j) override;
   int sequenceDefinitionForRow(int j);
   void addEmptyModel() override;
-  void reinitSelectedExpression(Shared::ExpiringPointer<Shared::SingleExpressionModelHandle> model) override;
+  void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
-  SequenceStore * modelStore() override { return static_cast<SequenceStore *>(Shared::StorageFunctionListController::modelStore()); }
+  SequenceStore * modelStore() override { return static_cast<SequenceStore *>(Shared::FunctionListController::modelStore()); }
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];

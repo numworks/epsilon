@@ -63,7 +63,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 
 void CalculationGraphController::reloadBannerView() {
   m_bannerView->setNumberOfSubviews(2);
-  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), StorageCartesianFunction::Symbol());
+  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), CartesianFunction::Symbol());
 }
 
 bool CalculationGraphController::moveCursor(int direction) {

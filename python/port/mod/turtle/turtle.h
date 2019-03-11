@@ -154,7 +154,21 @@ private:
 
   uint8_t m_speed; // Speed is between 0 and 10
   KDCoordinate m_penSize;
-  KDCoordinate m_mileage;
+
+  /* We sleep every time the turtle walks a mileageLimit amount, to allow user
+   * interruptions. The length of each sleep is determined by the speed of the
+   * turtle.
+   * With emscripten, sleep gives control to the web browser, which decides when
+   * to return from sleep: this makes the turtle significantly slower on the web
+   * emulator than on the calculator. We thus decided to sleep less often on the
+   * emscripten platform. */
+#if __EMSCRIPTEN__
+  static constexpr uint16_t k_mileageLimit = 10000;
+#else
+  static constexpr uint16_t k_mileageLimit = 1000;
+#endif
+
+  uint16_t m_mileage;
   bool m_drawn;
 
 };

@@ -3,6 +3,7 @@ app_src += $(addprefix apps/shared/,\
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
   button_with_separator.cpp \
+  cartesian_function.cpp\
   cursor_view.cpp \
   curve_view.cpp \
   curve_view_cursor.cpp \
@@ -10,8 +11,11 @@ app_src += $(addprefix apps/shared/,\
   double_pair_store.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
+  expression_model.cpp \
   expression_model_handle.cpp \
   float_parameter_controller.cpp \
+  function.cpp \
+  function_app.cpp \
   function_expression_cell.cpp \
   function_title_cell.cpp \
   global_context.cpp \
@@ -39,12 +43,8 @@ app_src += $(addprefix apps/shared/,\
   scrollable_exact_approximate_expressions_view.cpp \
   separator_even_odd_buffer_text_cell.cpp \
   simple_interactive_curve_view_controller.cpp \
-  single_expression_model_handle.cpp\
-  storage_cartesian_function.cpp \
   storage_expression_model_list_controller.cpp \
   storage_expression_model_store.cpp \
-  storage_function.cpp \
-  storage_function_app.cpp \
   storage_function_banner_delegate.cpp \
   storage_function_curve_parameter_controller.cpp \
   storage_function_go_to_parameter_controller.cpp \

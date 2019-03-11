@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageFunctionGraphView::StorageFunctionGraphView(InteractiveCurveViewRange * graphRange,
+FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
   m_selectedRecord(),
@@ -19,29 +19,29 @@ StorageFunctionGraphView::StorageFunctionGraphView(InteractiveCurveViewRange * g
 {
 }
 
-void StorageFunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
+void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
   drawAxes(ctx, rect);
   simpleDrawBothAxesLabels(ctx, rect);
 }
 
-void StorageFunctionGraphView::setContext(Context * context) {
+void FunctionGraphView::setContext(Context * context) {
   m_context = context;
 }
 
-Context * StorageFunctionGraphView::context() const {
+Context * FunctionGraphView::context() const {
   return m_context;
 }
 
-void StorageFunctionGraphView::selectRecord(Ion::Storage::Record record) {
+void FunctionGraphView::selectRecord(Ion::Storage::Record record) {
   if (m_selectedRecord != record) {
     m_selectedRecord = record;
     reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
   }
 }
 
-void StorageFunctionGraphView::setAreaHighlight(float start, float end) {
+void FunctionGraphView::setAreaHighlight(float start, float end) {
   if (m_highlightedStart != start || m_highlightedEnd != end) {
     float dirtyStart = start > m_highlightedStart ? m_highlightedStart : start;
     float dirtyEnd = start > m_highlightedStart ? start : m_highlightedStart;
@@ -60,18 +60,18 @@ void StorageFunctionGraphView::setAreaHighlight(float start, float end) {
   }
 }
 
-void StorageFunctionGraphView::setAreaHighlightColor(bool highlightColor) {
+void FunctionGraphView::setAreaHighlightColor(bool highlightColor) {
   if (m_shouldColorHighlighted != highlightColor) {
     reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
     m_shouldColorHighlighted = highlightColor;
   }
 }
 
-char * StorageFunctionGraphView::label(Axis axis, int index) const {
+char * FunctionGraphView::label(Axis axis, int index) const {
   return (axis == Axis::Horizontal ? (char *)m_xLabels[index] : (char *)m_yLabels[index]);
 }
 
-void StorageFunctionGraphView::reloadBetweenBounds(float start, float end) {
+void FunctionGraphView::reloadBetweenBounds(float start, float end) {
   if (start == end) {
     return;
   }

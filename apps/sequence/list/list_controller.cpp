@@ -10,7 +10,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { retur
 namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::StorageFunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
+  Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
   m_sequenceTitleCells{},
   m_expressionCells{},
   m_parameterController(inputEventHandlerDelegate, this),
@@ -61,7 +61,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::StorageFunctionListController::willDisplayCellAtLocation(cell, i, j);
+  Shared::FunctionListController::willDisplayCellAtLocation(cell, i, j);
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(modelIndexForRow(j)%2 == 0);
 }
@@ -278,7 +278,7 @@ void ListController::editExpression(Ion::Events::Event event) {
   editExpression(sequenceDefinitionForRow(selectedRow()), event);
 }
 
-void ListController::reinitSelectedExpression(ExpiringPointer<SingleExpressionModelHandle> model) {
+void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
   Sequence * sequence = static_cast<Sequence *>(model.pointer());
@@ -306,7 +306,7 @@ void ListController::reinitSelectedExpression(ExpiringPointer<SingleExpressionMo
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {
-  Shared::StorageFunctionListController::removeModelRow(record);
+  Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
   return true;

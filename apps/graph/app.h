@@ -6,11 +6,11 @@
 #include "graph/graph_controller.h"
 #include "list/storage_list_controller.h"
 #include "values/storage_values_controller.h"
-#include "../shared/storage_function_app.h"
+#include "../shared/function_app.h"
 
 namespace Graph {
 
-class App : public Shared::StorageFunctionApp {
+class App : public Shared::FunctionApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
@@ -18,7 +18,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public Shared::StorageFunctionApp::Snapshot {
+  class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;
@@ -33,7 +33,7 @@ public:
   InputViewController * inputViewController() override;
   char XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
-  StorageCartesianFunctionStore * functionStore() override { return static_cast<StorageCartesianFunctionStore *>(Shared::StorageFunctionApp::functionStore()); }
+  StorageCartesianFunctionStore * functionStore() override { return static_cast<StorageCartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
 private:
   App(Container * container, Snapshot * snapshot);
   StorageListController m_listController;

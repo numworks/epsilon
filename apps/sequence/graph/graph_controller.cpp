@@ -11,7 +11,7 @@ static inline int minInt(int x, int y) { return (x < y ? x : y); }
 static inline int maxInt(int x, int y) { return (x > y ? x : y); }
 
 GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
-  StorageFunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
@@ -40,7 +40,7 @@ float GraphController::interestingXMin() const {
 }
 
 float GraphController::interestingXHalfRange() const {
-  float standardRange = Shared::StorageFunctionGraphController::interestingXHalfRange();
+  float standardRange = Shared::FunctionGraphController::interestingXHalfRange();
   int nmin = INT_MAX;
   int nmax = 0;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
@@ -57,7 +57,7 @@ float GraphController::interestingXHalfRange() const {
 bool GraphController::handleEnter() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   m_termSumController.setRecord(record);
-  return StorageFunctionGraphController::handleEnter();
+  return FunctionGraphController::handleEnter();
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
@@ -84,7 +84,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 double GraphController::defaultCursorAbscissa() {
-  return std::round(Shared::StorageFunctionGraphController::defaultCursorAbscissa());
+  return std::round(Shared::FunctionGraphController::defaultCursorAbscissa());
 }
 
 }

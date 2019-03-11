@@ -2,7 +2,7 @@
 #define SHARED_STORAGE_VALUES_FUNCTION_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "storage_function.h"
+#include "function.h"
 #include <apps/i18n.h>
 
 namespace Shared {
@@ -34,7 +34,7 @@ protected:
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-  char m_pageTitle[StorageFunction::k_maxNameWithArgumentSize];
+  char m_pageTitle[Function::k_maxNameWithArgumentSize];
   char m_symbol;
 };
 

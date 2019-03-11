@@ -10,6 +10,22 @@ using namespace Poincare;
 
 namespace Sequence {
 
+Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
+  Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  Ion::Storage::Record record = store->recordAtIndex(store->numberOfModels()-1);
+  Sequence * u = store->modelForRecord(record);
+  u->setType(type);
+  u->setContent(definition);
+  if (condition1) {
+    u->setFirstInitialConditionContent(condition1);
+  }
+  if (condition2) {
+    u->setSecondInitialConditionContent(condition2);
+  }
+  return u;
+}
+
 void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, const char * definitionU, const char * conditionU1 = nullptr, const char * conditionU2 = nullptr, Sequence::Type typeV = Sequence::Type::Explicit, const char * definitionV = nullptr, const char * conditionV1 = nullptr, const char * conditionV2 = nullptr) {
   Shared::GlobalContext globalContext;
   SequenceStore store;
@@ -18,34 +34,17 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
   Sequence * u = nullptr;
   Sequence * v = nullptr;
   if (definitionU) {
-    u = static_cast<Sequence *>(store.addEmptyModel());
-    quiz_assert(u->name()[0] == 'u');
-    u->setType(typeU);
-    u->setContent(definitionU);
-    if (conditionU1) {
-      u->setFirstInitialConditionContent(conditionU1);
-    }
-    if (conditionU2) {
-      u->setSecondInitialConditionContent(conditionU2);
-    }
+    u = addSequence(&store, typeU, definitionU, conditionU1, conditionU2);
+    quiz_assert(u->fullName()[0] == 'u');
   }
   if (definitionV) {
     if (store.numberOfModels() == 0) {
-      Sequence * tempU = static_cast<Sequence *>(store.addEmptyModel());
-      v = static_cast<Sequence *>(store.addEmptyModel());
-      store.removeModel(tempU);
-      v = store.modelAtIndex(0);
+      Sequence * tempU = addSequence(&store, typeU, nullptr, nullptr, nullptr);
+      v = addSequence(&store, typeV, definitionV, conditionV1, conditionV2);
+      store.removeModel(*tempU);
     } else {
       quiz_assert(store.numberOfModels() == 1);
-      v = static_cast<Sequence *>(store.addEmptyModel());
-    }
-    v->setType(typeV);
-    v->setContent(definitionV);
-    if (conditionV1) {
-      v->setFirstInitialConditionContent(conditionV1);
-    }
-    if (conditionV2) {
-      v->setSecondInitialConditionContent(conditionV2);
+      v = addSequence(&store, typeV, definitionV, conditionV1, conditionV2);
     }
   }
   for (int j = 0; j < 10; j++) {
@@ -58,6 +57,7 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
       quiz_assert((std::isnan(vn) && std::isnan(result[1][j])) || (vn == result[1][j]));
     }
   }
+  store.removeAll();
 }
 
 QUIZ_CASE(sequence_evaluation) {

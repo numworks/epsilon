@@ -53,7 +53,7 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
     DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
     baseName = nameBuffer;
   }
-  *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, GlobalContext::funcExtension, &data, sizeof(data));
+  *error = Ion::Storage::sharedStorage()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
 
   // Return if error
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
@@ -61,7 +61,7 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
   }
 
   // Return the StorageCartesianFunction withthe new record
-  return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, GlobalContext::funcExtension));
+  return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
 int StorageCartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {

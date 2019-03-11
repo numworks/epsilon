@@ -12,8 +12,6 @@ using namespace Shared;
 
 namespace Solver {
 
-constexpr char Equation::extension[];
-
 Equation::Equation(Ion::Storage::Record record) :
   SingleExpressionModelHandle(record)
 {

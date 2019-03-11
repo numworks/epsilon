@@ -30,7 +30,7 @@ public:
   };
 
 private:
-  const char * modelExtension() const override { return Shared::GlobalContext::seqExtension; }
+  const char * modelExtension() const override { return Ion::Storage::seqExtension; }
   /* We don't really use model memoization as the number of Sequence is limited
    * and we keep enough Sequences to store them all. */
   void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;

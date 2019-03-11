@@ -11,11 +11,11 @@ public:
   bool shouldBeClearedBeforeRemove() override {
     return false;
   }
-  Poincare::Expression standardForm(Poincare::Context * context) const { return m_handle.standardForm(this, context); }
+  Poincare::Expression standardForm(Poincare::Context * context) const { return m_model.standardForm(this, context); }
   bool containsIComplex(Poincare::Context * context) const;
 
 private:
-  class Handle : public Shared::ExpressionModel {
+  class Model : public Shared::ExpressionModel {
   public:
     Poincare::Expression standardForm(const Ion::Storage::Record * record, Poincare::Context * context) const;
     void tidy() const override;
@@ -25,8 +25,8 @@ private:
     mutable Poincare::Expression m_standardForm;
   };
   size_t metaDataSize() const override { return 0; }
-  const Shared::ExpressionModel * handle() const override { return &m_handle; }
-  Handle m_handle;
+  const Shared::ExpressionModel * model() const override { return &m_model; }
+  Model m_model;
 };
 
 }

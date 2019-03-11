@@ -11,6 +11,8 @@ using namespace Poincare;
 
 namespace Shared {
 
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
 ExpressionModelHandle::ExpressionModelHandle() :
   m_expression(),
   m_layout(),
@@ -68,28 +70,43 @@ Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setContent(Ion::Storage
   return setExpressionContent(record, e);
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setExpressionContent(Ion::Storage::Record * record, Expression & expressionToStore) {
+Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setExpressionContent(Ion::Storage::Record * record, Expression & newExpression) {
   assert(record->fullName() != nullptr);
-  // Prepare the new data to store
+  // Prepare the new data to be stored
   Ion::Storage::Record::Data newData = record->value();
-  size_t expressionToStoreSize = expressionToStore.isUninitialized() ? 0 : expressionToStore.size();
-  newData.size = newData.size - expressionSize(record) + expressionToStoreSize;
-
-  // Set the data
+  size_t previousExpressionSize = expressionSize(record);
+  size_t newExpressionSize = newExpression.isUninitialized() ? 0 : newExpression.size();
+  size_t previousDataSize = newData.size;
+  size_t newDataSize = previousDataSize - previousExpressionSize + newExpressionSize;
+  void * expAddress = expressionAddress(record);
+  // Update size of record to maximal size between previous and new data
+  newData.size = maxInt(previousDataSize, newDataSize);
   Ion::Storage::Record::ErrorStatus error = record->setValue(newData);
   if (error != Ion::Storage::Record::ErrorStatus::None) {
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     return error;
   }
+  // Prepare the new data content
+  /* WARNING: expressionAddress() cannot be used while the metadata is invalid
+   * (as it is sometimes computed from metadata). Thus, the expression address
+   * is given as a parameter to updateNewDataWithExpression. */
+  updateNewDataWithExpression(record, newExpression, expAddress, newExpressionSize, previousExpressionSize);
+  // Set the data with the right size
+  newData.size = newDataSize;
+  error = record->setValue(newData);
+  // Any error would have occured at the first call to setValue
+  assert(error == Ion::Storage::Record::ErrorStatus::None);
 
-  // Copy the expression if needed
-  if (!expressionToStore.isUninitialized()) {
-    memcpy(expressionAddress(record), expressionToStore.addressInPool(), expressionToStore.size());
-  }
   /* Here we delete only the elements relative to the expression model kept in
    * this handle. */
   tidy();
   return error;
+}
+
+void ExpressionModelHandle::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
+  if (!expressionToStore.isUninitialized()) {
+    memmove(expressionAddress, expressionToStore.addressInPool(), expressionToStoreSize);
+  }
 }
 
 void ExpressionModelHandle::tidy() const {

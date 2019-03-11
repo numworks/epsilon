@@ -200,6 +200,20 @@ Poincare::Layout Sequence::SequenceHandle::name(Sequence * sequence) {
   return m_name;
 }
 
+void Sequence::SequenceHandle::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) {
+  Ion::Storage::Record::Data newData = record->value();
+  // Translate expressions located downstream
+  size_t sizeBeforeExpression = (char *)expressionAddress -(char *)newData.buffer;
+  size_t remainingSize = newData.size - sizeBeforeExpression - previousExpressionSize;
+  memmove((char *)expressionAddress + newExpressionSize, (char *)expressionAddress + previousExpressionSize, remainingSize);
+  // Copy the expression
+  if (!expressionToStore.isUninitialized()) {
+    memmove(expressionAddress, expressionToStore.addressInPool(), newExpressionSize);
+  }
+  // Update meta data
+  updateMetaData(record, newExpressionSize);
+}
+
 /* Definition Handle*/
 
 void * Sequence::DefinitionHandle::expressionAddress(const Ion::Storage::Record * record) const {
@@ -243,6 +257,10 @@ size_t Sequence::FirstInitialConditionHandle::expressionSize(const Ion::Storage:
   return static_cast<const Sequence *>(record)->recordData()->firstInitialConditionSize();
 }
 
+void Sequence::FirstInitialConditionHandle::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
+  static_cast<const Sequence *>(record)->recordData()->setFirstInitialConditionSize(newSize);
+}
+
 void Sequence::FirstInitialConditionHandle::buildName(Sequence * sequence) {
   assert(sequence->type() == Type::SingleRecurrence || sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits+1];
@@ -260,6 +278,10 @@ void * Sequence::SecondInitialConditionHandle::expressionAddress(const Ion::Stor
   SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   size_t offset = data.size - dataBuffer->secondInitialConditionSize();
   return (char *)data.buffer+offset;
+}
+
+void Sequence::SecondInitialConditionHandle::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
+  static_cast<const Sequence *>(record)->recordData()->setSecondInitialConditionSize(newSize);
 }
 
 size_t Sequence::SecondInitialConditionHandle::expressionSize(const Ion::Storage::Record * record) const {

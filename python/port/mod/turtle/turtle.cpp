@@ -335,24 +335,11 @@ bool Turtle::draw(bool force) {
     m_drawn = true;
   }
 
-  /* We sleep every time the turtle walks a mileageLimit amount, to allow user
-   * interruptions. The length of each sleep is determined by the speed of the
-   * turtle.
-   * With emscripten, sleep gives control to the web browser, which decides when
-   * to return from sleep: this makes the turtle significantly slower on the web
-   * emulator than on the calculator. We thus decided to sleep less often on the
-   * emscripten platform. */
-#if __EMSCRIPTEN__
-  constexpr KDCoordinate mileageLimit = 10000;
-#else
-  constexpr KDCoordinate mileageLimit = 1000;
-#endif
-
-  if (m_mileage > mileageLimit) {
+  if (m_mileage > k_mileageLimit) {
     if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : 3 * (k_maxSpeed - m_speed)))) {
       return true;
     }
-    m_mileage -= mileageLimit;
+    m_mileage -= k_mileageLimit;
   }
   return false;
 }
@@ -360,6 +347,7 @@ bool Turtle::draw(bool force) {
 bool Turtle::dot(mp_float_t x, mp_float_t y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
+  // Draw the dot if the pen is down
   if (m_penDown && hasDotBuffers()) {
     KDContext * ctx = KDIonContext::sharedContext();
     KDRect rect(
@@ -369,7 +357,12 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
     ctx->blendRectWithMask(rect, m_color, m_dotMask, m_dotWorkingPixelBuffer);
   }
 
-  m_mileage += sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
+  /* Increase the turtle's mileage. We need to make sure the mileage is not
+   * overflowed, otherwise we might skip some msleeps in draw. */
+  uint16_t additionalMileage = sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
+  m_mileage = ((m_mileage > k_mileageLimit)
+      && ((m_mileage + additionalMileage) < k_mileageLimit)) ?
+    k_mileageLimit + 1 : m_mileage + additionalMileage;
 
   m_x = x;
   m_y = y;

@@ -49,7 +49,7 @@ void EquationStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record
   m_equations[cacheIndex] = Equation(record);
 }
 
-SingleExpressionModelHandle * EquationStore::memoizedModelAtIndex(int cacheIndex) const {
+ExpressionModelHandle * EquationStore::memoizedModelAtIndex(int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_equations[cacheIndex];
 }

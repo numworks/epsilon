@@ -1,5 +1,5 @@
 #include "storage_sum_graph_controller.h"
-#include "storage_function_app.h"
+#include "function_app.h"
 #include "../apps_container.h"
 #include <poincare_layouts.h>
 #include <poincare/layout_helper.h>
@@ -13,7 +13,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageSumGraphController::StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
+StorageSumGraphController::StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, range, graphView, cursor),
   m_step(Step::FirstParameter),
   m_startSum(NAN),
@@ -101,9 +101,9 @@ bool StorageSumGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool StorageSumGraphController::moveCursorHorizontallyToPosition(double x) {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   assert(!m_record.isNull());
-  ExpiringPointer<StorageFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
   if (m_step == Step::FirstParameter) {
@@ -189,9 +189,9 @@ bool StorageSumGraphController::handleEnter() {
     return true;
   }
   m_step = (Step)((int)m_step+1);
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   assert(!m_record.isNull());
-  ExpiringPointer<StorageFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   double sum = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
   m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, createFunctionLayout(function));
   m_legendView.setLegendMessage(I18n::Message::Default, m_step);

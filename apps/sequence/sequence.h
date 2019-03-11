@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_H
 #define SEQUENCE_SEQUENCE_H
 
-#include "../shared/storage_function.h"
+#include "../shared/function.h"
 #include "sequence_context.h"
 #include <assert.h>
 
@@ -11,7 +11,7 @@ namespace Sequence {
  * or setSecondInitialConditionContent, the sequence context needs to
  * invalidate the cache because the sequences evaluations might have changed. */
 
-class Sequence : public Shared::StorageFunction {
+class Sequence : public Shared::Function {
 friend class SequenceStore;
 public:
   enum class Type : uint8_t {
@@ -20,7 +20,7 @@ public:
     DoubleRecurrence = 2
   };
   Sequence(Ion::Storage::Record record = Record()) :
-    StorageFunction(record),
+    Function(record),
     m_nameLayout() {}
   static char Symbol() { return 'n'; }
   void tidy() override;
@@ -94,9 +94,9 @@ private:
     uint16_t m_secondInitialConditionSize;
   };
 
-  class SequenceHandle : public Shared::ExpressionModelHandle {
+  class SequenceHandle : public Shared::ExpressionModel {
   public:
-    SequenceHandle() : Shared::ExpressionModelHandle(), m_name() {}
+    SequenceHandle() : Shared::ExpressionModel(), m_name() {}
     void tidyName() { m_name = Poincare::Layout(); }
     virtual Poincare::Layout name(Sequence * sequence);
   protected:
@@ -135,7 +135,7 @@ private:
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
   size_t metaDataSize() const override { return sizeof(SequenceRecordData); }
-  const Shared::ExpressionModelHandle * handle() const override { return &m_definitionHandle; }
+  const Shared::ExpressionModel * handle() const override { return &m_definitionHandle; }
   SequenceRecordData * recordData() const;
   DefinitionHandle m_definitionHandle;
   FirstInitialConditionHandle m_firstInitialConditionHandle;

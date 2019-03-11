@@ -1,4 +1,4 @@
-#include "storage_cartesian_function.h"
+#include "cartesian_function.h"
 #include "storage_expression_model_store.h"
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
+void CartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   static constexpr const char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
@@ -43,7 +43,7 @@ void StorageCartesianFunction::DefaultName(char buffer[], size_t bufferSize) {
   assert(currentNumberLength >= 0 && currentNumberLength < availableBufferSize);
 }
 
-StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
+CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
   static int s_colorIndex = 0;
   // Create the record
   char nameBuffer[SymbolAbstract::k_maxNameSize];
@@ -57,15 +57,15 @@ StorageCartesianFunction StorageCartesianFunction::NewModel(Ion::Storage::Record
 
   // Return if error
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
-    return StorageCartesianFunction();
+    return CartesianFunction();
   }
 
-  // Return the StorageCartesianFunction withthe new record
-  return StorageCartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
+  // Return the CartesianFunction withthe new record
+  return CartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-int StorageCartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {
-  // Fill buffer with f(x). Keep one char foderivativeSizer derivative sign.
+int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {
+  // Fill buffer with f(x). Keep size for derivative sign.
   int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
   int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize, arg);
   assert(numberOfChars + derivativeSize < bufferSize);
@@ -78,15 +78,15 @@ int StorageCartesianFunction::derivativeNameWithArgument(char * buffer, size_t b
   return numberOfChars + derivativeSize;
 }
 
-bool StorageCartesianFunction::displayDerivative() const {
+bool CartesianFunction::displayDerivative() const {
   return recordData()->displayDerivative();
 }
 
-void StorageCartesianFunction::setDisplayDerivative(bool display) {
+void CartesianFunction::setDisplayDerivative(bool display) {
   return recordData()->setDisplayDerivative(display);
 }
 
-double StorageCartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
+double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
   Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
@@ -94,7 +94,7 @@ double StorageCartesianFunction::approximateDerivative(double x, Poincare::Conte
   return PoincareHelpers::ApproximateToScalar<double>(derivative, *context);
 }
 
-double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
+double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
   // TODO: this does not work yet because integral does not understand UnknownX
   Poincare::Integral integral = Poincare::Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
@@ -103,35 +103,35 @@ double StorageCartesianFunction::sumBetweenBounds(double start, double end, Poin
   return PoincareHelpers::ApproximateToScalar<double>(integral, *context);
 }
 
-Expression::Coordinate2D StorageCartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
+Expression::Coordinate2D CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
   return PoincareHelpers::NextMinimum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
-Expression::Coordinate2D StorageCartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
+Expression::Coordinate2D CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
   return PoincareHelpers::NextMaximum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
-double StorageCartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
+double CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
   return PoincareHelpers::NextRoot(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
-Expression::Coordinate2D StorageCartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
+Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
   const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, *context, e);
 }
 
-void * StorageCartesianFunction::Handle::expressionAddress(const Ion::Storage::Record * record) const {
+void * CartesianFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
   return (char *)record->value().buffer+sizeof(CartesianFunctionRecordData);
 }
 
-size_t StorageCartesianFunction::Handle::expressionSize(const Ion::Storage::Record * record) const {
+size_t CartesianFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
   return record->value().size-sizeof(CartesianFunctionRecordData);
 }
 
-StorageCartesianFunction::CartesianFunctionRecordData * StorageCartesianFunction::recordData() const {
+CartesianFunction::CartesianFunctionRecordData * CartesianFunction::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
   return reinterpret_cast<CartesianFunctionRecordData *>(const_cast<void *>(d.buffer));

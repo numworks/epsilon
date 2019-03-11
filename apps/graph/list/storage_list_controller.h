@@ -11,7 +11,7 @@
 
 namespace Graph {
 
-class StorageListController : public Shared::StorageFunctionListController, public Shared::TextFieldDelegate {
+class StorageListController : public Shared::FunctionListController, public Shared::TextFieldDelegate {
 public:
   StorageListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
@@ -32,7 +32,7 @@ private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override {
     return static_cast<Shared::TextFieldDelegateApp *>(app());
   }
-  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::StorageFunction> function, TextField * textField);
+  void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::Function> function, TextField * textField);
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   ListParameterController m_parameterController;

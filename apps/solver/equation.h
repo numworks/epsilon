@@ -1,11 +1,11 @@
 #ifndef SOLVER_EQUATION_h
 #define SOLVER_EQUATION_h
 
-#include "../shared/single_expression_model_handle.h"
+#include "../shared/expression_model_handle.h"
 
 namespace Solver {
 
-class Equation : public Shared::SingleExpressionModelHandle {
+class Equation : public Shared::ExpressionModelHandle {
 public:
   Equation(Ion::Storage::Record record = Record());
   bool shouldBeClearedBeforeRemove() override {
@@ -15,7 +15,7 @@ public:
   bool containsIComplex(Poincare::Context * context) const;
 
 private:
-  class Handle : public Shared::ExpressionModelHandle {
+  class Handle : public Shared::ExpressionModel {
   public:
     Poincare::Expression standardForm(const Ion::Storage::Record * record, Poincare::Context * context) const;
     void tidy() const override;
@@ -25,7 +25,7 @@ private:
     mutable Poincare::Expression m_standardForm;
   };
   size_t metaDataSize() const override { return 0; }
-  const Shared::ExpressionModelHandle * handle() const override { return &m_handle; }
+  const Shared::ExpressionModel * handle() const override { return &m_handle; }
   Handle m_handle;
 };
 

@@ -145,7 +145,7 @@ KDCoordinate StorageExpressionModelListController::expressionRowHeight(int j) {
   if (isAddEmptyRow(j)) {
     return Metric::StoreRowHeight;
   }
-  ExpiringPointer<SingleExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<ExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   if (m->layout().isUninitialized()) {
     return Metric::StoreRowHeight;
   }
@@ -156,7 +156,7 @@ KDCoordinate StorageExpressionModelListController::expressionRowHeight(int j) {
 
 void StorageExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
-  ExpiringPointer<SingleExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<ExpressionModelHandle> m = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   myCell->setLayout(m->layout());
 }
 
@@ -176,7 +176,7 @@ bool StorageExpressionModelListController::handleEventOnExpression(Ion::Events::
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<SingleExpressionModelHandle> model =  modelStore()->modelForRecord(record);
+    ExpiringPointer<ExpressionModelHandle> model =  modelStore()->modelForRecord(record);
     if (model->shouldBeClearedBeforeRemove()) {
       reinitSelectedExpression(model);
     } else {
@@ -206,7 +206,7 @@ void StorageExpressionModelListController::addEmptyModel() {
   editExpression(Ion::Events::OK);
 }
 
-void StorageExpressionModelListController::reinitSelectedExpression(ExpiringPointer<SingleExpressionModelHandle> model) {
+void StorageExpressionModelListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   model->setContent("");
   // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
   resetMemoizationForIndex(k_memoizedCellsCount/2);
@@ -230,7 +230,7 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
   char initialTextContent[initialTextContentMaxSize];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<SingleExpressionModelHandle> model = modelStore()->modelForRecord(record);
+    ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
     model->text(initialTextContent, initialTextContentMaxSize);
     initialText = initialTextContent;
     // Replace Poincare::Symbol::SpecialSymbols::UnknownX with 'x'
@@ -252,7 +252,7 @@ bool StorageExpressionModelListController::editSelectedRecordWithText(const char
   // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
   resetMemoizationForIndex(k_memoizedCellsCount/2);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  ExpiringPointer<SingleExpressionModelHandle> model = modelStore()->modelForRecord(record);
+  ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
   return (model->setContent(text) == Ion::Storage::Record::ErrorStatus::None);
 }
 

@@ -7,13 +7,13 @@ namespace Sequence {
 
 GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
-  StorageFunctionGraphView(graphRange, cursor, bannerView, cursorView),
+  FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_sequenceStore(sequenceStore)
 {
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  StorageFunctionGraphView::drawRect(ctx, rect);
+  FunctionGraphView::drawRect(ctx, rect);
   for (int i = 0; i < m_sequenceStore->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
     Sequence * s = m_sequenceStore->modelForRecord(record);;

@@ -6,7 +6,7 @@
 
 namespace Graph {
 
-class GraphView : public Shared::StorageFunctionGraphView {
+class GraphView : public Shared::FunctionGraphView {
 public:
 
   GraphView(StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * graphRange,

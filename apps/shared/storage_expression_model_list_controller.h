@@ -25,7 +25,7 @@ protected:
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addEmptyModel();
   virtual void didChangeModelsList() { resetMemoization(); }
-  virtual void reinitSelectedExpression(ExpiringPointer<SingleExpressionModelHandle> model);
+  virtual void reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model);
   virtual void editExpression(Ion::Events::Event event);
   void replaceUnknownSymbolWithReadableSymbol(char * initialText);
   virtual bool editSelectedRecordWithText(const char * text);

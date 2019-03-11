@@ -10,7 +10,7 @@
 
 namespace Graph {
 
-class TangentGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::StorageFunctionBannerDelegate, public GraphControllerHelper {
+class TangentGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::FunctionBannerDelegate, public GraphControllerHelper {
 public:
   TangentGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;

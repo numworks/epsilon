@@ -9,9 +9,9 @@
 
 namespace Sequence {
 
-class SequenceStore : public Shared::StorageFunctionStore {
+class SequenceStore : public Shared::FunctionStore {
 public:
-  using Shared::StorageFunctionStore::StorageFunctionStore;
+  using Shared::FunctionStore::FunctionStore;
   char symbol() const override { return Sequence::Symbol(); }
   char unknownSymbol() const override { return Poincare::Symbol::SpecialSymbols::UnknownN; }
   /* Sequence Store hold all its Sequences in an array. The Sequence pointers
@@ -34,7 +34,7 @@ private:
   /* We don't really use model memoization as the number of Sequence is limited
    * and we keep enough Sequences to store them all. */
   void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
-  Shared::SingleExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
+  Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
   mutable Sequence m_sequences[MaxNumberOfSequences];
 };
 

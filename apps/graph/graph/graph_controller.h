@@ -13,7 +13,7 @@
 
 namespace Graph {
 
-class GraphController : public Shared::StorageFunctionGraphController, public GraphControllerHelper {
+class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
   GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
@@ -33,7 +33,7 @@ private:
     return &m_cursorView;
   }
   CurveParameterController * curveParameterController() override;
-  StorageCartesianFunctionStore * functionStore() const override { return static_cast<StorageCartesianFunctionStore *>(Shared::StorageFunctionGraphController::functionStore()); }
+  StorageCartesianFunctionStore * functionStore() const override { return static_cast<StorageCartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;

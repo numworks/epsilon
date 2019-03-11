@@ -31,8 +31,8 @@ protected:
     return 2;
 #endif
   }
-  StorageFunctionStore * functionStore();
-  ExpiringPointer<StorageFunction> function();
+  FunctionStore * functionStore();
+  ExpiringPointer<Function> function();
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:

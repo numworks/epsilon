@@ -1,5 +1,5 @@
 #include "storage_values_function_parameter_controller.h"
-#include "storage_function_app.h"
+#include "function_app.h"
 #include <assert.h>
 
 namespace Shared {
@@ -9,8 +9,8 @@ const char * StorageValuesFunctionParameterController::title() {
 }
 
 void StorageValuesFunctionParameterController::viewWillAppear() {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
-  myApp->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, StorageFunction::k_maxNameWithArgumentSize, m_symbol);
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  myApp->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, Function::k_maxNameWithArgumentSize, m_symbol);
 }
 
 void StorageValuesFunctionParameterController::didBecomeFirstResponder() {

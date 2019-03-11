@@ -1,8 +1,8 @@
 #include "variable_box_controller.h"
 #include "shared/global_context.h"
 #include "shared/poincare_helpers.h"
-#include "shared/storage_function.h"
-#include "shared/storage_cartesian_function.h"
+#include "shared/function.h"
+#include "shared/cartesian_function.h"
 #include "graph/storage_cartesian_function_store.h"
 #include "constant.h"
 #include <escher/metric.h>
@@ -103,18 +103,18 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
   ExpressionTableCellWithExpression * myCell = (ExpressionTableCellWithExpression *)cell;
   Storage::Record record = recordAtIndex(index);
-  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
-  char symbolName[Shared::StorageFunction::k_maxNameWithArgumentSize];
+  assert(Shared::Function::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   if (m_currentPage == Page::Expression) {
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else {
     assert(m_currentPage == Page::Function);
-    StorageCartesianFunction f(record);
+    CartesianFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
-        Shared::StorageFunction::k_maxNameWithArgumentSize,
-        Shared::StorageCartesianFunction::Symbol());
+        Shared::Function::k_maxNameWithArgumentSize,
+        Shared::CartesianFunction::Symbol());
   }
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);
@@ -191,9 +191,9 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
 
   // Get the name text to insert
   Storage::Record record = recordAtIndex(selectedRow);
-  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > 0);
-  assert(Shared::StorageFunction::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
-  constexpr size_t nameToHandleMaxSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
+  assert(Shared::Function::k_maxNameWithArgumentSize > 0);
+  assert(Shared::Function::k_maxNameWithArgumentSize > SymbolAbstract::k_maxNameSize);
+  constexpr size_t nameToHandleMaxSize = Shared::Function::k_maxNameWithArgumentSize;
   char nameToHandle[nameToHandleMaxSize];
   size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
 

@@ -8,11 +8,11 @@
 #include "graph/curve_view_range.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
-#include "../shared/storage_function_app.h"
+#include "../shared/function_app.h"
 
 namespace Sequence {
 
-class App : public Shared::StorageFunctionApp {
+class App : public Shared::FunctionApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
@@ -20,7 +20,7 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public Shared::StorageFunctionApp::Snapshot {
+  class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;
@@ -38,7 +38,7 @@ public:
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   char XNT() override;
   SequenceContext * localContext() override;
-  SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::StorageFunctionApp::functionStore()); }
+  SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::FunctionApp::functionStore()); }
 private:
   App(Container * container, Snapshot * snapshot);
   SequenceContext m_sequenceContext;

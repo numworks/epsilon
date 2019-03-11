@@ -7,14 +7,14 @@ using namespace Shared;
 
 namespace Graph {
 
-StorageFunctionParameterController::StorageFunctionParameterController(StorageValuesController * valuesController) :
-  StorageValuesFunctionParameterController(StorageCartesianFunction::Symbol()),
+FunctionParameterController::FunctionParameterController(StorageValuesController * valuesController) :
+  StorageValuesFunctionParameterController(CartesianFunction::Symbol()),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
   m_valuesController(valuesController)
 {
 }
 
-bool StorageFunctionParameterController::handleEvent(Ion::Events::Event event) {
+bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     switch (selectedRow()) {
       case 0:
@@ -38,11 +38,11 @@ bool StorageFunctionParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int StorageFunctionParameterController::numberOfRows() {
+int FunctionParameterController::numberOfRows() {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * StorageFunctionParameterController::reusableCell(int index) {
+HighlightCell * FunctionParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
 #if COPY_COLUMN
@@ -53,23 +53,23 @@ HighlightCell * StorageFunctionParameterController::reusableCell(int index) {
   return cells[index];
 }
 
-int StorageFunctionParameterController::reusableCellCount() {
+int FunctionParameterController::reusableCellCount() {
   return k_totalNumberOfCell;
 }
 
-void StorageFunctionParameterController::viewWillAppear() {
+void FunctionParameterController::viewWillAppear() {
   StorageValuesFunctionParameterController::viewWillAppear();
   m_selectedFunctionColumn = m_valuesController->selectedColumn();
 }
 
-void StorageFunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     SwitchView * switchView = (SwitchView *)m_displayDerivativeColumn.accessoryView();
     switchView->setState(function()->displayDerivative());
   }
 }
 
-ExpiringPointer<StorageCartesianFunction> StorageFunctionParameterController::function() {
+ExpiringPointer<CartesianFunction> FunctionParameterController::function() {
   App * a = static_cast<App *>(app());
   return a->functionStore()->modelForRecord(m_record);
 }

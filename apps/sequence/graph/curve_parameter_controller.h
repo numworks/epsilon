@@ -9,7 +9,7 @@ namespace Sequence {
 
 class GraphController;
 
-class CurveParameterController : public Shared::StorageFunctionCurveParameterController {
+class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
   CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;

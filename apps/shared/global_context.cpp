@@ -10,9 +10,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr char GlobalContext::expExtension[];
-constexpr char GlobalContext::funcExtension[];
-constexpr char GlobalContext::seqExtension[];
 constexpr const char * GlobalContext::k_extensions[];
 
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
@@ -23,10 +20,10 @@ Poincare::Expression GlobalContext::ExpressionFromRecord(Ion::Storage::Record re
   if (record.isNull() || record.value().size == 0) {
     return Expression();
   }
-  if (Ion::Storage::FullNameHasExtension(record.fullName(), expExtension, strlen(expExtension))) {
+  if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return ExpressionFromSymbolRecord(record);
   }
-  assert(Ion::Storage::FullNameHasExtension(record.fullName(), funcExtension, strlen(funcExtension)));
+  assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension)));
   return ExpressionFromFunctionRecord(record);
 }
 
@@ -34,7 +31,7 @@ Poincare::Expression GlobalContext::ExpressionFromSymbolRecord(Ion::Storage::Rec
   if (record.isNull() || record.value().size == 0) {
     return Expression();
   }
-  assert(Ion::Storage::FullNameHasExtension(record.fullName(), expExtension, strlen(expExtension)));
+  assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension)));
   // An expression record value is the expression itself
   Ion::Storage::Record::Data d = record.value();
   return Expression::ExpressionFromAddress(d.buffer, d.size);
@@ -43,7 +40,7 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
   if (record.isNull() || record.value().size == 0) {
     return Expression();
   }
-  if (!Ion::Storage::FullNameHasExtension(record.fullName(), funcExtension, strlen(funcExtension))) {
+  if (!Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     return Expression();
   }
   /* An function record value has metadata before the expression. To get the
@@ -94,7 +91,7 @@ const Expression GlobalContext::ExpressionForSymbolAndRecord(const SymbolAbstrac
 
 const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract & symbol, Ion::Storage::Record r) {
   assert(symbol.type() == ExpressionNode::Type::Symbol);
-  if (r.isNull() || !Ion::Storage::FullNameHasExtension(r.fullName(), expExtension, strlen(expExtension))) {
+  if (r.isNull() || !Ion::Storage::FullNameHasExtension(r.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
     return Expression();
   }
   // Look up the file system for symbol
@@ -102,7 +99,7 @@ const Expression GlobalContext::ExpressionForActualSymbol(const SymbolAbstract &
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
-  if (!previousRecord.isNull() && Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
+  if (!previousRecord.isNull() && Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     /* A function can overwrite a variable, but a variable cannot be created if
      * it has the same name as an existing function. */
     // TODO Pop up "Name taken for a function"
@@ -110,13 +107,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   }
   // Delete any record with same name (as it is going to be overriden)
   previousRecord.destroy();
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), expExtension, expression.addressInPool(), expression.size());
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(symbol.name(), Ion::Storage::expExtension, expression.addressInPool(), expression.size());
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunctionRecord(Expression expressionToStore, Ion::Storage::Record previousRecord, const char * baseName) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
-  if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), funcExtension, strlen(funcExtension))) {
+  if (!Ion::Storage::FullNameHasExtension(previousRecord.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension))) {
     // The previous record was not a function. Destroy it and create the new record.
     previousRecord.destroy();
     StorageCartesianFunction newModel = StorageCartesianFunction::NewModel(&error, baseName);
@@ -134,8 +131,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForFunction(const 
 }
 
 Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(const char * name) {
-  const char * extensions[2] = {expExtension, funcExtension/*, seqExtension*/};
-  return Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(name, extensions, 2);
+  return Ion::Storage::sharedStorage()->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
 }

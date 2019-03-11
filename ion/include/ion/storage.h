@@ -20,6 +20,11 @@ public:
   static Storage * sharedStorage();
   constexpr static char k_dotChar = '.';
 
+  static constexpr char eqExtension[] = "eq";
+  static constexpr char expExtension[] = "exp";
+  static constexpr char funcExtension[] = "func";
+  static constexpr char seqExtension[] = "seq";
+
   class Record {
     /* A Record is identified by the CRC32 on its fullName because:
      * - A record is identified by its fullName, which is unique
@@ -103,7 +108,7 @@ public:
   Record recordWithExtensionAtIndex(const char * extension, int index);
   Record recordNamed(const char * fullName);
   Record recordBaseNamedWithExtension(const char * baseName, const char * extension);
-  Record recordBaseNamedWithExtensions(const char * baseName, const char * extension[], size_t numberOfExtensions);
+  Record recordBaseNamedWithExtensions(const char * baseName, const char * const extension[], size_t numberOfExtensions);
 
   // Record destruction
   void destroyAllRecords();

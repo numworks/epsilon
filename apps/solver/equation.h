@@ -14,7 +14,6 @@ public:
   Poincare::Expression standardForm(Poincare::Context * context) const { return m_handle.standardForm(this, context); }
   bool containsIComplex(Poincare::Context * context) const;
 
-  static constexpr char extension[] = "eq"; // TODO: store this elsewhere?
 private:
   class Handle : public Shared::ExpressionModelHandle {
   public:

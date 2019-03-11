@@ -336,14 +336,14 @@ int Expression::getPolynomialReducedCoefficients(const char * symbolName, Expres
   return degree;
 }
 
-Expression Expression::replaceUnknown(const Symbol & symbol) {
-  return node()->replaceUnknown(symbol);
+Expression Expression::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return node()->replaceUnknown(symbol, unknownSymbol);
 }
 
-Expression Expression::defaultReplaceUnknown(const Symbol & symbol) {
+Expression Expression::defaultReplaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).replaceUnknown(symbol);
+    childAtIndex(i).replaceUnknown(symbol, unknownSymbol);
   }
   return *this;
 }

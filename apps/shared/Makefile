@@ -10,21 +10,9 @@ app_src += $(addprefix apps/shared/,\
   double_pair_store.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
-  expression_model.cpp \
   expression_model_handle.cpp \
-  expression_model_list_controller.cpp \
-  expression_model_store.cpp \
   float_parameter_controller.cpp \
-  function.cpp \
-  function_app.cpp \
-  function_banner_delegate.cpp \
-  function_curve_parameter_controller.cpp \
   function_expression_cell.cpp \
-  function_go_to_parameter_controller.cpp \
-  function_graph_controller.cpp \
-  function_graph_view.cpp \
-  function_list_controller.cpp \
-  function_store.cpp \
   function_title_cell.cpp \
   global_context.cpp \
   go_to_parameter_controller.cpp \
@@ -39,7 +27,6 @@ app_src += $(addprefix apps/shared/,\
   interval_parameter_controller.cpp \
   language_controller.cpp \
   layout_field_delegate.cpp \
-  list_parameter_controller.cpp \
   margin_even_odd_message_text_cell.cpp \
   memoized_curve_view_range.cpp \
   message_view.cpp \
@@ -75,14 +62,11 @@ app_src += $(addprefix apps/shared/,\
   store_parameter_controller.cpp \
   store_selectable_table_view.cpp \
   store_title_cell.cpp \
-  sum_graph_controller.cpp \
   tab_table_controller.cpp \
   text_field_delegate.cpp \
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
   toolbox_helpers.cpp \
-  values_controller.cpp \
-  values_function_parameter_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
   zoom_parameter_controller.cpp \

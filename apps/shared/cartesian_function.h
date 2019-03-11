@@ -15,7 +15,7 @@ public:
   CartesianFunction(Ion::Storage::Record record = Record()) :
     Function(record)
   {}
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableHandle()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownX); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownX); }
 
   // Derivative
   bool displayDerivative() const;
@@ -52,7 +52,7 @@ private:
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
   size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordData); }
-  const ExpressionModel * handle() const override { return &m_model; }
+  const ExpressionModel * model() const override { return &m_model; }
   CartesianFunctionRecordData * recordData() const;
   Model m_model;
 };

@@ -168,8 +168,8 @@ public:
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
-  Expression replaceUnknown(const Symbol & symbol);
-  Expression defaultReplaceUnknown(const Symbol & symbol);
+  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
+  Expression defaultReplaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
 
   /* Complex */
   static bool EncounteredComplex();

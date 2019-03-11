@@ -19,7 +19,6 @@ public:
 
   ExpiringPointer<StorageFunction> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<StorageFunction>(static_cast<StorageFunction *>(privateModelForRecord(record))); }
 
-  virtual char symbol() const = 0;
 };
 
 }

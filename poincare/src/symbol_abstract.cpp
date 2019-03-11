@@ -65,6 +65,7 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);
   if (!e.isUninitialized() && isFunction) {
+    // TODO: when SequenceFunction is created, we want to specify which unknown variable to replace (UnknownX or UnknownN)
     e = e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
   }
   return e;

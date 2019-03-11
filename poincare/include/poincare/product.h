@@ -16,7 +16,7 @@ public:
 #endif
 
   Type type() const override { return Type::Product; }
-  Expression replaceUnknown(const Symbol & symbol) override;
+  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
 
 private:
   float emptySequenceValue() const override { return 1.0f; }

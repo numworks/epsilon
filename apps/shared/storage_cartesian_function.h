@@ -11,11 +11,11 @@ class StorageCartesianFunction : public StorageFunction {
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
   static char Symbol() { return 'x'; }
-  char symbol() const override { return Symbol(); };
   static StorageCartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   StorageCartesianFunction(Ion::Storage::Record record = Record()) :
     StorageFunction(record)
   {}
+  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableHandle()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownX); }
 
   // Derivative
   bool displayDerivative() const;

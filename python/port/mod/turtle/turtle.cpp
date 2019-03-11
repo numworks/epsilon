@@ -94,8 +94,20 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t oldy = m_y;
   mp_float_t xLength = absF(std::floor(x) - std::floor(oldx));
   mp_float_t yLength = absF(std::floor(y) - std::floor(oldy));
-  bool principalDirectionIsX = xLength >= yLength;
-  mp_float_t length = principalDirectionIsX ? xLength : yLength;
+
+  enum PrincipalDirection {
+    None = 0,
+    X = 1,
+    Y = 2
+  };
+
+  PrincipalDirection principalDirection = xLength > yLength ?
+    PrincipalDirection::X :
+    (xLength == yLength ?
+     PrincipalDirection::None :
+     PrincipalDirection::Y);
+
+  mp_float_t length = principalDirection == PrincipalDirection::X ? xLength : yLength;
 
   if (length > 1) {
     // Tweening function
@@ -106,8 +118,8 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
        * the computation of the position on the principal coordinate is done
        * using a barycenter, roundings might skip some pixels, which results in
        * a dotted line. */
-      mp_float_t currentX = principalDirectionIsX ? oldx + (x > oldx ? i : -i) : x * progress + oldx * (1 - progress);
-      mp_float_t currentY = principalDirectionIsX ? y * progress + oldy * (1 - progress) : oldy + (y > oldy ? i : -i);
+      mp_float_t currentX = principalDirection == PrincipalDirection::Y ? x * progress + oldx * (1 - progress) : oldx + (x > oldx ? i : -i);
+      mp_float_t currentY = principalDirection == PrincipalDirection::X ? y * progress + oldy * (1 - progress) : oldy + (y > oldy ? i : -i);
       if (dot(currentX, currentY) || draw(false)) {
         // Keyboard interruption. Return now to let MicroPython process it.
         return true;

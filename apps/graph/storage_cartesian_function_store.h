@@ -12,6 +12,7 @@ class StorageCartesianFunctionStore : public Shared::StorageFunctionStore {
 public:
   Shared::ExpiringPointer<Shared::StorageCartesianFunction> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Shared::StorageCartesianFunction>(static_cast<Shared::StorageCartesianFunction *>(privateModelForRecord(record))); }
   char symbol() const override { return Shared::StorageCartesianFunction::Symbol(); }
+  char unknownSymbol() const override { return Poincare::Symbol::SpecialSymbols::UnknownX; }
 private:
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   const char * modelExtension() const override { return Shared::GlobalContext::funcExtension; }

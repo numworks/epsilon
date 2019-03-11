@@ -23,7 +23,6 @@ public:
     StorageFunction(record),
     m_nameLayout() {}
   static char Symbol() { return 'n'; }
-  char symbol() const override { return Symbol(); }
   void tidy() override;
   // MetaData getters
   Type type() const;
@@ -33,6 +32,7 @@ public:
   void setInitialRank(int rank);
   // Definition
   Poincare::Layout definitionName() { return m_definitionHandle.name(this); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableHandle()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownN); }
   // First initial condition
   Poincare::Layout firstInitialConditionName() { return m_firstInitialConditionHandle.name(this); }
   void firstInitialConditionText(char * buffer, size_t bufferSize) const { return m_firstInitialConditionHandle.text(this, buffer, bufferSize); }

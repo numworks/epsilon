@@ -21,7 +21,7 @@ public:
   // ExpressionNode
   Type type() const override { return Type::Integral; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression replaceUnknown(const Symbol & symbol) override;
+  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
 
   // Complex
   bool isReal(Context & context) const override { return true; }

@@ -65,8 +65,8 @@ Layout ExpressionModelHandle::layout(const Storage::Record * record) const {
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setContent(Ion::Storage::Record * record, const char * c, char symbol) {
-  Expression e = ExpressionModelHandle::BuildExpressionFromText(c, symbol);
+Ion::Storage::Record::ErrorStatus ExpressionModelHandle::setContent(Ion::Storage::Record * record, const char * c, char symbol, char unknownSymbol) {
+  Expression e = ExpressionModelHandle::BuildExpressionFromText(c, symbol, unknownSymbol);
   return setExpressionContent(record, e);
 }
 
@@ -115,14 +115,14 @@ void ExpressionModelHandle::tidy() const {
   m_circular = 0;
 }
 
-Poincare::Expression ExpressionModelHandle::BuildExpressionFromText(const char * c, char symbol) {
+Poincare::Expression ExpressionModelHandle::BuildExpressionFromText(const char * c, char symbol, char unknownSymbol) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c);
     if (!expressionToStore.isUninitialized() && symbol != 0) {
-      expressionToStore = expressionToStore.replaceUnknown(Symbol::Builder(symbol));
+      expressionToStore = expressionToStore.replaceUnknown(Symbol::Builder(symbol), Symbol::Builder(unknownSymbol));
     }
   }
   return expressionToStore;

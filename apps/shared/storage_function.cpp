@@ -1,7 +1,6 @@
 #include "storage_function.h"
 #include "poincare_helpers.h"
 #include <poincare/serialization_helper.h>
-#include <poincare/symbol.h>
 #include "poincare/src/parsing/parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -76,13 +75,13 @@ int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg
 }
 
 template<typename T>
-T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
+T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const {
   if (isCircularlyDefined(context)) {
     return NAN;
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, Poincare::Symbol::UnknownX);
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, unknownSymbol);
   return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
 }
 
@@ -94,5 +93,5 @@ StorageFunction::FunctionRecordData * StorageFunction::recordData() const {
 
 }
 
-template float Shared::StorageFunction::templatedApproximateAtAbscissa<float>(float, Poincare::Context*) const;
-template double Shared::StorageFunction::templatedApproximateAtAbscissa<double>(double, Poincare::Context*) const;
+template float Shared::StorageFunction::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, char) const;
+template double Shared::StorageFunction::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, char) const;

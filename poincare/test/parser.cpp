@@ -350,6 +350,7 @@ QUIZ_CASE(poincare_parser_parse_store) {
   assert_raises_parsing_error("1→𝐢");
   assert_raises_parsing_error("1→ℯ");
   assert_raises_parsing_error("1→\1"); // UnknownX
+  assert_raises_parsing_error("1→\2"); // UnknownN
   assert_raises_parsing_error("1→acos");
   assert_raises_parsing_error("1→f(2)");
   assert_raises_parsing_error("1→f(f)");

@@ -77,7 +77,7 @@ Poincare::Layout Sequence::nameLayout() {
   if (m_nameLayout.isUninitialized()) {
     m_nameLayout = HorizontalLayout::Builder(
         CodePointLayout::Builder(fullName()[0], KDFont::SmallFont),
-        VerticalOffsetLayout::Builder(CodePointLayout::Builder(symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder(Symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   return m_nameLayout;
@@ -122,7 +122,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   if (n < initialRank() || n < 0) {
     return NAN;
   }
-  char symb[] = {symbol(), 0};
+  const char unknownN[2] = {Poincare::Symbol::SpecialSymbols::UnknownN, 0};
   CacheContext<T> ctx = CacheContext<T>(sqctx);
   T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
   T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
@@ -139,7 +139,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, unSymbol);
       ctx.setValueForSymbol(vn, vnSymbol);
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), symb, (T)n, ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)n, ctx);
     }
     case Type::SingleRecurrence:
     {
@@ -150,7 +150,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm1, unSymbol);
       ctx.setValueForSymbol(vn, vn1Symbol);
       ctx.setValueForSymbol(vnm1, vnSymbol);
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), symb, (T)(n-1), ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-1), ctx);
     }
     default:
     {
@@ -164,7 +164,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm2, unSymbol);
       ctx.setValueForSymbol(vnm1, vn1Symbol);
       ctx.setValueForSymbol(vnm2, vnSymbol);
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), symb, (T)(n-2), ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-2), ctx);
     }
   }
 }

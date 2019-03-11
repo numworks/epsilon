@@ -27,8 +27,8 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Expression DerivativeNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Derivative(this), symbol);
+Expression DerivativeNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Derivative(this), symbol, unknownSymbol);
 }
 
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

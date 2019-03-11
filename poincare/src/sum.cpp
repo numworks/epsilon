@@ -14,8 +14,8 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Sum::s_functionHelper;
 
-Expression SumNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Sum(this), symbol);
+Expression SumNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Sum(this), symbol, unknownSymbol);
 }
 
 Layout SumNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {

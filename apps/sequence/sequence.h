@@ -31,22 +31,22 @@ public:
   void setType(Type type);
   void setInitialRank(int rank);
   // Definition
-  Poincare::Layout definitionName() { return m_definitionHandle.name(this); }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableHandle()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownN); }
+  Poincare::Layout definitionName() { return m_definition.name(this); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownN); }
   // First initial condition
-  Poincare::Layout firstInitialConditionName() { return m_firstInitialConditionHandle.name(this); }
-  void firstInitialConditionText(char * buffer, size_t bufferSize) const { return m_firstInitialConditionHandle.text(this, buffer, bufferSize); }
-  Poincare::Expression firstInitialConditionExpressionReduced(Poincare::Context * context) const { return m_firstInitialConditionHandle.expressionReduced(this, context); }
-  Poincare::Expression firstInitialConditionExpressionClone() const { return m_firstInitialConditionHandle.expressionClone(this); }
-  Poincare::Layout firstInitialConditionLayout() { return m_firstInitialConditionHandle.layout(this); }
-  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(const char * c) { return m_firstInitialConditionHandle.setContent(this, c); }
+  Poincare::Layout firstInitialConditionName() { return m_firstInitialCondition.name(this); }
+  void firstInitialConditionText(char * buffer, size_t bufferSize) const { return m_firstInitialCondition.text(this, buffer, bufferSize); }
+  Poincare::Expression firstInitialConditionExpressionReduced(Poincare::Context * context) const { return m_firstInitialCondition.expressionReduced(this, context); }
+  Poincare::Expression firstInitialConditionExpressionClone() const { return m_firstInitialCondition.expressionClone(this); }
+  Poincare::Layout firstInitialConditionLayout() { return m_firstInitialCondition.layout(this); }
+  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(const char * c) { return m_firstInitialCondition.setContent(this, c); }
   // Second initial condition
-  Poincare::Layout secondInitialConditionName() { return m_secondInitialConditionHandle.name(this); }
-  void secondInitialConditionText(char * buffer, size_t bufferSize) const { return m_secondInitialConditionHandle.text(this, buffer, bufferSize); }
-  Poincare::Expression secondInitialConditionExpressionReduced(Poincare::Context * context) const { return m_secondInitialConditionHandle.expressionReduced(this, context); }
-  Poincare::Expression secondInitialConditionExpressionClone() const { return m_secondInitialConditionHandle.expressionClone(this); }
-  Poincare::Layout secondInitialConditionLayout() { return m_secondInitialConditionHandle.layout(this); }
-  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(const char * c) { return m_secondInitialConditionHandle.setContent(this, c); }
+  Poincare::Layout secondInitialConditionName() { return m_secondInitialCondition.name(this); }
+  void secondInitialConditionText(char * buffer, size_t bufferSize) const { return m_secondInitialCondition.text(this, buffer, bufferSize); }
+  Poincare::Expression secondInitialConditionExpressionReduced(Poincare::Context * context) const { return m_secondInitialCondition.expressionReduced(this, context); }
+  Poincare::Expression secondInitialConditionExpressionClone() const { return m_secondInitialCondition.expressionClone(this); }
+  Poincare::Layout secondInitialConditionLayout() { return m_secondInitialCondition.layout(this); }
+  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(const char * c) { return m_secondInitialCondition.setContent(this, c); }
 
   // Sequence properties
   int numberOfElements() { return (int)type() + 1; }
@@ -94,9 +94,9 @@ private:
     uint16_t m_secondInitialConditionSize;
   };
 
-  class SequenceHandle : public Shared::ExpressionModel {
+  class SequenceModel : public Shared::ExpressionModel {
   public:
-    SequenceHandle() : Shared::ExpressionModel(), m_name() {}
+    SequenceModel() : Shared::ExpressionModel(), m_name() {}
     void tidyName() { m_name = Poincare::Layout(); }
     virtual Poincare::Layout name(Sequence * sequence);
   protected:
@@ -107,7 +107,7 @@ private:
     virtual void updateMetaData(const Ion::Storage::Record * record, size_t newSize) {}
   };
 
-  class DefinitionHandle : public SequenceHandle {
+  class DefinitionModel : public SequenceModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
@@ -115,7 +115,7 @@ private:
     void buildName(Sequence * sequence) override;
   };
 
-  class FirstInitialConditionHandle : public SequenceHandle {
+  class FirstInitialConditionModel : public SequenceModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
@@ -124,7 +124,7 @@ private:
     void buildName(Sequence * sequence) override;
   };
 
-  class SecondInitialConditionHandle : public SequenceHandle {
+  class SecondInitialConditionModel : public SequenceModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
@@ -135,11 +135,11 @@ private:
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
   size_t metaDataSize() const override { return sizeof(SequenceRecordData); }
-  const Shared::ExpressionModel * handle() const override { return &m_definitionHandle; }
+  const Shared::ExpressionModel * model() const override { return &m_definition; }
   SequenceRecordData * recordData() const;
-  DefinitionHandle m_definitionHandle;
-  FirstInitialConditionHandle m_firstInitialConditionHandle;
-  SecondInitialConditionHandle m_secondInitialConditionHandle;
+  DefinitionModel m_definition;
+  FirstInitialConditionModel m_firstInitialCondition;
+  SecondInitialConditionModel m_secondInitialCondition;
   Poincare::Layout m_nameLayout;
 };
 

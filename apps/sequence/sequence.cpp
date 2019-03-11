@@ -15,12 +15,12 @@ using namespace Poincare;
 namespace Sequence {
 
 void Sequence::tidy() {
-  m_definitionHandle.tidyName();
+  m_definition.tidyName();
   Function::tidy(); // m_definitionName.tidy()
-  m_firstInitialConditionHandle.tidy();
-  m_firstInitialConditionHandle.tidyName();
-  m_secondInitialConditionHandle.tidy();
-  m_secondInitialConditionHandle.tidyName();
+  m_firstInitialCondition.tidy();
+  m_firstInitialCondition.tidyName();
+  m_secondInitialCondition.tidy();
+  m_secondInitialCondition.tidyName();
   m_nameLayout = Layout();
 }
 
@@ -69,8 +69,8 @@ void Sequence::setType(Type t) {
 
 void Sequence::setInitialRank(int rank) {
   recordData()->setInitialRank(rank);
-  m_firstInitialConditionHandle.tidyName();
-  m_secondInitialConditionHandle.tidyName();
+  m_firstInitialCondition.tidyName();
+  m_secondInitialCondition.tidyName();
 }
 
 Poincare::Layout Sequence::nameLayout() {
@@ -193,14 +193,14 @@ Sequence::SequenceRecordData * Sequence::recordData() const {
 
 /* Sequence Handle */
 
-Poincare::Layout Sequence::SequenceHandle::name(Sequence * sequence) {
+Poincare::Layout Sequence::SequenceModel::name(Sequence * sequence) {
   if (m_name.isUninitialized()) {
     buildName(sequence);
   }
   return m_name;
 }
 
-void Sequence::SequenceHandle::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) {
+void Sequence::SequenceModel::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) {
   Ion::Storage::Record::Data newData = record->value();
   // Translate expressions located downstream
   size_t sizeBeforeExpression = (char *)expressionAddress -(char *)newData.buffer;
@@ -216,17 +216,17 @@ void Sequence::SequenceHandle::updateNewDataWithExpression(Ion::Storage::Record 
 
 /* Definition Handle*/
 
-void * Sequence::DefinitionHandle::expressionAddress(const Ion::Storage::Record * record) const {
+void * Sequence::DefinitionModel::expressionAddress(const Ion::Storage::Record * record) const {
   return (char *)record->value().buffer+sizeof(SequenceRecordData);
 }
 
-size_t Sequence::DefinitionHandle::expressionSize(const Ion::Storage::Record * record) const {
+size_t Sequence::DefinitionModel::expressionSize(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
   SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   return data.size-sizeof(SequenceRecordData) - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
 }
 
-void Sequence::DefinitionHandle::buildName(Sequence * sequence) {
+void Sequence::DefinitionModel::buildName(Sequence * sequence) {
   char name = sequence->fullName()[0];
   if (sequence->type() == Type::Explicit) {
     m_name = HorizontalLayout::Builder(
@@ -246,22 +246,22 @@ void Sequence::DefinitionHandle::buildName(Sequence * sequence) {
 
 /* First Initial Condition Handle*/
 
-void * Sequence::FirstInitialConditionHandle::expressionAddress(const Ion::Storage::Record * record) const {
+void * Sequence::FirstInitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
   SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   size_t offset = data.size - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
   return (char *)data.buffer+offset;
 }
 
-size_t Sequence::FirstInitialConditionHandle::expressionSize(const Ion::Storage::Record * record) const {
+size_t Sequence::FirstInitialConditionModel::expressionSize(const Ion::Storage::Record * record) const {
   return static_cast<const Sequence *>(record)->recordData()->firstInitialConditionSize();
 }
 
-void Sequence::FirstInitialConditionHandle::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
+void Sequence::FirstInitialConditionModel::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
   static_cast<const Sequence *>(record)->recordData()->setFirstInitialConditionSize(newSize);
 }
 
-void Sequence::FirstInitialConditionHandle::buildName(Sequence * sequence) {
+void Sequence::FirstInitialConditionModel::buildName(Sequence * sequence) {
   assert(sequence->type() == Type::SingleRecurrence || sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(sequence->initialRank()).serialize(buffer, k_initialRankNumberOfDigits+1);
@@ -273,22 +273,22 @@ void Sequence::FirstInitialConditionHandle::buildName(Sequence * sequence) {
 
 /* Second Initial Condition Handle*/
 
-void * Sequence::SecondInitialConditionHandle::expressionAddress(const Ion::Storage::Record * record) const {
+void * Sequence::SecondInitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
   SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   size_t offset = data.size - dataBuffer->secondInitialConditionSize();
   return (char *)data.buffer+offset;
 }
 
-void Sequence::SecondInitialConditionHandle::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
+void Sequence::SecondInitialConditionModel::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
   static_cast<const Sequence *>(record)->recordData()->setSecondInitialConditionSize(newSize);
 }
 
-size_t Sequence::SecondInitialConditionHandle::expressionSize(const Ion::Storage::Record * record) const {
+size_t Sequence::SecondInitialConditionModel::expressionSize(const Ion::Storage::Record * record) const {
   return static_cast<const Sequence *>(record)->recordData()->secondInitialConditionSize();
 }
 
-void Sequence::SecondInitialConditionHandle::buildName(Sequence * sequence) {
+void Sequence::SecondInitialConditionModel::buildName(Sequence * sequence) {
   assert(sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(sequence->initialRank()+1).serialize(buffer, k_initialRankNumberOfDigits+1);

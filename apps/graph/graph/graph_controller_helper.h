@@ -1,7 +1,7 @@
 #ifndef GRAPH_GRAPH_CONTROLLER_HELPER_H
 #define GRAPH_GRAPH_CONTROLLER_HELPER_H
 
-#include "../../shared/function_banner_delegate.h"
+#include "../../shared/banner_view.h"
 #include "../../shared/text_field_delegate_app.h"
 #include "../../shared/interactive_curve_view_range.h"
 #include "../storage_cartesian_function_store.h"

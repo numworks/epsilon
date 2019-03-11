@@ -19,7 +19,7 @@ const char * IntersectionGraphController::title() {
 void IntersectionGraphController::reloadBannerView() {
   m_bannerView->setNumberOfSubviews(2);
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), StorageCartesianFunction::Symbol());
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = StorageFunctionBannerDelegate::k_maxNumberOfCharacters+Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
   const char * legend = "=";

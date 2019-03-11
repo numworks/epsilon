@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "storage_function_go_to_parameter_controller.h"
-#include "function.h"
 #include "curve_view_cursor.h"
 #include "interactive_curve_view_range.h"
 

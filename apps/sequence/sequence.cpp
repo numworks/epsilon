@@ -16,7 +16,7 @@ namespace Sequence {
 
 void Sequence::tidy() {
   m_definitionHandle.tidyName();
-  StorageFunction::tidy(); // m_definitionName.tidy()
+  Function::tidy(); // m_definitionName.tidy()
   m_firstInitialConditionHandle.tidy();
   m_firstInitialConditionHandle.tidyName();
   m_secondInitialConditionHandle.tidy();
@@ -87,11 +87,11 @@ bool Sequence::isDefined() {
   SequenceRecordData * data = recordData();
   switch (type()) {
     case Type::Explicit:
-      return StorageFunction::isDefined();
+      return Function::isDefined();
     case Type::SingleRecurrence:
-      return StorageFunction::isDefined() && data->firstInitialConditionSize() > 0;
+      return Function::isDefined() && data->firstInitialConditionSize() > 0;
     default:
-      return StorageFunction::isDefined() && data->firstInitialConditionSize() > 0 && data->secondInitialConditionSize() > 0;
+      return Function::isDefined() && data->firstInitialConditionSize() > 0 && data->secondInitialConditionSize() > 0;
   }
 }
 
@@ -99,11 +99,11 @@ bool Sequence::isEmpty() {
   SequenceRecordData * data = recordData();
   switch (type()) {
     case Type::Explicit:
-      return StorageFunction::isEmpty();
+      return Function::isEmpty();
     case Type::SingleRecurrence:
-      return StorageFunction::isEmpty() && data->firstInitialConditionSize() == 0;
+      return Function::isEmpty() && data->firstInitialConditionSize() == 0;
     default:
-      return StorageFunction::isEmpty() && data->firstInitialConditionSize() == 0 && data->secondInitialConditionSize() == 0;
+      return Function::isEmpty() && data->firstInitialConditionSize() == 0 && data->secondInitialConditionSize() == 0;
   }
 }
 

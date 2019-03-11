@@ -2,16 +2,16 @@
 #define GRAPH_STORAGE_FUNCTION_PARAM_CONTROLLER_H
 
 #include "../../shared/expiring_pointer.h"
-#include "../../shared/storage_cartesian_function.h"
+#include "../../shared/cartesian_function.h"
 #include "../../shared/storage_values_function_parameter_controller.h"
 
 namespace Graph {
 
 class StorageValuesController;
 
-class StorageFunctionParameterController : public Shared::StorageValuesFunctionParameterController {
+class FunctionParameterController : public Shared::StorageValuesFunctionParameterController {
 public:
-  StorageFunctionParameterController(StorageValuesController * valuesController);
+  FunctionParameterController(StorageValuesController * valuesController);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
   HighlightCell * reusableCell(int index) override;
@@ -19,7 +19,7 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
-  Shared::ExpiringPointer<Shared::StorageCartesianFunction> function();
+  Shared::ExpiringPointer<Shared::CartesianFunction> function();
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;
 #else

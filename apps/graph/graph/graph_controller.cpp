@@ -8,7 +8,7 @@ namespace Graph {
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
-  StorageFunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
@@ -27,7 +27,7 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
-  StorageFunctionGraphController::viewWillAppear();
+  FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
 }
 
@@ -43,7 +43,7 @@ float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
@@ -57,8 +57,8 @@ int GraphController::estimatedBannerNumberOfLines() const {
 }
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
-  StorageFunctionGraphController::selectFunctionWithCursor(functionIndex);
-  ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  FunctionGraphController::selectFunctionWithCursor(functionIndex);
+  ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   m_cursorView.setColor(f->color());
 }
 
@@ -67,7 +67,7 @@ BannerView * GraphController::bannerView() {
 }
 
 void GraphController::reloadBannerView() {
-  StorageFunctionGraphController::reloadBannerView();
+  FunctionGraphController::reloadBannerView();
   m_bannerView.setNumberOfSubviews(2+m_displayDerivativeInBanner);
   if (functionStore()->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
     return;

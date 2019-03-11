@@ -40,13 +40,13 @@ void TangentGraphController::reloadBannerView() {
     return;
   }
   App * myApp = static_cast<App *>(app());
-  StorageFunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, myApp->functionStore(), StorageCartesianFunction::Symbol());
+  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, myApp->functionStore(), CartesianFunction::Symbol());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, myApp);
-  constexpr size_t bufferSize = StorageFunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
-  ExpiringPointer<StorageCartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 4);

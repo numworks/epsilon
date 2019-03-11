@@ -3,7 +3,7 @@
 
 namespace Shared {
 
-StorageFunctionCurveParameterController::StorageFunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
   ViewController(nullptr),
   m_goToCell(I18n::Message::Goto),
   m_selectableTableView(this, this, this),
@@ -11,18 +11,18 @@ StorageFunctionCurveParameterController::StorageFunctionCurveParameterController
 {
 }
 
-View * StorageFunctionCurveParameterController::view() {
+View * FunctionCurveParameterController::view() {
   return &m_selectableTableView;
 }
 
-void StorageFunctionCurveParameterController::didBecomeFirstResponder() {
+void FunctionCurveParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-bool StorageFunctionCurveParameterController::handleGotoSelection() {
+bool FunctionCurveParameterController::handleGotoSelection() {
   if (m_record.isNull()) {
     return false;
   }
@@ -32,11 +32,11 @@ bool StorageFunctionCurveParameterController::handleGotoSelection() {
   return true;
 }
 
-KDCoordinate StorageFunctionCurveParameterController::cellHeight() {
+KDCoordinate FunctionCurveParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void StorageFunctionCurveParameterController::setRecord(Ion::Storage::Record record) {
+void FunctionCurveParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
 }
 

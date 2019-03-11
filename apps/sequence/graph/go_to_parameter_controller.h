@@ -5,9 +5,9 @@
 
 namespace Sequence {
 
-class GoToParameterController : public Shared::StorageFunctionGoToParameterController {
+class GoToParameterController : public Shared::FunctionGoToParameterController {
 public:
-  using Shared::StorageFunctionGoToParameterController::StorageFunctionGoToParameterController;
+  using Shared::FunctionGoToParameterController::FunctionGoToParameterController;
 private:
   bool setParameterAtIndex(int parameterIndex, double f) override;
 };

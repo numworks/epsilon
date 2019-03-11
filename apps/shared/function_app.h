@@ -10,7 +10,7 @@ class AppsContainer;
 
 namespace Shared {
 
-class StorageFunctionApp : public ExpressionFieldDelegateApp {
+class FunctionApp : public ExpressionFieldDelegateApp {
 public:
   class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:
@@ -19,7 +19,7 @@ public:
     uint32_t * modelVersion() { return &m_modelVersion; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
     Poincare::Preferences::AngleUnit * angleUnitVersion() { return &m_angleUnitVersion; }
-    virtual StorageFunctionStore * functionStore() = 0;
+    virtual FunctionStore * functionStore() = 0;
     Interval * interval() { return &m_interval; }
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
@@ -33,13 +33,13 @@ public:
     uint32_t m_rangeVersion;
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
  };
-  virtual ~StorageFunctionApp() = default;
-  virtual StorageFunctionStore * functionStore() { return static_cast<StorageFunctionApp::Snapshot *>(snapshot())->functionStore(); }
+  virtual ~FunctionApp() = default;
+  virtual FunctionStore * functionStore() { return static_cast<FunctionApp::Snapshot *>(snapshot())->functionStore(); }
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 
 protected:
-  StorageFunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
+  FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
     ExpressionFieldDelegateApp(container, snapshot, rootViewController)
   {}
   // TextFieldDelegateApp

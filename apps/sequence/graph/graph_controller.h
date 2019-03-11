@@ -12,7 +12,7 @@
 
 namespace Sequence {
 
-class GraphController final : public Shared::StorageFunctionGraphController {
+class GraphController final : public Shared::FunctionGraphController {
 public:
   GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
@@ -28,7 +28,7 @@ private:
   bool moveCursorHorizontally(int direction) override;
   double defaultCursorAbscissa() override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
-  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::StorageFunctionGraphController::functionStore()); }
+  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
   View * cursorView() override {
     return &m_cursorView;

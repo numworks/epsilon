@@ -3,15 +3,15 @@
 
 #include <escher.h>
 #include "curve_view.h"
-#include "storage_function.h"
+#include "function.h"
 #include "../constant.h"
 #include "interactive_curve_view_range.h"
 
 namespace Shared {
 
-class StorageFunctionGraphView : public CurveView {
+class FunctionGraphView : public CurveView {
 public:
-  StorageFunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
+  FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
     BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Poincare::Context * context);

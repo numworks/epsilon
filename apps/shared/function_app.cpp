@@ -1,11 +1,11 @@
-#include "storage_function_app.h"
+#include "function_app.h"
 #include "../apps_container.h"
 
 using namespace Poincare;
 
 namespace Shared {
 
-StorageFunctionApp::Snapshot::Snapshot() :
+FunctionApp::Snapshot::Snapshot() :
   m_cursor(),
   m_interval(),
   m_indexFunctionSelectedByCursor(0),
@@ -18,7 +18,7 @@ StorageFunctionApp::Snapshot::Snapshot() :
   m_interval.setStep(1);
 }
 
-void StorageFunctionApp::Snapshot::reset() {
+void FunctionApp::Snapshot::reset() {
   m_interval.setStart(0);
   m_interval.setEnd(10);
   m_interval.setStep(1);
@@ -28,11 +28,11 @@ void StorageFunctionApp::Snapshot::reset() {
   setActiveTab(0);
 }
 
-void StorageFunctionApp::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
+void FunctionApp::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
   functionStore()->storageDidChangeForRecord(record);
 }
 
-void StorageFunctionApp::willBecomeInactive() {
+void FunctionApp::willBecomeInactive() {
   if (m_modalViewController.isDisplayingModal()) {
     m_modalViewController.dismissModalViewController();
   }
@@ -42,7 +42,7 @@ void StorageFunctionApp::willBecomeInactive() {
   ::App::willBecomeInactive();
 }
 
-bool StorageFunctionApp::isAcceptableExpression(const Poincare::Expression expression) {
+bool FunctionApp::isAcceptableExpression(const Poincare::Expression expression) {
   if (!TextFieldDelegateApp::ExpressionCanBeSerialized(expression, false, Expression())) {
     return false;
   }

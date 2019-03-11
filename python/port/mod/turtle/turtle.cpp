@@ -323,11 +323,24 @@ bool Turtle::draw(bool force) {
     m_drawn = true;
   }
 
-  if (m_mileage > 1000) {
+  /* We sleep every time the turtle walks a mileageLimit amount, to allow user
+   * interruptions. The length of each sleep is determined by the speed of the
+   * turtle.
+   * With emscripten, sleep gives control to the web browser, which decides when
+   * to return from sleep: this makes the turtle significantly slower on the web
+   * emulator than on the calculator. We thus decided to sleep less often on the
+   * emscripten platform. */
+#if __EMSCRIPTEN__
+  constexpr KDCoordinate mileageLimit = 10000;
+#else
+  constexpr KDCoordinate mileageLimit = 1000;
+#endif
+
+  if (m_mileage > mileageLimit) {
     if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : 3 * (k_maxSpeed - m_speed)))) {
       return true;
     }
-    m_mileage -= 1000;
+    m_mileage -= mileageLimit;
   }
   return false;
 }

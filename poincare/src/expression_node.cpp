@@ -18,8 +18,8 @@ Expression ExpressionNode::replaceSymbolWithExpression(const SymbolAbstract & sy
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
-Expression ExpressionNode::replaceUnknown(const Symbol & symbol) {
-  return Expression(this).defaultReplaceUnknown(symbol);
+Expression ExpressionNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return Expression(this).defaultReplaceUnknown(symbol, unknownSymbol);
 }
 
 Expression ExpressionNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {

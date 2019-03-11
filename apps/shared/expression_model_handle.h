@@ -20,7 +20,7 @@ public:
   Poincare::Layout layout(const Ion::Storage::Record * record) const;
 
   // Setters
-  virtual Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, char symbol = 0);
+  virtual Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, char symbol = 0, char unknownSymbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, Poincare::Expression & e);
 
   // Property
@@ -30,7 +30,7 @@ public:
   virtual void tidy() const;
 protected:
   // Setters helper
-  static Poincare::Expression BuildExpressionFromText(const char * c, char symbol = 0);
+  static Poincare::Expression BuildExpressionFromText(const char * c, char symbol = 0, char unknownSymbol = 0);
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:

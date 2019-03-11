@@ -2,6 +2,7 @@
 #define SHARED_STORAGE_FUNCTION_H
 
 #include <poincare/function.h>
+#include <poincare/symbol.h>
 #include "single_expression_model_handle.h"
 
 namespace Shared {
@@ -32,10 +33,10 @@ public:
 
   // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context);
+    return templatedApproximateAtAbscissa(x, context, Poincare::Symbol::SpecialSymbols::UnknownX);
   }
   virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context);
+    return templatedApproximateAtAbscissa(x, context, Poincare::Symbol::SpecialSymbols::UnknownX);
   }
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
@@ -57,7 +58,7 @@ protected:
     bool m_active;
   };
 private:
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
+  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const;
   FunctionRecordData * recordData() const;
 };
 

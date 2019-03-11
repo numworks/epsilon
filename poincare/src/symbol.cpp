@@ -14,7 +14,6 @@
 namespace Poincare {
 
 constexpr char Symbol::k_ans[];
-constexpr CodePoint Symbol::k_unknownXReadableChar;
 
 SymbolNode::SymbolNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
@@ -24,8 +23,8 @@ Expression SymbolNode::replaceSymbolWithExpression(const SymbolAbstract & symbol
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
-Expression SymbolNode::replaceUnknown(const Symbol & symbol) {
-  return Symbol(this).replaceUnknown(symbol);
+Expression SymbolNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return Symbol(this).replaceUnknown(symbol, unknownSymbol);
 }
 
 int SymbolNode::polynomialDegree(Context & context, const char * symbolName) const {
@@ -67,7 +66,7 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
 }
 
 float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  return isUnknownX() ? NAN : 0.0f;
+  return isUnknown(Symbol::SpecialSymbols::UnknownX) ? NAN : 0.0f;
 }
 
 bool SymbolNode::isReal(Context & context) const {
@@ -76,8 +75,11 @@ bool SymbolNode::isReal(Context & context) const {
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (isUnknownX()) {
-    return CodePointLayout::Builder(Symbol::k_unknownXReadableChar);
+  if (isUnknown(Symbol::SpecialSymbols::UnknownX)) {
+    return CodePointLayout::Builder('x');
+  }
+  if (isUnknown(Symbol::SpecialSymbols::UnknownN)) {
+    return CodePointLayout::Builder('n');
   }
   // TODO return Parse(m_name).createLayout() ?
   if (strcmp(m_name, "u(n)") == 0) {
@@ -145,8 +147,8 @@ Expression Symbol::UntypedBuilder(const char * name, size_t length, Context * co
   return Expression();
 }
 
-bool SymbolNode::isUnknownX() const {
-  bool result = UTF8Helper::CodePointIs(m_name, Symbol::SpecialSymbols::UnknownX);
+bool SymbolNode::isUnknown(char unknownSymbol) const {
+  bool result = UTF8Helper::CodePointIs(m_name, unknownSymbol);
   if (result) {
     assert(m_name[1] == 0);
   }
@@ -193,10 +195,11 @@ Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, co
   return *this;
 }
 
-Expression Symbol::replaceUnknown(const Symbol & symbol) {
+Expression Symbol::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
   assert(!symbol.isUninitialized());
   assert(symbol.type() == ExpressionNode::Type::Symbol);
-  return replaceSymbolWithExpression(symbol, Symbol::Builder(SpecialSymbols::UnknownX));
+  assert(unknownSymbol.type() == ExpressionNode::Type::Symbol);
+  return replaceSymbolWithExpression(symbol, unknownSymbol);
 }
 
 int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {

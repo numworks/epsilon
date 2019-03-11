@@ -14,6 +14,8 @@ class StorageExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)
 public:
   StorageExpressionModelStore();
+  virtual char symbol() const { return 0; }
+  virtual char unknownSymbol() const { return 0; }
 
   // Getters
   // By default, the number of models is not bounded

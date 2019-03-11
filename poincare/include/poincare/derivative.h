@@ -25,7 +25,7 @@ public:
   // Properties
   Type type() const override { return Type::Derivative; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression replaceUnknown(const Symbol & symbol) override;
+  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
 
 private:
   // Layout

@@ -20,7 +20,7 @@ namespace ParameteredExpressionHelper {
    * unknowns: for instance, we want to change f(x)=diff(cos(x),x,x) into
    * f(X)=diff(cos(x),x,X), X being an unknown. ReplaceUnknownInExpression does
    * that. */
-  Expression ReplaceUnknownInExpression(Expression e, const Symbol & symbolToReplace);
+  Expression ReplaceUnknownInExpression(Expression e, const Symbol & symbolToReplace, const Symbol & unknownSymbols);
 };
 
 }

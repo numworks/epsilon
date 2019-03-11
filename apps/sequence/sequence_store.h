@@ -13,6 +13,7 @@ class SequenceStore : public Shared::StorageFunctionStore {
 public:
   using Shared::StorageFunctionStore::StorageFunctionStore;
   char symbol() const override { return Sequence::Symbol(); }
+  char unknownSymbol() const override { return Poincare::Symbol::SpecialSymbols::UnknownN; }
   /* Sequence Store hold all its Sequences in an array. The Sequence pointers
    * return by modelForRecord are therefore non-expirable. We choose to return
    * Sequence * instead of ExpiringPointer<Sequence>. */

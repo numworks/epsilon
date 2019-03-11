@@ -29,8 +29,8 @@ int IntegralNode::polynomialDegree(Context & context, const char * symbolName) c
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Expression IntegralNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Integral(this), symbol);
+Expression IntegralNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Integral(this), symbol, unknownSymbol);
 }
 
 Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -1,4 +1,5 @@
 #include "graph_controller_helper.h"
+#include "../../shared/storage_function_banner_delegate.h"
 #include "../app.h"
 #include "../../constant.h"
 #include "../../shared/poincare_helpers.h"
@@ -20,7 +21,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 
 void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record, App * app) {
   ExpiringPointer<StorageCartesianFunction> function = app->functionStore()->modelForRecord(record);
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = StorageFunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize, StorageCartesianFunction::Symbol());

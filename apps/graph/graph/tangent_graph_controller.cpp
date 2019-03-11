@@ -42,7 +42,7 @@ void TangentGraphController::reloadBannerView() {
   App * myApp = static_cast<App *>(app());
   StorageFunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, myApp->functionStore(), StorageCartesianFunction::Symbol());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, myApp);
-  constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
+  constexpr size_t bufferSize = StorageFunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);

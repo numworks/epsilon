@@ -27,6 +27,7 @@ protected:
   virtual void didChangeModelsList() { resetMemoization(); }
   virtual void reinitSelectedExpression(ExpiringPointer<SingleExpressionModelHandle> model);
   virtual void editExpression(Ion::Events::Event event);
+  void replaceUnknownSymbolWithReadableSymbol(char * initialText);
   virtual bool editSelectedRecordWithText(const char * text);
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) { return j; }

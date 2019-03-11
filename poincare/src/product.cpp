@@ -14,8 +14,8 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Product::s_functionHelper;
 
-Expression ProductNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Product(this), symbol);
+Expression ProductNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
+  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Product(this), symbol, unknownSymbol);
 }
 
 Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {

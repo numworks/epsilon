@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-Expression ParameteredExpressionHelper::ReplaceUnknownInExpression(Expression e, const Symbol & symbolToReplace) {
+Expression ParameteredExpressionHelper::ReplaceUnknownInExpression(Expression e, const Symbol & symbolToReplace, const Symbol & unknownSymbol) {
   assert(!e.isUninitialized());
   assert(e.type() == ExpressionNode::Type::Integral
       || e.type() == ExpressionNode::Type::Derivative
@@ -22,10 +22,10 @@ Expression ParameteredExpressionHelper::ReplaceUnknownInExpression(Expression e,
 
   Symbol& parameterChild = static_cast<Symbol &>(child1);
   if (strcmp(parameterChild.name(), symbolToReplace.name()) != 0) {
-    return e.defaultReplaceUnknown(symbolToReplace);
+    return e.defaultReplaceUnknown(symbolToReplace, unknownSymbol);
   }
   for (int i = 2; i < numberOfChildren; i++) {
-    e.childAtIndex(i).replaceUnknown(symbolToReplace);
+    e.childAtIndex(i).replaceUnknown(symbolToReplace, unknownSymbol);
   }
   return e;
 }

@@ -77,9 +77,9 @@ int VariableBoxController::numberOfRows() {
     case Page::RootMenu:
       return k_numberOfMenuRows;
     case Page::Expression:
-      return Storage::sharedStorage()->numberOfRecordsWithExtension(GlobalContext::expExtension);
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
-      return Storage::sharedStorage()->numberOfRecordsWithExtension(GlobalContext::funcExtension);
+      return Storage::sharedStorage()->numberOfRecordsWithExtension(Ion::Storage::funcExtension);
     default:
       return 0;
   }
@@ -243,7 +243,7 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
 
 const char * VariableBoxController::extension() const {
   assert(m_currentPage != Page::RootMenu);
-  return m_currentPage == Page::Function ? GlobalContext::funcExtension : GlobalContext::expExtension;
+  return m_currentPage == Page::Function ? Ion::Storage::funcExtension : Ion::Storage::expExtension;
 }
 
 Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {

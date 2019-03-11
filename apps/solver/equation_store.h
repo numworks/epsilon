@@ -78,7 +78,7 @@ private:
   static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
 
   // StorageExpressionModelStore
-  const char * modelExtension() const override { return Equation::extension; }
+  const char * modelExtension() const override { return Ion::Storage::eqExtension; }
   /* We don't really use model memoization as the number of Equation is limited
    * and we keep enough Equations to store them all. */
   void setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;

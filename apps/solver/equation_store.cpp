@@ -35,13 +35,13 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   int currentNumber = 0;
   while (currentNumber < k_maxNumberOfEquations) {
     name[1] = '0'+currentNumber;
-    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Equation::extension).isNull()) {
+    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::eqExtension).isNull()) {
       break;
     }
     currentNumber++;
   }
   assert(currentNumber < k_maxNumberOfEquations);
-  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Equation::extension, nullptr, 0);
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 
 void EquationStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {

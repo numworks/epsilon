@@ -14,7 +14,7 @@ namespace Sequence {
 class Sequence : public Shared::StorageFunction {
 friend class SequenceStore;
 public:
-  enum class Type {
+  enum class Type : uint8_t {
     Explicit = 0,
     SingleRecurrence = 1,
     DoubleRecurrence = 2
@@ -83,14 +83,15 @@ private:
     int initialRank() const { return m_initialRank; }
     void setInitialRank(int initialRank) { m_initialRank = initialRank; }
     size_t firstInitialConditionSize() const { return m_firstInitialConditionSize; }
-    void setFirstInitialConditionSize(size_t firstInitialConditionSize) { m_firstInitialConditionSize = firstInitialConditionSize; }
+    void setFirstInitialConditionSize(uint16_t firstInitialConditionSize) { m_firstInitialConditionSize = firstInitialConditionSize; }
     size_t secondInitialConditionSize() const { return m_secondInitialConditionSize; }
-    void setSecondInitialConditionSize(size_t secondInitialConditionSize) { m_secondInitialConditionSize = secondInitialConditionSize; }
+    void setSecondInitialConditionSize(uint16_t secondInitialConditionSize) { m_secondInitialConditionSize = secondInitialConditionSize; }
   private:
+    static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::k_storageSize, "Potential overflows of Sequence initial condition sizes");
     Type m_type;
-    int m_initialRank;
-    size_t m_firstInitialConditionSize;
-    size_t m_secondInitialConditionSize;
+    uint8_t m_initialRank;
+    uint16_t m_firstInitialConditionSize;
+    uint16_t m_secondInitialConditionSize;
   };
 
   class SequenceHandle : public Shared::ExpressionModelHandle {

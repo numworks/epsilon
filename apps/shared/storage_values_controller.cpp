@@ -1,5 +1,5 @@
 #include "storage_values_controller.h"
-#include "storage_function_app.h"
+#include "function_app.h"
 #include "../constant.h"
 #include "../apps_container.h"
 #include "poincare_helpers.h"
@@ -309,7 +309,7 @@ int StorageValuesController::maxNumberOfElements() const {
 }
 
 double StorageValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  ExpiringPointer<StorageFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
 }
@@ -318,8 +318,8 @@ void StorageValuesController::updateNumberOfColumns() {
   m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
 }
 
-StorageFunctionStore * StorageValuesController::functionStore() const {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+FunctionStore * StorageValuesController::functionStore() const {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   return myApp->functionStore();
 }
 

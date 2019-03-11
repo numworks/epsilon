@@ -1,5 +1,5 @@
 #include "storage_list_parameter_controller.h"
-#include "storage_function_app.h"
+#include "function_app.h"
 #include <assert.h>
 
 namespace Shared {
@@ -94,12 +94,12 @@ bool StorageListParameterController::handleEnterOnRow(int rowIndex) {
   }
 }
 
-ExpiringPointer<StorageFunction> StorageListParameterController::function() {
+ExpiringPointer<Function> StorageListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }
 
-StorageFunctionStore * StorageListParameterController::functionStore() {
-  StorageFunctionApp * a = static_cast<StorageFunctionApp *>(app());
+FunctionStore * StorageListParameterController::functionStore() {
+  FunctionApp * a = static_cast<FunctionApp *>(app());
   return a->functionStore();
 }
 

@@ -42,7 +42,7 @@ void SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record
   m_sequences[cacheIndex] = Sequence(record);
 }
 
-Shared::SingleExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheIndex) const {
+Shared::ExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_sequences[cacheIndex];
 }

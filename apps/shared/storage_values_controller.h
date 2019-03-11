@@ -46,7 +46,7 @@ protected:
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns();
-  virtual StorageFunctionStore * functionStore() const;
+  virtual FunctionStore * functionStore() const;
   virtual Ion::Storage::Record recordAtColumn(int i);
   Interval * m_interval;
   int m_numberOfColumns;

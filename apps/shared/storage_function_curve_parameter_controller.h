@@ -8,9 +8,9 @@
 
 namespace Shared {
 
-class StorageFunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  StorageFunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
+  FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   View * view() override;
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
@@ -21,7 +21,7 @@ protected:
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
 private:
-  virtual StorageFunctionGoToParameterController * goToParameterController() = 0;
+  virtual FunctionGoToParameterController * goToParameterController() = 0;
 };
 
 }

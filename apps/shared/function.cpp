@@ -1,4 +1,4 @@
-#include "storage_function.h"
+#include "function.h"
 #include "poincare_helpers.h"
 #include <poincare/serialization_helper.h>
 #include "poincare/src/parsing/parser.h"
@@ -12,9 +12,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr char StorageFunction::k_parenthesedArgument[];
+constexpr char Function::k_parenthesedArgument[];
 
-bool StorageFunction::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
+bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
   assert(baseName[0] != 0);
 
   UTF8Decoder decoder(baseName);
@@ -52,19 +52,19 @@ bool StorageFunction::BaseNameCompliant(const char * baseName, NameNotCompliantE
   return true;
 }
 
-bool StorageFunction::isActive() const {
+bool Function::isActive() const {
   return recordData()->isActive();
 }
 
-KDColor StorageFunction::color() const {
+KDColor Function::color() const {
   return recordData()->color();
 }
 
-void StorageFunction::setActive(bool active) {
+void Function::setActive(bool active) {
   recordData()->setActive(active);
 }
 
-int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
+int Function::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
   const char * functionName = fullName();
   size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
   int result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
@@ -75,7 +75,7 @@ int StorageFunction::nameWithArgument(char * buffer, size_t bufferSize, char arg
 }
 
 template<typename T>
-T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const {
+T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const {
   if (isCircularlyDefined(context)) {
     return NAN;
   }
@@ -85,7 +85,7 @@ T StorageFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * conte
   return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
 }
 
-StorageFunction::FunctionRecordData * StorageFunction::recordData() const {
+Function::FunctionRecordData * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
   return reinterpret_cast<FunctionRecordData *>(const_cast<void *>(d.buffer));
@@ -93,5 +93,5 @@ StorageFunction::FunctionRecordData * StorageFunction::recordData() const {
 
 }
 
-template float Shared::StorageFunction::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, char) const;
-template double Shared::StorageFunction::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, char) const;
+template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, char) const;
+template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, char) const;

@@ -10,7 +10,7 @@ using namespace Shared;
 namespace Graph {
 
 StorageListController::StorageListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::StorageFunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
+  Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{ //TODO find better initialization
     TextFieldFunctionTitleCell(this),
     TextFieldFunctionTitleCell(this),
@@ -49,14 +49,14 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   assert(textField != nullptr);
   // Compute the new name
   size_t textLength = strlen(text);
-  size_t argumentLength = StorageFunction::k_parenthesedArgumentLength;
-  constexpr int maxBaseNameSize = StorageFunction::k_maxNameWithArgumentSize;
+  size_t argumentLength = Function::k_parenthesedArgumentLength;
+  constexpr int maxBaseNameSize = Function::k_maxNameWithArgumentSize;
   char baseName[maxBaseNameSize];
   if (textLength <= argumentLength) {
     // The user entered an empty name. Use a default function name.
-    StorageCartesianFunction::DefaultName(baseName, maxBaseNameSize);
+    CartesianFunction::DefaultName(baseName, maxBaseNameSize);
     size_t defaultNameLength = strlen(baseName);
-    strlcpy(baseName + defaultNameLength, StorageFunction::k_parenthesedArgument, maxBaseNameSize - defaultNameLength);
+    strlcpy(baseName + defaultNameLength, Function::k_parenthesedArgument, maxBaseNameSize - defaultNameLength);
     textField->setText(baseName);
     baseName[defaultNameLength] = 0;
   } else {
@@ -67,8 +67,8 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   GlobalContext::DestroyRecordsBaseNamedWithoutExtension(baseName, Ion::Storage::funcExtension);
 
   // Set the name
-  StorageFunction::NameNotCompliantError nameError = StorageFunction::NameNotCompliantError::None;
-  Ion::Storage::Record::ErrorStatus error = StorageFunction::BaseNameCompliant(baseName, &nameError) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, Ion::Storage::funcExtension) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
+  Function::NameNotCompliantError nameError = Function::NameNotCompliantError::None;
+  Ion::Storage::Record::ErrorStatus error = Function::BaseNameCompliant(baseName, &nameError) ? modelStore()->recordAtIndex(m_selectableTableView.selectedRow()).setBaseNameWithExtension(baseName, Ion::Storage::funcExtension) : Ion::Storage::Record::ErrorStatus::NonCompliantName;
 
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
@@ -96,13 +96,13 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Ion::Storage::Record::ErrorStatus::NonCompliantName) {
-    assert(nameError != StorageFunction::NameNotCompliantError::None);
-    if (nameError == StorageFunction::NameNotCompliantError::CharacterNotAllowed) {
+    assert(nameError != Function::NameNotCompliantError::None);
+    if (nameError == Function::NameNotCompliantError::CharacterNotAllowed) {
       app()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
-    } else if (nameError == StorageFunction::NameNotCompliantError::NameCannotStartWithNumber) {
+    } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithNumber) {
       app()->displayWarning(I18n::Message::NameCannotStartWithNumber);
     } else {
-      assert(nameError == StorageFunction::NameNotCompliantError::ReservedName);
+      assert(nameError == Function::NameNotCompliantError::ReservedName);
       app()->displayWarning(I18n::Message::ReservedName);
     }
   } else {
@@ -118,7 +118,7 @@ bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
   // Put the name column back to normal size
   computeTitlesColumnWidth();
   selectableTableView()->reloadData();
-  ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
+  ExpiringPointer<Function> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   app()->setFirstResponder(&m_selectableTableView);
@@ -165,7 +165,7 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
   titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
     // Set name and color if the name is not being edited
-    ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+    ExpiringPointer<Function> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
     titleCell->setColor(functionNameColor);
@@ -175,14 +175,14 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   assert(cell != nullptr);
   assert(j >= 0 && j < modelStore()->numberOfModels());
-  Shared::StorageFunctionListController::willDisplayExpressionCellAtIndex(cell, j);
+  Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
-  ExpiringPointer<StorageFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+  ExpiringPointer<Function> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 
-void StorageListController::setFunctionNameInTextField(ExpiringPointer<StorageFunction> function, TextField * textField) {
+void StorageListController::setFunctionNameInTextField(ExpiringPointer<Function> function, TextField * textField) {
   assert(textField != nullptr);
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());

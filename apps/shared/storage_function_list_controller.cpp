@@ -1,5 +1,5 @@
 #include "storage_function_list_controller.h"
-#include "storage_function_app.h"
+#include "function_app.h"
 #include "function_expression_cell.h"
 
 namespace Shared {
@@ -7,19 +7,19 @@ namespace Shared {
 static inline int maxInt(int x, int y) { return x > y ? x : y; }
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
-StorageFunctionListController::StorageFunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
+FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   StorageExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),
   m_selectableTableView(this, this, this, this),
   m_emptyCell(),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
-      StorageFunctionListController * list = (StorageFunctionListController *)context;
+      FunctionListController * list = (FunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(1);
       return true;
     }, this), KDFont::SmallFont, Palette::PurpleBright),
   m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
-      StorageFunctionListController * list = (StorageFunctionListController *)context;
+      FunctionListController * list = (FunctionListController *)context;
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
       return true;
@@ -38,11 +38,11 @@ StorageFunctionListController::StorageFunctionListController(Responder * parentR
 
 /* TableViewDataSource */
 
-void StorageFunctionListController::viewWillAppear() {
+void FunctionListController::viewWillAppear() {
   computeTitlesColumnWidth();
 }
 
-KDCoordinate StorageFunctionListController::columnWidth(int i) {
+KDCoordinate FunctionListController::columnWidth(int i) {
   switch (i) {
     case 0:
       return m_titlesColumnWidth;
@@ -54,7 +54,7 @@ KDCoordinate StorageFunctionListController::columnWidth(int i) {
   }
 }
 
-KDCoordinate StorageFunctionListController::cumulatedWidthFromIndex(int i) {
+KDCoordinate FunctionListController::cumulatedWidthFromIndex(int i) {
   switch (i) {
     case 0:
       return 0;
@@ -68,7 +68,7 @@ KDCoordinate StorageFunctionListController::cumulatedWidthFromIndex(int i) {
   }
 }
 
-int StorageFunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+int FunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   if (offsetX <= m_titlesColumnWidth) {
     return 0;
   } else {
@@ -80,14 +80,14 @@ int StorageFunctionListController::indexFromCumulatedWidth(KDCoordinate offsetX)
   }
 }
 
-int StorageFunctionListController::typeAtLocation(int i, int j) {
+int FunctionListController::typeAtLocation(int i, int j) {
   if (isAddEmptyRow(j)){
     return i + 2;
   }
   return i;
 }
 
-HighlightCell * StorageFunctionListController::reusableCell(int index, int type) {
+HighlightCell * FunctionListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < maxNumberOfDisplayableRows());
   switch (type) {
@@ -105,14 +105,14 @@ HighlightCell * StorageFunctionListController::reusableCell(int index, int type)
   }
 }
 
-int StorageFunctionListController::reusableCellCount(int type) {
+int FunctionListController::reusableCellCount(int type) {
   if (type > 1) {
     return 1;
   }
   return maxNumberOfDisplayableRows();
 }
 
-void StorageFunctionListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+void FunctionListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   if (!isAddEmptyRow(j)) {
     if (i == 0) {
       willDisplayTitleCellAtIndex(cell, j);
@@ -128,14 +128,14 @@ void StorageFunctionListController::willDisplayCellAtLocation(HighlightCell * ce
 
 /* ButtonRowDelegate */
 
-int StorageFunctionListController::numberOfButtons(ButtonRowController::Position position) const {
+int FunctionListController::numberOfButtons(ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Bottom) {
     return 2;
   }
   return 0;
 }
 
-Button * StorageFunctionListController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+Button * FunctionListController::buttonAtIndex(int index, ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Top) {
     return nullptr;
   }
@@ -145,7 +145,7 @@ Button * StorageFunctionListController::buttonAtIndex(int index, ButtonRowContro
 
 /* Responder */
 
-void StorageFunctionListController::didBecomeFirstResponder() {
+void FunctionListController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
     selectCellAtLocation(1, 0);
   } else {
@@ -158,7 +158,7 @@ void StorageFunctionListController::didBecomeFirstResponder() {
   app()->setFirstResponder(selectableTableView());
 }
 
-bool StorageFunctionListController::handleEvent(Ion::Events::Event event) {
+bool FunctionListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
@@ -202,11 +202,11 @@ bool StorageFunctionListController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StorageFunctionListController::didEnterResponderChain(Responder * previousFirstResponder) {
+void FunctionListController::didEnterResponderChain(Responder * previousFirstResponder) {
   selectableTableView()->reloadData();
 }
 
-void StorageFunctionListController::willExitResponderChain(Responder * nextFirstResponder) {
+void FunctionListController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     selectableTableView()->deselectTable();
     footer()->setSelectedButton(-1);
@@ -215,7 +215,7 @@ void StorageFunctionListController::willExitResponderChain(Responder * nextFirst
 
 /* SelectableTableViewDelegate */
 
-void StorageFunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void FunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   // Update memoization of cell heights
   StorageExpressionModelListController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY);
   // Do not select the cell left of the "addEmptyFunction" cell
@@ -226,40 +226,40 @@ void StorageFunctionListController::tableViewDidChangeSelection(SelectableTableV
 
 /* ExpressionModelListController */
 
-StackViewController * StorageFunctionListController::stackController() const {
+StackViewController * FunctionListController::stackController() const {
   return static_cast<StackViewController *>(parentResponder()->parentResponder()->parentResponder());
 }
 
-void StorageFunctionListController::configureFunction(Ion::Storage::Record record) {
+void FunctionListController::configureFunction(Ion::Storage::Record record) {
   StackViewController * stack = stackController();
   parameterController()->setRecord(record);
   stack->push(parameterController());
 }
 
-void StorageFunctionListController::computeTitlesColumnWidth(bool forceMax) {
+void FunctionListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
-    m_titlesColumnWidth = nameWidth(StorageFunction::k_maxNameWithArgumentSize - 1)+k_functionTitleSumOfMargins;
+    m_titlesColumnWidth = nameWidth(Function::k_maxNameWithArgumentSize - 1)+k_functionTitleSumOfMargins;
     return;
   }
   KDCoordinate maxTitleWidth = maxFunctionNameWidth()+k_functionTitleSumOfMargins;
   m_titlesColumnWidth = maxInt(maxTitleWidth, k_minTitleColumnWidth);
 }
 
-TabViewController * StorageFunctionListController::tabController() const {
+TabViewController * FunctionListController::tabController() const {
   return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
-StorageFunctionStore * StorageFunctionListController::modelStore() {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+FunctionStore * FunctionListController::modelStore() {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   return myApp->functionStore();
 }
 
-InputViewController * StorageFunctionListController::inputController() {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+InputViewController * FunctionListController::inputController() {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   return myApp->inputViewController();
 }
 
-KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
+KDCoordinate FunctionListController::maxFunctionNameWidth() {
   int maxNameLength = 0;
   int numberOfModels = modelStore()->numberOfModels();
   for (int i = 0; i < numberOfModels; i++) {
@@ -269,15 +269,15 @@ KDCoordinate StorageFunctionListController::maxFunctionNameWidth() {
     assert(dotPosition != nullptr);
     maxNameLength = maxInt(maxNameLength, dotPosition-functionName);
   }
-  return nameWidth(maxNameLength + StorageFunction::k_parenthesedArgumentLength);
+  return nameWidth(maxNameLength + Function::k_parenthesedArgumentLength);
 }
 
-void StorageFunctionListController::didChangeModelsList() {
+void FunctionListController::didChangeModelsList() {
   StorageExpressionModelListController::didChangeModelsList();
   computeTitlesColumnWidth();
 }
 
-KDCoordinate StorageFunctionListController::baseline(int j) {
+KDCoordinate FunctionListController::baseline(int j) {
   if (j < 0) {
     return -1;
   }
@@ -293,13 +293,13 @@ KDCoordinate StorageFunctionListController::baseline(int j) {
   return privateBaseline(j);
 }
 
-void StorageFunctionListController::resetMemoizationForIndex(int index) {
+void FunctionListController::resetMemoizationForIndex(int index) {
   assert(index >= 0 && index < k_memoizedCellsCount);
   m_memoizedCellBaseline[index] = -1;
   StorageExpressionModelListController::resetMemoizationForIndex(index);
 }
 
-void StorageFunctionListController::shiftMemoization(bool newCellIsUnder) {
+void FunctionListController::shiftMemoization(bool newCellIsUnder) {
   if (newCellIsUnder) {
     for (int i = 0; i < k_memoizedCellsCount - 1; i++) {
       m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i+1];
@@ -312,19 +312,19 @@ void StorageFunctionListController::shiftMemoization(bool newCellIsUnder) {
   StorageExpressionModelListController::shiftMemoization(newCellIsUnder);
 }
 
-KDCoordinate StorageFunctionListController::nameWidth(int nameLength) const {
+KDCoordinate FunctionListController::nameWidth(int nameLength) const {
   assert(nameLength >= 0);
-  return nameLength * const_cast<StorageFunctionListController *>(this)->titleCells(0)->font()->glyphSize().width();
+  return nameLength * const_cast<FunctionListController *>(this)->titleCells(0)->font()->glyphSize().width();
 }
 
-KDCoordinate StorageFunctionListController::privateBaseline(int j) const {
-  assert(j >= 0 && j < const_cast<StorageFunctionListController *>(this)->numberOfExpressionRows());
+KDCoordinate FunctionListController::privateBaseline(int j) const {
+  assert(j >= 0 && j < const_cast<FunctionListController *>(this)->numberOfExpressionRows());
   FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1; // Baseline < 0 triggers default behaviour (centered alignment)
   }
-  return 0.5*(const_cast<StorageFunctionListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
+  return 0.5*(const_cast<FunctionListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
 }
 
 }

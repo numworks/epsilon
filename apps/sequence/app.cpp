@@ -19,7 +19,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-  Shared::StorageFunctionApp::Snapshot::Snapshot(),
+  Shared::FunctionApp::Snapshot::Snapshot(),
   m_sequenceStore(),
   m_graphRange(&m_cursor)
 {
@@ -30,7 +30,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  StorageFunctionApp::Snapshot::reset();
+  FunctionApp::Snapshot::reset();
   /* reset might be called when activating the exam mode from the settings or
    * when a memory exception occurs. In both cases, we do not want to
    * computeYAuto in GraphRange::setDefault, so we need to set its delegate to
@@ -54,7 +54,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  StorageFunctionApp(container, snapshot, &m_inputViewController),
+  FunctionApp(container, snapshot, &m_inputViewController),
   m_sequenceContext(((AppsContainer *)container)->globalContext(), snapshot->functionStore()),
   m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),

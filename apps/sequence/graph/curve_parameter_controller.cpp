@@ -7,7 +7,7 @@ using namespace Shared;
 namespace Sequence {
 
 CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  StorageFunctionCurveParameterController(graphRange, cursor),
+  FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor, I18n::Message::N),
   m_sumCell(I18n::Message::TermSum),
   m_graphController(graphController)

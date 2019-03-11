@@ -1,5 +1,5 @@
 #include "storage_function_graph_controller.h"
-#include "storage_function_app.h"
+#include "function_app.h"
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StorageFunctionGraphController::StorageFunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
   m_initialisationParameterController(this, interactiveRange),
   m_angleUnitVersion(angleUnitVersion),
@@ -16,24 +16,24 @@ StorageFunctionGraphController::StorageFunctionGraphController(Responder * paren
 {
 }
 
-bool StorageFunctionGraphController::isEmpty() const {
+bool FunctionGraphController::isEmpty() const {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return true;
   }
   return false;
 }
 
-ViewController * StorageFunctionGraphController::initialisationParameterController() {
+ViewController * FunctionGraphController::initialisationParameterController() {
   return &m_initialisationParameterController;
 }
 
-void StorageFunctionGraphController::viewWillAppear() {
+void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setCursorView(cursorView());
   functionGraphView()->setBannerView(bannerView());
   functionGraphView()->setAreaHighlight(NAN,NAN);
 
   if (functionGraphView()->context() == nullptr) {
-    StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+    FunctionApp * myApp = static_cast<FunctionApp *>(app());
     functionGraphView()->setContext(myApp->localContext());
   }
   Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
@@ -44,7 +44,7 @@ void StorageFunctionGraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
 }
 
-bool StorageFunctionGraphController::handleEnter() {
+bool FunctionGraphController::handleEnter() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   curveParameterController()->setRecord(record);
   StackViewController * stack = stackController();
@@ -52,15 +52,15 @@ bool StorageFunctionGraphController::handleEnter() {
   return true;
 }
 
-void StorageFunctionGraphController::selectFunctionWithCursor(int functionIndex) {
+void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
   *m_indexFunctionSelectedByCursor = functionIndex;
 }
 
-float StorageFunctionGraphController::cursorBottomMarginRatio() {
+float FunctionGraphController::cursorBottomMarginRatio() {
   return (cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
 }
 
-void StorageFunctionGraphController::reloadBannerView() {
+void FunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
@@ -68,16 +68,16 @@ void StorageFunctionGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), functionStore()->symbol());
 }
 
-float StorageFunctionGraphController::displayBottomMarginRatio() {
+float FunctionGraphController::displayBottomMarginRatio() {
   return (cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
 }
 
-float StorageFunctionGraphController::estimatedBannerHeight() const {
+float FunctionGraphController::estimatedBannerHeight() const {
   return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
 }
 
-InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   float min = FLT_MAX;
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
@@ -89,7 +89,7 @@ InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::compute
     return range;
   }
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<StorageFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float y = 0.0f;
     float res = curveView()->resolution();
     /* Scan x-range from the middle to the extrema in order to get balanced
@@ -109,28 +109,28 @@ InteractiveCurveViewRangeDelegate::Range StorageFunctionGraphController::compute
   return range;
 }
 
-void StorageFunctionGraphController::initRangeParameters() {
+void FunctionGraphController::initRangeParameters() {
   interactiveCurveViewRange()->setDefault();
   initCursorParameters();
   selectFunctionWithCursor(0);
 }
 
-double StorageFunctionGraphController::defaultCursorAbscissa() {
+double FunctionGraphController::defaultCursorAbscissa() {
   return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
 }
 
-StorageFunctionStore * StorageFunctionGraphController::functionStore() const {
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+FunctionStore * FunctionGraphController::functionStore() const {
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   return myApp->functionStore();
 }
 
-void StorageFunctionGraphController::initCursorParameters() {
+void FunctionGraphController::initCursorParameters() {
   double x = defaultCursorAbscissa();
-  StorageFunctionApp * myApp = static_cast<StorageFunctionApp *>(app());
+  FunctionApp * myApp = static_cast<FunctionApp *>(app());
   int functionIndex = 0;
   double y = 0;
   do {
-    ExpiringPointer<StorageFunction> firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
+    ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
   } while ((std::isnan(y) || std::isinf(y)) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
@@ -141,9 +141,9 @@ void StorageFunctionGraphController::initCursorParameters() {
   }
 }
 
-bool StorageFunctionGraphController::moveCursorVertically(int direction) {
+bool FunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
-  Poincare::Context * context = static_cast<StorageFunctionApp *>(app())->localContext();
+  Poincare::Context * context = static_cast<FunctionApp *>(app())->localContext();
 
   int nextActiveFunctionIndex = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
   if (nextActiveFunctionIndex < 0) {
@@ -155,31 +155,31 @@ bool StorageFunctionGraphController::moveCursorVertically(int direction) {
   return true;
 }
 
-CurveView * StorageFunctionGraphController::curveView() {
+CurveView * FunctionGraphController::curveView() {
   return functionGraphView();
 }
 
-uint32_t StorageFunctionGraphController::modelVersion() {
+uint32_t FunctionGraphController::modelVersion() {
   return functionStore()->storeChecksum();
 }
 
-uint32_t StorageFunctionGraphController::rangeVersion() {
+uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
 }
 
-bool StorageFunctionGraphController::isCursorVisible() {
+bool FunctionGraphController::isCursorVisible() {
   return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
-bool StorageFunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
+bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
   return newIndex != currentIndex;
 }
 
-double StorageFunctionGraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {
+double FunctionGraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {
   return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateAtAbscissa(x, context);
 }
 
-int StorageFunctionGraphController::numberOfCurves() const {
+int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 

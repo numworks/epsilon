@@ -7,7 +7,7 @@
 #include "vertical_cursor_view.h"
 #include "curve_view_cursor.h"
 #include "simple_interactive_curve_view_controller.h"
-#include "storage_function.h"
+#include "function.h"
 #include "text_field_delegate.h"
 #include "expiring_pointer.h"
 
@@ -15,7 +15,7 @@ namespace Shared {
 
 class StorageSumGraphController : public SimpleInteractiveCurveViewController, public TextFieldDelegate {
 public:
-  StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageFunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
+  StorageSumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
   void viewWillAppear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -40,7 +40,7 @@ private:
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<StorageFunction> function) = 0;
+  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
   TextFieldDelegateApp * textFieldDelegateApp() override {
@@ -78,7 +78,7 @@ private:
     char m_draftText[TextField::maxBufferSize()];
     CodePoint m_sumSymbol;
   };
-  StorageFunctionGraphView * m_graphView;
+  FunctionGraphView * m_graphView;
   LegendView m_legendView;
   VerticalCursorView m_cursorView;
 };

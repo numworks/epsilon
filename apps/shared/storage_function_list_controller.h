@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "storage_function_store.h"
-#include "function_app.h"
 #include "function_title_cell.h"
 #include "storage_list_parameter_controller.h"
 #include "storage_expression_model_list_controller.h"

@@ -97,6 +97,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
       {
         assert(functionStore()->numberOfModels() > 0);
         functionStore()->removeModel(m_record);
+        setRecord(Ion::Storage::Record());
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;

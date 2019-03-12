@@ -84,7 +84,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, this, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
-  m_variableBoxController(this, snapshot->scriptStore())
+  m_variableBoxController(snapshot->scriptStore())
 {
 }
 

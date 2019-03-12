@@ -11,9 +11,8 @@
 
 namespace Code {
 
-VariableBoxController::VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore) :
+VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   NestedMenuController(nullptr, I18n::Message::FunctionsAndVariables),
-  m_pythonDelegate(pythonDelegate),
   m_scriptNodesCount(0),
   m_scriptStore(scriptStore)
 {
@@ -34,7 +33,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
    * environment where Python has already been inited. This way, we do not
    * deinit Python when leaving the VariableBoxController, so we do not lose the
    * environment that was loaded when entering the VariableBoxController. */
-  assert(m_pythonDelegate->pythonIsInited());
+  assert(static_cast<App *>(app())->pythonIsInited());
 }
 
 static bool shouldAddObject(const char * name, int maxLength) {

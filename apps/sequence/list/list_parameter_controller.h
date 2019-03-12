@@ -16,13 +16,15 @@ public:
   ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  HighlightCell * reusableCell(int index) override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
+
+  // ListViewDataSource
+  HighlightCell * reusableCell(int index, int type) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
 #if FUNCTION_COLOR_CHOICE
   constexpr static int k_totalNumberOfCell = 5;

@@ -20,6 +20,7 @@ void LED(const char * input);
 void MCUSerial(const char * input);
 void Ping(const char * input);
 void Print(const char * input);
+void Reset(const char * input);
 void Suspend(const char * input);
 void VBlank(const char * input);
 

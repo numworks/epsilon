@@ -48,7 +48,7 @@ CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus 
   // Create the record
   char nameBuffer[SymbolAbstract::k_maxNameSize];
   int numberOfColors = sizeof(Palette::DataColor)/sizeof(KDColor);
-  CartesianFunctionRecordData data(Palette::DataColor[s_colorIndex++ % numberOfColors]);
+  CartesianFunctionRecordDataBuffer data(Palette::DataColor[s_colorIndex++ % numberOfColors]);
   if (baseName == nullptr) {
     DefaultName(nameBuffer, SymbolAbstract::k_maxNameSize);
     baseName = nameBuffer;
@@ -124,17 +124,17 @@ Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, d
 }
 
 void * CartesianFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {
-  return (char *)record->value().buffer+sizeof(CartesianFunctionRecordData);
+  return (char *)record->value().buffer+sizeof(CartesianFunctionRecordDataBuffer);
 }
 
 size_t CartesianFunction::Model::expressionSize(const Ion::Storage::Record * record) const {
-  return record->value().size-sizeof(CartesianFunctionRecordData);
+  return record->value().size-sizeof(CartesianFunctionRecordDataBuffer);
 }
 
-CartesianFunction::CartesianFunctionRecordData * CartesianFunction::recordData() const {
+CartesianFunction::CartesianFunctionRecordDataBuffer * CartesianFunction::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<CartesianFunctionRecordData *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<CartesianFunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 }

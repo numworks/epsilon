@@ -85,10 +85,10 @@ T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, cha
   return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
 }
 
-Function::FunctionRecordData * Function::recordData() const {
+Function::FunctionRecordDataBuffer * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<FunctionRecordData *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<FunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 }

@@ -22,7 +22,7 @@ using namespace Shared;
 namespace Solver {
 
 EquationStore::EquationStore() :
-  StorageExpressionModelStore(),
+  ExpressionModelStore(),
   m_type(Type::LinearSystem),
   m_numberOfSolutions(0),
   m_exactSolutionExactLayouts{},
@@ -55,7 +55,7 @@ ExpressionModelHandle * EquationStore::memoizedModelAtIndex(int cacheIndex) cons
 }
 
 void EquationStore::tidy() {
-  StorageExpressionModelStore::tidy();
+  ExpressionModelStore::tidy();
   tidySolution();
 }
 

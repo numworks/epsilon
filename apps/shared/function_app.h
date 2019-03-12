@@ -1,8 +1,8 @@
-#ifndef SHARED_STORAGE_FUNCTION_APP_H
-#define SHARED_STORAGE_FUNCTION_APP_H
+#ifndef SHARED_FUNCTION_APP_H
+#define SHARED_FUNCTION_APP_H
 
 #include "expression_field_delegate_app.h"
-#include "storage_function_store.h"
+#include "function_store.h"
 #include "curve_view_cursor.h"
 #include "interval.h"
 

@@ -36,7 +36,7 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-StorageCartesianFunctionStore * App::Snapshot::functionStore() {
+CartesianFunctionStore * App::Snapshot::functionStore() {
   return &m_functionStore;
 }
 

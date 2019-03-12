@@ -2,7 +2,7 @@
 #define SOLVER_LIST_CONTROLLER_H
 
 #include <escher.h>
-#include "../shared/storage_expression_model_list_controller.h"
+#include "../shared/expression_model_list_controller.h"
 #include "../shared/layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"
 #include "equation_store.h"
@@ -12,7 +12,7 @@
 
 namespace Solver {
 
-class ListController : public Shared::StorageExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::ExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer);
   /* ButtonRowDelegate */
@@ -20,9 +20,9 @@ public:
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   int numberOfRows() override { return numberOfExpressionRows(); }
-  KDCoordinate rowHeight(int j) override{ return StorageExpressionModelListController::memoizedRowHeight(j); }
-  KDCoordinate cumulatedHeightFromIndex(int j) override { return StorageExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return StorageExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
+  KDCoordinate rowHeight(int j) override{ return ExpressionModelListController::memoizedRowHeight(j); }
+  KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -31,10 +31,10 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
-  /* StorageExpressionModelListController */
+  /* ExpressionModelListController */
   // Make methods public
-  void editExpression(Ion::Events::Event event) override { return Shared::StorageExpressionModelListController::editExpression(event); }
-  bool editSelectedRecordWithText(const char * text) override { return Shared::StorageExpressionModelListController::editSelectedRecordWithText(text); }
+  void editExpression(Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(event); }
+  bool editSelectedRecordWithText(const char * text) override { return Shared::ExpressionModelListController::editSelectedRecordWithText(text); }
   /* ViewController */
   View * view() override { return &m_equationListView; }
   /* Text/Layout Field Delegate */
@@ -53,7 +53,7 @@ private:
   void addEmptyModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
-  Shared::StorageExpressionModelStore * modelStore() override { return m_equationStore; }
+  Shared::ExpressionModelStore * modelStore() override { return m_equationStore; }
   StackViewController * stackController() const;
   InputViewController * inputController() override;
   // ListViewDataSource

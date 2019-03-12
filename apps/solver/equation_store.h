@@ -2,13 +2,13 @@
 #define SOLVER_EQUATION_STORE_H
 
 #include "equation.h"
-#include "../shared/storage_expression_model_store.h"
+#include "../shared/expression_model_store.h"
 #include <poincare/symbol_abstract.h>
 #include <stdint.h>
 
 namespace Solver {
 
-class EquationStore : public Shared::StorageExpressionModelStore {
+class EquationStore : public Shared::ExpressionModelStore {
 public:
   enum class Type {
     LinearSystem,
@@ -25,7 +25,7 @@ public:
   };
   EquationStore();
 
-  /* StorageExpressionModelStore */
+  /* ExpressionModelStore */
   int maxNumberOfModels() const override { return k_maxNumberOfEquations; }
   Shared::ExpiringPointer<Equation> modelForRecord(Ion::Storage::Record record) const { return Shared::ExpiringPointer<Equation>(static_cast<Equation *>(privateModelForRecord(record))); }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
@@ -77,7 +77,7 @@ private:
   static constexpr double k_precision = 0.01;
   static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
 
-  // StorageExpressionModelStore
+  // ExpressionModelStore
   const char * modelExtension() const override { return Ion::Storage::eqExtension; }
   /* We don't really use model memoization as the number of Equation is limited
    * and we keep enough Equations to store them all. */

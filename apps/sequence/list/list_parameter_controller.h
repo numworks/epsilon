@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_LIST_PARAM_CONTROLLER_H
 #define SEQUENCE_LIST_PARAM_CONTROLLER_H
 
-#include "../../shared/storage_list_parameter_controller.h"
+#include "../../shared/list_parameter_controller.h"
 #include "../../shared/parameter_text_field_delegate.h"
 #include "../sequence.h"
 #include "../sequence_store.h"
@@ -11,7 +11,7 @@ namespace Sequence {
 
 class ListController;
 
-class ListParameterController : public Shared::StorageListParameterController, public SelectableTableViewDelegate, public Shared::ParameterTextFieldDelegate {
+class ListParameterController : public Shared::ListParameterController, public SelectableTableViewDelegate, public Shared::ParameterTextFieldDelegate {
 public:
   ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list);
   const char * title() override;

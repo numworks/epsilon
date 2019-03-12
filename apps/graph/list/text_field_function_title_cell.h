@@ -7,11 +7,11 @@
 
 namespace Graph {
 
-class StorageListController;
+class ListController;
 
 class TextFieldFunctionTitleCell : public Shared::FunctionTitleCell, public Responder {
 public:
-  TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::LargeFont);
+  TextFieldFunctionTitleCell(ListController * listController, Orientation orientation = Orientation::VerticalIndicator, const KDFont * font = KDFont::LargeFont);
   TextField * textField() { return &m_textField; }
   void setEditing(bool editing);
   bool isEditing() const;

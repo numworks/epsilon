@@ -1,5 +1,5 @@
 #include "list_parameter_controller.h"
-#include "storage_list_controller.h"
+#include "list_controller.h"
 #include <assert.h>
 
 using namespace Shared;
@@ -10,7 +10,7 @@ HighlightCell * ListParameterController::reusableCell(int index) {
   if (index == 0) {
     return &m_renameCell;
   }
-  return StorageListParameterController::reusableCell(index -1);
+  return ListParameterController::reusableCell(index -1);
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
@@ -18,7 +18,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     renameFunction();
     return true;
   }
-  return StorageListParameterController::handleEnterOnRow(rowIndex-1);
+  return ListParameterController::handleEnterOnRow(rowIndex-1);
 }
 
 void ListParameterController::renameFunction() {

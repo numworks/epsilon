@@ -3,11 +3,11 @@
 
 #include <escher.h>
 #include "graph_view.h"
-#include "../../shared/storage_sum_graph_controller.h"
+#include "../../shared/sum_graph_controller.h"
 
 namespace Graph {
 
-class IntegralGraphController : public Shared::StorageSumGraphController {
+class IntegralGraphController : public Shared::SumGraphController {
 public:
   IntegralGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;

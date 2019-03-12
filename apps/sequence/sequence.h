@@ -69,10 +69,12 @@ private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
   constexpr static double k_maxNumberOfTermsInSum = 100000.0;
 
-  class SequenceRecordData : public FunctionRecordData {
+  /* SequenceRecordDataBuffer is the layout of the data buffer of Record
+   * representing a Sequence. */
+  class SequenceRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
-    SequenceRecordData(KDColor color) :
-      FunctionRecordData(color),
+    SequenceRecordDataBuffer(KDColor color) :
+      FunctionRecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
       m_firstInitialConditionSize(0),
@@ -134,9 +136,9 @@ private:
   };
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
-  size_t metaDataSize() const override { return sizeof(SequenceRecordData); }
+  size_t metaDataSize() const override { return sizeof(SequenceRecordDataBuffer); }
   const Shared::ExpressionModel * model() const override { return &m_definition; }
-  SequenceRecordData * recordData() const;
+  SequenceRecordDataBuffer * recordData() const;
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;
   SecondInitialConditionModel m_secondInitialCondition;

@@ -31,10 +31,12 @@ public:
   double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression expression) const;
 private:
-  class CartesianFunctionRecordData : public FunctionRecordData {
+  /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
+   * representing a CartesianFunction. */
+  class CartesianFunctionRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
-    CartesianFunctionRecordData(KDColor color) :
-      FunctionRecordData(color),
+    CartesianFunctionRecordDataBuffer(KDColor color) :
+      FunctionRecordDataBuffer(color),
       m_displayDerivative(false)
     {}
     bool displayDerivative() const { return m_displayDerivative; }
@@ -51,9 +53,9 @@ private:
   private:
     size_t expressionSize(const Ion::Storage::Record * record) const override;
   };
-  size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordData); }
+  size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordDataBuffer); }
   const ExpressionModel * model() const override { return &m_model; }
-  CartesianFunctionRecordData * recordData() const;
+  CartesianFunctionRecordDataBuffer * recordData() const;
   Model m_model;
 };
 

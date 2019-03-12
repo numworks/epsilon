@@ -40,13 +40,15 @@ public:
   }
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
-  class FunctionRecordData {
+  /* FunctionRecordDataBuffer is the layout of the data buffer of Record
+   * representing a Function. */
+  class FunctionRecordDataBuffer {
   public:
-    FunctionRecordData(KDColor color) : m_color(color), m_active(true) {}
+    FunctionRecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const {
       /* Record::value() is a pointer to an address inside
        * Ion::Storage::sharedStorage(), and it might be unaligned. In the method
-       * recordData(), we cast Record::value() to the type FunctionRecordData.
+       * recordData(), we cast Record::value() to the type FunctionRecordDataBuffer.
        * We must thus do some convolutions to read KDColor, which is a uint16_t
        * and might produce an alignment error on the emscripten platform. */
       return KDColor::RGB16(Ion::StorageHelper::unalignedShort(reinterpret_cast<char *>(const_cast<KDColor *>(&m_color))));
@@ -59,7 +61,7 @@ protected:
   };
 private:
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const;
-  FunctionRecordData * recordData() const;
+  FunctionRecordDataBuffer * recordData() const;
 };
 
 }

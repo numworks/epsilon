@@ -1,5 +1,7 @@
 package com.numworks.calculator;
 
+import java.util.Locale;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +36,13 @@ public class EpsilonActivity extends SDLActivity {
     super.onResume();
     sTracker.setScreenName("Calculator");
     sTracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
+  @Override
+  protected String[] getArguments() {
+    Locale currentLocale = getResources().getConfiguration().locale;
+    String[] arguments = {"--language", currentLocale.getLanguage()};
+    return arguments;
   }
 
   public Bitmap retrieveBitmapAsset(String identifier) {

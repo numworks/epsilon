@@ -87,11 +87,11 @@ bool Sequence::isDefined() {
   SequenceRecordDataBuffer * data = recordData();
   switch (type()) {
     case Type::Explicit:
-      return Function::isDefined();
+      return value().size > metaDataSize();
     case Type::SingleRecurrence:
-      return Function::isDefined() && data->initialConditionSize(0) > 0;
+      return data->initialConditionSize(0) > 0 && value().size > metaDataSize() + data->initialConditionSize(0);
     default:
-      return Function::isDefined() && data->initialConditionSize(0) > 0 && data->initialConditionSize(1) > 0;
+      return data->initialConditionSize(0) > 0 && data->initialConditionSize(0) > 0 && value().size > metaDataSize() + data->initialConditionSize(0) + data->initialConditionSize(1);
   }
 }
 

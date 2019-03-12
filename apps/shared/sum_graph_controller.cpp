@@ -15,7 +15,7 @@ using namespace Poincare;
 namespace Shared {
 
 SumGraphController::SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
-  SimpleInteractiveCurveViewController(parentResponder, range, graphView, cursor),
+  SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_step(Step::FirstParameter),
   m_startSum(NAN),
   m_endSum(NAN),

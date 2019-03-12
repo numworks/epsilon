@@ -45,7 +45,7 @@ $(BUILD_DIR)/app/res/%: ion/src/sdl/android/src/res/% $$(@D)/.
 	@echo "COPY    $@"
 	$(Q) cp $< $@
 
-NDK_ABIS = arm64-v8a x86_64
+NDK_ABIS = armeabi-v7a arm64-v8a x86 x86_64
 
 epsilon_apk_deps = $(patsubst %,$(BUILD_DIR)/app/libs/%/libepsilon.so,$(NDK_ABIS))
 epsilon_apk_deps += $(subst ion/src/sdl/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/sdl/android/src/res/*/*))

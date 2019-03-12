@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <style name="AppTheme" parent="Theme.AppCompat">
+    <item name="colorPrimary">@color/yellow</item>
+    <item name="colorAccent">@color/yellow</item> -->
+    <item name="android:windowLightStatusBar" tools:targetApi="21">false</item>
+    <item name="android:windowLightNavigationBar" tools:targetApi="21">true</item>
+    <item name="android:windowTranslucentNavigation" tools:targetApi="21">true</item>
+    <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
+    <item name="android:statusBarColor"  tools:targetApi="21">@android:color/transparent</item>
+  </style>
+</resources>

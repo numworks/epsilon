@@ -10,7 +10,7 @@ using namespace Shared;
 namespace Sequence {
 
 ListParameterController::ListParameterController(::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * listController) :
-  Shared::StorageListParameterController(listController, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
+  Shared::ListParameterController(listController, I18n::Message::SequenceColor, I18n::Message::DeleteSequence, this),
   m_typeCell(I18n::Message::SequenceType),
   m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer, I18n::Message::FirstTermIndex),
   m_typeParameterController(this, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
@@ -75,13 +75,13 @@ HighlightCell * ListParameterController::reusableCell(int index) {
         return &m_initialRankCell;
       }
     default:
-      return Shared::StorageListParameterController::reusableCell(index-1-hasInitialRankRow());
+      return Shared::ListParameterController::reusableCell(index-1-hasInitialRankRow());
   }
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
-  Shared::StorageListParameterController::willDisplayCellForIndex(cell, index);
+  Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.setLayout(sequence()->definitionName());
   }

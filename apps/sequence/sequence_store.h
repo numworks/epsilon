@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_STORE_H
 #define SEQUENCE_SEQUENCE_STORE_H
 
-#include "../shared/storage_function_store.h"
+#include "../shared/function_store.h"
 #include "../shared/global_context.h"
 #include "sequence.h"
 #include <stdint.h>

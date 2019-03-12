@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class ListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ListParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
 
@@ -18,9 +18,14 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   int numberOfRows() override { return totalNumberOfCells(); }
-  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override { return totalNumberOfCells(); }
+
+  // ListViewDataSource
+  KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }
+  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override { return 1; }
+  int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 protected:
   virtual bool handleEnterOnRow(int rowIndex);

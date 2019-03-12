@@ -14,7 +14,8 @@ public:
     m_listController(listController),
     m_renameCell(I18n::Message::Rename)
   {}
-  HighlightCell * reusableCell(int index) override;
+  // ListViewDataSource
+  HighlightCell * reusableCell(int index, int type) override;
 protected:
   bool handleEnterOnRow(int rowIndex) override;
 private:

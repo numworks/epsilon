@@ -64,38 +64,6 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell * ListParameterController::reusableCell(int index) {
-  switch (index) {
-    /*case 0:
-      return Shared::ListParameterController::reusableCell(index);*/
-    case 0://1:
-      return &m_typeCell;
-    case 1:
-      if (hasInitialRankRow()) {
-        return &m_initialRankCell;
-      }
-    default:
-      return Shared::ListParameterController::reusableCell(index-1-hasInitialRankRow());
-  }
-}
-
-void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
-  Shared::ListParameterController::willDisplayCellForIndex(cell, index);
-  if (cell == &m_typeCell && !m_record.isNull()) {
-    m_typeCell.setLayout(sequence()->definitionName());
-  }
-  if (cell == &m_initialRankCell && !m_record.isNull()) {
-    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
-    if (myCell->isEditing()) {
-      return;
-    }
-    char buffer[Sequence::k_initialRankNumberOfDigits+1];
-    Poincare::Integer(sequence()->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
-    myCell->setAccessoryText(buffer);
-  }
-}
-
 bool ListParameterController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::Down || event == Ion::Events::Up || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
@@ -149,6 +117,38 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
 #endif
     MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
     app()->setFirstResponder(myNewCell);
+  }
+}
+
+HighlightCell * ListParameterController::reusableCell(int index, int type) {
+  switch (type) {
+    /*case 0:
+      return Shared::ListParameterController::reusableCell(index);*/
+    case 0://1:
+      return &m_typeCell;
+    case 1:
+      if (hasInitialRankRow()) {
+        return &m_initialRankCell;
+      }
+    default:
+      return Shared::ListParameterController::reusableCell(index, type-1-hasInitialRankRow());
+  }
+}
+
+void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
+  Shared::ListParameterController::willDisplayCellForIndex(cell, index);
+  if (cell == &m_typeCell && !m_record.isNull()) {
+    m_typeCell.setLayout(sequence()->definitionName());
+  }
+  if (cell == &m_initialRankCell && !m_record.isNull()) {
+    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
+    if (myCell->isEditing()) {
+      return;
+    }
+    char buffer[Sequence::k_initialRankNumberOfDigits+1];
+    Poincare::Integer(sequence()->initialRank()).serialize(buffer, Sequence::k_initialRankNumberOfDigits+1);
+    myCell->setAccessoryText(buffer);
   }
 }
 

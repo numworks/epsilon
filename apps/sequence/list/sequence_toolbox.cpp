@@ -72,7 +72,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
    * There is a special case for double recurrent sequences because we do not
    * want to parse symbols u(n+2) or v(n+2). */
   m_numberOfAddedCells = recurrenceDepth == 2 ? 2*recurrenceDepth : 2*recurrenceDepth+1;
-  int sequenceIndex = sequenceName == SequenceStore::k_sequenceNames[0] ? 0 : 1;
+  int sequenceIndex = sequenceName[0] == SequenceStore::k_sequenceNames[0][0] ? 0 : 1;
   const char * otherSequenceName = SequenceStore::k_sequenceNames[1-sequenceIndex];
   for (int j = 0; j < recurrenceDepth; j++) {
     const char * indice = j == 0 ? "n" : "n+1";

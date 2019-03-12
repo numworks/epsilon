@@ -34,13 +34,13 @@ android {
   buildTypes {
     release {
       minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      proguardFiles getDefaultProguardFile('proguard-android.txt')
     }
   }
   sourceSets{
     main {
       manifest.srcFile 'src/AndroidManifest.xml'
-      res.srcDir 'src/res'
+      res.srcDir BUILD_DIR + '/res'
       java.srcDir 'src'
       jniLibs.srcDir BUILD_DIR + '/libs'
       assets.srcDir '../assets'

@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-SimpleInteractiveCurveViewController::SimpleInteractiveCurveViewController(Responder * parentResponder,InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor) :
+SimpleInteractiveCurveViewController::SimpleInteractiveCurveViewController(Responder * parentResponder, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_cursor(cursor)
 {

@@ -77,23 +77,26 @@ private:
       FunctionRecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
-      m_firstInitialConditionSize(0),
-      m_secondInitialConditionSize(0)
+      m_initialConditionSizes{0,0}
     {}
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
     int initialRank() const { return m_initialRank; }
     void setInitialRank(int initialRank) { m_initialRank = initialRank; }
-    size_t firstInitialConditionSize() const { return m_firstInitialConditionSize; }
-    void setFirstInitialConditionSize(uint16_t firstInitialConditionSize) { m_firstInitialConditionSize = firstInitialConditionSize; }
-    size_t secondInitialConditionSize() const { return m_secondInitialConditionSize; }
-    void setSecondInitialConditionSize(uint16_t secondInitialConditionSize) { m_secondInitialConditionSize = secondInitialConditionSize; }
+    size_t initialConditionSize(int conditionIndex) {
+      assert(conditionIndex >= 0 && conditionIndex < 2);
+      return m_initialConditionSizes[conditionIndex];
+    }
+    void setInitialConditionSize(uint16_t size, int conditionIndex) {
+      assert(conditionIndex >= 0 && conditionIndex < 2);
+      m_initialConditionSizes[conditionIndex] = size;
+    }
+
   private:
     static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::k_storageSize, "Potential overflows of Sequence initial condition sizes");
     Type m_type;
     uint8_t m_initialRank;
-    uint16_t m_firstInitialConditionSize;
-    uint16_t m_secondInitialConditionSize;
+    uint16_t m_initialConditionSizes[2];
   };
 
   class SequenceModel : public Shared::ExpressionModel {
@@ -117,22 +120,24 @@ private:
     void buildName(Sequence * sequence) override;
   };
 
-  class FirstInitialConditionModel : public SequenceModel {
+  class InitialConditionModel : public SequenceModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
   private:
     void updateMetaData(const Ion::Storage::Record * record, size_t newSize) override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     void buildName(Sequence * sequence) override;
+    virtual int conditionIndex() const = 0;
   };
 
-  class SecondInitialConditionModel : public SequenceModel {
-  public:
-    void * expressionAddress(const Ion::Storage::Record * record) const override;
+  class FirstInitialConditionModel : public InitialConditionModel {
   private:
-    void updateMetaData(const Ion::Storage::Record * record, size_t newSize) override;
-    size_t expressionSize(const Ion::Storage::Record * record) const override;
-    void buildName(Sequence * sequence) override;
+    int conditionIndex() const override { return 0; }
+  };
+
+  class SecondInitialConditionModel : public InitialConditionModel {
+  private:
+    int conditionIndex() const override { return 1; }
   };
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;

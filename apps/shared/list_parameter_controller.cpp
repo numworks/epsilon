@@ -53,15 +53,27 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell * ListParameterController::reusableCell(int index) {
-  assert(index >= 0);
+KDCoordinate ListParameterController::cumulatedHeightFromIndex(int j) {
+  return Metric::ParameterCellHeight * j;
+}
+
+int ListParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  return (offsetY - 1) / Metric::ParameterCellHeight;
+}
+
+HighlightCell * ListParameterController::reusableCell(int index, int type) {
+  assert(index == 0);
   assert(index < totalNumberOfCells());
 #if FUNCTION_COLOR_CHOICE
   HighlightCell * cells[] = {&m_colorCell, &m_enableCell, &m_deleteCell};
 #else
   HighlightCell * cells[] = {&m_enableCell, &m_deleteCell};
 #endif
-  return cells[index];
+  return cells[type];
+}
+
+int ListParameterController::typeAtLocation(int i, int j) {
+  return j;
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {

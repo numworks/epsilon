@@ -6,11 +6,11 @@ using namespace Shared;
 
 namespace Graph {
 
-HighlightCell * ListParameterController::reusableCell(int index) {
-  if (index == 0) {
+HighlightCell * ListParameterController::reusableCell(int index, int type) {
+  if (type == 0) {
     return &m_renameCell;
   }
-  return ListParameterController::reusableCell(index -1);
+  return Shared::ListParameterController::reusableCell(index, type - 1);
 }
 
 bool ListParameterController::handleEnterOnRow(int rowIndex) {
@@ -18,7 +18,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
     renameFunction();
     return true;
   }
-  return ListParameterController::handleEnterOnRow(rowIndex-1);
+  return Shared::ListParameterController::handleEnterOnRow(rowIndex-1);
 }
 
 void ListParameterController::renameFunction() {

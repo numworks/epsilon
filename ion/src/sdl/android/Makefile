@@ -51,14 +51,15 @@ epsilon_apk_deps = $(patsubst %,$(BUILD_DIR)/app/libs/%/libepsilon.so,$(NDK_ABIS
 epsilon_apk_deps += $(subst ion/src/sdl/android/src/res,$(BUILD_DIR)/app/res,$(wildcard ion/src/sdl/android/src/res/*/*))
 epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
-.PHONY: epsilon.apk
-epsilon.apk: $(epsilon_apk_deps)
+.PHONY: gradle_%
+gradle_%: $(epsilon_apk_deps)
 	@echo "GRADLE ion/src/sdl/android/build.gradle"
-	$(Q) ANDROID_HOME=/usr/local/android gradle -b ion/src/sdl/android/build.gradle assembleRelease
+	$(Q) ANDROID_HOME=/usr/local/android EPSILON_VERSION=$(EPSILON_VERSION) PATCH_LEVEL=$(PATCH_LEVEL) gradle -b ion/src/sdl/android/build.gradle $*
+
+.PHONY: epsilon.apk
+epsilon.apk: gradle_assembleRelease
 
 .PHONY: epsilon_run
-epsilon_run: $(epsilon_apk_deps)
-	@echo "GRADLE ion/src/sdl/android/build.gradle"
-	$(Q) ANDROID_HOME=/usr/local/android gradle -b ion/src/sdl/android/build.gradle installDebug
+epsilon_run: gradle_installDebug
 
 endif

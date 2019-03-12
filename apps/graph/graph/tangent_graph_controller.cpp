@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Graph {
 
 TangentGraphController::TangentGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor) :
-  SimpleInteractiveCurveViewController(parentResponder, curveViewRange, graphView, cursor),
+  SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_graphView(graphView),
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),

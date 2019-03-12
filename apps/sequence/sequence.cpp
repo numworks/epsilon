@@ -89,9 +89,9 @@ bool Sequence::isDefined() {
     case Type::Explicit:
       return Function::isDefined();
     case Type::SingleRecurrence:
-      return Function::isDefined() && data->firstInitialConditionSize() > 0;
+      return Function::isDefined() && data->initialConditionSize(0) > 0;
     default:
-      return Function::isDefined() && data->firstInitialConditionSize() > 0 && data->secondInitialConditionSize() > 0;
+      return Function::isDefined() && data->initialConditionSize(0) > 0 && data->initialConditionSize(1) > 0;
   }
 }
 
@@ -101,9 +101,9 @@ bool Sequence::isEmpty() {
     case Type::Explicit:
       return Function::isEmpty();
     case Type::SingleRecurrence:
-      return Function::isEmpty() && data->firstInitialConditionSize() == 0;
+      return Function::isEmpty() && data->initialConditionSize(0) == 0;
     default:
-      return Function::isEmpty() && data->firstInitialConditionSize() == 0 && data->secondInitialConditionSize() == 0;
+      return Function::isEmpty() && data->initialConditionSize(0) == 0 && data->initialConditionSize(1) == 0;
   }
 }
 
@@ -191,7 +191,7 @@ Sequence::SequenceRecordDataBuffer * Sequence::recordData() const {
   return reinterpret_cast<SequenceRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
-/* Sequence Handle */
+/* Sequence Model */
 
 Poincare::Layout Sequence::SequenceModel::name(Sequence * sequence) {
   if (m_name.isUninitialized()) {
@@ -223,7 +223,7 @@ void * Sequence::DefinitionModel::expressionAddress(const Ion::Storage::Record *
 size_t Sequence::DefinitionModel::expressionSize(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
   SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
-  return data.size-sizeof(SequenceRecordDataBuffer) - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
+  return data.size-sizeof(SequenceRecordDataBuffer) - dataBuffer->initialConditionSize(0) - dataBuffer->initialConditionSize(1);
 }
 
 void Sequence::DefinitionModel::buildName(Sequence * sequence) {
@@ -244,54 +244,27 @@ void Sequence::DefinitionModel::buildName(Sequence * sequence) {
   }
 }
 
-/* First Initial Condition Handle*/
+/* Initial Condition Handle*/
 
-void * Sequence::FirstInitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
+void * Sequence::InitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
   SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
-  size_t offset = data.size - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
+  size_t offset = conditionIndex() == 0 ? data.size - dataBuffer->initialConditionSize(0) - dataBuffer->initialConditionSize(1) : data.size - dataBuffer->initialConditionSize(1) ;
   return (char *)data.buffer+offset;
 }
 
-size_t Sequence::FirstInitialConditionModel::expressionSize(const Ion::Storage::Record * record) const {
-  return static_cast<const Sequence *>(record)->recordData()->firstInitialConditionSize();
+size_t Sequence::InitialConditionModel::expressionSize(const Ion::Storage::Record * record) const {
+  return static_cast<const Sequence *>(record)->recordData()->initialConditionSize(conditionIndex());
 }
 
-void Sequence::FirstInitialConditionModel::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
-  static_cast<const Sequence *>(record)->recordData()->setFirstInitialConditionSize(newSize);
+void Sequence::InitialConditionModel::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
+  static_cast<const Sequence *>(record)->recordData()->setInitialConditionSize(newSize, conditionIndex());
 }
 
-void Sequence::FirstInitialConditionModel::buildName(Sequence * sequence) {
-  assert(sequence->type() == Type::SingleRecurrence || sequence->type() == Type::DoubleRecurrence);
+void Sequence::InitialConditionModel::buildName(Sequence * sequence) {
+  assert((conditionIndex() == 0 && sequence->type() == Type::SingleRecurrence) || sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits+1];
-  Integer(sequence->initialRank()).serialize(buffer, k_initialRankNumberOfDigits+1);
-  Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
-  m_name = HorizontalLayout::Builder(
-      CodePointLayout::Builder(sequence->fullName()[0], k_layoutFont),
-      VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Type::Subscript));
-}
-
-/* Second Initial Condition Handle*/
-
-void * Sequence::SecondInitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
-  Ion::Storage::Record::Data data = record->value();
-  SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
-  size_t offset = data.size - dataBuffer->secondInitialConditionSize();
-  return (char *)data.buffer+offset;
-}
-
-void Sequence::SecondInitialConditionModel::updateMetaData(const Ion::Storage::Record * record, size_t newSize) {
-  static_cast<const Sequence *>(record)->recordData()->setSecondInitialConditionSize(newSize);
-}
-
-size_t Sequence::SecondInitialConditionModel::expressionSize(const Ion::Storage::Record * record) const {
-  return static_cast<const Sequence *>(record)->recordData()->secondInitialConditionSize();
-}
-
-void Sequence::SecondInitialConditionModel::buildName(Sequence * sequence) {
-  assert(sequence->type() == Type::DoubleRecurrence);
-  char buffer[k_initialRankNumberOfDigits+1];
-  Integer(sequence->initialRank()+1).serialize(buffer, k_initialRankNumberOfDigits+1);
+  Integer(sequence->initialRank()+conditionIndex()).serialize(buffer, k_initialRankNumberOfDigits+1);
   Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
   m_name = HorizontalLayout::Builder(
       CodePointLayout::Builder(sequence->fullName()[0], k_layoutFont),

@@ -14,7 +14,7 @@ public:
   View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
-  virtual void setRecord(Ion::Storage::Record record);
+  void setRecord(Ion::Storage::Record record);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   int numberOfRows() override { return totalNumberOfCells(); }

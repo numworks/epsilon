@@ -31,6 +31,7 @@ public class EpsilonActivity extends SDLActivity {
 
   @Override
   public void onResume() {
+    super.onResume();
     sTracker.setScreenName("Calculator");
     sTracker.send(new HitBuilders.ScreenViewBuilder().build());
   }

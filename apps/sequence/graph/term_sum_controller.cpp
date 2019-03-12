@@ -17,7 +17,7 @@ using namespace Poincare;
 namespace Sequence {
 
 TermSumController::TermSumController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
-  StorageSumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, UCodePointNArySummation)
+  SumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, UCodePointNArySummation)
 {
 }
 
@@ -29,7 +29,7 @@ bool TermSumController::moveCursorHorizontallyToPosition(double position) {
   if (position < 0.0) {
     return false;
   }
-  return StorageSumGraphController::moveCursorHorizontallyToPosition(std::round(position));
+  return SumGraphController::moveCursorHorizontallyToPosition(std::round(position));
 }
 
 I18n::Message TermSumController::legendMessageAtStep(Step step) {

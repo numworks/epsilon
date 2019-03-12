@@ -5,17 +5,17 @@
 #include "graph_controller_helper.h"
 #include "banner_view.h"
 #include "curve_parameter_controller.h"
-#include "../../shared/storage_function_graph_controller.h"
+#include "../../shared/function_graph_controller.h"
 #include "../../shared/curve_view_cursor.h"
 #include "../../shared/round_cursor_view.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../storage_cartesian_function_store.h"
+#include "../cartesian_function_store.h"
 
 namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
-  GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
+  GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const;
@@ -33,7 +33,7 @@ private:
     return &m_cursorView;
   }
   CurveParameterController * curveParameterController() override;
-  StorageCartesianFunctionStore * functionStore() const override { return static_cast<StorageCartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
+  CartesianFunctionStore * functionStore() const override { return static_cast<CartesianFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;

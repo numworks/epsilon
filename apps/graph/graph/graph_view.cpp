@@ -5,7 +5,7 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphView::GraphView(StorageCartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
+GraphView::GraphView(CartesianFunctionStore * functionStore, InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_functionStore(functionStore),

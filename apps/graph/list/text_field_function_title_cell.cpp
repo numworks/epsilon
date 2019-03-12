@@ -1,5 +1,5 @@
 #include "text_field_function_title_cell.h"
-#include "storage_list_controller.h"
+#include "list_controller.h"
 #include <assert.h>
 
 namespace Graph {
@@ -7,7 +7,7 @@ namespace Graph {
 static inline float minFloat(float x, float y) { return x < y ? x : y; }
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
-TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
+TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
   m_textField(Shared::Function::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 1.0f, 0.5f)

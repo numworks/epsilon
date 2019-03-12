@@ -20,8 +20,6 @@ public:
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
   float interestingXHalfRange() const override;
-protected:
-  int numberOfCurves() const override { return functionStore()->numberOfModels(); }
 private:
   BannerView * bannerView() override { return &m_bannerView; }
   bool handleEnter() override;

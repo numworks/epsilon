@@ -6,7 +6,7 @@
 #include "curve_parameter_controller.h"
 #include "curve_view_range.h"
 #include "term_sum_controller.h"
-#include "../../shared/storage_function_graph_controller.h"
+#include "../../shared/function_graph_controller.h"
 #include "../../shared/cursor_view.h"
 #include "../sequence_store.h"
 

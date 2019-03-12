@@ -4,7 +4,7 @@
 #include "../../shared/banner_view.h"
 #include "../../shared/text_field_delegate_app.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../storage_cartesian_function_store.h"
+#include "../cartesian_function_store.h"
 
 namespace Graph {
 

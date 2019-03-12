@@ -1,5 +1,5 @@
 #include "graph_controller_helper.h"
-#include "../../shared/storage_function_banner_delegate.h"
+#include "../../shared/function_banner_delegate.h"
 #include "../app.h"
 #include "../../constant.h"
 #include "../../shared/poincare_helpers.h"

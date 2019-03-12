@@ -3,7 +3,7 @@
 #include "shared/poincare_helpers.h"
 #include "shared/function.h"
 #include "shared/cartesian_function.h"
-#include "graph/storage_cartesian_function_store.h"
+#include "graph/cartesian_function_store.h"
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>

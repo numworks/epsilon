@@ -7,7 +7,7 @@ using namespace Shared;
 namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
-  Shared::StorageValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
+  Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
 #if COPY_COLUMN
@@ -21,7 +21,7 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::StorageValuesController::willDisplayCellAtLocation(cell, i, j);
+  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
   if (j == 0 && i == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
@@ -52,7 +52,7 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
   if (floatBody < 0) {
       return false;
   }
-  return Shared::StorageValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
+  return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
 int ValuesController::maxNumberOfCells() {
@@ -73,7 +73,7 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
-Shared::StorageValuesFunctionParameterController * ValuesController::functionParameterController() {
+Shared::ValuesFunctionParameterController * ValuesController::functionParameterController() {
 #if COPY_COLUMN
   return &m_sequenceParameterController;
 #else

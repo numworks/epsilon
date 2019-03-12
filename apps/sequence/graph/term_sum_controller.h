@@ -5,11 +5,11 @@
 #include <poincare/layout.h>
 #include "graph_view.h"
 #include "curve_view_range.h"
-#include "../../shared/storage_sum_graph_controller.h"
+#include "../../shared/sum_graph_controller.h"
 
 namespace Sequence {
 
-class TermSumController : public Shared::StorageSumGraphController {
+class TermSumController : public Shared::SumGraphController {
 public:
   TermSumController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;

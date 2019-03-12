@@ -3,12 +3,12 @@
 
 #include "../sequence_store.h"
 #include "../sequence_title_cell.h"
-#include "../../shared/storage_values_controller.h"
+#include "../../shared/values_controller.h"
 #include "interval_parameter_controller.h"
 
 namespace Sequence {
 
-class ValuesController : public Shared::StorageValuesController {
+class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::Interval * interval, ButtonRowController * header);
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
@@ -24,11 +24,11 @@ private:
   SequenceTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   EvenOddBufferTextCell * floatCells(int j) override;
-  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::StorageValuesController::functionStore()); }
+  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::ValuesController::functionStore()); }
 #if COPY_COLUMN
   Shared::ValuesFunctionParameterController m_sequenceParameterController;
 #endif
-  Shared::StorageValuesFunctionParameterController * functionParameterController() override;
+  Shared::ValuesFunctionParameterController * functionParameterController() override;
   IntervalParameterController m_intervalParameterController;
 };
 

@@ -84,7 +84,7 @@ Poincare::Layout Sequence::nameLayout() {
 }
 
 bool Sequence::isDefined() {
-  SequenceRecordData * data = recordData();
+  SequenceRecordDataBuffer * data = recordData();
   switch (type()) {
     case Type::Explicit:
       return Function::isDefined();
@@ -96,7 +96,7 @@ bool Sequence::isDefined() {
 }
 
 bool Sequence::isEmpty() {
-  SequenceRecordData * data = recordData();
+  SequenceRecordDataBuffer * data = recordData();
   switch (type()) {
     case Type::Explicit:
       return Function::isEmpty();
@@ -185,10 +185,10 @@ double Sequence::sumBetweenBounds(double start, double end, Context * context) c
   return result;
 }
 
-Sequence::SequenceRecordData * Sequence::recordData() const {
+Sequence::SequenceRecordDataBuffer * Sequence::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<SequenceRecordData *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<SequenceRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
 /* Sequence Handle */
@@ -217,13 +217,13 @@ void Sequence::SequenceModel::updateNewDataWithExpression(Ion::Storage::Record *
 /* Definition Handle*/
 
 void * Sequence::DefinitionModel::expressionAddress(const Ion::Storage::Record * record) const {
-  return (char *)record->value().buffer+sizeof(SequenceRecordData);
+  return (char *)record->value().buffer+sizeof(SequenceRecordDataBuffer);
 }
 
 size_t Sequence::DefinitionModel::expressionSize(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
-  SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
-  return data.size-sizeof(SequenceRecordData) - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
+  SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
+  return data.size-sizeof(SequenceRecordDataBuffer) - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
 }
 
 void Sequence::DefinitionModel::buildName(Sequence * sequence) {
@@ -248,7 +248,7 @@ void Sequence::DefinitionModel::buildName(Sequence * sequence) {
 
 void * Sequence::FirstInitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
-  SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
+  SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   size_t offset = data.size - dataBuffer->firstInitialConditionSize() - dataBuffer->secondInitialConditionSize();
   return (char *)data.buffer+offset;
 }
@@ -275,7 +275,7 @@ void Sequence::FirstInitialConditionModel::buildName(Sequence * sequence) {
 
 void * Sequence::SecondInitialConditionModel::expressionAddress(const Ion::Storage::Record * record) const {
   Ion::Storage::Record::Data data = record->value();
-  SequenceRecordData * dataBuffer = static_cast<const Sequence *>(record)->recordData();
+  SequenceRecordDataBuffer * dataBuffer = static_cast<const Sequence *>(record)->recordData();
   size_t offset = data.size - dataBuffer->secondInitialConditionSize();
   return (char *)data.buffer+offset;
 }

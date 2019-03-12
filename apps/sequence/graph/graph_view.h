@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_GRAPH_VIEW_H
 #define SEQUENCE_GRAPH_VIEW_H
 
-#include "../../shared/storage_function_graph_view.h"
+#include "../../shared/function_graph_view.h"
 #include "../sequence_store.h"
 
 namespace Sequence {

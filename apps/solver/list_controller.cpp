@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Solver {
 
 ListController::ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer) :
-  StorageExpressionModelListController(parentResponder, I18n::Message::AddEquation),
+  ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationStore(equationStore),
   m_equationListView(this),
@@ -215,7 +215,7 @@ void ListController::addEmptyModel() {
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {
-  StorageExpressionModelListController::removeModelRow(record);
+  ExpressionModelListController::removeModelRow(record);
   reloadButtonMessage();
   reloadBrace();
   return true;

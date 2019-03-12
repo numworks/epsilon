@@ -1,7 +1,7 @@
 #ifndef GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
-#include "../../shared/storage_function_curve_parameter_controller.h"
+#include "../../shared/function_curve_parameter_controller.h"
 #include "calculation_parameter_controller.h"
 #include "banner_view.h"
 

@@ -5,7 +5,7 @@
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
 #include "../../shared/function_expression_cell.h"
-#include "../../shared/storage_function_list_controller.h"
+#include "../../shared/function_list_controller.h"
 #include "../../shared/input_event_handler_delegate.h"
 #include "../../shared/layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"

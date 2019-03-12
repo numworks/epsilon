@@ -5,8 +5,8 @@
 #include "banner_view.h"
 #include "../../shared/curve_view_cursor.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../../shared/storage_function_banner_delegate.h"
-#include "../storage_cartesian_function_store.h"
+#include "../../shared/function_banner_delegate.h"
+#include "../cartesian_function_store.h"
 
 namespace Graph {
 
@@ -26,7 +26,7 @@ protected:
   virtual void reloadBannerView();
   bool moveCursor(int direction);
   Poincare::Expression::Coordinate2D computeNewPointOfInteresetFromAbscissa(double start, int direction);
-  StorageCartesianFunctionStore * functionStore() const;
+  CartesianFunctionStore * functionStore() const;
   virtual Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;

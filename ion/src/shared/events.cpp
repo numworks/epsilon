@@ -36,7 +36,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T("×"), T("/"), U(),
   T("1"), T("2"), T("3"), T("+"), T("-"), U(),
-  T("0"), T("."), T("ℯ"), TL(), TL(), U(),
+  T("0"), T("."), T("ᴇ"), TL(), TL(), U(),
 // Shift
   TL(), U(), U(), TL(), U(), U(),
   U(), U(), U(), U(), U(), U(),

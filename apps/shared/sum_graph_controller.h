@@ -34,8 +34,8 @@ protected:
   Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
 private:
-  constexpr static float k_cursorTopMarginRatio = 0.06f;   // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
+  float cursorTopMarginRatio() override { return 0.06f; }
+  float cursorBottomMarginRatio() override { return 0.28f; }
   bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
   void reloadBannerView() override;

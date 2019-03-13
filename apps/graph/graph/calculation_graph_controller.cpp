@@ -27,7 +27,7 @@ void CalculationGraphController::viewWillAppear() {
   } else {
     m_isActive = true;
     m_cursor->moveTo(pointOfInterest.abscissa, pointOfInterest.value);
-    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     reloadBannerView();
   }
   m_graphView->setOkView(nullptr);
@@ -76,7 +76,7 @@ bool CalculationGraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   m_cursor->moveTo(newPointOfInterest.abscissa, newPointOfInterest.value);
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

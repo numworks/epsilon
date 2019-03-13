@@ -11,8 +11,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
-
 ExpressionModelHandle::ExpressionModelHandle(Storage::Record record) :
   Storage::Record(record)
 {

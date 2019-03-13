@@ -60,3 +60,12 @@ else
 $(BUILD_DIR)/flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"
 endif
+
+#TODO Do not build all apps... Put elsewhere?
+ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
+$(BUILD_DIR)/bench.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
+$(BUILD_DIR)/bench.$(EXE): $(objs) $(call object_for,$(bench_src))
+else
+$(BUILD_DIR)/bench.$(EXE):
+	@echo "Error: bench.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
+endif

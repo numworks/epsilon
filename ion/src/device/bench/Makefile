@@ -1,10 +1,11 @@
-src += $(addprefix ion/src/device/bench/, \
+bench_src += $(addprefix ion/src/device/bench/, \
   bench.cpp \
   command_handler.cpp \
   command_list.cpp \
+  runner.cpp \
 )
 
-src += $(addprefix ion/src/device/bench/command/, \
+bench_src += $(addprefix ion/src/device/bench/command/, \
   adc.cpp \
   backlight.cpp \
   charge.cpp \

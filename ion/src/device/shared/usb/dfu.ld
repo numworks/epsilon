@@ -25,6 +25,10 @@ MEMORY {
   RAM_BUFFER (rw) : ORIGIN = EPSILON_STACK_END, LENGTH = 8K
 }
 
+/* The DFU needs to know to which address it should jump to after a leave
+ * command. This address is used in Ion::Device::Reset::jump(). */
+_isr_start = 0x08000000;
+
 SECTIONS {
   .text : {
     . = ALIGN(4);

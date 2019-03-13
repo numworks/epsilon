@@ -23,6 +23,7 @@ STACK_SIZE = 32K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(RAM_BUFFER) : {
+    _isr_start = .;
     KEEP(*(.isr_vector_table))
   } >RAM_BUFFER
 

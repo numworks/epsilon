@@ -2,6 +2,8 @@
 #include <regs/regs.h>
 #include <drivers/cache.h>
 
+extern void * _isr_start;
+
 namespace Ion {
 namespace Device {
 namespace Reset {
@@ -19,8 +21,8 @@ void jump() {
   Ion::Device::Cache::disableDCache();
   Ion::Device::Cache::disableICache();
 
-  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
-  uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
+  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(&_isr_start);
+  uint32_t * resetHandlerAddress = stackPointerAddress + 1;
 
   /* Jump to the reset service routine after having reset the stack pointer.
    * Both addresses are fetched from the base of the Flash memory, just like a

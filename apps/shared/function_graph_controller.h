@@ -19,8 +19,8 @@ public:
   void viewWillAppear() override;
 
 protected:
-  float cursorTopMarginRatio() { return 0.068f; } // (cursorHeight/2)/graphViewHeight
-  float cursorBottomMarginRatio();
+  float cursorTopMarginRatio() override { return 0.068f; }
+  float cursorBottomMarginRatio() override;
   void reloadBannerView() override;
   bool handleEnter() override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }

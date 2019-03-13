@@ -85,6 +85,8 @@ static Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
       return Toolbox;
     case SDLK_BACKSPACE:
       return Backspace;
+    case SDLK_AC_BACK:
+      return Termination;
   }
   return None;
 }

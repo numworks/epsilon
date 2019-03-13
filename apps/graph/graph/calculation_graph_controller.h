@@ -17,8 +17,7 @@ public:
   void viewWillAppear() override;
   void setRecord(Ion::Storage::Record record);
 protected:
-  constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
+  float cursorBottomMarginRatio() override { return 0.15f; }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
   Poincare::Expression::Coordinate2D computeNewPointOfInteresetFromAbscissa(double start, int direction);

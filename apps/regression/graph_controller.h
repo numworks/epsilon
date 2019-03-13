@@ -34,8 +34,7 @@ private:
   constexpr static float k_viewHeight = 174.0f;
 
   Poincare::Context * globalContext();
-  float cursorTopMarginRatio() { return 0.07f; } // (cursorHeight/2) / graphViewHeight
-  float cursorBottomMarginRatio();
+  float cursorBottomMarginRatio() override;
   float estimatedBannerHeight() const;
 
   // SimpleInteractiveCurveViewController

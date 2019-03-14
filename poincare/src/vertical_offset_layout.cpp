@@ -231,7 +231,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       // Add the Left parenthesis
       int idxInParent = parentRef.indexOfChild(thisRef);
       int leftParenthesisIndex = idxInParent;
-      LeftParenthesisLayout leftParenthesis = LeftParenthesisLayout();
+      LeftParenthesisLayout leftParenthesis = LeftParenthesisLayout::Builder();
       int numberOfOpenParenthesis = 0;
       while (leftParenthesisIndex > 0
           && parentRef.childAtIndex(leftParenthesisIndex-1).isCollapsable(&numberOfOpenParenthesis, true))
@@ -242,7 +242,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       idxInParent = parentRef.indexOfChild(thisRef);
 
       // Add the Right parenthesis
-      RightParenthesisLayout rightParenthesis = RightParenthesisLayout();
+      RightParenthesisLayout rightParenthesis = RightParenthesisLayout::Builder();
       if (cursor->position() == LayoutCursor::Position::Right) {
          parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, parentRef.numberOfChildren(), nullptr);
       } else {
@@ -266,11 +266,12 @@ LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   return parentNode->childAtIndex(idxInParent - 1);
 }
 
-VerticalOffsetLayout::VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type) :
-  Layout(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>())
-{
-  static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
-  replaceChildAtIndexInPlace(0,l);
+VerticalOffsetLayout VerticalOffsetLayout::Builder(Layout l, VerticalOffsetLayoutNode::Type type) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(VerticalOffsetLayoutNode));
+  VerticalOffsetLayoutNode * node = new (bufferNode) VerticalOffsetLayoutNode(type);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  h.replaceChildAtIndexInPlace(0, l);
+  return static_cast<VerticalOffsetLayout &>(h);
 }
 
 }

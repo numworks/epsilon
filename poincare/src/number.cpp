@@ -17,9 +17,11 @@ namespace Poincare {
 double NumberNode::doubleApproximation() const {
   switch (type()) {
     case Type::Undefined:
+    case Type::Unreal:
       return NAN;
     case Type::Infinity:
-      return sign() == Sign::Negative ? -INFINITY : INFINITY;
+      assert(Number(this).sign() == Sign::Negative || Number(this).sign() == Sign::Positive);
+      return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;
     case Type::Float:
       if (size() == sizeof(FloatNode<float>)) {
         return static_cast<const FloatNode<float> *>(this)->value();
@@ -39,8 +41,8 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   // Integer
   if (exponentLength == 0 && decimalLenght == 0) {
     Integer i(integralPart, integralLength, false);
-    if (!i.isInfinity()) {
-      return Rational(i);
+    if (!i.isOverflow()) {
+      return Rational::Builder(i);
     }
   }
   int exp;
@@ -53,32 +55,32 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   // Avoid Decimal with exponent > k_maxExponentLength
   if (exponentLength >= Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
     if (exp < 0) {
-      return Decimal(0.0);
+      return Decimal::Builder(0.0);
     } else {
-      return Infinity(false);
+      return Infinity::Builder(false);
     }
   }
-  return Decimal(integralPart, integralLength, decimalPart, decimalLenght, exp);
+  return Decimal::Builder(integralPart, integralLength, decimalPart, decimalLenght, exp);
 }
 
 template <typename T>
 Number Number::DecimalNumber(T f) {
   if (std::isnan(f)) {
-    return Undefined();
+    return Undefined::Builder();
   }
   if (std::isinf(f)) {
-    return Infinity(f < 0.0);
+    return Infinity::Builder(f < 0.0);
   }
-  return Decimal(f);
+  return Decimal::Builder(f);
 }
 
 Number Number::FloatNumber(double d) {
   if (std::isnan(d)) {
-    return Undefined();
+    return Undefined::Builder();
   } else if (std::isinf(d)) {
-    return Infinity(d < 0.0);
+    return Infinity::Builder(d < 0.0);
   } else {
-    return Float<double>(d);
+    return Float<double>::Builder(d);
   }
 }
 
@@ -90,7 +92,8 @@ Number Number::BinaryOperation(const Number & i, const Number & j, RationalBinar
       return a;
     }
   }
-  // one of the operand is Undefined/Infinity/Float or the Rational addition overflowed
+  /* At least one of the operands is Undefined/Infinity/Float, or the Rational
+   * addition overflowed */
   double a = doubleOp(i.node()->doubleApproximation(), j.node()->doubleApproximation());
   return FloatNumber(a);
 }
@@ -109,7 +112,7 @@ Number Number::Power(const Number & i, const Number & j) {
       [](const Rational & i, const Rational & j) {
         if (!j.integerDenominator().isOne()) {
           // We return an overflown result to reach the escape case Float+Float
-          return Rational(Integer::Overflow(false));
+          return Rational::Builder(Integer::Overflow(false));
         }
         return Rational::IntegerPower(i, j.signedIntegerNumerator());
       },

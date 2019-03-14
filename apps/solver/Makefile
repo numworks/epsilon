@@ -1,15 +1,15 @@
 apps += Solver::App
 app_headers += apps/solver/app.h
 
-app_objs += $(addprefix apps/solver/,\
-  app.o\
-  equation_models_parameter_controller.o\
-  equation.o\
-  equation_list_view.o\
-  equation_store.o\
-  interval_controller.o\
-  list_controller.o\
-  solutions_controller.o\
+app_src += $(addprefix apps/solver/,\
+  app.cpp \
+  equation_models_parameter_controller.cpp \
+  equation.cpp \
+  equation_list_view.cpp \
+  equation_store.cpp \
+  interval_controller.cpp \
+  list_controller.cpp \
+  solutions_controller.cpp \
 )
 
 i18n_files += $(addprefix apps/solver/,\
@@ -24,4 +24,4 @@ tests += $(addprefix apps/solver/test/,\
   equation_store.cpp\
 )
 
-app_images += apps/solver/solver_icon.png
+$(eval $(call depends_on_image,apps/solver/app.cpp,apps/solver/solver_icon.png))

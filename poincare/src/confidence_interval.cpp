@@ -25,14 +25,14 @@ int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ConfidenceInterval(this).shallowReduce(context, angleUnit, target);
+Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ConfidenceInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<typename T>
-Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f = static_cast<Complex<T> &>(fInput).toScalar();
   T n = static_cast<Complex<T> &>(nInput).toScalar();
   if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
@@ -41,7 +41,7 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
   std::complex<T> operands[2];
   operands[0] = std::complex<T>(f - 1/std::sqrt(n));
   operands[1] = std::complex<T>(f + 1/std::sqrt(n));
-  return MatrixComplex<T>(operands, 1, 2);
+  return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
 Layout SimplePredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -52,9 +52,10 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+
+Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -63,13 +64,13 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -77,7 +78,7 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -88,14 +89,15 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   Rational r0 = static_cast<Rational&>(c0);
   Rational r1 = static_cast<Rational&>(c1);
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
-  Expression sqr = Power(r1, Rational(-1, 2));
-  Matrix matrix;
-  matrix.addChildAtIndexInPlace(Addition(r0.clone(), Multiplication(Rational(-1), sqr.clone())), 0, 0);
-  matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
+  Expression sqr = Power::Builder(r1, Rational::Builder(-1, 2));
+  Matrix matrix = Matrix::Builder();
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), Multiplication::Builder(Rational::Builder(-1), sqr.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.deepReduceChildren(context, angleUnit, target);
+  matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
   return matrix;
 }
+
 
 }

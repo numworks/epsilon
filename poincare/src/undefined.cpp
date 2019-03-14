@@ -13,8 +13,9 @@ int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) 
   return -1;
 }
 
-Expression UndefinedNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
-  return Undefined();
+Expression UndefinedNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
+  return Undefined(this);
 }
 
 Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

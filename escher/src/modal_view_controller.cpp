@@ -118,6 +118,7 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
   m_previousResponder = app()->firstResponder();
+  m_currentModalViewController->initView();
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
   m_currentModalViewController->viewWillAppear();
   app()->setFirstResponder(vc);
@@ -152,8 +153,12 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ModalViewController::viewWillAppear() {
+void ModalViewController::initView() {
   m_contentView.setMainView(m_regularViewController->view());
+  m_regularViewController->initView();
+}
+
+void ModalViewController::viewWillAppear() {
   m_contentView.layoutSubviews();
   if (m_contentView.isDisplayingModal()) {
     m_currentModalViewController->viewWillAppear();

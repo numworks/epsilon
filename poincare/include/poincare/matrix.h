@@ -39,18 +39,18 @@ public:
   int polynomialDegree(Context & context, const char * symbolName) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return templatedApproximate<float>(context, angleUnit);
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return templatedApproximate<float>(context, complexFormat, angleUnit);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return templatedApproximate<double>(context, angleUnit);
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return templatedApproximate<double>(context, complexFormat, angleUnit);
   }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* We could store 2 uint8_t but multiplying m_numberOfRows and
    * m_numberOfColumns could then lead to overflow. As we are unlikely to use
    * greater matrix than 100*100, uint16_t is fine. */
@@ -62,14 +62,8 @@ class Matrix final : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:
-  static Matrix EmptyMatrix() {
-    return Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>());
-  }
-  Matrix() : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
   Matrix(const MatrixNode * node) : Expression(node) {}
-  explicit Matrix(Expression e) : Matrix() {
-    addChildAtIndexInPlace(e, 0, 0);
-  }
+  static Matrix Builder() { return TreeHandle::NAryBuilder<Matrix, MatrixNode>(); }
 
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }
@@ -79,7 +73,7 @@ public:
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
-  int rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace = false);
+  int rank(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace = false);
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
 #if MATRIX_EXACT_REDUCING
@@ -88,7 +82,7 @@ public:
   Matrix transpose() const;
   static Matrix createIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
-  Expression inverse(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
@@ -98,7 +92,7 @@ private:
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   /* rowCanonize turns a matrix in its reduced row echelon form. */
-  Matrix rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication());
+  Matrix rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication::Builder());
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
 };

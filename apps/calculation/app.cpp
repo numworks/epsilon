@@ -1,7 +1,7 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "calculation_icon.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include <poincare/symbol.h>
 
 using namespace Poincare;

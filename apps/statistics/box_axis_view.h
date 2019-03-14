@@ -20,7 +20,7 @@ public:
 private:
   constexpr static KDCoordinate k_axisMargin = 3;
   char * label(Axis axis, int index) const override;
-  char m_labels[k_maxNumberOfXLabels][k_labelBufferSize];
+  char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   BoxRange m_boxRange;
 };
 

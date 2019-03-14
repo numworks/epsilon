@@ -11,9 +11,8 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
 {
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
-  m_selectableTableView.setColorsBackground(false);
-  m_selectableTableView.setIndicatorThickness(k_indicatorThickness);
-  m_selectableTableView.verticalScrollIndicator()->setMargin(k_indicatorMargin);
+  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  static_cast<ScrollView::BarDecorator *>(m_selectableTableView.decorator())->verticalBar()->setMargin(k_indicatorMargin);
 }
 
 SelectableTableView * Controller::ContentView::selectableTableView() {
@@ -58,7 +57,9 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container,
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
+    bool switched = m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
+    assert(switched);
+    (void) switched; // Silence compilation warning about unused variable.
     return true;
   }
 

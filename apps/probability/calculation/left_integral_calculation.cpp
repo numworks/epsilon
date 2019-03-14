@@ -13,14 +13,6 @@ LeftIntegralCalculation::LeftIntegralCalculation() :
   compute(0);
 }
 
-Calculation::Type LeftIntegralCalculation::type() {
-  return Type::LeftIntegral;
-}
-
-int LeftIntegralCalculation::numberOfParameters() {
-  return 2;
-}
-
 I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -46,10 +38,6 @@ double LeftIntegralCalculation::parameterAtIndex(int index) {
     return m_upperBound;
   }
   return m_result;
-}
-
-double LeftIntegralCalculation::upperBound() {
-  return m_upperBound;
 }
 
 void LeftIntegralCalculation::compute(int indexKnownElement) {

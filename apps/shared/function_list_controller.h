@@ -6,7 +6,7 @@
 #include "function_app.h"
 #include "list_parameter_controller.h"
 #include "expression_model_list_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
@@ -47,6 +47,7 @@ protected:
   StackViewController * stackController() const;
   void configureFunction(Function * function);
   FunctionStore * m_functionStore;
+  SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
   TabViewController * tabController() const;
@@ -60,7 +61,6 @@ private:
   virtual HighlightCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
-  SelectableTableView m_selectableTableView;
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;

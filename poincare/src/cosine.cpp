@@ -16,10 +16,10 @@ float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit
 }
 
 template<typename T>
-Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::cos(angleInput);
-  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
+  return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
 Layout CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -30,13 +30,13 @@ int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
-Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Cosine(this).shallowReduce(context, angleUnit, target);
+Expression CosineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Cosine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Cosine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -47,7 +47,8 @@ Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angle
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit, target);
+  return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
 }
+
 
 }

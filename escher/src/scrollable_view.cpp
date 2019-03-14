@@ -7,8 +7,7 @@ ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollV
   ScrollView(view, dataSource),
   m_manualScrollingOffset(KDPointZero)
 {
-  setShowsIndicators(false);
-  setColorsBackground(false);
+  setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {
@@ -20,7 +19,7 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Right) {
-    KDCoordinate movementToEdge =  m_contentView->minimalSizeForOptimalDisplay().width() - bounds().width() - m_manualScrollingOffset.x();
+    KDCoordinate movementToEdge = minimalSizeForOptimalDisplay().width() - bounds().width() - m_manualScrollingOffset.x();
     if (movementToEdge > 0) {
       translation = KDPoint(min(Metric::ScrollStep, movementToEdge), 0);
     }
@@ -32,7 +31,7 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Down) {
-    KDCoordinate movementToEdge =  m_contentView->minimalSizeForOptimalDisplay().height() - bounds().height() - m_manualScrollingOffset.y();
+    KDCoordinate movementToEdge = minimalSizeForOptimalDisplay().height() - bounds().height() - m_manualScrollingOffset.y();
     if (movementToEdge > 0) {
       translation = KDPoint(0, min(Metric::ScrollStep, movementToEdge));
     }
@@ -50,10 +49,9 @@ void ScrollableView::reloadScroll(bool forceReLayout) {
   setContentOffset(m_manualScrollingOffset, forceReLayout);
 }
 
-void ScrollableView::layoutSubviews() {
-  KDSize viewSize = contentSize();
-  KDCoordinate viewWidth = max(viewSize.width(), bounds().width() - leftMargin() - rightMargin());
-  KDCoordinate viewHeight = max(viewSize.height(), bounds().height() - topMargin() - bottomMargin());
-  m_contentView->setSize(KDSize(viewWidth, viewHeight));
-  ScrollView::layoutSubviews();
+KDSize ScrollableView::contentSize() const {
+  KDSize viewSize = ScrollView::contentSize();
+  KDCoordinate viewWidth = max(viewSize.width(), maxContentWidthDisplayableWithoutScrolling());
+  KDCoordinate viewHeight = max(viewSize.height(), maxContentHeightDisplayableWithoutScrolling());
+  return KDSize(viewWidth, viewHeight);
 }

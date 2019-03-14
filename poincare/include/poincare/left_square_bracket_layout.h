@@ -29,7 +29,8 @@ protected:
 
 class LeftSquareBracketLayout final : public Layout {
 public:
-  LeftSquareBracketLayout();
+  static LeftSquareBracketLayout Builder() { return TreeHandle::FixedArityBuilder<LeftSquareBracketLayout, LeftSquareBracketLayoutNode>(); }
+  LeftSquareBracketLayout() = delete;
 };
 
 }

@@ -50,10 +50,10 @@ double TermSumController::cursorNextStep(double x, int direction) {
 }
 
 Layout TermSumController::createFunctionLayout(const char * functionName) {
-  return HorizontalLayout(
-      CharLayout(functionName[0], KDFont::SmallFont),
-        VerticalOffsetLayout(
-          CharLayout('n', KDFont::SmallFont),
+  return HorizontalLayout::Builder(
+      CharLayout::Builder(functionName[0], KDFont::SmallFont),
+        VerticalOffsetLayout::Builder(
+          CharLayout::Builder('n', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Subscript
         )
       );

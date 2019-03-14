@@ -26,8 +26,6 @@ public:
   void setColor(Color color) { m_color = color; }
   bool isVisible() const { return m_isVisible; }
   void setVisible(bool visible) { m_isVisible = visible; }
-  void setMargins(bool margins) { m_margins = margins; }
-  void setFont(const KDFont * font) { m_font = font; }
 
   // LayoutNode
   void deleteBeforeCursor(LayoutCursor * cursor) override;
@@ -75,7 +73,7 @@ private:
 class EmptyLayout final : public Layout {
 public:
   EmptyLayout(const EmptyLayoutNode * n);
-  EmptyLayout(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true);
+  static EmptyLayout Builder(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }

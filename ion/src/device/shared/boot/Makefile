@@ -1,4 +1,4 @@
-objs += $(addprefix ion/src/device/shared/boot/, \
-  isr.o \
-  rt0.o \
+src += $(addprefix ion/src/device/shared/boot/, \
+  isr.c \
+  rt0.cpp \
 )

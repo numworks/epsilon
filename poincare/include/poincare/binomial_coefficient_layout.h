@@ -43,12 +43,8 @@ private:
 
 class BinomialCoefficientLayout final : public Layout {
 public:
-  BinomialCoefficientLayout(Layout n, Layout k) :
-    Layout(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, n);
-    replaceChildAtIndexInPlace(1, k);
-  }
+  static BinomialCoefficientLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<BinomialCoefficientLayout, BinomialCoefficientLayoutNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  BinomialCoefficientLayout() = delete;
 };
 
 }

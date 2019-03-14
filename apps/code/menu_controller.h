@@ -52,7 +52,9 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldDidAbortEditing(TextField * textField) override {
+    return privateTextFieldDidAbortEditing(textField, true);
+  }
   bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
 
   /* ButtonRowDelegate */
@@ -74,6 +76,7 @@ private:
   void editScriptAtIndex(int scriptIndex);
   void numberedDefaultScriptName(char * buffer);
   void updateAddScriptRowDisplay();
+  bool privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain);
   ScriptStore * m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];

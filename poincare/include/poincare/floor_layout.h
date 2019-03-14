@@ -29,9 +29,8 @@ protected:
 
 class FloorLayout final : public Layout {
 public:
-  explicit FloorLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<FloorLayoutNode>()) {
-    replaceChildAtIndexInPlace(0, l);
-  }
+  static FloorLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<FloorLayout, FloorLayoutNode>(&child, 1); }
+  FloorLayout() = delete;
 };
 
 }

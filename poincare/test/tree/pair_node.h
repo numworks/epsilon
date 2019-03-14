@@ -4,6 +4,7 @@
 #include <poincare/tree_node.h>
 #include <poincare/tree_handle.h>
 
+
 namespace Poincare {
 
 class PairNode : public TreeNode {
@@ -19,10 +20,16 @@ public:
 
 class PairByReference : public TreeHandle {
 public:
-  PairByReference(TreeHandle t1, TreeHandle t2) : TreeHandle(TreePool::sharedPool()->createTreeNode<PairNode>()) {
-    replaceChildAtIndexInPlace(0, t1);
-    replaceChildAtIndexInPlace(1, t2);
+  static PairByReference Builder(TreeHandle t1, TreeHandle t2) {
+    void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PairNode));
+    PairNode * node = new (bufferNode) PairNode();
+    TreeHandle children[2] = {t1, t2};
+    TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+    h.replaceChildAtIndexInPlace(0, t1);
+    h.replaceChildAtIndexInPlace(1, t2);
+    return static_cast<PairByReference &>(h);
   }
+  PairByReference() = delete;
 };
 
 }

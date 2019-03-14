@@ -1,7 +1,3 @@
-products += $(patsubst %.$(EXE),%.hex,$(filter %.$(EXE),$(products)))
-products += $(patsubst %.$(EXE),%.bin,$(filter %.$(EXE),$(products)))
-products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
-
 %.dfu: %.$(EXE)
 	@echo "DFUSE   $@"
 	$(Q) $(PYTHON) build/device/elf2dfu.py $< $@
@@ -29,7 +25,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 .PHONY: %_run
 %_run: %.$(EXE)
-	$(GDB) -x build/$(PLATFORM)/gdb_script.gdb $<
+	$(GDB) -x scripts/$(PLATFORM)/gdb_script.gdb $<
 
 %.map: %.elf
 	@echo "LDMAP   $@"
@@ -38,7 +34,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 .PHONY: %_memory_map
 %_memory_map: %.map
 	@echo "========== MEMORY MAP ========="
-	$(Q) awk -f build/device/memory_map.awk < $<
+	$(Q) awk -f scripts/device/memory_map.awk < $<
 	@echo "==============================="
 
 .PHONY: %_flash
@@ -52,17 +48,15 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 .PHONY: openocd
 openocd:
-	openocd -f build/$(PLATFORM)/openocd.$(MODEL).cfg
+	openocd -f scripts/$(PLATFORM)/openocd.$(MODEL).cfg
 
 # The flasher target is defined here because otherwise $(objs) has not been
 # fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
-ion/src/$(PLATFORM)/shared/usb/flasher.o: SFLAGS += $(ION_DEVICE_SFLAGS)
-flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-flasher.$(EXE): $(objs) ion/src/$(PLATFORM)/shared/usb/flasher.o
+$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o: SFLAGS += $(ION_DEVICE_SFLAGS)
+$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
+$(BUILD_DIR)/flasher.$(EXE): $(objs) $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o
 else
-flasher.$(EXE):
+$(BUILD_DIR)/flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"
 endif
-
-products += flasher.$(EXE) flasher.bin

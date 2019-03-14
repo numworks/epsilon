@@ -12,16 +12,16 @@ namespace Regression {
 
 Layout PowerModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
-          CharLayout('b', KDFont::SmallFont),
+    Layout layoutChildren[] = {
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      VerticalOffsetLayout::Builder(
+          CharLayout::Builder('b', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
       };
-    m_layout = HorizontalLayout(layoutChildren, 4);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 4);
   }
   return m_layout;
 }

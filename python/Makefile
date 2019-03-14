@@ -1,142 +1,143 @@
 SFLAGS += -Ipython/src
 SFLAGS += -Ipython/port
+SFLAGS += -I$(BUILD_DIR)/python/port
 
 # How to maintain this Makefile
 # - Copy PY_CORE_O_BASENAME from py.mk into py_objs
 # - Copy select PY_EXTMOD_O_BASENAME from py.mk into extmod_objs
 # - Edit special-case workarounds below as needed
 
-py_objs = $(addprefix python/src/py/,\
-  mpstate.o \
-  nlr.o \
-  nlrx86.o \
-  nlrx64.o \
-  nlrthumb.o \
-  nlrxtensa.o \
-  nlrsetjmp.o \
-  malloc.o \
-  gc.o \
-  pystack.o \
-  qstr.o \
-  vstr.o \
-  mpprint.o \
-  unicode.o \
-  mpz.o \
-  reader.o \
-  lexer.o \
-  parse.o \
-  scope.o \
-  compile.o \
-  emitcommon.o \
-  emitbc.o \
-  asmbase.o \
-  asmx64.o \
-  emitnx64.o \
-  asmx86.o \
-  emitnx86.o \
-  asmthumb.o \
-  emitnthumb.o \
-  emitinlinethumb.o \
-  asmarm.o \
-  emitnarm.o \
-  asmxtensa.o \
-  emitnxtensa.o \
-  emitinlinextensa.o \
-  formatfloat.o \
-  parsenumbase.o \
-  parsenum.o \
-  emitglue.o \
-  persistentcode.o \
-  runtime.o \
-  runtime_utils.o \
-  scheduler.o \
-  nativeglue.o \
-  stackctrl.o \
-  argcheck.o \
-  warning.o \
-  map.o \
-  obj.o \
-  objarray.o \
-  objattrtuple.o \
-  objbool.o \
-  objboundmeth.o \
-  objcell.o \
-  objclosure.o \
-  objcomplex.o \
-  objdeque.o \
-  objdict.o \
-  objenumerate.o \
-  objexcept.o \
-  objfilter.o \
-  objfloat.o \
-  objfun.o \
-  objgenerator.o \
-  objgetitemiter.o \
-  objint.o \
-  objint_longlong.o \
-  objint_mpz.o \
-  objlist.o \
-  objmap.o \
-  objmodule.o \
-  objobject.o \
-  objpolyiter.o \
-  objproperty.o \
-  objnone.o \
-  objnamedtuple.o \
-  objrange.o \
-  objreversed.o \
-  objset.o \
-  objsingleton.o \
-  objslice.o \
-  objstr.o \
-  objstrunicode.o \
-  objstringio.o \
-  objtuple.o \
-  objtype.o \
-  objzip.o \
-  opmethods.o \
-  sequence.o \
-  stream.o \
-  binary.o \
-  builtinimport.o \
-  builtinevex.o \
-  builtinhelp.o \
-  modarray.o \
-  modbuiltins.o \
-  modcollections.o \
-  modgc.o \
-  modio.o \
-  modmath.o \
-  modcmath.o \
-  modmicropython.o \
-  modstruct.o \
-  modsys.o \
-  moduerrno.o \
-  modthread.o \
-  vm.o \
-  bc.o \
-  showbc.o \
-  repl.o \
-  smallint.o \
-  frozenmod.o \
+py_src = $(addprefix python/src/py/,\
+  mpstate.c \
+  nlr.c \
+  nlrx86.c \
+  nlrx64.c \
+  nlrthumb.c \
+  nlrxtensa.c \
+  nlrsetjmp.c \
+  malloc.c \
+  gc.c \
+  pystack.c \
+  qstr.c \
+  vstr.c \
+  mpprint.c \
+  unicode.c \
+  mpz.c \
+  reader.c \
+  lexer.c \
+  parse.c \
+  scope.c \
+  compile.c \
+  emitcommon.c \
+  emitbc.c \
+  asmbase.c \
+  asmx64.c \
+  emitnx64.c \
+  asmx86.c \
+  emitnx86.c \
+  asmthumb.c \
+  emitnthumb.c \
+  emitinlinethumb.c \
+  asmarm.c \
+  emitnarm.c \
+  asmxtensa.c \
+  emitnxtensa.c \
+  emitinlinextensa.c \
+  formatfloat.c \
+  parsenumbase.c \
+  parsenum.c \
+  emitglue.c \
+  persistentcode.c \
+  runtime.c \
+  runtime_utils.c \
+  scheduler.c \
+  nativeglue.c \
+  stackctrl.c \
+  argcheck.c \
+  warning.c \
+  map.c \
+  obj.c \
+  objarray.c \
+  objattrtuple.c \
+  objbool.c \
+  objboundmeth.c \
+  objcell.c \
+  objclosure.c \
+  objcomplex.c \
+  objdeque.c \
+  objdict.c \
+  objenumerate.c \
+  objexcept.c \
+  objfilter.c \
+  objfloat.c \
+  objfun.c \
+  objgenerator.c \
+  objgetitemiter.c \
+  objint.c \
+  objint_longlong.c \
+  objint_mpz.c \
+  objlist.c \
+  objmap.c \
+  objmodule.c \
+  objobject.c \
+  objpolyiter.c \
+  objproperty.c \
+  objnone.c \
+  objnamedtuple.c \
+  objrange.c \
+  objreversed.c \
+  objset.c \
+  objsingleton.c \
+  objslice.c \
+  objstr.c \
+  objstrunicode.c \
+  objstringio.c \
+  objtuple.c \
+  objtype.c \
+  objzip.c \
+  opmethods.c \
+  sequence.c \
+  stream.c \
+  binary.c \
+  builtinimport.c \
+  builtinevex.c \
+  builtinhelp.c \
+  modarray.c \
+  modbuiltins.c \
+  modcollections.c \
+  modgc.c \
+  modio.c \
+  modmath.c \
+  modcmath.c \
+  modmicropython.c \
+  modstruct.c \
+  modsys.c \
+  moduerrno.c \
+  modthread.c \
+  vm.c \
+  bc.c \
+  showbc.c \
+  repl.c \
+  smallint.c \
+  frozenmod.c \
 )
 
-extmod_objs += $(addprefix python/src/extmod/,\
-  modurandom.o \
+extmod_src += $(addprefix python/src/extmod/,\
+  modurandom.c \
 )
 
-port_objs += $(addprefix python/port/,\
-  port.o \
-  builtins.o\
-  helpers.o \
-  mod/kandinsky/modkandinsky.o \
-  mod/kandinsky/modkandinsky_table.o \
-  mod/time/modtime.o \
-  mod/time/modtime_table.o \
-  mod/turtle/modturtle.o \
-  mod/turtle/modturtle_table.o \
-  mod/turtle/turtle.o \
-  mphalport.o \
+port_src += $(addprefix python/port/,\
+  port.c \
+  builtins.c \
+  helpers.c \
+  mod/kandinsky/modkandinsky.cpp \
+  mod/kandinsky/modkandinsky_table.cpp \
+  mod/time/modtime.c \
+  mod/time/modtime_table.c \
+  mod/turtle/modturtle.cpp \
+  mod/turtle/modturtle_table.cpp \
+  mod/turtle/turtle.cpp \
+  mphalport.c \
 )
 
 # Workarounds
@@ -145,14 +146,14 @@ port_objs += $(addprefix python/port/,\
 # In order to change the name of the micropython module 'urandom' to 'random'
 # (without altering micropython files), we redefined the macro MP_QSTR_urandom
 # by DMP_QSTR_random.
-python/src/py/objmodule.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
-python/src/extmod/modurandom.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+$(call object_for,python/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+$(call object_for,python/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
 # Handle upward-growing stack
 # Some platforms such as emscripten have a stack that grows up. We've rewritten
 # the stack control file to handle this case.
-py_objs := $(filter-out python/src/py/stackctrl.o, $(py_objs))
-port_objs += python/port/stackctrl.o
+py_src := $(filter-out python/src/py/stackctrl.c, $(py_src))
+port_src += python/port/stackctrl.c
 
 # Fix the GC on emscripten
 # With optimizations, register and stack variables might be held in a JavaScript
@@ -162,21 +163,20 @@ port_objs += python/port/stackctrl.o
 # computing resumes, if necessary heap objects have been destroyed, the Python
 # program crashes.
 ifeq ($(PLATFORM),emscripten)
-$(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
+$(call object_for,$(py_src)): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
 endif
+
+python_src = $(py_src) $(extmod_src) $(port_src)
 
 # QSTR generation
 
-generated_headers += $(addprefix python/port/genhdr/, qstrdefs.generated.h)
+$(eval $(call rule_for, \
+  QSTRDAT, \
+  python/port/genhdr/qstrdefs.generated.h, \
+  python/port/genhdr/qstrdefs.in.h, \
+  $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@ \
+))
 
-python/port/genhdr/qstrdefs.generated.h: python/port/genhdr/qstrdefs.in.h
-	@echo "QSTRDAT $@"
-	$(Q) $(PYTHON) python/src/py/makeqstrdata.py $< > $@
+$(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
-products += python/port/genhdr/qstrdefs.generated.h
-
-$(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
-
-# List all objects needed
-
-objs += $(extmod_objs) $(py_objs) $(port_objs)
+src += $(python_src)

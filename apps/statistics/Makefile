@@ -1,26 +1,26 @@
 apps += Statistics::App
 app_headers += apps/statistics/app.h
 
-app_objs += $(addprefix apps/statistics/,\
-  app.o\
-  box_axis_view.o\
-  box_banner_view.o\
-  box_controller.o\
-  box_range.o\
-  box_view.o\
-  calculation_controller.o\
-  calculation_selectable_table_view.o\
-  histogram_banner_view.o\
-  histogram_controller.o\
-  histogram_parameter_controller.o\
-  histogram_view.o\
-  multiple_boxes_view.o\
-  multiple_data_view.o\
-  multiple_data_view_controller.o\
-  multiple_histograms_view.o\
-  statistics_context.o\
-  store.o\
-  store_controller.o\
+app_src += $(addprefix apps/statistics/,\
+  app.cpp \
+  box_axis_view.cpp \
+  box_banner_view.cpp \
+  box_controller.cpp \
+  box_range.cpp \
+  box_view.cpp \
+  calculation_controller.cpp \
+  calculation_selectable_table_view.cpp \
+  histogram_banner_view.cpp \
+  histogram_controller.cpp \
+  histogram_parameter_controller.cpp \
+  histogram_view.cpp \
+  multiple_boxes_view.cpp \
+  multiple_data_view.cpp \
+  multiple_data_view_controller.cpp \
+  multiple_histograms_view.cpp \
+  statistics_context.cpp \
+  store.cpp \
+  store_controller.cpp \
 )
 
 i18n_files += $(addprefix apps/statistics/,\
@@ -35,4 +35,4 @@ tests += $(addprefix apps/statistics/test/,\
   store.cpp\
 )
 
-app_images += apps/statistics/stat_icon.png
+$(eval $(call depends_on_image,apps/statistics/app.cpp,apps/statistics/stat_icon.png))

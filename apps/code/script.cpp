@@ -37,17 +37,38 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   return false;
 }
 
+bool isSmallLetterOrUnderscoreChar(const char c) {
+  return (c >= 'a' && c <= 'z') || c == '_';
+}
+bool isNumberChar(const char c) {
+  return c >= '0' && c <= '9';
+}
+
 bool Script::nameCompliant(const char * name) {
-  /* The name format is [a-z0-9_\.]+ */
-  const char * currentChar = name;
-  while (*currentChar != 0) {
-    if ((*currentChar >= 'a' && *currentChar <= 'z') || *currentChar == '_' || (*currentChar >= '0' && *currentChar <= '9') || *currentChar == '.') {
-      currentChar++;
-      continue;
-    }
+  /* We allow here the empty script name ".py", because it is the name used to
+   * create a new empty script. When naming or renaming a script, we check
+   * elsewhere that the name is no longer empty.
+   * The name format is ([a-z_][a-z0-9_]*)*\.py
+   *
+   * We do not allow upper cases in the script names because script names are
+   * used in the URLs of the NumWorks workshop website and we do not want
+   * problems with case sensitivity. */
+  const char * c = name;
+  if (*c == 0 || (!isSmallLetterOrUnderscoreChar(*c) && *c != '.')) {
+    /* The name cannot be empty. Its first letter must be in [a-z_] or the
+     * extension dot. */
     return false;
   }
-  return name != currentChar;
+  while (*c != 0) {
+    if (*c == '.' && strcmp(c+1, ScriptStore::k_scriptExtension) == 0) {
+      return true;
+    }
+    if (!isSmallLetterOrUnderscoreChar(*c) && !isNumberChar(*c)) {
+      return false;
+    }
+    c++;
+  }
+  return false;
 }
 
 bool Script::importationStatus() const {

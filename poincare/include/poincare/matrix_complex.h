@@ -57,8 +57,8 @@ class MatrixComplex final : public Evaluation<T> {
   friend class MatrixComplexNode<T>;
 public:
   MatrixComplex(MatrixComplexNode<T> * node) : Evaluation<T>(node) {}
-  MatrixComplex();
-  MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
+  static MatrixComplex Builder() { return TreeHandle::NAryBuilder<MatrixComplex<T>, MatrixComplexNode<T>>(); }
+  static MatrixComplex Builder(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
   static MatrixComplex<T> Undefined();
   static MatrixComplex<T> createIdentity(int dim);
   MatrixComplex<T> inverse() const { return node()->inverse(); }

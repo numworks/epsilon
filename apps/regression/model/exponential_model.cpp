@@ -11,20 +11,20 @@ namespace Regression {
 
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('e', KDFont::SmallFont),
-      VerticalOffsetLayout(
-          HorizontalLayout(
-            CharLayout('b', KDFont::SmallFont),
-            CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-            CharLayout('X', KDFont::SmallFont)
+    Layout layoutChildren[] = {
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('e', KDFont::SmallFont),
+      VerticalOffsetLayout::Builder(
+          HorizontalLayout::Builder(
+            CharLayout::Builder('b', KDFont::SmallFont),
+            CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+            CharLayout::Builder('X', KDFont::SmallFont)
           ),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = HorizontalLayout(layoutChildren, 4);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 4);
   }
   return m_layout;
 }

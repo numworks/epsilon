@@ -16,8 +16,9 @@ public:
 
   constexpr Event() : m_id(4*PageSize){} // Return Ion::Event::None by default
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
-#if DEBUG
+
   uint8_t id() const { return m_id; }
+#if DEBUG
   const char * name() const;
 #endif
   Event(Keyboard::Key key, bool shift, bool alpha);

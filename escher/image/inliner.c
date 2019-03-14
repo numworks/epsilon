@@ -16,7 +16,7 @@
 #include <assert.h>
 #include "../../ion/src/external/lz4/lz4hc.h"
 
-#define ERROR_IF(cond, message) if (cond) { printf(message); return -1; };
+#define ERROR_IF(cond, message) if (cond) { printf(message "\n"); return -1; };
 #define MAX_FILENAME_LENGTH 255
 
 void generateHeaderFromImage(FILE * file, const char * guardian, const char * variable);
@@ -29,7 +29,7 @@ void camelCaseNameFromSnakeCaseNames(const char * snakeCaseName, const char * up
 // TODO: truncate the app image dimensions to 55x56 pixels
 
 int main(int argc, char * argv[]) {
-  ERROR_IF(argc != 2, "Usage: inliner source.png");
+  ERROR_IF(argc != 4, "Usage: inliner source.png output.h output.cpp");
   const char * inputPath = argv[1];
 
   FILE * inputFile = fopen(inputPath, "rb");
@@ -79,6 +79,7 @@ int main(int argc, char * argv[]) {
   snakeCaseNameToUpperSnakeName(lowerSnakeCaseName, upperSnakeCaseName, MAX_FILENAME_LENGTH);
   camelCaseNameFromSnakeCaseNames(lowerSnakeCaseName, upperSnakeCaseName, camelCaseName, MAX_FILENAME_LENGTH);
 
+  /*
   char headerPath[MAX_FILENAME_LENGTH];
   size_t pathLength = strlen(inputPath);
   strcpy(headerPath, inputPath);
@@ -92,6 +93,9 @@ int main(int argc, char * argv[]) {
   implementationPath[pathLength-3] = 'c';
   implementationPath[pathLength-2] = 'p';
   implementationPath[pathLength-1] = 'p';
+  */
+  char * headerPath = argv[2];
+  char * implementationPath = argv[3];
 
   FILE * header = fopen(headerPath, "w");
   generateHeaderFromImage(header, upperSnakeCaseName, camelCaseName);

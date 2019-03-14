@@ -32,10 +32,10 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(0,0.14+I)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(2,1)", Undefined::Name());
   assert_parsed_expression_simplify_to("log(x,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(12925)", "2*log(5)+log(11)+log(47)");
-  assert_parsed_expression_simplify_to("ln(12925)", "2*ln(5)+ln(11)+ln(47)");
-  assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "-2*log(5,6)+log(7,6)+3*log(11,6)+log(17,6)-log(47,6)");
-  assert_parsed_expression_simplify_to("ln(2/3)", "ln(2)-ln(3)");
+  assert_parsed_expression_simplify_to("log(12925)", "log(47)+log(11)+2*log(5)");
+  assert_parsed_expression_simplify_to("ln(12925)", "ln(47)+ln(11)+2*ln(5)");
+  assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "-log(47,6)+log(17,6)+3*log(11,6)+log(7,6)-2*log(5,6)");
+  assert_parsed_expression_simplify_to("ln(2/3)", "-ln(3)+ln(2)");
   assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "log(158389/1175,-6)");
   assert_parsed_expression_simplify_to("ln(R(2))", "ln(2)/2");
   assert_parsed_expression_simplify_to("ln(X^3)", "3");
@@ -43,21 +43,21 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(R(3),R(3))", "1");
   assert_parsed_expression_simplify_to("log(1/R(2))", "-log(2)/2");
   assert_parsed_expression_simplify_to("log(-I)", "log(-I)");
-  assert_parsed_expression_simplify_to("ln(X^(IP/7))", "(P*I)/7");
+  assert_parsed_expression_simplify_to("ln(X^(IP/7))", "P/7*I");
   assert_parsed_expression_simplify_to("log(10^24)", "24");
   assert_parsed_expression_simplify_to("log((23P)^4,23P)", "4");
-  assert_parsed_expression_simplify_to("log(10^(2+P))", "2+P");
+  assert_parsed_expression_simplify_to("log(10^(2+P))", "P+2");
   assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
   /* log(1002101470343) does no reduce to 3*log(10007) because it involves
    * prime factors above k_biggestPrimeFactor */
   assert_parsed_expression_simplify_to("log(1002101470343)", "log(1002101470343)");
   assert_parsed_expression_simplify_to("log(64,2)", "6");
   assert_parsed_expression_simplify_to("log(2,64)", "log(2,64)");
-  assert_parsed_expression_simplify_to("log(1476225,5)", "2+10*log(3,5)");
+  assert_parsed_expression_simplify_to("log(1476225,5)", "10*log(3,5)+2");
 
   assert_parsed_expression_simplify_to("log(100)", "2");
   assert_parsed_expression_simplify_to("log(1000000)", "6");
-  assert_parsed_expression_simplify_to("log(70992768,14)", "5+2*log(2,14)+log(3,14)+log(11,14)");
-  assert_parsed_expression_simplify_to("log(1/6991712,14)", "-5-log(13,14)");
+  assert_parsed_expression_simplify_to("log(70992768,14)", "log(11,14)+log(3,14)+2*log(2,14)+5");
+  assert_parsed_expression_simplify_to("log(1/6991712,14)", "-log(13,14)-5");
   assert_parsed_expression_simplify_to("log(4,10)", "2*log(2)");
 }

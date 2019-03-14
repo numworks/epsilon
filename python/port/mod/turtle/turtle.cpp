@@ -1,12 +1,12 @@
 #include "turtle.h"
 #include <escher/palette.h>
+#include <cmath>
 extern "C" {
 #include <py/misc.h>
 }
 #include "../../helpers.h"
 #include "../../port.h"
 
-static inline mp_float_t maxF(mp_float_t x, mp_float_t y) { return x >= y ? x : y;}
 static inline mp_float_t absF(mp_float_t x) { return x >= 0 ? x : -x;}
 
 static constexpr KDCoordinate k_iconSize = 15;
@@ -31,7 +31,7 @@ void Turtle::reset() {
   // Reset turtle values
   m_x = 0;
   m_y = 0;
-  m_heading = k_headingOffset;
+  m_heading = 0;
   m_color = k_defaultColor;
   m_penDown = true;
   m_visible = true;
@@ -44,21 +44,36 @@ void Turtle::reset() {
 }
 
 bool Turtle::forward(mp_float_t length) {
+  /* cos and sin use radians, we thus need to multiply m_heading by PI/180 to
+   * compute the new turtle position. This induces rounding errors that are
+   * really visible when one expects a horizontal/vertical line and it is not.
+   * We thus make special cases for angles in degrees creating vertical /
+   * horizontal lines. */
+  if (m_heading == 0) {
+    return goTo(m_x + length, m_y);
+  }
+  if (m_heading == 180 || m_heading == -180) {
+    return goTo(m_x - length, m_y);
+  }
+  if (m_heading == 90 || m_heading == -270) {
+    return goTo(m_x, m_y + length);
+  }
+  if (m_heading == 270 || m_heading == -90) {
+    return goTo(m_x, m_y - length);
+  }
   return goTo(
-    m_x + length * sin(m_heading),
-    m_y + length * cos(m_heading)
+    m_x + length * std::cos(m_heading * k_headingScale),
+    m_y + length * std::sin(m_heading * k_headingScale)
   );
 }
 
 void Turtle::left(mp_float_t angle) {
-  setHeading(
-     k_invertedYAxisCoefficient * ((m_heading - k_headingOffset) + k_invertedYAxisCoefficient * (angle * k_headingScale)) / k_headingScale
-  );
+  setHeading(m_heading + angle);
 }
 
 void Turtle::circle(mp_int_t radius, mp_float_t angle) {
   mp_float_t oldHeading = heading();
-  mp_float_t length = ((angle > 0 ? 1 : -1) * angle * k_headingScale) * radius;
+  mp_float_t length = (angle > 0 ? 1 : -1) * angle * k_headingScale * radius;
   if (length > 1) {
     for (int i = 1; i < length; i++) {
       mp_float_t progress = i / length;
@@ -77,16 +92,35 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
 bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t oldx = m_x;
   mp_float_t oldy = m_y;
-  mp_float_t length = maxF(absF(floor(x) - floor(oldx)), absF(floor(y) - floor(oldy)));
+  mp_float_t xLength = absF(std::floor(x) - std::floor(oldx));
+  mp_float_t yLength = absF(std::floor(y) - std::floor(oldy));
+
+  enum PrincipalDirection {
+    None = 0,
+    X = 1,
+    Y = 2
+  };
+
+  PrincipalDirection principalDirection = xLength > yLength ?
+    PrincipalDirection::X :
+    (xLength == yLength ?
+     PrincipalDirection::None :
+     PrincipalDirection::Y);
+
+  mp_float_t length = principalDirection == PrincipalDirection::X ? xLength : yLength;
 
   if (length > 1) {
     // Tweening function
     for (int i = 1; i < length; i++) {
       mp_float_t progress = i / length;
       erase();
-      if (dot(x * progress + oldx * (1 - progress), y * progress + oldy * (1 - progress))
-          || draw(false))
-      {
+      /* We make sure that each pixel along the principal direction is drawn. If
+       * the computation of the position on the principal coordinate is done
+       * using a barycenter, roundings might skip some pixels, which results in
+       * a dotted line. */
+      mp_float_t currentX = principalDirection == PrincipalDirection::Y ? x * progress + oldx * (1 - progress) : oldx + (x > oldx ? i : -i);
+      mp_float_t currentY = principalDirection == PrincipalDirection::X ? y * progress + oldy * (1 - progress) : oldy + (y > oldy ? i : -i);
+      if (dot(currentX, currentY) || draw(false)) {
         // Keyboard interruption. Return now to let MicroPython process it.
         return true;
       }
@@ -97,10 +131,6 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   dot(x, y);
   draw(true);
   return false;
-}
-
-mp_float_t Turtle::heading() const {
-  return k_invertedYAxisCoefficient * (m_heading - k_headingOffset) / k_headingScale;
 }
 
 void Turtle::setHeading(mp_float_t angle) {
@@ -174,11 +204,19 @@ void Turtle::viewDidDisappear() {
 // Private functions
 
 void Turtle::setHeadingPrivate(mp_float_t angle) {
-  m_heading = k_invertedYAxisCoefficient * angle * k_headingScale + k_headingOffset;
+  // Put the angle in [0; 360[
+  mp_float_t angleLimit = 360;
+  mp_float_t angleBetween0And360 = angle - ((angle >= 0 && angle < angleLimit) ? 0 : std::floor(angle/angleLimit) * angleLimit);
+  if (angleBetween0And360 >= 0 && angleBetween0And360 < angleLimit) {
+    m_heading = angleBetween0And360;
+  } else {
+    // When angle is too big, our formula does not put it properly in [0; 360[
+    m_heading = 0;
+  }
 }
 
 KDPoint Turtle::position(mp_float_t x, mp_float_t y) const {
-  return KDPoint(floor(x + k_xOffset), floor(k_invertedYAxisCoefficient * y + k_yOffset));
+  return KDPoint(std::floor(x + k_xOffset), std::floor(k_invertedYAxisCoefficient * y + k_yOffset));
 }
 
 bool Turtle::hasUnderneathPixelBuffer() {
@@ -245,8 +283,8 @@ bool Turtle::draw(bool force) {
 
     // Draw the head
     KDCoordinate headOffsetLength = 6;
-    KDCoordinate headOffsetX = headOffsetLength * sin(m_heading);
-    KDCoordinate headOffsetY = -headOffsetLength * cos(m_heading);
+    KDCoordinate headOffsetX = headOffsetLength * std::cos(m_heading * k_headingScale);
+    KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * std::sin(m_heading * k_headingScale);
     KDPoint headOffset(headOffsetX, headOffsetY);
     drawingRect = KDRect(
         position().translatedBy(headOffset).translatedBy(KDPoint(-k_iconHeadSize/2, -k_iconHeadSize/2)),
@@ -297,11 +335,11 @@ bool Turtle::draw(bool force) {
     m_drawn = true;
   }
 
-  if (m_mileage > 1000) {
+  if (m_mileage > k_mileageLimit) {
     if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : 3 * (k_maxSpeed - m_speed)))) {
       return true;
     }
-    m_mileage -= 1000;
+    m_mileage -= k_mileageLimit;
   }
   return false;
 }
@@ -309,6 +347,7 @@ bool Turtle::draw(bool force) {
 bool Turtle::dot(mp_float_t x, mp_float_t y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
+  // Draw the dot if the pen is down
   if (m_penDown && hasDotBuffers()) {
     KDContext * ctx = KDIonContext::sharedContext();
     KDRect rect(
@@ -318,7 +357,12 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
     ctx->blendRectWithMask(rect, m_color, m_dotMask, m_dotWorkingPixelBuffer);
   }
 
-  m_mileage += sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
+  /* Increase the turtle's mileage. We need to make sure the mileage is not
+   * overflowed, otherwise we might skip some msleeps in draw. */
+  uint16_t additionalMileage = sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
+  m_mileage = ((m_mileage > k_mileageLimit)
+      && ((m_mileage + additionalMileage) < k_mileageLimit)) ?
+    k_mileageLimit + 1 : m_mileage + additionalMileage;
 
   m_x = x;
   m_y = y;
@@ -336,8 +380,8 @@ void Turtle::drawPaw(PawType type, PawPosition pos) {
   // Compute the paw offset from the turtle center
   float currentAngle = angles[(int) type];
   float crawlDelta = ((float)((int)pos)) * crawlOffset;
-  float pawX = pawOffset * sin(m_heading+currentAngle) + crawlDelta * sin(m_heading);
-  float pawY = - pawOffset * cos(m_heading+currentAngle) - crawlDelta * cos(m_heading);
+  float pawX = pawOffset * std::cos(m_heading * k_headingScale + currentAngle) + crawlDelta * std::cos(m_heading * k_headingScale);
+  float pawY = k_invertedYAxisCoefficient * (pawOffset * std::sin(m_heading * k_headingScale + currentAngle) + crawlDelta * std::sin(m_heading * k_headingScale));
   KDCoordinate pawOffsetX = ((int)pawX) - (pawX < 0 ? 1 : 0);
   KDCoordinate pawOffsetY = ((int)pawY) - (pawY < 0 ? 1 : 0);
   KDPoint offset(pawOffsetX, pawOffsetY);

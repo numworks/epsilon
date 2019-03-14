@@ -1,6 +1,6 @@
-app_objs += $(addprefix apps/usb/,\
-  app.o\
-  usb_connected_controller.o\
+app_src += $(addprefix apps/usb/,\
+  app.cpp \
+  usb_connected_controller.cpp \
 )
 
 i18n_files += $(addprefix apps/usb/,\

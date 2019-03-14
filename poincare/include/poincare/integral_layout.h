@@ -56,14 +56,8 @@ private:
 
 class IntegralLayout final : public Layout {
 public:
-  IntegralLayout(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) :
-    Layout(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, integrand);
-    replaceChildAtIndexInPlace(1, differential);
-    replaceChildAtIndexInPlace(2, lowerBound);
-    replaceChildAtIndexInPlace(3, upperBound);
-  }
+  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(ArrayBuilder<TreeHandle>(integrand, differential, lowerBound, upperBound).array(), 4); }
+  IntegralLayout() = delete;
 };
 
 }

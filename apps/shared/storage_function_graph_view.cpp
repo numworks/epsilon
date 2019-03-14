@@ -22,10 +22,8 @@ StorageFunctionGraphView::StorageFunctionGraphView(InteractiveCurveViewRange * g
 void StorageFunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
-  drawAxes(ctx, rect, Axis::Horizontal);
-  drawAxes(ctx, rect, Axis::Vertical);
-  drawLabels(ctx, rect, Axis::Horizontal, true);
-  drawLabels(ctx, rect, Axis::Vertical, true);
+  drawAxes(ctx, rect);
+  simpleDrawBothAxesLabels(ctx, rect);
 }
 
 void StorageFunctionGraphView::setContext(Context * context) {

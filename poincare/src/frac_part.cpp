@@ -19,21 +19,22 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, FracPart::s_functionHelper.name());
 }
 
-Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return FracPart(this).shallowReduce(context, angleUnit);
+Expression FracPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return FracPart(this).shallowReduce();
 }
 
 template<typename T>
-Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(c.real()-std::floor(c.real()));
+  return Complex<T>::Builder(c.real()-std::floor(c.real()));
 }
 
-Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression FracPart::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -49,9 +50,9 @@ Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
   Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.remainder.isInfinity());
+  assert(!div.remainder.isOverflow());
   Integer rDenominator = r.integerDenominator();
-  Expression result = Rational(div.remainder, rDenominator);
+  Expression result = Rational::Builder(div.remainder, rDenominator);
   replaceWithInPlace(result);
   return result;
 }

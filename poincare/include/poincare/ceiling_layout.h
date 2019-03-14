@@ -30,9 +30,8 @@ protected:
 
 class CeilingLayout final : public Layout {
 public:
-  explicit CeilingLayout(Layout l) : Layout(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>()) {
-    replaceChildAtIndexInPlace(0, l);
-  }
+  static CeilingLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<CeilingLayout, CeilingLayoutNode>(&child, 1); }
+  CeilingLayout() = delete;
 };
 
 }

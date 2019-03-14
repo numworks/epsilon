@@ -51,6 +51,7 @@ public:
   void tidy() override;
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 private:
+  constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
   constexpr static double k_maxNumberOfTermsInSum = 100000.0;
   constexpr static size_t k_dataLengthInBytes = (3*TextField::maxBufferSize()+3)*sizeof(char)+sizeof(int)+1;
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The sequence data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4

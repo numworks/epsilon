@@ -1,73 +1,71 @@
-usb_objs += $(addprefix ion/src/device/shared/usb/, \
-  calculator.o \
-  dfu_interface.o\
+usb_src += $(addprefix ion/src/device/shared/usb/, \
+  calculator.cpp \
+  dfu_interface.cpp\
 )
 
-usb_objs += $(addprefix ion/src/device/shared/usb/stack/, \
-  device.o\
-  endpoint0.o \
-  interface.o\
-  request_recipient.o\
-  setup_packet.o\
-  streamable.o\
+usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
+  device.cpp\
+  endpoint0.cpp \
+  interface.cpp\
+  request_recipient.cpp\
+  setup_packet.cpp\
+  streamable.cpp\
 )
 
-usb_objs += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
-  bos_descriptor.o\
-  configuration_descriptor.o \
-  descriptor.o\
-  device_descriptor.o\
-  device_capability_descriptor.o\
-  dfu_functional_descriptor.o\
-  extended_compat_id_descriptor.o \
-  interface_descriptor.o\
-  language_id_string_descriptor.o \
-  microsoft_os_string_descriptor.o\
-  platform_device_capability_descriptor.o\
-  string_descriptor.o\
-  url_descriptor.o\
-  webusb_platform_descriptor.o\
+usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
+  bos_descriptor.cpp\
+  configuration_descriptor.cpp \
+  descriptor.cpp\
+  device_descriptor.cpp\
+  device_capability_descriptor.cpp\
+  dfu_functional_descriptor.cpp\
+  extended_compat_id_descriptor.cpp \
+  interface_descriptor.cpp\
+  language_id_string_descriptor.cpp \
+  microsoft_os_string_descriptor.cpp\
+  platform_device_capability_descriptor.cpp\
+  string_descriptor.cpp\
+  url_descriptor.cpp\
+  webusb_platform_descriptor.cpp\
 )
 
-$(usb_objs): SFLAGS += $(ION_DEVICE_SFLAGS)
+$(usb_src): SFLAGS += $(ION_DEVICE_SFLAGS)
 
 EPSILON_USB_DFU_XIP ?= 0
 
 ifeq ($(EPSILON_USB_DFU_XIP),1)
 
-ion_device_objs += ion/src/device/shared/usb/dfu_xip.o
-ion_device_objs += $(usb_objs)
+ion_device_src += ion/src/device/shared/usb/dfu_xip.cpp
+ion_device_src += $(usb_src)
 
 else
 
-dfu_objs += liba/src/assert.o
-dfu_objs += liba/src/strlen.o
-dfu_objs += liba/src/strlcpy.o
-dfu_objs += liba/src/memset.o
-dfu_objs += liba/src/memcpy.o
-dfu_objs += libaxx/src/cxxabi/pure_virtual.o
-dfu_objs += ion/src/device/shared/usb/boot.o
-dfu_objs += $(addprefix ion/src/device/shared/drivers/, \
-  base64.o \
-  external_flash.o \
-  flash.o \
-  keyboard.o \
-  reset.o \
-  serial_number.o \
-  timing.o \
-  usb.o \
+dfu_src += liba/src/assert.c
+dfu_src += liba/src/strlen.c
+dfu_src += liba/src/strlcpy.c
+dfu_src += liba/src/memset.c
+dfu_src += liba/src/memcpy.c
+dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
+dfu_src += ion/src/device/shared/usb/boot.cpp
+dfu_src += $(addprefix ion/src/device/shared/drivers/, \
+  base64.cpp \
+  external_flash.cpp \
+  flash.cpp \
+  keyboard.cpp \
+  reset.cpp \
+  serial_number.cpp \
+  timing.cpp \
+  usb.cpp \
 )
 
-ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
-ion/src/device/shared/usb/dfu.elf: $(usb_objs) $(dfu_objs)
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(usb_src) $(dfu_src))
 
-ion/src/device/shared/usb/dfu.o: ion/src/device/shared/usb/dfu.bin
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared/usb/dfu.bin
 	@echo "OBJCOPY $@"
-	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_ion_src_device_shared_usb_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_ion_src_device_shared_usb_dfu_bin_end=_dfu_bootloader_flash_end $< $@
+	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
 
-ion_device_objs += ion/src/device/shared/usb/dfu.o
-ion_device_objs += ion/src/device/shared/usb/dfu_relocated.o
-
-products += $(usb_objs) $(addprefix ion/src/device/shared/usb/dfu, .elf .bin)
+ion_device_src += ion/src/device/shared/usb/dfu.cpp
+ion_device_src += ion/src/device/shared/usb/dfu_relocated.cpp
 
 endif

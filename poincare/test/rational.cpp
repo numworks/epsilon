@@ -9,13 +9,13 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_rational_constructor) {
   int initialPoolSize = pool_size();
-  Rational a("123","324");
-  Rational b("3456");
-  Rational c(123,324);
-  Rational d(3456789);
+  Rational a = Rational::Builder("123","324");
+  Rational b = Rational::Builder("3456");
+  Rational c = Rational::Builder(123,324);
+  Rational d = Rational::Builder(3456789);
   Integer overflow = Integer::Overflow(false);
-  Rational e(overflow);
-  Rational f(overflow, overflow);
+  Rational e = Rational::Builder(overflow);
+  Rational f = Rational::Builder(overflow, overflow);
   assert_pool_size(initialPoolSize+6);
 }
 
@@ -35,30 +35,31 @@ static inline void assert_greater(const Rational i, const Rational j) {
 }
 
 QUIZ_CASE(poincare_rational_compare) {
-  assert_equal(Rational(123,324), Rational(41,108));
-  assert_not_equal(Rational(123,234), Rational(42, 108));
-  assert_lower(Rational(123,234), Rational(456,567));
-  assert_lower(Rational(-123, 234),Rational(456, 567));
-  assert_greater(Rational(123, 234),Rational(-456, 567));
-  assert_greater(Rational(123, 234),Rational("123456789123456789", "12345678912345678910"));
+  assert_equal(Rational::Builder(123,324), Rational::Builder(41,108));
+  assert_not_equal(Rational::Builder(123,234), Rational::Builder(42, 108));
+  assert_lower(Rational::Builder(123,234), Rational::Builder(456,567));
+  assert_lower(Rational::Builder(-123, 234),Rational::Builder(456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder(-456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder("123456789123456789", "12345678912345678910"));
 }
 
 QUIZ_CASE(poincare_rational_properties) {
-  quiz_assert(Rational(-2).sign() == ExpressionNode::Sign::Negative);
-  quiz_assert(Rational(-2, 3).sign() == ExpressionNode::Sign::Negative);
-  quiz_assert(Rational(2, 3).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(Rational(0).isZero());
-  quiz_assert(!Rational(231).isZero());
-  quiz_assert(Rational(1).isOne());
-  quiz_assert(!Rational(-1).isOne());
-  quiz_assert(!Rational(1).isMinusOne());
-  quiz_assert(Rational(-1).isMinusOne());
-  quiz_assert(Rational(1,2).isHalf());
-  quiz_assert(!Rational(-1).isHalf());
-  quiz_assert(Rational(-1,2).isMinusHalf());
-  quiz_assert(!Rational(3,2).isMinusHalf());
-  quiz_assert(Rational(10).isTen());
-  quiz_assert(!Rational(-1).isTen());
+  quiz_assert(Rational::Builder(-2).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Rational::Builder(-2, 3).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Rational::Builder(2, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Rational::Builder(0, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Rational::Builder(0).isZero());
+  quiz_assert(!Rational::Builder(231).isZero());
+  quiz_assert(Rational::Builder(1).isOne());
+  quiz_assert(!Rational::Builder(-1).isOne());
+  quiz_assert(!Rational::Builder(1).isMinusOne());
+  quiz_assert(Rational::Builder(-1).isMinusOne());
+  quiz_assert(Rational::Builder(1,2).isHalf());
+  quiz_assert(!Rational::Builder(-1).isHalf());
+  quiz_assert(Rational::Builder(-1,2).isMinusHalf());
+  quiz_assert(!Rational::Builder(3,2).isMinusHalf());
+  quiz_assert(Rational::Builder(10).isTen());
+  quiz_assert(!Rational::Builder(-1).isTen());
 }
 
 static inline void assert_add_to(const Rational i, const Rational j, const Rational k) {
@@ -66,9 +67,9 @@ static inline void assert_add_to(const Rational i, const Rational j, const Ratio
 }
 
 QUIZ_CASE(poincare_rational_addition) {
-  assert_add_to(Rational(1,2), Rational(1), Rational(3,2));
-  assert_add_to(Rational("18446744073709551616","4294967296"), Rational(8,9), Rational("38654705672","9"));
-  assert_add_to(Rational("18446744073709551616","4294967296"), Rational(-8,9), Rational("38654705656","9"));
+  assert_add_to(Rational::Builder(1,2), Rational::Builder(1), Rational::Builder(3,2));
+  assert_add_to(Rational::Builder("18446744073709551616","4294967296"), Rational::Builder(8,9), Rational::Builder("38654705672","9"));
+  assert_add_to(Rational::Builder("18446744073709551616","4294967296"), Rational::Builder(-8,9), Rational::Builder("38654705656","9"));
 }
 
 static inline void assert_pow_to(const Rational i,const Integer j, const Rational k) {
@@ -76,8 +77,8 @@ static inline void assert_pow_to(const Rational i,const Integer j, const Rationa
 }
 
 QUIZ_CASE(poincare_rational_power) {
-  assert_pow_to(Rational(4,5), Rational(3).signedIntegerNumerator(), Rational(64,125));
-  assert_pow_to(Rational(4,5), Rational(-3).signedIntegerNumerator(), Rational(125,64));
+  assert_pow_to(Rational::Builder(4,5), Rational::Builder(3).signedIntegerNumerator(), Rational::Builder(64,125));
+  assert_pow_to(Rational::Builder(4,5), Rational::Builder(-3).signedIntegerNumerator(), Rational::Builder(125,64));
 }
 
 // Simplify
@@ -136,12 +137,12 @@ QUIZ_CASE(poincare_rational_approximate) {
 //Serialize
 
 QUIZ_CASE(poincare_rational_serialize) {
-  assert_parsed_expression_serialize_to(Rational(-2, 3), "-2/3");
-  assert_parsed_expression_serialize_to(Rational("2345678909876"), "2345678909876");
-  assert_parsed_expression_serialize_to(Rational("-2345678909876", "5"), "-2345678909876/5");
-  assert_parsed_expression_serialize_to(Rational(MaxIntegerString()), MaxIntegerString());
+  assert_parsed_expression_serialize_to(Rational::Builder(-2, 3), "-2/3");
+  assert_parsed_expression_serialize_to(Rational::Builder("2345678909876"), "2345678909876");
+  assert_parsed_expression_serialize_to(Rational::Builder("-2345678909876", "5"), "-2345678909876/5");
+  assert_parsed_expression_serialize_to(Rational::Builder(MaxIntegerString()), MaxIntegerString());
   Integer one(1);
   Integer overflow = Integer::Overflow(false);
-  assert_parsed_expression_serialize_to(Rational(one, overflow), "1/inf");
-  assert_parsed_expression_serialize_to(Rational(overflow), Infinity::Name());
+  assert_parsed_expression_serialize_to(Rational::Builder(one, overflow), "1/inf");
+  assert_parsed_expression_serialize_to(Rational::Builder(overflow), Infinity::Name());
 }

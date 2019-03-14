@@ -43,7 +43,6 @@ private:
   AppsContainer * m_container;
   static constexpr KDCoordinate k_sideMargin = 4;
   static constexpr KDCoordinate k_bottomMargin = 14;
-  static constexpr KDCoordinate k_indicatorThickness = 15;
   static constexpr KDCoordinate k_indicatorMargin = 61;
   static constexpr int k_numberOfColumns = 3;
   static constexpr int k_maxNumberOfCells = 16;

@@ -11,8 +11,8 @@ constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
 
 int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return MatrixDimension(this).shallowReduce(context, angleUnit);
+Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return MatrixDimension(this).shallowReduce();
 }
 
 Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -24,8 +24,8 @@ int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, angleUnit);
+Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     operands[0] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());
@@ -34,12 +34,13 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
     operands[0] = std::complex<T>(1.0);
     operands[1] = std::complex<T>(1.0);
   }
-  return MatrixComplex<T>(operands, 1, 2);
+  return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
-Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression MatrixDimension::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -48,25 +49,25 @@ Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleU
 #if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix &>(c);
-    Matrix result;
-    result.addChildAtIndexInPlace(Rational(m.numberOfRows()), 0, 0);
-    result.addChildAtIndexInPlace(Rational(m.numberOfColumns()), 1, 1);
+    Matrix result = Matrix::Builder();
+    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
     result.setDimensions(1, 2);
     return result;
   }
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    Matrix result;
-    result.addChildAtIndexInPlace(Rational(1), 0, 0);
-    result.addChildAtIndexInPlace(Rational(1), 1, 1);
+    Matrix result = Matrix::Builder();
+    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
     result.setDimensions(1, 2);
     return result;
   }
   return *this;
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
-    Matrix result;
-    result.addChildAtIndexInPlace(Rational(1), 0, 0);
-    result.addChildAtIndexInPlace(Rational(1), 1, 1);
+    Matrix result = Matrix::Builder();
+    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
+    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
     result.setDimensions(1, 2);
     replaceWithInPlace(result);
     return result;

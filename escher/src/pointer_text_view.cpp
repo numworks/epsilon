@@ -14,7 +14,3 @@ void PointerTextView::setText(const char * text) {
     markRectAsDirty(bounds());
   }
 }
-
-KDSize PointerTextView::minimalSizeForOptimalDisplay() const  {
-  return m_font->stringSize(text());
-}

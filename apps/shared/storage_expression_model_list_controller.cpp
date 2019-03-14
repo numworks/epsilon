@@ -15,20 +15,18 @@ StorageExpressionModelListController::StorageExpressionModelListController(Respo
 }
 
 void StorageExpressionModelListController::tableSelectionDidChange(int previousSelectedRow) {
-  constexpr int currentSelectedMemoizedIndex = k_memoizedCellHeightsCount/2 + 1; // Needs k_memoizedCellHeightsCount to be odd, which is static asserted in the header file
+  constexpr int currentSelectedMemoizedIndex = k_memoizedCellsCount/2 + 1; // Needs k_memoizedCellsCount to be odd, which is static asserted in the header file
   int currentSelectedRow = selectedRow();
 
   // The previously selected cell's height might have changed.
-  m_memoizedCellHeight[currentSelectedMemoizedIndex] = k_resetedMemoizedValue;
+  resetMemoizationForIndex(currentSelectedMemoizedIndex);
 
   // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
   if (currentSelectedRow == previousSelectedRow + 1) {
     /* We selected the cell under the previous cell. Shift the memoized cell
      * heights. */
-    for (int i = 0; i < k_memoizedCellHeightsCount - 1; i++) {
-      m_memoizedCellHeight[i] = m_memoizedCellHeight[i+1];
-    }
-    m_memoizedCellHeight[k_memoizedCellHeightsCount-1] = k_resetedMemoizedValue;
+    shiftMemoization(true);
+    resetMemoizationForIndex(k_memoizedCellsCount-1);
     // Update m_cumulatedHeightForSelectedIndex
     if (previousSelectedRow >= 0) {
       m_cumulatedHeightForSelectedIndex+= memoizedRowHeight(previousSelectedRow);
@@ -39,10 +37,8 @@ void StorageExpressionModelListController::tableSelectionDidChange(int previousS
   } else if (currentSelectedRow == previousSelectedRow - 1) {
     /* We selected the cell above the previous cell. Shift the memoized cell
      * heights. */
-    for (int i = k_memoizedCellHeightsCount - 1; i > 0; i--) {
-      m_memoizedCellHeight[i] = m_memoizedCellHeight[i-1];
-    }
-    m_memoizedCellHeight[0] = k_resetedMemoizedValue;
+    shiftMemoization(false);
+    resetMemoizationForIndex(0);
     // Update m_cumulatedHeightForSelectedIndex
     if (currentSelectedRow >= 0) {
       m_cumulatedHeightForSelectedIndex-= memoizedRowHeight(currentSelectedRow);
@@ -59,7 +55,7 @@ KDCoordinate StorageExpressionModelListController::memoizedRowHeight(int j) {
     return 0;
   }
   int currentSelectedRow = selectedRow();
-  constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
+  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
   if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
     int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
     if (m_memoizedCellHeight[memoizedIndex] == k_resetedMemoizedValue) {
@@ -75,7 +71,7 @@ KDCoordinate StorageExpressionModelListController::memoizedCumulatedHeightFromIn
     return 0;
   }
   int currentSelectedRow = selectedRow();
-  constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
+  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
   /* If j is not easily computable from the memoized values, compute it the hard
    * way. */
   if (j < currentSelectedRow - halfMemoizationCount || j > currentSelectedRow + halfMemoizationCount) {
@@ -176,6 +172,7 @@ void StorageExpressionModelListController::addEmptyModel() {
 
 void StorageExpressionModelListController::reinitExpression(ExpiringPointer<StorageExpressionModel> model) {
   model->setContent("");
+  resetMemoization();
   selectableTableView()->reloadData();
 }
 
@@ -201,6 +198,7 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
         StorageExpressionModelListController * myController = static_cast<StorageExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
+        myController->resetMemoization();
         return myController->editSelectedRecordWithText(textBody);
       },
       [](void * context, void * sender){
@@ -210,7 +208,7 @@ void StorageExpressionModelListController::editExpression(Ion::Events::Event eve
 
 bool StorageExpressionModelListController::editSelectedRecordWithText(const char * text) {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  ExpiringPointer<StorageExpressionModel> model =  modelStore()->modelForRecord(record);
+  ExpiringPointer<StorageExpressionModel> model = modelStore()->modelForRecord(record);
   return (model->setContent(text) == Ion::Storage::Record::ErrorStatus::None);
 }
 
@@ -224,10 +222,27 @@ bool StorageExpressionModelListController::isAddEmptyRow(int j) {
   return j == modelStore()->numberOfModels();
 }
 
+void StorageExpressionModelListController::resetMemoizationForIndex(int index) {
+  assert(index >= 0 && index < k_memoizedCellsCount);
+  m_memoizedCellHeight[index] = k_resetedMemoizedValue;
+}
+
+void StorageExpressionModelListController::shiftMemoization(bool newCellIsUnder) {
+  if (newCellIsUnder) {
+    for (int i = 0; i < k_memoizedCellsCount - 1; i++) {
+      m_memoizedCellHeight[i] = m_memoizedCellHeight[i+1];
+    }
+  } else {
+    for (int i = k_memoizedCellsCount - 1; i > 0; i--) {
+      m_memoizedCellHeight[i] = m_memoizedCellHeight[i-1];
+    }
+  }
+}
+
 void StorageExpressionModelListController::resetMemoization() {
   m_cumulatedHeightForSelectedIndex = k_resetedMemoizedValue;
-  for (int i = 0; i < k_memoizedCellHeightsCount; i++) {
-    m_memoizedCellHeight[i] = k_resetedMemoizedValue;
+  for (int i = 0; i < k_memoizedCellsCount; i++) {
+    resetMemoizationForIndex(i);
   }
 }
 

@@ -10,9 +10,9 @@ namespace Calculation {
 /* HistoryViewCellDataSource */
 
 HistoryViewCellDataSource::HistoryViewCellDataSource() :
-  m_selectedSubviewType(HistoryViewCellDataSource::SubviewType::Output) {}
+  m_selectedSubviewType(SubviewType::Output) {}
 
-void HistoryViewCellDataSource::setSelectedSubviewType(HistoryViewCellDataSource::SubviewType subviewType, HistoryViewCell * cell) {
+void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, HistoryViewCell * cell) {
   m_selectedSubviewType = subviewType;
   if (cell) {
     cell->setHighlighted(cell->isHighlighted());
@@ -39,17 +39,18 @@ Shared::ScrollableExactApproximateExpressionsView * HistoryViewCell::outputView(
 void HistoryViewCell::setEven(bool even) {
   EvenOddCell::setEven(even);
   m_inputView.setBackgroundColor(backgroundColor());
+  m_scrollableOutputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setEven(even);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
   assert(m_dataSource);
   m_highlighted = highlight;
-  m_inputView.setBackgroundColor(backgroundColor());
+  m_inputView.setExpressionBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   if (isHighlighted()) {
     if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-      m_inputView.setBackgroundColor(Palette::Select);
+      m_inputView.setExpressionBackgroundColor(Palette::Select);
     } else {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
     }
@@ -93,20 +94,21 @@ View * HistoryViewCell::subviewAtIndex(int index) {
 }
 
 void HistoryViewCell::layoutSubviews() {
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
+  KDCoordinate maxFrameWidth = bounds().width();
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
-  if (inputSize.width() + Metric::HistoryHorizontalMargin > width) {
-    m_inputView.setFrame(KDRect(Metric::HistoryHorizontalMargin, k_digitVerticalMargin, width - Metric::HistoryHorizontalMargin, inputSize.height()));
-  } else {
-    m_inputView.setFrame(KDRect(Metric::HistoryHorizontalMargin, k_digitVerticalMargin, inputSize.width(), inputSize.height()));
-  }
+  m_inputView.setFrame(KDRect(
+    0,
+    0,
+    min(maxFrameWidth, inputSize.width()),
+    inputSize.height()
+  ));
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  if (outputSize.width() + Metric::HistoryHorizontalMargin > width) {
-    m_scrollableOutputView.setFrame(KDRect(Metric::HistoryHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, width - Metric::HistoryHorizontalMargin, height - inputSize.height() - 3*k_digitVerticalMargin));
-  } else {
-    m_scrollableOutputView.setFrame(KDRect(width - outputSize.width() - Metric::HistoryHorizontalMargin, inputSize.height() + 2*k_digitVerticalMargin, outputSize.width(), height - inputSize.height() - 3*k_digitVerticalMargin));
-  }
+  m_scrollableOutputView.setFrame(KDRect(
+    max(0, maxFrameWidth - outputSize.width()),
+    inputSize.height(),
+    min(maxFrameWidth, outputSize.width()),
+    bounds().height() - inputSize.height()
+  ));
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {

@@ -9,8 +9,9 @@ extern "C" {
 
 namespace Poincare {
 
-Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
-  return Infinity(this).setSign(s, context, angleUnit);
+Expression InfinityNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
+  return Infinity(this).setSign(s, context, complexFormat, angleUnit);
 }
 
 Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -27,11 +28,19 @@ int InfinityNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
-  return Complex<T>(m_negative ? -INFINITY : INFINITY);
+  return Complex<T>::Builder(m_negative ? -INFINITY : INFINITY);
 }
 
-Expression Infinity::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
-  Expression result = Infinity(s == ExpressionNode::Sign::Negative);
+Infinity Infinity::Builder(bool negative) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(InfinityNode));
+  InfinityNode * node = new (bufferNode) InfinityNode(negative);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  return static_cast<Infinity &>(h);
+}
+
+Expression Infinity::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
+  Expression result = Infinity::Builder(s == ExpressionNode::Sign::Negative);
   replaceWithInPlace(result);
   return result;
 }

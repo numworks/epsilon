@@ -7,6 +7,8 @@ namespace Poincare {
 
 class SymbolNode final : public SymbolAbstractNode {
 public:
+  SymbolNode(const char * newName, int length);
+
   const char * name() const override { return m_name; }
 
   // TreeNode
@@ -26,23 +28,26 @@ public:
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
+  // Complex
+  bool isReal(Context & context) const override;
+
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   Expression shallowReplaceReplaceableSymbols(Context & context) override;
 
   /* Approximation */
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
 private:
   char m_name[0]; // MUST be the last member variable
 
   size_t nodeSize() const override { return sizeof(SymbolNode); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Symbol final : public SymbolAbstract {
@@ -58,25 +63,19 @@ public:
      * characters but events as 'end of text', 'backspace'... */
     UnknownX = 1,
   };
-  Symbol(const char * name, int length);
-  Symbol(char name);
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
-  static Symbol Ans() { return Symbol(k_ans, k_ansLength); }
-  static Expression UntypedBuilder(const char * name, size_t length, Context * context) {
-    // create an expression only if it is not in the context or defined as a symbol
-    Symbol s(name, length);
-    if (SymbolAbstract::ValidInContext(s, context)) {
-      return s;
-    }
-    return Expression();
-  }
+  static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
+  static Symbol Builder(char name) { return Symbol::Builder(&name, 1); }
+  static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
+  static Expression UntypedBuilder(const char * name, size_t length, Context * context);
+
   // Symbol properties
   bool isSystemSymbol() const { return name()[0] == SpecialSymbols::UnknownX && name()[1] == 0; }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression replaceUnknown(const Symbol & symbol);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;

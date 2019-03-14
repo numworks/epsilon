@@ -312,10 +312,6 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDSize TextField::minimalSizeForOptimalDisplay() const {
-  return m_contentView.minimalSizeForOptimalDisplay();
-}
-
 char TextField::XNTChar(char defaultXNTChar) {
   static constexpr struct { const char *name; char xnt; } sFunctions[] = {
     { "diff", 'x' }, { "int", 'x' },

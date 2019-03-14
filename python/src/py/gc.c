@@ -444,7 +444,7 @@ void *gc_alloc(size_t n_bytes, bool has_finaliser) {
     size_t i;
     size_t end_block;
     size_t start_block;
-    size_t n_free = 0;
+    size_t n_free;
     int collected = !MP_STATE_MEM(gc_auto_collect_enabled);
 
     #if MICROPY_GC_ALLOC_THRESHOLD
@@ -456,7 +456,7 @@ void *gc_alloc(size_t n_bytes, bool has_finaliser) {
     #endif
 
     for (;;) {
-
+        n_free = 0; // Fixes bug, should be written in the next MicroPython version
         // look for a run of n_blocks available blocks
         for (i = MP_STATE_MEM(gc_last_free_atb_index); i < MP_STATE_MEM(gc_alloc_table_byte_len); i++) {
             byte a = MP_STATE_MEM(gc_alloc_table_start)[i];

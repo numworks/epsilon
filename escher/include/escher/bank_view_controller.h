@@ -15,6 +15,7 @@ public:
 
   View * view() override { return &m_view; }
   void didEnterResponderChain(Responder * previousResponder) override;
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:

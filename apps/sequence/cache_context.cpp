@@ -22,7 +22,7 @@ const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & sym
     && (strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0))
   {
     Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
-    return Float<T>(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
+    return Float<T>::Builder(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
   }
   return VariableContext::expressionForSymbol(symbol, clone);
 }

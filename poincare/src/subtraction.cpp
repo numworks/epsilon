@@ -27,7 +27,7 @@ bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (child == childAtIndex(0)) {
     return false;
   }
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
@@ -42,32 +42,30 @@ int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::Print
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "-");
 }
 
-template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
-  MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c);
-  MatrixComplex<T> result;
+template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
+  MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c, complexFormat);
+  MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int i = 0; i < opposite.numberOfChildren(); i++) {
-    result.addChildAtIndexInPlace(OppositeNode::compute(opposite.complexAtIndex(i)), i, i);
+    result.addChildAtIndexInPlace(OppositeNode::compute(opposite.complexAtIndex(i), complexFormat), i, i);
   }
   result.setDimensions(opposite.numberOfRows(), opposite.numberOfColumns());
   return result;
 }
 
-Expression SubtractionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Subtraction(this).shallowReduce(context, angleUnit, target);
+Expression SubtractionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Subtraction(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Subtraction::Subtraction() : Expression(TreePool::sharedPool()->createTreeNode<SubtractionNode>()) {}
-
-Expression Subtraction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+Expression Subtraction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
-  Expression m = Multiplication(Rational(-1), childAtIndex(1));
-  Addition a(childAtIndex(0), m);
-  m = m.shallowReduce(context, angleUnit, target);
+  Expression m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
+  Addition a = Addition::Builder(childAtIndex(0), m);
+  m = m.shallowReduce(context, complexFormat, angleUnit, target);
   replaceWithInPlace(a);
-  return a.shallowReduce(context, angleUnit, target);
+  return a.shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 }

@@ -2,6 +2,7 @@
 
 #include <poincare/equal.h>
 #include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <poincare/rational.h>
 
 using namespace Poincare;
@@ -28,19 +29,28 @@ void Equation::tidy() {
 Expression Equation::standardForm(Context * context) const {
   if (m_standardForm.isUninitialized()) {
     const Expression e = expression(context);
+    if (e.type() == ExpressionNode::Type::Unreal) {
+      m_standardForm = Unreal::Builder();
+      return m_standardForm;
+    }
     if (e.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context, replaceSymbols); }, *context, true)) {
-      m_standardForm = Undefined();
+      m_standardForm = Undefined::Builder();
       return m_standardForm;
     }
     if (e.type() == ExpressionNode::Type::Equal) {
-      m_standardForm = static_cast<const Equal&>(e).standardEquation(*context, Preferences::sharedPreferences()->angleUnit());
+      Preferences * preferences = Preferences::sharedPreferences();
+      m_standardForm = static_cast<const Equal&>(e).standardEquation(*context, Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), text()), preferences->angleUnit());
     } else {
       assert(e.type() == ExpressionNode::Type::Rational && static_cast<const Rational&>(e).isOne());
       // The equality was reduced which means the equality was always true.
-      m_standardForm = Rational(0);
+      m_standardForm = Rational::Builder(0);
     }
   }
   return m_standardForm;
+}
+
+bool Equation::containsIComplex() const {
+  return strchr(text(), Ion::Charset::IComplex) != nullptr;
 }
 
 void Equation::tidyStandardForm() {

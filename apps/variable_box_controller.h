@@ -6,7 +6,7 @@
 #include <escher.h>
 #include "shared/global_context.h"
 #include "variable_box_empty_controller.h"
-#include "i18n.h"
+#include <apps/i18n.h>
 
 class VariableBoxController : public NestedMenuController {
 public:
@@ -51,6 +51,7 @@ private:
   bool displayEmptyController();
   bool isDisplayingEmptyController() { return StackViewController::depth() == 2; }
   void resetMemoization();
+  void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
   Page m_lockPageDelete;
   ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];

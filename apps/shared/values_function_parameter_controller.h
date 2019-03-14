@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "function.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

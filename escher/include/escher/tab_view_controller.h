@@ -19,6 +19,7 @@ public:
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousResponder) override;
   void willResignFirstResponder() override;
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:

@@ -24,6 +24,9 @@ QUIZ_CASE(poincare_infinity) {
   assert_parsed_expression_simplify_to("1E-1000", "0");
   assert_parsed_expression_evaluates_to<double>("1*10^1000", "inf");
 
+  assert_parsed_expression_simplify_to("inf^0", "undef");
+  assert_parsed_expression_simplify_to("1^inf", "1^inf");
+  assert_parsed_expression_simplify_to("1^(X^inf)", "1^(X^inf)");
   assert_parsed_expression_simplify_to("inf^(-1)", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-1)", "0");
   assert_parsed_expression_simplify_to("inf^(-R(2))", "0");
@@ -34,5 +37,20 @@ QUIZ_CASE(poincare_infinity) {
   assert_parsed_expression_simplify_to("(-inf)^R(2)", "inf*(-1)^R(2)");
   assert_parsed_expression_simplify_to("inf^x", "inf^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
+  assert_parsed_expression_simplify_to("X^(inf)/inf", "0*X^inf");
+
+  // Logarithm
+  assert_parsed_expression_simplify_to("log(inf,0)", "undef");
+  assert_parsed_expression_simplify_to("log(inf,1)", "undef");
+  assert_parsed_expression_simplify_to("log(0,inf)", "undef");
+  assert_parsed_expression_simplify_to("log(1,inf)", "0");
+  assert_parsed_expression_simplify_to("log(inf,inf)", "undef");
+
+  assert_parsed_expression_simplify_to("ln(inf)", "inf");
+  assert_parsed_expression_simplify_to("log(inf,-3)", "log(inf,-3)");
+  assert_parsed_expression_simplify_to("log(inf,3)", "inf");
+  assert_parsed_expression_simplify_to("log(inf,0.3)", "-inf");
+  assert_parsed_expression_simplify_to("log(inf,x)", "log(inf,x)");
+  assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 
 }

@@ -4,11 +4,6 @@
 
 namespace Probability {
 
-Calculation::Calculation():
-  m_law(nullptr)
-{
-}
-
 void Calculation::setLaw(Law * law) {
   m_law = law;
   compute(0);

@@ -73,51 +73,51 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 /* Layout modification */
 
 void LayoutCursor::addEmptyExponentialLayout() {
-  EmptyLayout emptyLayout;
-  HorizontalLayout sibling = HorizontalLayout(
-      CharLayout(Ion::Charset::Exponential),
-      VerticalOffsetLayout(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+  EmptyLayout emptyLayout = EmptyLayout::Builder();
+  HorizontalLayout sibling = HorizontalLayout::Builder(
+      CharLayout::Builder(Ion::Charset::Exponential),
+      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
 
 void LayoutCursor::addEmptyMatrixLayout() {
-  MatrixLayout matrixLayout = MatrixLayout(
-      EmptyLayout(EmptyLayoutNode::Color::Yellow),
-      EmptyLayout(EmptyLayoutNode::Color::Grey),
-      EmptyLayout(EmptyLayoutNode::Color::Grey),
-      EmptyLayout(EmptyLayoutNode::Color::Grey));
+  MatrixLayout matrixLayout = MatrixLayout::Builder(
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey),
+      EmptyLayout::Builder(EmptyLayoutNode::Color::Grey));
   m_layout.addSibling(this, matrixLayout, false);
   m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {
-  HorizontalLayout child1 = HorizontalLayout(EmptyLayout());
-  NthRootLayout newChild = NthRootLayout(child1);
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  NthRootLayout newChild = NthRootLayout::Builder(child1);
   m_layout.addSibling(this, newChild, false);
   m_layout = newChild.childAtIndex(0);
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(EmptyLayout(), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout(CharLayout('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CharLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
-  EmptyLayout emptyLayout;
-  HorizontalLayout sibling = HorizontalLayout(
-      CharLayout(Ion::Charset::MiddleDot),
-      CharLayout('1'),
-      CharLayout('0'),
-      VerticalOffsetLayout(
+  EmptyLayout emptyLayout = EmptyLayout::Builder();
+  HorizontalLayout sibling = HorizontalLayout::Builder(
+      CharLayout::Builder(Ion::Charset::MiddleDot),
+      CharLayout::Builder('1'),
+      CharLayout::Builder('0'),
+      VerticalOffsetLayout::Builder(
         emptyLayout,
         VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
@@ -125,15 +125,15 @@ void LayoutCursor::addEmptyTenPowerLayout() {
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
-  HorizontalLayout child1 = HorizontalLayout(EmptyLayout());
-  HorizontalLayout child2 = HorizontalLayout(EmptyLayout());
-  FractionLayout newChild = FractionLayout(child1, child2);
+  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  FractionLayout newChild = FractionLayout::Builder(child1, child2);
   m_layout.addSibling(this, newChild, true);
   Layout(newChild.node()).collapseSiblings(this);
 }
 
 void LayoutCursor::addXNTCharLayout() {
-  m_layout.addSibling(this, CharLayout(m_layout.XNTChar()), true);
+  m_layout.addSibling(this, CharLayout::Builder(m_layout.XNTChar()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
@@ -148,14 +148,14 @@ void LayoutCursor::insertText(const char * text) {
       continue;
     }
     if (text[i] == Ion::Charset::MultiplicationSign) {
-      newChild = CharLayout(Ion::Charset::MiddleDot);
+      newChild = CharLayout::Builder(Ion::Charset::MiddleDot);
     } else if (text[i] == '(') {
-      newChild = LeftParenthesisLayout();
+      newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
     } else if (text[i] == ')') {
-      newChild = RightParenthesisLayout();
+      newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
@@ -167,7 +167,7 @@ void LayoutCursor::insertText(const char * text) {
     }
 #endif
     else {
-      newChild = CharLayout(text[i]);
+      newChild = CharLayout::Builder(text[i]);
     }
     m_layout.addSibling(this, newChild, true);
   }
@@ -217,8 +217,8 @@ void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
     return;
   }
   // Else, add an empty base
-  EmptyLayout e = EmptyLayout();
-  HorizontalLayout newChild = HorizontalLayout(e, v);
+  EmptyLayout e = EmptyLayout::Builder();
+  HorizontalLayout newChild = HorizontalLayout::Builder(e, v);
   m_layout.addSibling(this, newChild, true);
 }
 

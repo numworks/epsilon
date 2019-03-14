@@ -11,18 +11,18 @@ namespace Regression {
 
 Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('l', KDFont::SmallFont),
-      CharLayout('n', KDFont::SmallFont),
-      CharLayout('(', KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      CharLayout(')', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont)
+    Layout layoutChildren[] = {
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('l', KDFont::SmallFont),
+      CharLayout::Builder('n', KDFont::SmallFont),
+      CharLayout::Builder('(', KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      CharLayout::Builder(')', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont)
     };
-    m_layout = HorizontalLayout(layoutChildren, 9);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 9);
   }
   return m_layout;
 }

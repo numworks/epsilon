@@ -15,7 +15,7 @@ VariableContext::VariableContext(const char * name, Context * parentContext) :
 
 template<typename T>
 void VariableContext::setApproximationForVariable(T value) {
-  m_value = Float<T>(value);
+  m_value = Float<T>::Builder(value);
 }
 
 void VariableContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {

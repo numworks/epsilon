@@ -16,6 +16,9 @@ int main(int argc, char * argv[]) {
   Ion::Display::Emscripten::init();
   Ion::Events::Emscripten::init();
 
+  // Set the seed for random using the current time
+  srand(emscripten_get_now());
+
   ion_main(argc, argv);
   return 0;
 }

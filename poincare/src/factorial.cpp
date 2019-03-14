@@ -12,10 +12,17 @@
 
 namespace Poincare {
 
+// Property
+
+Expression FactorialNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == Sign::Positive);
+  return Factorial(this);
+}
+
 // Layout
 
 bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
@@ -27,16 +34,16 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Factorial(this).shallowReduce(context, angleUnit);
+Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Factorial(this).shallowReduce();
 }
 
-Expression FactorialNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Factorial(this).shallowBeautify(context, angleUnit);
+Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Factorial(this).shallowBeautify();
 }
 
 template<typename T>
-Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   T n = c.real();
   if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Undefined();
@@ -45,17 +52,17 @@ Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences:
   for (int i = 1; i <= (int)n; i++) {
     result *= (T)i;
     if (std::isinf(result)) {
-      return Complex<T>(result);
+      return Complex<T>::Builder(result);
     }
   }
-  return Complex<T>(std::round(result));
+  return Complex<T>::Builder(std::round(result));
 }
 
 Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout result;
+  HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
-  result.addChildAtIndex(CharLayout('!'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndex(CharLayout::Builder('!'), childrenCount, childrenCount, nullptr);
   return result;
 }
 
@@ -82,11 +89,10 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return numberOfChar;
 }
 
-Factorial::Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
 
-Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -99,34 +105,34 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational r = childAtIndex(0).convert<Rational>();
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
       return *this;
     }
-    Rational fact = Rational(Integer::Factorial(r.unsignedIntegerNumerator()));
+    Rational fact = Rational::Builder(Integer::Factorial(r.unsignedIntegerNumerator()));
     assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
     replaceWithInPlace(fact);
     return fact;
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
   return *this;
 }
 
-Expression Factorial::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowBeautify() {
   // +(a,b)! ->(+(a,b))!
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication
       || childAtIndex(0).type() == ExpressionNode::Type::Power)
   {
-    Expression result = Factorial(Parenthesis(childAtIndex(0)));
+    Expression result = Factorial::Builder(Parenthesis::Builder(childAtIndex(0)));
     replaceWithInPlace(result);
     return result;
   }

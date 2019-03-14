@@ -12,14 +12,25 @@ namespace Probability {
 
 class LawCurveView : public Shared::CurveView {
 public:
-  LawCurveView(Law * law, Calculation * calculation);
+  LawCurveView(Law * law, Calculation * calculation) :
+    CurveView(law, nullptr, nullptr, nullptr),
+    m_labels{},
+    m_law(law),
+    m_calculation(calculation)
+  {
+    assert(law != nullptr);
+    assert(calculation != nullptr);
+  }
+
   void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   char * label(Axis axis, int index) const override;
 private:
-  char m_labels[k_maxNumberOfXLabels][k_labelBufferSize];
   static float EvaluateAtAbscissa(float abscissa, void * model, void * context);
+  static constexpr KDColor k_backgroundColor = Palette::WallScreen;
+  void drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const;
+  char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   Law * m_law;
   Calculation * m_calculation;
 };

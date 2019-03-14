@@ -7,9 +7,9 @@ namespace Poincare {
 
 class InfinityNode final : public NumberNode {
 public:
+  InfinityNode(bool negative) : NumberNode(), m_negative(negative) {}
 
-  void setNegative(bool negative) { m_negative = negative; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // TreeNode
   size_t size() const override { return sizeof(InfinityNode); }
@@ -24,13 +24,13 @@ public:
 
   // Properties
   Type type() const override { return Type::Infinity; }
-  Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>();
   }
 
@@ -45,10 +45,8 @@ private:
 class Infinity final : public Number {
 public:
   Infinity(InfinityNode * n) : Number(n) {}
-  Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {
-    node()->setNegative(negative);
-  }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  static Infinity Builder(bool negative);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   static const char * Name() {
     return "inf";
   }

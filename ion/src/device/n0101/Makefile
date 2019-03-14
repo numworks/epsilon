@@ -1,5 +1,5 @@
-ion_device_objs += $(addprefix ion/src/device/n0101/drivers/, \
-  board.o \
+ion_device_src += $(addprefix ion/src/device/n0101/drivers/, \
+  board.cpp \
 )
 
 LDSCRIPT ?= ion/src/device/n0101/flash.ld

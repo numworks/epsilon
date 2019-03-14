@@ -45,23 +45,23 @@ private:
   void isThereImplicitMultiplication();
 
   // Specific Token parsers
-  void parseUnexpected(Expression & leftHandSide);
-  void parseNumber(Expression & leftHandSide);
-  void parseConstant(Expression & leftHandSide);
-  void parseIdentifier(Expression & leftHandSide);
-  void parseEmpty(Expression & leftHandSide);
-  void parseMatrix(Expression & leftHandSide);
-  void parseLeftParenthesis(Expression & leftHandSide);
-  void parseBang(Expression & leftHandSide);
-  void parsePlus(Expression & leftHandSide);
-  void parseMinus(Expression & leftHandSide);
-  void parseTimes(Expression & leftHandSide);
-  void parseSlash(Expression & leftHandSide);
-  void parseImplicitTimes(Expression & leftHandSide);
-  void parseCaret(Expression & leftHandSide);
-  void parseEqual(Expression & leftHandSide);
-  void parseStore(Expression & leftHandSide);
-  void parseLeftSuperscript(Expression & leftHandSide);
+  void parseUnexpected(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseNumber(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseConstant(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseIdentifier(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseEmpty(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseBang(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parsePlus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseMinus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseSlash(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
 
   // Parsing helpers
   bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);
@@ -127,6 +127,7 @@ private:
     &DivisionRemainder::s_functionHelper,
     &NthRoot::s_functionHelper,
     &Round::s_functionHelper,
+    &SignFunction::s_functionHelper,
     &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
     &Sum::s_functionHelper,

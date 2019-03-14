@@ -12,6 +12,7 @@ public:
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:

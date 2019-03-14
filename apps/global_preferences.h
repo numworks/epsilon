@@ -1,7 +1,7 @@
 #ifndef APPS_GLOBAL_PREFERENCES_H
 #define APPS_GLOBAL_PREFERENCES_H
 
-#include "i18n.h"
+#include <apps/i18n.h>
 
 class GlobalPreferences {
 public:

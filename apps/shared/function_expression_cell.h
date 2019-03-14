@@ -7,7 +7,7 @@ namespace Shared {
 
 class FunctionExpressionCell : public EvenOddExpressionCell {
 public:
-  FunctionExpressionCell();
+  FunctionExpressionCell() : EvenOddExpressionCell() {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews() override;

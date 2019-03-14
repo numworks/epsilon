@@ -95,13 +95,12 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor
 }
 
 EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
-EmptyLayout::EmptyLayout(EmptyLayoutNode::Color color, bool visible, const KDFont * font, bool margins) :
-  Layout(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
-{
-  node()->setColor(color);
-  node()->setVisible(visible);
-  node()->setFont(font);
-  node()->setMargins(margins);
+
+EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, bool visible, const KDFont * font, bool margins) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EmptyLayoutNode));
+  EmptyLayoutNode * node = new (bufferNode) EmptyLayoutNode(color, visible, font, margins);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  return static_cast<EmptyLayout &>(h);
 }
 
 }

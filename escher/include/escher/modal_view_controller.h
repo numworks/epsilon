@@ -16,6 +16,7 @@ public:
   void reloadModalViewController();
   void dismissModalViewController();
   bool isDisplayingModal();
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
 protected:

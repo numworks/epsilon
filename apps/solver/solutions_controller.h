@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "equation_store.h"
 #include "../shared/scrollable_exact_approximate_expressions_cell.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Solver {
 
@@ -38,7 +38,8 @@ private:
   public:
     ContentView(SolutionsController * controller);
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    void setWarningMoreSolutions(bool warning);
+    void setWarning(bool warning);
+    void setWarningMessages(I18n::Message message0, I18n::Message message1);
     SelectableTableView * selectableTableView() {
       return &m_selectableTableView;
     }

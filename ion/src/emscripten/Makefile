@@ -1,22 +1,22 @@
-objs += $(addprefix ion/src/emscripten/, \
-  display.o \
-  events_keyboard.o \
-  main.o \
+src += $(addprefix ion/src/emscripten/, \
+  display.cpp \
+  events_keyboard.cpp \
+  main.cpp \
 )
 
-objs += $(addprefix ion/src/shared/, \
-  crc32.o \
-  crc32_padded.o \
-  events.o \
-  events_modifier.o \
-  power.o \
-  random.o \
-  timing.o \
-  dummy/backlight.o \
-  dummy/battery.o \
-  dummy/fcc_id.o \
-  dummy/led.o \
-  dummy/serial_number.o \
-  dummy/stack.o \
-  dummy/usb.o \
+src += $(addprefix ion/src/shared/, \
+  crc32.cpp \
+  crc32_padded.cpp \
+  events.cpp \
+  events_modifier.cpp \
+  power.cpp \
+  random.cpp \
+  timing.cpp \
+  dummy/backlight.cpp \
+  dummy/battery.cpp \
+  dummy/fcc_id.cpp \
+  dummy/led.cpp \
+  dummy/serial_number.cpp \
+  dummy/stack.cpp \
+  dummy/usb.cpp \
 )

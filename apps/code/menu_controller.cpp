@@ -1,6 +1,6 @@
 #include "menu_controller.h"
 #include "app.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 #include <assert.h>
 #include <escher/metric.h>
@@ -26,7 +26,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   m_shouldDisplayAddScriptRow(true)
 {
   m_selectableTableView.setMargins(0);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
@@ -49,7 +49,7 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
     TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
     if (tf->isEditing()) {
       tf->setEditing(false, false);
-      textFieldDidAbortEditing(tf);
+      privateTextFieldDidAbortEditing(tf, false);
     }
   }
 }
@@ -69,7 +69,8 @@ void MenuController::didBecomeFirstResponder() {
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
   app()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
-  if (consoleController()->locked() && consoleController()->loadPythonEnvironment()) {
+  if (consoleController()->locked()) {
+    consoleController()->setAutoImport(true);
     stackViewController()->push(consoleController());
     return;
   }
@@ -337,40 +338,12 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else if (error == Script::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Script::ErrorStatus::NonCompliantName) {
-    app()->displayWarning(I18n::Message::NonCompliantName);
+    app()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
   } else {
     assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
     app()->displayWarning(I18n::Message::NameTooLong);
   }
   return false;
-}
-
-bool MenuController::textFieldDidAbortEditing(TextField * textField) {
-  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
-  const char * scriptName = script.fullName();
-  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
-    // The previous text was an empty name. Use a numbered default script name.
-    char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
-    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
-    if (!foundDefaultName) {
-      // If we did not find a default name, delete the script
-      deleteScript(script);
-      return true;
-    }
-    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
-    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
-    /* Because we use the numbered default name, the name should not be
-     * already taken. Plus, the script could be added only if the storage has
-     * enough available space to add a script named 'script99.py' */
-    (void) error; // Silence the "variable unused" warning if assertions are not enabled
-    assert(error == Script::ErrorStatus::None);
-    updateAddScriptRowDisplay();
-  }
-  textField->setText(scriptName);
-  m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-  app()->setFirstResponder(&m_selectableTableView);
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
-  return true;
 }
 
 bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
@@ -408,6 +381,41 @@ void MenuController::editScriptAtIndex(int scriptIndex) {
 void MenuController::updateAddScriptRowDisplay() {
   m_shouldDisplayAddScriptRow = !m_scriptStore->isFull();
   m_selectableTableView.reloadData();
+}
+
+bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain) {
+  /* If menuControllerStaysInResponderChain is false, we do not want to use
+   * methods that might call setFirstResponder, because we might be in the
+   * middle of another setFirstResponder call. */
+  Script script = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow());
+  const char * scriptName = script.fullName();
+  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
+    // The previous text was an empty name. Use a numbered default script name.
+    char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
+    bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
+    if (!foundDefaultName) {
+      // If we did not find a default name, delete the script
+      deleteScript(script);
+      return true;
+    }
+    Script::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, ScriptStore::k_scriptExtension);
+    scriptName = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).fullName();
+    /* Because we use the numbered default name, the name should not be
+     * already taken. Plus, the script could be added only if the storage has
+     * enough available space to add a script named 'script99.py' */
+    (void) error; // Silence the "variable unused" warning if assertions are not enabled
+    assert(error == Script::ErrorStatus::None);
+    if (menuControllerStaysInResponderChain) {
+      updateAddScriptRowDisplay();
+    }
+  }
+  textField->setText(scriptName);
+  if (menuControllerStaysInResponderChain) {
+    m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+    app()->setFirstResponder(&m_selectableTableView);
+  }
+  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  return true;
 }
 
 }

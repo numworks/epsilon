@@ -1,6 +1,6 @@
 #include "storage_list_controller.h"
 #include "../app.h"
-#include "../../i18n.h"
+#include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
 #include <apps/apps_container.h>
@@ -33,13 +33,20 @@ const char * StorageListController::title() {
 void StorageListController::renameSelectedFunction() {
   assert(selectedColumn() == 0);
   assert(selectedRow() >= 0 && selectedRow() < numberOfRows()-1); // TODO change if sometimes the addFunction row is not displayed
+
+  // Increase the size of the name column
+  computeTitlesColumnWidth(true);
+  selectableTableView()->reloadData();
+
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   TextFieldFunctionTitleCell * selectedTitleCell = (TextFieldFunctionTitleCell *)(selectableTableView()->selectedCell());
+  selectedTitleCell->setHorizontalAlignment(1.0f);
   app()->setFirstResponder(selectedTitleCell);
   selectedTitleCell->setEditing(true);
 }
 
 bool StorageListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  assert(textField != nullptr);
   // Compute the new name
   size_t textLength = strlen(text);
   size_t argumentLength = StorageFunction::k_parenthesedArgumentLength;
@@ -107,6 +114,10 @@ bool StorageListController::textFieldDidFinishEditing(TextField * textField, con
 }
 
 bool StorageListController::textFieldDidAbortEditing(TextField * textField) {
+  assert(textField != nullptr);
+  // Put the name column back to normal size
+  computeTitlesColumnWidth();
+  selectableTableView()->reloadData();
   ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
@@ -120,6 +131,7 @@ bool StorageListController::textFieldShouldFinishEditing(TextField * textField, 
 }
 
 bool StorageListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  assert(textField != nullptr);
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     return false;
   }
@@ -145,8 +157,14 @@ HighlightCell * StorageListController::expressionCells(int index) {
 }
 
 void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
+  assert(cell != nullptr);
+  assert(j >= 0 && j < modelStore()->numberOfModels());
   TextFieldFunctionTitleCell * titleCell = static_cast<TextFieldFunctionTitleCell *>(cell);
+  // Update the corresponding expression cell in order to get the baseline
+  StorageExpressionModelListController::willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
+  titleCell->setBaseline(baseline(j));
   if (!titleCell->isEditing()) {
+    // Set name and color if the name is not being edited
     ExpiringPointer<StorageFunction> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
     setFunctionNameInTextField(function, titleCell->textField());
     KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
@@ -155,6 +173,8 @@ void StorageListController::willDisplayTitleCellAtIndex(HighlightCell * cell, in
 }
 
 void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
+  assert(cell != nullptr);
+  assert(j >= 0 && j < modelStore()->numberOfModels());
   Shared::StorageFunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   ExpiringPointer<StorageFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
@@ -163,9 +183,20 @@ void StorageListController::willDisplayExpressionCellAtIndex(HighlightCell * cel
 }
 
 void StorageListController::setFunctionNameInTextField(ExpiringPointer<StorageFunction> function, TextField * textField) {
+  assert(textField != nullptr);
   char bufferName[BufferTextView::k_maxNumberOfChar];
   function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
   textField->setText(bufferName);
+}
+
+KDCoordinate StorageListController::privateBaseline(int j) const {
+  assert(j >= 0 && j < const_cast<StorageListController *>(this)->modelStore()->numberOfModels());
+  Shared::FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
+  Poincare::Layout layout = cell->layout();
+  if (layout.isUninitialized()) {
+    return -1;
+  }
+  return 0.5*(const_cast<StorageListController *>(this)->rowHeight(j)-layout.layoutSize().height())+layout.baseline();
 }
 
 }

@@ -65,13 +65,15 @@ private:
 class HorizontalLayout final : public Layout {
   friend class HorizontalLayoutNode;
 public:
+  // Constructors
   HorizontalLayout(HorizontalLayoutNode * n) : Layout(n) {}
-  HorizontalLayout();
-  explicit HorizontalLayout(Layout l);
-  HorizontalLayout(Layout l1, Layout l2);
-  HorizontalLayout(Layout l1, Layout l2, Layout l3);
-  HorizontalLayout(Layout l1, Layout l2, Layout l3, Layout l4);
-  HorizontalLayout(const Layout * children, size_t numberOfChildren);
+  static HorizontalLayout Builder() { return TreeHandle::NAryBuilder<HorizontalLayout,HorizontalLayoutNode>(); }
+  static HorizontalLayout Builder(Layout l) { return HorizontalLayout::Builder(&l, 1); }
+  static HorizontalLayout Builder(Layout l1, Layout l2) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2).array(), 2); }
+  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2, l3).array(), 3); }
+  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2, l3, l4).array(), 4); }
+  static HorizontalLayout Builder(Layout * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<HorizontalLayout,HorizontalLayoutNode>(static_cast<TreeHandle *>(children), numberOfChildren); }
+
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);
   // Remove puts a child at the end of the pool
   void removeChild(Layout l, LayoutCursor * cursor, bool force = false) {
@@ -82,6 +84,7 @@ public:
   }
   void addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+
 private:
   void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };

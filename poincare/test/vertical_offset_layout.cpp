@@ -7,9 +7,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_vertical_offset_layout_serialize) {
-  HorizontalLayout layout = HorizontalLayout(
-    CharLayout('2'),
-      VerticalOffsetLayout(
+  HorizontalLayout layout = HorizontalLayout::Builder(
+    CharLayout::Builder('2'),
+      VerticalOffsetLayout::Builder(
         LayoutHelper::String("x+5", 3),
         VerticalOffsetLayoutNode::Type::Superscript
       )

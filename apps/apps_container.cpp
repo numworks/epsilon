@@ -84,7 +84,7 @@ AppsContainer::AppsContainer() :
    * We just remove the circuit breaker for now.
    * TODO: Put the Poincare circuit breaker back on epsilon's web emulator */
 #else
-  Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
+  Poincare::Expression::SetCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 #endif
   Ion::Storage::sharedStorage()->setDelegate(this);
 }
@@ -152,18 +152,19 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
-      if (activeApp() == nullptr || activeApp()->prepareForExit()) {
+      if (switchTo(usbConnectedAppSnapshot())) {
         /* Just after a software update, the battery timer does not have time to
          * fire before the calculator enters DFU mode. As the DFU mode blocks the
          * event loop, we update the battery state "manually" here. */
         updateBatteryState();
-        switchTo(usbConnectedAppSnapshot());
         Ion::USB::DFU();
-        switchTo(activeSnapshot);
+        bool switched = switchTo(activeSnapshot);
+        assert(switched);
+        (void) switched; // Silence compilation warning about unused variable.
         didProcessEvent = true;
       } else {
-        /* activeApp()->prepareForExit() returned false, which means that the
-         * app needs another event loop to prepare for being switched off.
+        /* We could not switch apps, which means that the current app needs
+         * another event loop to prepare for being switched off.
          * Discard the current enumeration interruption.
          * The USB host tries a few times in a row to enumerate the device, so
          * hopefully the device will get another enumeration event soon and this
@@ -222,8 +223,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-void AppsContainer::switchTo(App::Snapshot * snapshot) {
-  assert(activeApp() == nullptr || activeApp()->prepareForExit());
+bool AppsContainer::switchTo(App::Snapshot * snapshot) {
   if (activeApp() && snapshot != activeApp()->snapshot()) {
     resetShiftAlphaStatus();
   }
@@ -235,7 +235,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
   if (snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
   }
-  Container::switchTo(snapshot);
+  return Container::switchTo(snapshot);
 }
 
 void AppsContainer::run() {
@@ -252,15 +252,14 @@ void AppsContainer::run() {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */
+     bool switched =
 #if EPSILON_ONBOARDING_APP
-    switchTo(onBoardingAppSnapshot());
+       switchTo(onBoardingAppSnapshot());
 #else
-    if (numberOfApps() == 2) {
-      switchTo(appSnapshotAtIndex(1));
-    } else {
-      switchTo(appSnapshotAtIndex(0));
-    }
+       switchTo(appSnapshotAtIndex(numberOfApps() == 2 ? 1 : 0));
 #endif
+    assert(switched);
+    (void) switched; // Silence compilation warning about unused variable.
   } else {
     // Exception
     if (activeApp() != nullptr) {
@@ -277,7 +276,9 @@ void AppsContainer::run() {
        * history here, we will be stuck outside the calculation app. */
       activeApp()->snapshot()->reset();
     }
-    switchTo(appSnapshotAtIndex(0));
+    bool switched = switchTo(appSnapshotAtIndex(0));
+    assert(switched);
+    (void) switched; // Silence compilation warning about unused variable.
     Poincare::Tidy();
     activeApp()->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
   }

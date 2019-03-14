@@ -29,32 +29,69 @@ static_assert(sizeof(double_native_int_t) == 2*sizeof(native_int_t), "double_nat
 
 struct IntegerDivision;
 
-class Integer final {
+class IntegerNode final : public TreeNode {
+public:
+  IntegerNode(const native_uint_t * digits, uint8_t numberOfDigits);
+  // TreeNode
+  size_t size() const override;
+  int numberOfChildren() const override { return 0; }
+#if POINCARE_TREE_LOG
+  void log(std::ostream & stream) const;
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Integer";
+  }
+  virtual void logAttributes(std::ostream & stream) const override;
+#endif
+
+  const native_uint_t * digits() const { return m_digits; }
+  uint8_t numberOfDigits() const { return m_numberOfDigits; }
+private:
+  uint8_t m_numberOfDigits; // In base native_uint_t
+  native_uint_t m_digits[0]; // Little-endian
+};
+
+class Integer final : public TreeHandle {
 public:
   /* Constructors & Destructors */
+  static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(native_int_t i = 0);
   Integer(double_native_int_t i);
   Integer(const char * digits, size_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
-  static Integer Overflow(bool negative) { return Integer((native_uint_t *)nullptr, k_maxNumberOfDigits+1, negative); }
-  static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
-  ~Integer();
-  static void TidyIntegerBuffer();
-
+  static Integer Overflow(bool negative) { return Integer(OverflowIdentifier, negative); }
 
 #if POINCARE_TREE_LOG
-  void log(std::ostream & stream = std::cout) const;
+  void logInteger(std::ostream & stream) const {
+    if (isOverflow()) {
+      stream << "overflow";
+      return;
+    } else if (usesImmediateDigit()) {
+      stream << m_digit;
+      return;
+    }
+    node()->log(stream);
+  }
 #endif
 
-  /* Copy/Move constructors/assignments */
-  Integer(Integer&& other); // C++11 move constructor
-  Integer& operator=(Integer&& other); // C++11 move assignment operator
-  Integer(const Integer& other); // C++11 copy constructor
-  Integer& operator=(const Integer& other); // C++11 copy assignment operator
-
   // Getters
-  const native_uint_t * digits() const { return usesImmediateDigit() ? &m_digit : m_digits; }
-  uint8_t numberOfDigits() const { return m_numberOfDigits; }
+  const native_uint_t * digits() const {
+    if (usesImmediateDigit()) {
+      return &m_digit;
+    } else if (isOverflow()) {
+      return nullptr;
+    }
+    return node()->digits();
+  }
+  uint8_t numberOfDigits() const {
+    if (usesImmediateDigit()) {
+      return m_digit == 0 ? 0 : 1;
+    } else if (isOverflow()) {
+      return k_maxNumberOfDigits+1;
+    }
+    return node()->numberOfDigits();
+  }
+  bool isNegative() const { return m_negative; }
+  void setNegative(bool negative) { m_negative = numberOfDigits() > 0 ? negative : false; } // 0 is always positive
 
   // Serialization
   int serialize(char * buffer, int bufferSize) const;
@@ -66,21 +103,22 @@ public:
   template<typename T> T approximate() const;
 
   // Sign
-  bool isNegative() const { return m_negative; }
-  void setNegative(bool negative) { m_negative = m_numberOfDigits > 0 ? negative : false; }
 
   // Properties
+  /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
+   * overflow, or when we want to have one more digit than usual to compute a
+   * big division. */
+  bool isOverflow() const { return m_identifier == OverflowIdentifier; }
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
-  bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1 && !m_negative); };
-  bool isTwo() const { return (m_numberOfDigits == 1 && digit(0) == 2 && !m_negative); };
-  bool isTen() const { return (m_numberOfDigits == 1 && digit(0) == 10 && !m_negative); };
-  bool isMinusOne() const { return (m_numberOfDigits == 1 && digit(0) == 1 && m_negative); };
-  bool isZero() const { return (m_numberOfDigits == 0); };
-  bool isInfinity() const { return m_numberOfDigits > k_maxNumberOfDigits; }
+  bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
+  bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };
+  bool isTen() const { return (numberOfDigits() == 1 && digit(0) == 10 && !m_negative); };
+  bool isMinusOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_negative); };
+  bool isZero() const { return (numberOfDigits() == 0); };
   bool isEven() const { return ((digit(0) & 1) == 0); }
 
   constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
-  int extractedInt() const { assert(m_numberOfDigits == 0 || (m_numberOfDigits <= 1 && digit(0) <= k_maxExtractableInteger)); return m_numberOfDigits == 0 ? 0 : (m_negative ? -digit(0) : digit(0)); }
+  int extractedInt() const { assert(numberOfDigits() == 0 || (numberOfDigits() <= 1 && digit(0) <= k_maxExtractableInteger)); return numberOfDigits() == 0 ? 0 : (m_negative ? -digit(0) : digit(0)); }
 
   // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);
@@ -100,23 +138,14 @@ public:
   static Integer Factorial(const Integer & i);
 
   constexpr static int k_maxNumberOfDigits = 32;
-  constexpr static int k_maxNumberOfIntegerSimutaneously = 16;
 private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
-
-  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
-
-  // Dynamic allocation
-  /* In order to guarantee the potential existence of 16 Integers simutaneously,
-   * we keep a table uint32_t that can contain up to 16 Integers with the
-   * maximal numbers of digits. We also give them one extra digit to be able to
-   * perform complex operations (like division) which involve Integers with one
-   *  additional digit. */
-  static native_uint_t * allocDigits(int numberOfDigits);
-  static void freeDigits(native_uint_t * digits);
+  static constexpr int OverflowIdentifier = TreeNode::NoNodeIdentifier - 1;
 
   // Constructors
-  void releaseDynamicIvars();
+  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative);
+  Integer(int identifier, bool negative) : TreeHandle(identifier), m_negative(negative) {}
+  IntegerNode * node() const { return static_cast<IntegerNode *>(TreeHandle::node()); }
 
   // Arithmetic
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative, bool enableOneDigitOverflow = false);
@@ -133,36 +162,29 @@ private:
 
   // HalfDigits
   uint16_t numberOfHalfDigits() const {
-    if (m_numberOfDigits == 0) { return 0; }
-    native_uint_t d = digit(m_numberOfDigits-1);
+    if (numberOfDigits() == 0) { return 0; }
+    native_uint_t d = digit(numberOfDigits()-1);
     native_uint_t halfBase = 1 << (8*sizeof(half_native_uint_t));
-    return (d >= halfBase ? 2*m_numberOfDigits : 2*m_numberOfDigits-1);
+    return (d >= halfBase ? 2*numberOfDigits() : 2*numberOfDigits()-1);
   }
   half_native_uint_t halfDigit(int i) const {
     assert(i >= 0);
     if (i >= numberOfHalfDigits()) {
       return 0;
     }
-    return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)m_digits)[i]);
+    return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)digits())[i]);
   }
 
-  bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   native_uint_t digit(uint8_t i) const {
-    assert(i >= 0 && i < m_numberOfDigits);
-    return (usesImmediateDigit() ? m_digit : m_digits[i]);
+    assert(!isOverflow());
+    assert(i >= 0 && i < numberOfDigits());
+    return (usesImmediateDigit() ? m_digit : digits()[i]);
   }
 
-  /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
-   * overflow, or when we want to have one more digit than usual to compute a
-   * big division. */
-  bool isOverflow() const { return m_numberOfDigits == k_maxNumberOfDigits + 1 && m_digits == nullptr; }
+  bool usesImmediateDigit() const { return m_identifier == TreeNode::NoNodeIdentifier; }
 
   bool m_negative;
-  uint8_t m_numberOfDigits; // In base native_uint_t
-  union {
-    native_uint_t * m_digits; // Little-endian
-    native_uint_t m_digit;
-  };
+  native_uint_t m_digit;
 };
 
 struct IntegerDivision {

@@ -19,6 +19,7 @@ public:
   void runCode(const char * );
   virtual const char * inputText(const char * prompt) { return nullptr; }
   virtual void displaySandbox() {}
+  virtual void hideSandbox() {}
   virtual void resetSandbox() {}
   virtual void printText(const char * text, size_t length) {}
   void interrupt();

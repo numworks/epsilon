@@ -20,7 +20,6 @@ public:
 
   // VerticalOffsetLayoutNode
   Type type() const { return m_type; }
-  void setType(Type type) { m_type = type; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -59,7 +58,8 @@ private:
 
 class VerticalOffsetLayout final : public Layout {
 public:
-  VerticalOffsetLayout(Layout l, VerticalOffsetLayoutNode::Type type);
+  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Type type);
+  VerticalOffsetLayout() = delete;
 };
 
 }

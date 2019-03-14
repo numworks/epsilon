@@ -22,19 +22,19 @@ extern "C" {
 class Turtle {
 public:
   constexpr Turtle() :
+    m_underneathPixelBuffer(nullptr),
+    m_dotMask(nullptr),
+    m_dotWorkingPixelBuffer(nullptr),
     m_x(0),
     m_y(0),
-    m_heading(k_headingOffset),
+    m_heading(0),
     m_color(k_defaultColor),
     m_penDown(true),
     m_visible(true),
     m_speed(k_defaultSpeed),
     m_penSize(k_defaultPenSize),
     m_mileage(0),
-    m_drawn(false),
-    m_underneathPixelBuffer(nullptr),
-    m_dotMask(nullptr),
-    m_dotWorkingPixelBuffer(nullptr)
+    m_drawn(false)
   {
   }
 
@@ -47,7 +47,7 @@ public:
   void circle(mp_int_t radius, mp_float_t angle = 360);
   bool goTo(mp_float_t x, mp_float_t y);
 
-  mp_float_t heading() const;
+  mp_float_t heading() const { return m_heading; }
   void setHeading(mp_float_t angle);
 
   uint8_t speed() const { return m_speed; }
@@ -76,7 +76,6 @@ public:
   void viewDidDisappear();
 
 private:
-  static constexpr mp_float_t k_headingOffset = M_PI_2;
   static constexpr mp_float_t k_headingScale = M_PI / 180;
   /* The Y axis is oriented upwards in Turtle and downwards in Kandinsky, so we
    * need to invert some values, hence k_invertedYAxisCoefficient. */
@@ -133,11 +132,19 @@ private:
   void drawPaw(PawType type, PawPosition position);
   void erase();
 
+  /* When GC is performed, sTurtle is marked as root for GC collection and its
+   * data is scanned for pointers that point to the Python heap. We put the 3
+   * pointers that should be marked at the beginning of the object to maximize
+   * the chances they will be correctly aligned and interpreted as pointers. */
+  KDColor * m_underneathPixelBuffer;
+  uint8_t * m_dotMask;
+  KDColor * m_dotWorkingPixelBuffer;
+
   /* The frame's center is the center of the screen, the x axis goes to the
    * right and the y axis goes upwards. */
   mp_float_t m_x;
   mp_float_t m_y;
-  /* The heading is the angle in radians between the direction of the turtle and
+  /* The heading is the angle in degrees between the direction of the turtle and
    * the X axis, in the counterclockwise direction. */
   mp_float_t m_heading;
 
@@ -147,12 +154,23 @@ private:
 
   uint8_t m_speed; // Speed is between 0 and 10
   KDCoordinate m_penSize;
-  KDCoordinate m_mileage;
+
+  /* We sleep every time the turtle walks a mileageLimit amount, to allow user
+   * interruptions. The length of each sleep is determined by the speed of the
+   * turtle.
+   * With emscripten, sleep gives control to the web browser, which decides when
+   * to return from sleep: this makes the turtle significantly slower on the web
+   * emulator than on the calculator. We thus decided to sleep less often on the
+   * emscripten platform. */
+#if __EMSCRIPTEN__
+  static constexpr uint16_t k_mileageLimit = 10000;
+#else
+  static constexpr uint16_t k_mileageLimit = 1000;
+#endif
+
+  uint16_t m_mileage;
   bool m_drawn;
 
-  KDColor * m_underneathPixelBuffer;
-  uint8_t * m_dotMask;
-  KDColor * m_dotWorkingPixelBuffer;
 };
 
 #endif

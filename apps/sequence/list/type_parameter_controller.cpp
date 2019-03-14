@@ -23,7 +23,7 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_listController(list)
 {
   m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin, leftMargin);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 const char * TypeParameterController::title() {
@@ -115,9 +115,9 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
     font = KDFont::SmallFont;
   }
   const char * subscripts[3] = {"n", "n+1", "n+2"};
-  m_layouts[j] = HorizontalLayout(
-        CharLayout(nextName[0], font),
-        VerticalOffsetLayout(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Type::Subscript)
+  m_layouts[j] = HorizontalLayout::Builder(
+        CharLayout::Builder(nextName[0], font),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Type::Subscript)
       );
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setLayout(m_layouts[j]);

@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "function.h"
 #include "function_store.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

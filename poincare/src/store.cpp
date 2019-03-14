@@ -15,12 +15,16 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  // Interrupt simplification if the expression stored contains a matrix
+  if (Expression(childAtIndex(0)).recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return Expression::IsMatrix(e, context, replaceSymbols); }, context, true)) {
+    Expression::SetInterruption(true);
+  }
   return;
 }
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Store(this).shallowReduce(context, angleUnit);
+Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Store(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -28,35 +32,50 @@ int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 }
 
 Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout result = HorizontalLayout();
+  HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayout(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CharLayout::Builder(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }
 
 template<typename T>
-Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbol. */
-  Store s(this);
-  assert(!s.value().isUninitialized());
-  context.setExpressionForSymbol(s.value(), s.symbol(), context);
-  Expression e = context.expressionForSymbol(s.symbol(), false);
-  if (e.isUninitialized()) {
-    return Complex<T>::Undefined();
-  }
-  return e.approximateToEvaluation<T>(context, angleUnit);
+  Expression storedExpression = Store(this).storeValueForSymbol(context, complexFormat, angleUnit);
+  assert(!storedExpression.isUninitialized());
+  return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression storedExpression = storeValueForSymbol(context, complexFormat, angleUnit);
+
+  /* We want to replace the store with its reduced left side. If the
+   * simplification of the left side failed, just replace with the left side of
+   * the store without simplifying it.
+   * The simplification fails for [x]->d(x) for instance, because we do not
+   * have exact simplification of matrices yet. */
+  bool interruptedSimplification = SimplificationHasBeenInterrupted();
+  Expression reducedE = storedExpression.clone().deepReduce(context, complexFormat, angleUnit, target);
+  if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
+    storedExpression = reducedE;
+  }
+  // Restore the previous interruption flag
+  SetInterruption(interruptedSimplification);
+
+  replaceWithInPlace(storedExpression);
+  return storedExpression;
+}
+
+Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
+    Symbol xUnknown = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
     finalValue = childAtIndex(0).replaceSymbolWithExpression(static_cast<Symbol &>(userDefinedUnknown), xUnknown);
   } else {
     assert(symbol().type() == ExpressionNode::Type::Symbol);
@@ -64,19 +83,19 @@ Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   assert(!finalValue.isUninitialized());
   context.setExpressionForSymbol(finalValue, symbol(), context);
-  Expression e = context.expressionForSymbol(symbol(), true);
-  if (e.isUninitialized()) {
-    return Undefined();
+  Expression storedExpression = context.expressionForSymbol(symbol(), true);
+
+  if (storedExpression.isUninitialized()) {
+    return Undefined::Builder();
   }
   if (symbol().type() == ExpressionNode::Type::Function) {
     // Replace the xUnknown symbol with the variable initially used
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol(Symbol::SpecialSymbols::UnknownX);
-    e = e.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
+    Symbol xUnknown = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
+    storedExpression = storedExpression.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
-  replaceWithInPlace(e);
-  return e;
+  return storedExpression;
 }
 
 }

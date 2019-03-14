@@ -1,22 +1,22 @@
-# Makefile belows should augment $(ion_device_objs)
+# Makefile belows should augment $(ion_device_src)
 include ion/src/device/shared/Makefile
 include ion/src/device/bench/Makefile
 include ion/src/device/$(MODEL)/Makefile
 
-ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
+$(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
-objs += $(addprefix ion/src/shared/, \
-  console_line.o \
-  crc32_padded.o\
-  events_modifier.o \
+src += $(addprefix ion/src/shared/, \
+  console_line.cpp \
+  crc32_padded.cpp \
+  events_modifier.cpp \
 )
 
 # If you need to profile execution, you can replace events_keyboard with
 # events_replay.o and dummy/events_modifier.o
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
-$(ion_device_objs): SFLAGS += $(ION_DEVICE_SFLAGS)
-objs += $(ion_device_objs)
+$(call object_for,$(ion_device_src) $(dfu_src) $(usb_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
+src += $(ion_device_src)
 
 # When using the register.h C++ file in production mode, we expect the compiler
 # to completely inline all bit manipulations. For some reason, if we build using
@@ -26,10 +26,10 @@ objs += $(ion_device_objs)
 
 ifneq ($(DEBUG),1)
 ifneq ($(COMPILER),llvm)
-ion/src/device/led.o: SFLAGS+=-O3
-ion/src/device/console.o: SFLAGS+=-O3
-ion/src/device/display.o: SFLAGS+=-O3
-ion/src/device/swd.o: SFLAGS+=-O3
+$(BUILD_DIR)/ion/src/device/led.o: SFLAGS+=-O3
+$(BUILD_DIR)/ion/src/device/console.o: SFLAGS+=-O3
+$(BUILD_DIR)/ion/src/device/display.o: SFLAGS+=-O3
+$(BUILD_DIR)/ion/src/device/swd.o: SFLAGS+=-O3
 endif
 endif
 

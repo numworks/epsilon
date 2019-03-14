@@ -3,7 +3,7 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 1.9.0
+EPSILON_VERSION ?= 10.0.0
 EPSILON_ONBOARDING_APP ?= 1
 # Valid values are "none", "update", "beta"
 EPSILON_BOOT_PROMPT ?= none
@@ -13,15 +13,15 @@ EPSILON_GETOPT ?= 0
 MATRICES_ARE_DEFINED ?=1
 ESCHER_LOG_EVENTS_BINARY ?= 0
 
-include build/defaults.mak
-include build/platform.$(PLATFORM).mak
+include scripts/defaults.mak
+include scripts/platform.$(PLATFORM).mak
 ifndef USE_LIBA
   $(error platform.mak should define USE_LIBA)
 endif
 ifndef EXE
   $(error platform.mak should define EXE, the extension for executables)
 endif
-include build/toolchain.$(TOOLCHAIN).mak
+include scripts/toolchain.$(TOOLCHAIN).mak
 
 SFLAGS += -DDEBUG=$(DEBUG)
 SFLAGS += -DEPSILON_ONBOARDING_APP=$(EPSILON_ONBOARDING_APP)

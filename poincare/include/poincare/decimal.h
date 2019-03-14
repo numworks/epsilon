@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-/* A decimal as 0.01234 is stored that way:
+/* The decimal 0.01234 is stored as:
  *  - bool m_negative = false
  *  - int m_exponent = -2
  *  - int m_numberOfDigitsInMantissa = 1
@@ -18,19 +18,13 @@ class Decimal;
 class DecimalNode final : public NumberNode {
   friend class Decimal;
 public:
-  DecimalNode() :
-    m_negative(false),
-    m_exponent(0),
-    m_numberOfDigitsInMantissa(0) {}
-
-  virtual void setValue(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative);
+  DecimalNode(const native_uint_t * mantissaDigits, uint8_t mantissaSize, int exponent, bool negative);
 
   Integer signedMantissa() const;
   Integer unsignedMantissa() const;
   int exponent() const { return m_exponent; }
 
   // TreeNode
-  void initToMatchSize(size_t size) override;
   size_t size() const override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -39,7 +33,7 @@ public:
   virtual void logAttributes(std::ostream & stream) const override {
     stream << " negative=\"" << m_negative << "\"";
     stream << " mantissa=\"";
-    this->signedMantissa().log(stream);
+    this->signedMantissa().logInteger(stream);
     stream << "\"";
     stream << " exponent=\"" << m_exponent << "\"";
   }
@@ -47,23 +41,23 @@ public:
 
   // Properties
   Type type() const override { return Type::Decimal; }
-  Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return Complex<float>(templatedApproximate<float>());
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return Complex<float>::Builder(templatedApproximate<float>());
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return Complex<double>(templatedApproximate<double>());
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return Complex<double>::Builder(templatedApproximate<double>());
   }
 
   // Comparison
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Serialization
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
@@ -85,12 +79,15 @@ private:
 class Decimal final : public Number {
 friend class Number;
 friend class DecimalNode;
+template<typename T>
+friend class ComplexNode;
 public:
-  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentIsNegative = false);
-  Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
   Decimal(DecimalNode * node) : Number(node) {}
-  Decimal(Integer m, int e);
-  template <typename T> Decimal(T f);
+  static Decimal Builder(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
+  static Decimal Builder(Integer m, int e);
+  template <typename T> static Decimal Builder(T f);
+  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentIsNegative = false);
+
   /* k_maxExponentLength caps the string length we parse to create the exponent.
    * It prevents m_exponent (int32_t) from overflowing and giving wrong results. */
   constexpr static int k_maxExponentLength = 8;
@@ -99,11 +96,11 @@ public:
 private:
   constexpr static int k_maxMantissaLength = 20;
   DecimalNode * node() const { return static_cast<DecimalNode *>(Number::node()); }
-  Decimal(size_t size, const Integer & m, int e);
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  static Decimal Builder(size_t size, const Integer & m, int e);
+  Expression setSign(ExpressionNode::Sign s);
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce();
+  Expression shallowBeautify();
 };
 
 }

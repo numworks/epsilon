@@ -60,7 +60,7 @@ Layout layoutForPreferences(I18n::Message message) {
     case I18n::Message::Radian:
     {
       const char pi[] = {Ion::Charset::SmallPi};
-      return FractionLayout(
+      return FractionLayout::Builder(
           LayoutHelper::String(pi, sizeof(pi), KDFont::SmallFont),
           LayoutHelper::String("2", 1, KDFont::SmallFont)
         );
@@ -75,13 +75,17 @@ Layout layoutForPreferences(I18n::Message message) {
     }
     // Edition mode
     case I18n::Message::Edition2D:
-      return HorizontalLayout(
+      return HorizontalLayout::Builder(
           LayoutHelper::String("1+", 2, KDFont::SmallFont),
-          FractionLayout(LayoutHelper::String("2", 1, KDFont::SmallFont), LayoutHelper::String("3", 1, KDFont::SmallFont))
+          FractionLayout::Builder(LayoutHelper::String("2", 1, KDFont::SmallFont), LayoutHelper::String("3", 1, KDFont::SmallFont))
         );
     case I18n::Message::EditionLinear:
       return LayoutHelper::String("1+2/3", 5, KDFont::SmallFont);
     // Complex format
+    case I18n::Message::Real:
+    {
+      return CharLayout::Builder('x', KDFont::SmallFont);
+    }
     case I18n::Message::Cartesian:
     {
       const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};
@@ -91,9 +95,9 @@ Layout layoutForPreferences(I18n::Message message) {
     {
       const char base[] = {'r', Ion::Charset::Exponential};
       const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta};
-      return HorizontalLayout(
+      return HorizontalLayout::Builder(
           LayoutHelper::String(base, sizeof(base), KDFont::SmallFont),
-          VerticalOffsetLayout(LayoutHelper::String(superscript, sizeof(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
+          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, sizeof(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
         );
     }
     default:

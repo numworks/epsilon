@@ -16,7 +16,7 @@ constexpr Expression::FunctionHelper Ceiling::s_functionHelper;
 int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
 
 Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return CeilingLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return CeilingLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -24,20 +24,21 @@ int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 template<typename T>
-Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(std::ceil(c.real()));
+  return Complex<T>::Builder(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Ceiling(this).shallowReduce(context, angleUnit);
+Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Ceiling(this).shallowReduce();
 }
 
-Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression Ceiling::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -52,10 +53,10 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
     Constant s = static_cast<Constant&>(c);
     Expression result;
     if (s.isPi()) {
-      result = Rational(4);
+      result = Rational::Builder(4);
     }
     if (s.isExponential()) {
-      result = Rational(3);
+      result = Rational::Builder(3);
     }
     if (!result.isUninitialized()) {
       replaceWithInPlace(result);
@@ -68,17 +69,17 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   }
   Rational r = c.convert<Rational>();
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.remainder.isInfinity());
+  assert(!div.remainder.isOverflow());
   if (div.remainder.isZero()) {
-    Expression result = Rational(div.quotient);
+    Expression result = Rational::Builder(div.quotient);
     replaceWithInPlace(result);
     return result;
   }
   Integer result = Integer::Addition(div.quotient, Integer(1));
-  if (result.isInfinity()) {
+  if (result.isOverflow()) {
     return *this;
   }
-  Expression rationalResult = Rational(result);
+  Expression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }

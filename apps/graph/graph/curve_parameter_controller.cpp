@@ -1,6 +1,6 @@
 #include "curve_parameter_controller.h"
 #include "graph_controller.h"
-#include "../../i18n.h"
+#include <apps/i18n.h>
 #include <assert.h>
 
 using namespace Shared;

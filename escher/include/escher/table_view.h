@@ -20,7 +20,6 @@ public:
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
   void reloadCellAtLocation(int i, int j);
-  KDSize minimalSizeForOptimalDisplay() const override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -38,12 +37,12 @@ protected:
     void scrollToCell(int i, int j) const;
     void reloadCellAtLocation(int i, int j);
     HighlightCell * cellAtLocation(int i, int j);
-    void resizeToFitContent();
     TableViewDataSource * dataSource();
     int rowsScrollingOffset() const;
     int columnsScrollingOffset() const;
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
+    void layoutSubviews() override;
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;
@@ -54,11 +53,10 @@ protected:
 
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
-    void layoutSubviews() override;
 
     /* realCellWidth enables to handle list view for which
      * TableViewDataSource->cellWidht = 0 */
-    KDCoordinate columnWidth(int x) const;
+    KDRect cellFrame(int i, int j) const;
     /* These two methods transform an index (of subview for instance) into
      * coordinates that refer to the data source entire table */
     int absoluteColumnNumberFromSubviewIndex(int index) const;

@@ -26,14 +26,15 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return Factor(this).shallowBeautify(context, angleUnit);
+Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
 }
 
-Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
@@ -42,38 +43,38 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(r);
     return r;
   }
-  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, angleUnit);
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, complexFormat, angleUnit);
   if (numeratorDecomp.numberOfChildren() == 0) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.integerDenominator().isOne()) {
-    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, angleUnit);
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, complexFormat, angleUnit);
     if (denominatorDecomp.numberOfChildren() == 0) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
-    result = Division(result, denominatorDecomp.squashUnaryHierarchyInPlace());
+    result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
   }
   if (r.sign() == ExpressionNode::Sign::Negative) {
-    result = Opposite(result);
+    result = Opposite::Builder(result);
   }
   replaceWithInPlace(result);
   return result;
 }
 
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());
-  Multiplication m;
+  Multiplication m = Multiplication::Builder();
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
   if (numberOfPrimeFactors == 0) {
-    m.addChildAtIndexInPlace(Rational(i), 0, 0);
+    m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
     return m;
   }
   if (numberOfPrimeFactors < 0) {
@@ -81,9 +82,9 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
     return m;
   }
   for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational(factors[index]);
+    Expression factor = Rational::Builder(factors[index]);
     if (!coefficients[index].isOne()) {
-      factor = Power(factor, Rational(coefficients[index]));
+      factor = Power::Builder(factor, Rational::Builder(coefficients[index]));
     }
     m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
   }

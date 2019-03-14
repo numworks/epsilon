@@ -14,6 +14,8 @@ namespace Poincare {
 
 class SymbolAbstract;
 class Symbol;
+class ComplexCartesian;
+class ComplexPolar;
 
 class ExpressionNode : public TreeNode {
   friend class AdditionNode;
@@ -25,6 +27,7 @@ public:
    enum class Type : uint8_t {
     Uninitialized = 0,
     Undefined = 1,
+    Unreal,
     Rational,
     Decimal,
     Float,
@@ -34,6 +37,8 @@ public:
     Addition,
     Factorial,
     Division,
+    Constant,
+    Symbol,
     Store,
     Equal,
     Sine,
@@ -46,6 +51,7 @@ public:
     BinomialCoefficient,
     Ceiling,
     ComplexArgument,
+    ComplexPolar,
     Conjugate,
     Derivative,
     Determinant,
@@ -77,11 +83,12 @@ public:
     Randint,
     RealPart,
     Round,
+    SignFunction,
     SquareRoot,
     Subtraction,
     Sum,
-    Symbol,
-    Constant,
+
+    ComplexCartesian,
 
     Matrix,
     ConfidenceInterval,
@@ -96,16 +103,20 @@ public:
   virtual Type type() const = 0;
 
   /* Properties */
+  enum class ReductionTarget {
+    System = 0,
+    User
+  };
   enum class Sign {
     Negative = -1,
     Unknown = 0,
     Positive = 1
   };
-  virtual Sign sign() const { return Sign::Unknown; }
+  virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol);
-  /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   virtual int polynomialDegree(Context & context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context & context);
@@ -113,6 +124,9 @@ public:
   virtual int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
   virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
+
+  /* Complex */
+  virtual bool isReal(Context & context) const { return false; }
 
   /* Simplification */
   /* SimplificationOrder returns:
@@ -125,15 +139,15 @@ public:
    * together (ie Pi, 2*Pi).
    * Because SimplificationOrder is a recursive call, we sometimes enable its
    * interruption to avoid freezing in the simplification process. */
-  static int SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted = false);
+  static int SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool ascending, bool canBeInterrupted = false);
   /* In the simplification order, most expressions are compared by only
    * comparing their types. However hierarchical expressions of same type would
    * compare their operands and thus need to reimplement
    * simplificationOrderSameType. Besides, operations that can be simplified
    * (ie +, *, ^, !) have specific rules to group like terms together and thus
    * reimplement simplificationOrderGreaterType. */
-  virtual int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const { return -1; }
-  virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const;
+  virtual int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const { return ascending ? -1 : 1; }
+  virtual int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const;
 
   /* Layout Helper */
   virtual Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
@@ -142,20 +156,15 @@ public:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;
-  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
-  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  enum class ReductionTarget {
-    BottomUpComputation = 0,
-    TopDownComputation = 1,
-    User
-  };
-  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }

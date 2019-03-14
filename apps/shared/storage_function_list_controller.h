@@ -7,7 +7,7 @@
 #include "function_title_cell.h"
 #include "storage_list_parameter_controller.h"
 #include "storage_expression_model_list_controller.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
@@ -53,12 +53,15 @@ public:
 protected:
   StackViewController * stackController() const;
   void configureFunction(Ion::Storage::Record record);
-  void computeTitlesColumnWidth();
+  void computeTitlesColumnWidth(bool forceMax = false);
   StorageFunctionStore * modelStore() override;
+  KDCoordinate baseline(int j);
+  void resetMemoizationForIndex(int index) override;
+  void shiftMemoization(bool newCellIsUnder) override;
   SelectableTableView m_selectableTableView;
 private:
   static constexpr KDCoordinate k_minTitleColumnWidth = 65;
-  static constexpr KDCoordinate k_functionTitleSumOfMargins = 2*Metric::HistoryHorizontalMargin;
+  static constexpr KDCoordinate k_functionTitleSumOfMargins = 25;
   TabViewController * tabController() const;
   InputViewController * inputController() override;
   KDCoordinate maxFunctionNameWidth();
@@ -69,10 +72,13 @@ private:
   virtual FunctionTitleCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
+  virtual KDCoordinate privateBaseline(int j) const = 0;
+  KDCoordinate nameWidth(int nameLength) const;
   EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;
   KDCoordinate m_titlesColumnWidth;
+  KDCoordinate m_memoizedCellBaseline[k_memoizedCellsCount];
 };
 
 }

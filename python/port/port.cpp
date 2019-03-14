@@ -2,6 +2,7 @@
 
 #include <ion/keyboard.h>
 
+#include <math.h>
 #include <stdint.h>
 #include <string.h>
 #include <setjmp.h>
@@ -138,13 +139,34 @@ void gc_collect(void) {
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLength;
+  void ** scanStart;
   if ((uintptr_t)python_stack_top > (uintptr_t)&regs) {
-    stackLength = ((uintptr_t)python_stack_top - (uintptr_t)&regs) / sizeof(uintptr_t);
-    gc_collect_root(regs_ptr, stackLength);
+
+    /* To compute the stack length:
+     *                                  regs
+     *                             <----------->
+     * STACK ->  ...|  |  |  |  |  |--|--|--|--|  |  |  |  |  |  |
+     *                             ^&regs                        ^python_stack_top
+     * */
+
+    stackLength = ceil((float)((uintptr_t)python_stack_top - (uintptr_t)&regs) / (float)sizeof(uintptr_t));
+    scanStart = regs_ptr;
+
   } else {
-    stackLength = ((uintptr_t)(&regs) - (uintptr_t)python_stack_top) / sizeof(uintptr_t);
-    gc_collect_root((void **)python_stack_top, stackLength);
+
+    /* When computing the stack length, take into account regs' size.
+     *                                                 regs
+     *                                            <----------->
+     * STACK ->  |  |  |  |  |  |  |  |  |  |  |  |--|--|--|--|  |  |  |...
+     *           ^python_stack_top                ^&regs
+     * */
+
+    size_t sizeOfRegs = ceil(((float)sizeof(regs))/(float)sizeof(uintptr_t));
+    stackLength = (size_t)ceil(((float)((uintptr_t)(&regs) - (uintptr_t)python_stack_top)) / (float)sizeof(uintptr_t)) + sizeOfRegs;
+    scanStart = (void **)python_stack_top;
+
   }
+  gc_collect_root(scanStart, stackLength);
 
   gc_collect_end();
 }

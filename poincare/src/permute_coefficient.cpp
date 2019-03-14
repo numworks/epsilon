@@ -23,35 +23,36 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return PermuteCoefficient(this).shallowReduce(context, angleUnit);
+Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return PermuteCoefficient(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();
   T k = kInput.toScalar();
   if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
     return Complex<T>::Undefined();
   }
   if (k > n) {
-    return Complex<T>(0.0);
+    return Complex<T>::Builder(0.0);
   }
   T result = 1;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
     if (std::isinf(result) || std::isnan(result)) {
-      return Complex<T>(result);
+      return Complex<T>::Builder(result);
     }
   }
-  return Complex<T>(std::round(result));
+  return Complex<T>::Builder(std::round(result));
 }
 
-Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression PermuteCoefficient::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -60,13 +61,13 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return replaceWith(new Undefined(), true);
+    return replaceWith(new Undefined::Builder(), true);
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne() || r0.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -74,7 +75,7 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -88,7 +89,7 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
   Integer n = r0.unsignedIntegerNumerator();
   Integer k = r1.unsignedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Rational(0);
+    Expression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
   }
@@ -103,8 +104,8 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
     Integer factor = Integer::Subtraction(n, Integer(i));
     result = Integer::Multiplication(result, factor);
   }
-  assert(!result.isInfinity()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
-  Expression rationalResult = Rational(result);
+  assert(!result.isOverflow()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
+  Expression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 

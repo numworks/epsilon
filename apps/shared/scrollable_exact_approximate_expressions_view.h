@@ -25,7 +25,6 @@ public:
   }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  KDSize minimalSizeForOptimalDisplay() const override;
   Poincare::Layout layout() const {
     return m_contentCell.layout();
   }
@@ -55,12 +54,11 @@ private:
     Poincare::Layout layout() const override;
   private:
     View * subviewAtIndex(int index) override;
-    constexpr static KDCoordinate k_digitHorizontalMargin = 10;
     ExpressionView m_rightExpressionView;
     MessageTextView m_approximateSign;
     ExpressionView m_leftExpressionView;
     SubviewPosition m_selectedSubviewPosition;
-};
+  };
   ContentCell m_contentCell;
 };
 

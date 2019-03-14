@@ -10,7 +10,6 @@ public:
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   const char * text() const override { return m_text; }
   void setText(const char * text) override;
-  KDSize minimalSizeForOptimalDisplay() const override;
 private:
   const char * m_text;
 };

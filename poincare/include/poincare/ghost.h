@@ -12,7 +12,7 @@ namespace Poincare {
 
 class Ghost final : public TreeHandle {
 public:
-  Ghost() : TreeHandle(TreePool::sharedPool()->createTreeNode<GhostNode>()) {}
+  static Ghost Builder() { return TreeHandle::FixedArityBuilder<Ghost, GhostNode>(); }
 };
 
 }

@@ -91,25 +91,51 @@ const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * a = (AppsContainer *)(app()->container());
   m_inputRunLoopActive = true;
 
-  // Set the prompt text
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  m_editCell.setPrompt(prompt);
+  const char * promptText = prompt;
+  char * s = const_cast<char *>(prompt);
+
+  if (promptText != nullptr) {
+    /* Set the prompt text. If the prompt text has a '\n', put the prompt text in
+     * the history until the last '\n', and put the remaining prompt text in the
+     * edit cell's prompt. */
+    char * lastCarriageReturn = nullptr;
+    while (*s != 0) {
+      if (*s == '\n') {
+        lastCarriageReturn = s;
+      }
+      s++;
+    }
+    if (lastCarriageReturn != nullptr) {
+      printText(prompt, lastCarriageReturn-prompt+1);
+      promptText = lastCarriageReturn+1;
+    }
+  }
+
+  m_editCell.setPrompt(promptText);
   m_editCell.setText("");
 
-  // Run new input loop
+  // Reload the history
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   a->redrawWindow();
+
+  // Launch a new input loop
   a->runWhile([](void * a){
       ConsoleController * c = static_cast<ConsoleController *>(a);
       return c->inputRunLoopActive();
   }, this);
 
-  // Reset the prompt line
+  // Handle the input text
+  if (promptText != nullptr) {
+    printText(promptText, s - promptText);
+  }
+  const char * text = m_editCell.text();
+  printText(text, strlen(text));
   flushOutputAccumulationBufferToStore();
-  m_consoleStore.deleteLastLineIfEmpty();
+
   m_editCell.setPrompt(sStandardPromptText);
 
-  return m_editCell.text();
+  return text;
 }
 
 void ConsoleController::viewWillAppear() {
@@ -242,7 +268,11 @@ bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion:
 }
 
 bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Up && m_inputRunLoopActive) {
+  if (m_inputRunLoopActive
+      && (event == Ion::Events::Up
+        || event == Ion::Events::OK
+        || event == Ion::Events::EXE))
+  {
     m_inputRunLoopActive = false;
     /* We need to return true here because we want to actually exit from the
      * input run loop, which requires ending a dispatchEvent cycle. */
@@ -302,6 +332,13 @@ void ConsoleController::displaySandbox() {
   stackViewController()->push(&m_sandboxController);
 }
 
+void ConsoleController::hideSandbox() {
+  if (!sandboxIsDisplayed()) {
+    return;
+  }
+  m_sandboxController.hide();
+}
+
 void ConsoleController::resetSandbox() {
   if (!sandboxIsDisplayed()) {
     return;
@@ -313,28 +350,33 @@ void ConsoleController::resetSandbox() {
  * The text argument is not always null-terminated. */
 void ConsoleController::printText(const char * text, size_t length) {
   size_t textCutIndex = firstNewLineCharIndex(text, length);
-  // If there is no new line in text, just append it to the output accumulation
-  // buffer.
   if (textCutIndex >= length) {
+    /* If there is no new line in text, just append it to the output
+     * accumulation buffer. */
     appendTextToOutputAccumulationBuffer(text, length);
     return;
   }
-  // If there is a new line in the middle of the text, we have to store at least
-  // two new console lines in the console store.
   if (textCutIndex < length - 1) {
+    /* If there is a new line in the middle of the text, we have to store at
+     * least two new console lines in the console store. */
     printText(text, textCutIndex + 1);
     printText(&text[textCutIndex+1], length - (textCutIndex + 1));
     return;
   }
-  // If there is a new line at the end of the text, we have to store the line in
-  // the console store.
-  if (textCutIndex == length - 1) {
-    appendTextToOutputAccumulationBuffer(text, length-1);
-    flushOutputAccumulationBufferToStore();
-  }
+  /* There is a new line at the end of the text, we have to store the line in
+   * the console store. */
+  assert(textCutIndex == length - 1);
+  appendTextToOutputAccumulationBuffer(text, length-1);
+  flushOutputAccumulationBufferToStore();
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
+  if (sandboxIsDisplayed()) {
+    /* The sandbox might be displayed, for instance if we are auto-importing
+     * several scripts that draw at importation. In this case, we want to remove
+     * the sandbox. */
+    hideSandbox();
+  }
   if (script.importationStatus() || force) {
     // Step 1 - Create the command "from scriptName import *".
 
@@ -357,7 +399,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     // Step 2 - Run the command
     runAndPrintForCommand(command);
   }
-  if (force) {
+  if (!sandboxIsDisplayed() && force) {
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
     m_editCell.setEditing(true);

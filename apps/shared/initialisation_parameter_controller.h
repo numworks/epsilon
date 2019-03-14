@@ -3,13 +3,17 @@
 
 #include <escher.h>
 #include "interactive_curve_view_range.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
 class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange);
+  InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange) :
+    ViewController(parentResponder),
+    m_selectableTableView(this, this, this),
+    m_graphRange(graphRange)
+  {}
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

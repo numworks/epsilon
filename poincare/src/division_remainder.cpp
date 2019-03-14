@@ -20,25 +20,26 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, DivisionRemainder::s_functionHelper.name());
 }
 
-Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return DivisionRemainder(this).shallowReduce(context, angleUnit);
+Expression DivisionRemainderNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return DivisionRemainder(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();
   T f2 = f2Input.toScalar();
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(std::round(f1-f2*std::floor(f1/f2)));
+  return Complex<T>::Builder(std::round(f1-f2*std::floor(f1/f2)));
 }
 
-Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression DivisionRemainder::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -47,13 +48,13 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -61,7 +62,7 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -75,13 +76,13 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   if (b.isZero()) {
-    Expression result = Infinity(a.isNegative());
+    Expression result = Infinity::Builder(a.isNegative());
     replaceWithInPlace(result);
     return result;
   }
   Integer result = Integer::Division(a, b).remainder;
-  assert(!result.isInfinity());
-  Expression rationalResult = Rational(result);
+  assert(!result.isOverflow());
+  Expression rationalResult = Rational::Builder(result);
   replaceWithInPlace(rationalResult);
   return rationalResult;
 }

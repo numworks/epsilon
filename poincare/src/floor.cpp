@@ -16,7 +16,7 @@ constexpr Expression::FunctionHelper Floor::s_functionHelper;
 int FloorNode::numberOfChildren() const { return Floor::s_functionHelper.numberOfChildren(); }
 
 Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return FloorLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return FloorLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -24,20 +24,21 @@ int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 }
 
 template<typename T>
-Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
-  return Complex<T>(std::floor(c.real()));
+  return Complex<T>::Builder(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Floor(this).shallowReduce(context, angleUnit);
+Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Floor(this).shallowReduce();
 }
 
-Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression Floor::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -52,10 +53,10 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Constant s = static_cast<Constant &>(c);
     Expression result;
     if (s.isPi()) {
-      result = Rational(3);
+      result = Rational::Builder(3);
     }
     if (s.isExponential()) {
-      result = Rational(2);
+      result = Rational::Builder(2);
     }
     if (!result.isUninitialized()) {
       replaceWithInPlace(result);
@@ -68,8 +69,8 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
-  assert(!div.quotient.isInfinity());
-  Expression result = Rational(div.quotient);
+  assert(!div.quotient.isOverflow());
+  Expression result = Rational::Builder(div.quotient);
   replaceWithInPlace(result);
   return result;
 }

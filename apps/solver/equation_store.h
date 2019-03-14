@@ -18,9 +18,10 @@ public:
   enum class Error : int16_t {
     NoError = 0,
     EquationUndefined = -1,
-    TooManyVariables = -2,
-    NonLinearSystem = -3,
-    RequireApproximateSolution = -4,
+    EquationUnreal = -2,
+    TooManyVariables = -3,
+    NonLinearSystem = -4,
+    RequireApproximateSolution = -5,
   };
   /* EquationStore */
   EquationStore();
@@ -79,9 +80,11 @@ private:
     return emptyModel();
   }
   void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
-  Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
-  Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
+  Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
+  Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
   void tidySolution();
+  bool isExplictlyComplex();
+  Poincare::Preferences::ComplexFormat updatedComplexFormat();
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;

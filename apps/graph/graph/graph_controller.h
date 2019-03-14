@@ -20,7 +20,7 @@ public:
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const;
   void setDisplayDerivativeInBanner(bool displayDerivative);
-  float interestingXRange() override;
+  float interestingXHalfRange() const override;
 private:
   int estimatedBannerNumberOfLines() const override;
   void selectFunctionWithCursor(int functionIndex) override;

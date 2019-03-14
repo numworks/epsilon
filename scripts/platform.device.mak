@@ -6,6 +6,6 @@ EPSILON_BOOT_PROMPT = update
 EPSILON_DEVICE_BENCH ?= 1
 SFLAGS += -DEPSILON_DEVICE_BENCH=$(EPSILON_DEVICE_BENCH)
 
-python/port/port.o: CXXFLAGS += -DMP_PORT_USE_STACK_SYMBOLS=1
+$(BUILD_DIR)/python/port/port.o: CXXFLAGS += -DMP_PORT_USE_STACK_SYMBOLS=1
 
-include build/platform.device.$(MODEL).mak
+include scripts/platform.device.$(MODEL).mak

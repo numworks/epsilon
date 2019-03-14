@@ -8,7 +8,8 @@
 class ScrollView : public View {
 public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  ScrollView(ScrollView&& other);
+  KDSize minimalSizeForOptimalDisplay() const override;
 
   void setTopMargin(KDCoordinate m) { m_topMargin = m; }
   KDCoordinate topMargin() const { return m_topMargin; }
@@ -23,19 +24,61 @@ public:
     setTopMargin(top); setRightMargin(right); setBottomMargin(bottom); setLeftMargin(left);
   }
   void setMargins(KDCoordinate m) { setMargins(m, m, m, m); }
-  void setCommonMargins();
 
-  void setShowsIndicators(bool s) { m_showsIndicators = s; }
-  bool showsIndicators() const { return m_showsIndicators; }
-  void setColorsBackground(bool c) { m_colorsBackground = c; }
-  bool colorsBackground() const { return m_colorsBackground; }
-  virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  class Decorator {
+  public:
+    enum class Type {
+      None,
+      Bars,
+      Arrows
+    };
+    /* We want (Decorator *)->~Decorator() to call ~BarDecorator() or ~ArrowDecorator()
+     * when required. */
+    virtual ~Decorator() = default;
+    virtual int numberOfIndicators() const { return 0; }
+    virtual View * indicatorAtIndex(int index) { assert(false); return nullptr; }
+    virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) { return frame; }
+    virtual void setBackgroundColor(KDColor c) {}
+  };
+
+  class BarDecorator : public Decorator {
+  public:
+    BarDecorator();
+    int numberOfIndicators() const override { return 2; }
+    View * indicatorAtIndex(int index) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
+    ScrollViewVerticalBar * verticalBar() { return &m_verticalBar; }
+    ScrollViewHorizontalBar * horizontalBar() { return &m_horizontalBar; }
+  private:
+    ScrollViewVerticalBar m_verticalBar;
+    ScrollViewHorizontalBar m_horizontalBar;
+    static constexpr KDCoordinate k_barsFrameBreadth = 13;
+  };
+
+  class ArrowDecorator : public Decorator {
+  public:
+    ArrowDecorator();
+    int numberOfIndicators() const override { return 4; }
+    View * indicatorAtIndex(int index) override;
+    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame) override;
+    void setBackgroundColor(KDColor c) override;
+  private:
+    ScrollViewArrow m_topArrow;
+    ScrollViewArrow m_rightArrow;
+    ScrollViewArrow m_bottomArrow;
+    ScrollViewArrow m_leftArrow;
+  };
+
+  Decorator * decorator() { return m_decorators.activeDecorator(); }
+  void setDecoratorType(Decorator::Type t) {
+    m_decoratorType = t;
+    m_decorators.setActiveDecorator(t);
+  }
+  virtual void setBackgroundColor(KDColor c) {
+    m_backgroundColor = c;
+    decorator()->setBackgroundColor(m_backgroundColor);
+  }
   KDColor backgroundColor() const { return m_backgroundColor; }
-
-  ScrollViewIndicator * verticalScrollIndicator() { return &m_verticalScrollIndicator; }
-  ScrollViewIndicator * horizontalScrollIndicator() { return &m_horizontalScrollIndicator; }
-  void setIndicatorThickness(KDCoordinate t) { m_indicatorThickness = t; }
-  KDCoordinate indicatorThickness() const { return m_indicatorThickness; }
 
   void setContentOffset(KDPoint offset, bool forceRelayout = false);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
@@ -43,12 +86,15 @@ public:
   void scrollToContentPoint(KDPoint p, bool allowOverscroll = false);
   void scrollToContentRect(KDRect rect, bool allowOverscroll = false); // Minimal scrolling to make this rect visible
 protected:
-  KDCoordinate maxContentWidthDisplayableWithoutScrolling();
-  KDCoordinate maxContentHeightDisplayableWithoutScrolling();
+  KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {
+    return m_frame.width() - m_leftMargin - m_rightMargin;
+  }
+  KDCoordinate maxContentHeightDisplayableWithoutScrolling() const {
+    return m_frame.height() - m_topMargin - m_bottomMargin;
+  }
   KDRect visibleContentRect();
   void layoutSubviews() override;
-  void updateScrollIndicator();
-  KDSize contentSize();
+  virtual KDSize contentSize() const { return m_contentView->minimalSizeForOptimalDisplay(); }
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;
@@ -56,20 +102,41 @@ protected:
   View * m_contentView;
 private:
   ScrollViewDataSource * m_dataSource;
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
+  View * subviewAtIndex(int index) override { return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index); }
 
-  ScrollViewIndicator m_verticalScrollIndicator;
-  ScrollViewIndicator m_horizontalScrollIndicator;
-  bool hasVerticalIndicator() const;
-  bool hasHorizontalIndicator() const;
+  class InnerView : public View {
+  public:
+    InnerView(ScrollView * scrollView) : View(), m_scrollView(scrollView) {}
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+  private:
+    int numberOfSubviews() const override { return 1; }
+    View * subviewAtIndex(int index) override {
+      assert(index == 0);
+      return m_scrollView->m_contentView;
+    }
+    const ScrollView * m_scrollView;
+  };
+
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
   KDCoordinate m_leftMargin;
-  KDCoordinate m_indicatorThickness;
-  bool m_showsIndicators;
-  bool m_colorsBackground;
+
+  InnerView m_innerView;
+  Decorator::Type m_decoratorType;
+  union Decorators {
+  public:
+    Decorators();
+    ~Decorators();
+    Decorator * activeDecorator() { return &m_none; }
+    void setActiveDecorator(Decorator::Type t);
+  private:
+    Decorator m_none;
+    BarDecorator m_bars;
+    ArrowDecorator m_arrows;
+  };
+  Decorators m_decorators;
   KDColor m_backgroundColor;
 };
 

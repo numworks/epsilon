@@ -19,8 +19,9 @@ public:
     Scientific = 1,
   };
   enum class ComplexFormat {
-    Cartesian = 0,
-    Polar = 1
+    Real = 0,
+    Cartesian = 1,
+    Polar = 2
   };
   enum class AngleUnit {
     Degree = 0,

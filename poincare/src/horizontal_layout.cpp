@@ -226,7 +226,7 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
   if (m_numberOfChildren > 0) {
-    HorizontalLayout thisRef = HorizontalLayout(this);
+    HorizontalLayout thisRef(this);
     thisRef.removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), cursor);
     *currentNumberOfChildren = thisRef.numberOfChildren();
   }
@@ -258,7 +258,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
    * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
 
   if (!force && index == 0 && numberOfChildren() > 0 && childAtIndex(0)->mustHaveLeftSibling()) {
-    Layout(this).addChildAtIndex(EmptyLayout(), 0, numberOfChildren(), cursor);
+    Layout(this).addChildAtIndex(EmptyLayout::Builder(), 0, numberOfChildren(), cursor);
   }
 }
 
@@ -352,33 +352,6 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 }
 
 // HorizontalLayout
-
-HorizontalLayout::HorizontalLayout() : Layout(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
-
-HorizontalLayout::HorizontalLayout(Layout l) : HorizontalLayout() {
-  addChildAtIndexInPlace(l, 0, 0);
-}
-
-HorizontalLayout::HorizontalLayout(Layout l1, Layout l2) : HorizontalLayout() {
-  addChildAtIndexInPlace(l1, 0, 0);
-  addChildAtIndexInPlace(l2, 1, 1);
-}
-HorizontalLayout::HorizontalLayout(Layout l1, Layout l2, Layout l3) : HorizontalLayout() {
-  addChildAtIndexInPlace(l1, 0, 0);
-  addChildAtIndexInPlace(l2, 1, 1);
-  addChildAtIndexInPlace(l3, 2, 2);
-}
-HorizontalLayout::HorizontalLayout(Layout l1, Layout l2, Layout l3, Layout l4) : HorizontalLayout() {
-  addChildAtIndexInPlace(l1, 0, 0);
-  addChildAtIndexInPlace(l2, 1, 1);
-  addChildAtIndexInPlace(l3, 2, 2);
-  addChildAtIndexInPlace(l4, 3, 3);
-}
-HorizontalLayout::HorizontalLayout(const Layout * children, size_t numberOfChildren) : HorizontalLayout() {
-  for (size_t i = 0; i < numberOfChildren; i++) {
-    addChildAtIndexInPlace(children[i], i, i);
-  }
-}
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   if (l.isHorizontal()) {

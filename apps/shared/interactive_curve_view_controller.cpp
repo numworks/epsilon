@@ -37,7 +37,34 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 }
 
 float InteractiveCurveViewController::addMargin(float x, float range, bool isMin) {
+  /* We are adding margins. Let's name:
+   *   - The current range: rangeBefore
+   *   - The next range: rangeAfter
+   *   - The bottom margin ratio with which we will evaluate if a point is too
+   *       low on the screen: bottomRatioAfter
+   *   - The bottom margin ratio with which we will evaluate if a point is too
+   *       high on the screen: topRatioAfter
+   *   - The ratios we need to use to create the margins: bottomRatioBefore and
+   *       topRatioBefore
+   *
+   * We want to add margins so that:
+   *   bottomRatioAfter*rangeAfter == bottomRatioBefore * rangeBefore
+   *   topRatioAfter*rangeAfter == topRatioBefore * rangeBefore
+   * Knowing that:
+   *   rangeAfter = (1+bottomRatioBefore+topRatioBefore)*rangeBefore
+   *
+   * We thus have:
+   *   bottomRatioBefore = bottomRatioAfter / (1-bottomRatioAfter-topRatioAfter)
+   *   topRatioBefore = topRatioAfter / (1-bottomRatioAfter-topRatioAfter)
+   *
+   * If we just used bottomRatioBefore = bottomRatioAfter and
+   * topRatioBefore = topRatioAfter, we would create too small margins and the
+   * controller might need to pan right after a Y auto calibration. */
+
+  assert(displayBottomMarginRatio()+displayTopMarginRatio() < 1); // Assertion so that the formula is correct
+  float ratioDenominator = 1-displayBottomMarginRatio()-displayTopMarginRatio();
   float ratio = isMin ? -displayBottomMarginRatio() : displayTopMarginRatio();
+  ratio = ratio / ratioDenominator;
   return x+ratio*range;
 }
 
@@ -115,8 +142,11 @@ Responder * InteractiveCurveViewController::defaultController() {
 void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
+    if (*m_modelVersion == 0 || numberOfCurves() == 1) {
+      initRangeParameters();
+    }
     *m_modelVersion = newModelVersion;
-    initRangeParameters();
+    didChangeRange(interactiveCurveViewRange());
     /* Warning: init cursor parameter before reloading banner view. Indeed,
      * reloading banner view needs an updated cursor to load the right data. */
     initCursorParameters();

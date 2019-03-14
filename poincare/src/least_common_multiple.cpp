@@ -21,21 +21,21 @@ int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preference
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, LeastCommonMultiple::s_functionHelper.name());
 }
 
-Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return LeastCommonMultiple(this).shallowReduce(context, angleUnit);
+Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return LeastCommonMultiple(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();
   T f2 = f2Input.toScalar();
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return Complex<T>::Undefined();
   }
   if (f1 == 0.0f || f2 == 0.0f) {
-    return Complex<T>(0.0);
+    return Complex<T>::Builder(0.0);
   }
   int a = (int)f2;
   int b = (int)f1;
@@ -50,12 +50,13 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
     a = b;
     b = r;
   }
-  return Complex<T>(product/a);
+  return Complex<T>::Builder(product/a);
 }
 
-Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression LeastCommonMultiple::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -64,13 +65,13 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == Type::Matrix || c1.type() == Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -78,7 +79,7 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -92,10 +93,10 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   Integer lcm = Arithmetic::LCM(a, b);
-  if (lcm.isInfinity()) {
+  if (lcm.isOverflow()) {
     return *this;
   }
-  Expression result = Rational(lcm);
+  Expression result = Rational::Builder(lcm);
   replaceWithInPlace(result);
   return result;
 }

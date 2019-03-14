@@ -16,11 +16,6 @@
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
 
-#define USE_PIC_VIEW_APP 0
-#if USE_PIC_VIEW_APP
-#include "picview/picview_app.h"
-#endif
-
 #ifdef EPSILON_BOOT_PROMPT
 #include "on_boarding/pop_up_controller.h"
 #endif
@@ -42,7 +37,7 @@ public:
   VariableBoxController * variableBoxController();
   void suspend(bool checkIfPowerKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
-  void switchTo(App::Snapshot * snapshot) override;
+  bool switchTo(App::Snapshot * snapshot) override;
   void run() override;
   bool updateBatteryState();
   void refreshPreferences();
@@ -70,9 +65,6 @@ private:
 
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
-#if USE_PIC_VIEW_APP
-  PicViewApp m_picViewApp;
-#endif
   Shared::GlobalContext m_globalContext;
   MathToolbox m_mathToolbox;
   VariableBoxController m_variableBoxController;

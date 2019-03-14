@@ -9,6 +9,15 @@
 
 namespace Poincare {
 
+FunctionNode::FunctionNode(const char * newName, int length) : SymbolAbstractNode() {
+  strlcpy(const_cast<char*>(name()), newName, length+1);
+}
+
+bool FunctionNode::isReal(Context & context) const {
+  Function f(this);
+  return SymbolAbstract::isReal(f, context);
+}
+
 Expression FunctionNode::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
   return Function(this).replaceSymbolWithExpression(symbol, expression);
 }
@@ -57,36 +66,48 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FunctionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Function(this).shallowReduce(context, angleUnit, target); // This uses Symbol::shallowReduce
+Expression FunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return Function(this).shallowReduce(context, complexFormat, angleUnit, target); // This uses Symbol::shallowReduce
 }
 
 Expression FunctionNode::shallowReplaceReplaceableSymbols(Context & context) {
   return Function(this).shallowReplaceReplaceableSymbols(context);
 }
 
-Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<float>(context, angleUnit);
+Evaluation<float> FunctionNode::approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return templatedApproximate<float>(context, complexFormat, angleUnit);
 }
 
-Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const {
-  return templatedApproximate<double>(context, angleUnit);
+Evaluation<double> FunctionNode::approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return templatedApproximate<double>(context, complexFormat, angleUnit);
 }
 
 template<typename T>
-Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> FunctionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Function f(this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.approximateToEvaluation<T>(context, angleUnit);
+  return e.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Function::Function(const char * name, size_t length) :
-  Function(TreePool::sharedPool()->createTreeNode<FunctionNode>(SymbolAbstract::AlignedNodeSize(length, sizeof(FunctionNode))))
-{
-  static_cast<FunctionNode *>(Expression::node())->setName(name, length);
+Function Function::Builder(const char * name, size_t length, Expression child) {
+  Function f = SymbolAbstract::Builder<Function, FunctionNode>(name, length);
+  if (!child.isUninitialized()) {
+    f.replaceChildAtIndexInPlace(0, child);
+  }
+  return f;
+}
+
+Expression Function::UntypedBuilder(const char * name, size_t length, Expression child, Context * context) {
+  /* Create an expression only if it is not in the context or defined as a
+   * function */
+  Function f = Function::Builder(name, length, child);
+  if (SymbolAbstract::ValidInContext(f, context)) {
+    return f;
+  }
+  return Expression();
 }
 
 Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
@@ -95,12 +116,12 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     // Replace the unknown in the new expression by the function's child
-    Symbol xSymbol = Symbol(Symbol::SpecialSymbols::UnknownX);
+    Symbol xSymbol = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
     Expression xValue = childAtIndex(0);
     value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
-      value = Parenthesis(value);
+      value = Parenthesis::Builder(value);
     }
     replaceWithInPlace(value);
     return value;
@@ -108,12 +129,12 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Function::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Function f(*this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (!e.isUninitialized()) {
     replaceWithInPlace(e);
-    return e.deepReduce(context, angleUnit, target);
+    return e.deepReduce(context, complexFormat, angleUnit, target);
   }
   return *this;
 }
@@ -123,7 +144,7 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
   if (e.isUninitialized()) {
     return *this;
   }
-  e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
+  e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
   replaceWithInPlace(e);
   return e;
 }
@@ -131,7 +152,7 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
 // TODO: should we avoid replacing unknown X in-place but use a context instead?
 #if 0
 VariableContext Function::unknownXContext(Context & parentContext) const {
-  Symbol unknownXSymbol(Symbol::SpecialSymbols::UnknownX);
+  Symbol unknownXSymbol = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
   Expression child = childAtIndex(0);
   const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
   /* COMMENT */

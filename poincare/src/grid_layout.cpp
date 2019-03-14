@@ -103,7 +103,7 @@ void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
   int previousRowCount = m_numberOfRows;
   for (int i = 0; i < columnsCount; i++) {
     thisRef.addChildAtIndex(
-        EmptyLayout(color),
+        EmptyLayout::Builder(color),
         previousNumberOfChildren,
         previousNumberOfChildren + i,
         nullptr);
@@ -119,7 +119,7 @@ void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
   int futureColumnsCount = m_numberOfColumns + 1;
   for (int i = 0; i < rowsCount; i++) {
     thisRef.addChildAtIndex(
-        EmptyLayout(color),
+        EmptyLayout::Builder(color),
         i*futureColumnsCount + futureColumnsCount-1,
         previousNumberOfChildren + i,
         nullptr);

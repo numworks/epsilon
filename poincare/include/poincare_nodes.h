@@ -67,6 +67,7 @@
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
 #include <poincare/round.h>
+#include <poincare/sign_function.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/store.h>
@@ -75,6 +76,7 @@
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <poincare/variable_context.h>
 
 #endif

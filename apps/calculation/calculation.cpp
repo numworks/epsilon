@@ -3,6 +3,7 @@
 #include "../shared/poincare_helpers.h"
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <string.h>
 #include <cmath>
 
@@ -22,7 +23,14 @@ Calculation::Calculation() :
 
 bool Calculation::operator==(const Calculation& c) {
   return strcmp(m_inputText, c.m_inputText) == 0
-      && strcmp(m_approximateOutputText, c.m_approximateOutputText) == 0;
+      && strcmp(m_approximateOutputText, c.m_approximateOutputText) == 0
+      /* Some calculations can make appear trigonometric functions in their
+       * exact output. Their argument will be different with the angle unit
+       * preferences but both input and approximate output will be the same.
+       * For example, i^(sqrt(3)) = cos(sqrt(3)*pi/2)+i*sin(sqrt(3)*pi/2) if
+       * angle unit is radian and i^(sqrt(3)) = cos(sqrt(3)*90+i*sin(sqrt(3)*90)
+       * in degree. */
+      && strcmp(m_exactOutputText, c.m_exactOutputText) == 0;
 }
 
 void Calculation::reset() {
@@ -41,9 +49,10 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
      * to keep Ans symbol in the calculation store. */
     PoincareHelpers::Serialize(input, m_inputText, sizeof(m_inputText));
   }
-  Expression exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
+  Expression exactOutput;
+  Expression approximateOutput;
+  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
-  Expression approximateOutput = PoincareHelpers::Approximate<double>(exactOutput, *context);
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
@@ -116,7 +125,7 @@ Expression Calculation::exactOutput() {
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
   Expression exactOutput = Expression::Parse(m_exactOutputText);
   if (exactOutput.isUninitialized()) {
-    return Undefined();
+    return Undefined::Builder();
   }
   return exactOutput;
 }
@@ -142,21 +151,21 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   }
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts
-     * too, do not display the exact result. If, because of the number of
-     * significant digits, the two layouts are not equal, we display both. */
+     * too, do not display the exact result. If the two layouts are not equal
+     * because of the number of significant digits, we display both. */
     return exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
   }
-  if (strcmp(m_exactOutputText, Undefined::Name()) == 0) {
+  if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
+    // If the approximate result is 'unreal' or the exact result is 'undef'
     return true;
   }
   return input().isApproximate(*context) || exactOutput().isApproximate(*context);
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
-  /* If the approximateOutput is undef, we not not want to display it.
-   * This prevents:
+  /* If the approximateOutput is undef, do not display it. This prevents:
    * x->f(x) from displaying x = undef
-   * x+x form displaying 2x = undef */
+   * x+x from displaying 2x = undef */
   return strcmp(m_approximateOutputText, Undefined::Name()) == 0;
 }
 
@@ -167,11 +176,12 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
   char buffer[bufferSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  Expression exactOutputExpression = Expression::ParseAndSimplify(m_exactOutputText, *context, preferences->angleUnit());
+  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context);
   if (exactOutputExpression.isUninitialized()) {
-    exactOutputExpression = Undefined();
+    exactOutputExpression = Undefined::Builder();
   }
-  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
+  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

@@ -2,7 +2,7 @@
 #define SHARED_LANGUAGE_CONTROLLER_H
 
 #include <escher.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 

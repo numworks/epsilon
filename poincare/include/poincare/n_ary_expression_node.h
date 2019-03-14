@@ -18,6 +18,9 @@ public:
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
+  // Complex
+  bool isReal(Context & context) const override;
+
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 
@@ -30,8 +33,8 @@ protected:
    * than 6144 children which fit in uint16_t. */
   uint16_t m_numberOfChildren;
 private:
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
 };
 
 class NAryExpression : public Expression {
@@ -48,6 +51,11 @@ public:
   Expression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }
+  /* allChildrenAreReal returns:
+   * - 1 if all children are real
+   * - 0 if all non real children are ComplexCartesian
+   * - -1 if some chidren are non-real and non ComplexCartesian */
+  int allChildrenAreReal(Context & context) const;
 protected:
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
 };

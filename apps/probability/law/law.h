@@ -4,13 +4,13 @@
 #include <escher.h>
 #include "../../constant.h"
 #include "../../shared/curve_view_range.h"
-#include "../../i18n.h"
+#include <apps/i18n.h>
 
 namespace Probability {
 
 class Law : public Shared::CurveViewRange {
 public:
-  Law();
+  Law() : Shared::CurveViewRange() {}
   enum class Type : uint8_t{
     Binomial,
     Uniform,

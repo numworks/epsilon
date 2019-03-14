@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class UndefinedNode final : public NumberNode {
+class UndefinedNode : public NumberNode {
 public:
 
   // TreeNode
@@ -16,29 +16,33 @@ public:
   }
 #endif
 
+  // Complex
+  bool isReal(Context & context) const override { return false; }
+
   // Properties
   Type type() const override { return Type::Undefined; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>();
   }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
-private:
+protected:
   template<typename T> Evaluation<T> templatedApproximate() const;
 };
 
 class Undefined final : public Number {
 public:
-  Undefined() : Number(TreePool::sharedPool()->createTreeNode<UndefinedNode>()) {}
+  Undefined(const UndefinedNode * n) : Number(n) {}
+  static Undefined Builder() { return TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(); }
   static const char * Name() {
     return "undef";
   }

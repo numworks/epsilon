@@ -11,7 +11,7 @@ using namespace Poincare;
 template<typename T>
 void assert_exp_is_bounded(Expression exp, T lowBound, T upBound, bool upBoundIncluded = false) {
   Shared::GlobalContext globalContext;
-  T result = exp.approximateToScalar<T>(globalContext, Radian);
+  T result = exp.approximateToScalar<T>(globalContext, Cartesian, Radian);
   quiz_assert(result >= lowBound);
   quiz_assert(result < upBound || (result == upBound && upBoundIncluded));
 }
@@ -54,6 +54,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
   assert_parsed_expression_type("R(2)", ExpressionNode::Type::SquareRoot);
   assert_parsed_expression_type("round(2,3)", ExpressionNode::Type::Round);
+  assert_parsed_expression_type("sign(3)", ExpressionNode::Type::SignFunction);
   assert_parsed_expression_type("sum(n,n, 4, 10)", ExpressionNode::Type::Sum);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTrace);
@@ -83,9 +84,9 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<double>("ceil(0.2)", "1");
 
 #if MATRICES_ARE_DEFINED
-  assert_parsed_expression_evaluates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_parsed_expression_evaluates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", System, Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_parsed_expression_evaluates_to<double>("det([[1,23,3][4,5,6][7,8,9]])", "126");
-  assert_parsed_expression_evaluates_to<float>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_parsed_expression_evaluates_to<float>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I", System, Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_parsed_expression_evaluates_to<double>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I");
 #endif
   assert_parsed_expression_evaluates_to<float>("diff(2*x, x, 2)", "2");
@@ -164,10 +165,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<double>("factor(-123/24)", "-5.125");
 
 #if MATRICES_ARE_DEFINED
-  assert_parsed_expression_evaluates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
+  assert_parsed_expression_evaluates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", System, Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
   assert_parsed_expression_evaluates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333E-2,0.375][1.0833333333333,1.6666666666667E-1,-0.25][4.1666666666667E-2,-8.3333333333333E-2,4.1666666666667E-2]]");
-  assert_parsed_expression_evaluates_to<float>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[-0.0118-0.0455*I,-0.5-0.727*I,0.318+0.489*I][0.0409+0.00364*I,0.04-0.0218*I,-0.0255+0.00091*I][0.00334-0.00182*I,0.361+0.535*I,-0.13-0.358*I]]", Degree, Cartesian, 3); // inverse is not precise enough to display 7 significative digits
-  assert_parsed_expression_evaluates_to<double>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[-0.0118289353958-0.0454959053685*I,-0.500454959054-0.727024567789*I,0.31847133758+0.488626023658*I][0.0409463148317+3.63967242948E-3*I,0.0400363967243-0.0218380345769*I,-0.0254777070064+9.0991810737E-4*I][3.33636639369E-3-1.81983621474E-3*I,0.36093418259+0.534728541098*I,-0.130118289354-0.357597816197*I]]", Degree, Cartesian, 12); // FIXME: inverse is not precise enough to display 14 significative digits
+  assert_parsed_expression_evaluates_to<float>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[-0.0118-0.0455*I,-0.5-0.727*I,0.318+0.489*I][0.0409+0.00364*I,0.04-0.0218*I,-0.0255+0.00091*I][0.00334-0.00182*I,0.361+0.535*I,-0.13-0.358*I]]", System, Degree, Cartesian, 3); // inverse is not precise enough to display 7 significative digits
+  assert_parsed_expression_evaluates_to<double>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[-0.0118289353958-0.0454959053685*I,-0.500454959054-0.727024567789*I,0.31847133758+0.488626023658*I][0.0409463148317+3.63967242948E-3*I,0.0400363967243-0.0218380345769*I,-0.0254777070064+9.0991810737E-4*I][3.33636639369E-3-1.81983621474E-3*I,0.36093418259+0.534728541098*I,-0.130118289354-0.357597816197*I]]", System, Degree, Cartesian, 12); // FIXME: inverse is not precise enough to display 14 significative digits
 #endif
 
   assert_parsed_expression_evaluates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
@@ -185,11 +186,20 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("root(3, 3+I)", "1.382007-0.1524428*I");
   assert_parsed_expression_evaluates_to<double>("root(3, 3+I)", "1.3820069623326-0.1524427794159*I");
 
-  assert_parsed_expression_evaluates_to<float>("root(5^((-I)3^9),I)", "3.504", Degree, Cartesian, 4);
-  assert_parsed_expression_evaluates_to<double>("root(5^((-I)3^9),I)", "3.5039410843", Degree, Cartesian, 11);
+  assert_parsed_expression_evaluates_to<float>("root(5^((-I)3^9),I)", "3.504", System, Degree, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<double>("root(5^((-I)3^9),I)", "3.5039410843", System, Degree, Cartesian, 11);
 
   assert_parsed_expression_evaluates_to<float>("R(3+I)", "1.755317+0.2848488*I");
   assert_parsed_expression_evaluates_to<double>("R(3+I)", "1.7553173018244+2.8484878459314E-1*I");
+
+  assert_parsed_expression_evaluates_to<float>("sign(-23+1)", "-1");
+  assert_parsed_expression_evaluates_to<float>("sign(inf)", "1");
+  assert_parsed_expression_evaluates_to<float>("sign(-inf)", "-1");
+  assert_parsed_expression_evaluates_to<float>("sign(0)", "0");
+  assert_parsed_expression_evaluates_to<float>("sign(-0)", "0");
+  assert_parsed_expression_evaluates_to<float>("sign(x)", "undef");
+  assert_parsed_expression_evaluates_to<double>("sign(2+I)", "undef");
+  assert_parsed_expression_evaluates_to<double>("sign(undef)", "undef");
 
   assert_parsed_expression_evaluates_to<double>("sum(2+n*I,n,1,5)", "10+15*I");
   assert_parsed_expression_evaluates_to<double>("sum(2+n*I,n,1,5)", "10+15*I");
@@ -233,6 +243,9 @@ QUIZ_CASE(poincare_function_evaluate) {
 QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("abs(P)", "P");
   assert_parsed_expression_simplify_to("abs(-P)", "P");
+  assert_parsed_expression_simplify_to("abs(1+I)", "R(2)");
+  assert_parsed_expression_simplify_to("abs(0)", "0");
+  assert_parsed_expression_simplify_to("arg(1+I)", "P/4");
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
@@ -252,9 +265,11 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
+  assert_parsed_expression_simplify_to("im(1+5*I)", "5");
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
   assert_parsed_expression_simplify_to("R(4)", "2");
+  assert_parsed_expression_simplify_to("re(1+5*I)", "1");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
   assert_parsed_expression_simplify_to("root(4,P)", "4^(1/P)");
   assert_parsed_expression_simplify_to("root(27,3)", "3");
@@ -263,6 +278,17 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("round(4.9,0)", "5");
   assert_parsed_expression_simplify_to("round(12.9,-1)", "10");
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
+  assert_parsed_expression_simplify_to("sign(-23)", "-1");
+  assert_parsed_expression_simplify_to("sign(-I)", "sign(-I)");
+  assert_parsed_expression_simplify_to("sign(0)", "0");
+  assert_parsed_expression_simplify_to("sign(inf)", "1");
+  assert_parsed_expression_simplify_to("sign(-inf)", "-1");
+  assert_parsed_expression_simplify_to("sign(undef)", "undef");
+  assert_parsed_expression_simplify_to("sign(23)", "1");
+  assert_parsed_expression_simplify_to("sign(log(18))", "1");
+  assert_parsed_expression_simplify_to("sign(-R(2))", "-1");
+  assert_parsed_expression_simplify_to("sign(x)", "sign(x)");
+  assert_parsed_expression_simplify_to("sign(2+I)", "sign(2+I)");
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", Undefined::Name());
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");

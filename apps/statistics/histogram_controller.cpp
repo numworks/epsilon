@@ -250,7 +250,7 @@ void HistogramController::initBarParameters() {
   }
   maxValue = minValue >= maxValue ? minValue + std::pow(10.0f, std::floor(std::log10(std::fabs(minValue)))-1.0f) : maxValue;
   m_store->setFirstDrawnBarAbscissa(minValue);
-  float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, minValue, maxValue);
+  float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, maxValue - minValue);
   if (barWidth <= 0.0f) {
     barWidth = 1.0f;
   }

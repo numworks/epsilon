@@ -18,19 +18,22 @@ public:
   }
 #endif
 
+  // Complex
+  bool isReal(Context & context) const override { return true; }
+
   // Properties
   Type type() const override { return Type::Random; }
-  Sign sign() const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Sign sign(Context * context) const override { return Sign::Positive; }
+  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>();
   }
   template <typename T> Evaluation<T> templateApproximate() const;
@@ -40,14 +43,13 @@ class Random final : public Expression {
 friend class RandomNode;
 public:
   Random(const RandomNode * n) : Expression(n) {}
-  static Random Builder() { return Random(); }
-  static Expression UntypedBuilder(Expression children) { return Builder(); }
+  static Random Builder() { return TreeHandle::FixedArityBuilder<Random, RandomNode>(); }
+  static Expression UntypedBuilder(Expression children) { assert(children.type() == ExpressionNode::Type::Matrix); return Builder(); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template<typename T> static T random();
 private:
-  Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 };
 
 }

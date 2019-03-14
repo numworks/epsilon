@@ -57,9 +57,10 @@ private:
 class MatrixLayout /*final*/ : public GridLayout {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayout(const MatrixLayoutNode * n);
-  MatrixLayout();
-  MatrixLayout(Layout l1, Layout l2, Layout l3, Layout l4);
+  MatrixLayout(const MatrixLayoutNode * n) : GridLayout(n) {}
+  static MatrixLayout Builder() { return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(); }
+  static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4);
+
   bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }

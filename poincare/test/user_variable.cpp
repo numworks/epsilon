@@ -8,11 +8,11 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_user_variable_simple) {
   // Fill variable
-  assert_parsed_expression_simplify_to("1+2>Adadas", "1+2");
+  assert_parsed_expression_simplify_to("1+2>Adadas", "3");
   assert_parsed_expression_simplify_to("Adadas", "3");
 
   // Fill f1
-  assert_parsed_expression_simplify_to("1+x>f1(x)", "1+x");
+  assert_parsed_expression_simplify_to("1+x>f1(x)", "x+1");
   assert_parsed_expression_simplify_to("f1(4)", "5");
   assert_parsed_expression_simplify_to("f1(Adadas)", "4");
 
@@ -22,7 +22,7 @@ QUIZ_CASE(poincare_user_variable_simple) {
   assert_parsed_expression_simplify_to("f2(Adadas)", "2");
 
   // Define fBoth with f1 and f2
-  assert_parsed_expression_simplify_to("f1(x)+f2(x)>fBoth(x)", "f1(x)+f2(x)");
+  assert_parsed_expression_simplify_to("f1(x)+f2(x)>fBoth(x)", "2*x");
   assert_parsed_expression_simplify_to("fBoth(4)", "8");
   assert_parsed_expression_simplify_to("fBoth(Adadas)", "6");
 
@@ -157,9 +157,20 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
   assert_simplify("x^2>f(x)");
   // Approximate f(?-2) with ? = 5
   const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
-  assert_parsed_expression_approximates_with_value_for_symbol(Function("f", 1, Subtraction(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(2))), x, 5.0, 9.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Rational::Builder(2))), x, 5.0, 9.0);
   // Approximate f(?-1)+f(?+1) with ? = 3
-  assert_parsed_expression_approximates_with_value_for_symbol(Addition(Function("f", 1, Subtraction(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(1))), Function("f", 1, Addition(Symbol(Symbol::SpecialSymbols::UnknownX), Rational(1)))), x, 3.0, 20.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Rational::Builder(1)))), x, 3.0, 20.0);
+
+  // Clean the storage for other tests
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+
+  // f: x->R(-1)
+  assert_simplify("R(-1)*R(-1)>f(x)");
+  // Approximate f(?) with ? = 5
+  // Cartesian
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(Symbol::SpecialSymbols::UnknownX)), x, 1.0, -1.0);
+    // Real
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(Symbol::SpecialSymbols::UnknownX)), x, 1.0, (double)NAN, Real);
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -168,13 +179,16 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
 QUIZ_CASE(poincare_user_variable_properties) {
   Shared::GlobalContext context;
 
-  assert_simplify("[[1]]>a");
-  assert(Symbol('a').isApproximate(context));
-  assert(Poincare::Expression::IsMatrix(Symbol('a'), context, true));
+  assert_parsed_expression_evaluates_to<double>("[[1]]>a", "[[1]]");
+  quiz_assert(Symbol::Builder('a').isApproximate(context));
+  quiz_assert(Poincare::Expression::IsMatrix(Symbol::Builder('a'), context, true));
 
-  assert_simplify("[[x]]>f(x)");
-  assert(Function("f", 1, Rational(2)).isApproximate(context));
-  assert(Poincare::Expression::IsMatrix(Function("f", 1, Symbol('x')), context, true));
+  /* [[x]]->f(x) expression contains a matrix, so its simplification is going
+   * to be interrupted. We thus rather approximate it instead of simplifying it.
+   * TODO: use parse_and_simplify when matrix are simplified. */
+  assert_parsed_expression_evaluates_to<double>("[[x]]>f(x)", "[[undef]]");
+  quiz_assert(Function::Builder("f", 1, Rational::Builder(2)).isApproximate(context));
+  quiz_assert(Poincare::Expression::IsMatrix(Function::Builder("f", 1, Symbol::Builder('x')), context, true));
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();

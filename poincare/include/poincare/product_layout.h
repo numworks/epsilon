@@ -25,14 +25,8 @@ private:
 
 class ProductLayout final : public Layout {
 public:
-  ProductLayout(Layout argument, Layout variable, Layout lowerB, Layout upperB) :
-    Layout(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, argument);
-    replaceChildAtIndexInPlace(1, variable);
-    replaceChildAtIndexInPlace(2, lowerB);
-    replaceChildAtIndexInPlace(3, upperB);
-  }
+  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<ProductLayout,ProductLayoutNode>(ArrayBuilder<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
+  ProductLayout() = delete;
 };
 
 }

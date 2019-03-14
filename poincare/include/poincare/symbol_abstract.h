@@ -27,12 +27,14 @@ class SymbolAbstractNode : public ExpressionNode {
   friend class Store;
 public:
   virtual const char * name() const = 0;
-  void setName(const char * newName, int length);
   size_t size() const override;
-  void initToMatchSize(size_t goalSize) override;
 
   // ExpressionNode
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
+
+  // Property
+  Sign sign(Context * context) const override;
+  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 
   // TreeNode
 #if POINCARE_TREE_LOG
@@ -73,10 +75,13 @@ public:
 
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
+  template <typename T, typename U>
+  static T Builder(const char * name, int length);
+
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);
-  static size_t AlignedNodeSize(size_t nameLength, size_t nodeSize);
+  static bool isReal(const SymbolAbstract & symbol, Context & context);
 };
 
 }

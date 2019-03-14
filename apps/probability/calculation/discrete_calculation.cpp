@@ -13,18 +13,6 @@ DiscreteCalculation::DiscreteCalculation() :
   compute(0);
 }
 
-Calculation::Type DiscreteCalculation::type() {
-  return Type::Discrete;
-}
-
-int DiscreteCalculation::numberOfParameters() {
-  return 2;
-}
-
-int DiscreteCalculation::numberOfEditableParameters() {
-  return 1;
-}
-
 I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -47,14 +35,6 @@ double DiscreteCalculation::parameterAtIndex(int index) {
     return m_abscissa;
   }
   return m_result;
-}
-
-double DiscreteCalculation::lowerBound() {
-  return m_abscissa;
-}
-
-double DiscreteCalculation::upperBound() {
-  return m_abscissa;
 }
 
 void DiscreteCalculation::compute(int indexKnownElement) {

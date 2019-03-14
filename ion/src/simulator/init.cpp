@@ -76,9 +76,8 @@ void Ion::Display::waitForVBlank() {
 
 Ion::Keyboard::State Ion::Keyboard::scan() {
   Ion::Keyboard::State result = 0;
-  for (int i=0; i<Ion::Keyboard::NumberOfKeys; i++) {
+  for (int i = 0; i < Ion::Keyboard::NumberOfKeys; i++) {
     result = result << 1 | sKeyboard->key_down((Ion::Keyboard::Key)(Ion::Keyboard::NumberOfKeys-1-i));
-
   }
   return result;
 }

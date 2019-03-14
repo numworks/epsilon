@@ -36,7 +36,8 @@ protected:
 
 class RightParenthesisLayout final : public Layout {
 public:
-  RightParenthesisLayout();
+  static RightParenthesisLayout Builder() { return TreeHandle::FixedArityBuilder<RightParenthesisLayout, RightParenthesisLayoutNode>(); }
+  RightParenthesisLayout() = delete;
 };
 
 }

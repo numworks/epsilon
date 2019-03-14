@@ -19,7 +19,9 @@ bool StorageFunctionParameterController::handleEvent(Ion::Events::Event event) {
     switch (selectedRow()) {
       case 0:
       {
-        function()->setDisplayDerivative(!function()->displayDerivative());
+        bool isDisplayingDerivative = function()->displayDerivative();
+        function()->setDisplayDerivative(!isDisplayingDerivative);
+        m_valuesController->selectCellAtLocation(isDisplayingDerivative ? m_selectedFunctionColumn : m_selectedFunctionColumn + 1, m_valuesController->selectedRow());
         m_selectableTableView.reloadData();
         return true;
       }
@@ -57,9 +59,7 @@ int StorageFunctionParameterController::reusableCellCount() {
 
 void StorageFunctionParameterController::viewWillAppear() {
   StorageValuesFunctionParameterController::viewWillAppear();
-  if (function()->displayDerivative()) {
-    m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()+1, m_valuesController->selectedRow());
-  }
+  m_selectedFunctionColumn = m_valuesController->selectedColumn();
 }
 
 void StorageFunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

@@ -12,8 +12,9 @@ constexpr Expression::FunctionHelper Random::s_functionHelper;
 
 int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
-Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
-  return Random(this).setSign(s, context, angleUnit);
+Expression RandomNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  assert(s == ExpressionNode::Sign::Positive);
+  return Random(this).setSign(s, context, complexFormat, angleUnit);
 }
 
 Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -25,10 +26,10 @@ int RandomNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
-  return Complex<T>(Random::random<T>());
+  return Complex<T>::Builder(Random::random<T>());
 }
 
-Expression Random::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Random::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
 }

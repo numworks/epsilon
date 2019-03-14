@@ -11,7 +11,9 @@ namespace Poincare {
  * - Float
  * - Decimal
  * - Infinity
- */
+ *
+ * Before being approximated, an expression should be reduced and thus should
+ * not contain any Decimal. */
 
 class Rational;
 
@@ -21,6 +23,9 @@ public:
   int numberOfChildren() const override { return 0; }
 
   double doubleApproximation() const;
+
+  // Complex
+  bool isReal(Context & context) const override { return true; }
 };
 
 class Number : public Expression {
@@ -41,7 +46,13 @@ public:
   static Number Power(const Number & i, const Number & j);
   static int NaturalOrder(const Number & i, const Number & j);
 
-  Number setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return Expression::setSign(s, context, angleUnit).convert<Number>(); }
+  /* Number::sign() or Number::setSign does not need a context or an angle unit
+   * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
+  ExpressionNode::Sign sign() { return Expression::sign(nullptr); }
+  Number setSign(ExpressionNode::Sign s) {
+    assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
+    return Expression::setSign(s, nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User).convert<Number>();
+  }
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

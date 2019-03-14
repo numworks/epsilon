@@ -16,6 +16,7 @@ public:
   void setEditing(bool editing);
   bool isEditing() const;
   void setText(const char * textContent);
+  void setHorizontalAlignment(float alignment);
 
   // FunctionTitleCell
   void setColor(KDColor color) override;
@@ -38,10 +39,10 @@ public:
 
   // Responder
   void didBecomeFirstResponder() override;
-protected:
-  KDRect textFieldFrame() const;
 private:
+  constexpr static KDCoordinate k_textFieldRightMargin = 4;
   constexpr static int k_textFieldBufferSize = Shared::StorageFunction::k_maxNameWithArgumentSize;
+  float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const override;
   Shared::TextFieldWithExtension m_textField;
   char m_textFieldBuffer[k_textFieldBufferSize];
 };

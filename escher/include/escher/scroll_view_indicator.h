@@ -5,38 +5,60 @@
 
 class ScrollViewIndicator : public View {
 public:
-  enum class Direction {
-    Horizontal,
-    Vertical
-  };
-  ScrollViewIndicator(Direction direction);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-
-  void setIndicatorColor(KDColor c) { m_indicatorColor = c; }
-  KDColor indicatorColor() const { return m_indicatorColor; }
-  void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
-  KDColor backgroundColor() const { return m_backgroundColor; }
+  ScrollViewIndicator();
   void setMargin(KDCoordinate m) { m_margin = m; }
   KDCoordinate margin() const { return m_margin; }
-
-  float start() const;
-  void setStart(float start);
-  float end() const;
-  void setEnd(float end);
-  KDRect frame();
 protected:
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;
 #endif
-private:
-  constexpr static KDCoordinate k_indicatorThickness = 4;
-  Direction m_direction;
-  float m_start;
-  float m_end;
-  KDColor m_indicatorColor;
-  KDColor m_backgroundColor;
+  KDColor m_color;
   KDCoordinate m_margin;
+};
+
+class ScrollViewBar : public ScrollViewIndicator {
+public:
+  ScrollViewBar();
+  bool update(KDCoordinate totalContentLength, KDCoordinate contentOffset, KDCoordinate visibleContentLength);
+protected:
+  constexpr static KDCoordinate k_indicatorThickness = 4;
+  bool visible() const { return 0 < m_offset || m_visibleLength < 1; }
+  float m_offset;
+  float m_visibleLength;
+  KDColor m_trackColor;
+};
+
+class ScrollViewHorizontalBar : public ScrollViewBar {
+public:
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+private:
+  KDCoordinate totalLength() const { return m_frame.width() - 2*m_margin; }
+};
+
+class ScrollViewVerticalBar : public ScrollViewBar {
+public:
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+private:
+  KDCoordinate totalLength() const { return m_frame.height() - 2*m_margin; }
+};
+
+class ScrollViewArrow : public ScrollViewIndicator {
+public:
+  enum Side : char { //FIXME
+    Top = 't',
+    Right = '>',
+    Bottom = 'b',
+    Left = '<'
+  };
+  ScrollViewArrow(Side side);
+  bool update(bool visible);
+  void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+private:
+  bool m_visible;
+  const char m_arrow;
+  KDColor m_backgroundColor;
 };
 
 #endif

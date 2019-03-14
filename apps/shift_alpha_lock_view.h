@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "lock_view.h"
-#include "i18n.h"
+#include <apps/i18n.h>
 
 class ShiftAlphaLockView : public View {
 public:

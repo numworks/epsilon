@@ -1,4 +1,5 @@
 #include <poincare/great_common_divisor.h>
+
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -20,14 +21,14 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.name());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return GreatCommonDivisor(this).shallowReduce(context, angleUnit);
+Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return GreatCommonDivisor(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, angleUnit);
+Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();
   T f2 = f2Input.toScalar();
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
@@ -45,12 +46,13 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
     a = b;
     b = r;
   }
-  return Complex<T>(std::round((T)a));
+  return Complex<T>::Builder(std::round((T)a));
 }
 
-Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression GreatCommonDivisor::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -59,13 +61,13 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -73,7 +75,7 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -87,8 +89,8 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   Integer gcd = Arithmetic::GCD(a, b);
-  assert(!gcd.isInfinity());
-  Expression result = Rational(gcd);
+  assert(!gcd.isOverflow());
+  Expression result = Rational::Builder(gcd);
   replaceWithInPlace(result);
   return result;
 }

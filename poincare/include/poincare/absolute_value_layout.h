@@ -33,11 +33,8 @@ private:
 
 class AbsoluteValueLayout final : public Layout {
 public:
-  explicit AbsoluteValueLayout(Layout l) :
-    Layout(TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, l);
-  }
+  static AbsoluteValueLayout Builder(Layout child) { return TreeHandle::FixedArityBuilder<AbsoluteValueLayout, AbsoluteValueLayoutNode>(&child, 1); }
+  AbsoluteValueLayout() = delete;
 };
 
 }

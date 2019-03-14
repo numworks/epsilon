@@ -59,8 +59,7 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage && !isDisplayingEmptyController()) {
     int rowIndex = selectedRow();
     m_selectableTableView.deselectTable();
-    Storage::Record record = recordAtIndex(rowIndex);
-    record.destroy();
+    destroyRecordAtRowIndex(rowIndex);
     int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
     selectCellAtLocation(selectedColumn(), newSelectedRow);
     m_selectableTableView.reloadData();
@@ -221,16 +220,18 @@ I18n::Message VariableBoxController::nodeLabelAtIndex(int index) {
 
 Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
   assert(m_currentPage != Page::RootMenu);
+  assert(index >= 0);
   if (index >= m_firstMemoizedLayoutIndex+k_maxNumberOfDisplayedRows || index < m_firstMemoizedLayoutIndex) {
     // Change range of layout memoization
     int deltaIndex = index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows ? index - k_maxNumberOfDisplayedRows + 1 - m_firstMemoizedLayoutIndex : index - m_firstMemoizedLayoutIndex;
-    for (int i = 0; i < k_maxNumberOfDisplayedRows-1; i++) {
+    for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
       int j = deltaIndex + i;
-      m_layouts[i] = j >= 0 && j < k_maxNumberOfDisplayedRows ? m_layouts[j] : Layout();
+      m_layouts[i] = (j >= m_firstMemoizedLayoutIndex && j < k_maxNumberOfDisplayedRows) ? m_layouts[j] : Layout();
     }
     m_firstMemoizedLayoutIndex += deltaIndex;
+    assert(m_firstMemoizedLayoutIndex >= 0);
   }
-  assert(index-m_firstMemoizedLayoutIndex < k_maxNumberOfDisplayedRows);
+  assert(index >= m_firstMemoizedLayoutIndex && index < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
   if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
     m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::ExpressionFromRecord(record).createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Constant::ShortNumberOfSignificantDigits);
   }
@@ -250,7 +251,7 @@ Storage::Record VariableBoxController::recordAtIndex(int rowIndex) {
 
 bool VariableBoxController::displayEmptyController() {
   assert(!isDisplayingEmptyController());
-    /* If the content is empty, we push above an empty controller. */
+  // If the content is empty, we push above an empty controller.
   if (numberOfRows() == 0) {
     m_emptyViewController.setType((VariableBoxEmptyController::Type)m_currentPage);
     push(&m_emptyViewController);
@@ -264,4 +265,15 @@ void VariableBoxController::resetMemoization() {
     m_layouts[i] = Layout();
   }
   m_firstMemoizedLayoutIndex = 0;
+}
+
+void VariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
+  // Destroy the record
+  recordAtIndex(rowIndex).destroy();
+  // Shift the memoization
+  assert(rowIndex >= m_firstMemoizedLayoutIndex && rowIndex < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
+  for (int i = rowIndex - m_firstMemoizedLayoutIndex; i < k_maxNumberOfDisplayedRows - 1; i++) {
+    m_layouts[i] = m_layouts[i+1];
+  }
+  m_layouts[k_maxNumberOfDisplayedRows - 1] = Layout();
 }

@@ -60,10 +60,31 @@ bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
 
 void ZoomParameterController::viewWillAppear() {
   m_contentView.curveView()->setOkView(nullptr);
+  /* We need to change the curve range to keep the same visual aspect of the
+   * view. */
+  adaptCurveRange(true);
+}
+
+void ZoomParameterController::viewDidDisappear() {
+  // Restore the curve range
+  adaptCurveRange(false);
 }
 
 void ZoomParameterController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
+}
+
+void ZoomParameterController::adaptCurveRange(bool viewWillAppear) {
+  float currentYMin = m_interactiveRange->yMin();
+  float currentRange = m_interactiveRange->yMax() - m_interactiveRange->yMin();
+  float newYMin = 0;
+  if (viewWillAppear) {
+    newYMin = currentYMin + ((float)ContentView::k_legendHeight)/((float)k_standardViewHeight)*currentRange;
+  } else {
+    newYMin = m_interactiveRange->yMax() - currentRange*((float)k_standardViewHeight)/(((float)k_standardViewHeight)-((float)ContentView::k_legendHeight));
+  }
+  m_interactiveRange->setYMin(newYMin);
+  m_contentView.curveView()->reload();
 }
 
 /* Content View */
@@ -86,6 +107,7 @@ View * ZoomParameterController::ContentView::subviewAtIndex(int index) {
 }
 
 void ZoomParameterController::ContentView::layoutSubviews() {
+  assert(bounds().height() == ZoomParameterController::k_standardViewHeight);
   m_curveView->setFrame(KDRect(0, 0, bounds().width(), bounds().height() - k_legendHeight));
   m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
 }

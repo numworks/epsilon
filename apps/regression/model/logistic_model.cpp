@@ -12,26 +12,26 @@ namespace Regression {
 
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout exponentLayoutChildren[] = {
-      CharLayout('-', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont)
+    Layout exponentLayoutChildren[] = {
+      CharLayout::Builder('-', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont)
     };
-    const Layout layoutChildren[] = {
-      CharLayout('1', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('e', KDFont::SmallFont),
-      VerticalOffsetLayout(
-          HorizontalLayout(exponentLayoutChildren, 4),
+    Layout layoutChildren[] = {
+      CharLayout::Builder('1', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('e', KDFont::SmallFont),
+      VerticalOffsetLayout::Builder(
+          HorizontalLayout::Builder(exponentLayoutChildren, 4),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = FractionLayout(
-       CharLayout('c', KDFont::SmallFont),
-       HorizontalLayout(layoutChildren, 6)
+    m_layout = FractionLayout::Builder(
+       CharLayout::Builder('c', KDFont::SmallFont),
+       HorizontalLayout::Builder(layoutChildren, 6)
       );
   }
   return m_layout;

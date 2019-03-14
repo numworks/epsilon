@@ -14,10 +14,10 @@ EquationListView::EquationListView(Responder * parentResponder, TableViewDataSou
 {
   m_listView.setMargins(0);
   m_listView.setVerticalCellOverlap(0);
-  m_listView.setShowsIndicators(false);
+  m_listView.setDecoratorType(ScrollView::Decorator::Type::None);
   selectionDataSource->setScrollViewDelegate(this);
   m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
-  m_scrollBraceView.setShowsIndicators(false);
+  m_scrollBraceView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
 }
 

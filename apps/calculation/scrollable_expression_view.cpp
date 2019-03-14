@@ -8,11 +8,17 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
   ScrollableView(parentResponder, &m_expressionView, this),
   m_expressionView()
 {
+  setDecoratorType(ScrollView::Decorator::Type::Arrows);
+  setMargins(
+    Metric::CommonSmallMargin,
+    Metric::CommonLargeMargin,
+    Metric::CommonSmallMargin,
+    Metric::CommonLargeMargin
+  );
 }
 
 void ScrollableExpressionView::setLayout(Layout layout) {
   m_expressionView.setLayout(layout);
-  layoutSubviews();
 }
 
 void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
@@ -20,8 +26,8 @@ void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
   ScrollableView::setBackgroundColor(backgroundColor);
 }
 
-KDSize ScrollableExpressionView::minimalSizeForOptimalDisplay() const {
-  return m_expressionView.minimalSizeForOptimalDisplay();
+void ScrollableExpressionView::setExpressionBackgroundColor(KDColor backgroundColor) {
+  m_expressionView.setBackgroundColor(backgroundColor);
 }
 
 }

@@ -33,6 +33,7 @@ public:
   int selectedButton();
   bool setSelectedButton(int selectedButton);
   void setMessageOfButtonAtIndex(I18n::Message message, int index);
+  void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }

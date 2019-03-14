@@ -24,8 +24,14 @@ void BankViewController::didEnterResponderChain(Responder * previousResponder) {
   app()->setFirstResponder(activeViewController());
 }
 
-void BankViewController::viewWillAppear() {
+void BankViewController::initView() {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    childAtIndex(i)->initView();
+  }
   m_view.setSubview(activeViewController()->view());
+}
+
+void BankViewController::viewWillAppear() {
   activeViewController()->viewWillAppear();
 }
 

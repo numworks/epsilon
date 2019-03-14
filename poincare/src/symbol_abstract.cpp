@@ -1,4 +1,8 @@
 #include <poincare/symbol_abstract.h>
+#include <poincare/complex_cartesian.h>
+#include <poincare/constant.h>
+#include <poincare/function.h>
+#include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/expression.h>
 #include <poincare/helpers.h>
@@ -6,29 +10,39 @@
 
 namespace Poincare {
 
-void SymbolAbstractNode::setName(const char * newName, int length) {
-  strlcpy(const_cast<char*>(name()), newName, length+1);
-}
-
 size_t SymbolAbstractNode::size() const {
-  return SymbolAbstract::AlignedNodeSize(strlen(name()), nodeSize());
+  return nodeSize() + strlen(name()) + 1;
 }
 
-void SymbolAbstractNode::initToMatchSize(size_t goalSize) {
-  assert(goalSize != nodeSize());
-  assert(goalSize > nodeSize());
-  size_t nameSize = goalSize - nodeSize();
-  char * modifiableName = const_cast<char *>(name());
-  for (size_t i = 0; i < nameSize - 1; i++) {
-    modifiableName[i] = 'a';
+ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
+  SymbolAbstract s(this);
+  Expression e = SymbolAbstract::Expand(s, *context, false);
+  if (e.isUninitialized()) {
+    return Sign::Unknown;
   }
-  modifiableName[nameSize-1] = 0;
-  assert(size() == goalSize);
+  return e.sign(context);
 }
 
-int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+Expression SymbolAbstractNode::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  SymbolAbstract sa(this);
+  Expression e = SymbolAbstract::Expand(sa, *context, true);
+  assert(!e.isUninitialized());
+  sa.replaceWithInPlace(e);
+  return e.setSign(s, context, complexFormat, angleUnit, target);
+}
+
+int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
   assert(type() == e->type());
   return strcmp(name(), static_cast<const SymbolAbstractNode *>(e)->name());
+}
+
+template <typename T, typename U>
+T SymbolAbstract::Builder(const char * name, int length) {
+  size_t size = sizeof(U) + length + 1;
+  void * bufferNode = TreePool::sharedPool()->alloc(size);
+  U * node = new (bufferNode) U(name, length);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  return static_cast<T &>(h);
 }
 
 size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
@@ -55,15 +69,21 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
    * symbols are defined circularly. */
   e = Expression::ExpressionWithoutSymbols(e, context);
   if (!e.isUninitialized() && isFunction) {
-    e = e.replaceSymbolWithExpression(Symbol(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
+    e = e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), symbol.childAtIndex(0));
   }
   return e;
 }
 
-/* TreePool uses adresses and sizes that are multiples of 4 in order to make
- * node moves faster.*/
-size_t SymbolAbstract::AlignedNodeSize(size_t nameLength, size_t nodeSize) {
-  return Helpers::AlignedSize(nodeSize+nameLength+1, 4);
+bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context) {
+  Expression e = SymbolAbstract::Expand(symbol, context, false);
+  if (e.isUninitialized()) {
+    return true;
+  }
+  return e.isReal(context);
 }
+
+template Constant SymbolAbstract::Builder<Constant, ConstantNode>(char const*, int);
+template Function SymbolAbstract::Builder<Function, FunctionNode>(char const*, int);
+template Symbol SymbolAbstract::Builder<Symbol, SymbolNode>(char const*, int);
 
 }

@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "interactive_curve_view_range.h"
 #include "curve_view.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
@@ -15,10 +15,13 @@ public:
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
 private:
+  constexpr static KDCoordinate k_standardViewHeight = 175;
   class ContentView : public View {
   public:
+    constexpr static KDCoordinate k_legendHeight = 30;
     ContentView(CurveView * curveView);
     void layoutSubviews() override;
     CurveView * curveView();
@@ -41,8 +44,8 @@ private:
     View * subviewAtIndex(int index) override;
     CurveView * m_curveView;
     LegendView m_legendView;
-    constexpr static KDCoordinate k_legendHeight = 30;
   };
+  void adaptCurveRange(bool viewWillAppear);
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;
 };

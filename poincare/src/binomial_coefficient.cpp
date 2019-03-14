@@ -14,12 +14,12 @@ constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
 
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
-Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return BinomialCoefficient(this).shallowReduce(context, angleUnit);
+Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return BinomialCoefficient(this).shallowReduce();
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return BinomialCoefficientLayout(
+  return BinomialCoefficientLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -29,12 +29,12 @@ int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 template<typename T>
-Complex<T> BinomialCoefficientNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+Complex<T> BinomialCoefficientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
+  Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();
   T k = kInput.toScalar();
-  return Complex<T>(compute(k, n));
+  return Complex<T>::Builder(compute(k, n));
 }
 
 template<typename T>
@@ -53,9 +53,10 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return std::round(result);
 }
 
-Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression BinomialCoefficient::shallowReduce() {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -64,13 +65,13 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    return Undefined::Builder();
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (!r0.integerDenominator().isOne() || r0.isNegative()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -78,7 +79,7 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.isNegative()) {
-      Expression result = Undefined();
+      Expression result = Undefined::Builder();
       replaceWithInPlace(result);
       return result;
     }
@@ -92,7 +93,7 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Undefined();
+    Expression result = Undefined::Builder();
     replaceWithInPlace(result);
     return result;
   }
@@ -101,21 +102,20 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   if (Integer(k_maxNValue).isLowerThan(n)) {
     return *this;
   }
-  Rational result(1);
+  Rational result = Rational::Builder(1);
   Integer kBis = Integer::Subtraction(n, k);
   k = kBis.isLowerThan(k) ? kBis : k;
   int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
   for (int i = 0; i < clippedK; i++) {
     Integer nMinusI = Integer::Subtraction(n, Integer(i));
     Integer kMinusI = Integer::Subtraction(k, Integer(i));
-    Rational factor = Rational(nMinusI, kMinusI);
+    Rational factor = Rational::Builder(nMinusI, kMinusI);
     result = Rational::Multiplication(result, factor);
   }
   // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
   assert(!result.numeratorOrDenominatorIsInfinity());
-  Expression rationalResult = Rational(result);
-  replaceWithInPlace(rationalResult);
-  return rationalResult;
+  replaceWithInPlace(result);
+  return result;
 }
 
 template double BinomialCoefficientNode::compute(double k, double n);

@@ -10,7 +10,7 @@ class Opposite;
 
 class OppositeNode /*final*/ : public ExpressionNode {
 public:
-  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>::Builder(-c); }
 
 
   // TreeNode
@@ -25,14 +25,14 @@ public:
   // Properties
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Sign sign() const override;
+  Sign sign(Context * context) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<float>(this, context, angleUnit, compute<float>);
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit, compute<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationHelper::Map<double>(this, context, angleUnit, compute<double>);
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+    return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, compute<double>);
   }
 
   // Layout
@@ -41,18 +41,16 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
 };
 
 class Opposite final : public Expression {
 public:
-  Opposite();
   Opposite(const OppositeNode * n) : Expression(n) {}
-  explicit Opposite(Expression child) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
-    replaceChildAtIndexInPlace(0, child);
-  }
+  static Opposite Builder() { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(); }
+  static Opposite Builder(Expression child) { return TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(&child, 1); }
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };
 
 }

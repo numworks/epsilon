@@ -1,6 +1,5 @@
 SFLAGS += -Ilibaxx/include
 
-objs += $(addprefix libaxx/src/, new.o)
-objs += $(addprefix libaxx/src/cxxabi/, atexit.o pure_virtual.o)
-objs += $(addprefix libaxx/include/external/libcxx/, complex.o)
-
+src += $(addprefix libaxx/src/, new.cpp)
+src += $(addprefix libaxx/src/cxxabi/, atexit.cpp pure_virtual.cpp)
+src += $(addprefix libaxx/include/external/libcxx/, complex.cpp)

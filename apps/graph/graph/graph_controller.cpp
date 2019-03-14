@@ -5,6 +5,8 @@ using namespace Shared;
 
 namespace Graph {
 
+static inline float max(float x, float y) { return (x>y ? x : y); }
+
 GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   StorageFunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
@@ -37,17 +39,17 @@ void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
   m_displayDerivativeInBanner = displayDerivative;
 }
 
-float GraphController::interestingXRange() {
+float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
-      characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
+      characteristicRange = max(fRange, characteristicRange);
     }
   }
-  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : 10.0f);
+  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::interestingXHalfRange());
 }
 
 int GraphController::estimatedBannerNumberOfLines() const {

@@ -1,5 +1,5 @@
 #include "app.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 
 extern "C" {

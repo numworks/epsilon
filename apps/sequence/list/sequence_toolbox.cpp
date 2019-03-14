@@ -76,20 +76,20 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
   const char * otherSequenceName = SequenceStore::k_sequenceNames[1-sequenceIndex];
   for (int j = 0; j < recurrenceDepth; j++) {
     const char * indice = j == 0 ? "n" : "n+1";
-    m_addedCellLayout[j] = HorizontalLayout(
-        CharLayout(sequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+    m_addedCellLayout[j] = HorizontalLayout::Builder(
+        CharLayout::Builder(sequenceName[0], KDFont::LargeFont),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
       );
-    m_addedCellLayout[j+recurrenceDepth] = HorizontalLayout(
-        CharLayout(otherSequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+    m_addedCellLayout[j+recurrenceDepth] = HorizontalLayout::Builder(
+        CharLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
-    m_addedCellLayout[2*recurrenceDepth] = HorizontalLayout(
-        CharLayout(otherSequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+    m_addedCellLayout[2*recurrenceDepth] = HorizontalLayout::Builder(
+        CharLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
       );
   }
 }

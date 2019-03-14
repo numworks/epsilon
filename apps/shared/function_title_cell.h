@@ -11,16 +11,27 @@ public:
     HorizontalIndicator,
     VerticalIndicator
   };
-  FunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator);
-  void setOrientation(Orientation orientation);
+  FunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator) :
+    EvenOddCell(),
+    m_orientation(orientation),
+    m_baseline(-1),
+    m_functionColor(KDColorBlack)
+  {}
+  virtual void setOrientation(Orientation orientation);
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  void setBaseline(KDCoordinate baseline);
   virtual const KDFont * font() const = 0;
 protected:
   constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
+  KDRect subviewFrame() const;
+  float verticalAlignment() const;
   Orientation m_orientation;
+  KDCoordinate m_baseline;
 private:
+  constexpr static KDCoordinate k_equalWidthWithMargins = 10; // Ad hoc value
+  virtual float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const { assert(false); return 0; }
   KDColor m_functionColor;
 };
 

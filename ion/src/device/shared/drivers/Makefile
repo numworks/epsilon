@@ -1,22 +1,22 @@
-ion_device_objs += $(addprefix ion/src/device/shared/drivers/, \
-  backlight.o \
-  battery.o \
-  base64.o \
-  board.o \
-  console.o \
-  crc32.o \
-  display.o \
-  events.o \
-  external_flash.o \
-  flash.o \
-  keyboard.o \
-  led.o \
-  power.o\
-  random.o\
-  reset.o \
-  serial_number.o \
-  swd.o \
-  timing.o \
-  usb.o \
-  wakeup.o \
+ion_device_src += $(addprefix ion/src/device/shared/drivers/, \
+  backlight.cpp \
+  battery.cpp \
+  base64.cpp \
+  board.cpp \
+  console.cpp \
+  crc32.cpp \
+  display.cpp \
+  events.cpp \
+  external_flash.cpp \
+  flash.cpp \
+  keyboard.cpp \
+  led.cpp \
+  power.cpp\
+  random.cpp\
+  reset.cpp \
+  serial_number.cpp \
+  swd.cpp \
+  timing.cpp \
+  usb.cpp \
+  wakeup.cpp \
 )

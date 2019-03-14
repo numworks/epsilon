@@ -50,7 +50,7 @@ protected:
   virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const { assert(false); return false; }
   virtual double yValue(int curveIndex, double x, Poincare::Context * context) const { assert(false); return 0; }
   virtual bool suitableYValue(double y) const { return true; }
-  virtual int numberOfCurves() const { assert(false); return 0; }
+  virtual int numberOfCurves() const = 0;
 
   OkView m_okView;
 private:

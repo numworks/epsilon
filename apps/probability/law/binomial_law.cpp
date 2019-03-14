@@ -4,23 +4,6 @@
 
 namespace Probability {
 
-BinomialLaw::BinomialLaw() :
-  TwoParameterLaw(20.0, 0.5)
-{
-}
-
-I18n::Message BinomialLaw::title() {
-  return I18n::Message::BinomialLaw;
-}
-
-Law::Type BinomialLaw::type() const {
-  return Type::Binomial;
-}
-
-bool BinomialLaw::isContinuous() const {
-  return false;
-}
-
 I18n::Message BinomialLaw::parameterNameAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {

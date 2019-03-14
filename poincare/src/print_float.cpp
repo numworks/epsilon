@@ -41,22 +41,31 @@ void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLe
 
 template <class T>
 int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
-    int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
+    int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding)
+{
   assert(numberOfSignificantDigits > 0);
+  assert(bufferSize > 0);
+
   char tempBuffer[PrintFloat::k_maxFloatBufferLength];
-  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
-  /* if the required buffer size overflows the buffer size, we first force the
+  int numberOfZerosRemoved = 0;
+  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
+  /* If the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
-   * fit the buffer size. If the buffer size is still to small, we only write
-   * the beginning of the float and truncate it (which can result in a non sense
-   * text) */
+   * fit the buffer size. */
   if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   if (requiredLength >= bufferSize) {
-    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - requiredLength + bufferSize - 1;
+    /* If the buffer size is still too small and rounding is allowed, we only
+     * write the beginning of the float and truncate it (which can result in a
+     * non sense text). If no rounding is allowed, we set the text to null. */
+    if (!allowRounding) {
+      buffer[0] = 0;
+      return requiredLength;
+    }
+    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - requiredLength + bufferSize - 1;
     adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize-1;
   strlcpy(buffer, tempBuffer, bufferSize);
@@ -64,7 +73,7 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
 }
 
 template <class T>
-int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
+int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
   assert(numberOfSignificantDigits > 0);
   if (std::isinf(f)) {
     assert(Infinity::NameSize()+1 < PrintFloat::k_maxFloatBufferLength);
@@ -129,17 +138,22 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
    * that we stay beyond this threshold during computation. */
   assert(numberOfSignificantDigits < std::log10(std::pow(2.0f, 63.0f)));
 
-  // Supress the 0 on the right side of the mantissa
+  // Remove the 0 on the right side of the mantissa
   Integer dividend = Integer((int64_t)mantissa);
   Integer quotient = Integer::Division(dividend, Integer(10)).quotient;
   Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
   int minimumNumberOfCharsInMantissa = 1;
+  int numberOfZerosRemoved = 0;
   while (digit.isZero() && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
       (numberOfCharsForMantissaWithoutSign > exponentInBase10+1 || mode == Preferences::PrintFloatMode::Scientific)) {
     numberOfCharsForMantissaWithoutSign--;
     dividend = quotient;
     quotient = Integer::Division(dividend, Integer(10)).quotient;
     digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
+    numberOfZerosRemoved++;
+  }
+  if (numberOfRemovedZeros != nullptr) {
+    *numberOfRemovedZeros = numberOfZerosRemoved;
   }
 
   /* Part II: Decimal marker */
@@ -165,7 +179,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   /* Part III: print mantissa*10^exponent*/
   int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
   // Print mantissa
-  assert(!dividend.isInfinity());
+  assert(!dividend.isOverflow());
   if (numberOfCharsForMantissaWithSign >= PrintFloat::k_maxFloatBufferLength) {
     /* Exception 3: if we are about to overflow the buffer, we escape by
      * returning a big int. This will be caught by 'convertFloatToText' which
@@ -188,8 +202,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   return (numberOfCharsForMantissaWithSign+1+numberOfCharExponent);
 }
 
-template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode);
-template int PrintFloat::convertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode);
+template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
+template int PrintFloat::convertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
 
 }
-

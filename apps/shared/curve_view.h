@@ -6,11 +6,15 @@
 #include "curve_view_range.h"
 #include "curve_view_cursor.h"
 #include "banner_view.h"
+#include <apps/constant.h>
 
 namespace Shared {
 
 class CurveView : public View {
 public:
+  /* We want a 3 characters margin before the first label tick, so that most
+   * labels appear completely. This gives 3*charWidth/320 = 3*7/320= 0.066 */
+  static constexpr float k_labelsHorizontalMarginRatio = 0.066f;
   typedef float (*EvaluateModelWithParameter)(float t, void * model, void * context);
   enum class Axis {
     Horizontal = 0,
@@ -34,6 +38,7 @@ public:
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
 protected:
+  CurveViewRange * curveViewRange() { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   virtual float samplingRatio() const;
@@ -41,14 +46,9 @@ protected:
   constexpr static KDCoordinate k_okVerticalMargin = 23;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
   constexpr static KDCoordinate k_labelGraduationLength = 6;
-  /* The labels are bounds by ±1E8 and ±1E-8 which in worse case can be written
-   * in 6 characters.
-   * To avoid overlapping labels, k_labelBufferSize should verify:
-   * k_labelBufferSize =  Ion::Display::Width / ((CurveViewRange::k_maxNumberOfXGridUnits/2)*KDFont::SmallFont->glyphWidth)
-   *                   = 320/((18/2)*7) ~ 5.
-   * We take 6 creating small overlap in worse case but preventing from truncating
-   * labels (ie, "-1E-"). */
-  constexpr static int k_labelBufferSize = 6;
+  constexpr static int k_numberSignificantDigits = 6;
+  constexpr static int k_bigNumberSignificantDigits = Constant::LargeNumberOfSignificantDigits;
+  constexpr static int k_labelBufferMaxSize = 1 + k_bigNumberSignificantDigits + 3 + 3 + 1; // '-' + significant digits + '.' + "E-" + 3 digits + null-terminating char
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;
@@ -60,17 +60,20 @@ protected:
       float coordinate, float lowerBound, float upperBound,
       KDColor color, KDCoordinate thickness = 1) const;
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize = false) const;
-  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
-  void drawAxes(KDContext * ctx, KDRect rect, Axis axis) const;
+  void drawAxes(KDContext * ctx, KDRect rect) const;
+  void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
   void drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
-  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0) const;
+  void simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const;
+  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0, KDColor backgroundColor = KDColorWhite) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
+  void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* The window bounds are deduced from the model bounds but also take into
   account a margin (computed with k_marginFactor) */
   float min(Axis axis) const;
@@ -96,6 +99,9 @@ private:
   View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and
    * cursor views may be nullptr if not needed. */
+  void computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits = false);
+  float labelValueAtIndex(Axis axis, int i) const;
+  bool bannerIsVisible() const;
   CurveViewRange * m_curveViewRange;
   View * m_cursorView;
   View * m_okView;

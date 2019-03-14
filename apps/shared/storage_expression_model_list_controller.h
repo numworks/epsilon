@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "storage_expression_model_store.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 namespace Shared {
 
@@ -23,7 +23,7 @@ protected:
   // Responder
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addEmptyModel();
-  virtual void didChangeModelsList() {}
+  virtual void didChangeModelsList() { resetMemoization(); }
   virtual void reinitExpression(ExpiringPointer<StorageExpressionModel> model);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);
@@ -37,7 +37,7 @@ protected:
   EvenOddMessageTextCell m_addNewModel;
 protected:
   // Memoization
-  static constexpr int k_memoizedCellHeightsCount = 7;
+  static constexpr int k_memoizedCellsCount = 7;
   /* We use memoization to speed up indexFromHeight(offset) in the children
    * classes: if offset is "around" the memoized cumulatedHeightForIndex, we can
    * compute its value easily by adding/substracting memoized row heights. We
@@ -48,18 +48,20 @@ protected:
    * (ScreenHeight - Metric::TitleBarHeight - Metric::TabHeight - ButtonRowHeight
    * - currentSelectedRowHeight) / Metric::StoreRowHeight
    *   =  (240-18-27-20-50)/50 = 2.5 */
-  static_assert(StorageExpressionModelListController::k_memoizedCellHeightsCount % 2 == 1, "StorageExpressionModelListController::k_memoizedCellHeightsCount should be odd.");
+  static_assert(StorageExpressionModelListController::k_memoizedCellsCount % 2 == 1, "StorageExpressionModelListController::k_memoizedCellsCount should be odd.");
   /* We memoize values for indexes around the selectedRow index.
-   * k_memoizedCellHeightsCount needs to be odd to compute things such as:
-   * constexpr int halfMemoizationCount = k_memoizedCellHeightsCount/2;
+   * k_memoizedCellsCount needs to be odd to compute things such as:
+   * constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
    * if (j < selectedRow - halfMemoizationCount
    *   || j > selectedRow + halfMemoizationCount) { ... } */
+  virtual void resetMemoizationForIndex(int index);
+  virtual void shiftMemoization(bool newCellIsUnder);
 private:
   // Memoization
   static constexpr int k_resetedMemoizedValue = -1;
   void resetMemoization();
   virtual KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) = 0;
-  KDCoordinate m_memoizedCellHeight[k_memoizedCellHeightsCount];
+  KDCoordinate m_memoizedCellHeight[k_memoizedCellsCount];
   KDCoordinate m_cumulatedHeightForSelectedIndex;
 };
 

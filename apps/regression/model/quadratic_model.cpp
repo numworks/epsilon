@@ -19,22 +19,22 @@ namespace Regression {
 
 Layout QuadraticModel::layout() {
   if (m_layout.isUninitialized()) {
-    const Layout layoutChildren[] = {
-      CharLayout('a', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      VerticalOffsetLayout(
-          CharLayout('2', KDFont::SmallFont),
+    Layout layoutChildren[] = {
+      CharLayout::Builder('a', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      VerticalOffsetLayout::Builder(
+          CharLayout::Builder('2', KDFont::SmallFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('b', KDFont::SmallFont),
-      CharLayout(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout('X', KDFont::SmallFont),
-      CharLayout('+', KDFont::SmallFont),
-      CharLayout('c', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('b', KDFont::SmallFont),
+      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
+      CharLayout::Builder('X', KDFont::SmallFont),
+      CharLayout::Builder('+', KDFont::SmallFont),
+      CharLayout::Builder('c', KDFont::SmallFont),
     };
-    m_layout = HorizontalLayout(layoutChildren, 10);
+    m_layout = HorizontalLayout::Builder(layoutChildren, 10);
   }
   return m_layout;
 }
@@ -45,17 +45,17 @@ Expression QuadraticModel::simplifiedExpression(double * modelCoefficients, Poin
   double c = modelCoefficients[2];
   // a*x^2+b*x+c
   Expression addChildren[] = {
-    Multiplication(
+    Multiplication::Builder(
       Number::DecimalNumber(a),
-      Power(
-        Symbol('x'),
-        Decimal(2.0))),
-    Multiplication(
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(2.0))),
+    Multiplication::Builder(
       Number::DecimalNumber(b),
-      Symbol('x')),
+      Symbol::Builder('x')),
     Number::DecimalNumber(c)
   };
-  Expression result = Addition(addChildren, 3);
+  Expression result = Addition::Builder(addChildren, 3);
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

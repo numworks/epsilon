@@ -27,6 +27,8 @@ private:
 #endif
   MessageTableCellWithSwitch m_displayDerivativeColumn;
   StorageValuesController * m_valuesController;
+  // Index of the column corresponding to the function in the values controller
+  int m_selectedFunctionColumn;
 };
 
 }

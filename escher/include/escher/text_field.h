@@ -20,7 +20,6 @@ public:
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) override;
-  KDSize minimalSizeForOptimalDisplay() const override;
   char XNTChar(char defaultXNTChar) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;

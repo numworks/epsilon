@@ -20,7 +20,7 @@ int ArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 template<typename T>
-Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
   if (c.imag() == 0 && std::fabs(c.real()) <= 1.0) {
     /* atan: R -> R
@@ -41,16 +41,17 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
     }
   }
   result = Trigonometry::RoundToMeaningfulDigits(result, c);
-  return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+  return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ArcTangent(this).shallowReduce(context, angleUnit, target);
+Expression ArcTangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+  return ArcTangent(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
-Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+
+Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {
-    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -60,7 +61,7 @@ Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit a
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit, target);
+  return Trigonometry::shallowReduceInverseFunction(*this, context, complexFormat, angleUnit, target);
 }
 
 }

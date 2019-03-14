@@ -25,24 +25,22 @@ public:
 
 private:
   // Simplification
-  void deepReduceChildren(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) override;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Evalutation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Store final : public Expression {
+friend class StoreNode;
 public:
   Store(const StoreNode * n) : Expression(n) {}
-  Store(Expression value, SymbolAbstract symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {
-    replaceChildAtIndexInPlace(0, value);
-    replaceChildAtIndexInPlace(1, symbol);
-  }
+  static Store Builder(Expression value, SymbolAbstract symbol) { return TreeHandle::FixedArityBuilder<Store, StoreNode>(ArrayBuilder<TreeHandle>(value, symbol).array(), 2); }
 
   // Store
   const SymbolAbstract symbol() const {
@@ -55,7 +53,11 @@ public:
   }
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+
+private:
+  Expression storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  StoreNode * node() const { return static_cast<StoreNode *>(Expression::node()); }
 };
 
 }

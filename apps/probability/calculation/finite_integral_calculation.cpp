@@ -15,14 +15,6 @@ FiniteIntegralCalculation::FiniteIntegralCalculation() :
   compute(0);
 }
 
-Calculation::Type FiniteIntegralCalculation::type() {
-  return Type::FiniteIntegral;
-}
-
-int FiniteIntegralCalculation::numberOfParameters() {
-  return 3;
-}
-
 int FiniteIntegralCalculation::numberOfEditableParameters() {
   if (m_law->type() == Law::Type::Normal) {
     return 3;
@@ -65,14 +57,6 @@ double FiniteIntegralCalculation::parameterAtIndex(int index) {
     return m_upperBound;
   }
   return m_result;
-}
-
-double FiniteIntegralCalculation::lowerBound() {
-  return m_lowerBound;
-}
-
-double FiniteIntegralCalculation::upperBound() {
-  return m_upperBound;
 }
 
 void FiniteIntegralCalculation::compute(int indexKnownElement) {

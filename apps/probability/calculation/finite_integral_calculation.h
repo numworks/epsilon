@@ -8,14 +8,14 @@ namespace Probability {
 class FiniteIntegralCalculation : public Calculation {
 public:
   FiniteIntegralCalculation();
-  Type type() override;
-  int numberOfParameters() override;
+  Type type() override { return Type::FiniteIntegral; }
+  int numberOfParameters() override { return 3; }
   int numberOfEditableParameters() override;
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
-  double lowerBound() override;
-  double upperBound() override;
+  double lowerBound() override { return m_lowerBound; }
+  double upperBound() override { return m_upperBound; }
 private:
   void compute(int indexKnownElement) override;
   double m_lowerBound;

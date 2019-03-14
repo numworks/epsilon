@@ -1,6 +1,6 @@
 #include "calculation_cell.h"
 #include "responder_image_cell.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include <assert.h>
 
 namespace Probability {

@@ -8,9 +8,9 @@ namespace Poincare {
 
 class BlobNode : public TreeNode {
 public:
+  BlobNode(int data) : m_data(data) {}
   virtual size_t size() const override { return sizeof(BlobNode); }
   int data() { return m_data; }
-  void setData(int data) { m_data = data; }
   virtual int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -23,9 +23,13 @@ private:
 
 class BlobByReference : public TreeHandle {
 public:
-  BlobByReference(int data = 0) : TreeHandle(TreePool::sharedPool()->createTreeNode<BlobNode>()) {
-    node()->setData(data);
+  static BlobByReference Builder(int data = 0) {
+    void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BlobNode));
+    BlobNode * node = new (bufferNode) BlobNode(data);
+    TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+    return static_cast<BlobByReference &>(h);
   }
+  BlobByReference() = delete;
   int data() { return node()->data(); }
 private:
   BlobNode * node() const { return static_cast<BlobNode *>(TreeHandle::node()); }

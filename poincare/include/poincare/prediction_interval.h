@@ -27,27 +27,21 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class PredictionInterval final : public Expression {
 public:
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
-  static PredictionInterval Builder(Expression child0, Expression child1) { return PredictionInterval(child0, child1); }
-  static Expression UntypedBuilder(Expression children) { return Builder(children.childAtIndex(0), children.childAtIndex(1)); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilder);
+  static PredictionInterval Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PredictionInterval, PredictionIntervalNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("prediction95", 2, &UntypedBuilderTwoChildren<PredictionInterval>);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  PredictionInterval(Expression child0, Expression child1) : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {
-    replaceChildAtIndexInPlace(0, child0);
-    replaceChildAtIndexInPlace(1, child1);
-  }
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };
 
 }

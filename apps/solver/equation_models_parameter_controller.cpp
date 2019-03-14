@@ -3,7 +3,7 @@
 #include "../constant.h"
 #include <assert.h>
 #include <poincare/layout_helper.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 
 using namespace Poincare;
 
@@ -20,7 +20,7 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
   m_listController(listController)
 {
   m_selectableTableView.setMargins(0);
-  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e = Expression::Parse(k_models[i+1]);
     m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Constant::ShortNumberOfSignificantDigits);

@@ -33,3 +33,5 @@ ifeq ("$(origin V)", "command line")
     Q=
   endif
 endif
+
+BUILD_DIR = build/$(PLATFORM)

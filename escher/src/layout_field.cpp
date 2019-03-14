@@ -25,7 +25,7 @@ void LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  HorizontalLayout h;
+  HorizontalLayout h = HorizontalLayout::Builder();
   m_expressionView.setLayout(h);
   m_cursor.setLayout(h);
 }

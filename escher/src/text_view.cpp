@@ -33,6 +33,9 @@ void TextView::setFont(const KDFont * font) {
 }
 
 KDSize TextView::minimalSizeForOptimalDisplay() const  {
+  if (text() == nullptr) {
+    return KDSize(0,0);
+  }
   return m_font->stringSize(text());
 }
 

@@ -7,10 +7,17 @@
 
 class FltkKbd : public Fl_Group {
 public:
+  constexpr static int sNumberOfLettersInAlphabet = 26;
+  constexpr static int sNumberOfOtherShortcuts = 19; // TODO 3 are not working, when fixed put 22
   FltkKbd(int x, int y, int w, int h);
   bool key_down(Ion::Keyboard::Key key);
 private:
+  void initButtons(int x, int y, int w, int h);
+  void initAlphabetShortcuts();
+  void initOtherShortcuts();
   Fl_Button * m_buttons[Ion::Keyboard::NumberOfKeys];
+  Fl_Button * m_alphabetShortcuts[2 * sNumberOfLettersInAlphabet];
+  Fl_Button * m_otherShortcuts[sNumberOfOtherShortcuts];
 };
 
 #endif

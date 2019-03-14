@@ -4,13 +4,8 @@
 
 namespace Probability {
 
-Law::Law() :
- Shared::CurveViewRange()
-{
-}
-
 float Law::xGridUnit() {
-  return computeGridUnit(Axis::X, xMin(), xMax());
+  return computeGridUnit(Axis::X, xMax() - xMin());
 }
 
 double Law::cumulativeDistributiveFunctionAtAbscissa(double x) const {

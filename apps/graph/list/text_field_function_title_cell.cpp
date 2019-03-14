@@ -4,11 +4,15 @@
 
 namespace Graph {
 
+static inline float min(float x, float y) { return (x<y ? x : y); }
+static inline float max(float x, float y) { return (x>y ? x : y); }
+
 TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 0.5f, 0.5f)
-  {}
+  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 1.0f, 0.5f)
+{
+}
 
 void TextFieldFunctionTitleCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
@@ -44,8 +48,21 @@ void TextFieldFunctionTitleCell::setText(const char * title) {
   m_textField.setText(title);
 }
 
+void TextFieldFunctionTitleCell::setHorizontalAlignment(float alignment) {
+  assert(alignment >= 0.0f && alignment <= 1.0f);
+  m_textField.setAlignment(alignment, verticalAlignment());
+}
+
 void TextFieldFunctionTitleCell::layoutSubviews() {
-  m_textField.setFrame(textFieldFrame());
+  KDRect frame = subviewFrame();
+  m_textField.setFrame(frame);
+  KDCoordinate maxTextFieldX = frame.width() - m_textField.minimalSizeForOptimalDisplay().width();
+  float horizontalAlignment = max(
+      0.0f,
+      min(
+        1.0f,
+        ((float)(maxTextFieldX - k_textFieldRightMargin))/((float)maxTextFieldX)));
+  m_textField.setAlignment(horizontalAlignment, verticalAlignment());
 }
 
 void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
@@ -54,12 +71,10 @@ void TextFieldFunctionTitleCell::didBecomeFirstResponder() {
   }
 }
 
-KDRect TextFieldFunctionTitleCell::textFieldFrame() const {
-  KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
-  if (m_orientation == Orientation::VerticalIndicator){
-    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness-k_separatorThickness, bounds().height()-k_separatorThickness);
-  }
-  return textFrame;
+float TextFieldFunctionTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
+  assert(m_orientation == Orientation::VerticalIndicator);
+  KDCoordinate glyphHeight = font()->glyphSize().height();
+  return ((float)(expressionBaseline - glyphHeight/2))/((float)rowHeight+1-glyphHeight);
 }
 
 }

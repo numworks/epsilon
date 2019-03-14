@@ -13,11 +13,9 @@ ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer,
   // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
   m_textField.setBackgroundColor(KDColorWhite);
-  m_textField.setColorsBackground(true);
   // Initialize layout field
   m_layoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
   m_layoutField.setBackgroundColor(KDColorWhite);
-  m_layoutField.setColorsBackground(true);
 }
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {

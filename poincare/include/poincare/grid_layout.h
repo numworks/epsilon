@@ -89,7 +89,8 @@ private:
 class GridLayout : public Layout {
 public:
   GridLayout(const GridLayoutNode * n) : Layout(n) {}
-  GridLayout() : Layout(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
+  static GridLayout Builder() { return TreeHandle::NAryBuilder<GridLayout,GridLayoutNode>(); }
+
   void setDimensions(int rows, int columns);
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
     Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);

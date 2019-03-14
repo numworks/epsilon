@@ -1,6 +1,6 @@
 #include "expression_field_delegate_app.h"
 #include <escher.h>
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include "../apps_container.h"
 
 using namespace Poincare;
@@ -23,8 +23,14 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       layoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    char buffer[TextField::maxBufferSize()];
-    int bufferSize = TextField::maxBufferSize();
+    /* An acceptable layout has to be parsable and serialized in a fixed-size
+     * buffer. We check all that here. */
+    /* Step 1: Simple layout serialisation. Resulting texts can be parsed but
+     * not displayed, like:
+     * - 2a
+     * - log_{2}(x) */
+    constexpr int bufferSize = TextField::maxBufferSize();
+    char buffer[bufferSize];
     int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
     if (length >= bufferSize-1) {
       /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
@@ -32,7 +38,24 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    if (!isAcceptableText(buffer)) {
+    // Step 2: Parsing
+    Poincare::Expression e = Poincare::Expression::Parse(buffer);
+    if (e.isUninitialized()) {
+      // Unparsable expression
+      displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    /* Step 3: Expression serialization. Tesulting texts are parseable and
+     * displayable, like:
+     * - 2*a
+     * - log(x,2) */
+    length = e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode());
+    if (length >= bufferSize-1) {
+      // Same comment as before
+      displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    if (!isAcceptableExpression(e)) {
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }

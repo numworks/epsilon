@@ -1,15 +1,16 @@
 #include "curve_view.h"
 #include "../constant.h"
+#include <poincare/print_float.h>
 #include <assert.h>
 #include <string.h>
 #include <cmath>
 #include <float.h>
 
-#include <poincare/print_float.h>
-
 using namespace Poincare;
 
 namespace Shared {
+
+static inline int minInt(int x, int y) { return (x < y ? x : y); }
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, View * okView, bool displayBanner) :
@@ -91,6 +92,29 @@ float CurveView::samplingRatio() const {
   return 1.1f;
 }
 
+void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
+  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
+  /* We translate the pixel coordinates into floats, adding/subtracting 1 to
+   * account for conversion errors. */
+  float otherAxisMin = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.left() - 1 : rect.bottom() + 1);
+  float otherAxisMax = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.right() + 1 : rect.top() - 1);
+  float start = step * ((int)(min(otherAxis)/step));
+  float boldStart = 2*step * ((int)(min(otherAxis)/(2*step)));
+  bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;
+
+  for (float x = start; x < max(otherAxis); x+= step) {
+    /* When |start| >> step, start + step = start. In that case, quit the
+     * infinite loop. */
+    if (x == x-step || x == x+step) {
+      return;
+    }
+    if (otherAxisMin <= x && x <= otherAxisMax) {
+      drawLine(ctx, rect, axis, x, drawBold ? boldColor : lightColor);
+    }
+    drawBold = !drawBold;
+  }
+}
+
 float CurveView::min(Axis axis) const {
   assert(axis == Axis::Horizontal || axis == Axis::Vertical);
   return (axis == Axis::Horizontal ? m_curveViewRange->xMin(): m_curveViewRange->yMin());
@@ -110,9 +134,18 @@ KDCoordinate CurveView::pixelLength(Axis axis) const {
   return (axis == Axis::Horizontal ? m_frame.width() : m_frame.height());
 }
 
+int CurveView::numberOfLabels(Axis axis) const {
+  float labelStep = 2.0f * gridUnit(axis);
+  float minLabel = std::ceil(min(axis)/labelStep);
+  float maxLabel = std::floor(max(axis)/labelStep);
+  return maxLabel - minLabel + 1;
+}
+
 float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLength(axis)-p;
-  return min(axis) + pixels*((max(axis)-min(axis))/pixelLength(axis));
+  float pixelLen = pixelLength(axis);
+  float minA = min(axis);
+  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLen - p;
+  return minA + pixels*(max(axis)-minA)/pixelLen;
 }
 
 float CurveView::floatToPixel(Axis axis, float f) const {
@@ -132,51 +165,186 @@ float CurveView::floatToPixel(Axis axis, float f) const {
 
 void CurveView::computeLabels(Axis axis) {
   float step = gridUnit(axis);
-  int labelsCount = numberOfLabels(axis);
-  for (int index = 0; index < labelsCount; index++) {
-    float labelValue = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)))+index*2.0f*step;
+  int axisLabelsCount = numberOfLabels(axis);
+  for (int i = 0; i < axisLabelsCount; i++) {
+    float labelValue = labelValueAtIndex(axis, i);
+    /* Label cannot hold more than k_labelBufferMaxSize characters to prevent
+     * them from overprinting one another.*/
+    int labelMaxSize = k_labelBufferMaxSize;
+    if (axis == Axis::Horizontal) {
+      float pixelsPerLabel = ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin;
+      labelMaxSize = minInt(k_labelBufferMaxSize, pixelsPerLabel/k_font->glyphSize().width());
+    }
+
     if (labelValue < step && labelValue > -step) {
+      // Make sure the 0 value is really written 0
       labelValue = 0.0f;
     }
+
     /* Label cannot hold more than k_labelBufferSize characters to prevent them
-     * from overprinting one another.*/
-    PrintFloat::convertFloatToText<float>(labelValue, label(axis, index), k_labelBufferSize,
-      Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+     * from overprinting one another. */
+
+    char * labelBuffer = label(axis, i);
+    PrintFloat::convertFloatToText<float>(
+        labelValue,
+        labelBuffer,
+        labelMaxSize,
+        k_numberSignificantDigits,
+        Preferences::PrintFloatMode::Decimal,
+        axis == Axis::Vertical);
+
+    if (axis == Axis::Horizontal) {
+      if (labelBuffer[0] == 0) {
+        /* Some labels are too big and may overlap their neighbours. We write the
+         * extrema labels only. */
+        computeHorizontalExtremaLabels();
+        return;
+      }
+      if (i > 0 && strcmp(labelBuffer, label(axis, i-1)) == 0) {
+        /* We need to increase the number if significant digits, otherwise some
+         * labels are rounded to the same value. */
+        computeHorizontalExtremaLabels(true);
+        return;
+      }
+    }
   }
 }
 
-void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate) const {
-  float step = gridUnit(axis);
-  float start = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)));
-  float end = max(axis);
+enum class FloatingPosition : uint8_t {
+  None,
+  Min,
+  Max
+};
+
+void CurveView::simpleDrawBothAxesLabels(KDContext * ctx, KDRect rect) const {
+  drawLabels(ctx, rect, Axis::Vertical, true);
+  drawLabels(ctx, rect, Axis::Horizontal, true);
+}
+
+void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly, bool fixCoordinate, KDCoordinate fixedCoordinate, KDColor backgroundColor) const {
+  int numberLabels = numberOfLabels(axis);
+  if (numberLabels <= 1) {
+    return;
+  }
+
   float verticalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Vertical, 0.0f));
   float horizontalCoordinate = fixCoordinate ? fixedCoordinate : std::round(floatToPixel(Axis::Horizontal, 0.0f));
-  int i = 0;
-  for (float x = start; x < end; x += 2.0f*step) {
-    /* When |start| >> step, start + step = start. In that case, quit the
-     * infinite loop. */
-    if (x == x-step || x == x+step) {
-      return;
+
+  int viewHeight = bounds().height() - (bannerIsVisible() ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0);
+
+  /* If the axis is not visible, draw floating labels on the edge of the screen.
+   * The X axis floating status is needed when drawing both axes labels. */
+  FloatingPosition floatingHorizontalLabels = FloatingPosition::None;
+  if (verticalCoordinate > viewHeight - k_font->glyphSize().height() - k_labelMargin) {
+    floatingHorizontalLabels = FloatingPosition::Max;
+  } else if (max(Axis::Vertical) < 0.0f) {
+    floatingHorizontalLabels = FloatingPosition::Min;
+  }
+
+  FloatingPosition floatingLabels = FloatingPosition::None;
+  if (axis == Axis::Horizontal) {
+    floatingLabels = floatingHorizontalLabels;
+  } else {
+    if (horizontalCoordinate < k_labelMargin + k_font->glyphSize().width() * 3) { // We want do display at least 3 characters left of the Y axis
+      floatingLabels = FloatingPosition::Min;
+    } else if (max(Axis::Horizontal) < 0.0f) {
+      floatingLabels = FloatingPosition::Max;
     }
-    KDRect graduation(std::round(floatToPixel(Axis::Horizontal, x)), verticalCoordinate -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength);
-    if (axis == Axis::Vertical) {
-      graduation = KDRect(horizontalCoordinate-(k_labelGraduationLength-2)/2, std::round(floatToPixel(Axis::Vertical, x)), k_labelGraduationLength, 1);
+  }
+
+  /* There might be less labels than graduations, if the extrema labels are too
+   * close to the screen edge to write them. We must thus draw the graduations
+   * separately from the labels. */
+
+  float labelStep = 2.0f * gridUnit(axis);
+  int minLabelPixelPosition = std::round(floatToPixel(axis, labelStep * std::ceil(min(axis)/labelStep)));
+  int maxLabelPixelPosition = std::round(floatToPixel(axis, labelStep * std::floor(max(axis)/labelStep)));
+
+  // Draw the graduations
+
+  int minDrawnLabel = 0;
+  int maxDrawnLabel = numberLabels;
+  if (axis == Axis::Vertical) {
+    /* Do not draw an extremal vertical label if it collides with the horizontal
+     * labels */
+    int horizontalLabelsMargin = k_font->glyphSize().height() * 2;
+    if (floatingHorizontalLabels == FloatingPosition::Min
+        && maxLabelPixelPosition < horizontalLabelsMargin) {
+      maxDrawnLabel--;
+    } else if (floatingHorizontalLabels == FloatingPosition::Max
+        && minLabelPixelPosition > viewHeight - horizontalLabelsMargin)
+    {
+      minDrawnLabel++;
     }
-    if (!graduationOnly) {
-      KDSize textSize = KDFont::SmallFont->stringSize(label(axis, i));
-      KDPoint origin(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, verticalCoordinate + k_labelMargin);
-      if (axis == Axis::Vertical) {
-        origin = KDPoint(horizontalCoordinate + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
+  }
+
+  if (floatingLabels == FloatingPosition::None) {
+    for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
+      int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
+      KDRect graduation = axis == Axis::Horizontal ?
+        KDRect(
+            labelPosition,
+            verticalCoordinate -(k_labelGraduationLength-2)/2,
+            1,
+            k_labelGraduationLength) :
+        KDRect(
+            horizontalCoordinate-(k_labelGraduationLength-2)/2,
+            labelPosition,
+            k_labelGraduationLength,
+            1);
+      ctx->fillRect(graduation, KDColorBlack);
+    }
+  }
+
+  if (graduationOnly) {
+    return;
+  }
+
+  // Draw the labels
+  for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
+    int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
+    char * labelI = label(axis, i);
+    KDSize textSize = k_font->stringSize(labelI);
+    float xPosition = 0.0f;
+    float yPosition = 0.0f;
+
+    bool positioned = false;
+    if (strcmp(labelI, "0") == 0) {
+      if (floatingLabels != FloatingPosition::None) {
+        // Do not draw the zero, it is symbolized by the other axis
+        continue;
       }
-      if (-step < x && x < step && shiftOrigin) {
-        origin = KDPoint(horizontalCoordinate + k_labelMargin, verticalCoordinate + k_labelMargin);
-      }
-      if (rect.intersects(KDRect(origin, KDFont::SmallFont->stringSize(label(axis, i))))) {
-        ctx->drawString(label(axis, i), origin, KDFont::SmallFont, KDColorBlack);
+      if (shiftOrigin && floatingLabels == FloatingPosition::None) {
+        xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
+        yPosition = verticalCoordinate + k_labelMargin;
+        positioned = true;
       }
     }
-    ctx->fillRect(graduation, KDColorBlack);
-    i++;
+    if (!positioned) {
+      if (axis == Axis::Horizontal) {
+        xPosition = labelPosition - textSize.width()/2;
+        if (floatingLabels == FloatingPosition::None) {
+          yPosition = verticalCoordinate + k_labelMargin;
+        } else if (floatingLabels == FloatingPosition::Min) {
+          yPosition = k_labelMargin;
+        } else {
+          yPosition = viewHeight - k_font->glyphSize().height() - k_labelMargin;
+        }
+      } else {
+        yPosition = labelPosition - textSize.height()/2;
+        if (floatingLabels == FloatingPosition::None) {
+          xPosition = horizontalCoordinate - k_labelMargin - textSize.width();
+        } else if (floatingLabels == FloatingPosition::Min) {
+          xPosition = k_labelMargin;
+        } else {
+          xPosition = Ion::Display::Width - textSize.width() - k_labelMargin;
+        }
+      }
+    }
+    KDPoint origin = KDPoint(xPosition, yPosition);
+    if (rect.intersects(KDRect(origin, textSize))) {
+      ctx->drawString(labelI, origin, k_font, KDColorBlack, backgroundColor);
+    }
   }
 }
 
@@ -261,33 +429,19 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   }
 }
 
-void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor color) const {
-  float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
-  float rectMax = pixelToFloat(Axis::Horizontal, rect.right());
-  if (axis == Axis::Vertical) {
-    rectMax = pixelToFloat(Axis::Vertical, rect.top());
-    rectMin = pixelToFloat(Axis::Vertical, rect.bottom());
-  }
-  float start = step*((int)(min(axis)/step));
-  Axis otherAxis = (axis == Axis::Horizontal) ? Axis::Vertical : Axis::Horizontal;
-  for (float x =start; x < max(axis); x += step) {
-    /* When |start| >> step, start + step = start. In that case, quit the
-     * infinite loop. */
-    if (x == x-step || x == x+step) {
-      return;
-    }
-    if (rectMin <= x && x <= rectMax) {
-      drawLine(ctx, rect, otherAxis, x, color);
-    }
-  }
-}
-
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
-  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->xGridUnit(), Palette::GreyWhite);
-  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->yGridUnit(), Palette::GreyWhite);
+  KDColor boldColor = Palette::GreyMiddle;
+  KDColor lightColor = Palette::GreyWhite;
+  drawGridLines(ctx, rect, Axis::Vertical, m_curveViewRange->xGridUnit(), boldColor, lightColor);
+  drawGridLines(ctx, rect, Axis::Horizontal, m_curveViewRange->yGridUnit(), boldColor, lightColor);
 }
 
-void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
+void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {
+  drawAxis(ctx, rect, Axis::Vertical);
+  drawAxis(ctx, rect, Axis::Horizontal);
+}
+
+void CurveView::drawAxis(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1);
 }
 
@@ -428,14 +582,6 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   }
 }
 
-int CurveView::numberOfLabels(Axis axis) const {
-  Axis otherAxis = axis == Axis::Horizontal ? Axis::Vertical : Axis::Horizontal;
-  if (min(otherAxis) > 0.0f || max(otherAxis) < 0.0f) {
-    return 0;
-  }
-  return std::ceil((max(axis) - min(axis))/(2*gridUnit(axis)));
-}
-
 void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
@@ -453,7 +599,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   if (std::isinf(pvf)) {
     pvf = pvf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
   }
-  if (pyf - (float)circleDiameter/2.0f < pvf && pvf < pyf + (float)circleDiameter/2.0f) {
+  if (pyf - ((float)circleDiameter)/2.0f < pvf && pvf < pyf + ((float)circleDiameter)/2.0f) {
     // the dots are already joined
     return;
   }
@@ -493,11 +639,15 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
 
 void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
   // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize || pyf > pixelLength(Axis::Vertical)+stampSize) {
+  if (pyf < -stampSize - FLT_EPSILON || pyf > pixelLength(Axis::Vertical)+stampSize + FLT_EPSILON) {
     return;
   }
-  KDCoordinate px = pxf;
-  KDCoordinate py = pyf;
+  /* When converting floats to KDCoordinate, we need to add -1 if the float is
+   * negative, otherwise all floats in ]-1.0;1.0[ are converted to 0 and there
+   * is a blob for x = 0. Try for instance f(x)=cos(x), the blob is at the
+   * intersection of the curve with the left of the screen. */
+  KDCoordinate px = pxf + (pxf >= 0 ? 0 : -1);
+  KDCoordinate py = pyf + (pyf >= 0 ? 0 : -1);
   KDRect stampRect(px-(circleDiameter-2)/2, py-(circleDiameter-2)/2, stampSize, stampSize);
   if (!rect.intersects(stampRect)) {
     return;
@@ -547,7 +697,7 @@ KDRect CurveView::cursorFrame() {
 
 KDRect CurveView::bannerFrame() {
   KDRect bannerFrame = KDRectZero;
-  if (m_bannerView && m_mainViewSelected) {
+  if (bannerIsVisible()) {
     KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
     bannerFrame = KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight);
   }
@@ -580,15 +730,64 @@ View * CurveView::subviewAtIndex(int index) {
     if (m_okView != nullptr) {
       return m_okView;
     } else {
-      if (m_bannerView != nullptr) {
-        return m_bannerView;
+      if (m_cursorView != nullptr) {
+        return m_cursorView;
       }
     }
   }
-  if (index == 1 && m_bannerView != nullptr && m_okView != nullptr) {
-    return m_bannerView;
+  if (index == 1 && m_cursorView != nullptr && m_okView != nullptr) {
+    return m_cursorView;
   }
-  return m_cursorView;
+  return m_bannerView;
+}
+
+void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantDigits) {
+  Axis axis = Axis::Horizontal;
+  int axisLabelsCount = numberOfLabels(axis);
+  float minA = min(axis);
+
+  /* We want to draw the extrema labels (0 and numberOfLabels -1), but if they
+   * might not be fully visible, draw the labels 1 and numberOfLabels - 2. */
+  bool skipExtremaLabels =
+    (axisLabelsCount >= 4)
+    && ((labelValueAtIndex(axis, 0) - minA)/(max(axis) - minA) < k_labelsHorizontalMarginRatio+FLT_EPSILON);
+  int firstLabel = skipExtremaLabels ? 1 : 0;
+  int lastLabel = axisLabelsCount - (skipExtremaLabels ? 2 : 1);
+
+  assert(firstLabel != lastLabel);
+
+  // All labels but the extrema are empty
+  for (int i = 0; i < firstLabel; i++) {
+    label(axis, i)[0] = 0;
+  }
+  for (int i = firstLabel + 1; i < lastLabel; i++) {
+    label(axis, i)[0] = 0;
+  }
+  for (int i = lastLabel + 1; i < axisLabelsCount; i++) {
+    label(axis, i)[0] = 0;
+  }
+
+  int minMax[] = {firstLabel, lastLabel};
+  for (int i : minMax) {
+    // Compute the minimal and maximal label
+    PrintFloat::convertFloatToText<float>(
+        labelValueAtIndex(axis, i),
+        label(axis, i),
+        k_labelBufferMaxSize,
+        increaseNumberOfSignificantDigits ? k_bigNumberSignificantDigits : k_numberSignificantDigits,
+        Preferences::PrintFloatMode::Decimal,
+        false);
+  }
+}
+
+float CurveView::labelValueAtIndex(Axis axis, int i) const {
+  assert(i >= 0 && i < numberOfLabels(axis));
+  float labelStep = 2.0f * gridUnit(axis);
+  return labelStep*(std::ceil(min(axis)/labelStep)+i);
+}
+
+bool CurveView::bannerIsVisible() const {
+  return m_bannerView && m_mainViewSelected;
 }
 
 }

@@ -10,7 +10,7 @@
 #include "root_graph_controller.h"
 #include "graph_view.h"
 #include "banner_view.h"
-#include "../../i18n.h"
+#include <apps/i18n.h>
 
 namespace Graph {
 

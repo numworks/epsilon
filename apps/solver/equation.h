@@ -14,6 +14,7 @@ public:
     return false;
   }
   Poincare::Expression standardForm(Poincare::Context * context) const;
+  bool containsIComplex() const;
 private:
   void tidyStandardForm();
   mutable Poincare::Expression m_standardForm;

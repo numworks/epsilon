@@ -1,16 +1,16 @@
 apps += Calculation::App
 app_headers += apps/calculation/app.h
 
-app_objs += $(addprefix apps/calculation/,\
-  app.o\
-  calculation.o\
-  calculation_store.o\
-  edit_expression_controller.o\
-  expression_field.o\
-  history_view_cell.o\
-  history_controller.o\
-  scrollable_expression_view.o\
-  selectable_table_view.o\
+app_src += $(addprefix apps/calculation/,\
+  app.cpp \
+  calculation.cpp \
+  calculation_store.cpp \
+  edit_expression_controller.cpp \
+  expression_field.cpp \
+  history_view_cell.cpp \
+  history_controller.cpp \
+  scrollable_expression_view.cpp \
+  selectable_table_view.cpp \
 )
 
 i18n_files += $(addprefix apps/calculation/,\
@@ -25,4 +25,4 @@ tests += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\
 )
 
-app_images += apps/calculation/calculation_icon.png
+$(eval $(call depends_on_image,apps/calculation/app.cpp,apps/calculation/calculation_icon.png))

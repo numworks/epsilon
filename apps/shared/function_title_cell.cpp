@@ -3,11 +3,8 @@
 
 namespace Shared {
 
-FunctionTitleCell::FunctionTitleCell(Orientation orientation) :
-  EvenOddCell(),
-  m_orientation(orientation)
-{
-}
+static inline float min(float x, float y) { return (x<y ? x : y); }
+static inline float max(float x, float y) { return (x>y ? x : y); }
 
 void FunctionTitleCell::setOrientation(Orientation orientation) {
   m_orientation = orientation;
@@ -19,17 +16,46 @@ void FunctionTitleCell::setColor(KDColor color) {
   reloadCell();
 }
 
+void FunctionTitleCell::setBaseline(KDCoordinate baseline) {
+  if (m_baseline != baseline) {
+    m_baseline = baseline;
+    reloadCell();
+  }
+}
+
 void FunctionTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   if (m_orientation == Orientation::VerticalIndicator){
-    ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()), m_functionColor);
-    // Color the vertical separator
-    ctx->fillRect(KDRect(bounds().width()-k_separatorThickness, 0, k_separatorThickness, bounds().height()), Palette::GreyBright);
     KDColor separatorColor = m_even ? Palette::WallScreen : KDColorWhite;
-    // Color the horizontal separator
-    ctx->fillRect(KDRect(k_colorIndicatorThickness, bounds().height()-k_separatorThickness, bounds().width()-k_colorIndicatorThickness-k_separatorThickness, k_separatorThickness), separatorColor);
+    KDColor backgroundColor = m_even ? KDColorWhite : Palette::WallScreen;
+    // Draw the color indicator
+    ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()), m_functionColor);
+    // Draw the horizontal separator
+    ctx->fillRect(KDRect(k_colorIndicatorThickness, bounds().height()-k_separatorThickness, bounds().width()-k_colorIndicatorThickness, k_separatorThickness), separatorColor);
+    // Draw some background
+    ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0, k_equalWidthWithMargins, bounds().height()-k_separatorThickness), backgroundColor);
+    // Draw '='
+    KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - font()->glyphSize().height()/2 - 1); // -1 is visually needed
+    ctx->drawString("=", p, font(), m_functionColor, backgroundColor);
   } else {
+    // Draw the color indicator
     ctx->fillRect(KDRect(0, 0, bounds().width(), k_colorIndicatorThickness), m_functionColor);
   }
+}
+
+KDRect FunctionTitleCell::subviewFrame() const {
+  if (m_orientation == Orientation::VerticalIndicator) {
+    return KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness - k_equalWidthWithMargins, bounds().height()-k_separatorThickness);
+  }
+  return KDRect(0, k_colorIndicatorThickness, bounds().width(), bounds().height()-k_colorIndicatorThickness);
+}
+
+float FunctionTitleCell::verticalAlignment() const {
+  assert(m_orientation == Orientation::VerticalIndicator);
+  return max(
+      0.0f,
+      min(
+        1.0f,
+        m_baseline < 0 ? 0.5f : verticalAlignmentGivenExpressionBaselineAndRowHeight(m_baseline, subviewFrame().height())));
 }
 
 }

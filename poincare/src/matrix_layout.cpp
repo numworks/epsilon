@@ -266,16 +266,10 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   }
 }
 
-MatrixLayout::MatrixLayout(const MatrixLayoutNode * n) : GridLayout(n) {}
-MatrixLayout::MatrixLayout() : GridLayout(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
-MatrixLayout::MatrixLayout(Layout l1, Layout l2, Layout l3, Layout l4) :
-  MatrixLayout()
-{
-  addChildAtIndexInPlace(l1, 0, 0);
-  addChildAtIndexInPlace(l2, 1, 1);
-  addChildAtIndexInPlace(l3, 2, 2);
-  addChildAtIndexInPlace(l4, 3, 3);
-  setDimensions(2, 2);
+MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
+  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(ArrayBuilder<TreeHandle>(l1,l2,l3,l4).array(), 4);
+  m.setDimensions(2, 2);
+  return m;
 }
 
 }

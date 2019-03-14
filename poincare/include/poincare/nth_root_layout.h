@@ -14,9 +14,9 @@ public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
 
-  NthRootLayoutNode() :
+  NthRootLayoutNode(bool hasIndex) :
     LayoutNode(),
-    m_hasIndex(false)
+    m_hasIndex(hasIndex)
   {}
 
   // LayoutNode
@@ -50,14 +50,6 @@ private:
   constexpr static KDCoordinate k_heightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;
-  void setNumberOfChildren(int number) {
-    assert(number == 1 || number == 2);
-    if (number == 1) {
-      m_hasIndex = false;
-    } else {
-      m_hasIndex = true;
-    }
-  }
   KDSize adjustedIndexSize();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   LayoutNode * radicandLayout() { return childAtIndex(0); }
@@ -67,10 +59,9 @@ private:
 
 class NthRootLayout final : public Layout {
 public:
-  explicit NthRootLayout(Layout radicand);
-  NthRootLayout(Layout radicand, Layout index);
-private:
-  NthRootLayout();
+  NthRootLayout() = delete;
+  static NthRootLayout Builder(Layout child);
+  static NthRootLayout Builder(Layout radicand, Layout index);
 };
 
 }

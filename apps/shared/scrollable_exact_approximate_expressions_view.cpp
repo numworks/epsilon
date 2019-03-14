@@ -1,5 +1,5 @@
 #include "scrollable_exact_approximate_expressions_view.h"
-#include "../i18n.h"
+#include <apps/i18n.h>
 #include <assert.h>
 using namespace Poincare;
 
@@ -53,7 +53,7 @@ KDSize ScrollableExactApproximateExpressionsView::ContentCell::minimalSizeForOpt
   KDCoordinate rightBaseline = m_rightExpressionView.layout().baseline();
   KDCoordinate height = max(leftBaseline, rightBaseline) + max(leftExpressionSize.height()-leftBaseline, rightExpressionSize.height()-rightBaseline);
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
-  return KDSize(leftExpressionSize.width()+approximateSignSize.width()+rightExpressionSize.width()+2*k_digitHorizontalMargin, height);
+  return KDSize(leftExpressionSize.width()+approximateSignSize.width()+rightExpressionSize.width()+2*Metric::CommonLargeMargin, height);
 }
 
 void ScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition subviewPosition) {
@@ -94,14 +94,21 @@ void ScrollableExactApproximateExpressionsView::ContentCell::layoutSubviews() {
   KDSize leftExpressionSize = m_leftExpressionView.minimalSizeForOptimalDisplay();
   KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
   m_leftExpressionView.setFrame(KDRect(0, baseline-leftBaseline, leftExpressionSize));
-  m_rightExpressionView.setFrame(KDRect(2*k_digitHorizontalMargin+leftExpressionSize.width()+approximateSignSize.width(), baseline-rightBaseline, rightExpressionSize));
-  m_approximateSign.setFrame(KDRect(k_digitHorizontalMargin+leftExpressionSize.width(), baseline-approximateSignSize.height()/2, approximateSignSize));
+  m_rightExpressionView.setFrame(KDRect(2*Metric::CommonLargeMargin+leftExpressionSize.width()+approximateSignSize.width(), baseline-rightBaseline, rightExpressionSize));
+  m_approximateSign.setFrame(KDRect(Metric::CommonLargeMargin+leftExpressionSize.width(), baseline-approximateSignSize.height()/2, approximateSignSize));
 }
 
 ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressionsView(Responder * parentResponder) :
   ScrollableView(parentResponder, &m_contentCell, this),
   m_contentCell()
 {
+  setDecoratorType(ScrollView::Decorator::Type::Arrows);
+  setMargins(
+    Metric::CommonSmallMargin,
+    Metric::CommonLargeMargin,
+    Metric::CommonSmallMargin,
+    Metric::CommonLargeMargin
+  );
 }
 
 void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout rightLayout, Poincare::Layout leftLayout) {
@@ -136,10 +143,6 @@ bool ScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event e
     return true;
   }
   return ScrollableView::handleEvent(event);
-}
-
-KDSize ScrollableExactApproximateExpressionsView::minimalSizeForOptimalDisplay() const {
-  return m_contentCell.minimalSizeForOptimalDisplay();
 }
 
 }

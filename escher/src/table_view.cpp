@@ -13,10 +13,6 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 {
 }
 
-KDSize TableView::minimalSizeForOptimalDisplay() const {
-  return m_contentView.minimalSizeForOptimalDisplay();
-}
-
 TableViewDataSource * TableView::dataSource() {
   return m_contentView.dataSource();
 }
@@ -38,11 +34,22 @@ const char * TableView::className() const {
 #endif
 
 void TableView::layoutSubviews() {
-  // We only have to layout our contentView.
-  // We will size it here, and ScrollView::layoutSubviews will position it.
-
-  m_contentView.resizeToFitContent();
-
+  /* On the one hand, ScrollView::layoutSubviews()
+   * calls setFrame(...) over m_contentView,
+   * which typically calls layoutSubviews() over m_contentView.
+   * However, if the frame happens to be unchanged,
+   * setFrame(...) does not call layoutSubviews.
+   * On the other hand, calling only m_contentView.layoutSubviews()
+   * does not relayout ScrollView when the offset
+   * or the content's size changes.
+   * For those reasons, we call both of them explicitly.
+   * Besides, one must call layoutSubviews() over
+   * m_contentView first, in order to reload the table's data,
+   * otherwise the table's size might be miscomputed...
+   * FIXME:
+   * Finally, this solution is not optimal at all since
+   * layoutSubviews is called twice over m_contentView. */
+  m_contentView.layoutSubviews();
   ScrollView::layoutSubviews();
 }
 
@@ -69,17 +76,14 @@ TableViewDataSource * TableView::ContentView::dataSource() {
   return m_dataSource;
 }
 
-KDCoordinate TableView::ContentView::columnWidth(int i) const {
-  int columnWidth = m_dataSource->columnWidth(i);
+KDRect TableView::ContentView::cellFrame(int i, int j) const {
+  KDCoordinate columnWidth = m_dataSource->columnWidth(i);
   columnWidth = columnWidth ? columnWidth : m_tableView->maxContentWidthDisplayableWithoutScrolling();
-  return columnWidth;
-}
-
-void TableView::ContentView::resizeToFitContent() {
-  if (!(m_tableView->bounds() == KDRectZero)) {
-    layoutSubviews();
-    setSize(KDSize(width(), height()));
-  }
+  return KDRect(
+    m_dataSource->cumulatedWidthFromIndex(i), m_dataSource->cumulatedHeightFromIndex(j),
+    columnWidth + m_horizontalCellOverlap,
+    m_dataSource->rowHeight(j) + m_verticalCellOverlap
+  );
 }
 
 KDCoordinate TableView::ContentView::height() const {
@@ -93,8 +97,7 @@ KDCoordinate TableView::ContentView::width() const {
 }
 
 void TableView::ContentView::scrollToCell(int x, int y) const {
-  KDRect cellRect = KDRect(m_dataSource->cumulatedWidthFromIndex(x), m_dataSource->cumulatedHeightFromIndex(y), columnWidth(x), m_dataSource->rowHeight(y));
-  m_tableView->scrollToContentRect(cellRect, true);
+  m_tableView->scrollToContentRect(cellFrame(x, y), true);
 }
 
 void TableView::ContentView::reloadCellAtLocation(int i, int j) {
@@ -175,14 +178,7 @@ void TableView::ContentView::layoutSubviews() {
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
-
-    KDCoordinate rowHeight = m_dataSource->rowHeight(j);
-    KDCoordinate columnWidth = this->columnWidth(i);
-    KDCoordinate verticalOffset = m_dataSource->cumulatedHeightFromIndex(j);
-    KDCoordinate horizontalOffset = m_dataSource->cumulatedWidthFromIndex(i);
-    KDRect cellFrame(horizontalOffset, verticalOffset,
-      columnWidth+m_horizontalCellOverlap, rowHeight+m_verticalCellOverlap);
-    cell->setFrame(cellFrame);
+    cell->setFrame(cellFrame(i,j));
   }
 }
 

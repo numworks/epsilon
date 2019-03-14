@@ -71,6 +71,10 @@ void AlternateEmptyViewController::didBecomeFirstResponder() {
   }
 }
 
+void AlternateEmptyViewController::initView() {
+  m_contentView.mainViewController()->initView();
+}
+
 void AlternateEmptyViewController::viewWillAppear() {
   m_contentView.layoutSubviews();
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {

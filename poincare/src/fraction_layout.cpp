@@ -95,7 +95,7 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
       /* Case: Numerator and denominator are empty. Move the cursor and replace
        * the fraction with an empty layout. */
-      thisRef.replaceWith(EmptyLayout(), cursor);
+      thisRef.replaceWith(EmptyLayout::Builder(), cursor);
       // WARNING: Do no use "this" afterwards
       return;
     }
@@ -214,13 +214,6 @@ KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child) {
 void FractionLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + numeratorLayout()->layoutSize().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, layoutSize().width()-2*Metric::FractionAndConjugateHorizontalMargin, k_fractionLineHeight), expressionColor);
-}
-
-FractionLayout::FractionLayout(Layout numerator, Layout denominator) :
-  Layout(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
-{
-  replaceChildAtIndexInPlace(0, numerator);
-  replaceChildAtIndexInPlace(1, denominator);
 }
 
 }

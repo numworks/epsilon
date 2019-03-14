@@ -1,21 +1,21 @@
-objs += $(addprefix ion/src/device/bench/, \
-  bench.o \
-  command_handler.o \
-  command_list.o \
+src += $(addprefix ion/src/device/bench/, \
+  bench.cpp \
+  command_handler.cpp \
+  command_list.cpp \
 )
 
-objs += $(addprefix ion/src/device/bench/command/, \
-  command.o \
-  adc.o \
-  backlight.o \
-  charge.o \
-  display.o \
-  exit.o \
-  keyboard.o \
-  led.o \
-  mcu_serial.o \
-  ping.o \
-  print.o \
-  suspend.o \
-  vblank.o \
+src += $(addprefix ion/src/device/bench/command/, \
+  adc.cpp \
+  backlight.cpp \
+  charge.cpp \
+  command.cpp \
+  display.cpp \
+  exit.cpp \
+  keyboard.cpp \
+  led.cpp \
+  mcu_serial.cpp \
+  ping.cpp \
+  print.cpp \
+  suspend.cpp \
+  vblank.cpp \
 )

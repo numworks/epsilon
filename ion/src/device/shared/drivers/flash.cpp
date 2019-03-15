@@ -86,7 +86,7 @@ static inline T min(T i, T j) {
   return (i<j) ? i : j;
 }
 
-static void flash_memcpy(uint8_t * source, uint8_t * destination, size_t length) {
+static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length) {
   /* RM0402 3.5.4
    * It is not allowed to program data to the Flash memory that would cross the
    * 128-bit row boundary. In such a case, the write operation is not performed
@@ -230,10 +230,10 @@ void EraseSector(int i) {
   close();
 }
 
-void WriteMemory(uint8_t * source, uint8_t * destination, size_t length) {
+void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
   open();
   FLASH.CR()->setPG(true);
-  flash_memcpy(source, destination, length);
+  flash_memcpy(destination, source, length);
   wait();
   FLASH.CR()->setPG(false);
   close();

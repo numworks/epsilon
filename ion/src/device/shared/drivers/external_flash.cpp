@@ -1,5 +1,6 @@
 #include "external_flash.h"
 #include <drivers/config/external_flash.h>
+#include <ion/timing.h>
 
 namespace Ion {
 namespace Device {
@@ -281,6 +282,33 @@ void init() {
   initGPIO();
   initQSPI();
   initChip();
+}
+
+static void shutdownGPIO() {
+  for(const AFGPIOPin & p : Config::Pins) {
+    p.group().OSPEEDR()->setOutputSpeed(p.pin(), GPIO::OSPEEDR::OutputSpeed::Low);
+    p.group().MODER()->setMode(p.pin(), GPIO::MODER::Mode::Analog);
+    p.group().PUPDR()->setPull(p.pin(), GPIO::PUPDR::Pull::None);
+  }
+}
+
+static void shutdownChip() {
+  unset_memory_mapped_mode();
+  send_command(Command::DeepPowerDown);
+  Timing::usleep(100); // TODO should be 3us when usleep adjusted
+}
+
+static void shutdownQSPI() {
+  RCC.AHB3ENR()->setQSPIEN(false); // TODO: move in Device::shutdownClocks
+}
+
+void shutdown() {
+  if (Config::NumberOfSectors == 0) {
+    return;
+  }
+  shutdownChip();
+  shutdownQSPI();
+  shutdownGPIO();
 }
 
 int SectorAtAddress(uint32_t address) {

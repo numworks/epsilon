@@ -1,5 +1,4 @@
 #include "external_flash.h"
-#include <drivers/external_flash.h>
 #include <drivers/config/external_flash.h>
 
 namespace Ion {
@@ -209,23 +208,9 @@ void init() {
   initChip();
 }
 
-void shutdown() {
-  shutdownChip();
-  shutdownQSPI();
-  shutdownGPIO();
-}
-
 void initGPIO() {
   for(const AFGPIOPin & p : Config::Pins) {
     p.init();
-  }
-}
-
-void shutdownGPIO() {
-  for(const AFGPIOPin & p : Config::Pins) {
-    p.group().OSPEEDR()->setOutputSpeed(p.pin(), GPIO::OSPEEDR::OutputSpeed::Low);
-    p.group().MODER()->setMode(p.pin(), GPIO::MODER::Mode::Analog);
-    p.group().PUPDR()->setPull(p.pin(), GPIO::PUPDR::Pull::None);
   }
 }
 
@@ -272,13 +257,9 @@ void initChip() {
   set_as_memory_mapped();
 }
 
-int NumberOfSectors() {
-  return k_numberOfSectors;
-}
-
 int SectorAtAddress(uint32_t address) {
   int i = address >> NumberOfAddressBitsIn64KbyteBlock;
-  if (i >= NumberOfSectors()) {
+  if (i >= NumberOfSectors) {
     return -1;
   }
   return i;
@@ -294,7 +275,7 @@ void MassErase() {
 }
 
 void EraseSector(int i) {
-  assert(i >= 0 && i < NumberOfSectors());
+  assert(i >= 0 && i < NumberOfSectors);
   unset_memory_mapped_mode();
   send_command(Command::WriteEnable);
   wait();

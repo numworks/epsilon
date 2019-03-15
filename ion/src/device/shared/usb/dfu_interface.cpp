@@ -225,13 +225,13 @@ void DFUInterface::eraseMemoryIfNeeded() {
 void DFUInterface::writeOnMemory() {
   if (m_writeAddress >= k_flashStartAddress && m_writeAddress <= k_flashEndAddress) {
     // Write to the Flash memory
-    Flash::WriteMemory(m_largeBuffer, reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBufferLength);
+    Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
   } else if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
   } else if (m_writeAddress >= k_externalFlashStartAddress && m_writeAddress <= k_externalFlashEndAddress) {
-    ExternalFlash::WriteMemory(m_largeBuffer, reinterpret_cast<uint8_t *>(m_writeAddress) - k_externalFlashStartAddress, m_largeBufferLength);
+    ExternalFlash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress) - k_externalFlashStartAddress, m_largeBuffer, m_largeBufferLength);
   } else {
     // Invalid write address
     m_largeBufferLength = 0;

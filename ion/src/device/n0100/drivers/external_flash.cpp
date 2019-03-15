@@ -24,7 +24,7 @@ void MassErase() {}
 
 void EraseSector(int i) {}
 
-void WriteMemory(uint8_t * source, uint8_t * destination, size_t length) {}
+void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {}
 
 }
 }

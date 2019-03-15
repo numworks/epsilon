@@ -103,7 +103,7 @@ QUIZ_CASE(ion_ext_flash_program) {
     for (int byte = 0; byte < 256; byte++) {
       buffer[byte] = expected_value_at(reinterpret_cast<uint8_t *>(Ion::ExternalFlash::Device::QSPIBaseAddress + page * 256 + byte));
     }
-    Ion::ExternalFlash::Device::WriteMemory(buffer, reinterpret_cast<uint8_t *>(page * 256), 256);
+    Ion::ExternalFlash::Device::WriteMemory(reinterpret_cast<uint8_t *>(page * 256), buffer, 256);
   }
   printElapsedTime(startTime);
 #endif

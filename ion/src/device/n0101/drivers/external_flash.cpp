@@ -303,7 +303,7 @@ void EraseSector(int i) {
   set_as_memory_mapped();
 }
 
-void WriteMemory(uint8_t * source, uint8_t * destination, size_t length) {
+void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
   unset_memory_mapped_mode();
   /* Each 256-byte page of the external flash memory (contained in a previously erased area)
    * may be programmed in burst mode with a single Page Program instruction.

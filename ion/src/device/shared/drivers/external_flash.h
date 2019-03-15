@@ -34,38 +34,10 @@ namespace ExternalFlash {
 void init();
 void shutdown();
 
-void initGPIO();
-void initQSPI();
-void initChip();
-
 void MassErase();
-
-constexpr int NumberOfSectors = 128;
 int SectorAtAddress(uint32_t address);
 void EraseSector(int i);
 void WriteMemory(uint8_t * destination, uint8_t * source, size_t length);
-
-enum class Command : uint8_t {
-  ReadStatusRegister = 0x05,
-  WriteStatusRegister2 = 0x31,
-  WriteEnable = 0x06,
-  ReadData = 0x03,
-  FastRead = 0x0B,
-  FastReadQuadIO = 0xEB,
-  // Program previously erased memory areas as being "0"
-  PageProgram = 0x02,
-  QuadPageProgram = 0x33,
-  EnableQPI = 0x38,
-  // Erase the whole chip or a 64-Kbyte block as being "1"
-  ChipErase = 0xC7,
-  Erase64KbyteBlock = 0xD8,
-  SetReadParameters = 0xC0
-};
-
-constexpr static uint32_t QSPIBaseAddress = 0x90000000;
-constexpr static uint8_t NumberOfAddressBitsInChip = 23;
-constexpr static uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
-constexpr static uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
 
 }
 }

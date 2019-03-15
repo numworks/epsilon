@@ -176,7 +176,7 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
 
   if (transferBufferLength == 1) {
     // Mass erase
-    m_erasePage = Flash::NumberOfSectors + ExternalFlash::NumberOfSectors();
+    m_erasePage = Flash::NumberOfSectors + ExternalFlash::NumberOfSectors;
     return;
   }
 
@@ -206,7 +206,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  if (m_erasePage == Flash::NumberOfSectors + ExternalFlash::NumberOfSectors()) {
+  if (m_erasePage == Flash::NumberOfSectors + ExternalFlash::NumberOfSectors) {
     Flash::MassErase();
     ExternalFlash::MassErase();
   } else if (m_erasePage < Flash::NumberOfSectors) {

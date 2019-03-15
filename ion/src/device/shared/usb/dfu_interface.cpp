@@ -1,4 +1,5 @@
 #include "dfu_interface.h"
+#include <drivers/config/external_flash.h>
 #include <string.h>
 #include "../drivers/flash.h"
 #include "../drivers/external_flash.h"
@@ -176,7 +177,7 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
 
   if (transferBufferLength == 1) {
     // Mass erase
-    m_erasePage = Flash::NumberOfSectors + ExternalFlash::NumberOfSectors;
+    m_erasePage = Flash::NumberOfSectors + ExternalFlash::Config::NumberOfSectors;
     return;
   }
 
@@ -206,7 +207,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  if (m_erasePage == Flash::NumberOfSectors + ExternalFlash::NumberOfSectors) {
+  if (m_erasePage == Flash::NumberOfSectors + ExternalFlash::Config::NumberOfSectors) {
     Flash::MassErase();
     ExternalFlash::MassErase();
   } else if (m_erasePage < Flash::NumberOfSectors) {

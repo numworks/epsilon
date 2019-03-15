@@ -52,6 +52,29 @@ using namespace Regs;
  * If the FIFO does not have as many bytes as requested by the read operation and if BUSY=1,
  * the operation is stalled until enough data is present or until the transfer is complete, whichever happens first. */
 
+enum class Command : uint8_t {
+  ReadStatusRegister = 0x05,
+  WriteStatusRegister2 = 0x31,
+  WriteEnable = 0x06,
+  ReadData = 0x03,
+  FastRead = 0x0B,
+  FastReadQuadIO = 0xEB,
+  // Program previously erased memory areas as being "0"
+  PageProgram = 0x02,
+  QuadPageProgram = 0x33,
+  EnableQPI = 0x38,
+  // Erase the whole chip or a 64-Kbyte block as being "1"
+  ChipErase = 0xC7,
+  Erase64KbyteBlock = 0xD8,
+  SetReadParameters = 0xC0,
+  DeepPowerDown = 0xB9,
+  ReleaseDeepPowerDown = 0xAB
+};
+
+static constexpr uint8_t NumberOfAddressBitsInChip = 23;
+static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
+static constexpr uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
+
 class ExternalFlashStatusRegister {
 public:
   class StatusRegister1 : Register8 {
@@ -151,7 +174,7 @@ static void unset_memory_mapped_mode() {
   );
 }
 
-void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
+static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
@@ -202,19 +225,13 @@ void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR
   }
 }
 
-void init() {
-  initGPIO();
-  initQSPI();
-  initChip();
-}
-
-void initGPIO() {
+static void initGPIO() {
   for(const AFGPIOPin & p : Config::Pins) {
     p.init();
   }
 }
 
-void initQSPI() {
+static void initQSPI() {
   // Enable QUADSPI AHB3 peripheral clock
   RCC.AHB3ENR()->setQSPIEN(true);
   // Configure controller for target device
@@ -229,7 +246,7 @@ void initQSPI() {
   QUADSPI.CR()->set(cr);
 }
 
-void initChip() {
+static void initChip() {
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QPI. */
   if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
@@ -257,15 +274,27 @@ void initChip() {
   set_as_memory_mapped();
 }
 
+void init() {
+  if (Config::NumberOfSectors == 0) {
+    return;
+  }
+  initGPIO();
+  initQSPI();
+  initChip();
+}
+
 int SectorAtAddress(uint32_t address) {
   int i = address >> NumberOfAddressBitsIn64KbyteBlock;
-  if (i >= NumberOfSectors) {
+  if (i >= Config::NumberOfSectors) {
     return -1;
   }
   return i;
 }
 
 void MassErase() {
+  if (Config::NumberOfSectors == 0) {
+    return;
+  }
   unset_memory_mapped_mode();
   send_command(Command::WriteEnable);
   wait();
@@ -285,6 +314,9 @@ void EraseSector(int i) {
 }
 
 void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
+  if (Config::NumberOfSectors == 0) {
+    return;
+  }
   unset_memory_mapped_mode();
   /* Each 256-byte page of the external flash memory (contained in a previously erased area)
    * may be programmed in burst mode with a single Page Program instruction.

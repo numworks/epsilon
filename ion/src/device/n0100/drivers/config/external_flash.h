@@ -20,14 +20,9 @@ namespace Config {
 
 using namespace Regs;
 
-constexpr static AFGPIOPin Pins[] = {
-  AFGPIOPin(GPIOB, 2,  GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
-  AFGPIOPin(GPIOB, 6,  GPIO::AFR::AlternateFunction::AF9,  GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
-  AFGPIOPin(GPIOC, 9,  GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
-  AFGPIOPin(GPIOD, 12, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
-  AFGPIOPin(GPIOD, 13, GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
-  AFGPIOPin(GPIOE, 2,  GPIO::AFR::AlternateFunction::AF10, GPIO::PUPDR::Pull::None, GPIO::OSPEEDR::OutputSpeed::High),
-};
+constexpr static uint32_t QSPIBaseAddress = 0;
+constexpr static int NumberOfSectors = 0;
+constexpr static AFGPIOPin Pins[] = {};
 
 }
 }

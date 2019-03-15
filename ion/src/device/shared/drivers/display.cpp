@@ -191,7 +191,8 @@ void initFSMC() {
   /* Set up the FSMC control registers.
    * We address the LCD panel as if it were an SRAM module, using a 16bits wide
    * bus, non-multiplexed.
-   * The STM32 FSMC supports two kinds of memory access modes :
+   * The STM32 FSMC supports two kinds of memory access modes (see Reference
+   * Manual) :
    *  - Base modes (1 and 2), which use the same timings for reads and writes
    *  - Extended modes (named A to D), which can be customized further.
    *  The LCD panel can be written to faster than it can be read from, therefore
@@ -214,19 +215,23 @@ void initFSMC() {
    *  A16 | D/CX
    *  Dn  | Dn
    *
-   * We need to set the values of the BTR and BWTR which gives the timings for
+   * We need to set the values of the BTR and BWTR which give the timings for
    * reading and writing. Note that the STM32 datasheet doesn't take into
    * account the time needed to actually switch from one logic state to another,
-   * whereas the ST7789V one does, so we'll add T(R) and T(F) as needed.
+   * whereas the ST7789V one does, so we'll add T(R) (Rising) and T(F) (Falling)
+   * as needed.
    * Last but not least, timings on the STM32 have to be expressed in terms of
-   * HCLK = 1/96MHz = 10.42ns.
+   * HCLK.
    *  - We'll pick Mode A which corresponds to SRAM with OE toggling
-   *  - ADDSET = T(AST) + T(F) = 0ns + 15ns = 2 HCLK
+   *  - ADDSET = Duration of the first access phase for read accesses.
+   *           = T(AST) + T(F) = 0ns + 15ns = 2 HCLK
    *  - ADDHLD is unused in this mode, set to 0
-   *  - DATAST(read) = T(RDLFM) + T(R) = 355ns + 15ns = 36 HCLK
-   *    DATAST(write) = T(WRL) + T(R) = 15ns + 15ns = 3 HCLK
-   *  - BUSTURN(read) = T(RDHFM) + T(F) = 90ns + 15ns = 10 HCLK
-   *    BUSTURN(write) = T(RDHFM) + T(F) = 15ns + 15ns = 3 HCLK
+   *  - DATAST = Duration of the second access phase for read accesses.
+   *      DATAST(read) = T(RDLFM) + T(R) = 355ns + 15ns = 36 HCLK
+   *      DATAST(write) = T(WRL) + T(R) = 15ns + 15ns = 3 HCLK
+   *  - BUSTURN = Time between NEx high to NEx low
+   *      BUSTURN(read) = T(RDHFM) + T(F) = 90ns + 15ns = 10 HCLK
+   *      BUSTURN(write) = T(RDHFM) + T(F) = 15ns + 15ns = 3 HCLK
    */
 
   // Read timing from the LCD

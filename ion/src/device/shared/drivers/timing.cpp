@@ -1,4 +1,5 @@
 #include "timing.h"
+#include "board.h"
 #include <ion/timing.h>
 #include <drivers/config/timing.h>
 
@@ -12,9 +13,12 @@ using namespace Device::Timing;
  * precision, we could use the controller cycle counter (Systick). */
 
 void msleep(uint32_t ms) {
+  // We decrease the AHB clock frequency to save power while sleeping.
+  Device::Board::setClockFrequency(Device::Board::Frequency::Low);
   for (volatile uint32_t i=0; i<Config::LoopsPerMillisecond*ms; i++) {
       __asm volatile("nop");
   }
+  Device::Board::setClockFrequency(Device::Board::Frequency::High);
 }
 void usleep(uint32_t us) {
   for (volatile uint32_t i=0; i<Config::LoopsPerMicrosecond*us; i++) {

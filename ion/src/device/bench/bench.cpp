@@ -1,5 +1,6 @@
 #include "bench.h"
 #include <ion.h>
+#include <poincare/init.h>
 #include <kandinsky.h>
 #include "command_list.h"
 
@@ -29,6 +30,8 @@ constexpr const CommandList sCommandList = CommandList(handles);
 constexpr int kMaxCommandLength = 255;
 
 void run() {
+  // Init the pool! Used in printFloatToText
+  Poincare::Init();
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->fillRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
   ctx->drawString("BENCH", KDPoint((320-50)/2, (240-18)/2));

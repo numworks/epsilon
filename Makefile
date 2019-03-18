@@ -12,6 +12,11 @@ default: $(BUILD_DIR)/epsilon.$(EXE)
 # extra rule that can build source files within the $(BUILD_DIR). This is useful
 # for rules that can be applied for intermediate objects (for example, when
 # going .png -> .cpp -> .o).
+
+define rule_label
+@ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(BUILD_DIR)/%=%)"
+endef
+
 define rule_for
 $(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
 	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"

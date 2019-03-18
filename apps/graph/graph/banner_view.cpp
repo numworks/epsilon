@@ -4,8 +4,12 @@
 
 namespace Graph {
 
-BannerView::BannerView() :
-  Shared::XYBannerView(),
+BannerView::BannerView(
+  Responder * parentResponder,
+  InputEventHandlerDelegate * inputEventHandlerDelegate,
+  TextFieldDelegate * textFieldDelegate
+) :
+  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
   m_derivativeView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_tangentEquationView(KDFont::SmallFont, I18n::Message::LinearRegressionFormula, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_aView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),

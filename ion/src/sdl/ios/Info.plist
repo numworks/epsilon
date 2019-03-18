@@ -16,14 +16,8 @@
     <string>APPL</string>
     <key>CFBundleSupportedPlatforms</key>
     <array>
-      <string>iPhoneSimulator</string>
+      <string>iPhoneOS</string>
     </array>
-    <key>DTPlatformVersion</key>
-    <string>12.1</string>
-    <key>DTSDKBuild</key>
-    <string>16B91</string>
-    <key>DTSDKName</key>
-    <string>iphonesimulator12.1</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UIDeviceFamily</key>

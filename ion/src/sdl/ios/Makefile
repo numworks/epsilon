@@ -29,11 +29,6 @@ $(call ios_resource,Epsilon): $(patsubst %,$(BUILD_DIR)/%/epsilon.bin,$(ARCHS)) 
 	$(call rule_label,LIPO)
 	$(Q) lipo -create $^ -output $@
 
-.PHONY: $(call ios_resource,Epsilon).signed
-$(call ios_resource,Epsilon).signed: $(call ios_resource,Epsilon) $(BUILD_DIR)/app/entitlements.plist
-	$(call rule_label,SIGN)
-	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "iPhone Distribution: NumWorks" $<
-
 $(call ios_resource,background.jpg): ion/src/sdl/assets/background.jpg
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
@@ -43,7 +38,10 @@ $(call ios_resource,Info.plist): ion/src/sdl/ios/Info.plist $(call ios_resource,
 	$(Q) cp $< $@
 	$(Q) plutil -insert "MinimumOSVersion" -string "$(IOS_MIN_VERSION)" $@
 	$(Q) plutil -insert "DTPlatformName" -string "$(IOS_PLATFORM)" $@
-	$(Q) plutil -insert "CFBundleVersion" -string "$(EPSILON_VERSION).$(PATCH_LEVEL)" $@
+	$(Q) plutil -insert "DTPlatformVersion" -string "$(IOS_PLATFORM_VERSION)" $@
+	$(Q) plutil -insert "DTSDKName" -string "$(IOS_PLATFORM)$(IOS_PLATFORM_VERSION)" $@
+	$(Q) plutil -insert "DTSDKBuild" -string "$(IOS_PLATFORM_BUILD)" $@
+	$(Q) plutil -insert "CFBundleVersion" -string "$(EPSILON_VERSION)" $@
 	$(Q) plutil -insert "CFBundleShortVersionString" -string "$(EPSILON_VERSION)" $@
 	$(foreach arch,$(ARCHS),$(Q) plutil -insert "UIRequiredDeviceCapabilities.0" -string "$(arch)" $@)
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
@@ -51,7 +49,7 @@ $(call ios_resource,Info.plist): ion/src/sdl/ios/Info.plist $(call ios_resource,
 
 $(call ios_resource,launch.storyboardc): ion/src/sdl/ios/launch.storyboard
 	$(call rule_label,IBTOOL)
-	$(Q) ibtool --compile $@ $^
+	$(Q) ibtool --minimum-deployment-target $(IOS_MIN_VERSION) --compile $@ $^
 
 $(call ios_resource,embedded.mobileprovision): $(IOS_PROVISIONNING_PROFILE)
 	$(call rule_label,COPY)
@@ -78,7 +76,7 @@ $(call ios_resource,Assets.car): $(call asset_for,Contents.json)
 
 epsilon_ipa_deps: $(call ios_resource,\
   Assets.car \
-  Epsilon.signed \
+  Epsilon \
   Info.plist \
   background.jpg \
   embedded.mobileprovision \
@@ -87,7 +85,9 @@ epsilon_ipa_deps: $(call ios_resource,\
 
 $(epsilon_ipa_deps): | $$(@D)/.
 
-$(BUILD_DIR)/app/epsilon.ipa: epsilon_ipa_deps
+$(BUILD_DIR)/app/epsilon.ipa: epsilon_ipa_deps $(BUILD_DIR)/app/entitlements.plist
+	$(call rule_label,SIGN)
+	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "iPhone Distribution: NumWorks" $(BUILD_DIR)/app/Payload/Epsilon.app
 	$(call rule_label,ZIP)
 	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload
 

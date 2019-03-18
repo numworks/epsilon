@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class SumGraphController : public SimpleInteractiveCurveViewController, public TextFieldDelegate {
+class SumGraphController : public SimpleInteractiveCurveViewController {
 public:
   SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
   void viewWillAppear() override;
@@ -41,9 +41,6 @@ private:
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
-  TextFieldDelegateApp * textFieldDelegateApp() override {
-    return static_cast<TextFieldDelegateApp *>(app());
-  }
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
   virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;

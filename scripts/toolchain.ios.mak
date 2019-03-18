@@ -7,8 +7,14 @@ LD = clang++
 # ARCH = arm64
 # SDK = iphoneos
 
-SYSROOT = $(shell xcrun --sdk $(SDK) --show-sdk-path)
+SYSROOT = $(shell xcrun --sdk $(IOS_PLATFORM) --show-sdk-path)
 
-SFLAGS += -fPIC -arch $(ARCH) -isysroot $(SYSROOT)
-LDFLAGS += -arch $(ARCH) -isysroot $(SYSROOT)
-#-framework Foundation -framework OpenGLES -framework UIKit -framework AVFoundation -framework AudioToolbox -framework QuartzCore -framework GameController -framework CoreGraphics -framework CoreMotion
+SFLAGS += -arch $(ARCH)
+SFLAGS += -isysroot $(SYSROOT)
+SFLAGS += -fPIC
+SFLAGS += -miphoneos-version-min=$(IOS_MIN_VERSION)
+#SFLAGS += -mios-simulator-version-min=$(IOS_MIN_VERSION)
+
+LDFLAGS += -arch $(ARCH)
+LDFLAGS += -isysroot $(SYSROOT)
+LDFLAGS += -miphoneos-version-min=$(IOS_MIN_VERSION)

@@ -1,9 +1,12 @@
 TOOLCHAIN ?= ios
 EXE = bin
 
-SDK ?= iphonesimulator
+IOS_PLATFORM ?= iphonesimulator
+IOS_MIN_VERSION = 8.0
+IOS_IDENTIFIER ?= unknown
+IOS_PROVISIONNING_PROFILE ?= unknown
 
-BUILD_DIR := $(BUILD_DIR)/$(SDK)
+BUILD_DIR := $(BUILD_DIR)/$(IOS_PLATFORM)
 
 ifdef ARCH
 BUILD_DIR := $(BUILD_DIR)/$(ARCH)

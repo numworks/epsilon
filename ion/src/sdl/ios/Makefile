@@ -12,7 +12,13 @@ $(BUILD_DIR)/%/epsilon.bin: force_remake
 	$(Q) echo "MAKE    ARCH=$*"
 	$(Q) $(MAKE) ARCH=$*
 
+ifndef ARCH
+ifeq ($(IOS_PLATFORM),iphoneos)
+ARCHS ?= arm64
+else ifeq ($(IOS_PLATFORM),iphonesimulator)
 ARCHS ?= x86_64
+endif
+endif
 
 # iOS resources
 
@@ -27,9 +33,9 @@ $(BUILD_DIR)/app/entitlements.plist: ion/src/sdl/ios/entitlements.plist
 
 $(call ios_resource,Epsilon): $(patsubst %,$(BUILD_DIR)/%/epsilon.bin,$(ARCHS)) | $$(@D)/.
 	$(call rule_label,LIPO)
-	$(Q) lipo -create $^ -output $@
+	$(Q) $(LIPO) -create $^ -output $@
 
-$(call ios_resource,background.jpg): ion/src/sdl/assets/background.jpg
+$(call ios_resource,background.jpg): ion/src/sdl/assets/background.jpg | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
 
@@ -47,11 +53,11 @@ $(call ios_resource,Info.plist): ion/src/sdl/ios/Info.plist $(call ios_resource,
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 
-$(call ios_resource,launch.storyboardc): ion/src/sdl/ios/launch.storyboard
+$(call ios_resource,launch.storyboardc): ion/src/sdl/ios/launch.storyboard | $$(@D)/.
 	$(call rule_label,IBTOOL)
-	$(Q) ibtool --minimum-deployment-target $(IOS_MIN_VERSION) --compile $@ $^
+	$(Q) $(IBTOOL) --minimum-deployment-target $(IOS_MIN_VERSION) --compile $@ $^
 
-$(call ios_resource,embedded.mobileprovision): $(IOS_PROVISIONNING_PROFILE)
+$(call ios_resource,embedded.mobileprovision): $(IOS_PROVISIONNING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
 
@@ -70,9 +76,9 @@ $(call asset_for,icon_%.png): ion/src/sdl/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background "#FFB734" -resize $* $< $@
 
-$(call ios_resource,Assets.car): $(call asset_for,Contents.json)
+$(call ios_resource,Assets.car): $(call asset_for,Contents.json) | $$(@D)/.
 	$(call rule_label,ACTOOL)
-	$(Q) actool --compile $(BUILD_DIR)/app/Payload/Epsilon.app --minimum-deployment-target $(IOS_MIN_VERSION) --platform $(IOS_PLATFORM) --app-icon AppIcon --output-partial-info-plist $(BUILD_DIR)/app/assets/partial.plist $(BUILD_DIR)/app/assets/Assets.xcassets
+	$(Q) $(ACTOOL) --compile $(BUILD_DIR)/app/Payload/Epsilon.app --minimum-deployment-target $(IOS_MIN_VERSION) --platform $(IOS_PLATFORM) --app-icon AppIcon --output-partial-info-plist $(BUILD_DIR)/app/assets/partial.plist $(BUILD_DIR)/app/assets/Assets.xcassets
 
 epsilon_ipa_deps: $(call ios_resource,\
   Assets.car \
@@ -83,13 +89,14 @@ epsilon_ipa_deps: $(call ios_resource,\
   launch.storyboardc \
 )
 
-$(epsilon_ipa_deps): | $$(@D)/.
-
 $(BUILD_DIR)/app/epsilon.ipa: epsilon_ipa_deps $(BUILD_DIR)/app/entitlements.plist
 	$(call rule_label,SIGN)
 	$(Q) codesign --force --entitlements $(BUILD_DIR)/app/entitlements.plist --sign "iPhone Distribution: NumWorks" $(BUILD_DIR)/app/Payload/Epsilon.app
 	$(call rule_label,ZIP)
 	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload
+
+.PHONY: epsilon.ipa
+epsilon.ipa: $(BUILD_DIR)/app/epsilon.ipa
 
 epsilon_run: $(BUILD_DIR)/app/Epsilon.app
 	xcrun simctl install booted $(BUILD_DIR)/app/Epsilon.app

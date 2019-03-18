@@ -57,6 +57,21 @@ void shutdownPeripherals(bool keepLEDAwake) {
   Display::shutdown();
 }
 
+void setClockFrequency(Frequency f) {
+  switch (f) {
+    case Frequency::High:
+      RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
+      return;
+    default:
+      assert(f == Frequency::Low);
+      /* We could divide the system clock by 512. However, the HCLK clock
+       * frequency must be >= 14.2MHz and <=216 MHz which forces the
+       * AHBPrescaler to be below 192MHz/14.2MHz~13.5MHz. */
+      RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy8);
+      return;
+  }
+}
+
 }
 }
 }

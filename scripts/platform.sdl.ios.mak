@@ -1,7 +1,7 @@
 TOOLCHAIN ?= ios
 EXE = bin
 
-IOS_PLATFORM ?= iphonesimulator
+IOS_PLATFORM ?= iphoneos
 IOS_MIN_VERSION = 8.0
 IOS_IDENTIFIER ?= unknown
 IOS_PROVISIONNING_PROFILE ?= unknown

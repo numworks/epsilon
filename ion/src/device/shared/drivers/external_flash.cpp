@@ -110,7 +110,7 @@ static inline void send_command(Command c, QUADSPI::CCR::OperatingMode operating
   );
 }
 
-static inline void send_write_command(Command c, uint8_t * address, uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
+static inline void send_write_command(Command c, uint8_t * address, const uint8_t * data, size_t dataLength, QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   send_command_full(
     QUADSPI::CCR::FunctionalMode::IndirectWrite,
     operatingMode,
@@ -118,7 +118,7 @@ static inline void send_write_command(Command c, uint8_t * address, uint8_t * da
     address,
     0, 0,
     0,
-    data, dataLength
+    const_cast<uint8_t *>(data), dataLength
   );
 }
 
@@ -346,7 +346,7 @@ void EraseSector(int i) {
   set_as_memory_mapped();
 }
 
-void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
+void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
   if (Config::NumberOfSectors == 0) {
     return;
   }

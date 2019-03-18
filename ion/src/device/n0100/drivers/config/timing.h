@@ -8,6 +8,8 @@ namespace Device {
 namespace Timing {
 namespace Config {
 
+#warning N100-calibration
+//TODO: calibrate LoopsPerMillisecond now that we decrease AHB clock while msleeping
 constexpr static int LoopsPerMillisecond = 8852;
 constexpr static int LoopsPerMicrosecond = 9;
 // CPU clock is 96 MHz, and systick clock source is divided by 8

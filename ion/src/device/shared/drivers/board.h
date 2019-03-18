@@ -15,6 +15,13 @@ void shutdownClocks(bool keepLEDAwake = false);
 void initPeripherals();
 void shutdownPeripherals(bool keepLEDAwake = false);
 
+enum class Frequency {
+  Low = 0,
+  High = 1
+};
+
+void setClockFrequency(Frequency f);
+
 }
 }
 }

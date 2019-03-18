@@ -3,7 +3,11 @@
 
 namespace Shared {
 
-XYBannerView::XYBannerView() :
+XYBannerView::XYBannerView(
+  Responder * parentResponder,
+  InputEventHandlerDelegate * inputEventHandlerDelegate,
+  TextFieldDelegate * textFieldDelegate
+) :
   m_abscissaView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_ordinateView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle)
 {

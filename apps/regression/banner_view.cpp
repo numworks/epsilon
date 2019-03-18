@@ -6,8 +6,12 @@ namespace Regression {
 constexpr KDColor BannerView::k_textColor;
 constexpr KDColor BannerView::k_backgroundColor;
 
-BannerView::BannerView() :
-  Shared::XYBannerView(),
+BannerView::BannerView(
+  Responder * parentResponder,
+  InputEventHandlerDelegate * inputEventHandlerDelegate,
+  TextFieldDelegate * textFieldDelegate
+) :
+  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
   m_dotNameView(k_font, 0.0f, 0.5f, k_textColor, k_backgroundColor),
   m_regressionTypeView(k_font, (I18n::Message)0, 0.0f, 0.5f, k_textColor,k_backgroundColor),
   m_subText0(k_font, 0.5f, 0.5f, k_textColor, k_backgroundColor),

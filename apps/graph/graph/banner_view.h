@@ -7,7 +7,11 @@ namespace Graph {
 
 class BannerView : public Shared::XYBannerView {
 public:
-  BannerView();
+  BannerView(
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate
+  );
   BufferTextView * derivativeView() { return &m_derivativeView; }
   BufferTextView * aView() { return &m_aView; }
   BufferTextView * bView() { return &m_bView; }

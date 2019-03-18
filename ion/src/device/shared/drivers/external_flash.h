@@ -37,7 +37,7 @@ void shutdown();
 void MassErase();
 int SectorAtAddress(uint32_t address);
 void EraseSector(int i);
-void WriteMemory(uint8_t * destination, uint8_t * source, size_t length);
+void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length);
 
 }
 }

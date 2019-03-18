@@ -27,4 +27,10 @@ LDFLAGS += -shared
 LDFLAGS += -static-libstdc++
 LDFLAGS += -Wl,-z,defs # Warn on missing symbols when linking the dynamic library
 
+else
+
+CC = false
+CXX = false
+LD = false
+
 endif

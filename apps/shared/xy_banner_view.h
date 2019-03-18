@@ -7,7 +7,11 @@ namespace Shared {
 
 class XYBannerView : public BannerView {
 public:
-  XYBannerView();
+  XYBannerView(
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate
+  );
   BufferTextView * abscissaView() { return &m_abscissaView; }
   BufferTextView * ordinateView() { return &m_ordinateView; }
   static constexpr int k_numberOfSubviews = 2;

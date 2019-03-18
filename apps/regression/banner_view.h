@@ -7,7 +7,11 @@ namespace Regression {
 
 class BannerView : public Shared::XYBannerView {
 public:
-  BannerView();
+  BannerView(
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    TextFieldDelegate * textFieldDelegate
+  );
   BufferTextView * dotNameView() { return &m_dotNameView; }
   MessageTextView * regressionTypeView() { return &m_regressionTypeView; }
   BufferTextView * subTextAtIndex(int index);

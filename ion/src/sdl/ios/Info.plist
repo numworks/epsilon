@@ -2,18 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>BuildMachineOSBuild</key>
-    <string>18B75</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
     <string>Epsilon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.blabla.PlifPlouf</string>
+    <string>com.numworks.calculator</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>PlifPlouf</string>
+    <string>NumWorks Graphing Calculator</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -24,12 +22,6 @@
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
-    <key>DTCompiler</key>
-    <string>com.apple.compilers.llvm.clang.1_0</string>
-    <key>DTPlatformBuild</key>
-    <string>10B61</string>
-    <key>DTPlatformName</key>
-    <string>iphonesimulator</string>
     <key>DTPlatformVersion</key>
     <string>12.1</string>
     <key>DTSDKBuild</key>
@@ -47,11 +39,21 @@
     </array>
     <key>UIRequiredDeviceCapabilities</key>
     <array>
-      <string>armv7</string>
     </array>
     <key>UILaunchStoryboardName</key>
     <string>launch</string>
     <key>UISupportedInterfaceOrientations</key>
     <array/>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+      <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+      <string>UIInterfaceOrientationPortrait</string>
+      <string>UIInterfaceOrientationPortraitUpsideDown</string>
+      <string>UIInterfaceOrientationLandscapeLeft</string>
+      <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
   </dict>
 </plist>

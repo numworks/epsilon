@@ -332,7 +332,7 @@ void MassErase() {
 }
 
 void EraseSector(int i) {
-  assert(i >= 0 && i < NumberOfSectors);
+  assert(i >= 0 && i < Config::NumberOfSectors);
   unset_memory_mapped_mode();
   send_command(Command::WriteEnable);
   wait();

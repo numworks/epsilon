@@ -26,6 +26,16 @@ static void open() {
 }
 
 static void close() {
+  // Clear error flags
+  class FLASH::SR sr(0);
+  // Error flags are cleared by writing 1
+  sr.setERSERR(true);
+  sr.setPGPERR(true);
+  sr.setPGAERR(true);
+  sr.setWRPERR(true);
+  sr.setEOP(true);
+  FLASH.SR()->set(sr);
+
   // Lock the Flash configuration register
   assert(!FLASH.CR()->getMER());
   assert(!FLASH.CR()->getSER());

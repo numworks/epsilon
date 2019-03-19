@@ -47,7 +47,13 @@ public:
 
   class SR : public Register32 {
   public:
+    using Register32::Register32;
     REGS_BOOL_FIELD(BSY, 16);
+    REGS_BOOL_FIELD(ERSERR, 7);
+    REGS_BOOL_FIELD(PGPERR, 6);
+    REGS_BOOL_FIELD(PGAERR, 5);
+    REGS_BOOL_FIELD(WRPERR, 4);
+    REGS_BOOL_FIELD(EOP, 0);
   };
 
   constexpr FLASH() {};

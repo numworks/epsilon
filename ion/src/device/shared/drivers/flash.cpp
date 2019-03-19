@@ -1,5 +1,6 @@
 #include "flash.h"
 #include <drivers/cache.h>
+#include <drivers/config/flash.h>
 #include <assert.h>
 
 namespace Ion {
@@ -212,14 +213,8 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
 }
 
 int SectorAtAddress(uint32_t address) {
-  uint32_t sectorAddresses[NumberOfSectors+1] = {
-    0x08000000, 0x08004000, 0x08008000, 0x0800C000,
-    0x08010000, 0x08020000, 0x08040000, 0x08060000,
-    0x08080000, 0x080A0000, 0x080C0000, 0x080E0000,
-    0x08100000
-  };
   for (int i=0; i<NumberOfSectors; i++) {
-    if (address >= sectorAddresses[i] && address < sectorAddresses[i+1]) {
+    if (address >= Config::SectorAddresses[i] && address < Config::SectorAddresses[i+1]) {
       return i;
     }
   }

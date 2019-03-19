@@ -1,6 +1,6 @@
 %.dfu: %.$(EXE)
 	@echo "DFUSE   $@"
-	$(Q) $(PYTHON) build/device/elf2dfu.py $< $@
+	$(Q) $(PYTHON) scripts/device/elf2dfu.py $< $@
 
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"

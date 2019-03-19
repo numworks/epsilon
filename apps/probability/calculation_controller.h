@@ -71,8 +71,8 @@ private:
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;
   Law * m_law;
-  constexpr static int k_maxNumberOfTitleCharacters = 30;
-  char m_titleBuffer[k_maxNumberOfTitleCharacters];
+  constexpr static int k_titleBufferSize = 30;
+  char m_titleBuffer[k_titleBufferSize];
 };
 
 }

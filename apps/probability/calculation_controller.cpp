@@ -278,26 +278,26 @@ TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {
-    if (currentChar >= k_maxNumberOfTitleCharacters) {
+    if (currentChar >= k_titleBufferSize) {
       break;
     }
     m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", k_maxNumberOfTitleCharacters - currentChar);
+    strlcpy(m_titleBuffer+currentChar, " = ", k_titleBufferSize - currentChar);
     currentChar += 3;
-    if (currentChar >= k_maxNumberOfTitleCharacters) {
+    if (currentChar >= k_titleBufferSize) {
       break;
     }
     constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
     char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, k_maxNumberOfTitleCharacters - currentChar);
+    strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
     currentChar += strlen(buffer);
-    if (currentChar >= k_maxNumberOfTitleCharacters) {
+    if (currentChar >= k_titleBufferSize) {
       break;
     }
-    currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_maxNumberOfTitleCharacters - currentChar);
+    currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
   }
-  m_titleBuffer[minInt(currentChar, k_maxNumberOfTitleCharacters) - 1] = 0;
+  m_titleBuffer[minInt(currentChar, k_titleBufferSize) - 1] = 0;
 }
 
 }

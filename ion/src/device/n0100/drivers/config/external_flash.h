@@ -20,7 +20,8 @@ namespace Config {
 
 using namespace Regs;
 
-constexpr static uint32_t QSPIBaseAddress = 0;
+constexpr static uint32_t StartAddress = 0xFFFFFFFF;
+constexpr static uint32_t EndAddress = 0xFFFFFFFF;
 constexpr static int NumberOfSectors = 0;
 constexpr static AFGPIOPin Pins[] = {};
 

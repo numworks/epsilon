@@ -281,17 +281,20 @@ void CalculationController::updateTitle() {
     if (currentChar >= k_titleBufferSize) {
       break;
     }
-    m_titleBuffer[currentChar++] = I18n::translate(m_law->parameterNameAtIndex(index))[0];
-    strlcpy(m_titleBuffer+currentChar, " = ", k_titleBufferSize - currentChar);
-    currentChar += 3;
+    /* strlcpy returns the size of src, not the size copied, but it is not a
+     * problem here. */
+    currentChar += strlcpy(m_titleBuffer+currentChar, I18n::translate(m_law->parameterNameAtIndex(index)), k_titleBufferSize - currentChar);
+    if (currentChar >= k_titleBufferSize) {
+      break;
+    }
+    currentChar += strlcpy(m_titleBuffer+currentChar, " = ", k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;
     }
     constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits);
     char buffer[bufferSize];
     PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
-    currentChar += strlen(buffer);
+    currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;
     }

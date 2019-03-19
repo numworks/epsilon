@@ -161,6 +161,7 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
 
     // Then eventually write the header back into the aligned destination
     *alignedDestination++ = header;
+    wait();
   }
 
   /* Step 2 - Copy the bulk of the data
@@ -169,6 +170,7 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
   MemoryAccessType * lastAlignedDestination = align<MemoryAccessType>(destination + length);
   while (alignedDestination < lastAlignedDestination) {
     *alignedDestination++ = eat<MemoryAccessType>(&source);
+    wait();
   }
 
   /* Step 3 - Copy a footer if needed
@@ -201,6 +203,7 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
 
     // Then eventually write the footer back into the aligned destination
     *alignedDestination = footer;
+    wait();
   }
 }
 
@@ -244,7 +247,6 @@ void WriteMemory(uint8_t * destination, uint8_t * source, size_t length) {
   open();
   FLASH.CR()->setPG(true);
   flash_memcpy(destination, source, length);
-  wait();
   FLASH.CR()->setPG(false);
   close();
 }

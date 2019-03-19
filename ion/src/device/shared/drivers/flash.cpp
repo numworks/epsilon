@@ -1,4 +1,5 @@
 #include "flash.h"
+#include <drivers/cache.h>
 #include <assert.h>
 
 namespace Ion {
@@ -8,6 +9,9 @@ namespace Flash {
 using namespace Regs;
 
 static inline void wait() {
+  /* Issue a DSB instruction to guarantee the completion of a previous access
+   * to FLASH_CR register or data write operation. (RM0431) */
+  Cache::dsb();
   // Wait for pending Flash operations to complete
   while (FLASH.SR()->getBSY()) {
   }

@@ -84,7 +84,6 @@ bool GraphController::moveCursorHorizontally(int direction) {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
-  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

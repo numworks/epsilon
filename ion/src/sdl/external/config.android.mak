@@ -1,4 +1,4 @@
-SDL_SFLAGS = -DGL_GLEXT_PROTOTYPES
+SDL_SFLAGS += -DGL_GLEXT_PROTOTYPES
 
 sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
   audio/android/SDL_androidaudio.c \

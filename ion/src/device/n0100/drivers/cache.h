@@ -10,6 +10,8 @@ namespace Cache {
 using namespace Regs;
 
 inline void dsb() {} // No L1-cache on N0100
+inline void invalidateDCache() {}
+inline void invalidateICache() {}
 
 }
 }

@@ -9,11 +9,11 @@
     <key>CFBundleExecutable</key>
     <string>Epsilon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.blabla.FooBarCocoa</string>
+    <string>com.numworks.calculator</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>FooBarCocoa</string>
+    <string>Epsilon</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -41,7 +41,7 @@
     <key>LSMinimumSystemVersion</key>
     <string>10.14</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 2019 Romain Goyet. All rights reserved.</string>
+    <string>Copyright © 2019 NumWorks. All rights reserved.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
   </dict>

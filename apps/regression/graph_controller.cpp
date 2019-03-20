@@ -219,13 +219,11 @@ bool GraphController::moveCursorHorizontally(int direction) {
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
       m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     return false;
@@ -234,7 +232,6 @@ bool GraphController::moveCursorHorizontally(int direction) {
     m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   double y = yValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, y);
-  m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

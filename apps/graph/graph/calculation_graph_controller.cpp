@@ -76,7 +76,6 @@ bool CalculationGraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   m_cursor->moveTo(newPointOfInterest.abscissa, newPointOfInterest.value);
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

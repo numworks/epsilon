@@ -1,11 +1,9 @@
-// This shall be implemented per-platform
-//
-#include "../../../shared/images.h"
+#include "../../../shared/platform.h"
 #include <SDL.h>
 #include <jni.h>
 #include <android/bitmap.h>
 
-SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSDLPlatformGetLanguageCode(SDL_Renderer * renderer, const char * identifier) {
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 

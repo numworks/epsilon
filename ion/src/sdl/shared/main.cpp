@@ -1,20 +1,29 @@
 #include "main.h"
 #include "display.h"
-#include "images.h"
+#include "platform.h"
 #include "layout.h"
 
 #include <ion.h>
 #include <ion/timing.h>
 #include <ion/events.h>
 #include <SDL.h>
+#include <vector>
 
 void Ion::Timing::msleep(uint32_t ms) {
   SDL_Delay(ms);
 }
 
 int main(int argc, char * argv[]) {
+  std::vector<char *> arguments(argv, argv + argc);
+
+  char * language = IonSDLPlatformGetLanguageCode();
+  if (language != nullptr) {
+    arguments.push_back("--language");
+    arguments.push_back(language);
+  }
+
   Ion::SDL::Main::init();
-  ion_main(argc, argv);
+  ion_main(arguments.size(), &arguments[0]);
   Ion::SDL::Main::quit();
   return 0;
 }
@@ -53,7 +62,7 @@ void init() {
 
   Display::init(sRenderer);
 
-  sBackgroundTexture = loadImage(sRenderer, "background.jpg");
+  sBackgroundTexture = IonSDLPlatformLoadImage(sRenderer, "background.jpg");
 
   relayout();
 }

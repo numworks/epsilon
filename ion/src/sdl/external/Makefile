@@ -90,6 +90,12 @@ sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
   video/yuv2rgb/yuv_rgb.c \
 )
 
+ifeq ($(DEBUG),1)
+SDL_SFLAGS += -DSDL_ASSERT_LEVEL=2
+else
+SDL_SFLAGS += -DSDL_ASSERT_LEVEL=0
+endif
+
 include ion/src/sdl/external/config.$(MODEL).mak
 
 $(call object_for,$(sdl_src)): SFLAGS += $(SDL_SFLAGS)

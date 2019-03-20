@@ -1,7 +1,9 @@
+#include "../shared/platform.h"
+
 #include <SDL.h>
 #include <AppKit/AppKit.h>
 
-SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
+SDL_Texture * IonSDLPlatformLoadImage(SDL_Renderer * renderer, const char * identifier) {
   NSImage * nsImage = [NSImage imageNamed:[NSString stringWithUTF8String:identifier]];
   CGImageRef cgImage = [nsImage CGImageForProposedRect:NULL
                                                context:NULL

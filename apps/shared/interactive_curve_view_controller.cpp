@@ -194,6 +194,17 @@ StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
+bool InteractiveCurveViewController::isCursorVisible() {
+  InteractiveCurveViewRange * range = interactiveCurveViewRange();
+  float xRange = range->xMax() - range->xMin();
+  float yRange = range->yMax() - range->yMin();
+  return
+    m_cursor->x() >= range->xMin() +  k_cursorLeftMarginRatio   * xRange &&
+    m_cursor->x() <= range->xMax() - k_cursorRightMarginRatio   * xRange &&
+    m_cursor->y() >= range->yMin() +  cursorBottomMarginRatio() * yRange &&
+    m_cursor->y() <= range->yMax() -     cursorTopMarginRatio() * yRange;
+}
+
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
   double x = m_cursor->x();
   double y = m_cursor->y();

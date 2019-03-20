@@ -148,10 +148,6 @@ uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
 }
 
-bool FunctionGraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
-}
-
 bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
   return newIndex != currentIndex;
 }

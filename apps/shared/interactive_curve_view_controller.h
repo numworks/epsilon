@@ -37,7 +37,7 @@ protected:
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
-  virtual bool isCursorVisible() = 0;
+  bool isCursorVisible();
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;

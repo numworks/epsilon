@@ -312,7 +312,6 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
     m_cursor->moveTo(x, yValue(*m_selectedSeriesIndex, x, context));
-    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     return true;
   }
 
@@ -324,11 +323,9 @@ bool GraphController::moveCursorVertically(int direction) {
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       // Select the mean dot
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     } else {
       // Select a data point dot
       m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     }
     return true;
   }

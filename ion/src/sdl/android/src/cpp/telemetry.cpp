@@ -7,7 +7,7 @@ void IonSDLPlatformTelemetryInit() {
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
   jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
-  jmethodID j_methodId = env->GetMethodID(j_class,"telemetryInit", "(V)V");
+  jmethodID j_methodId = env->GetMethodID(j_class,"telemetryInit", "()V");
 
   env->CallVoidMethod(activity, j_methodId);
 }
@@ -17,7 +17,7 @@ void IonSDLPlatformTelemetryEvent(const char * eventName) {
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
   jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
-  jmethodID j_methodId = env->GetMethodID(j_class,"telemetryEvent", "(V)Ljava/lang/String;");
+  jmethodID j_methodId = env->GetMethodID(j_class,"telemetryEvent", "(Ljava/lang/String;)V");
 
   jstring j_eventName = env->NewStringUTF(eventName);
 

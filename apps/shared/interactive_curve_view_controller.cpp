@@ -97,6 +97,10 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
     if (moveCursorVertically(direction)) {
+      interactiveCurveViewRange()->panToMakePointVisible(
+        m_cursor->x(), m_cursor->y(),
+        cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio
+      );
       reloadBannerView();
       curveView()->reload();
       return true;

@@ -7,14 +7,14 @@ SDL_Texture * IonSDLPlatformGetLanguageCode(SDL_Renderer * renderer, const char 
   JNIEnv * env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
 
-  jstring j_identifier = env->NewStringUTF(identifier);
-
   jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
   jmethodID j_methodId = env->GetMethodID(
     j_class,
     "retrieveBitmapAsset",
     "(Ljava/lang/String;)Landroid/graphics/Bitmap;"
   );
+
+  jstring j_identifier = env->NewStringUTF(identifier);
 
   jobject j_bitmap = env->CallObjectMethod(activity, j_methodId, j_identifier);
 

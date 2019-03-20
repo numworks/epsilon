@@ -22,9 +22,13 @@ int main(int argc, char * argv[]) {
     arguments.push_back(language);
   }
 
+  IonSDLPlatformTelemetryInit();
   Ion::SDL::Main::init();
+  IonSDLPlatformTelemetryEvent("Calculator");
   ion_main(arguments.size(), &arguments[0]);
   Ion::SDL::Main::quit();
+  IonSDLPlatformTelemetryDeinit();
+
   return 0;
 }
 

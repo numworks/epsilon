@@ -25,20 +25,6 @@ public class EpsilonActivity extends SDLActivity {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    sAnalytics = GoogleAnalytics.getInstance(this);
-    sTracker = sAnalytics.newTracker("UA-93775823-3");
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    sTracker.setScreenName("Calculator");
-    sTracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
-
-  @Override
   protected String[] getArguments() {
     Locale currentLocale = getResources().getConfiguration().locale;
     String[] arguments = {"--language", currentLocale.getLanguage()};
@@ -55,5 +41,15 @@ public class EpsilonActivity extends SDLActivity {
       Log.w("LoadTexture", "Coundn't load a file:" + identifier);
     }
     return bitmap;
+  }
+
+  public void telemetryInit() {
+    sAnalytics = GoogleAnalytics.getInstance(this);
+    sTracker = sAnalytics.newTracker("UA-93775823-3");
+  }
+
+  public void telemetryEvent(String eventName) {
+    sTracker.setScreenName(eventName);
+    sTracker.send(new HitBuilders.ScreenViewBuilder().build());
   }
 }

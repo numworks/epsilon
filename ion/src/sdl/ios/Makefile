@@ -5,6 +5,22 @@ src += $(addprefix ion/src/sdl/ios/, \
 
 $(call object_for,ion/src/sdl/shared/main.cpp) : SFLAGS += -DEPSILON_SDL_FULLSCREEN=1
 
+GOOGLE_ANALYTICS = 1
+ifeq ($(GOOGLE_ANALYTICS),1)
+src += ion/src/sdl/ios/telemetry.m
+$(call object_for,ion/src/sdl/ios/telemetry.m): SFLAGS += -Iion/src/sdl/ios/GoogleAnalyticsServices/GoogleAnalytics/Library
+
+LDFLAGS += -lGoogleAnalyticsServices
+LDFLAGS += -lsqlite3
+LDFLAGS += -lz
+LDFLAGS += -framework SystemConfiguration
+LDFLAGS += -framework CoreData
+LDFLAGS += -Lion/src/sdl/ios/GoogleAnalyticsServices
+else
+src += ion/src/sdl/shared/telemetry_dummy.cpp
+endif
+
+
 # Cross-ARCH epsilon.bin
 
 .PHONY: force_remake

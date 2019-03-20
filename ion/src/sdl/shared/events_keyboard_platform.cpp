@@ -1,4 +1,5 @@
 #include "main.h"
+#include "platform.h"
 
 #include <assert.h>
 #include <ion/events.h>
@@ -134,6 +135,10 @@ Event getPlatformEvent() {
     }
     if (event.type == SDL_TEXTINPUT) {
       return eventFromSDLTextInputEvent(event.text);
+    }
+    if (event.type == SDL_APP_WILLENTERFOREGROUND) {
+      IonSDLPlatformTelemetryEvent("Calculator");
+      return None;
     }
   }
   return None;

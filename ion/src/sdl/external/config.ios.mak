@@ -1,6 +1,6 @@
 # This file is built manually by mimic-ing SDL's Xcode project
 
-SDL_SFLAGS = -fasm-blocks -fstrict-aliasing -fobjc-arc
+SDL_SFLAGS += -fasm-blocks -fstrict-aliasing -fobjc-arc
 
 sdl_src += $(addprefix ion/src/sdl/external/sdl/src/, \
   audio/coreaudio/SDL_coreaudio.m \

@@ -21,9 +21,13 @@ inline void isb() {
 
 void invalidateDCache();
 void enableDCache();
+void disableDCache();
 
 void invalidateICache();
 void enableICache();
+void disableICache();
+
+void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disable);
 
 }
 }

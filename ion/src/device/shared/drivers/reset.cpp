@@ -1,5 +1,6 @@
 #include "reset.h"
 #include <regs/regs.h>
+#include <drivers/cache.h>
 
 namespace Ion {
 namespace Device {
@@ -13,6 +14,11 @@ void core() {
 }
 
 void jump() {
+  /* Disabling all caches finishes ongoing operations, so for instance we make
+   * sure all memcpy are done before jumpung to a code copied. */
+  Ion::Device::Cache::disableDCache();
+  Ion::Device::Cache::disableICache();
+
   uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
   uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
 

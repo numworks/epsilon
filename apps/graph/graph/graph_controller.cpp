@@ -81,7 +81,7 @@ void GraphController::reloadBannerView() {
 bool GraphController::moveCursorHorizontally(int direction) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   App * myApp = static_cast<App *>(app());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, myApp, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, myApp);
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {

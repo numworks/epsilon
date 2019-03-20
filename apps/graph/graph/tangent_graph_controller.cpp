@@ -61,7 +61,7 @@ void TangentGraphController::reloadBannerView() {
 
 bool TangentGraphController::moveCursorHorizontally(int direction) {
   App * myApp = static_cast<App *>(app());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, myApp, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, myApp);
 }
 
 bool TangentGraphController::handleEnter() {

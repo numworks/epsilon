@@ -580,12 +580,13 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
     // Check if a > 0 or c is Integer
-    if (p.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive
-        || (childAtIndex(1).type() == ExpressionNode::Type::Rational
-          && childAtIndex(1).convert<Rational>().integerDenominator().isOne()))
-    {
+    bool aPositive = p.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive;
+    bool cInteger = (childAtIndex(1).type() == ExpressionNode::Type::Rational
+          && childAtIndex(1).convert<Rational>().integerDenominator().isOne());
+    if (aPositive || cInteger) {
       // Check that the complex format is not Real or that b is an integer
-      if (complexFormat != Preferences::ComplexFormat::Real || (p.childAtIndex(1).type() == ExpressionNode::Type::Rational && p.childAtIndex(1).convert<Rational>().integerDenominator().isOne())) {
+      bool bInteger = (p.childAtIndex(1).type() == ExpressionNode::Type::Rational && p.childAtIndex(1).convert<Rational>().integerDenominator().isOne());
+      if (aPositive || complexFormat != Preferences::ComplexFormat::Real || bInteger) {
         return simplifyPowerPower(context, complexFormat, angleUnit, target);
       }
     }

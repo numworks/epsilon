@@ -28,7 +28,6 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_modelType[i] = (Model::Type) -1;
   }
-  m_store->setCursor(m_cursor);
   m_store->setDelegate(this);
 }
 
@@ -347,10 +346,6 @@ uint32_t GraphController::modelVersion() {
 
 uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
-}
-
-bool GraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {

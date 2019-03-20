@@ -2,9 +2,8 @@
 #define GRAPH_GRAPH_CONTROLLER_HELPER_H
 
 #include "banner_view.h"
-#include "../../shared/text_field_delegate_app.h"
+#include "../../shared/curve_view_cursor.h"
 #include "../../shared/interactive_curve_view_range.h"
-#include "../cartesian_function_store.h"
 
 namespace Graph {
 

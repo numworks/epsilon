@@ -44,7 +44,6 @@ private:
   void initCursorParameters() override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
-  bool isCursorVisible() override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   double yValue(int curveIndex, double x, Poincare::Context * context) const override;
   bool suitableYValue(double y) const override;

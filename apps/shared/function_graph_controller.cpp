@@ -132,7 +132,6 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   }
   selectFunctionWithCursor(nextActiveFunctionIndex);
   m_cursor->moveTo(m_cursor->x(), yValue(nextActiveFunctionIndex, m_cursor->x(), context));
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

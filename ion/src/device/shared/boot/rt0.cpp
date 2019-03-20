@@ -5,6 +5,7 @@
 #include "../drivers/board.h"
 #include "../drivers/reset.h"
 #include "../drivers/timing.h"
+#include <drivers/cache.h>
 
 typedef void (*cxx_constructor)();
 
@@ -41,8 +42,13 @@ static void __attribute__((noinline)) non_inlined_ion_main() {
 }
 
 void start() {
-  // This is where execution starts after reset.
-  // Many things are not initialized yet so the code here has to pay attention.
+  /* This is where execution starts after reset.
+   * Many things are not initialized yet so the code here has to pay attention. */
+
+  /* First of all, reset the data/instruction caches. Indeed, if we do not, "an
+   * UNPREDICTIBLE behavior can occur".*/
+  Ion::Device::Cache::invalidateDCache();
+  Ion::Device::Cache::invalidateICache();
 
   /* Copy data section to RAM
    * The data section is R/W but its initialization value matters. It's stored

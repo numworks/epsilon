@@ -94,8 +94,20 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
   mp_float_t oldy = m_y;
   mp_float_t xLength = absF(std::floor(x) - std::floor(oldx));
   mp_float_t yLength = absF(std::floor(y) - std::floor(oldy));
-  bool principalDirectionIsX = xLength >= yLength;
-  mp_float_t length = principalDirectionIsX ? xLength : yLength;
+
+  enum PrincipalDirection {
+    None = 0,
+    X = 1,
+    Y = 2
+  };
+
+  PrincipalDirection principalDirection = xLength > yLength ?
+    PrincipalDirection::X :
+    (xLength == yLength ?
+     PrincipalDirection::None :
+     PrincipalDirection::Y);
+
+  mp_float_t length = principalDirection == PrincipalDirection::X ? xLength : yLength;
 
   if (length > 1) {
     // Tweening function
@@ -106,8 +118,8 @@ bool Turtle::goTo(mp_float_t x, mp_float_t y) {
        * the computation of the position on the principal coordinate is done
        * using a barycenter, roundings might skip some pixels, which results in
        * a dotted line. */
-      mp_float_t currentX = principalDirectionIsX ? oldx + (x > oldx ? i : -i) : x * progress + oldx * (1 - progress);
-      mp_float_t currentY = principalDirectionIsX ? y * progress + oldy * (1 - progress) : oldy + (y > oldy ? i : -i);
+      mp_float_t currentX = principalDirection == PrincipalDirection::Y ? x * progress + oldx * (1 - progress) : oldx + (x > oldx ? i : -i);
+      mp_float_t currentY = principalDirection == PrincipalDirection::X ? y * progress + oldy * (1 - progress) : oldy + (y > oldy ? i : -i);
       if (dot(currentX, currentY) || draw(false)) {
         // Keyboard interruption. Return now to let MicroPython process it.
         return true;
@@ -323,11 +335,11 @@ bool Turtle::draw(bool force) {
     m_drawn = true;
   }
 
-  if (m_mileage > 1000) {
+  if (m_mileage > k_mileageLimit) {
     if (micropython_port_interruptible_msleep(1 + (m_speed == 0 ? 0 : 3 * (k_maxSpeed - m_speed)))) {
       return true;
     }
-    m_mileage -= 1000;
+    m_mileage -= k_mileageLimit;
   }
   return false;
 }
@@ -335,6 +347,7 @@ bool Turtle::draw(bool force) {
 bool Turtle::dot(mp_float_t x, mp_float_t y) {
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
 
+  // Draw the dot if the pen is down
   if (m_penDown && hasDotBuffers()) {
     KDContext * ctx = KDIonContext::sharedContext();
     KDRect rect(
@@ -344,7 +357,12 @@ bool Turtle::dot(mp_float_t x, mp_float_t y) {
     ctx->blendRectWithMask(rect, m_color, m_dotMask, m_dotWorkingPixelBuffer);
   }
 
-  m_mileage += sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
+  /* Increase the turtle's mileage. We need to make sure the mileage is not
+   * overflowed, otherwise we might skip some msleeps in draw. */
+  uint16_t additionalMileage = sqrt((x - m_x) * (x - m_x) + (y - m_y) * (y - m_y)) * 1000;
+  m_mileage = ((m_mileage > k_mileageLimit)
+      && ((m_mileage + additionalMileage) < k_mileageLimit)) ?
+    k_mileageLimit + 1 : m_mileage + additionalMileage;
 
   m_x = x;
   m_y = y;

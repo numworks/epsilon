@@ -24,5 +24,5 @@ LD = false
 endif
 
 ACTOOL = $(shell xcrun --sdk $(IOS_PLATFORM) --find actool)
-IBTOOL = $(shell xcrun --sdk $(IOS_PLATFORM) --find actool)
+IBTOOL = $(shell xcrun --sdk $(IOS_PLATFORM) --find ibtool)
 LIPO = $(shell xcrun --sdk $(IOS_PLATFORM) --find lipo)

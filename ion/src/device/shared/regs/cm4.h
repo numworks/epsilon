@@ -95,6 +95,20 @@ public:
     REGS_FIELD(WAY, uint8_t, 31, 30);
   };
 
+  class DCCSW : public Register32 {
+  public:
+    DCCSW() : Register32(0) {}
+    REGS_FIELD(SET, uint16_t, 13, 5);
+    REGS_FIELD(WAY, uint8_t, 31, 30);
+  };
+
+  class DCCISW : public Register32 {
+  public:
+    DCCISW() : Register32(0) {}
+    REGS_FIELD(SET, uint16_t, 13, 5);
+    REGS_FIELD(WAY, uint8_t, 31, 30);
+  };
+
   constexpr CM4() {};
   REGS_REGISTER_AT(SYST_CSR, 0x10);
   REGS_REGISTER_AT(SYST_RVR, 0x14);
@@ -108,6 +122,8 @@ public:
   REGS_REGISTER_AT(CPACR, 0xD88);
   REGS_REGISTER_AT(ICIALLU, 0xF50);
   REGS_REGISTER_AT(DCISW, 0xF60);
+  REGS_REGISTER_AT(DCCSW, 0xF6C);
+  REGS_REGISTER_AT(DCCISW, 0xF74);
 private:
   constexpr uint32_t Base() const {
     return 0xE000E000;

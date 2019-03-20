@@ -13,6 +13,10 @@ extern "C" {
 SDL_Texture * IonSDLPlatformLoadImage(SDL_Renderer * renderer, const char * identifier);
 char * IonSDLPlatformGetLanguageCode();
 
+void IonSDLPlatformTelemetryInit();
+void IonSDLPlatformTelemetryEvent(const char * eventName);
+void IonSDLPlatformTelemetryDeinit();
+
 #ifdef __cplusplus
 }
 #endif

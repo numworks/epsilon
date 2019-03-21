@@ -6,25 +6,6 @@ namespace Cache {
 
 using namespace Regs;
 
-void invalidateDCache() {
-  privateCleanInvalidateDisableDCache(false, true, false);
-}
-
-void enableDCache() {
-  invalidateDCache();
-  CM4.CCR()->setDC(true);
-  dsb();
-  isb();
-}
-
-void disableDCache() {
-  privateCleanInvalidateDisableDCache(true, true, true);
-}
-
-void cleanDCache() {
-  privateCleanInvalidateDisableDCache(true, false, false);
-}
-
 void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disable) {
   CM4.CSSELR()->set(0);
   dsb();
@@ -65,6 +46,24 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
   dsb();
 }
 
+void invalidateDCache() {
+  privateCleanInvalidateDisableDCache(false, true, false);
+}
+
+void cleanDCache() {
+  privateCleanInvalidateDisableDCache(true, false, false);
+}
+
+void enableDCache() {
+  invalidateDCache();
+  CM4.CCR()->setDC(true);
+  dsb();
+  isb();
+}
+
+void disableDCache() {
+  privateCleanInvalidateDisableDCache(true, true, true);
+}
 
 void invalidateICache() {
   dsb();

@@ -14,8 +14,7 @@ void core() {
 }
 
 void jump() {
-  /* Disabling all caches finishes ongoing operations, so for instance we make
-   * sure all memcpy are done before jumpung to a code copied. */
+  // Disable cache before reset
   Ion::Device::Cache::disableDCache();
   Ion::Device::Cache::disableICache();
 

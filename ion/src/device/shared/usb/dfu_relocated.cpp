@@ -1,6 +1,7 @@
 #include <ion/usb.h>
 #include <string.h>
 #include <assert.h>
+#include <drivers/cache.h>
 #include "../drivers/timing.h"
 
 extern char _stack_end;
@@ -47,6 +48,12 @@ void DFU() {
   /* 3- Copy the DFU bootloader from Flash to RAM. */
 
   memcpy(dfu_bootloader_ram_start, &_dfu_bootloader_flash_start, dfu_bootloader_size);
+  /* The DFU bootloader might have been copied in the DCache. However, when we
+   * run the instructions from the DFU bootloader, the CPU looks for
+   * instructions in the ICache and then in the RAM. We thus need to flush the
+   * DCache to update the RAM. */
+  // Flush data cache
+  Device::Cache::cleanDCache();
 
   /* 4- Disable all interrupts
    * The interrupt service routines live in the Flash and could be overwritten

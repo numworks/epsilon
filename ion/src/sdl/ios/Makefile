@@ -50,11 +50,16 @@ $(call ios_resource,background.jpg): ion/src/sdl/assets/background.jpg | $$(@D)/
 $(call ios_resource,Info.plist): ion/src/sdl/ios/Info.plist $(call ios_resource,Assets.car)
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
+	$(Q) plutil -insert "BuildMachineOSBuild" -string "$(IOS_BUILD_MACHINE_OS_BUILD)" $@
 	$(Q) plutil -insert "MinimumOSVersion" -string "$(IOS_MIN_VERSION)" $@
+	$(Q) plutil -insert "DTCompiler" -string "$(IOS_COMPILER)" $@
+	$(Q) plutil -insert "DTPlatformBuild" -string "$(IOS_PLATFORM_BUILD)" $@
 	$(Q) plutil -insert "DTPlatformName" -string "$(IOS_PLATFORM)" $@
 	$(Q) plutil -insert "DTPlatformVersion" -string "$(IOS_PLATFORM_VERSION)" $@
 	$(Q) plutil -insert "DTSDKName" -string "$(IOS_PLATFORM)$(IOS_PLATFORM_VERSION)" $@
 	$(Q) plutil -insert "DTSDKBuild" -string "$(IOS_PLATFORM_BUILD)" $@
+	$(Q) plutil -insert "DTXcode" -string "$(IOS_XCODE_VERSION)" $@
+	$(Q) plutil -insert "DTXcodeBuild" -string "$(IOS_XCODE_BUILD)" $@
 	$(Q) plutil -insert "CFBundleVersion" -string "$(EPSILON_VERSION)" $@
 	$(Q) plutil -insert "CFBundleShortVersionString" -string "$(EPSILON_VERSION)" $@
 	$(Q) $(foreach capability,$(UI_REQUIRED_CAPABILITIES),plutil -insert "UIRequiredDeviceCapabilities.0" -string "$(capability)" $@ ;)

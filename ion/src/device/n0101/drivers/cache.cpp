@@ -17,6 +17,7 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
 
   if (disable) {
     CM4.CCR()->setDC(false);
+    dsb();
   }
 
   do {
@@ -44,6 +45,7 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
   } while (sets-- != 0);
 
   dsb();
+  isb();
 }
 
 void invalidateDCache() {

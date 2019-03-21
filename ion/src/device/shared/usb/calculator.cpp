@@ -1,7 +1,6 @@
 #include "calculator.h"
 #include <ion/usb.h>
 #include <drivers/keyboard.h>
-#include <drivers/reset.h>
 #include <drivers/serial_number.h>
 
 namespace Ion {
@@ -30,12 +29,7 @@ void Calculator::PollAndReset(bool exitWithKeyboard) {
     c.detach();
   }
   if (c.resetOnDisconnect()) {
-    /* We don't perform a core reset because at this point in time the USB cable
-     * is most likely plugged in. Doing a full core reset would be the clean
-     * thing to do but would therefore result in the device entering the ROMed
-     * DFU bootloader, which we want to avoid. By performing a jump-reset, we
-     * will enter the newly flashed firmware. */
-    Ion::Device::Reset::jump();
+    c.leave();
   }
 }
 

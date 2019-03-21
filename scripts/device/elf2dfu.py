@@ -11,8 +11,8 @@ import argparse
 # arm-none-eabi-objdump -h -w file.elf
 # arm-none-eabi-objcopy -O binary -j .data file.elf file.bin
 
-def loadable_sections(elf_file, section_name_appendix = ""):
-  objdump_section_headers_pattern = re.compile("^\s+\d+\s+(\.[\w\.]+"+section_name_appendix+")\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+).*LOAD", flags=re.MULTILINE)
+def loadable_sections(elf_file, address_prefix = ""):
+  objdump_section_headers_pattern = re.compile("^\s+\d+\s+(\.[\w\.]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+("+address_prefix+"[0-9a-f]+)\s+([0-9a-f]+).*LOAD", flags=re.MULTILINE)
   objdump_output = subprocess.check_output(["arm-none-eabi-objdump", "-h", "-w", elf_file])
   sections = []
   for (name, size, vma, lma, offset) in re.findall(objdump_section_headers_pattern, objdump_output):
@@ -47,7 +47,11 @@ def print_sections(sections):
       print("%s-%s: %s, %s" % (hex(s['lma']), hex(s['lma'] + s['size'] - 1), s['name'], "{:,} bytes".format(s['size'])))
 
 def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
-  external_block = {'name': "external", 'sections': loadable_sections(elf_file, "external")}
+  external_address_prefix = "9"; # External addresses start with 0x9
+  # We don't sort sections on their names (.external, .internal) but on their
+  # addresses because some sections like dfu_entry_point can either be the
+  # internal or the external flash depending on build flags (ie EPSILON_USB_DFU_XIP)
+  external_block = {'name': "external", 'sections': loadable_sections(elf_file, external_address_prefix)}
   internal_block = {'name': "internal", 'sections': [s for s in loadable_sections(elf_file) if s not in external_block['sections']]}
   blocks = [external_block, internal_block]
   if verbose:

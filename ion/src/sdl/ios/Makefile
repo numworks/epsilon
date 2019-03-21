@@ -20,7 +20,6 @@ else
 src += ion/src/sdl/shared/telemetry_dummy.cpp
 endif
 
-
 # Cross-ARCH epsilon.bin
 
 .PHONY: force_remake
@@ -30,7 +29,8 @@ $(BUILD_DIR)/%/epsilon.bin: force_remake
 	$(Q) $(MAKE) ARCH=$*
 
 ifeq ($(IOS_PLATFORM),iphoneos)
-ARCHS ?= arm64
+ARCHS ?= arm64 armv7
+UI_REQUIRED_CAPABILITIES += armv7
 else ifeq ($(IOS_PLATFORM),iphonesimulator)
 ARCHS ?= x86_64
 endif
@@ -57,7 +57,7 @@ $(call ios_resource,Info.plist): ion/src/sdl/ios/Info.plist $(call ios_resource,
 	$(Q) plutil -insert "DTSDKBuild" -string "$(IOS_PLATFORM_BUILD)" $@
 	$(Q) plutil -insert "CFBundleVersion" -string "$(EPSILON_VERSION)" $@
 	$(Q) plutil -insert "CFBundleShortVersionString" -string "$(EPSILON_VERSION)" $@
-	$(foreach arch,$(ARCHS),$(Q) plutil -insert "UIRequiredDeviceCapabilities.0" -string "$(arch)" $@)
+	$(Q) $(foreach capability,$(UI_REQUIRED_CAPABILITIES),plutil -insert "UIRequiredDeviceCapabilities.0" -string "$(capability)" $@ ;)
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(BUILD_DIR)/app/assets/partial.plist` $@
 

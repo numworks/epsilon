@@ -48,6 +48,7 @@ dfu_src += liba/src/memcpy.c
 dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
 dfu_src += ion/src/device/shared/usb/boot.cpp
 dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
+dfu_src += ion/src/device/$(MODEL)/usb/stack/device.cpp
 dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   external_flash.cpp \

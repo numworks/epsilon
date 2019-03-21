@@ -14,6 +14,7 @@ void core() {
 }
 
 void jump() {
+  // TODO: shutdown all clocks and peripherial to mimic a hardware reset
   // Disable cache before reset
   Ion::Device::Cache::disableDCache();
   Ion::Device::Cache::disableICache();

@@ -44,7 +44,7 @@ void initPeripherals() {
 
 void shutdownPeripherals(bool keepLEDAwake) {
   ExternalFlash::shutdown();
-  Timing::shutdown();
+  //Timing::shutdown(); TODO FIXME
   SWD::shutdown();
   Console::shutdown();
   USB::shutdown();

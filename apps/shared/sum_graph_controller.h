@@ -3,9 +3,7 @@
 
 #include <escher.h>
 #include "function_graph_view.h"
-#include "interactive_curve_view_range.h"
 #include "vertical_cursor_view.h"
-#include "curve_view_cursor.h"
 #include "simple_interactive_curve_view_controller.h"
 #include "function.h"
 #include "text_field_delegate.h"
@@ -67,7 +65,7 @@ private:
     static KDCoordinate editableZoneHeight() { return k_font->glyphSize().height(); }
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 3; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     void layoutSubviews(Step step);

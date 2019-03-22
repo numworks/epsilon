@@ -38,7 +38,7 @@ void initPeripherals() {
   USB::init();
   Console::init();
   SWD::init();
-  Timing::init();
+  //Timing::init(); TODO FIXME
   ExternalFlash::init();
 }
 

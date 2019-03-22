@@ -263,6 +263,9 @@ void initPanel() {
   send_command(Command::TearingEffectLineOn, 0x00);
   send_command(Command::FrameRateControl, 0x1E); // 40 Hz frame rate
 
+  if (Config::DisplayInversion) {
+    send_command(Command::DisplayInversionOn);
+  }
   send_command(Command::DisplayOn);
 }
 

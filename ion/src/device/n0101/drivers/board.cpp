@@ -100,7 +100,7 @@ void initClocks() {
    * for use in different parts of the system.  */
 
   // Configure the PLL ratios and use HSE as a PLL input
-  RCC.PLLCFGR()->setPLLM(25);
+  RCC.PLLCFGR()->setPLLM(8);
   RCC.PLLCFGR()->setPLLN(384);
   RCC.PLLCFGR()->setPLLQ(8);
   RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);

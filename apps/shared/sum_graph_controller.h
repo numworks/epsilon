@@ -36,6 +36,7 @@ protected:
 private:
   constexpr static float k_cursorTopMarginRatio = 0.06f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
+  bool handleLeftRightEvent(Ion::Events::Event event) override;
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
   virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;

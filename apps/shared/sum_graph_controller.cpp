@@ -51,31 +51,7 @@ void SumGraphController::didEnterResponderChain(Responder * previousFirstRespond
 }
 
 bool SumGraphController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Plus || event == Ion::Events::Minus) {
-    return handleZoom(event);
-  }
-  if ((int)m_step > 1 && event != Ion::Events::OK && event != Ion::Events::EXE && event != Ion::Events::Back) {
-    return false;
-  }
-  if (event == Ion::Events::Left && !m_legendView.textField()->isEditing()) {
-    if ((int)m_step > 0 && m_startSum >= m_cursor->x()) {
-      return false;
-    }
-    if (moveCursorHorizontallyToPosition(cursorNextStep(m_cursor->x(), -1))) {
-      return true;
-    }
-    return false;
-  }
-  if (event == Ion::Events::Right && !m_legendView.textField()->isEditing()) {
-    if (moveCursorHorizontallyToPosition(cursorNextStep(m_cursor->x(), 1))) {
-      return true;
-    }
-    return false;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnter();
-  }
-  if (event == Ion::Events::Back && (int)m_step > 0) {
+  if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step-1);
     m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
     if (m_step == Step::SecondParameter) {
@@ -94,7 +70,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  return false;
+  return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
 bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
@@ -146,6 +122,19 @@ bool SumGraphController::textFieldDidReceiveEvent(TextField * textField, Ion::Ev
     return handleEnter();
   }
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
+bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
+  if (m_step == Step::Result) {
+    return false;
+  }
+  const double oldPosition = m_cursor->x();
+  int direction = event == Ion::Events::Left ? -1 : 1;
+  double newPosition = cursorNextStep(oldPosition, direction);
+  if (m_step == Step::SecondParameter && newPosition < m_startSum) {
+    newPosition = m_startSum;
+  }
+  return moveCursorHorizontallyToPosition(newPosition);
 }
 
 bool SumGraphController::handleEnter() {

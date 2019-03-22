@@ -20,4 +20,5 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   reset.cpp \
   suspend.cpp \
   vblank.cpp \
+  write_external.cpp \
 )

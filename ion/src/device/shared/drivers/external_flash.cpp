@@ -91,8 +91,8 @@ public:
 };
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
+static constexpr int AHBClockFrequency = 192; // MHz
 static constexpr int ClockFrequencyDivisor = 2;
-static constexpr int ChipSelectHighTime = (ClockFrequencyDivisor == 1) ? 3 : (ClockFrequencyDivisor == 2) ? 2 : 1;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
@@ -238,6 +238,10 @@ static void initQSPI() {
   // Configure controller for target device
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
+  /* According to the device's datasheet (see Sections 8.7 and 8.8), the CS
+   * signal should stay high (deselect the device) for t_SHSL = 30ns at least.
+   * */
+  constexpr int ChipSelectHighTime = (30 * AHBClockFrequency + ClockFrequencyDivisor * 1000 - 1) / (ClockFrequencyDivisor * 1000);
   dcr.setCSHT(ChipSelectHighTime - 1);
   dcr.setCKMODE(true);
   QUADSPI.DCR()->set(dcr);

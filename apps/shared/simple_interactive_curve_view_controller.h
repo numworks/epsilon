@@ -22,7 +22,7 @@ public:
 protected:
   virtual bool handleZoom(Ion::Events::Event event);
   virtual bool handleLeftRightEvent(Ion::Events::Event event);
-  virtual void reloadBannerView() {};
+  virtual void reloadBannerView() = 0;
   /* the result of moveCursorVertically/Horizontally means:
    * false -> the cursor cannot move in this direction
    * true -> the cursor moved */

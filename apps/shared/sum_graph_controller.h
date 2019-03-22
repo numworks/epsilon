@@ -37,15 +37,16 @@ private:
   constexpr static float k_cursorTopMarginRatio = 0.06f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   bool handleLeftRightEvent(Ion::Events::Event event) override;
-  virtual I18n::Message legendMessageAtStep(Step step) = 0;
-  virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
+  bool handleEnter() override;
+  void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
   TextFieldDelegateApp * textFieldDelegateApp() override {
     return static_cast<TextFieldDelegateApp *>(app());
   }
-  bool handleEnter() override;
+  virtual I18n::Message legendMessageAtStep(Step step) = 0;
+  virtual double cursorNextStep(double position, int direction) = 0;
+  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
   class LegendView : public View {
   public:
     LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);
@@ -58,7 +59,7 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
-    void setSumSymbol(Step step, double start = NAN, double end = NAN, double result = NAN, Poincare::Layout sequenceName = Poincare::Layout());
+    void setSumSymbol(Step step, double start, double end, double result, Poincare::Layout functionLayout);
   private:
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static const KDFont * k_font = KDFont::SmallFont;

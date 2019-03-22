@@ -1,3 +1,4 @@
+#include <ion/events.h>
 #include <ion/usb.h>
 #include <assert.h>
 

@@ -28,6 +28,8 @@ constexpr static int DMAStream = 0;
 
 constexpr static int HCLKFrequencyInMHz = 192;
 
+constexpr static bool DisplayInversion = true;
+
 }
 }
 }

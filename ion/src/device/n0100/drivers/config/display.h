@@ -56,6 +56,9 @@ constexpr static int DMAStream = 0;
 
 constexpr static int HCLKFrequencyInMHz = 96;
 
+constexpr static bool DisplayInversion = false;
+
+
 }
 }
 }

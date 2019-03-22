@@ -64,6 +64,11 @@ public:
     void setPPRE2(APBPrescaler r) volatile { setBitRange(15, 13, (uint32_t)r); }
   };
 
+  class AHB3RSTR : Register32 {
+  public:
+    REGS_BOOL_FIELD(QSPIRST, 1);
+  };
+
   class AHB1ENR : public Register32 {
   public:
     using Register32::Register32;
@@ -136,6 +141,7 @@ public:
   REGS_REGISTER_AT(CR, 0x00);
   REGS_REGISTER_AT(PLLCFGR, 0x04);
   REGS_REGISTER_AT(CFGR, 0x08);
+  REGS_REGISTER_AT(AHB3RSTR, 0x18);
   REGS_REGISTER_AT(AHB1ENR, 0x30);
   REGS_REGISTER_AT(AHB2ENR, 0x34);
   REGS_REGISTER_AT(AHB3ENR, 0x38);

@@ -174,11 +174,6 @@ void InteractiveCurveViewController::viewDidDisappear() {
   *m_rangeVersion = rangeVersion();
 }
 
-void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {
-  reloadBannerView();
-  curveView()->reload();
-}
-
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     curveView()->selectMainView(false);

@@ -1,7 +1,6 @@
 #include "graph_controller.h"
 #include "../shared/poincare_helpers.h"
 #include "../apps_container.h"
-#include <kandinsky/font.h>
 #include <cmath>
 
 using namespace Poincare;
@@ -44,16 +43,43 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
-  InteractiveCurveViewController::viewWillAppear();
-  if (m_modelType[*m_selectedSeriesIndex] != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
-    initCursorParameters();
-  }
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_modelType[i] = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  }
+  /* At this point, there is at least one non-empty series.
+   * However, before the graph view appears for the very first time,
+   * *m_selectedSeriesIndex is set to -1. Thus one needs to select a series.
+   * TODO Perhaps the three following lines should be moved elsewhere. */
   if (*m_selectedSeriesIndex < 0) {
     *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
   }
+
+  /* Both the GraphController and the Store hold the Model::Type of each
+   * series. The values differ in two cases:
+   *  1) the very first time the graph view appears
+   *  2) when the user selects another Model::Type for a series.
+   * where we decide to place the cursor at a default position. */
+  if (m_modelType[*m_selectedSeriesIndex] != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
+    initCursorParameters();
+  }
+
+  /* Equalize the Model::Type of each series between the GraphController and
+   * the Store.
+   * TODO In passing, one may probably avoid keeping the Model::Type of each
+   * series in two places:
+   *  1) call initCursorParameters elsewhere the very first time the graph view
+   *     appears,
+   *  2) take into account the Model::Type in the computation of the
+   *     storeChecksum in order to detect any change in the series and in
+   *     their model types. */
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    m_modelType[i] = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  }
+
+  /* The following
+   *   - calls initCursorParameters() if necessary,
+   *   - reloads the bannerView and the curveView. */
+  InteractiveCurveViewController::viewWillAppear();
+
+  /* Since *m_selectedDotIndex is altered by initCursorParameters(),
+   * the following must absolutely come at the end. */
   if (*m_selectedDotIndex >= 0) {
     m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
   } else {
@@ -77,10 +103,6 @@ Poincare::Context * GraphController::globalContext() {
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
-  if (*m_selectedSeriesIndex < 0) {
-    return;
-  }
-
   // Set point equals: "P(...) ="
   constexpr size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
@@ -138,12 +160,12 @@ void GraphController::reloadBannerView() {
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
-  Model * model = m_store->modelForSeries(selectedSeriesIndex());
+  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
   I18n::Message formula = model->formulaMessage();
   m_bannerView.regressionTypeView()->setMessage(formula);
 
   // Get the coefficients
-  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
+  double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
   bool coefficientsAreDefined = true;
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     if (std::isnan(coefficients[i])) {
@@ -180,7 +202,7 @@ void GraphController::reloadBannerView() {
     coefficientName++;
   }
 
-  if (m_store->seriesRegressionType(selectedSeriesIndex()) == Model::Type::Linear) {
+  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
     // Set "r=..."
     numberOfChar = 0;
     legend = " r=";
@@ -250,9 +272,6 @@ bool GraphController::handleEnter() {
 
 // InteractiveCurveViewController
 void GraphController::initCursorParameters() {
-  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
-    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
-  }
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   m_cursor->moveTo(x, y);

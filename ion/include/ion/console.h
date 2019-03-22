@@ -10,6 +10,7 @@ char readChar();
 // The lines are NULL-terminated
 void writeLine(const char * line);
 void readLine(char * line, int maxLineLength);
+bool transmissionDone();
 
 }
 }

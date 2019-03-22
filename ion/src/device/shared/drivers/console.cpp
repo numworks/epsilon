@@ -18,9 +18,14 @@ char readChar() {
 }
 
 void writeChar(char c) {
+  Config::Port.TDR()->set(c);
+  // Wait until the write is done
   while (Config::Port.SR()->getTXE() == 0) {
   }
-  Config::Port.TDR()->set(c);
+}
+
+bool transmissionDone() {
+  return Config::Port.SR()->getTC() == 1;
 }
 
 }

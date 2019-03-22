@@ -13,6 +13,7 @@ public:
   class SR : Register32 {
   public:
     REGS_BOOL_FIELD(RXNE, 5);
+    REGS_BOOL_FIELD(TC, 6);
     REGS_BOOL_FIELD(TXE, 7);
   };
 

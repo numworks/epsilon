@@ -28,7 +28,6 @@ public:
 
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   Responder * tabController() const;

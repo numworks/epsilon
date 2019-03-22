@@ -93,6 +93,8 @@ public:
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
 static constexpr int AHBClockFrequency = 192; // MHz
 static constexpr int ClockFrequencyDivisor = 2;
+static constexpr bool ajustNumberOfDummyCycles = AHBClockFrequency < 80 * ClockFrequencyDivisor;
+static constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad && ajustNumberOfDummyCycles) ? 4 : 2;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
 
@@ -149,14 +151,13 @@ static void set_as_memory_mapped() {
    *
    * It goes low, only if the low-power timeout counter is enabled.
    * (Flash memories tend to consume more when nCS is held low.) */
-  constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Single) ? 8 : (ClockFrequencyDivisor > 1) ? 4 : 6;
   send_command_full(
     QUADSPI::CCR::FunctionalMode::MemoryMapped,
     DefaultOperatingMode,
     Command::FastReadQuadIO,
     reinterpret_cast<uint8_t *>(FlashAddressSpaceSize),
     0xA0, 1,
-    2, //FIXME
+    FastReadDummyCycles,
     nullptr, 0
   );
 }
@@ -170,7 +171,7 @@ static void unset_memory_mapped_mode() {
     Command::FastReadQuadIO,
     0,
     ~(0xA0), 1,
-    2, //FIXME
+    FastReadDummyCycles,
     &dummyData, 1
   );
 }
@@ -263,7 +264,7 @@ static void initChip() {
     wait(QUADSPI::CCR::OperatingMode::Single);
     send_command(Command::EnableQPI, QUADSPI::CCR::OperatingMode::Single);
     wait();
-    if (ClockFrequencyDivisor == 1) {
+    if (ajustNumberOfDummyCycles) {
       class ReadParameters : Register8 {
       public:
         /* Parameters sent along with SetReadParameters instruction in order

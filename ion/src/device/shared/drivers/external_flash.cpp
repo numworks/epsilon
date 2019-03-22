@@ -64,6 +64,7 @@ enum class Command : uint8_t {
   PageProgram = 0x02,
   QuadPageProgram = 0x33,
   EnableQPI = 0x38,
+  Reset = 0x99,
   // Erase the whole chip or a 64-Kbyte block as being "1"
   ChipErase = 0xC7,
   Erase64KbyteBlock = 0xD8,
@@ -287,6 +288,16 @@ void init() {
   initGPIO();
   initQSPI();
   initChip();
+}
+
+void deinit() {
+  if (Config::NumberOfSectors == 0) {
+    return;
+  }
+  // Reset the controller
+  RCC.AHB3RSTR()->setQSPIRST(true);
+  RCC.AHB3RSTR()->setQSPIRST(false);
+  send_command(Command::Reset, QUADSPI::CCR::OperatingMode::Quad);
 }
 
 static void shutdownGPIO() {

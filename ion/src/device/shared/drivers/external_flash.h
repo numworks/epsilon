@@ -33,6 +33,7 @@ namespace ExternalFlash {
 
 void init();
 void shutdown();
+void deinit();
 
 void MassErase();
 int SectorAtAddress(uint32_t address);

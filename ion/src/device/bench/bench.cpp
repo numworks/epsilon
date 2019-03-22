@@ -36,7 +36,6 @@ void run() {
   ctx->fillRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
   ctx->drawString("BENCH", KDPoint((320-50)/2, (240-18)/2));
   char command[kMaxCommandLength];
-  Ion::LED::setColor(KDColorBlue);
   while (true) {
     Ion::Console::readLine(command, kMaxCommandLength);
     const CommandHandler * ch = sCommandList.dispatch(command);

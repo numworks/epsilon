@@ -75,7 +75,7 @@ __attribute__((naked)) unsigned int nlr_push(nlr_buf_t *nlr) {
     #if defined(__APPLE__) || defined(__MACH__)
     "b      _nlr_push_tail      \n" // do the rest in C
     #else
-    "jmp    nlr_push_tail       \n" // do the rest in C
+    "b      nlr_push_tail       \n" // do the rest in C
     #endif
 #endif
     );

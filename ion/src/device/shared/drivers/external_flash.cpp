@@ -192,6 +192,15 @@ static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADS
         }
       }
     }
+  } else if (QUADSPI.CCR()->getFMODE() == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
+    /* "BUSY goes high as soon as the first memory-mapped access occurs. Because
+     * of the prefetch operations, BUSY does not fall until there is a timeout,
+     * there is an abort, or the peripheral is disabled". (From the Reference
+     * Manual)
+     * If we are leaving memory-mapped mode, we send an abort to clear BUSY. */
+    QUADSPI.CR()->setABORT(true);
+    while (QUADSPI.CR()->getABORT()) {
+    }
   }
 
   class QUADSPI::CCR ccr(0);
@@ -237,7 +246,8 @@ static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADS
   /* Wait for the command to be sent.
    * "When configured in memory-mapped mode, because of the prefetch operations,
    * BUSY does not fall until there is a timeout, there is an abort, or the
-   * peripheral is disabled." */
+   * peripheral is disabled.", so we do not wait if the device is in
+   * memory-mapped mode. */
   if (functionalMode != QUADSPI::CCR::FunctionalMode::MemoryMapped) {
     while (QUADSPI.SR()->getBUSY()) {
     }

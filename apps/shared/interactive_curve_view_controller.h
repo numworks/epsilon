@@ -40,8 +40,9 @@ protected:
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
-  virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const { assert(false); return false; }
-  virtual double yValue(int curveIndex, double x, Poincare::Context * context) const { assert(false); return 0; }
+  virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const = 0;
+  virtual int selectedCurveIndex() const = 0;
+  virtual double yValue(int curveIndex, double x, Poincare::Context * context) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
 

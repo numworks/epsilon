@@ -16,6 +16,7 @@ public:
   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(EN, 0);
+    REGS_BOOL_FIELD(ABORT, 1);
     REGS_BOOL_FIELD(TCEN, 3); // Lower-power timeout counter enable in memory-mapped mode
     REGS_BOOL_FIELD(SSHIFT, 4);
     REGS_FIELD(PRESCALER, uint8_t, 31, 24);

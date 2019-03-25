@@ -178,6 +178,22 @@ static void unset_memory_mapped_mode() {
 }
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength) {
+  /* According to ST's Errata Sheet ES0360, "Wrong data can be read in
+   * memory-mapped after an indirect mode operation". This is the workaround. */
+  if (functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {
+    QUADSPI::CCR::FunctionalMode previousMode = QUADSPI.CCR()->getFMODE();
+    if (previousMode == QUADSPI::CCR::FunctionalMode::IndirectWrite || previousMode == QUADSPI::CCR::FunctionalMode::IndirectRead) {
+      // Reset the address register
+      QUADSPI.AR()->set(0); // No write to DR should be done after this
+      if (previousMode == QUADSPI::CCR::FunctionalMode::IndirectRead) {
+        // Make an abort request to stop the reading and clear the busy bit
+        QUADSPI.CR()->setABORT(true);
+        while (QUADSPI.CR()->getABORT()) {
+        }
+      }
+    }
+  }
+
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {

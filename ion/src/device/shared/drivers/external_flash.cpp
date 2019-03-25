@@ -203,6 +203,8 @@ static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADS
     }
   }
 
+  assert(QUADSPI.CCR()->getFMODE() != QUADSPI::CCR::FunctionalMode::MemoryMapped || QUADSPI.SR()->getBUSY() == 0);
+
   class QUADSPI::CCR ccr(0);
   ccr.setFMODE(functionalMode);
   if (data != nullptr || functionalMode == QUADSPI::CCR::FunctionalMode::MemoryMapped) {

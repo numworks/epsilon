@@ -73,7 +73,7 @@ enum class Command : uint8_t {
   ReleaseDeepPowerDown = 0xAB
 };
 
-static constexpr uint8_t NumberOfAddressBitsInChip = 23;
+static constexpr uint8_t NumberOfAddressBitsInChip = 23; // 2^23 Bytes = 8 MBytes
 static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
 static constexpr uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
 
@@ -94,7 +94,7 @@ public:
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
 static constexpr int AHBClockFrequency = 192; // MHz
 static constexpr int ClockFrequencyDivisor = 2;
-static constexpr bool ajustNumberOfDummyCycles = AHBClockFrequency < 80 * ClockFrequencyDivisor;
+static constexpr bool ajustNumberOfDummyCycles = AHBClockFrequency > 80 * ClockFrequencyDivisor;
 static constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad && ajustNumberOfDummyCycles) ? 4 : 2;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
@@ -299,7 +299,7 @@ static void initChip() {
         /* Parameters sent along with SetReadParameters instruction in order
          * to configure the number of dummy cycles for the QPI Read instructions. */
         using Register8::Register8;
-        REGS_BOOL_FIELD_W(P5, 1);
+        REGS_BOOL_FIELD_W(P5, 5);
       };
       ReadParameters readParameters(0);
       readParameters.setP5(true);

@@ -6,7 +6,7 @@ namespace Code {
 
 /* EditorView */
 
-static constexpr const KDFont * editorFont = KDFont::LargeFont;
+static constexpr const KDFont * editorFont = KDFont::SmallFont;
 
 EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),

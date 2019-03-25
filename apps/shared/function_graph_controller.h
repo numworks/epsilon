@@ -40,6 +40,7 @@ private:
   CurveView * curveView() override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
+  int selectedCurveIndex() const override { return *m_indexFunctionSelectedByCursor; }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const override;
   double yValue(int curveIndex, double x, Poincare::Context * context) const override;
   int numberOfCurves() const override;

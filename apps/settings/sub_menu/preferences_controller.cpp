@@ -119,14 +119,11 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
-  }
-  if (message == I18n::Message::DisplayMode) {
+  } else if (message == I18n::Message::DisplayMode) {
     preferences->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
-  }
-  if (message == I18n::Message::EditionMode) {
+  } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
-  }
-  if (message == I18n::Message::ComplexFormat) {
+  } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   }
 }

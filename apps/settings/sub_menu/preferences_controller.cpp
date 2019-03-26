@@ -55,16 +55,13 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     case I18n::Message::Degres:
     {
       const char * degEx = "90°";
-      return LayoutHelper::String("90°", strlen(degEx), k_layoutFont);
+      return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
     }
     case I18n::Message::Radian:
-    {
-      const char * pi = "π";
       return FractionLayout::Builder(
-          LayoutHelper::String(pi, sizeof(pi), k_layoutFont),
-          LayoutHelper::String("2", 1, k_layoutFont)
-        );
-    }
+          CodePointLayout::Builder(UCodePointGreekSmallLetterPi, k_layoutFont),
+          CodePointLayout::Builder('2', k_layoutFont));
+
     // Display Mode format
     case I18n::Message::Decimal:
       return LayoutHelper::String("12.34", 5, k_layoutFont);
@@ -73,6 +70,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * text = "1.234ᴇ1";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
+
     // Edition mode
     case I18n::Message::Edition2D:
       return HorizontalLayout::Builder(
@@ -81,11 +79,10 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
         );
     case I18n::Message::EditionLinear:
       return LayoutHelper::String("1+2/3", 5, k_layoutFont);
+
     // Complex format
     case I18n::Message::Real:
-    {
       return CodePointLayout::Builder('x', k_layoutFont);
-    }
     case I18n::Message::Cartesian:
     {
       const char * text = "a+𝐢b";

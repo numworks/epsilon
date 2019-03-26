@@ -11,7 +11,7 @@ namespace Regression {
 Layout LinearModel::layout() {
   if (m_layout.isUninitialized()) {
     const char * s = "a·X+b";
-    m_layout = LayoutHelper::String(s, strlen(s), KDFont::SmallFont);
+    m_layout = LayoutHelper::String(s, strlen(s), k_layoutFont);
   }
   return m_layout;
 }

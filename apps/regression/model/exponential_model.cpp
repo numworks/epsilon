@@ -13,14 +13,14 @@ Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
     constexpr int size = 4;
     Layout layoutChildren[size] = {
-      CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('e', KDFont::SmallFont),
+      CodePointLayout::Builder('a', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(
-            CodePointLayout::Builder('b', KDFont::SmallFont),
-            CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-            CodePointLayout::Builder('X', KDFont::SmallFont)
+            CodePointLayout::Builder('b', k_layoutFont),
+            CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+            CodePointLayout::Builder('X', k_layoutFont)
           ),
           VerticalOffsetLayoutNode::Type::Superscript
         )

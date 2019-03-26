@@ -21,27 +21,27 @@ Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
     constexpr int size = 15;
     Layout layoutChildren[size] = {
-      CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder('a', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('3', KDFont::SmallFont),
+          CodePointLayout::Builder('3', k_layoutFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('b', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('b', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2', KDFont::SmallFont),
+          CodePointLayout::Builder('2', k_layoutFont),
           VerticalOffsetLayoutNode::Type::Superscript
         ),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('c', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('X', KDFont::SmallFont),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('d', KDFont::SmallFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('c', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('d', k_layoutFont),
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, size);
   }

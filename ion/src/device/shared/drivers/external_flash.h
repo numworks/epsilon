@@ -40,6 +40,9 @@ int SectorAtAddress(uint32_t address);
 void EraseSector(int i);
 void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length);
 
+static constexpr uint8_t NumberOfAddressBitsInChip = 23; // 2^23 Bytes = 8 MBytes
+static constexpr uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
+
 }
 }
 }

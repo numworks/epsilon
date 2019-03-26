@@ -1,13 +1,14 @@
 #include <quiz.h>
 #include <ion.h>
 #include <assert.h>
-#include "ion/src/device/external_flash.h"
+#include <drivers/config/external_flash.h>
+#include <drivers/external_flash.h>
 #include "ion/include/ion/timing.h"
 
 // Choose some not too uniform data to program and test the external flash memory with.
 
 static inline uint8_t expected_value_at(uint8_t * ptr) {
-  uint32_t address = reinterpret_cast<uint32_t>(ptr) - Ion::ExternalFlash::Device::StartAddress;
+  uint32_t address = reinterpret_cast<uint32_t>(ptr) - Ion::Device::ExternalFlash::Config::StartAddress;
   return (address / 0x10000) + (address / 0x100) + address;
   // Example: the value expected at the address 0x123456 is 0x12 + 0x34 + 0x56.
 }
@@ -31,8 +32,8 @@ static inline void check(volatile T * p, int repeat) {
 
 template <typename T>
 void test(int accessType, int repeat) {
-  uint8_t * start = reinterpret_cast<uint8_t *>(Ion::ExternalFlash::Device::StartAddress);
-  uint8_t * end = reinterpret_cast<uint8_t *>(Ion::ExternalFlash::Device::StartAddress + Ion::ExternalFlash::Device::FlashAddressSpaceSize);
+  uint8_t * start = reinterpret_cast<uint8_t *>(Ion::Device::ExternalFlash::Config::StartAddress);
+  uint8_t * end = reinterpret_cast<uint8_t *>(Ion::Device::ExternalFlash::Config::StartAddress + Ion::Device::ExternalFlash::FlashAddressSpaceSize);
 
   // Forward sequential access
   if (accessType == 0) {
@@ -52,10 +53,10 @@ void test(int accessType, int repeat) {
 
   // Random access
   if (accessType == 2) {
-    T * endT = reinterpret_cast<T *>(Ion::ExternalFlash::Device::StartAddress + Ion::ExternalFlash::Device::FlashAddressSpaceSize);
-    for (size_t i=0; i<Ion::ExternalFlash::Device::FlashAddressSpaceSize; i++) {
-      uint32_t randomAddr = Ion::random() >> (32 - Ion::ExternalFlash::Device::NumberOfAddressBitsInChip);
-      volatile T * q = reinterpret_cast<T *>(randomAddr + Ion::ExternalFlash::Device::StartAddress);
+    T * endT = reinterpret_cast<T *>(Ion::Device::ExternalFlash::Config::StartAddress + Ion::Device::ExternalFlash::FlashAddressSpaceSize);
+    for (size_t i=0; i<Ion::Device::ExternalFlash::FlashAddressSpaceSize; i++) {
+      uint32_t randomAddr = Ion::random() >> (32 - Ion::Device::ExternalFlash::NumberOfAddressBitsInChip);
+      volatile T * q = reinterpret_cast<T *>(randomAddr + Ion::Device::ExternalFlash::Config::StartAddress);
       if (q <= endT - 1) {
         check(q, repeat);
       }
@@ -89,7 +90,7 @@ static void printElapsedTime(uint64_t startTime) {
 QUIZ_CASE(ion_ext_flash_erase) {
 #if TEST_EXT_FLASH_REPROGRAM
   uint64_t startTime = Ion::Timing::millis();
-  Ion::ExternalFlash::Device::MassErase();
+  Ion::Device::ExternalFlash::MassErase();
   printElapsedTime(startTime);
 #endif
 }
@@ -101,9 +102,9 @@ QUIZ_CASE(ion_ext_flash_program) {
   for (int page = 0; page < (1<<15); page++) {
     uint8_t buffer[256];
     for (int byte = 0; byte < 256; byte++) {
-      buffer[byte] = expected_value_at(reinterpret_cast<uint8_t *>(Ion::ExternalFlash::Device::StartAddress + page * 256 + byte));
+      buffer[byte] = expected_value_at(reinterpret_cast<uint8_t *>(Ion::Device::ExternalFlash::Config::StartAddress + page * 256 + byte));
     }
-    Ion::ExternalFlash::Device::WriteMemory(reinterpret_cast<uint8_t *>(page * 256), buffer, 256);
+    Ion::Device::ExternalFlash::WriteMemory(reinterpret_cast<uint8_t *>(page * 256), buffer, 256);
   }
   printElapsedTime(startTime);
 #endif

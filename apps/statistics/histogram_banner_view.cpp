@@ -5,12 +5,12 @@
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView() :
-  m_intervalLegendView(KDFont::SmallFont, I18n::Message::Interval, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_intervalView(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_sizeLegendView(KDFont::SmallFont, I18n::Message::Size, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_sizeView(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_frequencyLegendView(KDFont::SmallFont, I18n::Message::Frequency, 1.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_frequencyView(KDFont::SmallFont, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle)
+  m_intervalLegendView(Font(), I18n::Message::Interval, 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_intervalView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_sizeLegendView(Font(), I18n::Message::Size, 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_sizeView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_frequencyLegendView(Font(), I18n::Message::Frequency, 1.0f, 0.5f, TextColor(), BackgroundColor()),
+  m_frequencyView(Font(), 0.0f, 0.5f, TextColor(), BackgroundColor())
 {
 }
 

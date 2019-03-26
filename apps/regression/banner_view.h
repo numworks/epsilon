@@ -16,11 +16,7 @@ public:
   MessageTextView * regressionTypeView() { return &m_regressionTypeView; }
   BufferTextView * subTextAtIndex(int index);
   static constexpr int numberOfsubTexts() { return 5; }
-  const KDFont * font() const { return k_font; }
 private:
-  static constexpr const KDFont * k_font = KDFont::SmallFont;
-  static constexpr KDColor k_textColor = KDColorBlack;
-  static constexpr KDColor k_backgroundColor = Palette::GreyMiddle;
   static constexpr int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 7;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   View * subviewAtIndex(int index) override;

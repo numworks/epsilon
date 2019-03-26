@@ -8,8 +8,8 @@ XYBannerView::XYBannerView(
   InputEventHandlerDelegate * inputEventHandlerDelegate,
   TextFieldDelegate * textFieldDelegate
 ) :
-  m_abscissaView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_ordinateView(KDFont::SmallFont, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle)
+  m_abscissaView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor()),
+  m_ordinateView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
 {
 }
 

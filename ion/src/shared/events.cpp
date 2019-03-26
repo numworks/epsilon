@@ -63,7 +63,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T(k_arcSine), T(k_arcCosine), T(k_arcTangent), T("="), T("<"), T(">"),
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
-  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), TL(), TL(), U(),
   U(), U(), U(), U(), U(), U(),
 // Alpha
   U(), U(), U(), U(), U(), U(),
@@ -163,7 +163,7 @@ static constexpr const char * s_nameForEvent[255] = {
   "Arcsine", "Arccosine", "Arctangent", "Equal", "Lower", "Greater",
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, "BrightnessPlus", "BrightnessMinus", nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   //Alpha,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,

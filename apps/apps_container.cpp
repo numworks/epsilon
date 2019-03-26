@@ -220,6 +220,12 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     suspend(true);
     return true;
   }
+  if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus) {
+      int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
+      int direction = (event == Ion::Events::BrightnessPlus) ? delta : -delta;
+      GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
+    return true;
+  }
   return false;
 }
 

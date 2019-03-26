@@ -139,6 +139,9 @@ constexpr Event Equal = Event::ShiftKey(Keyboard::Key::E4);
 constexpr Event Lower = Event::ShiftKey(Keyboard::Key::E5);
 constexpr Event Greater = Event::ShiftKey(Keyboard::Key::E6);
 
+constexpr Event BrightnessPlus = Event::ShiftKey(Keyboard::Key::H4);
+constexpr Event BrightnessMinus = Event::ShiftKey(Keyboard::Key::H5);
+
 // Alpha
 
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::C3);

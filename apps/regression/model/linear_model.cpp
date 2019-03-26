@@ -1,9 +1,8 @@
 #include "linear_model.h"
 #include "../store.h"
+#include <poincare/layout_helper.h>
 #include <math.h>
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
 
 using namespace Poincare;
 
@@ -11,14 +10,8 @@ namespace Regression {
 
 Layout LinearModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout layoutChildren[] = {
-      CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('X', KDFont::SmallFont),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('b', KDFont::SmallFont),
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, 5);
+    const char * s = "a·X+b";
+    m_layout = LayoutHelper::String(s, strlen(s), KDFont::SmallFont);
   }
   return m_layout;
 }

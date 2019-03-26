@@ -100,6 +100,13 @@ Layout layoutForPreferences(I18n::Message message) {
           VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, sizeof(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
         );
     }
+    // Font size
+    case I18n::Message::Large:
+      return LayoutHelper::String("000", 3, KDFont::LargeFont);
+    case I18n::Message::Small:
+    {
+      return LayoutHelper::String("000", 3, KDFont::SmallFont);
+    }
     default:
       assert(false);
       return Layout();
@@ -132,6 +139,9 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   }
+  if (message == I18n::Message::FontSize) {
+    preferences->setFontSize((Preferences::FontSize)valueIndex);
+  }
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) {
@@ -147,6 +157,9 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) {
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();
+  }
+  if (message == I18n::Message::FontSize) {
+    return (int)preferences->fontSize();
   }
   return 0;
 }

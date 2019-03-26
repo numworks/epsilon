@@ -11,18 +11,20 @@ const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message:
 const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
+const SettingsMessageTree fontSizeChildren[2] = {SettingsMessageTree(I18n::Message::Large), SettingsMessageTree(I18n::Message::Small)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree menu[9] =
+const SettingsMessageTree menu[10] =
 #else
-const SettingsMessageTree menu[8] =
+const SettingsMessageTree menu[9] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
     SettingsMessageTree(I18n::Message::EditionMode, editionModeChildren, 2),
     SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 3),
+    SettingsMessageTree(I18n::Message::FontSize, fontSizeChildren, 2),
     SettingsMessageTree(I18n::Message::Brightness),
     SettingsMessageTree(I18n::Message::Language),
     SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
@@ -33,9 +35,9 @@ const SettingsMessageTree menu[8] =
 #endif
   SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
 #ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 10);
 #else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
 #endif
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
@@ -109,16 +111,16 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       case 1:
         subController = &m_displayModeController;
         break;
-      case 4:
       case 5:
-        assert(false);
       case 6:
+        assert(false);
+      case 7:
         subController = &m_examModeController;
         break;
 #ifdef EPSILON_BOOT_PROMPT
-      case 8:
+      case 9:
 #else
-      case 7:
+      case 8:
 #endif
         subController = &m_aboutController;
         break;
@@ -173,11 +175,11 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 4) {
+  if (j == 5) {
     return 1;
   }
 #ifdef EPSILON_BOOT_PROMPT
-  if (j == 7) {
+  if (j == 8) {
     return 2;
   }
 #endif
@@ -189,19 +191,19 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_messageTreeModel->children(index)->label());
-  if (index == 4) {
+  if (index == 5) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (index == 5) {
+  if (index == 6) {
     int index = (int)globalPreferences->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
 #ifdef EPSILON_BOOT_PROMPT
-  if (index == 7) {
+  if (index == 8) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
@@ -222,6 +224,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       break;
     case 3:
       childIndex = (int)preferences->complexFormat();
+      break;
+    case 4:
+      childIndex = (int)preferences->fontSize();
       break;
   }
   I18n::Message message = childIndex >= 0 ? m_messageTreeModel->children(index)->children(childIndex)->label() : I18n::Message::Default;

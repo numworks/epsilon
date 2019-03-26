@@ -69,7 +69,55 @@ void init() {
 
 void initClocks() {
   /* System clock
-   * Configure the CPU at 96 MHz, APB2 and USB at 48 MHz. */
+   * Configure the CPU at 192 MHz and USB at 48 MHz. */
+
+  /* After reset, the device is using the high-speed internal oscillator (HSI)
+   * as a clock source, which runs at a fixed 16 MHz frequency. The HSI is not
+   * accurate enough for reliable USB operation, so we need to use the external
+   * high-speed oscillator (HSE). */
+
+  // Enable the HSI and wait for it to be ready
+  RCC.CR()->setHSION(true);
+  while(!RCC.CR()->getHSIRDY()) {
+  }
+
+  // Enable the HSE and wait for it to be ready
+  RCC.CR()->setHSEON(true);
+  while(!RCC.CR()->getHSERDY()) {
+  }
+
+  // Enable PWR peripheral clock
+  RCC.APB1ENR()->setPWREN(true);
+  // Choose Voltage scale 1
+  PWR.CR()->setVOS(PWR::CR::Voltage::Scale1);
+  //while (!PWR.CSR1()->getVOSRDY()) {}
+
+  /* Given the crystal used on our device, the HSE will oscillate at 8 MHz. By
+   * piping it through a phase-locked loop (PLL) we can derive other frequencies
+   * for use in different parts of the system.  */
+
+  // Configure the PLL ratios and use HSE as a PLL input
+  RCC.PLLCFGR()->setPLLM(8);
+  RCC.PLLCFGR()->setPLLN(384);
+  RCC.PLLCFGR()->setPLLQ(8);
+  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
+
+  /* If you want to considerably slow down the whole machine uniformely, which
+   * can be very useful to diagnose performance issues, just uncomment the line
+   * below. Note that even booting takes a few seconds, so don't be surprised
+   * if the screen is black for a short while upon booting. */
+  //RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy2);
+
+  // Enable the PLL and wait for it to be ready
+  RCC.CR()->setPLLON(true);
+
+  PWR.CR()->setODEN(true);
+  while(!PWR.CSR1()->getODRDY()) {
+  }
+
+  PWR.CR()->setODSWEN(true);
+  while(!PWR.CSR1()->getODSWRDY()) {
+  }
 
   /* After reset the Flash runs as fast as the CPU. When we clock the CPU faster
    * the flash memory cannot follow and therefore flash memory accesses need to
@@ -85,38 +133,11 @@ void initClocks() {
   /* Enable the ART */
   FLASH.ACR()->setARTEN(true);
 
-  /* After reset, the device is using the high-speed internal oscillator (HSI)
-   * as a clock source, which runs at a fixed 16 MHz frequency. The HSI is not
-   * accurate enough for reliable USB operation, so we need to use the external
-   * high-speed oscillator (HSE). */
-
-  // Enable the HSE and wait for it to be ready
-  RCC.CR()->setHSEON(true);
-  while(!RCC.CR()->getHSERDY()) {
-  }
-
-  /* Given the crystal used on our device, the HSE will oscillate at 25 MHz. By
-   * piping it through a phase-locked loop (PLL) we can derive other frequencies
-   * for use in different parts of the system.  */
-
-  // Configure the PLL ratios and use HSE as a PLL input
-  RCC.PLLCFGR()->setPLLM(8);
-  RCC.PLLCFGR()->setPLLN(384);
-  RCC.PLLCFGR()->setPLLQ(8);
-  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
   // 192 MHz is too fast for APB1. Divide it by four to reach 48 MHz
   RCC.CFGR()->setPPRE1(RCC::CFGR::APBPrescaler::AHBDividedBy4);
   // 192 MHz is too fast for APB2. Divide it by two to reach 96 MHz
   RCC.CFGR()->setPPRE2(RCC::CFGR::APBPrescaler::AHBDividedBy2);
 
-  /* If you want to considerably slow down the whole machine uniformely, which
-   * can be very useful to diagnose performance issues, just uncomment the line
-   * below. Note that even booting takes a few seconds, so don't be surprised
-   * if the screen is black for a short while upon booting. */
-  // RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy128);
-
-  // Enable the PLL and wait for it to be ready
-  RCC.CR()->setPLLON(true);
   while(!RCC.CR()->getPLLRDY()) {
   }
 
@@ -151,7 +172,6 @@ void initClocks() {
   // APB1 bus
   // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
-  RCC.APB1ENR()->setPWREN(true);
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0); // Reset value

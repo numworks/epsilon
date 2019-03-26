@@ -175,7 +175,7 @@ void GraphController::reloadBannerView() {
   }
   if (!coefficientsAreDefined) {
     // Force the "Data not suitable" message to be on the next line
-    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width/(m_bannerView.font()->glyphSize().width())- strlen(I18n::translate(formula)), 0);
+    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
     numberOfChar = 0;
     for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
       buffer[numberOfChar++] = ' ';

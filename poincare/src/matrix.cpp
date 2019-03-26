@@ -292,7 +292,7 @@ Matrix Matrix::transpose() const {
   return matrix;
 }
 
-Matrix Matrix::createIdentity(int dim) {
+Matrix Matrix::CreateIdentity(int dim) {
   Matrix matrix();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {

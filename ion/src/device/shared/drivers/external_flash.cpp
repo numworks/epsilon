@@ -33,7 +33,7 @@ using namespace Regs;
  *               |      peripheral      |          |  External  |
  *               |                      |   read   |   flash    |
  *   AHB    <--  |   data   <-- 32-byte |   <--    |   memory   |
- *  matrix  -->  | regsiter -->  FIFO   |    -->   |            |
+ *  matrix  -->  | register -->  FIFO   |    -->   |            |
  *               +----------------------+   write  +------------+
  *
  * Any data transmitted to or from the external flash memory go through a 32-byte FIFO.
@@ -94,7 +94,7 @@ public:
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
 static constexpr int AHBClockFrequency = 192; // MHz
 static constexpr int ClockFrequencyDivisor = 2;
-static constexpr bool ajustNumberOfDummyCycles = AHBClockFrequency > 80 * ClockFrequencyDivisor;
+static constexpr bool ajustNumberOfDummyCycles = AHBClockFrequency > (80 * ClockFrequencyDivisor);
 static constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad && ajustNumberOfDummyCycles) ? 4 : 2;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);

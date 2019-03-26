@@ -11,6 +11,9 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void reload() { layoutSubviews(); }
+  static constexpr const KDFont * Font() { return KDFont::SmallFont; }
+  static constexpr KDColor TextColor() { return KDColorBlack; }
+  static constexpr KDColor BackgroundColor() { return Palette::GreyMiddle; }
 private:
   static constexpr KDCoordinate LineSpacing = 2;
   int numberOfSubviews() const override = 0;

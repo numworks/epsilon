@@ -86,6 +86,7 @@ src += $(addprefix poincare/src/,\
   matrix.cpp \
   matrix_complex.cpp \
   matrix_dimension.cpp \
+  matrix_identity.cpp \
   matrix_inverse.cpp \
   matrix_trace.cpp \
   matrix_transpose.cpp \

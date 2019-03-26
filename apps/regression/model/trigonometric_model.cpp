@@ -1,17 +1,15 @@
 #include "trigonometric_model.h"
 #include "../../shared/poincare_helpers.h"
-#include <math.h>
-#include <poincare/preferences.h>
-#include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/vertical_offset_layout.h>
-#include <poincare/number.h>
-#include <poincare/symbol.h>
 #include <poincare/addition.h>
+#include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
+#include <poincare/number.h>
 #include <poincare/power.h>
+#include <poincare/preferences.h>
 #include <poincare/sine.h>
+#include <poincare/symbol.h>
+#include <math.h>
+#include <assert.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -20,23 +18,8 @@ namespace Regression {
 
 Layout TrigonometricModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout layoutChildren[] = {
-      CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('s', KDFont::SmallFont),
-      CodePointLayout::Builder('i', KDFont::SmallFont),
-      CodePointLayout::Builder('n', KDFont::SmallFont),
-      CodePointLayout::Builder('(', KDFont::SmallFont),
-      CodePointLayout::Builder('b', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('X', KDFont::SmallFont),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('c', KDFont::SmallFont),
-      CodePointLayout::Builder(')', KDFont::SmallFont),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('d', KDFont::SmallFont)
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, 14);
+    const char * s = "a·sin(b·X+c)+d";
+    m_layout = LayoutHelper::String(s, strlen(s), KDFont::SmallFont);
   }
   return m_layout;
 }

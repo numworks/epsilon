@@ -18,7 +18,7 @@ public:
   Poincare::Layout layout(const Ion::Storage::Record * record) const;
 
   // Setters
-  virtual Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, char symbol = 0, char unknownSymbol = 0);
+  virtual Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0, CodePoint unknownSymbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, Poincare::Expression & e);
 
   // Property

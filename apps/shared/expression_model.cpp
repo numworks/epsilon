@@ -65,7 +65,7 @@ Layout ExpressionModel::layout(const Storage::Record * record) const {
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, char symbol, char unknownSymbol) {
+Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol, CodePoint unknownSymbol) {
   Expression e = ExpressionModel::BuildExpressionFromText(c, symbol, unknownSymbol);
   return setExpressionContent(record, e);
 }

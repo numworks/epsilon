@@ -22,7 +22,11 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e.numberOfChildren() == 1);
-  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
+  constexpr int size = 5;
+  char x[size];
+  int zeroIndex = UTF8Decoder::CodePointToChars(UCodePointUnknownX, x, size);
+  assert(zeroIndex <= size - 1);
+  x[zeroIndex] = 0;
   int d = e.childAtIndex(0).polynomialDegree(context, x);
   if (d < 0 || d > 1) {
     // child(0) is not linear so we cannot easily find an interesting range

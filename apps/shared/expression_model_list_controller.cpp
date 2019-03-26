@@ -233,7 +233,7 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
     model->text(initialTextContent, initialTextContentMaxSize);
     initialText = initialTextContent;
-    // Replace Poincare::Symbol::SpecialSymbols::UnknownX with 'x'
+    // Replace UCodePointUnknownX with 'x'
     replaceUnknownSymbolWithReadableSymbol(initialTextContent);
   }
   inputController()->edit(this, event, this, initialText,

@@ -122,7 +122,11 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   if (n < initialRank() || n < 0) {
     return NAN;
   }
-  const char unknownN[2] = {Poincare::Symbol::SpecialSymbols::UnknownN, 0};
+  constexpr int bufferSize = 5;
+  char unknownN[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownN, unknownN, bufferSize);
+  assert(codePointSize <= bufferSize - 1);
+  unknownN[codePointSize] = 0;
   CacheContext<T> ctx = CacheContext<T>(sqctx);
   T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
   T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);

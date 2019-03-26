@@ -10,17 +10,17 @@ namespace Shared {
 class CartesianFunction : public Function {
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
-  static char Symbol() { return 'x'; }
+  static CodePoint Symbol() { return 'x'; }
   static CartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   CartesianFunction(Ion::Storage::Record record = Record()) :
     Function(record)
   {}
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), Poincare::Symbol::SpecialSymbols::UnknownX); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), UCodePointUnknownX); }
 
   // Derivative
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
-  int derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg);
+  int derivativeNameWithArgument(char * buffer, size_t bufferSize, CodePoint arg);
   double approximateDerivative(double x, Poincare::Context * context) const;
   // Integral
   double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;

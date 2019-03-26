@@ -43,7 +43,7 @@ public:
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
-  bool isUnknown(char unknownSymbol) const;
+  bool isUnknown(CodePoint unknownSymbol) const;
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -58,20 +58,14 @@ class Symbol final : public SymbolAbstract {
 public:
   static constexpr int k_ansLength = 3;
   static constexpr char k_ans[k_ansLength+1] = "ans";
-  enum SpecialSymbols : char {
-    /* We can use characters from 1 to 31 as they do not correspond to usual
-     * characters but events as 'end of text', 'backspace'... */
-    UnknownX = 1, //TODO LEA make sure there is no collision with the code points
-    UnknownN = 2 //TODO LEA make sure there is no collision with the code points,
-  };
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
-  static Symbol Builder(char name) { return Symbol::Builder(&name, 1); }
+  static Symbol Builder(CodePoint name);
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
   static Expression UntypedBuilder(const char * name, size_t length, Context * context);
 
   // Symbol properties
-  bool isSystemSymbol() const { return node()->isUnknown(Symbol::SpecialSymbols::UnknownX) || node()->isUnknown(Symbol::SpecialSymbols::UnknownN); }
+  bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX) || node()->isUnknown(UCodePointUnknownN); }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
 

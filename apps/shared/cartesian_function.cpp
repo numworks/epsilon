@@ -64,7 +64,7 @@ CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus 
   return CartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, char arg) {
+int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) {
   // Fill buffer with f(x). Keep size for derivative sign.
   int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
   int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize, arg);
@@ -87,7 +87,7 @@ void CartesianFunction::setDisplayDerivative(bool display) {
 }
 
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
+  Poincare::Derivative derivative = Poincare::Derivative::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(x)); // derivative takes ownership of Poincare::Float<double>::Builder(x) and the clone of expression
   /* TODO: when we approximate derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
@@ -96,7 +96,7 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
 
 double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
   // TODO: this does not work yet because integral does not understand UnknownX
-  Poincare::Integral integral = Poincare::Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
+  Poincare::Integral integral = Poincare::Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */
@@ -104,22 +104,34 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
 }
 
 Expression::Coordinate2D CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  constexpr int bufferSize = 3;
+  char unknownX[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
+  assert(codePointSize <= bufferSize);
   return PoincareHelpers::NextMinimum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  constexpr int bufferSize = 3;
+  char unknownX[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
+  assert(codePointSize <= bufferSize);
   return PoincareHelpers::NextMaximum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 double CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  constexpr int bufferSize = 3;
+  char unknownX[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
+  assert(codePointSize <= bufferSize);
   return PoincareHelpers::NextRoot(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
-  const char unknownX[2] = {Poincare::Symbol::UnknownX, 0};
+  constexpr int bufferSize = 3;
+  char unknownX[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
+  assert(codePointSize <= bufferSize);
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, *context, e);
 }
 

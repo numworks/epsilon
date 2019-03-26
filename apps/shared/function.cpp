@@ -64,18 +64,20 @@ void Function::setActive(bool active) {
   recordData()->setActive(active);
 }
 
-int Function::nameWithArgument(char * buffer, size_t bufferSize, char arg) {
+int Function::nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) {
+  assert(UTF8Decoder::CharSizeOfCodePoint(arg) == 1);
   const char * functionName = fullName();
   size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
   int result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
-  if (baseNameLength+1 < bufferSize - 1) {
-    buffer[baseNameLength+1] = arg;
+  int bufferRemainingSize = bufferSize - (baseNameLength+1);
+  if (bufferRemainingSize > 0) {
+    UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferRemainingSize);
   }
   return result;
 }
 
 template<typename T>
-T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const {
+T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const {
   if (isCircularlyDefined(context)) {
     return NAN;
   }
@@ -93,5 +95,5 @@ Function::FunctionRecordDataBuffer * Function::recordData() const {
 
 }
 
-template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, char) const;
-template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, char) const;
+template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, CodePoint) const;
+template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, CodePoint) const;

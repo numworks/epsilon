@@ -106,7 +106,6 @@ uint32_t CodePoints[] = {
   0x7e, // ~ // TILDE
 
   0xb0, // ° // DEGREE SIGN
-  0xb5, // µ // MICRO SIGN
   0xb7, // · // MIDDLE DOT
 
   0xc6, // Æ // LATIN CAPITAL LETTER AE
@@ -134,6 +133,7 @@ uint32_t CodePoints[] = {
   0x394,   // Δ // GREEK CAPITAL LETTER DELTA
   0x3b8,   // θ // GREEK SMALL LETTER THETA
   0x3bb,   // λ // GREEK SMALL LETTER LAMDA
+  0x3bc,   // μ // GREEK SMALL LETTER MU
   0x3c0,   // π // GREEK SMALL LETTER PI
   0x3c3,   // σ // GREEK SMALL LETTER SIGMA
   0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E

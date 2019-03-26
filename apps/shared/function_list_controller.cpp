@@ -5,7 +5,6 @@
 namespace Shared {
 
 static inline int maxInt(int x, int y) { return x > y ? x : y; }
-static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ExpressionModelListController(parentResponder, text),

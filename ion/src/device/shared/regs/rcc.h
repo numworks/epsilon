@@ -12,6 +12,7 @@ public:
   class CR : public Register32 {
   public:
     REGS_BOOL_FIELD(HSION, 0);
+    REGS_BOOL_FIELD(HSIRDY, 1);
     REGS_BOOL_FIELD(HSEON, 16);
     REGS_BOOL_FIELD_R(HSERDY, 17);
     REGS_BOOL_FIELD(PLLON, 24);

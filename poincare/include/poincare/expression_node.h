@@ -93,6 +93,7 @@ public:
     Matrix,
     ConfidenceInterval,
     MatrixDimension,
+    MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,
     PredictionInterval,

@@ -19,7 +19,8 @@ namespace Regression {
 
 Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout layoutChildren[] = {
+    constexpr int size = 15;
+    Layout layoutChildren[size] = {
       CodePointLayout::Builder('a', KDFont::SmallFont),
       CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('X', KDFont::SmallFont),
@@ -42,7 +43,7 @@ Layout CubicModel::layout() {
       CodePointLayout::Builder('+', KDFont::SmallFont),
       CodePointLayout::Builder('d', KDFont::SmallFont),
     };
-    m_layout = HorizontalLayout::Builder(layoutChildren, 15);
+    m_layout = HorizontalLayout::Builder(layoutChildren, size);
   }
   return m_layout;
 }

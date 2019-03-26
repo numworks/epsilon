@@ -14,25 +14,25 @@ Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
     constexpr int exponentSize = 4;
     Layout exponentLayoutChildren[exponentSize] = {
-      CodePointLayout::Builder('-', KDFont::SmallFont),
-      CodePointLayout::Builder('b', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('X', KDFont::SmallFont)
+      CodePointLayout::Builder('-', k_layoutFont),
+      CodePointLayout::Builder('b', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont)
     };
     constexpr int denominatorSize = 6;
     Layout layoutChildren[denominatorSize] = {
-      CodePointLayout::Builder('1', KDFont::SmallFont),
-      CodePointLayout::Builder('+', KDFont::SmallFont),
-      CodePointLayout::Builder('a', KDFont::SmallFont),
-      CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
-      CodePointLayout::Builder('e', KDFont::SmallFont),
+      CodePointLayout::Builder('1', k_layoutFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('a', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(exponentLayoutChildren, exponentSize),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
     m_layout = FractionLayout::Builder(
-       CodePointLayout::Builder('c', KDFont::SmallFont),
+       CodePointLayout::Builder('c', k_layoutFont),
        HorizontalLayout::Builder(layoutChildren, denominatorSize)
       );
   }

@@ -116,7 +116,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   if (symbol.type() == ExpressionNode::Type::Function && strcmp(name(), symbol.name()) == 0) {
     Expression value = expression.clone();
     // Replace the unknown in the new expression by the function's child
-    Symbol xSymbol = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
+    Symbol xSymbol = Symbol::Builder(UCodePointUnknownX);
     Expression xValue = childAtIndex(0);
     value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
@@ -144,7 +144,7 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
   if (e.isUninitialized()) {
     return *this;
   }
-  e.replaceSymbolWithExpression(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), childAtIndex(0));
+  e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknownX), childAtIndex(0));
   replaceWithInPlace(e);
   return e;
 }
@@ -152,9 +152,9 @@ Expression Function::shallowReplaceReplaceableSymbols(Context & context) {
 // TODO: should we avoid replacing unknown X in-place but use a context instead?
 #if 0
 VariableContext Function::unknownXContext(Context & parentContext) const {
-  Symbol unknownXSymbol = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
+  Symbol unknownXSymbol = Symbol::Builder(UCodePointUnknownX);
   Expression child = childAtIndex(0);
-  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
+  const char x[] = {UCodePointUnknownX, 0}; // UGLY, use decoder
   /* COMMENT */
   if (child.type() == ExpressionNode::Type::Symbol && static_cast<Symbol &>(child).isSystemSymbol()) {
     return parentContext;

@@ -78,7 +78,7 @@ Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexForm
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
+    Symbol xUnknown = Symbol::Builder(UCodePointUnknownX);
     finalValue = childAtIndex(0).replaceSymbolWithExpression(static_cast<Symbol &>(userDefinedUnknown), xUnknown);
   } else {
     assert(symbol().type() == ExpressionNode::Type::Symbol);
@@ -95,7 +95,7 @@ Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexForm
     // Replace the xUnknown symbol with the variable initially used
     assert(symbol().childAtIndex(0).type() == ExpressionNode::Type::Symbol);
     Expression userDefinedUnknown = symbol().childAtIndex(0);
-    Symbol xUnknown = Symbol::Builder(Symbol::SpecialSymbols::UnknownX);
+    Symbol xUnknown = Symbol::Builder(UCodePointUnknownX);
     storedExpression = storedExpression.replaceSymbolWithExpression(xUnknown, static_cast<Symbol &>(userDefinedUnknown));
   }
   return storedExpression;

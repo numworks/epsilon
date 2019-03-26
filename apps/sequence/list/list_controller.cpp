@@ -104,7 +104,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
         break;
     }
     initialText = initialTextContent;
-    // Replace Poincare::Symbol::SpecialSymbols::UnknownN with 'n'
+    // Replace UCodePointUnknownN with 'n'
     replaceUnknownSymbolWithReadableSymbol(initialText);
   }
   App * myApp = (App *)app();

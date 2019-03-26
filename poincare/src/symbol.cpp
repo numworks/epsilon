@@ -7,6 +7,7 @@
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/vertical_offset_layout.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <assert.h>
@@ -66,7 +67,7 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
 }
 
 float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  return isUnknown(Symbol::SpecialSymbols::UnknownX) ? NAN : 0.0f;
+  return isUnknown(UCodePointUnknownX) ? NAN : 0.0f;
 }
 
 bool SymbolNode::isReal(Context & context) const {
@@ -75,10 +76,10 @@ bool SymbolNode::isReal(Context & context) const {
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (isUnknown(Symbol::SpecialSymbols::UnknownX)) {
+  if (isUnknown(UCodePointUnknownX)) {
     return CodePointLayout::Builder('x');
   }
-  if (isUnknown(Symbol::SpecialSymbols::UnknownN)) {
+  if (isUnknown(UCodePointUnknownN)) {
     return CodePointLayout::Builder('n');
   }
   // TODO return Parse(m_name).createLayout() ?
@@ -147,12 +148,20 @@ Expression Symbol::UntypedBuilder(const char * name, size_t length, Context * co
   return Expression();
 }
 
-bool SymbolNode::isUnknown(char unknownSymbol) const {
+bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
   bool result = UTF8Helper::CodePointIs(m_name, unknownSymbol);
   if (result) {
     assert(m_name[1] == 0);
   }
   return result;
+}
+
+Symbol Symbol::Builder(CodePoint name) {
+  constexpr int bufferSize = 5;
+  char buffer[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(name, buffer, bufferSize);
+  assert(codePointSize <= bufferSize);
+  return Symbol::Builder(buffer, codePointSize);
 }
 
 bool Symbol::isSeriesSymbol(const char * c) {

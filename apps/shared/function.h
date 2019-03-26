@@ -29,14 +29,14 @@ public:
   void setActive(bool active);
 
   // Name
-  int nameWithArgument(char * buffer, size_t bufferSize, char arg);
+  int nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg);
 
   // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context, Poincare::Symbol::SpecialSymbols::UnknownX);
+    return templatedApproximateAtAbscissa(x, context, UCodePointUnknownX);
   }
   virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context, Poincare::Symbol::SpecialSymbols::UnknownX);
+    return templatedApproximateAtAbscissa(x, context, UCodePointUnknownX);
   }
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
@@ -60,7 +60,7 @@ protected:
     bool m_active;
   };
 private:
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, char unknownSymbol) const;
+  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const;
   FunctionRecordDataBuffer * recordData() const;
 };
 

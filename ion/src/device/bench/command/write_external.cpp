@@ -27,6 +27,20 @@ void WriteExternal(const char * input) {
   Ion::Device::ExternalFlash::EraseSector(0);
   Ion::Device::ExternalFlash::WriteMemory(
       reinterpret_cast<uint8_t *>(0),
+      reinterpret_cast<const uint8_t *>(data) ,
+      dataSize);
+
+  // Check it was correctly copied
+  for (int i = 0; i < dataSize; i++) {
+    if (*(externalFlashStart + i) != data[i]) {
+      reply(sKO);
+      return;
+    }
+  }
+
+  Ion::Device::ExternalFlash::EraseSector(0);
+  Ion::Device::ExternalFlash::WriteMemory(
+      reinterpret_cast<uint8_t *>(0),
       reinterpret_cast<const uint8_t *>(data),
       dataSize);
 

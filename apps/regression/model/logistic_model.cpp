@@ -12,26 +12,28 @@ namespace Regression {
 
 Layout LogisticModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout exponentLayoutChildren[] = {
+    constexpr int exponentSize = 4;
+    Layout exponentLayoutChildren[exponentSize] = {
       CodePointLayout::Builder('-', KDFont::SmallFont),
       CodePointLayout::Builder('b', KDFont::SmallFont),
       CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('X', KDFont::SmallFont)
     };
-    Layout layoutChildren[] = {
+    constexpr int denominatorSize = 6;
+    Layout layoutChildren[denominatorSize] = {
       CodePointLayout::Builder('1', KDFont::SmallFont),
       CodePointLayout::Builder('+', KDFont::SmallFont),
       CodePointLayout::Builder('a', KDFont::SmallFont),
       CodePointLayout::Builder(UCodePointMiddleDot, KDFont::SmallFont),
       CodePointLayout::Builder('e', KDFont::SmallFont),
       VerticalOffsetLayout::Builder(
-          HorizontalLayout::Builder(exponentLayoutChildren, 4),
+          HorizontalLayout::Builder(exponentLayoutChildren, exponentSize),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
     m_layout = FractionLayout::Builder(
        CodePointLayout::Builder('c', KDFont::SmallFont),
-       HorizontalLayout::Builder(layoutChildren, 6)
+       HorizontalLayout::Builder(layoutChildren, denominatorSize)
       );
   }
   return m_layout;

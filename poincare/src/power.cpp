@@ -217,7 +217,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
     MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex(), complexFormat);
     return result;
   }
-  MatrixComplex<T> result = MatrixComplex<T>::createIdentity(m.numberOfRows());
+  MatrixComplex<T> result = MatrixComplex<T>::CreateIdentity(m.numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
     if (Expression::ShouldStopProcessing()) {
@@ -311,7 +311,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return this;
     }
     int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
-    Matrix * id = Matrix::createIdentity(mat->numberOfRows());
+    Matrix * id = Matrix::CreateIdentity(mat->numberOfRows());
     if (exp == 0) {
       return replaceWith(id, true);
     }

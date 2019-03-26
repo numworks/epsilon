@@ -91,9 +91,6 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (SimpleInteractiveCurveViewController::handleEvent(event)) {
-    return true;
-  }
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
     if (moveCursorVertically(direction)) {
@@ -105,14 +102,14 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       curveView()->reload();
       return true;
     }
-    if (event == Ion::Events::Down) {
-      return false;
+    if (event == Ion::Events::Up) {
+      curveView()->selectMainView(false);
+      header()->setSelectedButton(0);
+      return true;
     }
-    curveView()->selectMainView(false);
-    header()->setSelectedButton(0);
-    return true;
+    return false;
   }
-  return false;
+  return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
 void InteractiveCurveViewController::didBecomeFirstResponder() {

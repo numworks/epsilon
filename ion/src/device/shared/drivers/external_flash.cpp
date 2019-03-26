@@ -73,9 +73,7 @@ enum class Command : uint8_t {
   ReleaseDeepPowerDown = 0xAB
 };
 
-static constexpr uint8_t NumberOfAddressBitsInChip = 23; // 2^23 Bytes = 8 MBytes
 static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
-static constexpr uint32_t FlashAddressSpaceSize = 1 << NumberOfAddressBitsInChip;
 
 class ExternalFlashStatusRegister {
 public:

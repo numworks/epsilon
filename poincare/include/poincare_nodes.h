@@ -47,6 +47,7 @@
 #include <poincare/matrix.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_dimension.h>
+#include <poincare/matrix_identity.h>
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix_trace.h>
 #include <poincare/matrix_transpose.h>

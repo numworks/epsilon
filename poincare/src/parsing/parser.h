@@ -109,6 +109,7 @@ private:
     &Floor::s_functionHelper,
     &FracPart::s_functionHelper,
     &GreatCommonDivisor::s_functionHelper,
+    &MatrixIdentity::s_functionHelper,
     &ImaginaryPart::s_functionHelper,
     &Integral::s_functionHelper,
     &MatrixInverse::s_functionHelper,

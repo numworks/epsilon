@@ -56,6 +56,7 @@ class Expression : public TreeHandle {
   friend class Logarithm;
   friend class Matrix;
   friend class MatrixDimension;
+  friend class MatrixIdentity;
   friend class MatrixInverse;
   friend class MatrixTrace;
   friend class MatrixTranspose;

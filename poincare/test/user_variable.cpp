@@ -156,10 +156,14 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
   // f : x→ x^2
   assert_simplify("x^2→f(x)");
   // Approximate f(?-2) with ? = 5
-  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Rational::Builder(2))), x, 5.0, 9.0);
+  constexpr int bufferSize = 5;
+  char x[bufferSize];
+  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, x, bufferSize);
+  quiz_assert(codePointSize <= bufferSize - 1);
+  x[codePointSize] = 0;
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknownX), Rational::Builder(2))), x, 5.0, 9.0);
   // Approximate f(?-1)+f(?+1) with ? = 3
-  assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(Symbol::SpecialSymbols::UnknownX), Rational::Builder(1)))), x, 3.0, 20.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknownX), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(UCodePointUnknownX), Rational::Builder(1)))), x, 3.0, 20.0);
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
@@ -168,9 +172,9 @@ QUIZ_CASE(poincare_user_variable_functions_with_context) {
   assert_simplify("√(-1)×√(-1)→f(x)");
   // Approximate f(?) with ? = 5
   // Cartesian
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(Symbol::SpecialSymbols::UnknownX)), x, 1.0, -1.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknownX)), x, 1.0, -1.0);
   // Real
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(Symbol::SpecialSymbols::UnknownX)), x, 1.0, (double)NAN, Real);
+  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknownX)), x, 1.0, (double)NAN, Real);
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

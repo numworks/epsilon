@@ -44,6 +44,8 @@ static constexpr const char k_arcSine[8] = {'a', 's', 'i', 'n', '(', Ion::Charse
 static constexpr const char k_arcCosine[8] = {'a', 'c', 'o', 's', '(', Ion::Charset::Empty, ')', 0};
 static constexpr const char k_arcTangent[8] = {'a', 't', 'a', 'n', '(', Ion::Charset::Empty, ')', 0};
 
+static constexpr const char k_parentheses[4] = {'(', Ion::Charset::Empty, ')',0};
+
 static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
@@ -61,7 +63,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   U(), U(), TL(), TL(), TL(), TL(),
   T("["), T("]"), T("{"), T("}"), T("_"), T(k_sto),
   T(k_arcSine), T(k_arcCosine), T(k_arcTangent), T("="), T("<"), T(">"),
-  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), T(k_parentheses), U(), U(),
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
@@ -161,7 +163,7 @@ static constexpr const char * s_nameForEvent[255] = {
   nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",
   "Arcsine", "Arccosine", "Arctangent", "Equal", "Lower", "Greater",
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, "DoubleParenthesis", nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,

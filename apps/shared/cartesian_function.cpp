@@ -3,6 +3,7 @@
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
+#include <poincare/serialization_helper.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <float.h>
@@ -104,34 +105,30 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
 }
 
 Expression::Coordinate2D CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  constexpr int bufferSize = 3;
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
-  assert(codePointSize <= bufferSize);
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
   return PoincareHelpers::NextMinimum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  constexpr int bufferSize = 3;
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
-  assert(codePointSize <= bufferSize);
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
   return PoincareHelpers::NextMaximum(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 double CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  constexpr int bufferSize = 3;
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
-  assert(codePointSize <= bufferSize);
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
   return PoincareHelpers::NextRoot(expressionReduced(context), unknownX, start, step, max, *context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Expression e) const {
-  constexpr int bufferSize = 3;
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownX, unknownX, bufferSize);
-  assert(codePointSize <= bufferSize);
+  SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
   return PoincareHelpers::NextIntersection(expressionReduced(context), unknownX, start, step, max, *context, e);
 }
 

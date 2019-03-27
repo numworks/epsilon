@@ -157,7 +157,7 @@ bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
 }
 
 Symbol Symbol::Builder(CodePoint name) {
-  constexpr int bufferSize = 5;
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   int codePointSize = UTF8Decoder::CodePointToChars(name, buffer, bufferSize);
   assert(codePointSize <= bufferSize);

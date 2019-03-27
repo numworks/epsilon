@@ -12,7 +12,7 @@ public:
   int numberOfChildren() const override { return 1; }
 private:
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
 };
 
 class HyperbolicTrigonometricFunction : public Expression {

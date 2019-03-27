@@ -19,7 +19,7 @@ int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
 }
 
-Expression ArcSineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ArcSineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return ArcSine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

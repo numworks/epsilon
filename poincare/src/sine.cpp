@@ -30,7 +30,7 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
-Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Sine(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

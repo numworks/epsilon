@@ -108,11 +108,11 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool a
   return 0;
 }
 
-void ExpressionNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  Expression(this).defaultDeepReduceChildren(context, complexFormat, angleUnit, target);
+void ExpressionNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+  Expression(this).defaultDeepReduceChildren(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Expression(this).defaultShallowReduce();
 }
 

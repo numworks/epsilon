@@ -2,6 +2,7 @@
 #include "cache_context.h"
 #include "sequence_store.h"
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/integer.h>
@@ -122,11 +123,11 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   if (n < initialRank() || n < 0) {
     return NAN;
   }
-  constexpr int bufferSize = 5;
+
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownN[bufferSize];
-  int codePointSize = UTF8Decoder::CodePointToChars(UCodePointUnknownN, unknownN, bufferSize);
-  assert(codePointSize <= bufferSize - 1);
-  unknownN[codePointSize] = 0;
+  Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknownN);
+
   CacheContext<T> ctx = CacheContext<T>(sqctx);
   T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
   T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);

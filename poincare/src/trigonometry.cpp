@@ -8,6 +8,7 @@
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
@@ -22,11 +23,11 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e.numberOfChildren() == 1);
-  constexpr int size = 5;
-  char x[size];
-  int zeroIndex = UTF8Decoder::CodePointToChars(UCodePointUnknownX, x, size);
-  assert(zeroIndex <= size - 1);
-  x[zeroIndex] = 0;
+
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char x[bufferSize];
+  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknownX);
+
   int d = e.childAtIndex(0).polynomialDegree(context, x);
   if (d < 0 || d > 1) {
     // child(0) is not linear so we cannot easily find an interesting range

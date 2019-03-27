@@ -5,6 +5,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <cmath>
 
 namespace Poincare {
@@ -66,8 +67,8 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Function(this).shallowReduce(context, complexFormat, angleUnit, target); // This uses Symbol::shallowReduce
+Expression FunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+  return Function(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation); // This uses Symbol::shallowReduce
 }
 
 Expression FunctionNode::shallowReplaceReplaceableSymbols(Context & context) {
@@ -129,12 +130,17 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Function::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   Function f(*this);
   Expression e = SymbolAbstract::Expand(f, context, true);
   if (!e.isUninitialized()) {
     replaceWithInPlace(e);
-    return e.deepReduce(context, complexFormat, angleUnit, target);
+    return e.deepReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+  }
+  if (!symbolicComputation) {
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

@@ -19,7 +19,7 @@
 
 namespace Poincare {
 
-Expression ComplexCartesianNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ComplexCartesianNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return ComplexCartesian(this).shallowReduce();
 }
 

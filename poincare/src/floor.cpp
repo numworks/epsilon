@@ -31,7 +31,7 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
   return Complex<T>::Builder(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Floor(this).shallowReduce();
 }
 

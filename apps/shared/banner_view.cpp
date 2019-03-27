@@ -4,7 +4,16 @@
 namespace Shared {
 
 KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
-  return KDFont::SmallFont->glyphSize().height()*linesCount;
+  return LineSpacing + (KDFont::SmallFont->glyphSize().height() + LineSpacing) * linesCount;
+}
+
+void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
+  const KDCoordinate frameHeight = minimalSizeForOptimalDisplay().height();
+  const KDCoordinate lineHeight = KDFont::SmallFont->glyphSize().height() + LineSpacing;
+  const KDCoordinate lineWidth = m_frame.width();
+  for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
+    ctx->fillRect(KDRect(0, y, lineWidth, LineSpacing), Palette::GreyMiddle);
+  }
 }
 
 KDSize BannerView::minimalSizeForOptimalDisplay() const {
@@ -21,7 +30,7 @@ void BannerView::layoutSubviews() {
   const KDCoordinate lineWidth = m_frame.width();
   KDCoordinate remainingWidth = lineWidth;
   int indexOfFirstViewOfCurrentLine = 0;
-  KDCoordinate y = 0;
+  KDCoordinate y = LineSpacing;
   /* We do a last iteration of the loop to layout the last line. */
   for (int i = 0; i <= numberOfSubviews(); i++) {
     KDCoordinate subviewWidth = (i < numberOfSubviews()) ? subviewAtIndex(i)->minimalSizeForOptimalDisplay().width() : lineWidth;
@@ -38,7 +47,7 @@ void BannerView::layoutSubviews() {
         x += width;
       }
       // Next line
-      y += subviewPreviousLine->minimalSizeForOptimalDisplay().height();
+      y += subviewPreviousLine->minimalSizeForOptimalDisplay().height() + LineSpacing;
       remainingWidth = lineWidth;
       indexOfFirstViewOfCurrentLine = i;
     }

@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper MatrixIdentity::s_functionHelper;
 
 int MatrixIdentityNode::numberOfChildren() const { return MatrixIdentity::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixIdentityNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression MatrixIdentityNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return MatrixIdentity(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

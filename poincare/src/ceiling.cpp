@@ -31,7 +31,7 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Ceiling(this).shallowReduce();
 }
 

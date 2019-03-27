@@ -33,7 +33,7 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(res, angleInput));
 }
 
-Expression TangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression TangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Tangent(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

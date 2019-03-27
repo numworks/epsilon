@@ -81,7 +81,7 @@ Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::
   return Complex<T>::Builder(M_E);
 }
 
-Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Constant(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

@@ -67,7 +67,7 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression OppositeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Opposite(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

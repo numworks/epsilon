@@ -98,7 +98,7 @@ int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
-Expression MultiplicationNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression MultiplicationNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Multiplication(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

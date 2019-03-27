@@ -53,7 +53,7 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
   }
   Expression exactOutput;
   Expression approximateOutput;
-  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context);
+  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context, false);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
@@ -183,7 +183,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
   char buffer[bufferSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context);
+  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context, false);
   if (exactOutputExpression.isUninitialized()) {
     exactOutputExpression = Undefined::Builder();
   }

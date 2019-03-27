@@ -15,16 +15,15 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   // Interrupt simplification if the expression stored contains a matrix
   if (Expression(childAtIndex(0)).recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return Expression::IsMatrix(e, context, replaceSymbols); }, context, true)) {
     Expression::SetInterruption(true);
   }
-  return;
 }
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Store(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+  return Store(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -52,21 +51,24 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Com
   return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+  // Store the expression.
   Expression storedExpression = storeValueForSymbol(context, complexFormat, angleUnit);
 
-  /* We want to replace the store with its reduced left side. If the
-   * simplification of the left side failed, just replace with the left side of
-   * the store without simplifying it.
-   * The simplification fails for [x]->d(x) for instance, because we do not
-   * have exact simplification of matrices yet. */
-  bool interruptedSimplification = SimplificationHasBeenInterrupted();
-  Expression reducedE = storedExpression.clone().deepReduce(context, complexFormat, angleUnit, target);
-  if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
-    storedExpression = reducedE;
+  if (symbol().type() == ExpressionNode::Type::Symbol) {
+    /* If the symbol is not a function, we want to replace the store with its
+     * reduced left side. If the simplification of the left side failed, just
+     * replace with the left side of the store without simplifying it.
+     * The simplification fails for [1+2]->a for instance, because we do not
+     * have exact simplification of matrices yet. */
+    bool interruptedSimplification = SimplificationHasBeenInterrupted();
+    Expression reducedE = storedExpression.clone().deepReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
+      storedExpression = reducedE;
+    }
+    // Restore the previous interruption flag
+    SetInterruption(interruptedSimplification);
   }
-  // Restore the previous interruption flag
-  SetInterruption(interruptedSimplification);
 
   replaceWithInPlace(storedExpression);
   return storedExpression;

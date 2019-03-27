@@ -86,7 +86,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool asce
   return ((int)Number(this).sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Decimal(this).shallowReduce();
 }
 

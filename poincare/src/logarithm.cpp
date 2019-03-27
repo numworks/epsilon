@@ -49,12 +49,12 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   return CommonLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   return Logarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

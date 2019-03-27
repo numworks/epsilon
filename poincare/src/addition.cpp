@@ -50,7 +50,7 @@ int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression AdditionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Addition(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

@@ -74,7 +74,7 @@ Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & conte
 bool SymbolAbstract::isReal(const SymbolAbstract & symbol, Context & context) {
   Expression e = SymbolAbstract::Expand(symbol, context, false);
   if (e.isUninitialized()) {
-    return true;
+    return false;
   }
   return e.isReal(context);
 }

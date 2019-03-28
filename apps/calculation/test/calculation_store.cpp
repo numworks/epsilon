@@ -108,6 +108,23 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
+QUIZ_CASE(calculation_symbolic_computation) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
+
+  assertCalculationDisplay("x+x+1+3+√(π)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("1+x→f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "x+1", nullptr, &globalContext, &store);
+  assertCalculationDisplay("f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("f(2)", false, true, ::Calculation::Calculation::EqualSign::Equal, "3", "3", &globalContext, &store);
+  assertCalculationDisplay("2→x", false, true, ::Calculation::Calculation::EqualSign::Equal, "2", nullptr, &globalContext, &store);
+  assertCalculationDisplay("f(x)", false, true, ::Calculation::Calculation::EqualSign::Equal, "3", nullptr, &globalContext, &store);
+  assertCalculationDisplay("x+x+1+3+√(π)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "√(π)+8", nullptr, &globalContext, &store);
+
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+}
+
 QUIZ_CASE(calculation_complex_format) {
   Shared::GlobalContext globalContext;
   CalculationStore store;

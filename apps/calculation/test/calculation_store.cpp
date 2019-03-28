@@ -69,11 +69,12 @@ QUIZ_CASE(calculation_ans) {
   store.deleteAll();
 }
 
-void assertCalculationDisplay(const char * input, bool displayExactOutput, bool displayApproximateOutput, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
+void assertCalculationDisplay(const char * input, bool displayExactOutputOnly, bool displayApproximateOutputOnly, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
+  quiz_assert(!(displayExactOutputOnly && displayApproximateOutputOnly));
   store->push(input, context);
   ::Calculation::Calculation * lastCalculation = store->calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == displayExactOutput);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(context) == displayApproximateOutput);
+  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == displayExactOutputOnly);
+  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(context) == displayApproximateOutputOnly);
   if (sign != ::Calculation::Calculation::EqualSign::Unknown) {
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }

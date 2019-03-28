@@ -106,7 +106,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   //assert_parsed_expression_simplify_to("prediction(-2,-3)", "prediction(-2)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("randint(2,4)", "randint(2,4)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("random()", "random()", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("re(x)", "x", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("sign(x)", "sign(x)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("sin(23)", "sin(23)", User, Radian, Cartesian);
@@ -163,14 +163,14 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("-2×ℯ^(𝐢×π/2)", "2×ℯ^(-π/2×𝐢)", User, Radian, Polar);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "√(a^2)×ℯ^((-π×sign(a)+π)/2×𝐢)", User, Radian, Polar);
+  assert_parsed_expression_simplify_to("a", "a", User, Radian, Polar);
   // a = 2 + 𝐢
   assert_simplify("2+𝐢→a");
   assert_parsed_expression_simplify_to("a", "√(5)×ℯ^((-2×atan(2)+π)/2×𝐢)", User, Radian, Polar);
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
   // User defined function
-  assert_parsed_expression_simplify_to("f(3)", "√(f(3)^2)×ℯ^((-π×sign(f(3))+π)/2×𝐢)", User, Radian, Polar);
+  assert_parsed_expression_simplify_to("f(3)", "f(3)", User, Radian, Polar);
   // f: x → x+1
   assert_simplify("x+1+𝐢→f(x)");
   assert_parsed_expression_simplify_to("f(3)", "√(17)×ℯ^((-2×atan(4)+π)/2×𝐢)", User, Radian, Polar);

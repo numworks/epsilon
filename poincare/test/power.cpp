@@ -55,8 +55,8 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("4^0.5", "2");
   assert_parsed_expression_simplify_to("8^0.5", "2×√(2)");
   assert_parsed_expression_simplify_to("(12^4×3)^(0.5)", "144×√(3)");
-  assert_parsed_expression_simplify_to("(2^A)^B", "2^(A×B)");
-  assert_parsed_expression_simplify_to("(2×A)^B", "2^B×A^B");
+  assert_parsed_expression_simplify_to("(π^3)^4", "π^12");
+  assert_parsed_expression_simplify_to("(A×B)^3", "A^3×B^3");
   assert_parsed_expression_simplify_to("(12^4×x)^(0.5)", "144×√(x)");
   assert_parsed_expression_simplify_to("√(32)", "4×√(2)");
   assert_parsed_expression_simplify_to("√(-1)", "𝐢");

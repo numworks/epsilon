@@ -89,7 +89,5 @@ void start() {
 }
 
 void __attribute__((interrupt)) isr_systick() {
-#warning BOO
-  // FIXME: TODO//
-  //Ion::Timing::Device::MillisElapsed++;
+  Ion::Device::Timing::MillisElapsed++;
 }

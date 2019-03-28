@@ -23,7 +23,7 @@ QUIZ_CASE(poincare_user_variable_simple) {
   assert_parsed_expression_simplify_to("f2(Adadas)", "2");
 
   // Define fBoth with f1 and f2
-  assert_parsed_expression_simplify_to("f1(x)+f2(x)→fBoth(x)", "2×x");
+  assert_parsed_expression_simplify_to("f1(x)+f2(x)→fBoth(x)", "f1(x)+f2(x)");
   assert_parsed_expression_simplify_to("fBoth(4)", "8");
   assert_parsed_expression_simplify_to("fBoth(Adadas)", "6");
 

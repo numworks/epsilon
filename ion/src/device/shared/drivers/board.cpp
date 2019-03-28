@@ -38,13 +38,13 @@ void initPeripherals() {
   USB::init();
   Console::init();
   SWD::init();
-  //Timing::init(); TODO FIXME
+  Timing::init();
   ExternalFlash::init();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {
   ExternalFlash::shutdown();
-  //Timing::shutdown(); TODO FIXME
+  Timing::shutdown();
   SWD::shutdown();
   Console::shutdown();
   USB::shutdown();

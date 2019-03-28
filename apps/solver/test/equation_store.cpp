@@ -176,6 +176,12 @@ QUIZ_CASE(equation_solve) {
   const char * equations19[] = {"Big1+Big2=0", "3Big1+Big2=-5", 0};
   const char * solutions19[] = {"-(5)/(2)", "(5)/(2)"};
   assert_equation_system_exact_solve_to(equations19,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesBig1Big2, solutions19, 2);
+
+  // conj(x)*x+1 = 0
+  const char * equations20one = "conj(x)*x+1=0";
+  const char * equations20[] = {equations20one, 0};
+  assert_equation_system_exact_solve_to(equations20, EquationStore::Error::RequireApproximateSolution, EquationStore::Type::LinearSystem, (const char **)variables1, nullptr, 0);
+  assert_equation_approximate_solve_to(equations20one, -100.0, 100.0, "x", nullptr, 0, false);
 }
 
 QUIZ_CASE(equation_solve_complex_format) {

@@ -102,10 +102,14 @@ void HistoryViewCell::layoutSubviews() {
     min(maxFrameWidth, inputSize.width()),
     inputSize.height()
   ));
+
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
+  bool oneLine = outputSize.width() + inputSize.width() < maxFrameWidth - 10;
+  int outputY = oneLine ? max(0, inputSize.height() - outputSize.height()) / 2 : inputSize.height();
+
   m_scrollableOutputView.setFrame(KDRect(
     max(0, maxFrameWidth - outputSize.width()),
-    inputSize.height(),
+    outputY,
     min(maxFrameWidth, outputSize.width()),
     bounds().height() - inputSize.height()
   ));

@@ -60,6 +60,7 @@ SECTIONS {
     *(.text._ZN3Ion*)
     *(.text._ZNV3Ion*)
     *(.text._ZNK3Ion*)
+    */libgcc.a:(.text)
   } >INTERNAL_FLASH
 
   .rodata.internal : {

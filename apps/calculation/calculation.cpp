@@ -60,19 +60,41 @@ KDCoordinate Calculation::height(Context * context) {
   if (m_height < 0) {
     Layout inputLayout = createInputLayout();
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
+    KDCoordinate inputWidth = inputLayout.layoutSize().width();
     Layout approximateLayout = createApproximateOutputLayout(context);
     Layout exactLayout = createExactOutputLayout();
+    bool singleLine = false;
     if (shouldOnlyDisplayExactOutput()) {
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-      m_height = inputHeight+exactOutputHeight;
+      KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
+      singleLine = exactOutputWidth + inputWidth < 80 - 6;
+      if (singleLine) {
+        m_height = (inputHeight >= exactOutputHeight) ? inputHeight : exactOutputHeight;
+      } else {
+        m_height = inputHeight + exactOutputHeight;
+      }
     } else if (shouldOnlyDisplayApproximateOutput(context)) {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
-      m_height = inputHeight+approximateOutputHeight;
+      KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
+      singleLine = approximateOutputWidth + inputWidth < 80 - 6;
+      if (singleLine) {
+        m_height = (inputHeight >= approximateOutputHeight) ? inputHeight : approximateOutputHeight;
+      } else {
+        m_height = inputHeight + approximateOutputHeight;
+      }
     } else {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
-      m_height = inputHeight + outputHeight;
+      KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
+      KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
+      KDCoordinate outputWidth = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputWidth-exactLayout.baseline(), approximateOutputWidth-approximateLayout.baseline());
+      singleLine = outputWidth + inputWidth < 80 - 6;
+      if (singleLine) {
+        m_height = (inputHeight >= outputHeight) ? inputHeight : outputHeight;
+      } else {
+        m_height = inputHeight + outputHeight;
+      }
     }
   }
   return m_height;

@@ -138,6 +138,11 @@ Expression Calculation::approximateOutput(Context * context) {
   /* To ensure that the expression 'm_output' is a matrix or a complex, we
    * call 'evaluate'. */
   Expression exp = Expression::Parse(m_approximateOutputText);
+  if (exp.isUninitialized()) {
+    /* TODO: exp might be uninitialized because the serialization did not fit in
+     * the buffer. Put a special error instead of "undef". */
+    return Undefined::Builder();
+  }
   return PoincareHelpers::Approximate<double>(exp, *context);
 }
 

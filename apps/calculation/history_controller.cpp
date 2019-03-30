@@ -150,7 +150,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
   }
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   App * calculationApp = (App *)app();
-  return calculation->height(calculationApp->localContext()) + 4 * Metric::CommonSmallMargin;
+  return calculation->height(calculationApp->localContext()) + 2 * Metric::CommonSmallMargin;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

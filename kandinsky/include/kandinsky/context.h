@@ -5,10 +5,15 @@
 #include <kandinsky/rect.h>
 #include <kandinsky/font.h>
 
+class KDPostProcessContext;
+
 class KDContext {
+  friend KDPostProcessContext;
 public:
-  void setOrigin(KDPoint origin);
-  void setClippingRect(KDRect clippingRect);
+  KDPoint origin() const { return m_origin; }
+  KDRect clippingRect() const { return m_clippingRect; }
+  virtual void setOrigin(KDPoint origin);
+  virtual void setClippingRect(KDRect clippingRect);
 
   // Pixel manipulation
   void setPixel(KDPoint p, KDColor c);

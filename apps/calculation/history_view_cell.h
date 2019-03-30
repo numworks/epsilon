@@ -40,6 +40,7 @@ public:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
+  bool oneLine();
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableExactApproximateExpressionsView * outputView();

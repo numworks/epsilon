@@ -69,18 +69,18 @@ KDCoordinate Calculation::height(Context * context) {
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       singleLine = exactOutputWidth + inputWidth < 80 - 6;
       if (singleLine) {
-        m_height = (inputHeight >= exactOutputHeight) ? inputHeight : exactOutputHeight;
+        m_height = (inputHeight >= exactOutputHeight) ? inputHeight + 2 * Metric::CommonSmallMargin: exactOutputHeight + 2 * Metric::CommonSmallMargin;
       } else {
-        m_height = inputHeight + exactOutputHeight;
+        m_height = inputHeight + exactOutputHeight + 4 * Metric::CommonSmallMargin;
       }
     } else if (shouldOnlyDisplayApproximateOutput(context)) {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
       singleLine = approximateOutputWidth + inputWidth < 80 - 6;
       if (singleLine) {
-        m_height = (inputHeight >= approximateOutputHeight) ? inputHeight : approximateOutputHeight;
+        m_height = (inputHeight >= approximateOutputHeight) ? inputHeight + 2 * Metric::CommonSmallMargin: approximateOutputHeight + 2 * Metric::CommonSmallMargin;
       } else {
-        m_height = inputHeight + approximateOutputHeight;
+        m_height = inputHeight + approximateOutputHeight + 4 * Metric::CommonSmallMargin;
       }
     } else {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
@@ -91,9 +91,9 @@ KDCoordinate Calculation::height(Context * context) {
       KDCoordinate outputWidth = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputWidth-exactLayout.baseline(), approximateOutputWidth-approximateLayout.baseline());
       singleLine = outputWidth + inputWidth < 80 - 6;
       if (singleLine) {
-        m_height = (inputHeight >= outputHeight) ? inputHeight : outputHeight;
+        m_height = (inputHeight >= outputHeight) ? inputHeight + 2 * Metric::CommonSmallMargin: outputHeight + 2 * Metric::CommonSmallMargin;
       } else {
-        m_height = inputHeight + outputHeight;
+        m_height = inputHeight + outputHeight + 4 * Metric::CommonSmallMargin;
       }
     }
   }

@@ -1,5 +1,6 @@
 #include "about_controller.h"
 #include "../../apps_container.h"
+#include "../../../python/port/genhdr/mpversion.h"
 #include <assert.h>
 #include <cmath>
 
@@ -55,10 +56,11 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
   static const char * messages[] = {
     Ion::softwareVersion(),
+    MICROPY_VERSION_STRING,
     Ion::serialNumber(),
     Ion::fccId()
   };
-  assert(index >= 0 && index < 3);
+  assert(index >= 0 && index < 4);
   myCell->setAccessoryText(messages[index]);
 }
 

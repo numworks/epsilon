@@ -44,7 +44,6 @@ void initMPU() {
 
 void init() {
   initFPU();
-  initL1Cache();
   initMPU();
   initClocks();
 
@@ -65,6 +64,8 @@ void init() {
   }
 
   initPeripherals();
+  // Initiate L1 cache after initiating the external flash
+  initL1Cache();
 
   // TODO if EPSILON_DEVICE_BENCH, run bench? See n0100
 }

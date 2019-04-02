@@ -82,19 +82,23 @@ int CalculationParameterController::numberOfRows() {
   return k_totalNumberOfCells;
 };
 
+KDCoordinate CalculationParameterController::rowHeight(int j) {
+  return Metric::ParameterCellHeight;
+}
 
-HighlightCell * CalculationParameterController::reusableCell(int index) {
+HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
   return &m_cells[index];
 }
 
-int CalculationParameterController::reusableCellCount() {
+int CalculationParameterController::reusableCellCount(int type) {
   return k_totalNumberOfCells;
 }
 
-KDCoordinate CalculationParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
+int CalculationParameterController::typeAtLocation(int i, int j) {
+  assert(i == 0);
+  return 0;
 }
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

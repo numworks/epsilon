@@ -14,7 +14,7 @@
 
 namespace Graph {
 
-class CalculationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class CalculationParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
   View * view() override;
@@ -22,9 +22,10 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
-  KDCoordinate cellHeight() override;
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override;
+  KDCoordinate rowHeight(int j) override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override;
+  int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:

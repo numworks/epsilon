@@ -117,7 +117,7 @@ void HistoryViewCell::layoutSubviews() {
 bool HistoryViewCell::oneLine() {
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  return outputSize.width() + inputSize.width() < 320 - 6;
+  return outputSize.width() + inputSize.width() < 300;
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {

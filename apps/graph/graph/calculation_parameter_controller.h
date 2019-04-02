@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "../cartesian_function_store.h"
+#include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
 #include "integral_graph_controller.h"
@@ -29,10 +30,13 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
-  constexpr static int k_totalNumberOfCells = 6;
-  MessageTableCell m_cells[k_totalNumberOfCells];
+  MessageTableCellWithChevron m_preimageCell;
+  constexpr static int k_totalNumberOfReusableCells = 6;
+  MessageTableCell m_cells[k_totalNumberOfReusableCells];
   SelectableTableView m_selectableTableView;
   Ion::Storage::Record m_record;
+  PreimageParameterController m_preimageParameterController;
+  PreimageGraphController m_preimageGraphController;
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
   MinimumGraphController m_minimumGraphController;

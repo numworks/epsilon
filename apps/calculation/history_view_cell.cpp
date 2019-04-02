@@ -4,7 +4,6 @@
 #include "selectable_table_view.h"
 #include <assert.h>
 #include <string.h>
-#include <iostream>
 
 namespace Calculation {
 
@@ -118,7 +117,6 @@ void HistoryViewCell::layoutSubviews() {
 bool HistoryViewCell::oneLine() {
   KDSize inputSize = m_inputView.minimalSizeForOptimalDisplay();
   KDSize outputSize = m_scrollableOutputView.minimalSizeForOptimalDisplay();
-  std::cout << "  " << outputSize.width() << "   " << inputSize.width() << "   " << outputSize.width() + inputSize.width() << "   " << (outputSize.width() + inputSize.width() < 190) << "   \n";
   return outputSize.width() + inputSize.width() < 300;
 }
 

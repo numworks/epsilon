@@ -69,9 +69,9 @@ public:
   HorizontalLayout(HorizontalLayoutNode * n) : Layout(n) {}
   static HorizontalLayout Builder() { return TreeHandle::NAryBuilder<HorizontalLayout,HorizontalLayoutNode>(); }
   static HorizontalLayout Builder(Layout l) { return HorizontalLayout::Builder(&l, 1); }
-  static HorizontalLayout Builder(Layout l1, Layout l2) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2).array(), 2); }
-  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2, l3).array(), 3); }
-  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) { return HorizontalLayout::Builder(ArrayBuilder<Layout>(l1, l2, l3, l4).array(), 4); }
+  static HorizontalLayout Builder(Layout l1, Layout l2) { return HorizontalLayout::Builder(ArrayBuilder2<Layout>(l1, l2).array(), 2); }
+  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) { return HorizontalLayout::Builder(ArrayBuilder3<Layout>(l1, l2, l3).array(), 3); }
+  static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) { return HorizontalLayout::Builder(ArrayBuilder4<Layout>(l1, l2, l3, l4).array(), 4); }
   static HorizontalLayout Builder(Layout * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<HorizontalLayout,HorizontalLayoutNode>(static_cast<TreeHandle *>(children), numberOfChildren); }
 
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);

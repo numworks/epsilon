@@ -51,7 +51,7 @@ private:
 class Derivative final : public Expression {
 public:
   Derivative(const DerivativeNode * n) : Expression(n) {}
-  static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
+  static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(ArrayBuilder3<TreeHandle>(child0, child1, child2).array(), 3); }
   static Expression UntypedBuilder(Expression children);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
 

@@ -58,7 +58,7 @@ private:
 
 class FractionLayout final : public Layout {
 public:
-  static FractionLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static FractionLayout Builder(Layout child0, Layout child1) { return TreeHandle::FixedArityBuilder<FractionLayout, FractionLayoutNode>(ArrayBuilder2<TreeHandle>(child0, child1).array(), 2); }
   FractionLayout() = delete;
 };
 

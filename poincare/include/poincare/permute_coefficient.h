@@ -41,7 +41,7 @@ private:
 class PermuteCoefficient final : public Expression {
 public:
   PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}
-  static PermuteCoefficient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static PermuteCoefficient Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<PermuteCoefficient, PermuteCoefficientNode>(ArrayBuilder2<TreeHandle>(child0, child1).array(), 2); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, &UntypedBuilderTwoChildren<PermuteCoefficient>);
 
   // Expression

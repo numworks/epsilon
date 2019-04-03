@@ -35,7 +35,7 @@ private:
 class Equal final : public Expression {
 public:
   Equal(const EqualNode * n) : Expression(n) {}
-  static Equal Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Equal, EqualNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
+  static Equal Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Equal, EqualNode>(ArrayBuilder2<TreeHandle>(child0, child1).array(), 2); }
 
   // For the equation A = B, create the reduced expression A-B
   Expression standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

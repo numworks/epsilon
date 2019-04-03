@@ -23,7 +23,7 @@ private:
 
 class SumLayout final : public Layout {
 public:
-  static SumLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<SumLayout,SumLayoutNode>(ArrayBuilder<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
+  static SumLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<SumLayout,SumLayoutNode>(ArrayBuilder4<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
   SumLayout() = delete;
 };
 

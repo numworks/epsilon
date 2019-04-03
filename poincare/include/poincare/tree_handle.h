@@ -21,7 +21,13 @@ namespace Poincare {
 
 class TreeHandle {
   template<class T>
-  friend class ArrayBuilder;
+  friend class ArrayBuilder1;
+  template<class T>
+  friend class ArrayBuilder2;
+  template<class T>
+  friend class ArrayBuilder3;
+  template<class T>
+  friend class ArrayBuilder4;
   friend class TreeNode;
   friend class TreePool;
 public:

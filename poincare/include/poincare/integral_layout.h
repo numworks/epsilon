@@ -56,7 +56,7 @@ private:
 
 class IntegralLayout final : public Layout {
 public:
-  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(ArrayBuilder<TreeHandle>(integrand, differential, lowerBound, upperBound).array(), 4); }
+  static IntegralLayout Builder(Layout integrand, Layout differential, Layout lowerBound, Layout upperBound) { return TreeHandle::FixedArityBuilder<IntegralLayout, IntegralLayoutNode>(ArrayBuilder4<TreeHandle>(integrand, differential, lowerBound, upperBound).array(), 4); }
   IntegralLayout() = delete;
 };
 

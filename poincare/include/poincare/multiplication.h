@@ -68,8 +68,8 @@ public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   static Multiplication Builder() { return TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(); }
   static Multiplication Builder(Expression e1) { return Multiplication::Builder(&e1, 1); }
-  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication::Builder(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
+  static Multiplication Builder(Expression e1, Expression e2) { return Multiplication::Builder(ArrayBuilder2<Expression>(e1, e2).array(), 2); }
+  static Multiplication Builder(Expression e1, Expression e2, Expression e3) { return Multiplication::Builder(ArrayBuilder3<Expression>(e1, e2, e3).array(), 3); }
 
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Expression

@@ -25,7 +25,7 @@ private:
 
 class ProductLayout final : public Layout {
 public:
-  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<ProductLayout,ProductLayoutNode>(ArrayBuilder<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
+  static ProductLayout Builder(Layout argument, Layout variable, Layout lowerB, Layout upperB)  { return TreeHandle::FixedArityBuilder<ProductLayout,ProductLayoutNode>(ArrayBuilder4<TreeHandle>(argument, variable, lowerB, upperB).array(), 4); }
   ProductLayout() = delete;
 };
 

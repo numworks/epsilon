@@ -62,7 +62,7 @@ class Division final : public Expression {
 public:
   Division(const DivisionNode * n) : Expression(n) {}
   static Division Builder() { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(); }
-  static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(ArrayBuilder<TreeHandle>(numerator, denominator).array(), 2); }
+  static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(ArrayBuilder2<TreeHandle>(numerator, denominator).array(), 2); }
 
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
 };

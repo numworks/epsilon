@@ -1,5 +1,6 @@
 #include <drivers/board.h>
 #include <drivers/cache.h>
+#include <drivers/config/clocks.h>
 #include <regs/regs.h>
 #include <ion.h>
 
@@ -100,23 +101,10 @@ void initClocks() {
    * for use in different parts of the system.  */
 
   // Configure the PLL ratios and use HSE as a PLL input
-  RCC.PLLCFGR()->setPLLM(8);
-  RCC.PLLCFGR()->setPLLN(384);
-  RCC.PLLCFGR()->setPLLQ(8);
+  RCC.PLLCFGR()->setPLLM(Clocks::Config::PLL_M);
+  RCC.PLLCFGR()->setPLLN(Clocks::Config::PLL_N);
+  RCC.PLLCFGR()->setPLLQ(Clocks::Config::PLL_Q);
   RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
-
-  /* If you want to considerably slow down the whole machine uniformely, which
-   * can be very useful to diagnose performance issues, change the PLL
-   * configuration to:
-   * RCC.PLLCFGR()->setPLLM(8);
-   * RCC.PLLCFGR()->setPLLN(192);
-   * RCC.PLLCFGR()->setPLLP(RCC::PLLCFGR::PLLP::PLLP8);
-   * RCC.PLLCFGR()->setPLLQ(4);
-   * RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
-   * HCLK will be set to 24 MHz.
-   * Don't forget to change ExternalFlash::AHBClockFrequency
-   * Note that even booting takes a few seconds, so don't be surprised
-   * if the screen is black for a short while upon booting. */
 
   // Enable the PLL and wait for it to be ready
   RCC.CR()->setPLLON(true);

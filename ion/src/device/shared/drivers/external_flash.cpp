@@ -263,7 +263,10 @@ static void initGPIO() {
 static void initQSPI() {
   // Enable QUADSPI AHB3 peripheral clock
   RCC.AHB3ENR()->setQSPIEN(true);
-  // Configure controller for target device
+  /* Reset QSPI peripheral */
+  RCC.AHB3RSTR()->setQSPIRST(true);
+  RCC.AHB3RSTR()->setQSPIRST(false);
+ // Configure controller for target device
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
   /* According to the device's datasheet (see Sections 8.7 and 8.8), the CS

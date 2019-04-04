@@ -51,7 +51,7 @@ void init() {
   // The bootloader leaves its own after flashing
   //SYSCFG.MEMRMP()->setMEM_MODE(SYSCFG::MEMRMP::MemMode::MainFlashmemory);
   // Ensure right location of interrupt vectors
-  CM4.VTOR()->setVTOR((void*)&InitialisationVector);
+  CORTEX.VTOR()->setVTOR((void*)&InitialisationVector);
 
   // Put all inputs as Analog Input, No pull-up nor pull-down
   // Except for the SWD port (PB3, PA13, PA14)

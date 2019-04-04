@@ -1,5 +1,5 @@
-#ifndef REGS_CM4_H
-#define REGS_CM4_H
+#ifndef REGS_CORTEX_H
+#define REGS_CORTEX_H
 
 #include "register.h"
 
@@ -7,7 +7,7 @@ namespace Ion {
 namespace Device {
 namespace Regs {
 
-class CM4 {
+class CORTEX {
 public:
   // Vector table offset register
   // http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
@@ -109,7 +109,7 @@ public:
     REGS_FIELD(WAY, uint8_t, 31, 30);
   };
 
-  constexpr CM4() {};
+  constexpr CORTEX() {};
   REGS_REGISTER_AT(SYST_CSR, 0x10);
   REGS_REGISTER_AT(SYST_RVR, 0x14);
   REGS_REGISTER_AT(SYST_CVR, 0x18);
@@ -130,7 +130,7 @@ private:
   }
 };
 
-constexpr CM4 CM4;
+constexpr CORTEX CORTEX;
 
 }
 }

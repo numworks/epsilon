@@ -14,7 +14,7 @@ using namespace Regs;
 
 void core() {
   // Perform a full core reset
-  CM4.AIRCR()->requestReset();
+  CORTEX.AIRCR()->requestReset();
 }
 
 void jump() {

@@ -2,7 +2,7 @@
 #define REGS_REGS_H
 
 #include "adc.h"
-#include "cm4.h"
+#include "cortex.h"
 #include "crc.h"
 #include "dma.h"
 #include "exti.h"

@@ -7,16 +7,16 @@ namespace Cache {
 using namespace Regs;
 
 void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disable) {
-  CM4.CSSELR()->set(0);
+  CORTEX.CSSELR()->set(0);
   dsb();
 
   // Associativity = 6
 
-  uint32_t sets = CM4.CCSIDR()->getNUMSETS();
-  uint32_t ways = CM4.CCSIDR()->getASSOCIATIVITY();
+  uint32_t sets = CORTEX.CCSIDR()->getNUMSETS();
+  uint32_t ways = CORTEX.CCSIDR()->getASSOCIATIVITY();
 
   if (disable) {
-    CM4.CCR()->setDC(false);
+    CORTEX.CCR()->setDC(false);
     dsb();
   }
 
@@ -25,21 +25,21 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
     do {
       if (clean) {
         if (invalidate) {
-          class CM4::DCCISW dccisw;
+          class CORTEX::DCCISW dccisw;
           dccisw.setSET(sets);
           dccisw.setWAY(w);
-          CM4.DCCISW()->set(dccisw);
+          CORTEX.DCCISW()->set(dccisw);
         } else {
-          class CM4::DCCSW dccsw;
+          class CORTEX::DCCSW dccsw;
           dccsw.setSET(sets);
           dccsw.setWAY(w);
-          CM4.DCCSW()->set(dccsw);
+          CORTEX.DCCSW()->set(dccsw);
         }
       } else if (invalidate) {
-        class CM4::DCISW dcisw;
+        class CORTEX::DCISW dcisw;
         dcisw.setSET(sets);
         dcisw.setWAY(w);
-        CM4.DCISW()->set(dcisw);
+        CORTEX.DCISW()->set(dcisw);
       }
     } while (w-- != 0);
   } while (sets-- != 0);
@@ -58,7 +58,7 @@ void cleanDCache() {
 
 void enableDCache() {
   invalidateDCache();
-  CM4.CCR()->setDC(true);
+  CORTEX.CCR()->setDC(true);
   dsb();
   isb();
 }
@@ -70,14 +70,14 @@ void disableDCache() {
 void invalidateICache() {
   dsb();
   isb();
-  CM4.ICIALLU()->set(0);
+  CORTEX.ICIALLU()->set(0);
   dsb();
   isb();
 }
 
 void enableICache() {
   invalidateICache();
-  CM4.CCR()->setIC(true);
+  CORTEX.CCR()->setIC(true);
   dsb();
   isb();
 }
@@ -85,7 +85,7 @@ void enableICache() {
 void disableICache() {
   dsb();
   isb();
-  CM4.CCR()->setIC(false);
+  CORTEX.CCR()->setIC(false);
   invalidateICache();
 }
 

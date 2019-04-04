@@ -42,16 +42,16 @@ using namespace Regs;
 volatile uint64_t MillisElapsed = 0;
 
 void init() {
-  CM4.SYST_RVR()->setRELOAD(Config::SysTickPerMillisecond - 1); // Remove 1 because the counter resets *after* counting to 0
-  CM4.SYST_CVR()->setCURRENT(0);
-  CM4.SYST_CSR()->setCLKSOURCE(CM4::SYST_CSR::CLKSOURCE::AHB_DIV8);
-  CM4.SYST_CSR()->setTICKINT(true);
-  CM4.SYST_CSR()->setENABLE(true);
+  CORTEX.SYST_RVR()->setRELOAD(Config::SysTickPerMillisecond - 1); // Remove 1 because the counter resets *after* counting to 0
+  CORTEX.SYST_CVR()->setCURRENT(0);
+  CORTEX.SYST_CSR()->setCLKSOURCE(CORTEX::SYST_CSR::CLKSOURCE::AHB_DIV8);
+  CORTEX.SYST_CSR()->setTICKINT(true);
+  CORTEX.SYST_CSR()->setENABLE(true);
 }
 
 void shutdown() {
-  CM4.SYST_CSR()->setENABLE(false);
-  CM4.SYST_CSR()->setTICKINT(false);
+  CORTEX.SYST_CSR()->setENABLE(false);
+  CORTEX.SYST_CSR()->setTICKINT(false);
 }
 
 }

@@ -1,5 +1,6 @@
 #include "external_flash.h"
 #include <drivers/config/external_flash.h>
+#include <drivers/config/clocks.h>
 #include <ion/timing.h>
 
 namespace Ion {
@@ -90,9 +91,8 @@ public:
 };
 
 static constexpr QUADSPI::CCR::OperatingMode DefaultOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
-static constexpr int AHBClockFrequency = 192; // MHz
 static constexpr int ClockFrequencyDivisor = 2;
-static constexpr bool ajustNumberOfDummyCycles = AHBClockFrequency > (80 * ClockFrequencyDivisor);
+static constexpr bool ajustNumberOfDummyCycles = Clocks::Config::AHBFrequency > (80 * ClockFrequencyDivisor);
 static constexpr int FastReadDummyCycles = (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad && ajustNumberOfDummyCycles) ? 4 : 2;
 
 static void send_command_full(QUADSPI::CCR::FunctionalMode functionalMode, QUADSPI::CCR::OperatingMode operatingMode, Command c, uint8_t * address, uint32_t altBytes, size_t numberOfAltBytes, uint8_t dummyCycles, uint8_t * data, size_t dataLength);
@@ -269,7 +269,7 @@ static void initQSPI() {
   /* According to the device's datasheet (see Sections 8.7 and 8.8), the CS
    * signal should stay high (deselect the device) for t_SHSL = 30ns at least.
    * */
-  constexpr int ChipSelectHighTime = (30 * AHBClockFrequency + ClockFrequencyDivisor * 1000 - 1) / (ClockFrequencyDivisor * 1000);
+  constexpr int ChipSelectHighTime = (30 * Clocks::Config::AHBFrequency + ClockFrequencyDivisor * 1000 - 1) / (ClockFrequencyDivisor * 1000);
   dcr.setCSHT(ChipSelectHighTime - 1);
   dcr.setCKMODE(true);
   QUADSPI.DCR()->set(dcr);

@@ -26,7 +26,18 @@ void initL1Cache() {
 }
 
 void initMPU() {
-  // Configure MPU settings for the FMC memory area
+  // 1. Disable the MPU
+  // 1.1 Memory barrier
+  asm volatile("dmb 0xF":::"memory");
+
+  // 1.2 Disable fault exceptions
+  CM4.SHCRS()->setMEMFAULTENA(false);
+
+  // 1.3 Disable the MPU and clear the control register
+  MPU.CTRL()->setENABLE(false);
+
+  // 2. MPU settings
+  // 2.1 Configure a MPU region for the FMC memory area
   // This is needed for interfacing with the LCD
   MPU.RNR()->setREGION(0x00);
   MPU.RBAR()->setADDR(0x60000000);
@@ -39,8 +50,37 @@ void initMPU() {
   MPU.RASR()->setB(0);
   MPU.RASR()->setENABLE(true);
 
+  // 2.2 Configure MPU regions for the QUADSPI peripheral
+  // TODO: lengthy comment
+  MPU.RNR()->setREGION(0x01);
+  MPU.RBAR()->setADDR(0x90000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::NoAccess);
+  MPU.RASR()->setXN(true);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(0);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  MPU.RNR()->setREGION(0x02);
+  MPU.RBAR()->setADDR(0x90000000);
+  MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_8MB);
+  MPU.RASR()->setAP(MPU::RASR::AccessPermission::RW);
+  MPU.RASR()->setXN(false);
+  MPU.RASR()->setTEX(0);
+  MPU.RASR()->setS(0);
+  MPU.RASR()->setC(1);
+  MPU.RASR()->setB(0);
+  MPU.RASR()->setENABLE(true);
+
+  // 2.3 Enable MPU
   MPU.CTRL()->setPRIVDEFENA(true);
   MPU.CTRL()->setENABLE(true);
+
+  // 3. Data/instruction synchronisation barriers to ensure that the new MPU configuration is used by subsequent instructions.
+  asm volatile("dsb 0xF":::"memory");
+  asm volatile("isb 0xF":::"memory");
 }
 
 void init() {

@@ -86,11 +86,11 @@ void initClocks() {
    * and the required 48 MHz USB clock. */
 
   // Configure the PLL ratios and use HSE as a PLL input
-  RCC.PLLCFGR()->setPLLM(25);
-  RCC.PLLCFGR()->setPLLQ(4);
+  RCC.PLLCFGR()->setPLLM(Clocks::Config::PLL_M);
+  RCC.PLLCFGR()->setPLLQ(Clocks::Config::PLL_Q);
   RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
   // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
-  RCC.CFGR()->setPPRE1(RCC::CFGR::APBPrescaler::AHBDividedBy2);
+  RCC.CFGR()->setPPRE1(Clocks::Config::APBP1rescaler);
 
   /* If you want to considerably slow down the whole machine uniformely, which
    * can be very useful to diagnose performance issues, just uncomment the line

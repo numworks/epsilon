@@ -65,6 +65,7 @@ enum class Command : uint8_t {
   PageProgram = 0x02,
   QuadPageProgram = 0x33,
   EnableQPI = 0x38,
+  EnableReset = 0x66,
   Reset = 0x99,
   // Erase the whole chip or a 64-Kbyte block as being "1"
   ChipErase = 0xC7,
@@ -283,6 +284,11 @@ static void initQSPI() {
 }
 
 static void initChip() {
+  // Reset
+  send_command(Command::EnableReset, QUADSPI::CCR::OperatingMode::Single);
+  send_command(Command::Reset, QUADSPI::CCR::OperatingMode::Single);
+  Ion::Timing::usleep(30); // 30us conservative
+
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QPI. */
   if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {

@@ -53,15 +53,18 @@ public:
     REGS_BOOL_FIELD(B, 16); // Buffereable
     REGS_FIELD(SRD, uint8_t, 15, 8);
     enum class RegionSize : uint8_t {
-      Bytes32 = 0b00100,
-      Bytes64 = 0b00101,
-      Bytes128 = 0b00110,
-      KyloBytes1 = 0b01001,
-      MegaBytes1 = 0b10011,
+      _32B = 0b00100,
+      _64B = 0b00101,
+      _128B = 0b00110,
+      _1KB = 0b01001,
+      _64KB = 0b01111,
       _1MB = 19,
+      _2MB = 20,
+      _4MB = 21,
+      _8MB = 22,
       _32MB = 24,
-      GigaBytes1 = 0b11101,
-      GigaBytes4 = 0b11111
+      _1GB = 0b11101,
+      _4GB = 0b11111
     };
 
     REGS_FIELD(SIZE, RegionSize, 5, 1);

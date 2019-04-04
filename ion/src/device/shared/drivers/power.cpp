@@ -32,7 +32,7 @@ void suspend(bool checkIfPowerKeyReleased) {
   PWR.CR()->setUDEN(PWR::CR::UnderDrive::Enable);
 #endif
 
-  CM4.SCR()->setSLEEPDEEP(!isLEDActive);
+  CORTEX.SCR()->setSLEEPDEEP(!isLEDActive);
 
   while (1) {
 #if EPSILON_LED_WHILE_CHARGING

@@ -24,8 +24,8 @@ void shutdown() {
 
 void initFPU() {
 // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
-  CM4.CPACR()->setAccess(10, CM4::CPACR::Access::Full);
-  CM4.CPACR()->setAccess(11, CM4::CPACR::Access::Full);
+  CORTEX.CPACR()->setAccess(10, CORTEX::CPACR::Access::Full);
+  CORTEX.CPACR()->setAccess(11, CORTEX::CPACR::Access::Full);
   // FIXME: The pipeline should be flushed at this point
 }
 

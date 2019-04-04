@@ -23,7 +23,13 @@ public:
   public:
     REGS_FIELD(PLLM, uint8_t, 5, 0);
     REGS_FIELD(PLLN, uint16_t, 14, 6);
-    REGS_FIELD(PLLP, uint8_t, 17, 16);
+    enum class PLLP {
+      PLLP2 = 0b00,
+      PLLP4 = 0b01,
+      PLLP6 = 0b10,
+      PLLP8 = 0b11
+    };
+    void setPLLP(PLLP s) volatile { setBitRange(17, 16, (uint8_t)s); }
     enum class PLLSRC {
       HSI = 0,
       HSE = 1

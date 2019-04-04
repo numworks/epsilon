@@ -106,10 +106,17 @@ void initClocks() {
   RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
 
   /* If you want to considerably slow down the whole machine uniformely, which
-   * can be very useful to diagnose performance issues, just uncomment the line
-   * below. Note that even booting takes a few seconds, so don't be surprised
+   * can be very useful to diagnose performance issues, change the PLL
+   * configuration to:
+   * RCC.PLLCFGR()->setPLLM(8);
+   * RCC.PLLCFGR()->setPLLN(192);
+   * RCC.PLLCFGR()->setPLLP(RCC::PLLCFGR::PLLP::PLLP8);
+   * RCC.PLLCFGR()->setPLLQ(4);
+   * RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
+   * HCLK will be set to 24 MHz.
+   * Don't forget to change ExternalFlash::AHBClockFrequency
+   * Note that even booting takes a few seconds, so don't be surprised
    * if the screen is black for a short while upon booting. */
-  //RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy2);
 
   // Enable the PLL and wait for it to be ready
   RCC.CR()->setPLLON(true);

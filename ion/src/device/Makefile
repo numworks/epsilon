@@ -8,6 +8,7 @@ $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION=
 src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   crc32_padded.cpp \
+  events_keyboard.cpp \
   events_modifier.cpp \
 )
 

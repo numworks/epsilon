@@ -27,9 +27,6 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculation(),
-  m_inputLayout(),
-  m_leftOutputLayout(),
-  m_rightOutputLayout(),
   m_inputView(this),
   m_scrollableOutputView(this)
 {
@@ -64,7 +61,7 @@ void HistoryViewCell::setHighlighted(bool highlight) {
 Poincare::Layout HistoryViewCell::layout() const {
   assert(m_dataSource);
   if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-    return m_inputLayout;
+    return m_inputView.layout();
   } else {
     return m_scrollableOutputView.layout();
   }
@@ -119,28 +116,23 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
     return;
   }
   m_calculation = *calculation;
-  m_inputLayout = calculation->createInputLayout();
-  m_inputView.setLayout(m_inputLayout);
+  m_inputView.setLayout(calculation->createInputLayout());
   App * calculationApp = (App *)app();
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  if (!m_leftOutputLayout.isUninitialized()) {
-    m_leftOutputLayout = Poincare::Layout();
-  }
-  if (!m_rightOutputLayout.isUninitialized()) {
-    m_rightOutputLayout = Poincare::Layout();
-  }
+  Poincare::Layout leftOutputLayout = Poincare::Layout();
+  Poincare::Layout rightOutputLayout;
   Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
   if (display == Calculation::DisplayOutput::ExactOnly) {
-    m_rightOutputLayout = calculation->createExactOutputLayout();
+    rightOutputLayout = calculation->createExactOutputLayout();
   } else {
-    m_rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
+    rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
     if (display == Calculation::DisplayOutput::ExactAndApproximate) {
-      m_leftOutputLayout = calculation->createExactOutputLayout();
+      leftOutputLayout = calculation->createExactOutputLayout();
     }
   }
-  m_scrollableOutputView.setLayouts(m_rightOutputLayout, m_leftOutputLayout);
+  m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
 }

@@ -264,9 +264,7 @@ static void initGPIO() {
 static void initQSPI() {
   // Enable QUADSPI AHB3 peripheral clock
   RCC.AHB3ENR()->setQSPIEN(true);
-  /* Reset QSPI peripheral */
-  RCC.AHB3RSTR()->setQSPIRST(true);
-  RCC.AHB3RSTR()->setQSPIRST(false);
+
  // Configure controller for target device
   class QUADSPI::DCR dcr(0);
   dcr.setFSIZE(NumberOfAddressBitsInChip - 1);
@@ -284,11 +282,6 @@ static void initQSPI() {
 }
 
 static void initChip() {
-  // Reset
-  send_command(Command::EnableReset, QUADSPI::CCR::OperatingMode::Single);
-  send_command(Command::Reset, QUADSPI::CCR::OperatingMode::Single);
-  Ion::Timing::usleep(30); // 30us conservative
-
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QPI. */
   if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
@@ -325,16 +318,6 @@ void init() {
   initChip();
 }
 
-void deinit() {
-  if (Config::NumberOfSectors == 0) {
-    return;
-  }
-  // Reset the controller
-  RCC.AHB3RSTR()->setQSPIRST(true);
-  RCC.AHB3RSTR()->setQSPIRST(false);
-  send_command(Command::Reset, QUADSPI::CCR::OperatingMode::Quad);
-}
-
 static void shutdownGPIO() {
   for(const AFGPIOPin & p : Config::Pins) {
     p.group().OSPEEDR()->setOutputSpeed(p.pin(), GPIO::OSPEEDR::OutputSpeed::Low);
@@ -345,11 +328,21 @@ static void shutdownGPIO() {
 
 static void shutdownChip() {
   unset_memory_mapped_mode();
+  // Reset
+  send_command(Command::EnableReset);
+  send_command(Command::Reset);
+  Ion::Timing::usleep(30);
+
+  // Sleep deep
   send_command(Command::DeepPowerDown);
-  Timing::usleep(100); // TODO should be 3us when usleep adjusted
+  Timing::usleep(3);
 }
 
 static void shutdownQSPI() {
+  // Reset the controller
+  RCC.AHB3RSTR()->setQSPIRST(true);
+  RCC.AHB3RSTR()->setQSPIRST(false);
+
   RCC.AHB3ENR()->setQSPIEN(false); // TODO: move in Device::shutdownClocks
 }
 

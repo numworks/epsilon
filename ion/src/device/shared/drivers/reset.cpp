@@ -22,9 +22,7 @@ void jump() {
   Ion::Device::Cache::disableDCache();
   Ion::Device::Cache::disableICache();
 
-  /* Shutdown all clocks and periherals to mimic a hardware reset. Special
-   * deinit for he external flash (it needs a reset command). */
-  ExternalFlash::deinit();
+  /* Shutdown all clocks and periherals to mimic a hardware reset. */
   Board::shutdown();
 
   /* Jump to the reset service routine after having reset the stack pointer.

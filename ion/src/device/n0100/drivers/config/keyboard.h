@@ -37,6 +37,10 @@ constexpr GPIO ColumnGPIO = GPIOC;
 constexpr uint8_t numberOfColumns = 6;
 constexpr uint8_t ColumnPins[numberOfColumns] = {0, 1, 2, 3, 4, 5};
 
+inline uint64_t cheat(uint64_t state) {
+  return state;
+}
+
 }
 }
 }

@@ -12,7 +12,6 @@ SFLAGS += -ggdb3
 # This allows the linker script to precisely place a given symbol
 SFLAGS += -fdata-sections -ffunction-sections
 
-# LTO ?= NOT(DEBUG)
 ifeq ($(DEBUG),1)
 LTO ?= 0
 else

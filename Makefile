@@ -12,6 +12,11 @@ default: $(BUILD_DIR)/epsilon.$(EXE)
 # extra rule that can build source files within the $(BUILD_DIR). This is useful
 # for rules that can be applied for intermediate objects (for example, when
 # going .png -> .cpp -> .o).
+
+define rule_label
+@ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(BUILD_DIR)/%=%)"
+endef
+
 define rule_for
 $(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(strip $(3)) | $$$$(@D)/.
 	@ echo "$(shell printf "%-8s" $(strip $(1)))$$(@:$$(BUILD_DIR)/%=%)"
@@ -76,6 +81,10 @@ objs = $(call object_for,$(src))
 # but allows correct yet optimal incremental builds.
 -include $(objs:.o=.d)
 
+# Load platform-specific targets
+# We include them before the standard ones to give them precedence.
+-include scripts/targets.$(PLATFORM).mak
+
 # Define rules for executables
 # Those can be built directly with make executable.exe as a shortcut. They also
 # depends on $(objs)
@@ -105,8 +114,13 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   CXX, %.o, %.cpp, \
-  $$(CC) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
+  $$(CXX) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@, \
   with_local_version \
+))
+
+$(eval $(call rule_for, \
+  OCC, %.o, %.m, \
+  $$(CC) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
 ))
 
 $(eval $(call rule_for, \
@@ -133,4 +147,3 @@ cowsay_%:
 .PHONY: clena
 clena: cowsay_CLENA clean
 
--include scripts/targets.$(PLATFORM).mak

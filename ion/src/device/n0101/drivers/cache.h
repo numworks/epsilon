@@ -7,6 +7,14 @@ namespace Ion {
 namespace Device {
 namespace Cache {
 
+/* Data memory barrier
+ * Ensures that all explicit memory accesses that appear in program order before
+ * the DMB instruction are observed before any explicit memory accesses that
+ * appear in program order after the DMB instruction */
+inline void dmb() {
+  asm volatile("dmb 0xF":::"memory");
+}
+
 /* Data synchronisation barrier
  * Ensures that the processor stalls until the memory write is complete */
 inline void dsb() {

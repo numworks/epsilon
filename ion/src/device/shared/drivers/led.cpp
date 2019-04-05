@@ -127,8 +127,8 @@ void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen,
   }
 
   TIM3.CCR(Ion::Device::LED::Config::RedChannel)->set(dutyCycleRed*period);
-  TIM3.CCR(Ion::Device::LED::Config::GreenChannel)->set(dutyCycleBlue*period);
-  TIM3.CCR(Ion::Device::LED::Config::BlueChannel)->set(dutyCycleGreen*period);
+  TIM3.CCR(Ion::Device::LED::Config::GreenChannel)->set(dutyCycleGreen*period);
+  TIM3.CCR(Ion::Device::LED::Config::BlueChannel)->set(dutyCycleBlue*period);
 }
 
 }

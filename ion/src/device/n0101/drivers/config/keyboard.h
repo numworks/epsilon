@@ -2,6 +2,7 @@
 #define ION_DEVICE_N0101_CONFIG_KEYBOARD_H
 
 #include <regs/regs.h>
+#include <ion/keyboard.h>
 
 /*  Pin | Role              | Mode
  * -----+-------------------+--------------------
@@ -36,6 +37,12 @@ constexpr uint8_t RowPins[numberOfRows] = {1, 0, 2, 3, 4, 5, 6, 7, 8};
 constexpr GPIO ColumnGPIO = GPIOC;
 constexpr uint8_t numberOfColumns = 6;
 constexpr uint8_t ColumnPins[numberOfColumns] = {0, 1, 2, 3, 4, 5};
+
+/* The key B2 is actually on B3 in hardware on model N0101. To avoid some extra
+ * work, we switch B2 and B3 bit in the bit array 'state'. */
+inline uint64_t cheat(uint64_t state) {
+  return state & Ion::Keyboard::State(Ion::Keyboard::Key::B3) ? state | Ion::Keyboard::State(Ion::Keyboard::Key::B2) : state;
+}
 
 }
 }

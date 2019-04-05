@@ -62,6 +62,9 @@ State scan() {
     state = (state << 6) | (~columns & 0x3F);
   }
 
+  // On model N0101, the B2 key is located on B3. We cheat here to avoid extra re-work.
+  state = Config::cheat(state);
+
   /* Last but not least, keys number 8, 9, 10, 11, 35, 41, 47 and 53 are not
    * defined. Therefore we want to make sure those bits are forced to zero in
    * whatever value we return. */

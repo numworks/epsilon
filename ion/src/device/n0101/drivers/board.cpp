@@ -28,10 +28,10 @@ void initL1Cache() {
 void initMPU() {
   // 1. Disable the MPU
   // 1.1 Memory barrier
-  asm volatile("dmb 0xF":::"memory");
+  Cache::dmb();
 
   // 1.2 Disable fault exceptions
-  CM4.SHCRS()->setMEMFAULTENA(false);
+  CORTEX.SHCRS()->setMEMFAULTENA(false);
 
   // 1.3 Disable the MPU and clear the control register
   MPU.CTRL()->setENABLE(false);
@@ -51,7 +51,14 @@ void initMPU() {
   MPU.RASR()->setENABLE(true);
 
   // 2.2 Configure MPU regions for the QUADSPI peripheral
-  // TODO: lengthy comment
+  /* L1 Cache can issue speculative reads to any memory address. But, when the
+   * Quad-SPI is in memory-mapped mode, if an access is made to an address
+   * outside of the range defined by FSIZE but still within the 256Mbytes range,
+   * then an AHB error is given (AN4760). To prevent this to happen, we
+   * configure the MPU to define the whole Quad-SPI addressable space as
+   * strongly ordered, non-executable and not accessible. Plus, we define the
+   * Quad-SPI region corresponding to the Expternal Chip as executable and
+   * fully accessible (AN4861). */
   MPU.RNR()->setREGION(0x01);
   MPU.RBAR()->setADDR(0x90000000);
   MPU.RASR()->setSIZE(MPU::RASR::RegionSize::_256MB);
@@ -79,8 +86,8 @@ void initMPU() {
   MPU.CTRL()->setENABLE(true);
 
   // 3. Data/instruction synchronisation barriers to ensure that the new MPU configuration is used by subsequent instructions.
-  asm volatile("dsb 0xF":::"memory");
-  asm volatile("isb 0xF":::"memory");
+  Cache::dsb();
+  Cache::isb();
 }
 
 void init() {

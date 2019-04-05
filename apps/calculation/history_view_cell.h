@@ -46,9 +46,6 @@ public:
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   Calculation m_calculation;
-  Poincare::Layout m_inputLayout;
-  Poincare::Layout m_leftOutputLayout;
-  Poincare::Layout m_rightOutputLayout;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

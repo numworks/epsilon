@@ -90,8 +90,11 @@ KDCoordinate Calculation::height(Context * context) {
       KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-      KDCoordinate outputWidth = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputWidth-exactLayout.baseline(), approximateOutputWidth-approximateLayout.baseline());
-      singleLine = outputWidth + inputWidth < 157;
+      KDCoordinate outputWidth = exactOutputWidth + approximateOutputWidth;
+      //singleLine = outputWidth + inputWidth < 290 - 70;
+      //singleLine = (outputWidth > inputWidth + 30) || outputWidth + inputWidth < 290;
+      //singleLine = outputWidth + inputWidth < 200;
+      singleLine = outputWidth + inputWidth < 220;
       if (singleLine) {
         m_height = (inputHeight >= outputHeight) ? inputHeight + smallMargin : outputHeight + smallMargin;
       } else {

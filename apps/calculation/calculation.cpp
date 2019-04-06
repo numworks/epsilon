@@ -63,24 +63,26 @@ KDCoordinate Calculation::height(Context * context) {
     KDCoordinate inputWidth = inputLayout.layoutSize().width();
     Layout approximateLayout = createApproximateOutputLayout(context);
     Layout exactLayout = createExactOutputLayout();
+    float smallMargin = 2 * Metric::CommonSmallMargin;
+    float lessSmallMargin = 4 * Metric::CommonSmallMargin;
     bool singleLine = false;
     if (shouldOnlyDisplayExactOutput()) {
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
-      singleLine = exactOutputWidth + inputWidth < 80 - 6;
+      singleLine = exactOutputWidth + inputWidth < 290;
       if (singleLine) {
-        m_height = (inputHeight >= exactOutputHeight) ? inputHeight + 2 * Metric::CommonSmallMargin: exactOutputHeight + 2 * Metric::CommonSmallMargin;
+        m_height = (inputHeight >= exactOutputHeight) ? inputHeight + smallMargin : exactOutputHeight + smallMargin;
       } else {
-        m_height = inputHeight + exactOutputHeight + 4 * Metric::CommonSmallMargin;
+        m_height = inputHeight + exactOutputHeight + lessSmallMargin;
       }
     } else if (shouldOnlyDisplayApproximateOutput(context)) {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
-      singleLine = approximateOutputWidth + inputWidth < 80 - 6;
+      singleLine = approximateOutputWidth + inputWidth < 290;
       if (singleLine) {
-        m_height = (inputHeight >= approximateOutputHeight) ? inputHeight + 2 * Metric::CommonSmallMargin: approximateOutputHeight + 2 * Metric::CommonSmallMargin;
+        m_height = (inputHeight >= approximateOutputHeight) ? inputHeight + smallMargin : approximateOutputHeight + smallMargin;
       } else {
-        m_height = inputHeight + approximateOutputHeight + 4 * Metric::CommonSmallMargin;
+        m_height = inputHeight + approximateOutputHeight + lessSmallMargin;
       }
     } else {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
@@ -89,11 +91,11 @@ KDCoordinate Calculation::height(Context * context) {
       KDCoordinate exactOutputWidth = exactLayout.layoutSize().width();
       KDCoordinate approximateOutputWidth = approximateLayout.layoutSize().width();
       KDCoordinate outputWidth = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputWidth-exactLayout.baseline(), approximateOutputWidth-approximateLayout.baseline());
-      singleLine = outputWidth + inputWidth < 80 - 6;
+      singleLine = outputWidth + inputWidth < 157;
       if (singleLine) {
-        m_height = (inputHeight >= outputHeight) ? inputHeight + 2 * Metric::CommonSmallMargin: outputHeight + 2 * Metric::CommonSmallMargin;
+        m_height = (inputHeight >= outputHeight) ? inputHeight + smallMargin : outputHeight + smallMargin;
       } else {
-        m_height = inputHeight + outputHeight + 4 * Metric::CommonSmallMargin;
+        m_height = inputHeight + outputHeight + lessSmallMargin;
       }
     }
   }

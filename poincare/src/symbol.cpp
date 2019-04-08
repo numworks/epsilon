@@ -3,6 +3,7 @@
 #include <poincare/context.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/parametered_expression.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
@@ -188,15 +189,15 @@ Expression Symbol::shallowReduce(Context & context, Preferences::ComplexFormat c
     Expression p = parentExpression;
 
     while (!p.isUninitialized()) {
-      if (p.type() == ExpressionNode::Type::Integral) { //TODO
+      if (p.isParameteredExpression()) {
         int index = p.indexOfChild(current);
-        if (index == 1) { //TODO 1 for everybody?
+        if (index == ParameteredExpression::ParameterChildIndex()) {
           // The symbol is a paremetered expression's parameter
           return *this;
         }
-        if (index == 0) { //TODO
-          assert(p.childAtIndex(1).type() == ExpressionNode::Type::Symbol);
-          Expression untypedParameter = p.childAtIndex(1);
+        if (index == ParameteredExpression::ParameteredChildIndex()) {
+          assert(p.childAtIndex(ParameteredExpression::ParameterChildIndex()).type() == ExpressionNode::Type::Symbol);
+          Expression untypedParameter = p.childAtIndex(ParameteredExpression::ParameterChildIndex());
           Symbol parameter = static_cast<Symbol &>(untypedParameter);
           if (strcmp(parameter.name(), name()) == 0) {
             return *this;

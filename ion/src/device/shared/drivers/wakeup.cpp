@@ -36,9 +36,9 @@ void onUSBPlugging() {
   SYSCFG.EXTICR3()->setEXTI(USB::Config::VbusPin.pin(), USB::Config::VbusPin.group());
 
   EXTI.EMR()->set(USB::Config::VbusPin.pin(), true);
-#if EPSILON_LED_WHILE_CHARGING
+//#if EPSILON_LED_WHILE_CHARGING
   EXTI.FTSR()->set(USB::Config::VbusPin.pin(), true);
-#endif
+//#endif
   EXTI.RTSR()->set(USB::Config::VbusPin.pin(), true);
 }
 

@@ -1,12 +1,12 @@
 #ifndef POINCARE_INTEGRAL_H
 #define POINCARE_INTEGRAL_H
 
-#include <poincare/expression.h>
+#include <poincare/parametered_expression.h>
 #include <poincare/symbol.h>
 
 namespace Poincare {
 
-class IntegralNode final : public ExpressionNode {
+class IntegralNode final : public ParameteredExpressionNode {
 public:
 
   // TreeNode
@@ -21,7 +21,6 @@ public:
   // ExpressionNode
   Type type() const override { return Type::Integral; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
 
   // Complex
   bool isReal(Context & context) const override { return true; }
@@ -52,9 +51,9 @@ private:
   template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
-class Integral final : public Expression {
+class Integral final : public ParameteredExpression {
 public:
-  Integral(const IntegralNode * n) : Expression(n) {}
+  Integral(const IntegralNode * n) : ParameteredExpression(n) {}
   static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Integral, IntegralNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
   static Expression UntypedBuilder(Expression children);
 

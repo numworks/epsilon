@@ -15,9 +15,9 @@ public:
     REGS_BOOL_FIELD(LPDS, 0);
     REGS_BOOL_FIELD(PPDS, 1);
     REGS_BOOL_FIELD(FPDS, 9);
+    REGS_BOOL_FIELD(LPUDS, 10); // Called LPLVDS in N0100
+    REGS_BOOL_FIELD(MRUDS, 11); // Called MRLVDS in N100
 #if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
-    REGS_BOOL_FIELD(LPUDS, 10);
-    REGS_BOOL_FIELD(MRUDS, 11);
     enum class Voltage {
       Scale3 = 0x01,
       Scale2 = 0x10,

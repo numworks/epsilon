@@ -13,7 +13,7 @@ void Window::redraw(bool force) {
   if (force) {
     markRectAsDirty(bounds());
   }
-  //Ion::Display::waitForVBlank();
+  Ion::Display::waitForVBlank();
   View::redraw(bounds());
 }
 

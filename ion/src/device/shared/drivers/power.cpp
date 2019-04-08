@@ -50,6 +50,20 @@ void stopConfiguration() {
 }
 
 void sleepConfiguration() {
+  // Decrease HCLK frequency
+  Device::Board::sNormalFrequency = Device::Board::Frequency::Low;
+  Device::Board::setClockFrequency(Device::Board::sNormalFrequency);
+
+  // Disable over-drive
+  PWR.CR()->setODSWEN(false);
+  while(!PWR.CSR1()->getODSWRDY()) {
+  }
+  PWR.CR()->setODEN(true);
+
+  // Choose Voltage scale 3
+  PWR.CR()->setVOS(PWR::CR::Voltage::Scale3);
+  while (!PWR.CSR1()->getVOSRDY()) {}
+
   // AHB1 peripheral clock enable in low-power mode register
 #if REGS_RCC_CONFIG_F730
   class RCC::AHB1LPENR ahb1lpenr(0x7EF7B7FF); // Reset value
@@ -229,6 +243,8 @@ void suspend(bool checkIfPowerKeyReleased) {
     }
     isPlugged = USB::isPlugged();
   }
+
+  Device::Board::sNormalFrequency = Device::Board::Frequency::High;
   Device::Board::initClocks();
 
   Device::Board::initPeripherals();

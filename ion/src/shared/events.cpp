@@ -47,7 +47,8 @@ static constexpr const char k_arcTangent[8] = {'a', 't', 'a', 'n', '(', Ion::Cha
 static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
-  TL(), TL(), U(),   U(),  U(),  U(),
+  // Warning: B2 and B3 keys don't simultaneously exist in the same model but we define both here to avoid duplicating implementation of s_dataForEvent
+  TL(), TL(), TL(), U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
   T(k_exponential), T(k_naperianLogarithm),  T(k_logarithm), T(k_complexI), T(","), T("^"),
   T(k_sine), T(k_cosine), T(k_tangent), T(k_pi), T(k_root), T("^2"),

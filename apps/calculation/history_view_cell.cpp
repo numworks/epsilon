@@ -131,11 +131,12 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   if (!m_rightOutputLayout.isUninitialized()) {
     m_rightOutputLayout = Poincare::Layout();
   }
-  if (calculation->shouldOnlyDisplayExactOutput()) {
+  Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
+  if (display == Calculation::DisplayOutput::ExactOnly) {
     m_rightOutputLayout = calculation->createExactOutputLayout();
   } else {
     m_rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
-    if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
+    if (display == Calculation::DisplayOutput::ExactAndApproximate) {
       m_leftOutputLayout = calculation->createExactOutputLayout();
     }
   }

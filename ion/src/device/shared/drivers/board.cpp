@@ -17,6 +17,8 @@ namespace Board {
 
 using namespace Regs;
 
+Frequency sNormalFrequency = Frequency::High;
+
 void shutdown() {
   shutdownPeripherals();
   shutdownClocks();

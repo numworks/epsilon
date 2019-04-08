@@ -134,6 +134,7 @@ public:
   bool isApproximate(Context & context) const;
   bool recursivelyMatchesInfinity(Context & context) { return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Infinity; }, context, true); }
   static bool IsMatrix(const Expression e, Context & context, bool replaceSymbols);
+  bool isParameteredExpression() const { return node()->isParameteredExpression(); }
   /* 'characteristicXRange' tries to assess the range on x where the expression
    * (considered as a function on x) has an interesting evolution. For example,
    * the period of the function on 'x' if it is periodic. If

@@ -12,6 +12,7 @@ namespace Poincare {
 class ParameteredExpressionNode : public ExpressionNode {
 public:
   // Expression
+  bool isParameteredExpression() const override { return true; }
   Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
 };
 

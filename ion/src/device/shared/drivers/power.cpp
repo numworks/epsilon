@@ -9,6 +9,15 @@
 #include <regs/config/rcc.h>
 
 namespace Ion {
+
+namespace Device {
+namespace Board {
+
+extern Device::Board::Frequency sNormalFrequency;
+
+}
+}
+
 namespace Power {
 
 using namespace Device::Regs;

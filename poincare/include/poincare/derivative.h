@@ -1,13 +1,13 @@
 #ifndef POINCARE_DERIVATIVE_H
 #define POINCARE_DERIVATIVE_H
 
-#include <poincare/expression.h>
+#include <poincare/parametered_expression.h>
 #include <poincare/symbol.h>
 #include <poincare/variable_context.h>
 
 namespace Poincare {
 
-class DerivativeNode final : public ExpressionNode {
+class DerivativeNode final : public ParameteredExpressionNode {
 public:
 
   // TreeNode
@@ -25,7 +25,6 @@ public:
   // Properties
   Type type() const override { return Type::Derivative; }
   int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
 
 private:
   // Layout
@@ -48,9 +47,9 @@ private:
   constexpr static double k_rateStepSize = 1.4;
 };
 
-class Derivative final : public Expression {
+class Derivative final : public ParameteredExpression {
 public:
-  Derivative(const DerivativeNode * n) : Expression(n) {}
+  Derivative(const DerivativeNode * n) : ParameteredExpression(n) {}
   static Derivative Builder(Expression child0, Symbol child1, Expression child2) { return TreeHandle::FixedArityBuilder<Derivative, DerivativeNode>(ArrayBuilder<TreeHandle>(child0, child1, child2).array(), 3); }
   static Expression UntypedBuilder(Expression children);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);

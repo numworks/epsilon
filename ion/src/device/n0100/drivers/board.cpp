@@ -153,6 +153,12 @@ void shutdownClocks(bool keepLEDAwake) {
   // APB2 bus
   RCC.APB2ENR()->set(0x00008000); // Reset value
 
+  // AHB2 bus
+  RCC.AHB2ENR()->set(0); // Reset value
+
+  // AHB3 bus
+  RCC.AHB3ENR()->set(0); // Reset value
+
   // APB1
   class RCC::APB1ENR apb1enr(0x00000400); // Reset value
   // AHB1 bus
@@ -164,8 +170,6 @@ void shutdownClocks(bool keepLEDAwake) {
   }
   RCC.APB1ENR()->set(apb1enr);
   RCC.AHB1ENR()->set(ahb1enr);
-
-  RCC.AHB3ENR()->setFSMCEN(false);
 }
 
 }

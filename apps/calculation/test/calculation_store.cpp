@@ -125,6 +125,24 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
 }
 
+QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
+
+  assertCalculationDisplay("int(x,x,0,2)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("sum(x,x,0,2)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("product(x,x,1,2)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("diff(x^2,x,3)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
+  assertCalculationDisplay("2→x", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("int(x,x,0,2)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("sum(x,x,0,2)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("product(x,x,1,2)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("diff(x^2,x,3)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
+
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+}
+
+
 QUIZ_CASE(calculation_complex_format) {
   Shared::GlobalContext globalContext;
   CalculationStore store;

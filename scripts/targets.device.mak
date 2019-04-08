@@ -73,5 +73,5 @@ endif
 .PHONY: %_two_binaries
 %_two_binaries: %.elf
 	@echo "Building an internal and an external binary for     $<"
-	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external -j .data.external $< $(basename $<).external.bin
-	$(Q) $(OBJCOPY) -O binary -j .text.internal -j .rodata.internal -j .data.internal $< $(basename $<).internal.bin
+	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external $< $(basename $<).external.bin
+	$(Q) $(OBJCOPY) -O binary -j .isr_vector_table -j .header -j .text.internal -j .rodata.internal -j .init_array -j .data $< $(basename $<).internal.bin

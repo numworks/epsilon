@@ -66,6 +66,7 @@ public:
 
   // Symbol properties
   bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX) || node()->isUnknown(UCodePointUnknownN); }
+  const char * name() const { return node()->name(); }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
 

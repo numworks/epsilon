@@ -96,7 +96,7 @@ src += $(addprefix poincare/src/,\
   nth_root.cpp \
   number.cpp \
   opposite.cpp \
-  parametered_expression_helper.cpp \
+  parametered_expression.cpp \
   parenthesis.cpp \
   permute_coefficient.cpp \
   power.cpp \

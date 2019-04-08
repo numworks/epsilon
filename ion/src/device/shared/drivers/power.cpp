@@ -200,7 +200,7 @@ void suspend(bool checkIfPowerKeyReleased) {
     bool isPowerDown = true;
     while (isPowerDown) {
       Keyboard::State scan = Keyboard::scan();
-      isPowerDown = scan.keyDown(Keyboard::Key::B2);
+      isPowerDown = scan.keyDown(Keyboard::PowerKey);
     }
   }
 
@@ -236,7 +236,7 @@ void suspend(bool checkIfPowerKeyReleased) {
     Device::Keyboard::init();
     Keyboard::State scan = Keyboard::scan();
 
-    Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::Key::B2);
+    Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::PowerKey);
     if (scan == OnlyPowerKeyDown || (!isPlugged && USB::isPlugged())) {
       // Wake up
       break;

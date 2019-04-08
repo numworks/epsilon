@@ -60,10 +60,11 @@ constexpr GPIO ColumnGPIO = GPIOC;
 constexpr uint8_t numberOfColumns = 6;
 constexpr uint8_t ColumnPins[numberOfColumns] = {0, 1, 2, 3, 4, 5};
 
-/* The key B2 is actually on B3 in hardware on model N0101. To avoid some extra
- * work, we switch B2 and B3 bit in the bit array 'state'. */
-inline uint64_t cheat(uint64_t state) {
-  return state & Ion::Keyboard::State(Ion::Keyboard::Key::B3) ? state | Ion::Keyboard::State(Ion::Keyboard::Key::B2) : state;
+/* Undefined keys numbers are: 7, 9, 10, 11, 35, 41, 47 and 53
+ * Therefore we want to make sure those bits are forced to zero in
+ * whatever value we return. */
+inline uint64_t ValidKeys(uint64_t state) {
+  return state & 0x1F7DF7FFFFF17F;
 }
 
 }

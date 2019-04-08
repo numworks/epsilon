@@ -67,7 +67,7 @@ constexpr Event OK    = Event::PlainKey(Keyboard::Key::A5);
 constexpr Event Back  = Event::PlainKey(Keyboard::Key::A6);
 
 constexpr Event Home  = Event::PlainKey(Keyboard::Key::B1);
-constexpr Event OnOff = Event::PlainKey(Keyboard::Key::B2);
+constexpr Event OnOff = Event::PlainKey(Keyboard::PowerKey);
 
 constexpr Event Shift = Event::PlainKey(Keyboard::Key::C1);
 constexpr Event Alpha = Event::PlainKey(Keyboard::Key::C2);

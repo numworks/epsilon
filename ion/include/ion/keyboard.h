@@ -22,8 +22,15 @@ enum class Key : uint8_t {
   None = 54
 };
 
+#define MODEL_N0101 1
+#ifdef MODEL_N0101
+constexpr Key PowerKey = Key::B3;
+#else
+constexpr Key PowerKey = Key::B2;
+#endif
+
 constexpr Key ValidKeys[] = {
-  Key::A1, Key::A2, Key::A3, Key::A4, Key::A5, Key::A6, Key::B1, Key::B2,
+  Key::A1, Key::A2, Key::A3, Key::A4, Key::A5, Key::A6, Key::B1, PowerKey,
   Key::C1, Key::C2, Key::C3, Key::C4, Key::C5, Key::C6, Key::D1, Key::D2,
   Key::D3, Key::D4, Key::D5, Key::D6, Key::E1, Key::E2, Key::E3, Key::E4,
   Key::E5, Key::E6, Key::F1, Key::F2, Key::F3, Key::F4, Key::F5, Key::G1,

@@ -1,6 +1,5 @@
 #include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
-#include <poincare/parametered_expression_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
@@ -25,10 +24,6 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
   }
   // If one of the children depends on the symbol, we do not know the degree.
   return ExpressionNode::polynomialDegree(context, symbolName);
-}
-
-Expression DerivativeNode::replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Derivative(this), symbol, unknownSymbol);
 }
 
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

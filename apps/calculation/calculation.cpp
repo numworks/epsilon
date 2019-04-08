@@ -64,13 +64,15 @@ KDCoordinate Calculation::height(Context * context) {
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     Layout approximateLayout = createApproximateOutputLayout(context);
     Layout exactLayout = createExactOutputLayout();
-    if (shouldOnlyDisplayExactOutput()) {
+    DisplayOutput display = displayOutput(context);
+    if (display == DisplayOutput::ExactOnly) {
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       m_height = inputHeight+exactOutputHeight;
-    } else if (shouldOnlyDisplayApproximateOutput(context)) {
+    } else if (display == DisplayOutput::ApproximateOnly) {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       m_height = inputHeight+approximateOutputHeight;
     } else {
+      assert(display == DisplayOutput::ExactAndApproximate);
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
@@ -152,21 +154,23 @@ Layout Calculation::createApproximateOutputLayout(Context * context) {
   return PoincareHelpers::CreateLayout(approximateOutput(context));
 }
 
-bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
+Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   if (shouldOnlyDisplayExactOutput()) {
-    return false;
+    return DisplayOutput::ExactOnly;
   }
+  bool approximateOnly = false;
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts
      * too, do not display the exact result. If the two layouts are not equal
      * because of the number of significant digits, we display both. */
-    return exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
-  }
-  if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
+    approximateOnly = exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
+  } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
     // If the approximate result is 'unreal' or the exact result is 'undef'
-    return true;
+    approximateOnly = true;
+  } else {
+    approximateOnly = input().isApproximate(*context) || exactOutput().isApproximate(*context);
   }
-  return input().isApproximate(*context) || exactOutput().isApproximate(*context);
+  return approximateOnly ? DisplayOutput::ApproximateOnly : DisplayOutput::ExactAndApproximate;
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {

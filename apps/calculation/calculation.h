@@ -17,6 +17,13 @@ public:
     Approximation,
     Equal
   };
+
+  enum class DisplayOutput : uint8_t {
+    ExactOnly,
+    ApproximateOnly,
+    ExactAndApproximate
+  };
+
   Calculation();
   bool operator==(const Calculation& c);
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
@@ -34,7 +41,7 @@ public:
   Poincare::Layout createApproximateOutputLayout(Poincare::Context * context);
   bool isEmpty();
   void tidy();
-  bool shouldOnlyDisplayApproximateOutput(Poincare::Context * context);
+  DisplayOutput displayOutput(Poincare::Context * context);
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 private:

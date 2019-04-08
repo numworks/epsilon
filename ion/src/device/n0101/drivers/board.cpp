@@ -139,9 +139,6 @@ void initClocks() {
 
   // Enable PWR peripheral clock
   RCC.APB1ENR()->setPWREN(true);
-  // Choose Voltage scale 1
-  PWR.CR()->setVOS(PWR::CR::Voltage::Scale1);
-  //while (!PWR.CSR1()->getVOSRDY()) {}
 
   /* Given the crystal used on our device, the HSE will oscillate at 8 MHz. By
    * piping it through a phase-locked loop (PLL) we can derive other frequencies
@@ -156,6 +153,7 @@ void initClocks() {
   // Enable the PLL and wait for it to be ready
   RCC.CR()->setPLLON(true);
 
+  // Enable Over-drive
   PWR.CR()->setODEN(true);
   while(!PWR.CSR1()->getODRDY()) {
   }
@@ -163,6 +161,10 @@ void initClocks() {
   PWR.CR()->setODSWEN(true);
   while(!PWR.CSR1()->getODSWRDY()) {
   }
+
+  // Choose Voltage scale 1
+  PWR.CR()->setVOS(PWR::CR::Voltage::Scale1);
+  while (!PWR.CSR1()->getVOSRDY()) {}
 
   /* After reset the Flash runs as fast as the CPU. When we clock the CPU faster
    * the flash memory cannot follow and therefore flash memory accesses need to

@@ -10,6 +10,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <cmath>
+#include <string.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -181,6 +182,32 @@ bool Symbol::isRegressionSymbol(const char * c) {
 }
 
 Expression Symbol::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+  Expression parentExpression = parent();
+  {
+    Expression current = *this;
+    Expression p = parentExpression;
+
+    while (!p.isUninitialized()) {
+      if (p.type() == ExpressionNode::Type::Integral) { //TODO
+        int index = p.indexOfChild(current);
+        if (index == 1) { //TODO 1 for everybody?
+          // The symbol is a paremetered expression's parameter
+          return *this;
+        }
+        if (index == 0) { //TODO
+          assert(p.childAtIndex(1).type() == ExpressionNode::Type::Symbol);
+          Expression untypedParameter = p.childAtIndex(1);
+          Symbol parameter = static_cast<Symbol &>(untypedParameter);
+          if (strcmp(parameter.name(), name()) == 0) {
+            return *this;
+          }
+        }
+      }
+      current = p;
+      p = current.parent();
+    }
+  }
+
   Symbol s = *this;
   Expression result = SymbolAbstract::Expand(s, context, true);
   if (result.isUninitialized()) {
@@ -189,7 +216,9 @@ Expression Symbol::shallowReduce(Context & context, Preferences::ComplexFormat c
     }
     result = Undefined::Builder();
   }
-  replaceWithInPlace(result);
+  if (!parentExpression.isUninitialized()) {
+    parentExpression.replaceChildInPlace(*this, result);
+  }
   // The stored expression is as entered by the user, so we need to call reduce
   return result.deepReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }

@@ -246,4 +246,23 @@ QUIZ_CASE(equation_solve_complex_format) {
 
 }
 
+QUIZ_CASE(equation_and_symbolic_computation) {
+
+  // x+a=0 : non linear system
+  const char * equation[] = {"x+a=0", 0};
+  assert_equation_system_exact_solve_to(equation, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, nullptr, nullptr, INT_MAX);
+
+  // -3->a
+  Shared::GlobalContext globalContext;
+  Expression::ParseAndSimplify("-3→a", globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+
+  // x+a = 0 : x = 3
+  const char * variables[] = {"x", ""};
+  const char * solutions[] = {"3"};
+  assert_equation_system_exact_solve_to(equation, EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables, solutions, 1);
+
+  // Clean the storage
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+}
+
 }

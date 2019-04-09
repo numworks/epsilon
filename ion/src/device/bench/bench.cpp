@@ -12,6 +12,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("ADC", Command::ADC),
   CommandHandler("BACKLIGHT", Command::Backlight),
   CommandHandler("CHARGE", Command::Charge),
+  CommandHandler("CRC", Command::CRC),
   CommandHandler("DISPLAY", Command::Display),
   CommandHandler("EXIT", Command::Exit),
   CommandHandler("KEYBOARD", Command::Keyboard),

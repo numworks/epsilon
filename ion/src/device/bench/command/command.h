@@ -13,6 +13,7 @@ typedef void (*Function)(const char * input);
 void ADC(const char * input);
 void Backlight(const char * input);
 void Charge(const char * input);
+void CRC(const char * input);
 void Display(const char * input);
 void Exit(const char * input);
 void Keyboard(const char * input);
@@ -36,6 +37,7 @@ extern const char * const sOFF;
 void reply(const char * s);
 int8_t hexChar(char c);
 bool isHex(char c);
+uint32_t numberBase10(const char * s, int maxLength = -1);
 uint32_t hexNumber(const char * s, int maxLength = -1);
 
 }

@@ -9,6 +9,7 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   adc.cpp \
   backlight.cpp \
   charge.cpp \
+  crc.cpp \
   command.cpp \
   display.cpp \
   exit.cpp \

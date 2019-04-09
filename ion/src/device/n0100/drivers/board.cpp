@@ -1,5 +1,6 @@
 #include <drivers/board.h>
 #include <drivers/console.h>
+#include <drivers/config/clocks.h>
 #include <regs/regs.h>
 #include <ion.h>
 #include <ion/src/device/bench/bench.h>
@@ -80,7 +81,7 @@ void initClocks() {
   RCC.PLLCFGR()->setPLLQ(Clocks::Config::PLL_Q);
   RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
   // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
-  RCC.CFGR()->setPPRE1(Clocks::Config::APBP1rescaler);
+  RCC.CFGR()->setPPRE1(Clocks::Config::APB1PrescalerRegs);
 
   /* If you want to considerably slow down the whole machine uniformely, which
    * can be very useful to diagnose performance issues, just uncomment the line

@@ -20,7 +20,7 @@ TableViewDataSource * TableView::dataSource() {
 // This method computes the minimal scrolling needed to properly display the
 // requested cell.
 void TableView::scrollToCell(int i, int j) {
-  m_contentView.scrollToCell(i, j);
+  scrollToContentRect(m_contentView.cellFrame(i, j), true);
 }
 
 HighlightCell * TableView::cellAtLocation(int i, int j) {
@@ -94,10 +94,6 @@ KDCoordinate TableView::ContentView::width() const {
   int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns())+m_horizontalCellOverlap;
   // handle the case of list: cumulatedWidthFromIndex() = 0
   return result ? result : m_tableView->maxContentWidthDisplayableWithoutScrolling();
-}
-
-void TableView::ContentView::scrollToCell(int x, int y) const {
-  m_tableView->scrollToContentRect(cellFrame(x, y), true);
 }
 
 void TableView::ContentView::reloadCellAtLocation(int i, int j) {

@@ -113,7 +113,7 @@ KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
     + (editionIsInTextField() ? k_textFieldHeight :
         minCoordinate(maximalHeight(),
-          maxCoordinate(k_textFieldHeight, m_layoutField.minimalSizeForOptimalDisplay().height() + 2*k_verticalMargin)));
+          maxCoordinate(k_textFieldHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
 KDCoordinate ExpressionField::maximalHeight() const {

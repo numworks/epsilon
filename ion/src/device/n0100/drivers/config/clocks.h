@@ -20,17 +20,25 @@ namespace Config {
  * Note that even booting takes a few seconds, so don't be surprised
  * if the screen is black for a short while upon booting. */
 
-//constexpr static int HSE = 25;
+constexpr static int HSE = 25;
 constexpr static int PLL_M = 25;
 constexpr static int PLL_Q = 4;
-//constexpr static int PLL_N = 192;
-//constexpr static Regs::RCC::PLLCFGR::PLLP PLL_P_Reg = Regs::RCC::PLLCFGR::PLLP::PLLP2;
-//constexpr static int PLL_P = 2*(int)PLL_P_Reg;
-//constexpr static int SYSCLKFrequency = ((HSE/PLL_M)*PLL_N)/PLL_P;
-//constexpr static int AHB_prescaler = 1;
-//constexpr static int HCLKFrequency = SYSCLKFrequency/AHB_prescaler;
-//constexpr static int AHBFrequency = HCLKFrequency;
-constexpr static int APB1Prescaler = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;
+constexpr static int PLL_N = 192;
+constexpr static Regs::RCC::PLLCFGR::PLLP PLL_P_Reg = Regs::RCC::PLLCFGR::PLLP::PLLP2;
+constexpr static int PLL_P = ((int)PLL_P_Reg | 1) << 1;
+constexpr static int SYSCLKFrequency = ((HSE/PLL_M)*PLL_N)/PLL_P;
+constexpr static int AHB_prescaler = 1;
+constexpr static int HCLKFrequency = SYSCLKFrequency/AHB_prescaler;
+constexpr static int AHBFrequency = HCLKFrequency;
+constexpr static Regs::RCC::CFGR::APBPrescaler APB1PrescalerRegs = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;
+constexpr static int APB1Prescaler = 2;
+constexpr static int APB1Frequency = HCLKFrequency/APB1Prescaler;
+constexpr static int APB1TimerFrequency = 2*APB1Frequency;
+/* To slow down the whole system, we prescale the AHB clock.
+ * We could divide the system clock by 512. However, the HCLK clock
+ * frequency must be >= 14.2MHz and <=216 MHz which forces the
+ * AHBPrescaler to be below 96MHz/14.2MHz~6.7. */
+constexpr static Regs::RCC::CFGR::AHBPrescaler AHBLowFrequencyPrescaler = Regs::RCC::CFGR::AHBPrescaler::SysClkDividedBy4;
 
 }
 }

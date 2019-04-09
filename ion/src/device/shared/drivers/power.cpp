@@ -52,7 +52,7 @@ void stopConfiguration() {
 void sleepConfiguration() {
   // Decrease HCLK frequency
   Device::Board::sNormalFrequency = Device::Board::Frequency::Low;
-  Device::Board::setClockFrequency(Device::Board::sNormalFrequency);
+  Device::Board::setClockFrequency(Device::Board::Frequency::Low);
 
   // Disable over-drive
   PWR.CR()->setODSWEN(false);

@@ -10,6 +10,7 @@
 #include <drivers/swd.h>
 #include <drivers/timing.h>
 #include <drivers/usb.h>
+#include <drivers/config/clocks.h>
 
 namespace Ion {
 namespace Device {
@@ -66,10 +67,7 @@ void setClockFrequency(Frequency f) {
       return;
     default:
       assert(f == Frequency::Low);
-      /* We could divide the system clock by 512. However, the HCLK clock
-       * frequency must be >= 14.2MHz and <=216 MHz which forces the
-       * AHBPrescaler to be below 192MHz/14.2MHz~13.5MHz. */
-      RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy8);
+      RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescaler);
       return;
   }
 }

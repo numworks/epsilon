@@ -27,15 +27,18 @@ constexpr static Regs::RCC::PLLCFGR::PLLP PLL_P_Reg = Regs::RCC::PLLCFGR::PLLP::
 constexpr static int PLL_P = ((int)PLL_P_Reg | 1) << 1;
 constexpr static int PLL_Q = 8;
 constexpr static int SYSCLKFrequency = ((HSE/PLL_M)*PLL_N)/PLL_P;
-constexpr static int AHB_prescaler = 1;
-constexpr static int HCLKFrequency = SYSCLKFrequency/AHB_prescaler;
+constexpr static int AHBPrescaler = 1;
+constexpr static int HCLKFrequency = SYSCLKFrequency/AHBPrescaler;
 constexpr static int AHBFrequency = HCLKFrequency;
-constexpr static int LoopsPerMillisecond = 4811;
-constexpr static int LoopsPerMicrosecond = 38;
-// CPU clock is 192 MHz, and systick clock source is divided by 8
-// To get 1 ms systick overflow we need to reset it to
-// 192 000 000 (Hz) / 8 / 1 000 (ms/s)
-constexpr static int SysTickPerMillisecond = 24000;
+constexpr static int APB1Prescaler = 4;
+constexpr static int APB1Frequency = HCLKFrequency/APB1Prescaler;
+constexpr static int APB1TimerFrequency = 2*APB1Frequency;
+
+/* To slow down the whole system, we prescale the AHB clock.
+ * We could divide the system clock by 512. However, the HCLK clock
+ * frequency must be >= 14.2MHz and <=216 MHz which forces the
+ * AHBPrescaler to be below 192MHz/14.2MHz~13.5. */
+constexpr static Regs::RCC::CFGR::AHBPrescaler AHBLowFrequencyPrescaler = Regs::RCC::CFGR::AHBPrescaler::SysClkDividedBy8;
 
 }
 }

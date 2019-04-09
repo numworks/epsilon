@@ -83,12 +83,6 @@ void initClocks() {
   // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
   RCC.CFGR()->setPPRE1(Clocks::Config::APB1PrescalerRegs);
 
-  /* If you want to considerably slow down the whole machine uniformely, which
-   * can be very useful to diagnose performance issues, just uncomment the line
-   * below. Note that even booting takes a few seconds, so don't be surprised
-   * if the screen is black for a short while upon booting. */
-  // RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClkDividedBy128);
-
   // Enable the PLL and wait for it to be ready
   RCC.CR()->setPLLON(true);
   while(!RCC.CR()->getPLLRDY()) {

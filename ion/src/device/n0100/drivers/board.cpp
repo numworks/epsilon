@@ -37,17 +37,7 @@ void init() {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
-#if EPSILON_DEVICE_BENCH
-  bool consolePeerConnectedOnBoot = Console::peerConnected();
-#endif
-
   initPeripherals();
-
-#if EPSILON_DEVICE_BENCH
-  if (consolePeerConnectedOnBoot) {
-    Ion::Device::Bench::run();
-  }
-#endif
 }
 
 void initClocks() {
@@ -135,9 +125,6 @@ void initClocks() {
   // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);
-#if EPSILON_DEVICE_BENCH
-  RCC.APB1ENR()->setUSART3EN(true);
-#endif
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0x00008000); // Reset value

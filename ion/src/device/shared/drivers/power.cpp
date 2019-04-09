@@ -54,6 +54,7 @@ void sleepConfiguration() {
   Device::Board::sNormalFrequency = Device::Board::Frequency::Low;
   Device::Board::setClockFrequency(Device::Board::Frequency::Low);
 
+#if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   // Disable over-drive
   PWR.CR()->setODSWEN(false);
   while(!PWR.CSR1()->getODSWRDY()) {
@@ -63,6 +64,7 @@ void sleepConfiguration() {
   // Choose Voltage scale 3
   PWR.CR()->setVOS(PWR::CR::Voltage::Scale3);
   while (!PWR.CSR1()->getVOSRDY()) {}
+#endif
 
   // AHB1 peripheral clock enable in low-power mode register
 #if REGS_RCC_CONFIG_F730

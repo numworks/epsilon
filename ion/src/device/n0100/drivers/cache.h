@@ -14,6 +14,7 @@ using namespace Regs;
 inline void dsb() {}
 
 inline void invalidateDCache() {}
+inline void cleanDCache() {}
 inline void enableDCache() {}
 inline void disableDCache() {}
 

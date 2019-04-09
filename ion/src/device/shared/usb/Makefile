@@ -47,17 +47,30 @@ dfu_src += liba/src/memset.c
 dfu_src += liba/src/memcpy.c
 dfu_src += libaxx/src/cxxabi/pure_virtual.cpp
 dfu_src += ion/src/device/shared/usb/boot.cpp
+dfu_src += ion/src/device/$(MODEL)/drivers/board.cpp
 dfu_src += ion/src/device/$(MODEL)/drivers/cache.cpp
 dfu_src += ion/src/device/$(MODEL)/usb/stack/device.cpp
 dfu_src += $(addprefix ion/src/device/shared/drivers/, \
+  backlight.cpp \
+  battery.cpp \
   base64.cpp \
+  board.cpp \
+  console.cpp \
+  crc32.cpp \
+  display.cpp \
+  events_keyboard_platform.cpp \
   external_flash.cpp \
   flash.cpp \
   keyboard.cpp \
+  led.cpp \
+  power.cpp\
+  random.cpp\
   reset.cpp \
   serial_number.cpp \
+  swd.cpp \
   timing.cpp \
   usb.cpp \
+  wakeup.cpp \
 )
 
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld

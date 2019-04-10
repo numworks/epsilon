@@ -25,7 +25,6 @@ constexpr CommandHandler handles[] = {
   CommandHandler("STOP", Command::Stop),
   CommandHandler("STANDBY", Command::Standby),
   CommandHandler("VBLANK", Command::VBlank),
-  CommandHandler("WRITE_EXTERNAL", Command::WriteExternal),
   CommandHandler(nullptr, nullptr)
 };
 

@@ -1,6 +1,7 @@
 #include "led.h"
 #include <ion/led.h>
 #include <drivers/config/led.h>
+#include <drivers/config/clocks.h>
 
 static KDColor sLedColor = KDColorBlack;
 
@@ -113,15 +114,15 @@ void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen,
       period = PWMPeriod;
       break;
     case Mode::Blink:
-      int systemClockFreq = 96;
       /* We still want to do PWM, but at a rate slow enough to blink. Ideally,
        * we want to pre-scale the period to be able to set it in milliseconds;
        * however, as the prescaler is cap by 2^16-1, we divide it by a factor
        * and correct the period consequently. */
-      int factor = 2;
-      // TODO: explain the 2 ?
-      TIM3.PSC()->set(systemClockFreq*1000/factor);
-      period *= factor;
+      int prescalerFactor = 4;
+      /* Most of the time AP1TimerFrequency is the 'low' one as most of the time
+       * is spent in Timing::msleep. */
+      TIM3.PSC()->set(Clocks::Config::APB1TimerLowFrequency*1000/prescalerFactor-1);
+      period *= prescalerFactor;
       TIM3.ARR()->set(period);
       break;
   }

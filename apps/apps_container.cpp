@@ -152,11 +152,13 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      /* Just after a software update, the battery timer does not have time to
+       * fire before the calculator enters DFU mode. As the DFU mode blocks the
+       * event loop, we update the battery state "manually" here.
+       * We do it before switching to USB application to redraw the battery
+       * pictogram. */
+      updateBatteryState();
       if (switchTo(usbConnectedAppSnapshot())) {
-        /* Just after a software update, the battery timer does not have time to
-         * fire before the calculator enters DFU mode. As the DFU mode blocks the
-         * event loop, we update the battery state "manually" here. */
-        updateBatteryState();
         Ion::USB::DFU();
         bool switched = switchTo(activeSnapshot);
         assert(switched);

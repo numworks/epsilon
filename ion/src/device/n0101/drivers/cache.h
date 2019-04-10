@@ -27,6 +27,9 @@ inline void isb() {
   asm volatile("isb 0xF":::"memory");
 }
 
+void enable();
+void disable();
+
 void invalidateDCache();
 void cleanDCache();
 void enableDCache();

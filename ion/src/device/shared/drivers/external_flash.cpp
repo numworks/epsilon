@@ -281,10 +281,12 @@ static void initQSPI() {
   QUADSPI.CR()->set(cr);
 }
 
+static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
+
 static void initChip() {
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QPI. */
-  if (DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
+  if (sOperatingMode == QUADSPI::CCR::OperatingMode::Single && DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
     send_command(Command::WriteEnable, QUADSPI::CCR::OperatingMode::Single);
     ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
     statusRegister2.setQE(true);
@@ -305,6 +307,7 @@ static void initChip() {
       readParameters.setP5(true);
       send_write_command(Command::SetReadParameters, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&readParameters), sizeof(readParameters));
     }
+    sOperatingMode = QUADSPI::CCR::OperatingMode::Quad;
   }
   set_as_memory_mapped();
 }
@@ -331,6 +334,7 @@ static void shutdownChip() {
   // Reset
   send_command(Command::EnableReset);
   send_command(Command::Reset);
+  sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
   Ion::Timing::usleep(30);
 
   // Sleep deep

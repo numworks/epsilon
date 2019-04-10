@@ -218,6 +218,7 @@ constexpr Event Termination = Event::Special(1);
 constexpr Event TimerFire = Event::Special(2);
 constexpr Event USBEnumeration = Event::Special(3);
 constexpr Event USBPlug = Event::Special(4);
+constexpr Event BatteryCharging = Event::Special(5);
 
 }
 }

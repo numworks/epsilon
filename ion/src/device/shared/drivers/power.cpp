@@ -1,8 +1,13 @@
+#include <ion/battery.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/usb.h>
 #include <drivers/board.h>
+#include <drivers/battery.h>
+#include <drivers/external_flash.h>
 #include <drivers/keyboard.h>
+#include <drivers/led.h>
+#include <drivers/usb.h>
 #include <drivers/wakeup.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
@@ -25,9 +30,7 @@ using namespace Device::Regs;
 void configWakeUp() {
   Device::WakeUp::onPowerKeyDown();
   Device::WakeUp::onUSBPlugging();
-#if EPSILON_LED_WHILE_CHARGING
   Device::WakeUp::onChargingEvent();
-#endif
 }
 
 void stopConfiguration() {
@@ -195,7 +198,7 @@ void sleepConfiguration() {
 
 void suspend(bool checkIfPowerKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
-  bool isPlugged = USB::isPlugged();
+  bool plugged = USB::isPlugged();
 
   if (checkIfPowerKeyReleased) {
     /* Wait until power is released to avoid restarting just after suspending */
@@ -214,14 +217,6 @@ void suspend(bool checkIfPowerKeyReleased) {
     } else {
       stopConfiguration();
     }
-#if EPSILON_LED_WHILE_CHARGING
-    /* Update LEDS
-     * if the standby mode was stopped due to a "stop charging" event, we wait
-     * a while to be sure that the plug state of the USB is up-to-date. */
-    msleep(200);
-    Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
-#endif
-
 
    /* To enter sleep, we need to issue a WFE instruction, which waits for the
    * event flag to be set and then clears it. However, the event flag might
@@ -239,11 +234,22 @@ void suspend(bool checkIfPowerKeyReleased) {
     Keyboard::State scan = Keyboard::scan();
 
     Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::PowerKey);
-    if (scan == OnlyPowerKeyDown || (!isPlugged && USB::isPlugged())) {
+
+    /* Update LEDS
+     * if the standby mode was stopped due to a "stop charging" event, we wait
+     * a while to be sure that the plug state of the USB is up-to-date. */
+    Device::Battery::initGPIO();
+    Device::USB::initGPIO();
+    Device::LED::init();
+    KDColor ledColor = USB::isPlugged() ? (Battery::isCharging() ? KDColorYellow : KDColorGreen) : KDColorBlack;
+    Ion::LED::setColor(ledColor);
+    isLEDActive = ledColor != KDColorBlack;
+
+    if (scan == OnlyPowerKeyDown || (!plugged && USB::isPlugged())) {
       // Wake up
       break;
     }
-    isPlugged = USB::isPlugged();
+    plugged = USB::isPlugged();
   }
 
   Device::Board::sNormalFrequency = Device::Board::Frequency::High;

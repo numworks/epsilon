@@ -176,9 +176,9 @@ void initClocks() {
   FLASH.ACR()->setARTEN(true);
 
   // 192 MHz is too fast for APB1. Divide it by four to reach 48 MHz
-  RCC.CFGR()->setPPRE1(RCC::CFGR::APBPrescaler::AHBDividedBy4);
+  RCC.CFGR()->setPPRE1(Clocks::Config::APB1PrescalerReg);
   // 192 MHz is too fast for APB2. Divide it by two to reach 96 MHz
-  RCC.CFGR()->setPPRE2(RCC::CFGR::APBPrescaler::AHBDividedBy2);
+  RCC.CFGR()->setPPRE2(Clocks::Config::APB2PrescalerReg);
 
   while(!RCC.CR()->getPLLRDY()) {
   }

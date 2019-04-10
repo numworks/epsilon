@@ -174,10 +174,10 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
-  /* If the approximateOutput is undef, do not display it. This prevents:
-   * x->f(x) from displaying x = undef
-   * x+x from displaying 2x = undef */
-  return strcmp(m_approximateOutputText, Undefined::Name()) == 0;
+  /* If the input is a "store in a function", do not display the approximate
+   * result. This prevents x->f(x) from displaying x = undef. */
+  return input().type() == ExpressionNode::Type::Store
+    && input().childAtIndex(1).type() == ExpressionNode::Type::Function;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

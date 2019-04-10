@@ -66,6 +66,10 @@ SECTIONS {
   .rodata.internal : {
     . = ALIGN(4);
     *(.rodata._ZN3Ion*)
+    *(.rodata._ZN3KDColor*)
+    *(.rodata._ZL11KDColor*)
+    *(.rodata._ZL12KDColor*)
+    *(.rodata._ZL13KDColor*)
   } >INTERNAL_FLASH
 
   .text.external : {

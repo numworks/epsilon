@@ -105,10 +105,10 @@ void shutdownTimer() {
 void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, uint16_t period) {
   switch (mode) {
     case Mode::PWM:
-      /* Let's set the prescaler to 1. Increasing the prescaler would slow down
+      /* Let's set the prescaler to 1 (PSC = 0). Increasing the prescaler would slow down
        * the modulation, which can be useful when debugging or when we want an
        * actual blinking. */
-      TIM3.PSC()->set(1);
+      TIM3.PSC()->set(0);
       TIM3.ARR()->set(PWMPeriod);
       period = PWMPeriod;
       break;

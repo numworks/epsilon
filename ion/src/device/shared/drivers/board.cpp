@@ -61,13 +61,14 @@ void shutdownPeripherals(bool keepLEDAwake) {
 }
 
 void setClockFrequency(Frequency f) {
+  // TODO: Update TIM3 prescaler or ARR to avoid irregular LED blinking
   switch (f) {
     case Frequency::High:
       RCC.CFGR()->setHPRE(RCC::CFGR::AHBPrescaler::SysClk);
       return;
     default:
       assert(f == Frequency::Low);
-      RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescaler);
+      RCC.CFGR()->setHPRE(Clocks::Config::AHBLowFrequencyPrescalerReg);
       return;
   }
 }

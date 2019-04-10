@@ -129,6 +129,81 @@ void initClocks() {
   apb2enr.setSDIOEN(true);
 #endif
   RCC.APB2ENR()->set(apb2enr);
+
+  // AHB1 peripheral clock enable in low-power mode register
+  class RCC::AHB1LPENR ahb1lpenr(0x006190FF); // Reset value
+  ahb1lpenr.setGPIOALPEN(true); // Enable IO port A for Charging/USB plug/Keyboard pins
+  ahb1lpenr.setGPIOBLPEN(true); // Enable IO port B for LED pins
+  ahb1lpenr.setGPIOCLPEN(true); // Enable IO port C for LED/Keyboard pins
+  ahb1lpenr.setGPIODLPEN(false); // Disable IO port D (LCD...)
+  ahb1lpenr.setGPIOELPEN(true); // Enable IO port E for Keyboard/Battery pins
+  ahb1lpenr.setGPIOFLPEN(false); // Disable IO port F
+  ahb1lpenr.setGPIOGLPEN(false); // Disable IO port G
+  ahb1lpenr.setGPIOHLPEN(false); // Disable IO port H
+  ahb1lpenr.setGPIOILPEN(false); // Disable IO port I
+  ahb1lpenr.setCRCLPEN(false);
+  ahb1lpenr.setFLITFLPEN(false);
+  ahb1lpenr.setSRAM1LPEN(false);
+  ahb1lpenr.setDMA1LPEN(false);
+  ahb1lpenr.setDMA2LPEN(false);
+  RCC.AHB1LPENR()->set(ahb1lpenr);
+
+  // AHB2 peripheral clock enable in low-power mode register
+  class RCC::AHB2LPENR ahb2lpenr(0x000000C0); // Reset value
+  ahb2lpenr.setOTGFSLPEN(false);
+  ahb2lpenr.setRNGLPEN(false);
+  RCC.AHB2LPENR()->set(ahb2lpenr);
+
+  // AHB3 peripheral clock enable in low-power mode register
+  class RCC::AHB3LPENR ahb3lpenr(0x00000003); // Reset value
+  ahb3lpenr.setFMCLPEN(false);
+  ahb3lpenr.setQSPILPEN(false);
+  RCC.AHB3LPENR()->set(ahb3lpenr);
+
+  // APB1 peripheral clock enable in low-power mode register
+  class RCC::APB1LPENR apb1lpenr(0x17E6CDFF); // Reset value
+  apb1lpenr.setTIM2LPEN(false);
+  apb1lpenr.setTIM3LPEN(true); // Enable TIM3 in sleep mode for LEDs
+  apb1lpenr.setTIM4LPEN(false);
+  apb1lpenr.setTIM5LPEN(false);
+  apb1lpenr.setTIM6LPEN(false);
+  apb1lpenr.setTIM7LPEN(false);
+  apb1lpenr.setTIM12LPEN(false);
+  apb1lpenr.setTIM13LPEN(false);
+  apb1lpenr.setTIM14LPEN(false);
+  apb1lpenr.setRTCAPBLPEN(false);
+  apb1lpenr.setWWDGLPEN(false);
+  apb1lpenr.setSPI2LPEN(false);
+  apb1lpenr.setSPI3LPEN(false);
+  apb1lpenr.setUSART2LPEN(false);
+  apb1lpenr.setUSART3LPEN(false);
+  apb1lpenr.setI2C1LPEN(false);
+  apb1lpenr.setI2C2LPEN(false);
+  apb1lpenr.setI2C3LPEN(false);
+  apb1lpenr.setCAN1LPEN(false);
+  apb1lpenr.setPWRLPEN(false);
+  apb1lpenr.setI2CFMP1LPEN(false);
+  apb1lpenr.setCAN2LPEN(false);
+  RCC.APB1LPENR()->set(apb1lpenr);
+
+  // APB2 peripheral clock enable in low-power mode register
+  class RCC::APB2LPENR apb2lpenr(0x0117F933); // Reset value
+  apb2lpenr.setTIM1LPEN(false);
+  apb2lpenr.setTIM8LPEN(false);
+  apb2lpenr.setUSART1LPEN(false);
+  apb2lpenr.setUSART6LPEN(false);
+  apb2lpenr.setADC1LPEN(false);
+  apb2lpenr.setSPI1LPEN(false);
+  apb2lpenr.setSPI4LPEN(false);
+  apb2lpenr.setSYSCFGLPEN(false);
+  apb2lpenr.setTIM9LPEN(false);
+  apb2lpenr.setTIM10LPEN(false);
+  apb2lpenr.setTIM11LPEN(false);
+  apb2lpenr.setSPI5LPEN(false);
+  apb2lpenr.setSDIOLPEN(false);
+  apb2lpenr.setEXTITEN(false);
+  apb2lpenr.setDFSDM1LPEN(false);
+  RCC.APB2LPENR()->set(apb2lpenr);
 }
 
 void shutdownClocks(bool keepLEDAwake) {

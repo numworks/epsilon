@@ -18,8 +18,10 @@ void onChargingEvent() {
 
   /* Warning: pins with the same number in different groups cannot be set as
    * source input for EXTI at the same time. Here, EXTICR1 register is filled
-   * between position 0-3 (charging pin = 0) with
-   * 0000 (ChargingGPIO = group A). */
+   * between:
+   * - N0100: position 0-3 (charging pin = 0) with  0000 (ChargingGPIO = group A)
+   * - N0101: position 12-15 (charging pin = 3) with 0100 (ChargingGPIO = group E)
+   */
   SYSCFG.EXTICR1()->setEXTI(Battery::Config::ChargingPin.pin(), Battery::Config::ChargingPin.group());
 
   EXTI.EMR()->set(Battery::Config::ChargingPin.pin(), true);
@@ -54,8 +56,9 @@ void onPowerKeyDown() {
   Keyboard::Config::ColumnGPIO.MODER()->setMode(columnPin, GPIO::MODER::Mode::Input);
   Keyboard::Config::ColumnGPIO.PUPDR()->setPull(columnPin, GPIO::PUPDR::Pull::Up);
 
-  /* Here, EXTICR1 register is filled between position 4-7 (column pin = 1) with
-   * 0010 (ColumnGPIO = group C). */
+  /* Here, EXTICR1 register is filled between:
+   * - N0100: position 4-7 (column pin = 1) with 0010 (ColumnGPIO = group C)
+   * - N0101: position 8-11 (column pin = 2) with 0010 (ColumnGPIO = group C). */
 
   SYSCFG.EXTICR1()->setEXTI(columnPin, Keyboard::Config::ColumnGPIO);
 

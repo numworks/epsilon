@@ -20,11 +20,6 @@ namespace Board {
 
 using namespace Regs;
 
-void initL1Cache() {
-  Cache::enableICache();
-  Cache::enableDCache();
-}
-
 void initMPU() {
   // 1. Disable the MPU
   // 1.1 Memory barrier
@@ -113,7 +108,7 @@ void init() {
 
   initPeripherals();
   // Initiate L1 cache after initiating the external flash
-  initL1Cache();
+  Cache::enable();
 
   // TODO if EPSILON_DEVICE_BENCH, run bench? See n0100
 }

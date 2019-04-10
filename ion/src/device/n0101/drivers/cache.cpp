@@ -48,6 +48,16 @@ void privateCleanInvalidateDisableDCache(bool clean, bool invalidate, bool disab
   isb();
 }
 
+void enable() {
+  enableICache();
+  enableDCache();
+}
+
+void disable() {
+  disableICache();
+  disableDCache();
+}
+
 void invalidateDCache() {
   privateCleanInvalidateDisableDCache(false, true, false);
 }

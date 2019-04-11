@@ -66,12 +66,6 @@ void sleepConfiguration() {
   CORTEX.SCR()->setSLEEPDEEP(false);
 }
 
-KDColor updateLED() {
-  KDColor ledColor = USB::isPlugged() ? (Battery::isCharging() ? KDColorOrange : KDColorGreen) : KDColorBlack;
-  Ion::LED::setColor(ledColor);
-  return ledColor;
-}
-
 void suspend(bool checkIfPowerKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   bool plugged = USB::isPlugged();
@@ -94,7 +88,7 @@ void suspend(bool checkIfPowerKeyReleased) {
     Device::Battery::initGPIO();
     Device::USB::initGPIO();
     Device::LED::init();
-    isLEDActive = updateLED() != KDColorBlack;
+    isLEDActive = LED::updateColorWithPlugAndCharge() != KDColorBlack;
 
     // Configure low-power mode
     if (isLEDActive) {
@@ -150,7 +144,7 @@ void suspend(bool checkIfPowerKeyReleased) {
   Device::Board::initClocks();
   Device::Board::initPeripherals();
   // Update LED according to plug and charge state
-  updateLED();
+  LED::updateColorWithPlugAndCharge();
 }
 
 }

@@ -150,16 +150,16 @@ void initClocks() {
 
   // Enable Over-drive
   PWR.CR()->setODEN(true);
-  while(!PWR.CSR1()->getODRDY()) {
+  while(!PWR.CSR()->getODRDY()) {
   }
 
   PWR.CR()->setODSWEN(true);
-  while(!PWR.CSR1()->getODSWRDY()) {
+  while(!PWR.CSR()->getODSWRDY()) {
   }
 
   // Choose Voltage scale 1
   PWR.CR()->setVOS(PWR::CR::Voltage::Scale1);
-  while (!PWR.CSR1()->getVOSRDY()) {}
+  while (!PWR.CSR()->getVOSRDY()) {}
 
   /* After reset the Flash runs as fast as the CPU. When we clock the CPU faster
    * the flash memory cannot follow and therefore flash memory accesses need to

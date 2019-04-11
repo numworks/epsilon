@@ -22,7 +22,7 @@
 EPSILON_STACK_END = 0x20000000 + 256K - 32K;
 
 MEMORY {
-  RAM_BUFFER (rw) : ORIGIN = EPSILON_STACK_END, LENGTH = 8K
+  RAM_BUFFER (rw) : ORIGIN = EPSILON_STACK_END, LENGTH = 9K
 }
 
 /* The DFU needs to know to which address it should jump to after a leave

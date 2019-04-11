@@ -42,6 +42,11 @@ SECTIONS {
     *(.rodata.*)
   } >RAM_BUFFER
 
+  .data : {
+    /* We need to keep this symbol. */
+    *(.data._ZN3Ion6Device5BoardL18sStandardFrequencyE)
+  } >RAM_BUFFER
+
   /DISCARD/ : {
     /* For now, we do not need .bss and .data sections. This allows us to simply
      * skip any rt0-style initialization and jump straight into the PollAndReset

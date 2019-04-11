@@ -112,13 +112,6 @@ void HistoryViewCell::layoutSubviews() {
     min(maxFrameWidth, outputSize.width()),
     oneLine() ? outputSize.height() : (bounds().height() - inputSize.height())
   ));
-
-  if (oneLine()) {
-    setSize(KDSize(
-      bounds().width(),
-      max(inputSize.height(), outputSize.height())
-    ));
-  }
 }
 
 bool HistoryViewCell::oneLine() {

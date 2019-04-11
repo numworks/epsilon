@@ -44,12 +44,6 @@ void stopConfiguration() {
 #endif
 
   CORTEX.SCR()->setSLEEPDEEP(true);
-
-  Device::Board::shutdownPeripherals();
-
-  configWakeUp();
-
-  Device::Board::shutdownClocks();
 }
 
 void sleepConfiguration() {
@@ -70,12 +64,12 @@ void sleepConfiguration() {
 #endif
 
   CORTEX.SCR()->setSLEEPDEEP(false);
+}
 
-  Device::Board::shutdownPeripherals(true);
-
-  configWakeUp();
-
-  Device::Board::shutdownClocks(true);
+KDColor updateLED() {
+  KDColor ledColor = USB::isPlugged() ? (Battery::isCharging() ? KDColorYellow : KDColorGreen) : KDColorBlack;
+  Ion::LED::setColor(ledColor);
+  return ledColor;
 }
 
 void suspend(bool checkIfPowerKeyReleased) {
@@ -91,14 +85,35 @@ void suspend(bool checkIfPowerKeyReleased) {
     }
   }
 
+  /* First, shutdown all peripherals except LED. Indeed, the charging pin state
+   * might change when we shutdown peripherals that draw current. */
+  Device::Board::shutdownPeripherals(true);
 
   while (1) {
+    // Update LED color according to plug and charge state
+    Device::Battery::initGPIO();
+    Device::USB::initGPIO();
+    Device::LED::init();
+    isLEDActive = updateLED() != KDColorBlack;
+
     // Configure low-power mode
     if (isLEDActive) {
       sleepConfiguration();
     } else {
       stopConfiguration();
     }
+
+    // Shutdown all peripherals (except LED if active)
+    Device::Board::shutdownPeripherals(isLEDActive);
+
+    /* Wake up on:
+     * - Power key
+     * - Plug/Unplug USB
+     * - Stop charging */
+    configWakeUp();
+
+    // Shutdown all clocks (except the ones used by LED if active)
+    Device::Board::shutdownClocks(isLEDActive);
 
    /* To enter sleep, we need to issue a WFE instruction, which waits for the
    * event flag to be set and then clears it. However, the event flag might
@@ -110,23 +125,19 @@ void suspend(bool checkIfPowerKeyReleased) {
     asm("nop");
     asm("wfe");
 
+    /* A hardware event triggered a wake up, we determine if the device should
+     * wake up. We wake up when:
+     * - only the power key was down
+     * - the unplugged device was plugged */
     Device::Board::initClocks();
 
+    // Check power key
     Device::Keyboard::init();
     Keyboard::State scan = Keyboard::scan();
-
     Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::PowerKey);
 
-    /* Update LEDS
-     * if the standby mode was stopped due to a "stop charging" event, we wait
-     * a while to be sure that the plug state of the USB is up-to-date. */
-    Device::Battery::initGPIO();
+    // Check plugging state
     Device::USB::initGPIO();
-    Device::LED::init();
-    KDColor ledColor = USB::isPlugged() ? (Battery::isCharging() ? KDColorYellow : KDColorGreen) : KDColorBlack;
-    Ion::LED::setColor(ledColor);
-    isLEDActive = ledColor != KDColorBlack;
-
     if (scan == OnlyPowerKeyDown || (!plugged && USB::isPlugged())) {
       // Wake up
       break;
@@ -134,10 +145,12 @@ void suspend(bool checkIfPowerKeyReleased) {
     plugged = USB::isPlugged();
   }
 
+  // Reset normal frequency
   Device::Board::sNormalFrequency = Device::Board::Frequency::High;
   Device::Board::initClocks();
-
   Device::Board::initPeripherals();
+  // Update LED according to plug and charge state
+  updateLED();
 }
 
 }

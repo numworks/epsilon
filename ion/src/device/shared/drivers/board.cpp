@@ -18,8 +18,6 @@ namespace Board {
 
 using namespace Regs;
 
-Frequency sNormalFrequency = Frequency::High;
-
 void shutdown() {
   shutdownPeripherals();
   shutdownClocks();
@@ -58,6 +56,16 @@ void shutdownPeripherals(bool keepLEDAwake) {
   Keyboard::shutdown();
   Backlight::shutdown();
   Display::shutdown();
+}
+
+Frequency sStandardFrequency = Frequency::High;
+
+Frequency standardFrequency() {
+  return sStandardFrequency;
+}
+
+void setStandardFrequency(Frequency f) {
+  sStandardFrequency = f;
 }
 
 void setClockFrequency(Frequency f) {

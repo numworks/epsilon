@@ -58,7 +58,7 @@ void shutdownPeripherals(bool keepLEDAwake) {
   Display::shutdown();
 }
 
-Frequency sStandardFrequency = Frequency::High;
+static Frequency sStandardFrequency = Frequency::High;
 
 Frequency standardFrequency() {
   return sStandardFrequency;

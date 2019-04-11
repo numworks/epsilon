@@ -12,6 +12,7 @@
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
+#include "events_keyboard_platform.h"
 
 namespace Ion {
 
@@ -135,6 +136,11 @@ void suspend(bool checkIfPowerKeyReleased) {
     if (scan == OnlyPowerKeyDown || (!plugged && USB::isPlugged())) {
       // Wake up
       break;
+    } else {
+      /* The wake up event can be an unplug event or a battery charging event.
+       * In both cases, we want to update static observed states like
+       * sLastUSBPlugged or sLastBatteryCharging. */
+      Events::getPlatformEvent();
     }
     plugged = USB::isPlugged();
   }
@@ -145,6 +151,12 @@ void suspend(bool checkIfPowerKeyReleased) {
   Device::Board::initPeripherals();
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();
+  /* If the USB has been unplugged while sleeping, the USB should have been
+   * soft disabled but as part of the USB peripheral was asleep, this could
+   * not be done before. */
+  if (USB::isPlugged()) {
+    USB::disable();
+  }
 }
 
 }

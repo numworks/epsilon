@@ -55,7 +55,7 @@ void sleepConfiguration() {
 #if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   // Disable over-drive
   PWR.CR()->setODSWEN(false);
-  while(!PWR.CSR1()->getODSWRDY()) {
+  while(!PWR.CSR()->getODSWRDY()) {
   }
   PWR.CR()->setODEN(true);
 #endif

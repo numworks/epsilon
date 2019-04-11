@@ -5,14 +5,6 @@
 
 namespace Ion {
 
-namespace Device {
-namespace Board {
-
-extern Device::Board::Frequency sNormalFrequency;
-
-}
-}
-
 namespace Timing {
 
 using namespace Device::Timing;
@@ -27,7 +19,7 @@ void msleep(uint32_t ms) {
   for (volatile uint32_t i=0; i<Config::LoopsPerMillisecond*ms; i++) {
       __asm volatile("nop");
   }
-  Device::Board::setClockFrequency(Device::Board::sNormalFrequency);
+  Device::Board::setClockFrequency(Device::Board::standardFrequency());
 }
 void usleep(uint32_t us) {
   for (volatile uint32_t i=0; i<Config::LoopsPerMicrosecond*us; i++) {

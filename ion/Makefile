@@ -20,6 +20,7 @@ src += $(addprefix ion/src/shared/, \
   crc32_padded.cpp \
   decompress.cpp \
   events.cpp \
+  led.cpp \
   platform_info.cpp \
   storage.cpp \
 )

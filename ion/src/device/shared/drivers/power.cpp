@@ -58,10 +58,6 @@ void sleepConfiguration() {
   while(!PWR.CSR1()->getODSWRDY()) {
   }
   PWR.CR()->setODEN(true);
-
-  // Choose Voltage scale 3
-  PWR.CR()->setVOS(PWR::CR::Voltage::Scale3);
-  while (!PWR.CSR1()->getVOSRDY()) {}
 #endif
 
   CORTEX.SCR()->setSLEEPDEEP(false);

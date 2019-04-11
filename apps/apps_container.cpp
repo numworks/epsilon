@@ -147,7 +147,7 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 
 void AppsContainer::updateLED() {
   if (Ion::USB::isPlugged()) {
-    Ion::LED::setColor(Ion::Battery::isCharging() ? KDColorYellow : KDColorGreen);
+    Ion::LED::setColor(Ion::Battery::isCharging() ? KDColorOrange : KDColorGreen);
   } else {
     Ion::LED::setColor(KDColorBlack);
   }

@@ -67,7 +67,7 @@ void sleepConfiguration() {
 }
 
 KDColor updateLED() {
-  KDColor ledColor = USB::isPlugged() ? (Battery::isCharging() ? KDColorYellow : KDColorGreen) : KDColorBlack;
+  KDColor ledColor = USB::isPlugged() ? (Battery::isCharging() ? KDColorOrange : KDColorGreen) : KDColorBlack;
   Ion::LED::setColor(ledColor);
   return ledColor;
 }

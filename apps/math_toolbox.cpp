@@ -9,6 +9,24 @@ using namespace Poincare;
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
 
+const ToolboxMessageTree physicsChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::c_cDesc, I18n::Message::c_c, false, I18n::Message::c_c),
+  ToolboxMessageTree::Leaf(I18n::Message::c_GDesc, I18n::Message::c_G, false, I18n::Message::c_G),
+  ToolboxMessageTree::Leaf(I18n::Message::c_kDesc, I18n::Message::c_k, false, I18n::Message::c_k),
+  ToolboxMessageTree::Leaf(I18n::Message::c_eDesc, I18n::Message::c_e, false, I18n::Message::c_e),
+  ToolboxMessageTree::Leaf(I18n::Message::c_mgDesc, I18n::Message::c_mg, false, I18n::Message::c_mg),
+  ToolboxMessageTree::Leaf(I18n::Message::c_mpDesc, I18n::Message::c_mp, false, I18n::Message::c_mp),
+  ToolboxMessageTree::Leaf(I18n::Message::c_mnDesc, I18n::Message::c_mn, false, I18n::Message::c_mn),
+  ToolboxMessageTree::Leaf(I18n::Message::c_meDesc, I18n::Message::c_me, false, I18n::Message::c_me),
+  ToolboxMessageTree::Leaf(I18n::Message::c_hDesc, I18n::Message::c_h, false, I18n::Message::c_h)};
+
+const ToolboxMessageTree chemistryChildren[1] = {
+  ToolboxMessageTree::Leaf(I18n::Message::c_NaDesc, I18n::Message::c_Na,  false, I18n::Message::c_Na)};
+
+const ToolboxMessageTree constantsChildren[2] = {
+  ToolboxMessageTree::Node(I18n::Message::Physics, physicsChildren),
+  ToolboxMessageTree::Node(I18n::Message::Chemistry, chemistryChildren)};
+
 const ToolboxMessageTree calculChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, false, I18n::Message::DiffCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IntCommandWithArg, I18n::Message::Integral, false, I18n::Message::IntCommand),
@@ -83,6 +101,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),
+  ToolboxMessageTree::Node(I18n::Message::Constants, constantsChildren),
   ToolboxMessageTree::Node(I18n::Message::Calculation, calculChildren),
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),

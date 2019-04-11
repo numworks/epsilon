@@ -63,6 +63,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
       Ion::LED::setBlinking(1000, 0.1f);
     } else {
       Ion::LED::setColor(KDColorBlack);
+      Ion::LED::updateColorWithPlugAndCharge();
     }
     container->refreshPreferences();
     container->activeApp()->dismissModalViewController();

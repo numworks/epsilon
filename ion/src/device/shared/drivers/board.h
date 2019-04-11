@@ -20,6 +20,8 @@ enum class Frequency {
   High = 1
 };
 
+Frequency standardFrequency();
+void setStandardFrequency(Frequency f);
 void setClockFrequency(Frequency f);
 
 }

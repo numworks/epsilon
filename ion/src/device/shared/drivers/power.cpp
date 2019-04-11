@@ -16,14 +16,6 @@
 
 namespace Ion {
 
-namespace Device {
-namespace Board {
-
-extern Device::Board::Frequency sNormalFrequency;
-
-}
-}
-
 namespace Power {
 
 using namespace Device::Regs;
@@ -49,8 +41,8 @@ void stopConfiguration() {
 
 void sleepConfiguration() {
   // Decrease HCLK frequency
-  Device::Board::sNormalFrequency = Device::Board::Frequency::Low;
-  Device::Board::setClockFrequency(Device::Board::Frequency::Low);
+  Device::Board::setStandardFrequency(Device::Board::Frequency::Low);
+  Device::Board::setClockFrequency(Device::Board::standardFrequency());
 
 #if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   // Disable over-drive
@@ -142,7 +134,7 @@ void suspend(bool checkIfPowerKeyReleased) {
   }
 
   // Reset normal frequency
-  Device::Board::sNormalFrequency = Device::Board::Frequency::High;
+  Device::Board::setStandardFrequency(Device::Board::Frequency::High);
   Device::Board::initClocks();
   Device::Board::initPeripherals();
   // Update LED according to plug and charge state

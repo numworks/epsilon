@@ -206,10 +206,12 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 }
 
 bool AppsContainer::processEvent(Ion::Events::Event event) {
+  // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         displayExamModePopUp(false);
+        window()->redraw();
       } else {
         Ion::USB::enable();
       }

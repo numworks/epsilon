@@ -34,12 +34,12 @@ void LCDDataTestController::ContentView::layoutSubviews() {
   m_lcdDataStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
 }
 
-
 void colorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c) {
   for (int i = 0; i < numberOfPixels; i++) {
     pixels[i] = c;
   }
 }
+
 bool LCDDataTestController::test() {
   KDColor testColors[] = {
     KDColorRed, KDColorGreen, KDColorBlue,
@@ -62,7 +62,7 @@ bool LCDDataTestController::testDisplayColor(KDColor c) {
 
   KDColor stamp[stampWidth*stampHeight];
 
-  // Test with pushRect
+  // Tiling test with pushRect
   colorPixelBuffer(stamp, stampWidth * stampHeight, c);
   for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
     for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {

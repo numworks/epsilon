@@ -10,7 +10,6 @@ namespace Flash {
 
 void MassErase();
 
-constexpr int NumberOfSectors = 4;
 int SectorAtAddress(uint32_t address);
 void EraseSector(int i);
 

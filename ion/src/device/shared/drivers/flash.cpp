@@ -213,7 +213,7 @@ static void flash_memcpy(uint8_t * destination, uint8_t * source, size_t length)
 }
 
 int SectorAtAddress(uint32_t address) {
-  for (int i=0; i<NumberOfSectors; i++) {
+  for (int i = 0; i < Config::NumberOfSectors; i++) {
     if (address >= Config::SectorAddresses[i] && address < Config::SectorAddresses[i+1]) {
       return i;
     }
@@ -231,7 +231,7 @@ void MassErase() {
 }
 
 void EraseSector(int i) {
-  assert(i >= 0 && i < NumberOfSectors);
+  assert(i >= 0 && i < Config::NumberOfSectors);
   open();
   FLASH.CR()->setSNB(i);
   FLASH.CR()->setSER(true);

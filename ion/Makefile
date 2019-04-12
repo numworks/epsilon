@@ -6,6 +6,11 @@ endif
 
 SFLAGS += -Iion/include -DKD_CONFIG_H=1
 
+ifndef ION_KEYBOARD_LAYOUT
+  $(error platform.mak should define ION_KEYBOARD_LAYOUT)
+endif
+SFLAGS += -Iion/include/ion/keyboard/$(ION_KEYBOARD_LAYOUT)
+
 include ion/src/$(PLATFORM)/Makefile
 include ion/src/shared/tools/Makefile
 

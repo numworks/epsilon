@@ -79,10 +79,12 @@ namespace Keyboard {
 using namespace Regs;
 
 void init() {
+#if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   /* PA0 pin is also used as the wake up pin of the standby mode. It has to be
    * unable to be used in output mode, open-drain for the keyboard. */
   PWR.CSR2()->setEWUP1(false); // Disable PA0 as wakeup pin
   PWR.CR2()->setCWUPF1(true); // Clear wakeup pin flag for PA0
+#endif
 
   for (uint8_t i=0; i<Config::numberOfRows; i++) {
     uint8_t pin = Config::RowPins[i];

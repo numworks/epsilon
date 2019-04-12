@@ -1,1 +1,2 @@
 TOOLCHAIN ?= arm-gcc-m4f
+ION_KEYBOARD_LAYOUT = layout_B2

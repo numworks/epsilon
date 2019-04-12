@@ -8,6 +8,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
 #include <drivers/usb.h>
+#include <drivers/reset.h>
 #include <drivers/wakeup.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
@@ -55,17 +56,53 @@ void sleepConfiguration() {
   CORTEX.SCR()->setSLEEPDEEP(false);
 }
 
+void standbyConfiguration() {
+  PWR.CR()->setPPDS(true); // Select standby when the CPU enters deepsleep
+  PWR.CR()->setCSBF(true); // Clear Standby flag
+  PWR.CSR()->setBRE(false); // Unable back up RAM (lower power consumption in standby)
+  PWR.CSR()->setEIWUP(false); // Unable RTC (lower power consumption in standby)
+
+  PWR.CSR2()->setEWUP1(true); // Enable PA0 as wakeup pin
+  PWR.CR2()->setWUPP1(false); // Define PA0 (wakeup) pin polarity (rising edge)
+  PWR.CR2()->setCWUPF1(true); // Clear wakeup pin flag for PA0 (if device has already been in standby and woke up)
+  CORTEX.SCR()->setSLEEPDEEP(true); // Allow Cortex-M7 deepsleep state
+}
+
+void waitUntilPowerKeyReleased() {
+  /* Wait until power is released to avoid restarting just after suspending */
+  bool isPowerDown = true;
+  while (isPowerDown) {
+    Keyboard::State scan = Keyboard::scan();
+    isPowerDown = scan.keyDown(Keyboard::PowerKey);
+  }
+}
+
+void enterLowPowerMode() {
+  /* To enter sleep, we need to issue a WFE instruction, which waits for the
+   * event flag to be set and then clears it. However, the event flag might
+   * already be on. So the safest way to make sure we actually wait for a new
+   * event is to force the event flag to on (SEV instruction), use a first WFE
+   * to clear it, and then a second WFE to wait for a _new_ event. */
+  asm("sev");
+  asm("wfe");
+  asm("nop");
+  asm("wfe");
+}
+
+void standby() {
+  waitUntilPowerKeyReleased();
+  standbyConfiguration();
+  Device::Board::shutdown();
+  enterLowPowerMode();
+  Device::Reset::core();
+}
+
 void suspend(bool checkIfPowerKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   bool plugged = USB::isPlugged();
 
   if (checkIfPowerKeyReleased) {
-    /* Wait until power is released to avoid restarting just after suspending */
-    bool isPowerDown = true;
-    while (isPowerDown) {
-      Keyboard::State scan = Keyboard::scan();
-      isPowerDown = scan.keyDown(Keyboard::PowerKey);
-    }
+    waitUntilPowerKeyReleased();
   }
 
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
@@ -98,15 +135,7 @@ void suspend(bool checkIfPowerKeyReleased) {
     // Shutdown all clocks (except the ones used by LED if active)
     Device::Board::shutdownClocks(isLEDActive);
 
-   /* To enter sleep, we need to issue a WFE instruction, which waits for the
-   * event flag to be set and then clears it. However, the event flag might
-   * already be on. So the safest way to make sure we actually wait for a new
-   * event is to force the event flag to on (SEV instruction), use a first WFE
-   * to clear it, and then a second WFE to wait for a _new_ event. */
-    asm("sev");
-    asm("wfe");
-    asm("nop");
-    asm("wfe");
+    enterLowPowerMode();
 
     /* A hardware event triggered a wake up, we determine if the device should
      * wake up. We wake up when:

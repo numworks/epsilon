@@ -128,7 +128,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
+void AppsContainer::suspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
 #ifdef EPSILON_BOOT_PROMPT
@@ -136,7 +136,7 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
     activeApp()->displayModalViewController(&m_promptController, 0.f, 0.f);
   }
 #endif
-  Ion::Power::suspend(checkIfPowerKeyReleased);
+  Ion::Power::suspend(checkIfOnOffKeyReleased);
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */

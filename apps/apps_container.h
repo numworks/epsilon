@@ -35,7 +35,7 @@ public:
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
   VariableBoxController * variableBoxController();
-  void suspend(bool checkIfPowerKeyReleased = false);
+  void suspend(bool checkIfOnOffKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   bool switchTo(App::Snapshot * snapshot) override;
   void run() override;

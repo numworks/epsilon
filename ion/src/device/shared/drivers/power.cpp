@@ -22,7 +22,7 @@ namespace Power {
 using namespace Device::Regs;
 
 void configWakeUp() {
-  Device::WakeUp::onPowerKeyDown();
+  Device::WakeUp::onOnOffKeyDown();
   Device::WakeUp::onUSBPlugging();
   Device::WakeUp::onChargingEvent();
 }
@@ -71,7 +71,7 @@ void standbyConfiguration() {
   CORTEX.SCR()->setSLEEPDEEP(true); // Allow Cortex-M7 deepsleep state
 }
 
-void waitUntilPowerKeyReleased() {
+void waitUntilOnOffKeyReleased() {
   /* Wait until power is released to avoid restarting just after suspending */
   bool isPowerDown = true;
   while (isPowerDown) {
@@ -93,19 +93,19 @@ void enterLowPowerMode() {
 }
 
 void standby() {
-  waitUntilPowerKeyReleased();
+  waitUntilOnOffKeyReleased();
   standbyConfiguration();
   Device::Board::shutdown();
   enterLowPowerMode();
   Device::Reset::core();
 }
 
-void suspend(bool checkIfPowerKeyReleased) {
+void suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   bool plugged = USB::isPlugged();
 
-  if (checkIfPowerKeyReleased) {
-    waitUntilPowerKeyReleased();
+  if (checkIfOnOffKeyReleased) {
+    waitUntilOnOffKeyReleased();
   }
 
   /* First, shutdown all peripherals except LED. Indeed, the charging pin state
@@ -149,11 +149,11 @@ void suspend(bool checkIfPowerKeyReleased) {
     // Check power key
     Device::Keyboard::init();
     Keyboard::State scan = Keyboard::scan();
-    Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::Key::OnOff);
+    Ion::Keyboard::State OnlyOnOffKeyDown = Keyboard::State(Keyboard::Key::OnOff);
 
     // Check plugging state
     Device::USB::initGPIO();
-    if (scan == OnlyPowerKeyDown || (!plugged && USB::isPlugged())) {
+    if (scan == OnlyOnOffKeyDown || (!plugged && USB::isPlugged())) {
       // Wake up
       break;
     } else {

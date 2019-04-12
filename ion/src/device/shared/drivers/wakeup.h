@@ -32,7 +32,7 @@ namespace WakeUp {
 
 void onChargingEvent();
 void onUSBPlugging();
-void onPowerKeyDown();
+void onOnOffKeyDown();
 
 }
 }

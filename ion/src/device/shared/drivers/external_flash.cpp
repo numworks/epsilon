@@ -284,6 +284,10 @@ static void initQSPI() {
 static QUADSPI::CCR::OperatingMode sOperatingMode = QUADSPI::CCR::OperatingMode::Single;
 
 static void initChip() {
+  // Release sleep deep
+  send_command(Command::ReleaseDeepPowerDown, sOperatingMode);
+  Timing::usleep(3);
+
   /* The chip initially expects commands in SPI mode. We need to use SPI to tell
    * it to switch to QPI. */
   if (sOperatingMode == QUADSPI::CCR::OperatingMode::Single && DefaultOperatingMode == QUADSPI::CCR::OperatingMode::Quad) {
@@ -338,7 +342,7 @@ static void shutdownChip() {
   Ion::Timing::usleep(30);
 
   // Sleep deep
-  send_command(Command::DeepPowerDown);
+  send_command(Command::DeepPowerDown, sOperatingMode);
   Timing::usleep(3);
 }
 

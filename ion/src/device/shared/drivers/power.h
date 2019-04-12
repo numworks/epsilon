@@ -5,9 +5,14 @@ namespace Ion {
 namespace Device {
 namespace Power {
 
-void stopConfiguration();
+void configWakeUp();
+
 void sleepConfiguration();
-//void standby();
+void stopConfiguration();
+void standbyConfiguration();
+
+void waitUntilOnOffKeyReleased();
+void enterLowPowerMode();
 
 }
 }

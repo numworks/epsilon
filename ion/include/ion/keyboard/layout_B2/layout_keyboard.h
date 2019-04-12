@@ -5,19 +5,17 @@ namespace Ion {
 namespace Keyboard {
 
 enum class Key : uint8_t {
-  A1=0,  A2=1,  A3=2,  A4=3,  A5=4,  A6=5,
-  B1=6,  B2=7,  /*B3=8, B4=9,  B5=10, B6=11, */
-  C1=12, C2=13, C3=14, C4=15, C5=16, C6=17,
-  D1=18, D2=19, D3=20, D4=21, D5=22, D6=23,
-  E1=24, E2=25, E3=26, E4=27, E5=28, E6=29,
-  F1=30, F2=31, F3=32, F4=33, F5=34, // F6=35,
-  G1=36, G2=37, G3=38, G4=39, G5=40, // G6=41,
-  H1=42, H2=43, H3=44, H4=45, H5=46, // H6=47,
-  I1=48, I2=49, I3=50, I4=51, I5=52, // I6=53,
+  Left=0,  Up=1,     Down=2,    Right=3,           OK=4,              Back=5,
+  Home=6,  OnOff=7,  /*B3= 8,   B4=9,            B5=10,             B6=11, */
+  Shift=12,Alpha=13, XNT=14,    Var=15,            Toolbox=16,        Backspace=17,
+  Exp=18,  Ln=19,    Log=20,    Imaginary=21,      Comma=22,          Power=23,
+  Sine=24, Cosine=25,Tangent=26,Pi=27,             Sqrt=28,           Square=29,
+  Seven=30,Eight=31, Nine=32,   LeftParenthesis=33,RightParenthesis=34,// F6=35,
+  Four=36, Five=37,  Six=38,    Multiplication=39, Division=40,        // G6=41,
+  One=42,  Two=43,   Three=44,  Plus=45,           Minus=46,           // H6=47,
+  Zero=48, Dot=49,   EE=50,     Ans=51,            EXE=52,             // I6=53,
   None = 54
 };
-
-constexpr Key PowerKey = Key::B2;
 
 }
 }

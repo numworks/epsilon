@@ -43,7 +43,7 @@ void onUSBPlugging() {
 }
 
 
-void onPowerKeyDown() {
+void onOnOffKeyDown() {
   Keyboard::Key key = Keyboard::Key::OnOff;
   uint8_t rowPin = Keyboard::Config::RowPins[Keyboard::rowForKey(key)];
   Keyboard::Config::RowGPIO.MODER()->setMode(rowPin, GPIO::MODER::Mode::Output);

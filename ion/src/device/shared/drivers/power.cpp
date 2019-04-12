@@ -62,9 +62,12 @@ void standbyConfiguration() {
   PWR.CSR()->setBRE(false); // Unable back up RAM (lower power consumption in standby)
   PWR.CSR()->setEIWUP(false); // Unable RTC (lower power consumption in standby)
 
+#if REGS_PWR_CONFIG_ADDITIONAL_FIELDS
   PWR.CSR2()->setEWUP1(true); // Enable PA0 as wakeup pin
   PWR.CR2()->setWUPP1(false); // Define PA0 (wakeup) pin polarity (rising edge)
   PWR.CR2()->setCWUPF1(true); // Clear wakeup pin flag for PA0 (if device has already been in standby and woke up)
+#endif
+
   CORTEX.SCR()->setSLEEPDEEP(true); // Allow Cortex-M7 deepsleep state
 }
 

@@ -7,6 +7,7 @@
 #include <drivers/external_flash.h>
 #include <drivers/keyboard.h>
 #include <drivers/led.h>
+#include <drivers/power.h>
 #include <drivers/usb.h>
 #include <drivers/reset.h>
 #include <drivers/wakeup.h>
@@ -19,6 +20,94 @@ namespace Ion {
 
 namespace Power {
 
+void suspend(bool checkIfOnOffKeyReleased) {
+  bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
+  bool plugged = USB::isPlugged();
+
+  if (checkIfOnOffKeyReleased) {
+    Device::Power::waitUntilOnOffKeyReleased();
+  }
+
+  /* First, shutdown all peripherals except LED. Indeed, the charging pin state
+   * might change when we shutdown peripherals that draw current. */
+  Device::Board::shutdownPeripherals(true);
+
+  while (1) {
+    // Update LED color according to plug and charge state
+    Device::Battery::initGPIO();
+    Device::USB::initGPIO();
+    Device::LED::init();
+    isLEDActive = LED::updateColorWithPlugAndCharge() != KDColorBlack;
+
+    // Configure low-power mode
+    if (isLEDActive) {
+      Device::Power::sleepConfiguration();
+    } else {
+      Device::Power::stopConfiguration();
+    }
+
+    // Shutdown all peripherals (except LED if active)
+    Device::Board::shutdownPeripherals(isLEDActive);
+
+    /* Wake up on:
+     * - Power key
+     * - Plug/Unplug USB
+     * - Stop charging */
+    Device::Power::configWakeUp();
+
+    // Shutdown all clocks (except the ones used by LED if active)
+    Device::Board::shutdownClocks(isLEDActive);
+
+    Device::Power::enterLowPowerMode();
+
+    /* A hardware event triggered a wake up, we determine if the device should
+     * wake up. We wake up when:
+     * - only the power key was down
+     * - the unplugged device was plugged */
+    Device::Board::initClocks();
+
+    // Check power key
+    Device::Keyboard::init();
+    Keyboard::State scan = Keyboard::scan();
+    Ion::Keyboard::State OnlyOnOffKeyDown = Keyboard::State(Keyboard::Key::OnOff);
+
+    // Check plugging state
+    Device::USB::initGPIO();
+    if (scan == OnlyOnOffKeyDown || (!plugged && USB::isPlugged())) {
+      // Wake up
+      break;
+    } else {
+      /* The wake up event can be an unplug event or a battery charging event.
+       * In both cases, we want to update static observed states like
+       * sLastUSBPlugged or sLastBatteryCharging. */
+      Events::getPlatformEvent();
+    }
+    plugged = USB::isPlugged();
+  }
+
+  // Reset normal frequency
+  Device::Board::setStandardFrequency(Device::Board::Frequency::High);
+  Device::Board::initClocks();
+  Device::Board::initPeripherals();
+  // Update LED according to plug and charge state
+  LED::updateColorWithPlugAndCharge();
+  /* If the USB has been unplugged while sleeping, the USB should have been
+   * soft disabled but as part of the USB peripheral was asleep, this could
+   * not be done before. */
+  if (USB::isPlugged()) {
+    USB::disable();
+  }
+}
+
+}
+
+}
+
+namespace Ion {
+namespace Device {
+namespace Power {
+
+// Public Power methods
 using namespace Device::Regs;
 
 void configWakeUp() {
@@ -92,92 +181,6 @@ void enterLowPowerMode() {
   asm("wfe");
 }
 
-void standby() {
-  waitUntilOnOffKeyReleased();
-  standbyConfiguration();
-  Device::Board::shutdown();
-  enterLowPowerMode();
-  Device::Reset::core();
 }
-
-void suspend(bool checkIfOnOffKeyReleased) {
-  bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
-  bool plugged = USB::isPlugged();
-
-  if (checkIfOnOffKeyReleased) {
-    waitUntilOnOffKeyReleased();
-  }
-
-  /* First, shutdown all peripherals except LED. Indeed, the charging pin state
-   * might change when we shutdown peripherals that draw current. */
-  Device::Board::shutdownPeripherals(true);
-
-  while (1) {
-    // Update LED color according to plug and charge state
-    Device::Battery::initGPIO();
-    Device::USB::initGPIO();
-    Device::LED::init();
-    isLEDActive = LED::updateColorWithPlugAndCharge() != KDColorBlack;
-
-    // Configure low-power mode
-    if (isLEDActive) {
-      sleepConfiguration();
-    } else {
-      stopConfiguration();
-    }
-
-    // Shutdown all peripherals (except LED if active)
-    Device::Board::shutdownPeripherals(isLEDActive);
-
-    /* Wake up on:
-     * - Power key
-     * - Plug/Unplug USB
-     * - Stop charging */
-    configWakeUp();
-
-    // Shutdown all clocks (except the ones used by LED if active)
-    Device::Board::shutdownClocks(isLEDActive);
-
-    enterLowPowerMode();
-
-    /* A hardware event triggered a wake up, we determine if the device should
-     * wake up. We wake up when:
-     * - only the power key was down
-     * - the unplugged device was plugged */
-    Device::Board::initClocks();
-
-    // Check power key
-    Device::Keyboard::init();
-    Keyboard::State scan = Keyboard::scan();
-    Ion::Keyboard::State OnlyOnOffKeyDown = Keyboard::State(Keyboard::Key::OnOff);
-
-    // Check plugging state
-    Device::USB::initGPIO();
-    if (scan == OnlyOnOffKeyDown || (!plugged && USB::isPlugged())) {
-      // Wake up
-      break;
-    } else {
-      /* The wake up event can be an unplug event or a battery charging event.
-       * In both cases, we want to update static observed states like
-       * sLastUSBPlugged or sLastBatteryCharging. */
-      Events::getPlatformEvent();
-    }
-    plugged = USB::isPlugged();
-  }
-
-  // Reset normal frequency
-  Device::Board::setStandardFrequency(Device::Board::Frequency::High);
-  Device::Board::initClocks();
-  Device::Board::initPeripherals();
-  // Update LED according to plug and charge state
-  LED::updateColorWithPlugAndCharge();
-  /* If the USB has been unplugged while sleeping, the USB should have been
-   * soft disabled but as part of the USB peripheral was asleep, this could
-   * not be done before. */
-  if (USB::isPlugged()) {
-    USB::disable();
-  }
-}
-
 }
 }

@@ -62,6 +62,9 @@ constexpr static uint32_t FSMCBankAddress = FSMCBaseAddress + (FSMCMemoryBank-1)
 static volatile Command * const CommandAddress = (Command *)(FSMCBankAddress);
 static volatile uint16_t * const DataAddress = (uint16_t *)(FSMCBankAddress | (1<<(FSMCDataCommandAddressBit+1)));
 
+// For hardware test
+void HardwareTestPushBlackWhite();
+
 }
 }
 }

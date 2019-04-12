@@ -6,10 +6,10 @@ namespace Ion {
 namespace Power {
 
 void standby() {
-  waitUntilOnOffKeyReleased();
-  standbyConfiguration();
+  Device::Power::waitUntilOnOffKeyReleased();
+  Device::Power::standbyConfiguration();
   Device::Board::shutdown();
-  enterLowPowerMode();
+  Device::Power::enterLowPowerMode();
   Device::Reset::core();
 }
 

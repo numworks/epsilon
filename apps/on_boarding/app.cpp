@@ -33,7 +33,7 @@ bool App::processEvent(Ion::Events::Event e) {
     return true;
   }
   if (e == Ion::Events::OnOff) {
-    m_languageController.reinitOnBoarding();
+    Ion::Power::standby(); // Force a core reset to exit
   }
   return ::App::processEvent(e);
 }

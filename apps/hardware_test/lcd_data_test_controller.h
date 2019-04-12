@@ -7,6 +7,17 @@
 namespace HardwareTest {
 
 class LCDDataTestController : public ViewController {
+
+/* There are three types of tests, where a pattern is pushed to the screen and
+ * the number of invalid pixels then counted.
+ *   - Test 1: Tile the screen with color patches. Tiling increases the number
+ *   of border mistakes.
+ *   - Test 2: Push one color to the whole screen in one step. It shows errors
+ *   that appear on large and fast pushes.
+ *   - Test 3: Color the screen by alterning one pixel black and one pixel
+ *   white (maximal data difference), at maximal data writing speed.
+ * Tests 1 and 2 are done for a few different colors. */
+
 public:
   LCDDataTestController(Responder * parentResponder) :
     ViewController(parentResponder),

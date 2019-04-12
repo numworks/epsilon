@@ -5,6 +5,7 @@ app_src += $(addprefix apps/hardware_test/,\
   code_128b_view.cpp \
   keyboard_test_controller.cpp \
   keyboard_view.cpp \
+  lcd_data_test_controller.cpp \
   led_test_controller.cpp \
   pattern.cpp \
   pattern_view.cpp \

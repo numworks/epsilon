@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "keyboard_test_controller.h"
 #include "screen_test_controller.h"
+#include "lcd_data_test_controller.h"
 #include "led_test_controller.h"
 #include "battery_test_controller.h"
 #include "serial_number_controller.h"
@@ -30,6 +31,7 @@ private:
   private:
     KeyboardTestController m_keyboardController;
     ScreenTestController m_screenTestController;
+    LCDDataTestController m_lcdDataTestController;
     LEDTestController m_ledTestController;
     BatteryTestController m_batteryTestController;
     SerialNumberController m_serialNumberController;

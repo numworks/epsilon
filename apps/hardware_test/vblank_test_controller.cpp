@@ -29,9 +29,6 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void VBlankTestController::viewWillAppear() {
-  for (int i=0; i<6; i++) {
-    Ion::Display::waitForVBlank();
-  }
   m_view.vBlankStateTextView()->setText(k_vBlankLaunchTest);
 }
 

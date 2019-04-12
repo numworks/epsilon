@@ -12,4 +12,5 @@ app_src += $(addprefix apps/hardware_test/,\
   screen_test_controller.cpp \
   screen_test_controller.cpp \
   serial_number_controller.cpp \
+  vblank_test_controller.cpp \
 )

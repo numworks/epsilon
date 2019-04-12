@@ -7,6 +7,7 @@
 #include "led_test_controller.h"
 #include "battery_test_controller.h"
 #include "serial_number_controller.h"
+#include "vblank_test_controller.h"
 
 class AppsContainer;
 
@@ -32,6 +33,7 @@ private:
     LEDTestController m_ledTestController;
     BatteryTestController m_batteryTestController;
     SerialNumberController m_serialNumberController;
+    VBlankTestController m_vBlankTestController;
   };
 
   App(Container * container, Snapshot * snapshot);

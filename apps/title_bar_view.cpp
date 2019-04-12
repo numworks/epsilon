@@ -98,3 +98,8 @@ void TitleBarView::refreshPreferences() {
   // Layout the exam mode icon if needed
   layoutSubviews();
 }
+
+void TitleBarView::reload() {
+  refreshPreferences();
+  markRectAsDirty(bounds());
+}

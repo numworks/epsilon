@@ -1,5 +1,4 @@
 #include "go_to_parameter_controller.h"
-#include "../app.h"
 #include <assert.h>
 #include <cmath>
 

@@ -1,6 +1,5 @@
 #include <poincare/product.h>
 #include <poincare/multiplication.h>
-#include <poincare/parametered_expression_helper.h>
 #include <poincare/product_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -13,10 +12,6 @@ extern "C" {
 namespace Poincare {
 
 constexpr Expression::FunctionHelper Product::s_functionHelper;
-
-Expression ProductNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Product(this), symbol);
-}
 
 Layout ProductNode::createSequenceLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
   return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);

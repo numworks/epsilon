@@ -10,10 +10,10 @@ class FunctionGoToParameterController : public GoToParameterController {
 public:
   FunctionGoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol);
   const char * title() override;
-  void setFunction(Function * function);
+  void setRecord(Ion::Storage::Record record);
 protected:
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  Function * m_function;
+  Ion::Storage::Record m_record;
 private:
   double parameterAtIndex(int index) override;
 };

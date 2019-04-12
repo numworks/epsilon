@@ -15,7 +15,7 @@ public:
   void setColor(KDColor color) override;
   void setOrientation(Orientation orientation) override;
   const KDFont * font() const override {
-    return Poincare::CharLayoutNode::k_defaultFont;
+    return Poincare::CodePointLayoutNode::k_defaultFont;
   }
   Poincare::Layout layout() const override {
     return m_titleTextView.layout();

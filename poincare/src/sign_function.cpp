@@ -33,7 +33,7 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SignFunction::s_functionHelper.name());
 }
 
-Expression SignFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression SignFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return SignFunction(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

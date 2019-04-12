@@ -80,7 +80,7 @@ public:
   Expression trace() const;
   Expression determinant() const;
   Matrix transpose() const;
-  static Matrix createIdentity(int dim);
+  static Matrix CreateIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
   Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif

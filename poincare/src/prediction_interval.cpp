@@ -27,7 +27,7 @@ int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 
-Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return PredictionInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

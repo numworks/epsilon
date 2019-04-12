@@ -2,15 +2,15 @@
 #define GRAPH_APP_H
 
 #include <escher.h>
-#include "storage_cartesian_function_store.h"
+#include "cartesian_function_store.h"
 #include "graph/graph_controller.h"
-#include "list/storage_list_controller.h"
-#include "values/storage_values_controller.h"
-#include "../shared/storage_function_app.h"
+#include "list/list_controller.h"
+#include "values/values_controller.h"
+#include "../shared/function_app.h"
 
 namespace Graph {
 
-class App : public Shared::StorageFunctionApp {
+class App : public Shared::FunctionApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
@@ -18,27 +18,25 @@ public:
     I18n::Message upperName() override;
     const Image * icon() override;
   };
-  class Snapshot : public Shared::StorageFunctionApp::Snapshot {
+  class Snapshot : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
     App * unpack(Container * container) override;
-    void reset() override;
-    void storageDidChangeForRecord(const Ion::Storage::Record record) override;
     Descriptor * descriptor() override;
-    StorageCartesianFunctionStore * functionStore();
+    CartesianFunctionStore * functionStore() override;
     Shared::InteractiveCurveViewRange * graphRange();
   private:
     void tidy() override;
-    StorageCartesianFunctionStore m_functionStore;
+    CartesianFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
   char XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
-  StorageCartesianFunctionStore * functionStore() override { return static_cast<Snapshot *>(snapshot())->functionStore(); }
+  CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
 private:
   App(Container * container, Snapshot * snapshot);
-  StorageListController m_listController;
+  ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;
   StackViewController m_listStackViewController;
@@ -46,7 +44,7 @@ private:
   AlternateEmptyViewController m_graphAlternateEmptyViewController;
   ButtonRowController m_graphHeader;
   StackViewController m_graphStackViewController;
-  StorageValuesController m_valuesController;
+  ValuesController m_valuesController;
   AlternateEmptyViewController m_valuesAlternateEmptyViewController;
   ButtonRowController m_valuesHeader;
   StackViewController m_valuesStackViewController;

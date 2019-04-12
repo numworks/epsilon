@@ -13,6 +13,8 @@ extern "C" {
 
 namespace Code {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 static const char * sStandardPromptText = ">>> ";
 
 ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
@@ -389,7 +391,7 @@ void ConsoleController::autoImportScript(Script script, bool force) {
 
     /* Copy the script name without the extension ".py". The '.' is overwritten
      * by the null terminating char. */
-    int copySizeWithNullTerminatingZero = min(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
+    int copySizeWithNullTerminatingZero = minInt(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
     strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
     currentChar += copySizeWithNullTerminatingZero-1;
 

@@ -46,11 +46,13 @@ protected:
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns();
+  virtual FunctionStore * functionStore() const;
+  virtual Ion::Storage::Record recordAtColumn(int i);
   Interval * m_interval;
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
-  virtual Function * functionAtColumn(int i);
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void configureAbscissa();
@@ -69,7 +71,6 @@ private:
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
-  virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;

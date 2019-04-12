@@ -1,6 +1,10 @@
 #include <poincare/integer.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -13,7 +17,8 @@ extern "C" {
 #endif
 namespace Poincare {
 
-static inline int max(int x, int y) { return (x>y ? x : y); }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 /* To compute operations between Integers, we need an array where to store the
  * result digits. Instead of allocating it on the stack which would eventually
@@ -134,7 +139,7 @@ Integer::Integer(double_native_int_t i) {
 Integer::Integer(const char * digits, size_t length, bool negative) :
   Integer(0)
 {
-  if (digits != nullptr && digits[0] == '-') {
+  if (digits != nullptr && UTF8Helper::CodePointIs(digits, '-')) {
     negative = true;
     digits++;
     length--;
@@ -143,7 +148,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
     Integer base(10);
     for (size_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
-      *this = Addition(*this, Integer(*digits-'0'));
+      *this = Addition(*this, Integer(*digits - '0'));
       digits++;
     }
   }
@@ -157,6 +162,9 @@ int Integer::serialize(char * buffer, int bufferSize) const {
     return -1;
   }
   buffer[bufferSize-1] = 0;
+  if (bufferSize == 1) {
+    return 0;
+  }
   if (isOverflow()) {
     return PrintFloat::convertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
@@ -165,14 +173,12 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   Integer abs = *this;
   abs.setNegative(false);
   IntegerDivision d = udiv(abs, base);
+
   int size = 0;
-  if (bufferSize == 1) {
-    return 0;
-  }
   if (isZero()) {
-    buffer[size++] = '0';
+    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, '0');
   } else if (isNegative()) {
-    buffer[size++] = '-';
+    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, '-');
   }
 
   while (!(d.remainder.isZero() &&
@@ -181,9 +187,10 @@ int Integer::serialize(char * buffer, int bufferSize) const {
     if (size >= bufferSize-1) {
       return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
     }
-    buffer[size++] = c;
+    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, c);
     d = udiv(d.quotient, base);
   }
+  assert(size <= bufferSize - 1);
   buffer[size] = 0;
 
   // Flip the string
@@ -197,9 +204,14 @@ int Integer::serialize(char * buffer, int bufferSize) const {
 
 // Layout
 
-HorizontalLayout Integer::createLayout() const {
+Layout Integer::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
+  assert(numberOfChars >= 1);
+  if ((int)UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
+    UTF8Decoder decoder = UTF8Decoder(buffer);
+    return CodePointLayout::Builder(decoder.nextCodePoint());
+  }
   return LayoutHelper::String(buffer, numberOfChars);
 }
 
@@ -375,7 +387,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
     return Integer::Overflow(a.m_negative != b.m_negative);
   }
 
-  uint8_t size = min(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
+  uint8_t size = minInt(a.numberOfDigits() + b.numberOfDigits(), k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
   memset(s_workingBuffer, 0, size*sizeof(native_uint_t));
 
@@ -444,7 +456,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     return Overflow(a.m_negative != b.m_negative);
   }
 
-  uint8_t size = max(a.numberOfDigits(), b.numberOfDigits());
+  uint8_t size = maxInt(a.numberOfDigits(), b.numberOfDigits());
   if (!subtract) {
     // Addition can overflow
     size++;
@@ -468,7 +480,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
       carry = (aDigit > result) || (bDigit > result); // There's been an overflow
     }
   }
-  size = min(size, k_maxNumberOfDigits+oneDigitOverflow);
+  size = minInt(size, k_maxNumberOfDigits+oneDigitOverflow);
   while (size>0 && s_workingBuffer[size-1] == 0) {
     size--;
   }
@@ -547,7 +559,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   // qDigits is a half_native_uint_t array and enable one digit overflow
   half_native_uint_t * qDigits = reinterpret_cast<half_native_uint_t *>(s_workingBufferDivision);
   // The quotient q has at maximum m+1 half digits but we set an extra half digit to 0 to enable to easily convert it from half digits to digits
-  memset(qDigits, 0, max(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
+  memset(qDigits, 0, maxInt(m+1+1,2*k_maxNumberOfDigits)*sizeof(half_native_uint_t));
   // betaMB = B*beta^m
   Integer betaMB = B.multiplyByPowerOfBase(m);
   if (Integer::NaturalOrder(A,betaMB) >= 0) { // A >= B*beta^m
@@ -558,7 +570,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
   for (int j = m-1; j >= 0; j--) {
     native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1); // (a[n+j]*beta+a[n+j-1])/b[n-1]
     half_native_uint_t baseMinus1 = (1 << 16) -1; // beta-1
-    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // min(qj2, beta -1)
+    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // minInt(qj2, beta -1)
     A = Integer::addition(A, multiplication(qDigits[j], B.multiplyByPowerOfBase(j), true), true, true); // A-q[j]*beta^j*B
     if (A.isNegative()) {
       Integer betaJM = B.multiplyByPowerOfBase(j); // betaJM = B*beta^j

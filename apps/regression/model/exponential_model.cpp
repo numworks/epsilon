@@ -1,7 +1,7 @@
 #include "exponential_model.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -11,20 +11,21 @@ namespace Regression {
 
 Layout ExponentialModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout layoutChildren[] = {
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('e', KDFont::SmallFont),
+    constexpr int size = 4;
+    Layout layoutChildren[size] = {
+      CodePointLayout::Builder('a', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(
-            CharLayout::Builder('b', KDFont::SmallFont),
-            CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-            CharLayout::Builder('X', KDFont::SmallFont)
+            CodePointLayout::Builder('b', k_layoutFont),
+            CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+            CodePointLayout::Builder('X', k_layoutFont)
           ),
           VerticalOffsetLayoutNode::Type::Superscript
         )
     };
-    m_layout = HorizontalLayout::Builder(layoutChildren, 4);
+    m_layout = HorizontalLayout::Builder(layoutChildren, size);
   }
   return m_layout;
 }

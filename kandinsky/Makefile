@@ -22,6 +22,7 @@ src += $(addprefix kandinsky/fonts/, \
 
 tests += $(addprefix kandinsky/test/,\
   color.cpp\
+  font.cpp\
   rect.cpp\
 )
 
@@ -37,7 +38,7 @@ endif
 $(eval $(call rule_for, \
   HOSTCC, \
   kandinsky/fonts/rasterizer, \
-  kandinsky/fonts/rasterizer.c kandinsky/fonts/unicode_for_symbol.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
+  kandinsky/fonts/rasterizer.c $(addprefix ion/src/external/lz4/, lz4.c lz4hc.c), \
   $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$^ $$(RASTERIZER_LDFLAGS) -o $$@ \
 ))
 
@@ -46,13 +47,13 @@ RASTERIZER := $(BUILD_DIR)/kandinsky/fonts/rasterizer
 $(eval $(call rule_for, \
   RASTER, \
   kandinsky/fonts/SmallSourcePixel.cpp, \
-  kandinsky/fonts/SmallSourcePixel.ttf $$(RASTERIZER), \
+  kandinsky/fonts/SmallSourcePixel.otf $$(RASTERIZER), \
   $$(RASTERIZER) $$< 12 12 SmallFont $$@ \
 ))
 
 $(eval $(call rule_for, \
   RASTER, \
   kandinsky/fonts/LargeSourcePixel.cpp, \
-  kandinsky/fonts/LargeSourcePixel.ttf $$(RASTERIZER), \
+  kandinsky/fonts/LargeSourcePixel.otf $$(RASTERIZER), \
   $$(RASTERIZER) $$< 16 16 LargeFont $$@ \
 ))

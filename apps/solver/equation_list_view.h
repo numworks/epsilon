@@ -5,6 +5,8 @@
 
 namespace Solver {
 
+class ListController;
+
 class EquationListView : public Responder, public View, public ScrollViewDelegate, public ScrollViewDataSource {
 public:
   enum class BraceStyle {
@@ -12,7 +14,7 @@ public:
     OneRowShort,
     Full
   };
-  EquationListView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource);
+  EquationListView(ListController * listController);
   void setBraceStyle(BraceStyle style);
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;

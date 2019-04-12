@@ -8,7 +8,7 @@
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/horizontal_layout.h>
 #include <ion.h>
@@ -20,14 +20,14 @@ extern "C" {
 }
 namespace Poincare {
 
-Expression EqualNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression EqualNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Equal(this).shallowReduce();
 }
 
 Layout EqualNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayout::Builder('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CodePointLayout::Builder('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }

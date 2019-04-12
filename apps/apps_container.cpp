@@ -309,6 +309,10 @@ void AppsContainer::refreshPreferences() {
   m_window.refreshPreferences();
 }
 
+void AppsContainer::reloadTitleBarView() {
+  m_window.reloadTitleBarView();
+}
+
 void AppsContainer::displayExamModePopUp(bool activate) {
   m_examPopUpController.setActivatingExamMode(activate);
   activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
@@ -316,6 +320,7 @@ void AppsContainer::displayExamModePopUp(bool activate) {
 
 void AppsContainer::shutdownDueToLowBattery() {
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+    Ion::Backlight::setBrightness(0);
     m_emptyBatteryWindow.redraw(true);
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();

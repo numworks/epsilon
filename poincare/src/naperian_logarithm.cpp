@@ -18,7 +18,7 @@ int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 
-Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return NaperianLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
@@ -35,7 +35,7 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Comp
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(Ion::Charset::Exponential));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(UCodePointScriptSmallE));
   replaceWithInPlace(l);
   return l.shallowReduce(context, complexFormat, angleUnit, target);
 }

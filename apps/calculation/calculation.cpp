@@ -12,6 +12,8 @@ using namespace Shared;
 
 namespace Calculation {
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 Calculation::Calculation() :
   m_inputText(),
   m_exactOutputText(),
@@ -51,7 +53,7 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
   }
   Expression exactOutput;
   Expression approximateOutput;
-  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context);
+  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context, false);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
@@ -62,16 +64,18 @@ KDCoordinate Calculation::height(Context * context) {
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     Layout approximateLayout = createApproximateOutputLayout(context);
     Layout exactLayout = createExactOutputLayout();
-    if (shouldOnlyDisplayExactOutput()) {
+    DisplayOutput display = displayOutput(context);
+    if (display == DisplayOutput::ExactOnly) {
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       m_height = inputHeight+exactOutputHeight;
-    } else if (shouldOnlyDisplayApproximateOutput(context)) {
+    } else if (display == DisplayOutput::ApproximateOnly) {
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       m_height = inputHeight+approximateOutputHeight;
     } else {
+      assert(display == DisplayOutput::ExactAndApproximate);
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-      KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
+      KDCoordinate outputHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       m_height = inputHeight + outputHeight;
     }
   }
@@ -138,6 +142,11 @@ Expression Calculation::approximateOutput(Context * context) {
   /* To ensure that the expression 'm_output' is a matrix or a complex, we
    * call 'evaluate'. */
   Expression exp = Expression::Parse(m_approximateOutputText);
+  if (exp.isUninitialized()) {
+    /* TODO: exp might be uninitialized because the serialization did not fit in
+     * the buffer. Put a special error instead of "undef". */
+    return Undefined::Builder();
+  }
   return PoincareHelpers::Approximate<double>(exp, *context);
 }
 
@@ -145,28 +154,30 @@ Layout Calculation::createApproximateOutputLayout(Context * context) {
   return PoincareHelpers::CreateLayout(approximateOutput(context));
 }
 
-bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
+Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   if (shouldOnlyDisplayExactOutput()) {
-    return false;
+    return DisplayOutput::ExactOnly;
   }
+  bool approximateOnly = false;
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts
      * too, do not display the exact result. If the two layouts are not equal
      * because of the number of significant digits, we display both. */
-    return exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
-  }
-  if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
+    approximateOnly = exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
+  } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
     // If the approximate result is 'unreal' or the exact result is 'undef'
-    return true;
+    approximateOnly = true;
+  } else {
+    approximateOnly = input().isApproximate(*context) || exactOutput().isApproximate(*context);
   }
-  return input().isApproximate(*context) || exactOutput().isApproximate(*context);
+  return approximateOnly ? DisplayOutput::ApproximateOnly : DisplayOutput::ExactAndApproximate;
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {
-  /* If the approximateOutput is undef, do not display it. This prevents:
-   * x->f(x) from displaying x = undef
-   * x+x from displaying 2x = undef */
-  return strcmp(m_approximateOutputText, Undefined::Name()) == 0;
+  /* If the input is a "store in a function", do not display the approximate
+   * result. This prevents x->f(x) from displaying x = undef. */
+  return input().type() == ExpressionNode::Type::Store
+    && input().childAtIndex(1).type() == ExpressionNode::Type::Function;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
@@ -176,7 +187,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
   char buffer[bufferSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context);
+  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context, false);
   if (exactOutputExpression.isUninitialized()) {
     exactOutputExpression = Undefined::Builder();
   }

@@ -47,6 +47,9 @@ bool ExponentialLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 double ExponentialLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
+  if (x < 0.0) {
+    return 0.0;
+  }
   return 1.0 - std::exp((double)(-m_parameter1 * x));
 }
 

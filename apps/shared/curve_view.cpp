@@ -10,7 +10,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-static inline int minInt(int x, int y) { return (x < y ? x : y); }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
 
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, View * okView, bool displayBanner) :

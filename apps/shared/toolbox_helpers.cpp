@@ -1,6 +1,6 @@
 #include "toolbox_helpers.h"
-#include <ion/charset.h>
 #include <apps/i18n.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 #include <assert.h>
 
@@ -8,16 +8,24 @@ namespace Shared {
 namespace ToolboxHelpers {
 
 int CursorIndexInCommandText(const char * text) {
-  size_t textLength = strlen(text);
-  for (size_t i = 0; i < textLength; i++) {
-    if (text[i] == '(' || text[i] == '\'') {
-      return i + 1;
+  UTF8Decoder decoder(text);
+  size_t index = 0;
+  const char * currentPointer = text;
+  CodePoint codePoint = decoder.nextCodePoint();
+  const char * nextPointer = decoder.stringPosition();
+  while (codePoint != UCodePointNull) {
+    if (codePoint == '(' || codePoint == '\'') {
+      return index + 1;
     }
-    if (text[i] == ']') {
-      return i;
+    if (codePoint == '[') {
+      return index;
     }
+    index+= nextPointer - currentPointer;
+    currentPointer = nextPointer;
+    codePoint = decoder.nextCodePoint();
+    nextPointer = decoder.stringPosition();
   }
-  return textLength;
+  return index;
 }
 
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
@@ -25,45 +33,49 @@ void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int buf
 }
 
 void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
-  int currentNewTextIndex = 0;
+  int index = 0;
   int numberOfOpenParentheses = 0;
   int numberOfOpenBrackets = 0;
   bool insideQuote = false;
   bool argumentAlreadyReplaced = false;
-  size_t commandLength = strlen(command);
-  for (size_t i = 0; i < commandLength; i++) {
-    if (command[i] == ')') {
+
+  UTF8Decoder decoder(command);
+  CodePoint codePoint = decoder.nextCodePoint();
+  while (codePoint != UCodePointNull) {
+    if (codePoint == ')') {
       numberOfOpenParentheses--;
-    }
-    if (command[i] == ']') {
+    } else if (codePoint == ']') {
       numberOfOpenBrackets--;
     }
-    if (((numberOfOpenParentheses == 0 && numberOfOpenBrackets == 0)
-          || command[i] == ','
-          || (numberOfOpenBrackets > 0 && (command[i] == ',' || command[i] == '[' || command[i] == ']')))
-        && (!insideQuote || command[i] == '\'')) {
-      assert(currentNewTextIndex < bufferSize);
+    if ((!insideQuote || codePoint == '\'')
+        && ((numberOfOpenParentheses == 0 && numberOfOpenBrackets == 0)
+          || codePoint == ','
+          || (numberOfOpenBrackets > 0
+            && (codePoint == ','
+              || codePoint == '['
+              || codePoint == ']'))))
+    {
+      assert(index < bufferSize);
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      buffer[currentNewTextIndex++] = command[i];
+      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        buffer[currentNewTextIndex++] = Ion::Charset::Empty;
+        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
         argumentAlreadyReplaced = true;
       }
     }
-    if (command[i] == '(') {
+    if (codePoint == '(') {
       numberOfOpenParentheses++;
-    }
-    if (command[i] == '[') {
+    } else if (codePoint == '[') {
       numberOfOpenBrackets++;
-    }
-    if (command[i] == '\'') {
+    } else if (codePoint == '\'') {
       insideQuote = !insideQuote;
     }
+    codePoint = decoder.nextCodePoint();
   }
-  buffer[currentNewTextIndex] = 0;
+  buffer[index] = 0;
 }
 
 }

@@ -8,6 +8,7 @@
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/sign_function.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
@@ -22,7 +23,11 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e.numberOfChildren() == 1);
-  const char x[] = {Symbol::SpecialSymbols::UnknownX, 0};
+
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char x[bufferSize];
+  SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknownX);
+
   int d = e.childAtIndex(0).polynomialDegree(context, x);
   if (d < 0 || d > 1) {
     // child(0) is not linear so we cannot easily find an interesting range
@@ -32,7 +37,7 @@ float Trigonometry::characteristicXRange(const Expression & e, Context & context
   if (d == 0) {
     return 0.0f;
   }
-  // e has the form cos/sin/tan(ax+b) so it is periodic of period 2*Pi/a
+  // e has the form cos/sin/tan(ax+b) so it is periodic of period 2*π/a
   assert(d == 1);
   /* To compute a, the slope of the expression child(0), we compute the
    * derivative of child(0) for any x value. */
@@ -175,8 +180,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     }
   }
 
-  /* Step 6. Look for an expression of type "cos(p/q * Pi)" in radians or
-   * "cos(p/q)" in degrees, put the argument in [0, Pi/2[ or [0, 90[ and
+  /* Step 6. Look for an expression of type "cos(p/q * π)" in radians or
+   * "cos(p/q)" in degrees, put the argument in [0, π/2[ or [0, 90[ and
    * multiply the cos/sin/tan by -1 if needed.
    * We know thanks to Step 3 that p/q > 0. */
   if ((angleUnit == Preferences::AngleUnit::Radian
@@ -190,25 +195,25 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
   {
     Rational r = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0).childAtIndex(0).convert<Rational>() : e.childAtIndex(0).convert<Rational>();
     /* Step 4.1. In radians:
-     * We first check if p/q * Pi is already in the right quadrant:
-     * p/q * Pi < Pi/2 => p/q < 2 => 2p < q */
+     * We first check if p/q * π is already in the right quadrant:
+     * p/q * π < π/2 => p/q < 2 => 2p < q */
     Integer dividand = angleUnit == Preferences::AngleUnit::Radian ? Integer::Addition(r.unsignedIntegerNumerator(), r.unsignedIntegerNumerator()) : r.unsignedIntegerNumerator();
     Integer divisor = angleUnit == Preferences::AngleUnit::Radian ? r.integerDenominator() : Integer::Multiplication(r.integerDenominator(), Integer(90));
     if (divisor.isLowerThan(dividand)) {
-      /* Step 4.2. p/q * Pi is not in the wanted trigonometrical quadrant.
-       * We could subtract n*Pi to p/q with n an integer.
+      /* Step 4.2. p/q * π is not in the wanted trigonometrical quadrant.
+       * We could subtract n*π to p/q with n an integer.
        * Given p/q = (q'*q+r')/q, we have
-       * (p/q * Pi - q'*Pi) < Pi/2 => r'/q < 1/2 => 2*r'<q
+       * (p/q * π - q'*π) < π/2 => r'/q < 1/2 => 2*r'<q
        * (q' is the theoretical n).*/
       int unaryCoefficient = 1; // store 1 or -1 for the final result.
       Integer piDivisor = angleUnit == Preferences::AngleUnit::Radian ? r.integerDenominator() : Integer::Multiplication(r.integerDenominator(), Integer(180));
       IntegerDivision div = Integer::Division(r.unsignedIntegerNumerator(), piDivisor);
       dividand = angleUnit == Preferences::AngleUnit::Radian ? Integer::Addition(div.remainder, div.remainder) : div.remainder;
       if (divisor.isLowerThan(dividand)) {
-        /* Step 4.3. r'/q * Pi is not in the wanted trigonometrical quadrant,
+        /* Step 4.3. r'/q * π is not in the wanted trigonometrical quadrant,
          * and because r'<q (as r' is the remainder of an euclidian division
-         * by q), we know that r'/q*Pi is in [Pi/2; Pi[.
-         * So we can take the new angle Pi - r'/q*Pi, which changes cosinus or
+         * by q), we know that r'/q*π is in [π/2; π[.
+         * So we can take the new angle π - r'/q*π, which changes cosinus or
          * tangent, but not sinus. The new rational is 1-r'/q = (q-r')/q. */
         div.remainder = Integer::Subtraction(piDivisor, div.remainder);
         if (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Tangent) {
@@ -228,8 +233,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         e.childAtIndex(0).shallowReduce(context, complexFormat, angleUnit, target);
       }
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e.type() != ExpressionNode::Type::Tangent) {
-        /* Step 4.6. If we subtracted an odd number of Pi in 4.2, we need to
-         * multiply the result by -1 (because cos((2k+1)Pi + x) = -cos(x) */
+        /* Step 4.6. If we subtracted an odd number of π in 4.2, we need to
+         * multiply the result by -1 (because cos((2k+1)π + x) = -cos(x) */
         unaryCoefficient *= -1;
       }
       Expression simplifiedCosine = e.shallowReduce(context, complexFormat, angleUnit, target); // recursive
@@ -269,7 +274,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     }
   }
 
-  // Step 3. Look for an expression of type "arctan(1/x), return sign(x)*Pi/2-arctan(x)
+  // Step 3. Look for an expression of type "arctan(1/x), return sign(x)*π/2-arctan(x)
   if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
     /* This equality is not true if x = 0. We apply it under certain conditions:
@@ -278,7 +283,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
      *   reduced to undef) */
     if (target == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(Ion::Charset::SmallPi));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
       sign.shallowReduce(context, complexFormat, angleUnit, target);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
@@ -305,16 +310,16 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    */
   Expression p = e.parent();
   bool letArcFunctionAtRoot = !p.isUninitialized() && isDirectTrigonometryFunction(p);
-  /* Step 5. Handle opposite argument: arccos(-x) = Pi-arcos(x),
+  /* Step 5. Handle opposite argument: arccos(-x) = π-arcos(x),
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
    */
   if (!letArcFunctionAtRoot) {
     Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
     if (!positiveArg.isUninitialized()) {
       // The argument was made positive
-      // acos(-x) = pi-acos(x)
+      // acos(-x) = π-acos(x)
       if (e.type() == ExpressionNode::Type::ArcCosine) {
-        Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant::Builder(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational::Builder(180));
+        Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Constant::Builder(UCodePointGreekSmallLetterPi)) : static_cast<Expression>(Rational::Builder(180));
         Subtraction s = Subtraction::Builder();
         e.replaceWithInPlace(s);
         s.replaceChildAtIndexInPlace(0, pi);
@@ -355,11 +360,11 @@ template<typename T>
 T Trigonometry::RoundToMeaningfulDigits(T result, T input) {
   /* Cheat: openbsd trigonometric functions are numerical implementation and
    * thus are approximative.
-   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
-   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we round
-   * the result to its 1E-6 or 1E-14 precision when its ratio with the
-   * argument (pi/2 in the exemple) is smaller than epsilon. This way, we
-   * have sin(pi) ~ 0 and sin(1E-15)=1E-15.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
+   * weird results as acos(1) = 6E-17 or cos(π/2) = 4E-17, we round the result
+   * to its 1E-6 or 1E-14 precision when its ratio with the argument (π/2 in the
+   * example) is smaller than epsilon. This way, we have sin(π) ~ 0 and
+   * sin(1E-15)=1E-15.
    * We can't do that for all evaluation as the user can operate on values as
    * small as 1E-308 (in double) and most results still be correct. */
   if (input == 0.0 || std::fabs(result/input) <= Expression::Epsilon<T>()) {

@@ -90,7 +90,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
 
   /* We need to scroll:
    * - After notifying the delegate. For instance,
-   *   StorageExpressionModelListController needs to update its memoized cell
+   *   ExpressionModelListController needs to update its memoized cell
    *   height values before any scroll.
    * - Before setting the first responder. If the first responder is a view, it
    *   might change during the scroll. */

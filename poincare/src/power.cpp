@@ -164,7 +164,7 @@ int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 
 // Simplify
 
-Expression PowerNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression PowerNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Power(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
@@ -217,7 +217,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
     MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex(), complexFormat);
     return result;
   }
-  MatrixComplex<T> result = MatrixComplex<T>::createIdentity(m.numberOfRows());
+  MatrixComplex<T> result = MatrixComplex<T>::CreateIdentity(m.numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
     if (Expression::ShouldStopProcessing()) {
@@ -311,7 +311,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return this;
     }
     int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
-    Matrix * id = Matrix::createIdentity(mat->numberOfRows());
+    Matrix * id = Matrix::CreateIdentity(mat->numberOfRows());
     if (exp == 0) {
       return replaceWith(id, true);
     }
@@ -521,7 +521,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       Multiplication m1 = Multiplication::Builder();
       replaceWithInPlace(m1);
       // Multiply m1 by i complex
-      Constant i = Constant::Builder(Ion::Charset::IComplex);
+      Constant i = Constant::Builder(UCodePointMathematicalBoldSmallI);
       m1.addChildAtIndexInPlace(i, 0, 0);
       i.shallowReduce(context, complexFormat, angleUnit, target);
       m1.addChildAtIndexInPlace(*this, 1, 1);
@@ -1136,17 +1136,17 @@ Expression Power::equivalentExpressionUsingStandardExpression() const {
 
 Expression Power::CreateComplexExponent(const Expression & r, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // Returns e^(i*pi*r)
-  const Constant exp = Constant::Builder(Ion::Charset::Exponential);
-  Constant iComplex = Constant::Builder(Ion::Charset::IComplex);
-  const Constant pi = Constant::Builder(Ion::Charset::SmallPi);
+  const Constant exp = Constant::Builder(UCodePointScriptSmallE);
+  Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
+  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
   Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());
   iComplex.shallowReduce(context, complexFormat, angleUnit, target);
   Power p = Power::Builder(exp, mExp);
   mExp.shallowReduce(context, complexFormat, angleUnit, target);
   return p;
 #if 0
-  const Constant iComplex = Constant::Builder(Ion::Charset::IComplex);
-  const Constant pi = Constant::Builder(Ion::Charset::SmallPi);
+  const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
+  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
   Expression op = Multiplication::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
   Cosine cos = Cosine(op).shallowReduce(context, complexFormat, angleUnit, false);;
   Sine sin = Sine(op).shallowReduce(context, complexFormat, angleUnit, false);

@@ -2,11 +2,11 @@
 
 namespace Shared {
 
-void TextFieldWithExtension::willSetCursorLocation(int * location) {
+void TextFieldWithExtension::willSetCursorLocation(const char * * location) {
   size_t textLength = strlen(text());
   assert(textLength >= m_extensionLength);
-  size_t maxLocation = textLength - m_extensionLength;
-  if (*location > (int)maxLocation) {
+  const char * maxLocation = m_contentView.draftTextBuffer() + (textLength - m_extensionLength);
+  if (*location > maxLocation) {
     *location = maxLocation;
   }
 }
@@ -21,17 +21,18 @@ void TextFieldWithExtension::removeWholeText() {
 }
 
 bool TextFieldWithExtension::removeTextBeforeExtension(bool whole) {
-  int extensionIndex = strlen(text()) - m_extensionLength;
-  assert(extensionIndex >= 0 && extensionIndex < ContentView::k_maxBufferSize - m_extensionLength);
-  int destinationIndex = whole ? 0 : cursorLocation();
-  if (destinationIndex == extensionIndex) {
+  assert(isEditing());
+  const char * extension = m_contentView.draftTextBuffer() + (strlen(text()) - m_extensionLength);
+  assert(extension >= m_contentView.draftTextBuffer() && extension < m_contentView.draftTextBuffer() + (ContentView::k_maxBufferSize - m_extensionLength));
+  char * destination = whole ? m_contentView.draftTextBuffer() : const_cast<char *>(cursorLocation());
+  if (destination == extension) {
     return false;
   }
-  assert(destinationIndex >= 0);
-  assert(destinationIndex < extensionIndex);
+  assert(destination >= m_contentView.draftTextBuffer());
+  assert(destination < extension);
   m_contentView.willModifyTextBuffer();
-  strlcpy(&(m_contentView.textBuffer()[destinationIndex]), &(m_contentView.textBuffer()[extensionIndex]), ContentView::k_maxBufferSize);
-  m_contentView.setCursorLocation(destinationIndex);
+  strlcpy(destination, extension, ContentView::k_maxBufferSize - (destination - m_contentView.draftTextBuffer()));
+  m_contentView.setCursorLocation(destination);
   m_contentView.didModifyTextBuffer();
   layoutSubviews();
   return true;

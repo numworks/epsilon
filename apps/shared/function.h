@@ -1,34 +1,67 @@
 #ifndef SHARED_FUNCTION_H
 #define SHARED_FUNCTION_H
 
-#include "expression_model.h"
+#include <poincare/function.h>
+#include <poincare/symbol.h>
+#include "expression_model_handle.h"
 
 namespace Shared {
 
-class Function : public ExpressionModel {
+class Function : public ExpressionModelHandle {
 public:
-  Function(const char * name = nullptr, KDColor color = KDColorBlack);
-  virtual uint32_t checksum();
-  const char * name() const;
-  KDColor color() const { return m_color; }
-  bool isActive();
+  enum class NameNotCompliantError {
+    None = 0,
+    CharacterNotAllowed,
+    NameCannotStartWithNumber,
+    ReservedName
+  };
+  constexpr static int k_parenthesedArgumentLength = 3;
+  static constexpr char k_parenthesedArgument[k_parenthesedArgumentLength+1] = "(x)";
+  constexpr static int k_maxNameWithArgumentSize = Poincare::SymbolAbstract::k_maxNameSize + k_parenthesedArgumentLength; /* Function name and null-terminating char + "(x)" */;
+  static bool BaseNameCompliant(const char * baseName, NameNotCompliantError * error = nullptr);
+
+  // Constructors
+  Function(Ion::Storage::Record record) : ExpressionModelHandle(record){}
+
+  // Properties
+  bool isActive() const;
+  KDColor color() const;
   void setActive(bool active);
-  void setColor(KDColor m_color);
+
+  // Name
+  int nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg);
+
+  // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context);
+    return templatedApproximateAtAbscissa(x, context, UCodePointUnknownX);
   }
   virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context);
+    return templatedApproximateAtAbscissa(x, context, UCodePointUnknownX);
   }
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
+protected:
+  /* FunctionRecordDataBuffer is the layout of the data buffer of Record
+   * representing a Function. */
+  class FunctionRecordDataBuffer {
+  public:
+    FunctionRecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
+    KDColor color() const {
+      /* Record::value() is a pointer to an address inside
+       * Ion::Storage::sharedStorage(), and it might be unaligned. In the method
+       * recordData(), we cast Record::value() to the type FunctionRecordDataBuffer.
+       * We must thus do some convolutions to read KDColor, which is a uint16_t
+       * and might produce an alignment error on the emscripten platform. */
+      return KDColor::RGB16(Ion::StorageHelper::unalignedShort(reinterpret_cast<char *>(const_cast<KDColor *>(&m_color))));
+    }
+    bool isActive() const { return m_active; }
+    void setActive(bool active) { m_active = active; }
+  private:
+    KDColor m_color;
+    bool m_active;
+  };
 private:
-  constexpr static size_t k_dataLengthInBytes = (TextField::maxBufferSize()+2)*sizeof(char)+2;
-  static_assert((k_dataLengthInBytes & 0x3) == 0, "The function data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
-  virtual const char * symbol() const = 0;
-  const char * m_name;
-  KDColor m_color;
-  bool m_active;
+  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const;
+  FunctionRecordDataBuffer * recordData() const;
 };
 
 }

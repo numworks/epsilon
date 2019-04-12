@@ -20,7 +20,7 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   LayoutNode * layoutToPointWhenInserting() override { return lowerBoundLayout(); }
-  char XNTChar() const override { return 'n'; }
+  CodePoint XNTCodePoint() const override { return 'n'; }
 
   // TreeNode
   int numberOfChildren() const override { return 4; }
@@ -29,7 +29,7 @@ protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
   constexpr static const KDFont * k_font = KDFont::LargeFont;
-  constexpr static char k_equal[] = {'=', 0};
+  constexpr static const char * k_equal = "=";
 
   KDSize lowerBoundSizeWithVariableEquals();
 

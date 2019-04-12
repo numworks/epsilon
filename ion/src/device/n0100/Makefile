@@ -1,5 +1,6 @@
 ion_device_src += $(addprefix ion/src/device/n0100/drivers/, \
   board.cpp \
+  power.cpp \
 )
 
 ion_device_src += ion/src/device/n0101/usb/stack/device.cpp

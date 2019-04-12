@@ -1,10 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
 
-extern "C" {
-#include <assert.h>
-}
-
 namespace HardwareTest {
 
 App * App::Snapshot::unpack(Container * container) {
@@ -24,11 +20,12 @@ App::App(Container * container, Snapshot * snapshot) :
 
 App::WizardViewController::WizardViewController(Responder * parentResponder) :
   BankViewController(parentResponder),
+  m_batteryTestController(this),
+  m_centeredScreenTestController(this),
+  m_deadPixelsTestController(this),
   m_keyboardController(this),
-  m_screenTestController(this),
   m_lcdDataTestController(this),
   m_ledTestController(this),
-  m_batteryTestController(this),
   m_serialNumberController(this),
   m_vBlankTestController(this)
 {
@@ -42,9 +39,10 @@ ViewController * App::WizardViewController::childAtIndex(int i) {
   ViewController * children[] = {
     &m_vBlankTestController,
     &m_lcdDataTestController,
-    &m_keyboardController,
-    &m_screenTestController,
+    &m_centeredScreenTestController,
+    &m_deadPixelsTestController,
     &m_ledTestController,
+    &m_keyboardController,
     &m_batteryTestController,
     &m_serialNumberController
   };

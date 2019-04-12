@@ -8,10 +8,16 @@ namespace Poincare {
 
 class Integer;
 
+
 namespace PrintFloat {
+  // × and · are 2 bytes long, ᴇ and ℯ are 3 bytes long, 𝐢is 4 bytes long.
+  constexpr static int k_multiplicationCodePointByteLength = 2;
+  constexpr static int k_specialECodePointByteLength = 3;
+  constexpr static int k_iComplexCodePointByteLength = 4;
+
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
-    // The worst case is -1.234E-328
-    return numberOfSignificantDigits + 8;
+    // The worst case is -1.234ᴇ-328
+    return 2+numberOfSignificantDigits+k_specialECodePointByteLength+1+3+1;
   }
   /* This function prints the integer i in the buffer with a '.' at the position
    * specified by the decimalMarkerPosition. It starts printing at the end of the
@@ -29,25 +35,34 @@ namespace PrintFloat {
 
   /* We here define the buffer size to write the lengthest float possible.
    * At maximum, the number has 15 significant digits so, in the worst case it
-   * has the form -1.99999999999999e-308 (15+7+1 char) (the auto mode is always
-   * shorter. */
-  constexpr static int k_maxFloatBufferLength = k_numberOfStoredSignificantDigits+7+1;
-  /* We here define the buffer size to write the lengthest complex possible.
-   * The worst case has the form
-   * -1.99999999999999e-308*e^(-1.99999999999999e-308*i) (14+14+7+1 char) */
-  constexpr static int k_maxComplexBufferLength = k_maxFloatBufferLength-1+k_maxFloatBufferLength-1+7+1;
+   * has the form -1.99999999999999ᴇ-308 (2+15+3+1+3 char) (the auto mode is
+   * always shorter. */
+  constexpr static int k_maxFloatBufferLength = 2+k_numberOfStoredSignificantDigits+k_specialECodePointByteLength+1+3+1;
+  /* We here define the buffer size to write the longest complex possible. The
+   * worst case has the form
+   * -1.99999999999999ᴇ-308*ℯ^(-1.99999999999999ᴇ-308*𝐢) */
+  constexpr static int k_maxComplexBufferLength =
+    (k_maxFloatBufferLength-1)
+    + k_multiplicationCodePointByteLength
+    + k_specialECodePointByteLength
+    + 2 // Exponent + opening parenthesis
+    + (k_maxFloatBufferLength-1)
+    + k_multiplicationCodePointByteLength
+    + k_iComplexCodePointByteLength
+    + 1 // Closing parenthesis
+    + 1; // Null-terminating char
 
   /* If the buffer size is too small to display the right number of significant
-   * digits, the function forces the scientific mode and cap the number of
-   * significant digits to fit the buffer. If the buffer is too small to
-   * display any float, the text representing the float is truncated at the end
-   * of the buffer.
-   * ConvertFloatToText return the number of characters that have been written
-   * in buffer (excluding the last \O character) */
+   * digits, the function forces the scientific mode and caps the number of
+   * significant digits to fit the buffer. If the buffer is too small to display
+   * any float, the text representing the float is truncated at the end of the
+   * buffer.
+   * ConvertFloatToText returns the number of characters that have been written
+   * in buffer (excluding the last \0 character). */
   template <class T>
   int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding = true);
   template <class T>
-  static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);
+  static int convertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);
 }
 
 }

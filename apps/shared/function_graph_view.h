@@ -16,12 +16,12 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Poincare::Context * context);
   Poincare::Context * context() const;
-  void selectFunction(Function * function);
+  void selectRecord(Ion::Storage::Record record);
   void setAreaHighlight(float start, float end);
   virtual void setAreaHighlightColor(bool highlightColor);
 protected:
   void reloadBetweenBounds(float start, float end);
-  Function * m_selectedFunction;
+  Ion::Storage::Record m_selectedRecord;
   float m_highlightedStart;
   float m_highlightedEnd;
   bool m_shouldColorHighlighted;

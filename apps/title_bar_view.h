@@ -16,6 +16,7 @@ public:
   bool setIsPlugged(bool isPlugged);
   bool setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
   void refreshPreferences();
+  void reload();
 private:
   constexpr static KDCoordinate k_alphaRightMargin = 5;
   constexpr static KDCoordinate k_examIconWidth = 18;

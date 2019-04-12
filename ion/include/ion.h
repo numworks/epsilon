@@ -3,7 +3,6 @@
 
 #include <ion/backlight.h>
 #include <ion/battery.h>
-#include <ion/charset.h>
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
@@ -13,6 +12,8 @@
 #include <ion/storage.h>
 #include <ion/timing.h>
 #include <ion/usb.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <stdint.h>
 #include <string.h>
 

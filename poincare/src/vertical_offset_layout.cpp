@@ -3,7 +3,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/left_parenthesis_layout.h>
 #include <poincare/right_parenthesis_layout.h>
-#include <ion/charset.h>
 #include <string.h>
 #include <assert.h>
 
@@ -159,28 +158,28 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
       return 0;
     }
     // If the layout is a subscript, write "_{indice}"
-    int numberOfChar = SerializationHelper::Char(buffer, bufferSize, '_');
+    int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '_');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, '{');
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '{');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, '}');
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '}');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     return numberOfChar;
   }
   assert(m_type == Type::Superscript);
   /* If the layout is a superscript, write:
-   * "Ion::Charset::LeftSuperscript indice Ion::Charset::RightSuperscript" */
-  int numberOfChar = SerializationHelper::Char(buffer, bufferSize, Ion::Charset::LeftSuperscript);
+   * "UCodePointLeftSuperscript indice UCodePointRightSuperscript" */
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointLeftSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, Ion::Charset::RightSuperscript);
+  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, UCodePointRightSuperscript);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   buffer[numberOfChar] = 0;

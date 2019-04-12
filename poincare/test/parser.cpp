@@ -9,10 +9,7 @@
 using namespace Poincare;
 
 void assert_tokenizes_as(const Token::Type * tokenTypes, const char * string) {
-  char buffer[500];
-  strlcpy(buffer, string, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  Tokenizer tokenizer(buffer);
+  Tokenizer tokenizer(string);
   while (true) {
     Token token = tokenizer.popToken();
     quiz_assert(token.type() == *tokenTypes);
@@ -29,10 +26,7 @@ void assert_tokenizes_as_number(const char * string) {
 }
 
 void assert_tokenizes_as_undefined_token(const char * string) {
-  char buffer[500];
-  strlcpy(buffer, string, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  Tokenizer tokenizer(buffer);
+  Tokenizer tokenizer(string);
   while (true) {
     Token token = tokenizer.popToken();
     if (token.type() == Token::Undefined) {
@@ -45,10 +39,7 @@ void assert_tokenizes_as_undefined_token(const char * string) {
 }
 
 void assert_raises_parsing_error(const char * text) {
-  char buffer[500];
-  strlcpy(buffer, text, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  Parser p(buffer);
+  Parser p(text);
   Expression result = p.parse();
   quiz_assert(p.getStatus() != Parser::Status::Success);
 }
@@ -59,23 +50,23 @@ QUIZ_CASE(poincare_parser_tokenize_numbers) {
   assert_tokenizes_as_number("123");
   assert_tokenizes_as_number("1.3");
   assert_tokenizes_as_number(".3");
-  assert_tokenizes_as_number("1.3E3");
-  assert_tokenizes_as_number("12.34E56");
-  assert_tokenizes_as_number(".3E-32");
+  assert_tokenizes_as_number("1.3ᴇ3");
+  assert_tokenizes_as_number("12.34ᴇ56");
+  assert_tokenizes_as_number(".3ᴇ-32");
   assert_tokenizes_as_number("12.");
   assert_tokenizes_as_number(".999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
   assert_tokenizes_as_number("0.");
-  assert_tokenizes_as_number("1.E-4");
-  assert_tokenizes_as_number("1.E9999");
+  assert_tokenizes_as_number("1.ᴇ-4");
+  assert_tokenizes_as_number("1.ᴇ9999");
 
-  assert_tokenizes_as_undefined_token("1E");
+  assert_tokenizes_as_undefined_token("1ᴇ");
   assert_tokenizes_as_undefined_token("1..");
   assert_tokenizes_as_undefined_token("..");
-  assert_tokenizes_as_undefined_token("1.EE");
-  assert_tokenizes_as_undefined_token("1.E");
-  assert_tokenizes_as_undefined_token("1E--4");
-  assert_tokenizes_as_undefined_token("1.EE4");
-  assert_tokenizes_as_undefined_token("1E2E4");
+  assert_tokenizes_as_undefined_token("1.ᴇᴇ");
+  assert_tokenizes_as_undefined_token("1.ᴇ");
+  assert_tokenizes_as_undefined_token("1ᴇ--4");
+  assert_tokenizes_as_undefined_token("1.ᴇᴇ4");
+  assert_tokenizes_as_undefined_token("1ᴇ2ᴇ4");
 }
 
 QUIZ_CASE(poincare_parser_parse_numbers) {
@@ -88,14 +79,14 @@ QUIZ_CASE(poincare_parser_parse_numbers) {
   assert_parsed_expression_is("0.1", Decimal::Builder(0.1));
   assert_parsed_expression_is("1.", Rational::Builder(1));
   assert_parsed_expression_is(".1", Decimal::Builder(0.1));
-  assert_parsed_expression_is("0E2", Decimal::Builder(0.0));
-  assert_parsed_expression_is("0.1E2", Decimal::Builder(10.0));
-  assert_parsed_expression_is("1.E2", Decimal::Builder(100.0));
-  assert_parsed_expression_is(".1E2", Decimal::Builder(10.0));
-  assert_parsed_expression_is("0E-2", Decimal::Builder(0.0));
-  assert_parsed_expression_is("0.1E-2", Decimal::Builder(0.001));
-  assert_parsed_expression_is("1.E-2", Decimal::Builder(0.01));
-  assert_parsed_expression_is(".1E-2", Decimal::Builder(0.001));
+  assert_parsed_expression_is("0ᴇ2", Decimal::Builder(0.0));
+  assert_parsed_expression_is("0.1ᴇ2", Decimal::Builder(10.0));
+  assert_parsed_expression_is("1.ᴇ2", Decimal::Builder(100.0));
+  assert_parsed_expression_is(".1ᴇ2", Decimal::Builder(10.0));
+  assert_parsed_expression_is("0ᴇ-2", Decimal::Builder(0.0));
+  assert_parsed_expression_is("0.1ᴇ-2", Decimal::Builder(0.001));
+  assert_parsed_expression_is("1.ᴇ-2", Decimal::Builder(0.01));
+  assert_parsed_expression_is(".1ᴇ-2", Decimal::Builder(0.001));
 }
 
 QUIZ_CASE(poincare_parser_memory_exhaustion) {
@@ -131,16 +122,16 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_parsed_expression_is("(1+2)", Parenthesis::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2))));
   assert_parsed_expression_is("1+2+3", Addition::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
   assert_parsed_expression_is("1+2+(3+4)", Addition::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2)),Parenthesis::Builder(Addition::Builder(Rational::Builder(3),Rational::Builder(4)))));
-  assert_parsed_expression_is("1*2", Multiplication::Builder(Rational::Builder(1),Rational::Builder(2)));
-  assert_parsed_expression_is("1*2*3", Multiplication::Builder(Multiplication::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
-  assert_parsed_expression_is("1+2*3", Addition::Builder(Rational::Builder(1), Multiplication::Builder(Rational::Builder(2), Rational::Builder(3))));
+  assert_parsed_expression_is("1×2", Multiplication::Builder(Rational::Builder(1),Rational::Builder(2)));
+  assert_parsed_expression_is("1×2×3", Multiplication::Builder(Multiplication::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
+  assert_parsed_expression_is("1+2×3", Addition::Builder(Rational::Builder(1), Multiplication::Builder(Rational::Builder(2), Rational::Builder(3))));
   assert_parsed_expression_is("1/2", Division::Builder(Rational::Builder(1),Rational::Builder(2)));
   assert_parsed_expression_is("(1/2)", Parenthesis::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2))));
   assert_parsed_expression_is("1/2/3", Division::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
-  assert_parsed_expression_is("1/2*3", Multiplication::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
-  assert_parsed_expression_is("(1/2*3)", Parenthesis::Builder(Multiplication::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3))));
-  assert_parsed_expression_is("1*2/3", Multiplication::Builder(Rational::Builder(1),Division::Builder(Rational::Builder(2),Rational::Builder(3))));
-  assert_parsed_expression_is("(1*2/3)", Parenthesis::Builder(Multiplication::Builder(Rational::Builder(1),Division::Builder(Rational::Builder(2),Rational::Builder(3)))));
+  assert_parsed_expression_is("1/2×3", Multiplication::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
+  assert_parsed_expression_is("(1/2×3)", Parenthesis::Builder(Multiplication::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3))));
+  assert_parsed_expression_is("1×2/3", Multiplication::Builder(Rational::Builder(1),Division::Builder(Rational::Builder(2),Rational::Builder(3))));
+  assert_parsed_expression_is("(1×2/3)", Parenthesis::Builder(Multiplication::Builder(Rational::Builder(1),Division::Builder(Rational::Builder(2),Rational::Builder(3)))));
   assert_parsed_expression_is("(1/2/3)", Parenthesis::Builder(Division::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3))));
   assert_parsed_expression_is("1^2", Power::Builder(Rational::Builder(1),Rational::Builder(2)));
   assert_parsed_expression_is("1^2^3", Power::Builder(Rational::Builder(1),Power::Builder(Rational::Builder(2),Rational::Builder(3))));
@@ -156,23 +147,23 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_parsed_expression_is("1+-2", Addition::Builder(Rational::Builder(1),Opposite::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("--1", Opposite::Builder((Expression)Opposite::Builder(Rational::Builder(1))));
   assert_parsed_expression_is("(1+2)-3", Subtraction::Builder(Parenthesis::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2))),Rational::Builder(3)));
-  assert_parsed_expression_is("(2*-3)", Parenthesis::Builder(Multiplication::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(3)))));
+  assert_parsed_expression_is("(2×-3)", Parenthesis::Builder(Multiplication::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(3)))));
   assert_parsed_expression_is("1^(2)-3", Subtraction::Builder(Power::Builder(Rational::Builder(1),Parenthesis::Builder(Rational::Builder(2))),Rational::Builder(3)));
   assert_parsed_expression_is("1^2-3", Subtraction::Builder(Power::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
   assert_parsed_expression_is("2^-3", Power::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(3))));
   assert_parsed_expression_is("2--2+-1", Addition::Builder(Subtraction::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(2))),Opposite::Builder(Rational::Builder(1))));
-  assert_parsed_expression_is("2--2*-1", Subtraction::Builder(Rational::Builder(2),Opposite::Builder(Multiplication::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(1))))));
+  assert_parsed_expression_is("2--2×-1", Subtraction::Builder(Rational::Builder(2),Opposite::Builder(Multiplication::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(1))))));
   assert_parsed_expression_is("-1^2", Opposite::Builder(Power::Builder(Rational::Builder(1),Rational::Builder(2))));
   assert_parsed_expression_is("2/-3/-4", Division::Builder(Division::Builder(Rational::Builder(2),Opposite::Builder(Rational::Builder(3))),Opposite::Builder(Rational::Builder(4))));
-  assert_parsed_expression_is("1*2-3*4", Subtraction::Builder(Multiplication::Builder(Rational::Builder(1),Rational::Builder(2)),Multiplication::Builder(Rational::Builder(3),Rational::Builder(4))));
-  assert_parsed_expression_is("-1*2", Opposite::Builder(Multiplication::Builder(Rational::Builder(1), Rational::Builder(2))));
+  assert_parsed_expression_is("1×2-3×4", Subtraction::Builder(Multiplication::Builder(Rational::Builder(1),Rational::Builder(2)),Multiplication::Builder(Rational::Builder(3),Rational::Builder(4))));
+  assert_parsed_expression_is("-1×2", Opposite::Builder(Multiplication::Builder(Rational::Builder(1), Rational::Builder(2))));
   assert_parsed_expression_is("1!", Factorial::Builder(Rational::Builder(1)));
   assert_parsed_expression_is("1+2!", Addition::Builder(Rational::Builder(1),Factorial::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("1!+2", Addition::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
   assert_parsed_expression_is("1!+2!", Addition::Builder(Factorial::Builder(Rational::Builder(1)),Factorial::Builder(Rational::Builder(2))));
-  assert_parsed_expression_is("1*2!", Multiplication::Builder(Rational::Builder(1),Factorial::Builder(Rational::Builder(2))));
-  assert_parsed_expression_is("1!*2", Multiplication::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("1!*2!", Multiplication::Builder(Factorial::Builder(Rational::Builder(1)),Factorial::Builder(Rational::Builder(2))));
+  assert_parsed_expression_is("1×2!", Multiplication::Builder(Rational::Builder(1),Factorial::Builder(Rational::Builder(2))));
+  assert_parsed_expression_is("1!×2", Multiplication::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
+  assert_parsed_expression_is("1!×2!", Multiplication::Builder(Factorial::Builder(Rational::Builder(1)),Factorial::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("1-2!", Subtraction::Builder(Rational::Builder(1),Factorial::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("1!-2", Subtraction::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
   assert_parsed_expression_is("1!-2!", Subtraction::Builder(Factorial::Builder(Rational::Builder(1)),Factorial::Builder(Rational::Builder(2))));
@@ -191,14 +182,14 @@ QUIZ_CASE(poincare_parser_parse) {
   assert_raises_parsing_error("1)");
   assert_raises_parsing_error("1++2");
   assert_raises_parsing_error("1//2");
-  assert_raises_parsing_error("*1");
+  assert_raises_parsing_error("×1");
   assert_raises_parsing_error("1^^2");
   assert_raises_parsing_error("^1");
   assert_raises_parsing_error("t0000000");
   assert_raises_parsing_error("[[t0000000[");
-  assert_raises_parsing_error("0>x=0");
-  assert_raises_parsing_error("0=0>x");
-  assert_raises_parsing_error("1E2E3");
+  assert_raises_parsing_error("0→x=0");
+  assert_raises_parsing_error("0=0→x");
+  assert_raises_parsing_error("1ᴇ2ᴇ3");
 }
 
 Matrix BuildMatrix(int rows, int columns, Expression entries[]) {
@@ -266,9 +257,9 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
 
   // Reserved symbols
   assert_parsed_expression_is("ans", Symbol::Builder("ans", 3));
-  assert_parsed_expression_is("I", Constant::Builder(Ion::Charset::IComplex));
-  assert_parsed_expression_is("P", Constant::Builder(Ion::Charset::SmallPi));
-  assert_parsed_expression_is("X", Constant::Builder(Ion::Charset::Exponential));
+  assert_parsed_expression_is("𝐢", Constant::Builder(UCodePointMathematicalBoldSmallI));
+  assert_parsed_expression_is("π", Constant::Builder(UCodePointGreekSmallLetterPi));
+  assert_parsed_expression_is("ℯ", Constant::Builder(UCodePointScriptSmallE));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
@@ -327,43 +318,44 @@ QUIZ_CASE(poincare_parser_symbols_and_functions) {
   assert_parsed_expression_is("tanh(1)", HyperbolicTangent::Builder(Rational::Builder(1)));
   assert_parsed_expression_is("trace(1)", MatrixTrace::Builder(Rational::Builder(1)));
   assert_parsed_expression_is("transpose(1)", MatrixTranspose::Builder(Rational::Builder(1)));
-  assert_parsed_expression_is("\x91(1)", SquareRoot::Builder(Rational::Builder(1)));
+  assert_parsed_expression_is("√(1)", SquareRoot::Builder(Rational::Builder(1)));
   assert_raises_parsing_error("cos(1,2)");
   assert_raises_parsing_error("log(1,2,3)");
 }
 
 QUIZ_CASE(poincare_parser_parse_store) {
-  assert_parsed_expression_is("1>a", Store::Builder(Rational::Builder(1),Symbol::Builder("a",1)));
-  assert_parsed_expression_is("1>e", Store::Builder(Rational::Builder(1),Symbol::Builder("e",1)));
-  assert_parsed_expression_is("1>f(x)", Store::Builder(Rational::Builder(1),Function::Builder("f",1,Symbol::Builder("x",1))));
-  assert_parsed_expression_is("x>f(x)", Store::Builder(Symbol::Builder("x",1),Function::Builder("f",1,Symbol::Builder("x",1))));
-  assert_parsed_expression_is("n>f(x)", Store::Builder(Symbol::Builder("n",1),Function::Builder("f",1,Symbol::Builder("x",1))));
+  assert_parsed_expression_is("1→a", Store::Builder(Rational::Builder(1),Symbol::Builder("a",1)));
+  assert_parsed_expression_is("1→e", Store::Builder(Rational::Builder(1),Symbol::Builder("e",1)));
+  assert_parsed_expression_is("1→f(x)", Store::Builder(Rational::Builder(1),Function::Builder("f",1,Symbol::Builder("x",1))));
+  assert_parsed_expression_is("x→f(x)", Store::Builder(Symbol::Builder("x",1),Function::Builder("f",1,Symbol::Builder("x",1))));
+  assert_parsed_expression_is("n→f(x)", Store::Builder(Symbol::Builder("n",1),Function::Builder("f",1,Symbol::Builder("x",1))));
   Expression m0[] = {Symbol::Builder('x')};
-  assert_parsed_expression_is("[[x]]>f(x)", Store::Builder(BuildMatrix(1,1,m0), Function::Builder("f", 1, Symbol::Builder('x'))));
-  assert_raises_parsing_error("a>b>c");
-  assert_raises_parsing_error("1>2");
-  assert_raises_parsing_error("1>");
-  assert_raises_parsing_error(">2");
-  assert_raises_parsing_error("(1>a)");
-  assert_raises_parsing_error("1>u(n)");
-  assert_raises_parsing_error("1>u(n+1)");
-  assert_raises_parsing_error("1>v(n)");
-  assert_raises_parsing_error("1>v(n+1)");
-  assert_raises_parsing_error("1>u_{n}");
-  assert_raises_parsing_error("1>u_{n+1}");
-  assert_raises_parsing_error("1>v_{n}");
-  assert_raises_parsing_error("1>v_{n+1}");
-  assert_raises_parsing_error("1>inf");
-  assert_raises_parsing_error("1>undef");
-  assert_raises_parsing_error("1>P");
-  assert_raises_parsing_error("1>I");
-  assert_raises_parsing_error("1>X");
-  assert_raises_parsing_error("1>\1"); // UnknownX
-  assert_raises_parsing_error("1>acos");
-  assert_raises_parsing_error("1>f(2)");
-  assert_raises_parsing_error("1>f(f)");
-  assert_raises_parsing_error("1>ans");
-  assert_raises_parsing_error("ans>ans");
+  assert_parsed_expression_is("[[x]]→f(x)", Store::Builder(BuildMatrix(1,1,m0), Function::Builder("f", 1, Symbol::Builder('x'))));
+  assert_raises_parsing_error("a→b→c");
+  assert_raises_parsing_error("1→2");
+  assert_raises_parsing_error("1→");
+  assert_raises_parsing_error("→2");
+  assert_raises_parsing_error("(1→a)");
+  assert_raises_parsing_error("1→u(n)");
+  assert_raises_parsing_error("1→u(n+1)");
+  assert_raises_parsing_error("1→v(n)");
+  assert_raises_parsing_error("1→v(n+1)");
+  assert_raises_parsing_error("1→u_{n}");
+  assert_raises_parsing_error("1→u_{n+1}");
+  assert_raises_parsing_error("1→v_{n}");
+  assert_raises_parsing_error("1→v_{n+1}");
+  assert_raises_parsing_error("1→inf");
+  assert_raises_parsing_error("1→undef");
+  assert_raises_parsing_error("1→π");
+  assert_raises_parsing_error("1→𝐢");
+  assert_raises_parsing_error("1→ℯ");
+  assert_raises_parsing_error("1→\1"); // UnknownX
+  assert_raises_parsing_error("1→\2"); // UnknownN
+  assert_raises_parsing_error("1→acos");
+  assert_raises_parsing_error("1→f(2)");
+  assert_raises_parsing_error("1→f(f)");
+  assert_raises_parsing_error("1→ans");
+  assert_raises_parsing_error("ans→ans");
 }
 
 QUIZ_CASE(poincare_parser_implicit_multiplication) {
@@ -373,10 +365,10 @@ QUIZ_CASE(poincare_parser_implicit_multiplication) {
   assert_parsed_expression_is("1ans", Multiplication::Builder(Rational::Builder(1),Symbol::Builder("ans", 3)));
   assert_parsed_expression_is("x1", Symbol::Builder("x1", 2));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1)),Rational::Builder(2)));
-  assert_parsed_expression_is("1P", Multiplication::Builder(Rational::Builder(1),Constant::Builder(Ion::Charset::SmallPi)));
+  assert_parsed_expression_is("1π", Multiplication::Builder(Rational::Builder(1),Constant::Builder(UCodePointGreekSmallLetterPi)));
   assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1)),Rational::Builder(2)));
   assert_parsed_expression_is("-1x", Opposite::Builder(Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1))));
-  assert_parsed_expression_is("2*1x", Multiplication::Builder(Rational::Builder(2),Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1))));
+  assert_parsed_expression_is("2×1x", Multiplication::Builder(Rational::Builder(2),Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1))));
   assert_parsed_expression_is("2^1x", Multiplication::Builder(Power::Builder(Rational::Builder(2),Rational::Builder(1)),Symbol::Builder("x", 1)));
   assert_parsed_expression_is("1x^2", Multiplication::Builder(Rational::Builder(1),Power::Builder(Symbol::Builder("x", 1),Rational::Builder(2))));
   assert_parsed_expression_is("2/1x", Division::Builder(Rational::Builder(2),Multiplication::Builder(Rational::Builder(1),Symbol::Builder("x", 1))));
@@ -386,7 +378,7 @@ QUIZ_CASE(poincare_parser_implicit_multiplication) {
   assert_parsed_expression_is("sin(1)2", Multiplication::Builder(Sine::Builder(Rational::Builder(1)),Rational::Builder(2)));
   assert_parsed_expression_is("1cos(2)", Multiplication::Builder(Rational::Builder(1),Cosine::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("1!2", Multiplication::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("2X^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(Ion::Charset::Exponential),Parenthesis::Builder(Rational::Builder(3)))));
+  assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
   Expression m1[] = {Rational::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {Rational::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);
   assert_parsed_expression_is("[[1]][[2]]", Multiplication::Builder(M1,M2));
@@ -397,29 +389,29 @@ QUIZ_CASE(poincare_parser_expression_evaluation) {
   assert_parsed_expression_evaluates_to<float>("-0.1", "-0.1");
   assert_parsed_expression_evaluates_to<float>("-1.", "-1");
   assert_parsed_expression_evaluates_to<float>("-.1", "-0.1");
-  assert_parsed_expression_evaluates_to<float>("-0E2", "0");
-  assert_parsed_expression_evaluates_to<float>("-0.1E2", "-10");
-  assert_parsed_expression_evaluates_to<float>("-1.E2", "-100");
-  assert_parsed_expression_evaluates_to<float>("-.1E2", "-10");
-  assert_parsed_expression_evaluates_to<float>("-0E-2", "0");
-  assert_parsed_expression_evaluates_to<float>("-0.1E-2", "-0.001");
-  assert_parsed_expression_evaluates_to<float>("-1.E-2", "-0.01");
-  assert_parsed_expression_evaluates_to<float>("-.1E-2", "-0.001");
+  assert_parsed_expression_evaluates_to<float>("-0ᴇ2", "0");
+  assert_parsed_expression_evaluates_to<float>("-0.1ᴇ2", "-10");
+  assert_parsed_expression_evaluates_to<float>("-1.ᴇ2", "-100");
+  assert_parsed_expression_evaluates_to<float>("-.1ᴇ2", "-10");
+  assert_parsed_expression_evaluates_to<float>("-0ᴇ-2", "0");
+  assert_parsed_expression_evaluates_to<float>("-0.1ᴇ-2", "-0.001");
+  assert_parsed_expression_evaluates_to<float>("-1.ᴇ-2", "-0.01");
+  assert_parsed_expression_evaluates_to<float>("-.1ᴇ-2", "-0.001");
 
   assert_parsed_expression_evaluates_to<float>("-2-3", "-5");
-  assert_parsed_expression_evaluates_to<float>("1.2*X^(1)", "3.261938");
-  assert_parsed_expression_evaluates_to<float>("2X^(3)", "40.1711", System, Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbos simulator
-  assert_parsed_expression_evaluates_to<float>("X^2*X^(1)", "20.0855", System, Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on simulator
-  assert_parsed_expression_evaluates_to<double>("X^2*X^(1)", "20.085536923188");
-  assert_parsed_expression_evaluates_to<double>("2*3^4+2", "164");
-  assert_parsed_expression_evaluates_to<float>("-2*3^4+2", "-160");
-  assert_parsed_expression_evaluates_to<double>("-sin(3)*2-3", "-3.2822400161197", System, Radian);
+  assert_parsed_expression_evaluates_to<float>("1.2×ℯ^(1)", "3.261938");
+  assert_parsed_expression_evaluates_to<float>("2ℯ^(3)", "40.1711", System, Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on blackbos simulator
+  assert_parsed_expression_evaluates_to<float>("ℯ^2×ℯ^(1)", "20.0855", System, Radian, Cartesian, 6); // WARNING: the 7th significant digit is wrong on simulator
+  assert_parsed_expression_evaluates_to<double>("ℯ^2×ℯ^(1)", "20.085536923188");
+  assert_parsed_expression_evaluates_to<double>("2×3^4+2", "164");
+  assert_parsed_expression_evaluates_to<float>("-2×3^4+2", "-160");
+  assert_parsed_expression_evaluates_to<double>("-sin(3)×2-3", "-3.2822400161197", System, Radian);
   assert_parsed_expression_evaluates_to<float>("-.003", "-0.003");
-  assert_parsed_expression_evaluates_to<double>(".02E2", "2");
+  assert_parsed_expression_evaluates_to<double>(".02ᴇ2", "2");
   assert_parsed_expression_evaluates_to<float>("5-2/3", "4.333333");
   assert_parsed_expression_evaluates_to<double>("2/3-5", "-4.3333333333333");
   assert_parsed_expression_evaluates_to<float>("-2/3-5", "-5.666667");
   assert_parsed_expression_evaluates_to<double>("sin(3)2(4+2)", "1.6934400967184", System, Radian);
-  assert_parsed_expression_evaluates_to<float>("4/2*(2+3)", "10");
-  assert_parsed_expression_evaluates_to<double>("4/2*(2+3)", "10");
+  assert_parsed_expression_evaluates_to<float>("4/2×(2+3)", "10");
+  assert_parsed_expression_evaluates_to<double>("4/2×(2+3)", "10");
 }

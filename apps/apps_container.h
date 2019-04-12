@@ -41,6 +41,7 @@ public:
   void run() override;
   bool updateBatteryState();
   void refreshPreferences();
+  void reloadTitleBarView();
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);

@@ -9,7 +9,7 @@ namespace Shared {
 FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
-  m_selectedFunction(nullptr),
+  m_selectedRecord(),
   m_highlightedStart(NAN),
   m_highlightedEnd(NAN),
   m_shouldColorHighlighted(false),
@@ -34,9 +34,9 @@ Context * FunctionGraphView::context() const {
   return m_context;
 }
 
-void FunctionGraphView::selectFunction(Function * function) {
-  if (m_selectedFunction != function) {
-    m_selectedFunction = function;
+void FunctionGraphView::selectRecord(Ion::Storage::Record record) {
+  if (m_selectedRecord != record) {
+    m_selectedRecord = record;
     reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
   }
 }

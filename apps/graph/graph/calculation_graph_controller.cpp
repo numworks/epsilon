@@ -63,7 +63,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 
 void CalculationGraphController::reloadBannerView() {
   m_bannerView->setNumberOfSubviews(2);
-  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), StorageCartesianFunctionStore::Symbol());
+  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), CartesianFunction::Symbol());
 }
 
 bool CalculationGraphController::moveCursor(int direction) {
@@ -84,7 +84,7 @@ Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetF
   return computeNewPointOfInterest(start, step, max, myApp->localContext());
 }
 
-StorageCartesianFunctionStore * CalculationGraphController::functionStore() const {
+CartesianFunctionStore * CalculationGraphController::functionStore() const {
   App * a = static_cast<App *>(app());
   return a->functionStore();
 }

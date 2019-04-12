@@ -3,6 +3,7 @@
 #include <cmath>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Sequence {
 
@@ -49,12 +50,12 @@ void TemplatedSequenceContext<T>::step(SequenceStore * sequenceStore, SequenceCo
   }
 
   /* Evaluate new u(n) and v(n) */
-  Sequence * u = sequenceStore->numberOfModels() > 0 ? sequenceStore->modelAtIndex(0) : nullptr;
+  Sequence * u = sequenceStore->numberOfModels() > 0 ? sequenceStore->modelForRecord(sequenceStore->recordAtIndex(0)) : nullptr;
   u = u && u->isDefined() ? u : nullptr;
-  Sequence * v = sequenceStore->numberOfModels() > 1 ? sequenceStore->modelAtIndex(1) : nullptr;
+  Sequence * v = sequenceStore->numberOfModels() > 1 ? sequenceStore->modelForRecord(sequenceStore->recordAtIndex(1)) : nullptr;
   v = v && v->isDefined() ? v : nullptr;
   /* Switch u & v  if the name of u is v */
-  if (u != nullptr && u->name()[0] ==  SequenceStore::k_sequenceNames[1][0]) {
+  if (u && u->fullName()[0] ==  SequenceStore::k_sequenceNames[1][0]) {
     Sequence * temp = u;
     u = v;
     v = temp;

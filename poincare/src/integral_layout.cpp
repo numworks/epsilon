@@ -1,5 +1,5 @@
 #include <poincare/integral_layout.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/serialization_helper.h>
 #include <string.h>
@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t topSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayoutNode::k_symbolWidth] = {
   {0x00, 0x00, 0xFF, 0xFF},
@@ -160,7 +160,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Write the opening parenthesis
-  buffer[numberOfChar++] = '(';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -169,7 +169,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
     if (i != 0) {
       // Write the comma
-      buffer[numberOfChar++] = ',';
+      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ',');
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
 
@@ -179,7 +179,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Write the closing parenthesis
-  buffer[numberOfChar++] = ')';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }
@@ -190,14 +190,14 @@ KDSize IntegralLayoutNode::computeSize() {
   KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
+  KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+maxCoordinate(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+2*k_differentialWidthMargin+dSize.width()+differentialSize.width();
   KDCoordinate baseline = computeBaseline();
-  KDCoordinate height = baseline + k_integrandHeigthMargin+max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline())+lowerBoundSize.height();
+  KDCoordinate height = baseline + k_integrandHeigthMargin+maxCoordinate(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline())+lowerBoundSize.height();
   return KDSize(width, height);
 }
 
 KDCoordinate IntegralLayoutNode::computeBaseline() {
-  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + max(integrandLayout()->baseline(), differentialLayout()->baseline());
+  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + maxCoordinate(integrandLayout()->baseline(), differentialLayout()->baseline());
 }
 
 KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
@@ -212,7 +212,7 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {
     x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;;
     y = 0;
   } else if (child == integrandLayout()) {
-    x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
+    x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+maxCoordinate(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
     y = computeBaseline()-integrandLayout()->baseline();
   } else if (child == differentialLayout()) {
     x = computeSize().width() - k_differentialWidthMargin - differentialLayout()->layoutSize().width();
@@ -227,7 +227,7 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize differentialSize = differentialLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  KDCoordinate centralArgumentHeight =  max(integrandLayout()->baseline(), differentialLayout()->baseline()) + max(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline());
+  KDCoordinate centralArgumentHeight =  maxCoordinate(integrandLayout()->baseline(), differentialLayout()->baseline()) + maxCoordinate(integrandSize.height()-integrandLayout()->baseline(), differentialSize.height()-differentialLayout()->baseline());
 
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
 

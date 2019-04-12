@@ -1,7 +1,7 @@
 #ifndef GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
-#include "../../shared/storage_function_curve_parameter_controller.h"
+#include "../../shared/function_curve_parameter_controller.h"
 #include "calculation_parameter_controller.h"
 #include "banner_view.h"
 
@@ -9,7 +9,7 @@ namespace Graph {
 
 class GraphController;
 
-class CurveParameterController : public Shared::StorageFunctionCurveParameterController {
+class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
   CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController);
   const char * title() override;
@@ -19,8 +19,8 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  Shared::StorageFunctionGoToParameterController * goToParameterController() override;
-  Shared::StorageFunctionGoToParameterController m_goToParameterController;
+  Shared::FunctionGoToParameterController * goToParameterController() override;
+  Shared::FunctionGoToParameterController m_goToParameterController;
   GraphController * m_graphController;
   constexpr static int k_totalNumberOfCells = 3;
   MessageTableCellWithChevron m_calculationCell;

@@ -16,14 +16,13 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
   m_curveParameterController(inputEventHandlerDelegate, this, graphRange, m_cursor),
-  m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor),
-  m_sequenceStore(sequenceStore)
+  m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor)
 {
   m_graphRange->setDelegate(this);
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (m_sequenceStore->numberOfDefinedModels() == 0) {
+  if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
@@ -31,11 +30,10 @@ I18n::Message GraphController::emptyMessage() {
 
 float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
-  for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
-    Sequence * s = m_sequenceStore->modelAtIndex(i);
-    if (s->isDefined() && s->isActive()) {
-      nmin = minInt(nmin, s->initialRank());
-    }
+  int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+  for (int i = 0; i < nbOfActiveModels; i++) {
+    Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    nmin = minInt(nmin, s->initialRank());
   }
   assert(nmin < INT_MAX);
   return nmin;
@@ -45,20 +43,20 @@ float GraphController::interestingXHalfRange() const {
   float standardRange = Shared::FunctionGraphController::interestingXHalfRange();
   int nmin = INT_MAX;
   int nmax = 0;
-  for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
-    Sequence * s = m_sequenceStore->modelAtIndex(i);
-    if (s->isDefined() && s->isActive()) {
-      int firstInterestingIndex = s->initialRank();
-      nmin = minInt(nmin, firstInterestingIndex);
-      nmax = maxInt(nmax, firstInterestingIndex + standardRange);
-    }
+  int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+  for (int i = 0; i < nbOfActiveModels; i++) {
+    Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    int firstInterestingIndex = s->initialRank();
+    nmin = minInt(nmin, firstInterestingIndex);
+    nmax = maxInt(nmax, firstInterestingIndex + standardRange);
   }
   assert(nmax - nmin >= standardRange);
   return nmax - nmin;
 }
 
 bool GraphController::handleEnter() {
-  m_termSumController.setFunction(m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor()));
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  m_termSumController.setRecord(record);
   return FunctionGraphController::handleEnter();
 }
 
@@ -77,11 +75,11 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (x < 0.0) {
     return false;
   }
-  Sequence * s = m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
+  Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
-  m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

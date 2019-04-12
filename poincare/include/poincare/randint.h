@@ -22,6 +22,7 @@ public:
 
   // Complex
   bool isReal(Context & context) const override { return true; }
+  bool isRandom() const override { return true; }
 
 private:
   // Layout

@@ -28,6 +28,8 @@ src += $(addprefix ion/src/shared/, \
   led.cpp \
   platform_info.cpp \
   storage.cpp \
+  unicode/utf8_decoder.cpp\
+  unicode/utf8_helper.cpp\
 )
 
 src += ion/src/external/lz4/lz4.c
@@ -37,6 +39,7 @@ tests += $(addprefix ion/test/,\
   events.cpp\
   keyboard.cpp\
   storage.cpp\
+  utf8_decoder.cpp\
 )
 
 TEST_EXT_FLASH ?= 0
@@ -45,4 +48,8 @@ SFLAGS += -DTEST_EXT_FLASH=1
 tests += ion/test/external_flash.cpp
 TEST_EXT_FLASH_REPROGRAM ?= 0
 SFLAGS += -DTEST_EXT_FLASH_REPROGRAM=$(TEST_EXT_FLASH_REPROGRAM)
+endif
+
+ifdef ION_STORAGE_LOG
+SFLAGS += -DION_STORAGE_LOG=1
 endif

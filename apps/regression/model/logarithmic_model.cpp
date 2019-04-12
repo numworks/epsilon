@@ -1,9 +1,8 @@
 #include "logarithmic_model.h"
 #include "../store.h"
+#include <poincare/layout_helper.h>
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
-#include <poincare/horizontal_layout.h>
 
 using namespace Poincare;
 
@@ -11,18 +10,8 @@ namespace Regression {
 
 Layout LogarithmicModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout layoutChildren[] = {
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('l', KDFont::SmallFont),
-      CharLayout::Builder('n', KDFont::SmallFont),
-      CharLayout::Builder('(', KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
-      CharLayout::Builder(')', KDFont::SmallFont),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('b', KDFont::SmallFont)
-    };
-    m_layout = HorizontalLayout::Builder(layoutChildren, 9);
+    const char * s = "a·ln(X)+b";
+    m_layout = LayoutHelper::String(s, strlen(s), k_layoutFont);
   }
   return m_layout;
 }

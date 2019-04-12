@@ -58,7 +58,7 @@ private:
   MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
   VariableBoxEmptyController m_emptyViewController;
   // Layout memoization
-  // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and StorageExpressionModelStore code
+  // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code
   int m_firstMemoizedLayoutIndex;
   Poincare::Layout m_layouts[k_maxNumberOfDisplayedRows];
 };

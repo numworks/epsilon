@@ -1,5 +1,8 @@
 #include <kandinsky/rect.h>
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 KDRect::KDRect(KDPoint p, KDSize s) :
   m_x(p.x()), m_y(p.y()),
   m_width(s.width()), m_height(s.height())
@@ -35,10 +38,10 @@ KDRect KDRect::intersectedWith(const KDRect & other) const {
     return KDRectZero;
   }
 
-  KDCoordinate intersectionLeft = max(left(), other.left());
-  KDCoordinate intersectionRight = min(right(), other.right());
-  KDCoordinate intersectionTop = max(top(), other.top());
-  KDCoordinate intersectionBottom = min(bottom(), other.bottom());
+  KDCoordinate intersectionLeft = maxCoordinate(left(), other.left());
+  KDCoordinate intersectionRight = minCoordinate(right(), other.right());
+  KDCoordinate intersectionTop = maxCoordinate(top(), other.top());
+  KDCoordinate intersectionBottom = minCoordinate(bottom(), other.bottom());
 
   return KDRect(
       intersectionLeft,
@@ -54,8 +57,8 @@ void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
 {
   if (size1 != 0) {
     if (size2 != 0) {
-      *outputMin = min(min1, min2);
-      *outputMax = max(max1, max2);
+      *outputMin = minCoordinate(min1, min2);
+      *outputMax = maxCoordinate(max1, max2);
     } else {
       *outputMin = min1;
       *outputMax = max1;

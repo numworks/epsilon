@@ -2,7 +2,7 @@
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "../storage_cartesian_function_store.h"
+#include "../cartesian_function_store.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
 #include "integral_graph_controller.h"

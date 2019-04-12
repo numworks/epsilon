@@ -3,7 +3,10 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/preferences.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -20,21 +23,29 @@ void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLe
    * in first position. When called by convertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */
   assert(bufferLength > 0 && decimalMarkerPosition != 0);
-  char tempBuffer[PrintFloat::k_maxFloatBufferLength];
-  int intLength = i.serialize(tempBuffer, PrintFloat::k_maxFloatBufferLength);
-  int firstDigitChar = tempBuffer[0] == '-' ? 1 : 0;
+  constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
+  char tempBuffer[tempBufferSize];
+  int intLength = i.serialize(tempBuffer, tempBufferSize);
+  int firstDigitChar = UTF8Helper::CodePointIs(tempBuffer, '-') ? 1 : 0;
+  /* We should use the UTF8Decoder to write code points in buffers, but it is
+   * much clearer to manipulate chars directly as we know that the code point we
+   * use ('.', '0, '1', '2', ...) are only one char long. */
   for (int k = bufferLength-1; k >= firstDigitChar; k--) {
     if (k == decimalMarkerPosition) {
+      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       buffer[k] = '.';
       continue;
     }
     if (intLength > firstDigitChar) {
+      assert(UTF8Decoder::CharSizeOfCodePoint(tempBuffer[intLength-1]) == 1);
       buffer[k] = tempBuffer[--intLength];
       continue;
     }
+    assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     buffer[k] = '0';
   }
   if (firstDigitChar == 1) {
+    assert(UTF8Decoder::CharSizeOfCodePoint(tempBuffer[0]) == 1);
     buffer[0] = tempBuffer[0];
   }
 }
@@ -46,14 +57,15 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
 
-  char tempBuffer[PrintFloat::k_maxFloatBufferLength];
+  constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
+  char tempBuffer[tempBufferSize];
   int numberOfZerosRemoved = 0;
-  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
+  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
   /* If the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
    * fit the buffer size. */
   if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   if (requiredLength >= bufferSize) {
     /* If the buffer size is still too small and rounding is allowed, we only
@@ -65,7 +77,7 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
     }
     int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - requiredLength + bufferSize - 1;
     adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, tempBufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize-1;
   strlcpy(buffer, tempBuffer, bufferSize);
@@ -73,21 +85,21 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
 }
 
 template <class T>
-int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
+int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
   assert(numberOfSignificantDigits > 0);
   if (std::isinf(f)) {
-    assert(Infinity::NameSize()+1 < PrintFloat::k_maxFloatBufferLength);
+    assert(Infinity::NameSize()+1 < bufferSize);
     int currentChar = 0;
     if (f < 0) {
-      buffer[currentChar++] = '-';
+      currentChar+= SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '-');
     }
-    strlcpy(&buffer[currentChar], Infinity::Name(), PrintFloat::k_maxFloatBufferLength-1);
+    strlcpy(&buffer[currentChar], Infinity::Name(), bufferSize-1);
     return currentChar + Infinity::NameSize() - 1;
   }
 
   if (std::isnan(f)) {
-    assert(Undefined::NameSize() < PrintFloat::k_maxFloatBufferLength);
-    strlcpy(buffer, Undefined::Name(), PrintFloat::k_maxFloatBufferLength);
+    assert(Undefined::NameSize() < bufferSize);
+    strlcpy(buffer, Undefined::Name(), bufferSize);
     return Undefined::NameSize() - 1;
   }
 
@@ -146,6 +158,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   int numberOfZerosRemoved = 0;
   while (digit.isZero() && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
       (numberOfCharsForMantissaWithoutSign > exponentInBase10+1 || mode == Preferences::PrintFloatMode::Scientific)) {
+    assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     numberOfCharsForMantissaWithoutSign--;
     dividend = quotient;
     quotient = Integer::Division(dividend, Integer(10)).quotient;
@@ -161,12 +174,14 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   // Force a decimal marker if there is fractional part
   bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific && numberOfCharsForMantissaWithoutSign > 1) || (mode == Preferences::PrintFloatMode::Decimal && numberOfCharsForMantissaWithoutSign > exponentInBase10 +1);
   if (decimalMarker) {
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
   }
 
   /* Find the position of the decimal marker position */
   int decimalMarkerPosition = exponentInBase10 < 0 || mode == Preferences::PrintFloatMode::Scientific ? 1 : exponentInBase10+1;
   decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
+  assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
 
   /* Part III: Exponent */
 
@@ -174,32 +189,35 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   if (exponentInBase10 < 0){
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;
+    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   }
 
-  /* Part III: print mantissa*10^exponent*/
+  /* Part III: print mantissa*10^exponent */
   int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
+  assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
   assert(!dividend.isOverflow());
-  if (numberOfCharsForMantissaWithSign >= PrintFloat::k_maxFloatBufferLength) {
+  if (numberOfCharsForMantissaWithSign >= bufferSize) {
     /* Exception 3: if we are about to overflow the buffer, we escape by
      * returning a big int. This will be caught by 'convertFloatToText' which
      * will force displayMode to Scientific. */
     assert(mode == Preferences::PrintFloatMode::Decimal);
     return INT_MAX;
   }
-  assert(numberOfCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
+  assert(numberOfCharsForMantissaWithSign < bufferSize);
   PrintFloat::printBase10IntegerWithDecimalMarker(buffer, numberOfCharsForMantissaWithSign, dividend, decimalMarkerPosition);
   if (mode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {
     buffer[numberOfCharsForMantissaWithSign] = 0;
     return numberOfCharsForMantissaWithSign;
   }
   // Print exponent
-  assert(numberOfCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
-  buffer[numberOfCharsForMantissaWithSign] = Ion::Charset::Exponent;
-  assert(numberOfCharExponent+numberOfCharsForMantissaWithSign+1 < PrintFloat::k_maxFloatBufferLength);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer+numberOfCharsForMantissaWithSign+1, numberOfCharExponent, Integer(exponentInBase10), -1);
-  buffer[numberOfCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
-  return (numberOfCharsForMantissaWithSign+1+numberOfCharExponent);
+  assert(numberOfCharsForMantissaWithSign < bufferSize);
+  int currentNumberOfChar = numberOfCharsForMantissaWithSign;
+  currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, UCodePointLatinLetterSmallCapitalE);
+  assert(numberOfCharExponent+currentNumberOfChar < bufferSize);
+  PrintFloat::printBase10IntegerWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, Integer(exponentInBase10), -1);
+  buffer[currentNumberOfChar + numberOfCharExponent] = 0;
+  return (currentNumberOfChar + numberOfCharExponent);
 }
 
 template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);

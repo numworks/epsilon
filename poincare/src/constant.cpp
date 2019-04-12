@@ -1,13 +1,16 @@
 #include <poincare/constant.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/unreal.h>
 #include <poincare/unreal.h>
 #include <ion.h>
 #include <cmath>
 #include <assert.h>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
@@ -26,13 +29,13 @@ bool ConstantNode::isReal(Context & context) const {
   return !isIComplex();
 }
 
-int rankOfConstant(char c) {
+int rankOfConstant(CodePoint c) {
   switch (c) {
-    case Ion::Charset::IComplex:
+    case UCodePointMathematicalBoldSmallI :
       return 0;
-    case Ion::Charset::SmallPi:
+    case UCodePointGreekSmallLetterPi :
       return 1;
-    case Ion::Charset::Exponential:
+    case UCodePointScriptSmallE :
       return 2;
     default:
       assert(false);
@@ -40,12 +43,19 @@ int rankOfConstant(char c) {
   }
 }
 
+CodePoint ConstantNode::codePoint() const {
+  UTF8Decoder decoder = UTF8Decoder(m_name);
+  CodePoint result = decoder.nextCodePoint();
+  assert(decoder.nextCodePoint() == UCodePointNull);
+  return result;
+}
+
 int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const {
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, canBeInterrupted);
   }
   assert(type() == e->type());
-  return (rankOfConstant(name()[0]) - rankOfConstant(static_cast<const ConstantNode *>(e)->name()[0]));
+  return rankOfConstant(codePoint()) - rankOfConstant(static_cast<const ConstantNode *>(e)->codePoint());
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -62,7 +72,6 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 template<typename T>
 Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (isIComplex()) {
-    assert(m_name[1] == 0);
     return Complex<T>::Builder(0.0, 1.0);
   }
   if (isPi()) {
@@ -72,15 +81,30 @@ Evaluation<T> ConstantNode::templatedApproximate(Context& context, Preferences::
   return Complex<T>::Builder(M_E);
 }
 
-Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Constant(this).shallowReduce(context, complexFormat, angleUnit, target);
+}
+
+bool ConstantNode::isConstantCodePoint(CodePoint c) const {
+  UTF8Decoder decoder(m_name);
+  bool result = (decoder.nextCodePoint() == c);
+  assert(decoder.nextCodePoint() == UCodePointNull);
+  return result;
+}
+
+Constant Constant::Builder(CodePoint c) {
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char buffer[bufferSize];
+  size_t codePointSize = SerializationHelper::CodePoint(buffer, bufferSize, c);
+  return SymbolAbstract::Builder<Constant, ConstantNode>(buffer, codePointSize);
 }
 
 Expression Constant::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   Expression result;
-  if (complexFormat == Preferences::ComplexFormat::Real && isIComplex()) {
+  bool isI = isIComplex();
+  if (complexFormat == Preferences::ComplexFormat::Real && isI) {
     result = Unreal::Builder();
-  } else if (target == ExpressionNode::ReductionTarget::User && isIComplex()) {
+  } else if (target == ExpressionNode::ReductionTarget::User && isI) {
     result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
   }
   if (!result.isUninitialized()) {

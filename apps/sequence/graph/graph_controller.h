@@ -20,15 +20,13 @@ public:
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
   float interestingXHalfRange() const override;
-protected:
-  int numberOfCurves() const override { return m_sequenceStore->numberOfModels(); }
 private:
   BannerView * bannerView() override { return &m_bannerView; }
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction) override;
   double defaultCursorAbscissa() override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
-  SequenceStore * functionStore() const override { return m_sequenceStore; }
+  SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
   View * cursorView() override {
     return &m_cursorView;
@@ -40,7 +38,6 @@ private:
   CurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   TermSumController m_termSumController;
-  SequenceStore * m_sequenceStore;
 };
 
 

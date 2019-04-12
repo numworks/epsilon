@@ -10,8 +10,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
 uint32_t InteractiveCurveViewRange::rangeChecksum() {
   float data[5] = {m_xMin, m_xMax, m_yMin, m_yMax, m_yAuto ? 1.0f : 0.0f};
@@ -217,7 +217,7 @@ bool InteractiveCurveViewRange::isCursorVisible(float topMarginRatio, float righ
 float InteractiveCurveViewRange::clipped(float x, bool isMax) {
   float maxF = isMax ? k_upperMaxFloat : k_lowerMaxFloat;
   float minF = isMax ? -k_lowerMaxFloat : -k_upperMaxFloat;
-  return max(minF, min(x, maxF));
+  return maxFloat(minF, minFloat(x, maxF));
 }
 
 void InteractiveCurveViewRange::notifyRangeChange() {

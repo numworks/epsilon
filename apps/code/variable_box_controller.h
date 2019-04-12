@@ -8,11 +8,9 @@
 
 namespace Code {
 
-class App;
-
 class VariableBoxController : public NestedMenuController {
 public:
-  VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore);
+  VariableBoxController(ScriptStore * scriptStore);
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
@@ -36,7 +34,6 @@ private:
   void insertTextInCaller(const char * text);
   void addFunctionAtIndex(const char * functionName, int scriptIndex);
   void addVariableAtIndex(const char * variableName, int scriptIndex);
-  App * m_pythonDelegate;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
   int m_scriptNodesCount;
   ScriptStore * m_scriptStore;

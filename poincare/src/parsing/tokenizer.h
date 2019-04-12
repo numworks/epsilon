@@ -1,12 +1,11 @@
 #ifndef POINCARE_PARSING_TOKENIZER_H
 #define POINCARE_PARSING_TOKENIZER_H
 
-/* In order to parse a text input into an Expression,
- * (an instance of) the Tokenizer reads the successive
- * characters of the input, pops the Tokens it recognizes,
- * which are then consumed by the Parser.
- * For each Token, the Tokenizer determines a Type and
- * may save other relevant data intended for the Parser. */
+/* In order to parse a text input into an Expression, (an instance of) the
+ * Tokenizer reads the successive characters of the input, pops the Tokens it
+ * recognizes, which are then consumed by the Parser. For each Token, the
+ * Tokenizer determines a Type and may save other relevant data intended for the
+ * Parser. */
 
 #include "token.h"
 
@@ -14,16 +13,19 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text) : m_nextCharP(text) {};
+  Tokenizer(const char * text) : m_text(text) {}
   Token popToken();
 private:
-  const char popChar();
-  bool canPopChar(const char c);
+  typedef bool (*PopTest)(CodePoint c, CodePoint context);
+  const CodePoint nextCodePoint(PopTest popTest, CodePoint context = UCodePointNull, bool * testResult = nullptr);
+  const CodePoint popCodePoint();
+  bool canPopCodePoint(const CodePoint c);
+  size_t popWhile(PopTest popTest, CodePoint context = UCodePointNull);
   size_t popDigits();
   size_t popIdentifier();
   Token popNumber();
 
-  const char * m_nextCharP;
+  const char * m_text;
 };
 
 }

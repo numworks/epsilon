@@ -7,8 +7,8 @@
 
 using namespace Poincare;
 
-static inline int min(int x, int y) { return (x<y ? x : y); }
-static inline int max(int x, int y) { return (x>y ? x : y); }
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 namespace Shared {
 
@@ -255,7 +255,7 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 int StoreController::numberOfElements() {
   int result = 0;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    result = max(result, m_store->numberOfPairsOfSeries(i));
+    result = maxInt(result, m_store->numberOfPairsOfSeries(i));
   }
   return result;
 }
@@ -284,7 +284,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
     } else {
-      numberOfValuesToCompute = min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+      numberOfValuesToCompute = minInt(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
     }
     index++;
   }

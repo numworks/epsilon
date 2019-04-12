@@ -7,29 +7,18 @@
 
 namespace Shared {
 
-/* FunctionStore is a dumb class.
- * Its only job is to store functions and to give them a color. */
+/* FunctionStore storse functions and gives them a color. */
 
 class FunctionStore : public ExpressionModelStore {
 public:
-  FunctionStore();
-  virtual uint32_t storeChecksum() = 0;
-  virtual Function * modelAtIndex(int i) override = 0;
-  virtual Function * activeFunctionAtIndex(int i);
-  virtual Function * definedFunctionAtIndex(int i) { return static_cast<Function *>(definedModelAtIndex(i)); }
+  FunctionStore() : ExpressionModelStore() {}
+  uint32_t storeChecksum();
   // An active function must be defined to be counted
-  int numberOfActiveFunctions();
-  virtual char symbol() const = 0;
-protected:
-  static const char * const name(Shared::Function * f) { return f->name(); }
-  static KDColor const color(Shared::Function * f) { return f->color(); }
-  template<typename T> using AttributeGetter = T (*)(Function * f);
-  template<typename T> T firstAvailableAttribute(T attributes[], AttributeGetter<T> attribute);
-  const KDColor firstAvailableColor() {
-    return firstAvailableAttribute(Palette::DataColor, FunctionStore::color);
-  }
-private:
-  virtual const char * firstAvailableName() = 0;
+  int numberOfActiveFunctions() const { return numberOfModelsSatisfyingTest([](ExpressionModelHandle * m) { return m->isDefined() && static_cast<Function *>(m)->isActive(); }); }
+  Ion::Storage::Record activeRecordAtIndex(int i) const { return recordStatifyingTestAtIndex(i, [](ExpressionModelHandle * m) { return m->isDefined() && static_cast<Function *>(m)->isActive(); }); }
+
+  ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<Function>(static_cast<Function *>(privateModelForRecord(record))); }
+
 };
 
 }

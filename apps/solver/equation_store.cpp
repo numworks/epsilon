@@ -1,4 +1,5 @@
 #include "equation_store.h"
+#include "../constant.h"
 #include "../shared/poincare_helpers.h"
 #include <limits.h>
 
@@ -21,6 +22,7 @@ using namespace Shared;
 namespace Solver {
 
 EquationStore::EquationStore() :
+  ExpressionModelStore(),
   m_type(Type::LinearSystem),
   m_numberOfSolutions(0),
   m_exactSolutionExactLayouts{},
@@ -28,13 +30,28 @@ EquationStore::EquationStore() :
 {
 }
 
-Equation * EquationStore::emptyModel() {
-  static Equation e;
-  return &e;
+Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
+  char name[3] = {'e', '?', 0}; // name is going to be e0 or e1 or ... e5
+  int currentNumber = 0;
+  while (currentNumber < k_maxNumberOfEquations) {
+    name[1] = '0'+currentNumber;
+    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::eqExtension).isNull()) {
+      break;
+    }
+    currentNumber++;
+  }
+  assert(currentNumber < k_maxNumberOfEquations);
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, Ion::Storage::eqExtension, nullptr, 0);
 }
 
-void EquationStore::setModelAtIndex(Shared::ExpressionModel * e, int i) {
-  m_equations[i] = *(static_cast<Equation *>(e));;
+void EquationStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+  assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
+  m_equations[cacheIndex] = Equation(record);
+}
+
+ExpressionModelHandle * EquationStore::memoizedModelAtIndex(int cacheIndex) const {
+  assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
+  return &m_equations[cacheIndex];
 }
 
 void EquationStore::tidy() {
@@ -78,7 +95,7 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(PoincareHelpers::NextRoot(definedModelAtIndex(0)->standardForm(context), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context));
+  return !std::isnan(PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context), m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context));
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
@@ -88,7 +105,7 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = PoincareHelpers::NextRoot(definedModelAtIndex(0)->standardForm(context), m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
+    m_approximateSolutions[i] = PoincareHelpers::NextRoot(modelForRecord(definedRecordAtIndex(0))->standardForm(context), m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -105,7 +122,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   m_variables[0][0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    const Expression e = definedModelAtIndex(i)->standardForm(context);
+    const Expression e = modelForRecord(definedRecordAtIndex(i))->standardForm(context);
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined) {
       return Error::EquationUndefined;
     }
@@ -130,7 +147,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   Preferences * preferences = Preferences::sharedPreferences();
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], *context,  updatedComplexFormat(), preferences->angleUnit());
+    isLinear = isLinear && modelForRecord(definedRecordAtIndex(i))->standardForm(context).getLinearCoefficients((char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize, coefficients[i], &constants[i], *context,  updatedComplexFormat(context), preferences->angleUnit());
     if (!isLinear) {
     // TODO: should we clean pool allocated memory if the system is not linear
 #if 0
@@ -161,7 +178,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     // Step 2. Polynomial & Monovariable?
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, *context, updatedComplexFormat(), preferences->angleUnit());
+    int degree = modelForRecord(definedRecordAtIndex(0))->standardForm(context).getPolynomialReducedCoefficients(m_variables[0], polynomialCoefficients, *context, updatedComplexFormat(context), preferences->angleUnit());
     if (degree == 2) {
       // Polynomial degree <= 2
       m_type = Type::PolynomialMonovariable;
@@ -189,14 +206,14 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i]);
       m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);
       // Check for identity between exact and approximate layouts
-      char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      char exactBuffer[::Constant::MaxSerializedExpressionSize];
+      char approximateBuffer[::Constant::MaxSerializedExpressionSize];
+      m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, ::Constant::MaxSerializedExpressionSize);
+      m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, ::Constant::MaxSerializedExpressionSize);
       m_exactSolutionIdentity[solutionIndex] = strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        char buffer[Shared::ExpressionModel::k_expressionBufferSize];
-        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, Shared::ExpressionModel::k_expressionBufferSize, preferences->complexFormat(), preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
+        char buffer[::Constant::MaxSerializedExpressionSize];
+        m_exactSolutionEquality[solutionIndex] = exactSolutions[i].isEqualToItsApproximationLayout(exactSolutionsApproximations[i], buffer, ::Constant::MaxSerializedExpressionSize, preferences->complexFormat(), preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context);
       }
       solutionIndex++;
     }
@@ -221,7 +238,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Ab.setDimensions(m, n+1);
 
   // Compute the rank of (A | b)
-  int rankAb = Ab.rank(*context, updatedComplexFormat(), angleUnit, true);
+  int rankAb = Ab.rank(*context, updatedComplexFormat(context), angleUnit, true);
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;
@@ -246,7 +263,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         exactSolutions[i] = Ab.matrixChild(i,n);
-        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+        exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
       }
     }
   }
@@ -258,7 +275,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   assert(degree == 2);
   // Compute delta = b*b-4ac
   Expression delta = Subtraction::Builder(Power::Builder(coefficients[1].clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(4), coefficients[0].clone(), coefficients[2].clone()));
-  delta = delta.simplify(*context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+  delta = delta.simplify(*context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
   if (delta.isUninitialized()) {
     delta = Poincare::Undefined::Builder();
   }
@@ -275,7 +292,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
   }
   exactSolutions[m_numberOfSolutions-1] = delta;
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+    exactSolutions[i].simplifyAndApproximate(&exactSolutions[i], &exactSolutionsApproximations[i], *context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
   }
   return Error::NoError;
 #if 0
@@ -325,7 +342,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exact
       // C = Root((delta1+sqrt(-27a^2*delta))/2, 3)
       Expression * mult11Operands[3] = {new Rational::Builder(-27), new Power::Builder(a->clone(), new Rational::Builder(2), false), (*delta)->clone()};
       Expression * c = new Power::Builder(new Division::Builder(new Addition(delta1, new SquareRoot(new Multiplication::Builder(mult11Operands, 3, false), false), false), new Rational::Builder(2), false), new Rational::Builder(1,3), false);
-      Expression * unary3roots[2] = {new Addition(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(Ion::Charset::IComplex), false), new Rational::Builder(2), false), false), new Subtraction::Builder(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(Ion::Charset::IComplex), false), new Rational::Builder(2), false), false)};
+      Expression * unary3roots[2] = {new Addition(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(UCodePointMathematicalBoldSmallI), false), new Rational::Builder(2), false), false), new Subtraction::Builder(new Rational::Builder(-1,2), new Division::Builder(new Multiplication::Builder(new SquareRoot(new Rational::Builder(3), false), new Constant::Builder(UCodePointMathematicalBoldSmallI), false), new Rational::Builder(2), false), false)};
       // x_k = -1/(3a)*(b+C*z+delta0/(zC)) with z = unary cube root
       for (int k = 0; k < 3; k++) {
         Expression * ccopy = c;
@@ -351,17 +368,17 @@ void EquationStore::tidySolution() {
   }
 }
 
-Preferences::ComplexFormat EquationStore::updatedComplexFormat() {
+Preferences::ComplexFormat EquationStore::updatedComplexFormat(Context * context) {
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  if (complexFormat == Preferences::ComplexFormat::Real && isExplictlyComplex()) {
+  if (complexFormat == Preferences::ComplexFormat::Real && isExplictlyComplex(context)) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
 }
 
-bool EquationStore::isExplictlyComplex() {
+bool EquationStore::isExplictlyComplex(Context * context) {
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    if (definedModelAtIndex(i)->containsIComplex()) {
+    if (modelForRecord(definedRecordAtIndex(i))->containsIComplex(context)) {
       return true;
     }
   }

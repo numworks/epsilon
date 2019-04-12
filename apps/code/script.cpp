@@ -5,8 +5,8 @@ namespace Code {
 
 static inline void intToText(int i, char * buffer, int bufferSize) {
   // We only support integers from 0 to 99.
-  assert(i>=0);
-  assert(i<100);
+  assert(i >= 0);
+  assert(i < 100);
   assert(bufferSize >= 3);
   if (i/10 == 0) {
     buffer[0] = i+'0';
@@ -37,13 +37,6 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   return false;
 }
 
-bool isSmallLetterOrUnderscoreChar(const char c) {
-  return (c >= 'a' && c <= 'z') || c == '_';
-}
-bool isNumberChar(const char c) {
-  return c >= '0' && c <= '9';
-}
-
 bool Script::nameCompliant(const char * name) {
   /* We allow here the empty script name ".py", because it is the name used to
    * create a new empty script. When naming or renaming a script, we check
@@ -53,20 +46,21 @@ bool Script::nameCompliant(const char * name) {
    * We do not allow upper cases in the script names because script names are
    * used in the URLs of the NumWorks workshop website and we do not want
    * problems with case sensitivity. */
-  const char * c = name;
-  if (*c == 0 || (!isSmallLetterOrUnderscoreChar(*c) && *c != '.')) {
+  UTF8Decoder decoder(name);
+  CodePoint c = decoder.nextCodePoint();
+  if (c == UCodePointNull || !(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || c == '.')) {
     /* The name cannot be empty. Its first letter must be in [a-z_] or the
      * extension dot. */
     return false;
   }
-  while (*c != 0) {
-    if (*c == '.' && strcmp(c+1, ScriptStore::k_scriptExtension) == 0) {
+  while (c != UCodePointNull) {
+    if (c == '.' && strcmp(decoder.stringPosition(), ScriptStore::k_scriptExtension) == 0) {
       return true;
     }
-    if (!isSmallLetterOrUnderscoreChar(*c) && !isNumberChar(*c)) {
+    if (!(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || UTF8Helper::CodePointIsNumber(c))) {
       return false;
     }
-    c++;
+    c = decoder.nextCodePoint();
   }
   return false;
 }
@@ -86,7 +80,7 @@ void Script::toggleImportationStatus() {
 const char * Script::readContent() const {
   assert(!isNull());
   Data d = value();
-  return (const char *)d.buffer+k_importationStatusSize;
+  return (const char *)d.buffer + k_importationStatusSize;
 }
 
 }

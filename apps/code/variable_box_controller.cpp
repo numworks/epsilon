@@ -6,13 +6,13 @@
 #include <assert.h>
 #include <escher/buffer_text_view.h>
 #include <escher/palette.h>
+#include <ion/unicode/utf8_helper.h>
 #include <string.h>
 
 namespace Code {
 
-VariableBoxController::VariableBoxController(App * pythonDelegate, ScriptStore * scriptStore) :
+VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   NestedMenuController(nullptr, I18n::Message::FunctionsAndVariables),
-  m_pythonDelegate(pythonDelegate),
   m_scriptNodesCount(0),
   m_scriptStore(scriptStore)
 {
@@ -33,7 +33,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
    * environment where Python has already been inited. This way, we do not
    * deinit Python when leaving the VariableBoxController, so we do not lose the
    * environment that was loaded when entering the VariableBoxController. */
-  assert(m_pythonDelegate->pythonIsInited());
+  assert(static_cast<App *>(app())->pythonIsInited());
 }
 
 static bool shouldAddObject(const char * name, int maxLength) {
@@ -41,7 +41,7 @@ static bool shouldAddObject(const char * name, int maxLength) {
     return false;
   }
   assert(name != nullptr);
-  if (name[0] == '_') {
+  if (UTF8Helper::CodePointIs(name, '_')) {
     return false;
   }
   return true;

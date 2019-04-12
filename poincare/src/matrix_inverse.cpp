@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper MatrixInverse::s_functionHelper;
 
 int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return MatrixInverse(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 

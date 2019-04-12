@@ -16,7 +16,7 @@ public:
   void setText(char * textBuffer, size_t textBufferSize) {
     m_textArea.setText(textBuffer, textBufferSize);
   }
-  bool setCursorLocation(int location) {
+  bool setCursorLocation(const char * location) {
     return m_textArea.setCursorLocation(location);
   }
   void loadSyntaxHighlighter() { m_textArea.loadSyntaxHighlighter(); };

@@ -1,5 +1,5 @@
 #include <poincare/layout_cursor.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -9,12 +9,14 @@
 #include <poincare/nth_root_layout.h>
 #include <poincare/right_parenthesis_layout.h>
 #include <poincare/vertical_offset_layout.h>
-#include <ion/charset.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <stdio.h>
 
 namespace Poincare {
 
 /* Getters and setters */
+
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 KDCoordinate LayoutCursor::cursorHeight() {
   KDCoordinate height = layoutHeight();
@@ -33,7 +35,7 @@ KDCoordinate LayoutCursor::baseline() {
   if (m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.baseline();
   } else if (m_layout.hasSibling(equivalentLayout)) {
-    return max(layoutBaseline, equivalentLayout.baseline());
+    return maxCoordinate(layoutBaseline, equivalentLayout.baseline());
   }
   return layoutBaseline;
 }
@@ -75,7 +77,7 @@ void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
 void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CharLayout::Builder(Ion::Charset::Exponential),
+      CodePointLayout::Builder(UCodePointScriptSmallE),
       VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
@@ -107,16 +109,16 @@ void LayoutCursor::addEmptyPowerLayout() {
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CharLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CharLayout::Builder(Ion::Charset::MiddleDot),
-      CharLayout::Builder('1'),
-      CharLayout::Builder('0'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
         emptyLayout,
         VerticalOffsetLayoutNode::Type::Superscript));
@@ -132,44 +134,54 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
   Layout(newChild.node()).collapseSiblings(this);
 }
 
-void LayoutCursor::addXNTCharLayout() {
-  m_layout.addSibling(this, CharLayout::Builder(m_layout.XNTChar()), true);
+void LayoutCursor::addXNTCodePointLayout() {
+  m_layout.addSibling(this, CodePointLayout::Builder(m_layout.XNTCodePoint()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
-  int textLength = strlen(text);
-  if (textLength <= 0) {
-    return;
-  }
   Layout newChild;
   Layout pointedChild;
-  for (int i = 0; i < textLength; i++) {
-    if (text[i] == Ion::Charset::Empty) {
+  UTF8Decoder decoder(text);
+  CodePoint codePoint = decoder.nextCodePoint();
+  if (codePoint == UCodePointNull) {
+    return;
+  }
+  assert(!codePoint.isCombining());
+  while (codePoint != UCodePointNull) {
+    if (codePoint == UCodePointEmpty) {
+      codePoint = decoder.nextCodePoint();
+      assert(!codePoint.isCombining());
       continue;
     }
-    if (text[i] == Ion::Charset::MultiplicationSign) {
-      newChild = CharLayout::Builder(Ion::Charset::MiddleDot);
-    } else if (text[i] == '(') {
+    if (codePoint == UCodePointMultiplicationSign) {
+      newChild = CodePointLayout::Builder(UCodePointMiddleDot);
+    } else if (codePoint == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
-    } else if (text[i] == ')') {
+    } else if (codePoint == ')') {
       newChild = RightParenthesisLayout::Builder();
     }
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
 #if 0
-    else if (text[i] == '[') {
+    else if (codePoint == '[') {
       newChild = LeftSquareBracketLayout();
-    } else if (text[i] == ']') {
+    } else if (codePoint == ']') {
       newChild = RightSquareBracketLayout();
     }
 #endif
     else {
-      newChild = CharLayout::Builder(text[i]);
+      newChild = CodePointLayout::Builder(codePoint);
     }
     m_layout.addSibling(this, newChild, true);
+
+    // Get the next code point
+    codePoint = decoder.nextCodePoint();
+    while (codePoint.isCombining()) {
+      codePoint = decoder.nextCodePoint();
+    }
   }
   if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
@@ -204,8 +216,8 @@ KDCoordinate LayoutCursor::layoutHeight() {
     KDCoordinate equivalentLayoutHeight = equivalentLayout.layoutSize().height();
     KDCoordinate pointedLayoutBaseline = m_layout.baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentLayout.baseline();
-    return max(pointedLayoutBaseline, equivalentLayoutBaseline)
-      + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
+    return maxCoordinate(pointedLayoutBaseline, equivalentLayoutBaseline)
+      + maxCoordinate(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
 }

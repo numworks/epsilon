@@ -1,6 +1,5 @@
 #include <poincare/derivative.h>
 #include <poincare/layout_helper.h>
-#include <poincare/parametered_expression_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
@@ -27,10 +26,6 @@ int DerivativeNode::polynomialDegree(Context & context, const char * symbolName)
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Expression DerivativeNode::replaceUnknown(const Symbol & symbol) {
-  return ParameteredExpressionHelper::ReplaceUnknownInExpression(Derivative(this), symbol);
-}
-
 Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
@@ -39,7 +34,7 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
-Expression DerivativeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DerivativeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Derivative(this).shallowReduce();
 }
 

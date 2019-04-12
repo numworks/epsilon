@@ -1,6 +1,6 @@
 #include "variable_box_empty_controller.h"
 #include <poincare/layout_helper.h>
-#include "graph/storage_cartesian_function_store.h"
+#include "graph/cartesian_function_store.h"
 #include <apps/i18n.h>
 #include <assert.h>
 
@@ -84,8 +84,8 @@ void VariableBoxEmptyController::setType(Type type) {
       messages[0] = I18n::Message::EmptyExpressionBox0;
       messages[1] = I18n::Message::EmptyExpressionBox1;
       messages[2] = I18n::Message::EmptyExpressionBox2;
-      char storeExpression[] = {'3', Ion::Charset::Sto, 'A'};
-      layout = LayoutHelper::String(storeExpression, sizeof(storeExpression), VariableBoxEmptyView::k_font);
+      const char * storeExpression = "3→A";
+      layout = LayoutHelper::String(storeExpression, strlen(storeExpression), VariableBoxEmptyView::k_font);
       break;
     }
     case Type::Functions:
@@ -93,8 +93,8 @@ void VariableBoxEmptyController::setType(Type type) {
       messages[0] = I18n::Message::EmptyFunctionBox0;
       messages[1] = I18n::Message::EmptyFunctionBox1;
       messages[2] = I18n::Message::EmptyFunctionBox2;
-      char storeFunction[] = {'3', '+', Graph::StorageCartesianFunctionStore::Symbol(), Ion::Charset::Sto, 'f', '(', Graph::StorageCartesianFunctionStore::Symbol(), ')'};
-      layout = LayoutHelper::String(storeFunction, sizeof(storeFunction), VariableBoxEmptyView::k_font);
+      const char * storeFunction = "3+x→f(x)";
+      layout = LayoutHelper::String(storeFunction, strlen(storeFunction), VariableBoxEmptyView::k_font);
       break;
     }
     default:

@@ -9,6 +9,8 @@
 
 using namespace Poincare;
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+
 LayoutField::ContentView::ContentView() :
   m_cursor(),
   m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite),
@@ -68,12 +70,12 @@ void LayoutField::ContentView::layoutCursorSubview() {
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
 }
 
-char LayoutField::XNTChar(char defaultXNTChar) {
-  char xnt = m_contentView.cursor()->layoutReference().XNTChar();
-  if (xnt != Ion::Charset::Empty) {
+CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
+  CodePoint xnt = m_contentView.cursor()->layoutReference().XNTCodePoint();
+  if (xnt != UCodePointNull) {
     return xnt;
   }
-  return defaultXNTChar;
+  return defaultXNTCodePoint;
 }
 
 void LayoutField::reload(KDSize previousSize) {
@@ -97,7 +99,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
      * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
-     * and these events may add at most 6 layouts (e.g *10^•). */
+     * and these events may add at most 6 layouts (e.g *10^). */
     return true;
   }
 
@@ -276,8 +278,8 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(rect, true);
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
-  KDCoordinate minAroundBaseline = min(baseline, underBaseline);
-  minAroundBaseline = min(minAroundBaseline, bounds().height() / 2);
+  KDCoordinate minAroundBaseline = minCoordinate(baseline, underBaseline);
+  minAroundBaseline = minCoordinate(minAroundBaseline, bounds().height() / 2);
   KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }

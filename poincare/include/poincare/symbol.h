@@ -22,7 +22,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
-  Expression replaceUnknown(const Symbol & symbol) override;
+  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
   int polynomialDegree(Context & context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
   int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
@@ -36,13 +36,14 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
   Expression shallowReplaceReplaceableSymbols(Context & context) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
+  bool isUnknown(CodePoint unknownSymbol) const;
 private:
   char m_name[0]; // MUST be the last member variable
 
@@ -57,27 +58,22 @@ class Symbol final : public SymbolAbstract {
 public:
   static constexpr int k_ansLength = 3;
   static constexpr char k_ans[k_ansLength+1] = "ans";
-  static constexpr char k_unknownXReadableChar = 'x';
-  enum SpecialSymbols : char {
-    /* We can use characters from 1 to 31 as they do not correspond to usual
-     * characters but events as 'end of text', 'backspace'... */
-    UnknownX = 1,
-  };
   Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
-  static Symbol Builder(char name) { return Symbol::Builder(&name, 1); }
+  static Symbol Builder(CodePoint name);
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
   static Expression UntypedBuilder(const char * name, size_t length, Context * context);
 
   // Symbol properties
-  bool isSystemSymbol() const { return name()[0] == SpecialSymbols::UnknownX && name()[1] == 0; }
+  bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX) || node()->isUnknown(UCodePointUnknownN); }
+  const char * name() const { return node()->name(); }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression replaceUnknown(const Symbol & symbol);
+  Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
   int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
   Expression shallowReplaceReplaceableSymbols(Context & context);
 private:

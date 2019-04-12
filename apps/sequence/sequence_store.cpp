@@ -9,37 +9,42 @@ namespace Sequence {
 
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 
-uint32_t SequenceStore::storeChecksum() {
-  assert((MaxNumberOfSequences*sizeof(uint32_t) & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  uint32_t checksums[MaxNumberOfSequences];
-  for (int i = 0; i < MaxNumberOfSequences; i++) {
-    checksums[i] = m_sequences[i].checksum();
+const char * SequenceStore::firstAvailableName(int * nameIndex) {
+  // Choose available name
+  int currentNameIndex = 0;
+  while (currentNameIndex < MaxNumberOfSequences) {
+    const char * name = k_sequenceNames[currentNameIndex];
+    if (Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
+      if (nameIndex) {
+        *nameIndex = currentNameIndex;
+      }
+      return name;
+    }
+    currentNameIndex++;
   }
-  constexpr int checksumsStoreStorageSize = 2;
-  uint32_t checksumsStoreStorage[checksumsStoreStorageSize];
-  checksumsStoreStorage[0] = Ion::crc32((uint32_t *)checksums, MaxNumberOfSequences);
-  checksumsStoreStorage[1] = Ion::Storage::sharedStorage()->checksum();
-  return Ion::crc32((uint32_t *)checksumsStoreStorage, checksumsStoreStorageSize);
+  return nullptr;
 }
 
-char SequenceStore::symbol() const {
-  return 'n';
+Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
+  // Choose available name
+  int nameIndex;
+  const char * name = firstAvailableName(&nameIndex);
+  assert(name);
+  // Choose the corresponding color
+  KDColor color = Palette::DataColor[nameIndex];
+  Sequence::SequenceRecordDataBuffer data(color);
+  // m_sequences
+  return Ion::Storage::sharedStorage()->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
 }
 
-Sequence * SequenceStore::emptyModel() {
-  static Sequence addedSequence("", KDColorBlack);
-  addedSequence = Sequence(firstAvailableName(), firstAvailableColor());
-  return &addedSequence;
+void SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+  assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
+  m_sequences[cacheIndex] = Sequence(record);
 }
 
-Sequence * SequenceStore::nullModel() {
-  static Sequence emptyFunction("", KDColorBlack);
-  return &emptyFunction;
-}
-
-void SequenceStore::setModelAtIndex(Shared::ExpressionModel * f, int i) {
-  assert(i>=0 && i<m_numberOfModels);
-  m_sequences[i] = *(static_cast<Sequence *>(f));
+Shared::ExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheIndex) const {
+  assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
+  return &m_sequences[cacheIndex];
 }
 
 }

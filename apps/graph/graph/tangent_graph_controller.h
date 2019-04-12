@@ -5,12 +5,12 @@
 #include "banner_view.h"
 #include "graph_controller_helper.h"
 #include "../../shared/simple_interactive_curve_view_controller.h"
-#include "../../shared/storage_function_banner_delegate.h"
-#include "../storage_cartesian_function_store.h"
+#include "../../shared/function_banner_delegate.h"
+#include "../cartesian_function_store.h"
 
 namespace Graph {
 
-class TangentGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::StorageFunctionBannerDelegate, public GraphControllerHelper {
+class TangentGraphController : public Shared::SimpleInteractiveCurveViewController, public Shared::FunctionBannerDelegate, public GraphControllerHelper {
 public:
   TangentGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;

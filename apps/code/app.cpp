@@ -3,6 +3,7 @@
 #include "code_icon.h"
 #include <apps/i18n.h>
 #include "helpers.h"
+#include <ion/unicode/utf8_helper.h>
 
 namespace Code {
 
@@ -47,7 +48,7 @@ bool App::Snapshot::lockOnConsole() const {
 void App::Snapshot::setOpt(const char * name, char * value) {
   if (strcmp(name, "script") == 0) {
     m_scriptStore.deleteAllScripts();
-    char * separator = strchr(value, ':');
+    char * separator = const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
     if (!separator) {
       return;
     }
@@ -83,7 +84,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, this, snapshot->scriptStore(), &m_listFooter),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
-  m_variableBoxController(this, snapshot->scriptStore())
+  m_variableBoxController(snapshot->scriptStore())
 {
 }
 

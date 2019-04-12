@@ -2,6 +2,9 @@
 #include <string.h>
 #include <assert.h>
 #include <new>
+#if ION_STORAGE_LOG
+#include<iostream>
+#endif
 
 namespace Ion {
 
@@ -19,6 +22,11 @@ namespace Ion {
 
 uint32_t staticStorageArea[sizeof(Storage)/sizeof(uint32_t)] = {0};
 
+constexpr char Storage::expExtension[];
+constexpr char Storage::funcExtension[];
+constexpr char Storage::seqExtension[];
+constexpr char Storage::eqExtension[];
+
 Storage * Storage::sharedStorage() {
   static Storage * storage = nullptr;
   if (storage == nullptr) {
@@ -34,8 +42,8 @@ Storage::Record::Record(const char * fullName) {
     m_fullNameCRC32 = 0;
     return;
   }
-  const char * dotChar = strchr(fullName, k_dotChar);
-  assert(dotChar != nullptr);
+  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
+  assert(*dotChar != 0);
   assert(*(dotChar+1) != 0); // Assert there is an extension
   new (this) Record(fullName, dotChar - fullName, dotChar+1, (fullName + strlen(fullName)) - (dotChar+1));
 }
@@ -48,6 +56,15 @@ Storage::Record::Record(const char * baseName, const char * extension) {
   }
   new (this) Record(baseName, strlen(baseName), extension, strlen(extension));
 }
+
+
+#if ION_STORAGE_LOG
+
+void Storage::Record::log() {
+  std::cout << "Name: " << fullName() << std::endl;
+  std::cout << "        Value (" << value().size << "): " << (char *)value().buffer << "\n\n" << std::endl;
+}
+#endif
 
 uint32_t Storage::Record::checksum() {
   uint32_t crc32Results[2];
@@ -81,6 +98,15 @@ Storage::Storage() :
   // Set the size of the first record to 0
   overrideSizeAtPosition(m_buffer, 0);
 }
+
+#if ION_STORAGE_LOG
+void Storage::log() {
+  for (char * p : *this) {
+    const char * currentName = fullNameOfRecordStarting(p);
+    Record(currentName).log();
+  }
+}
+#endif
 
 size_t Storage::availableSize() {
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
@@ -199,14 +225,14 @@ Storage::Record Storage::recordBaseNamedWithExtension(const char * baseName, con
   return recordBaseNamedWithExtensions(baseName, extensions, 1);
 }
 
-Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * extensions[], size_t numberOfExtensions) {
+Storage::Record Storage::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
   size_t nameLength = strlen(baseName);
   for (char * p : *this) {
     const char * currentName = fullNameOfRecordStarting(p);
     if (strncmp(baseName, currentName, nameLength) == 0) {
       for (size_t i = 0; i < numberOfExtensions; i++) {
         if (strcmp(currentName+nameLength+1 /*+1 to pass the dot*/, extensions[i]) == 0) {
-          assert(*(currentName + nameLength) == '.');
+          assert(UTF8Helper::CodePointIs(currentName + nameLength, '.'));
           return Record(currentName);
         }
       }
@@ -375,6 +401,7 @@ size_t Storage::overrideFullNameAtPosition(char * position, const char * fullNam
 
 size_t Storage::overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension) {
   size_t result = strlcpy(position, baseName, strlen(baseName)+1); // strlcpy copies the null terminating char
+  assert(UTF8Decoder::CharSizeOfCodePoint(k_dotChar) == 1);
   *(position+result) = k_dotChar; // Replace the null terminating char with a dot
   result++;
   result += strlcpy(position+result, extension, strlen(extension)+1);
@@ -417,11 +444,11 @@ bool Storage::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
 
 bool Storage::FullNameCompliant(const char * fullName) {
   // We check that there is one dot and one dot only.
-  const char * dotChar = strchr(fullName, k_dotChar);
-  if (dotChar == nullptr) {
+  const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
+  if (*dotChar == 0) {
     return false;
   }
-  if (strchr(dotChar+1, k_dotChar) == nullptr) {
+  if (*(UTF8Helper::CodePointSearch(dotChar+1, k_dotChar)) == 0) {
     return true;
   }
   return false;
@@ -434,7 +461,7 @@ bool Storage::FullNameHasExtension(const char * fullName, const char * extension
   size_t fullNameLength = strlen(fullName);
   if (fullNameLength > extensionLength) {
     const char * ext = fullName + fullNameLength - extensionLength;
-    if (*(ext-1) == k_dotChar && strcmp(ext, extension) == 0) {
+    if (UTF8Helper::PreviousCodePointIs(fullName, ext, k_dotChar) && strcmp(ext, extension) == 0) {
       return true;
     }
   }

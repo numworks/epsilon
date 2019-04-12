@@ -17,7 +17,7 @@ private:
   bool moveCursorHorizontallyToPosition(double position) override;
   I18n::Message legendMessageAtStep(Step step) override;
   double cursorNextStep(double position, int direction) override;
-  Poincare::Layout createFunctionLayout(const char * functionName) override;
+  Poincare::Layout createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) override;
 };
 
 }

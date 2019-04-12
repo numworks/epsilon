@@ -49,12 +49,12 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
-Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   return CommonLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
 template<>
-Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   return Logarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
@@ -341,7 +341,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Conte
 
 Expression Logarithm::shallowBeautify() {
   assert(numberOfChildren() == 2);
-  Constant e = Constant::Builder(Ion::Charset::Exponential);
+  Constant e = Constant::Builder(UCodePointScriptSmallE);
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);

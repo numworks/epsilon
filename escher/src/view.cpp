@@ -132,7 +132,9 @@ void View::setFrame(KDRect frame) {
   markRectAsDirty(bounds());
   // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is being shrinked)
 
-  layoutSubviews();
+  if (!m_frame.isEmpty()) {
+    layoutSubviews();
+  }
 }
 
 KDPoint View::pointFromPointInView(View * view, KDPoint point) {

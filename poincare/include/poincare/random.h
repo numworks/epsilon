@@ -20,6 +20,7 @@ public:
 
   // Complex
   bool isReal(Context & context) const override { return true; }
+  bool isRandom() const override { return true; }
 
   // Properties
   Type type() const override { return Type::Random; }

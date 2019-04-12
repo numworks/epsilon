@@ -1,6 +1,6 @@
 #include <poincare/layout.h>
 #include <poincare/bracket_pair_layout.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
@@ -99,7 +99,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
      * replaceWith. */
     HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
     p.replaceChild(*this, horizontalLayoutR, cursor);
-    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
+    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, true);
     if (putCursorInTheMiddle) {
       if (!horizontalLayoutR.isEmpty()) {
         cursor->setLayout(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));
@@ -109,7 +109,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
         cursor->setPosition(LayoutCursor::Position::Left);
       }
     }
-    horizontalLayoutR.addOrMergeChildAtIndex(rightChild, 1, false);
+    horizontalLayoutR.addOrMergeChildAtIndex(rightChild, horizontalLayoutR.numberOfChildren(), true);
     return;
   }
   /* The parent is an Horizontal layout, so directly add the two juxtaposition

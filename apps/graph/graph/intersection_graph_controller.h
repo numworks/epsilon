@@ -2,7 +2,7 @@
 #define GRAPH_INTERSECTION_GRAPH_CONTROLLER_H
 
 #include "calculation_graph_controller.h"
-#include "../storage_cartesian_function_store.h"
+#include "../cartesian_function_store.h"
 
 namespace Graph {
 

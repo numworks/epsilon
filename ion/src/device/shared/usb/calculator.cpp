@@ -14,7 +14,7 @@ void Calculator::PollAndReset(bool exitWithKeyboard) {
 
   /* Leave DFU mode if the Back key is pressed, the calculator unplugged or the
    * USB core soft-disconnected. */
-  Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::A6;
+  Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::Back;
   uint8_t exitKeyRow = Ion::Device::Keyboard::rowForKey(exitKey);
   uint8_t exitKeyColumn = Ion::Device::Keyboard::columnForKey(exitKey);
 

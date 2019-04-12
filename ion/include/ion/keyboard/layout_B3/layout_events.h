@@ -7,9 +7,8 @@
 namespace Ion {
 namespace Events {
 
-static constexpr EventD
 static_assert('\x11' == UCodePointEmpty, "Unicode error");
-static constexpr EventData s_dataForPlainEventRowB[] = {
+static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), U(), TL(), U(),  U(),  U(),

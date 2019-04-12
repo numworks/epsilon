@@ -76,7 +76,7 @@ void waitUntilPowerKeyReleased() {
   bool isPowerDown = true;
   while (isPowerDown) {
     Keyboard::State scan = Keyboard::scan();
-    isPowerDown = scan.keyDown(Keyboard::PowerKey);
+    isPowerDown = scan.keyDown(Keyboard::Key::OnOff);
   }
 }
 
@@ -149,7 +149,7 @@ void suspend(bool checkIfPowerKeyReleased) {
     // Check power key
     Device::Keyboard::init();
     Keyboard::State scan = Keyboard::scan();
-    Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::PowerKey);
+    Ion::Keyboard::State OnlyPowerKeyDown = Keyboard::State(Keyboard::Key::OnOff);
 
     // Check plugging state
     Device::USB::initGPIO();

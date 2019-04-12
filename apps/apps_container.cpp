@@ -163,7 +163,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       updateBatteryState();
       if (switchTo(usbConnectedAppSnapshot())) {
         Ion::USB::DFU();
-        // Update LED when exciting DFU mode
+        // Update LED when exiting DFU mode
         Ion::LED::updateColorWithPlugAndCharge();
         bool switched = switchTo(activeSnapshot);
         assert(switched);

@@ -20,6 +20,7 @@ void Keyboard(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);
 void Ping(const char * input);
+void Pins(const char * input);
 void Print(const char * input);
 void Reset(const char * input);
 void Sleep(const char * input);

@@ -115,6 +115,8 @@ public:
   constexpr GPIOPin(GPIO group, uint8_t pin) : m_data(((group&0xF) << 4) | (pin&0xF)) {}
   GPIO group() const { return GPIO(m_data>>4); }
   uint8_t pin() const { return m_data & 0xF; }
+  bool operator==(const GPIOPin& other) const { return m_data == other.m_data; }
+  bool operator!=(const GPIOPin& other) const { return m_data != other.m_data; }
 private:
   uint8_t m_data;
 };

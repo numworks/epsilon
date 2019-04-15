@@ -19,6 +19,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("LED", Command::LED),
   CommandHandler("MCU_SERIAL", Command::MCUSerial),
   CommandHandler("PING", Command::Ping),
+  CommandHandler("PINS", Command::Pins),
   CommandHandler("PRINT", Command::Print),
   CommandHandler("RESET", Command::Reset),
   CommandHandler("SLEEP", Command::Sleep),

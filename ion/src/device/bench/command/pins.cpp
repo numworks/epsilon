@@ -13,8 +13,7 @@ void Pins(const char * input) {
     return;
   }
 
-  //const Ion::Device::Regs::GPIOPin[] pins = Ion::Device::Display::Config::FSMCPins;
-  /* We put all pins except:
+  /* We test all pins except:
    * - A0:  BAT_CHRG
    * - A9:  VBUS
    * - B10: LCD_TE
@@ -101,12 +100,14 @@ void Pins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 1),  // KBD_ROW_B
   };
 
+  int numberOfPins = sizeof(pins)/sizeof(Ion::Device::Regs::GPIOPin);
+
 
   // Put all testable GPIO to pull down and verify they all read 0
   for (const Ion::Device::Regs::GPIOPin & pinDown : pins) {
     pinDown.group().MODER()->setMode(pinDown.pin(), Ion::Device::Regs::GPIO::MODER::Mode::Input);
     pinDown.group().PUPDR()->setPull(pinDown.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
-    Ion::Timing::msleep(100);
+    Ion::Timing::msleep(10);
     if (pinDown.group().IDR()->get(pinDown.pin())) {
       char response[] = {'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
       response[7] = '0' + pinDown.group();
@@ -116,11 +117,11 @@ void Pins(const char * input) {
     }
   }
 
-  // TODO twice the number of tests...
   // Pull-up GPIOs one at a time and verify it does not impact other GPIOs
-  for (const Ion::Device::Regs::GPIOPin & pinUp : pins) {
+  for (int i = 0; i < numberOfPins; i++) {
+    const Ion::Device::Regs::GPIOPin & pinUp = pins[i];
     pinUp.group().PUPDR()->setPull(pinUp.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Up);
-    Ion::Timing::msleep(100);
+    Ion::Timing::msleep(10); //TODO
     if (!(pinUp.group().IDR()->get(pinUp.pin()))) {
       char response[] = {'P', 'i', 'n', 'U', 'p', 0, 0, 0};
       response[5] = '0' + pinUp.group();
@@ -128,12 +129,10 @@ void Pins(const char * input) {
       reply(response);
       return;
     }
-    for (const Ion::Device::Regs::GPIOPin & pinDown : pins) {
+    for (int j = 0; j < numberOfPins; j++) {
+      const Ion::Device::Regs::GPIOPin & pinDown = pins[j];
       if (pinUp != pinDown && pinDown.group().IDR()->get(pinDown.pin())) {
-        char response[] = {'P', 'i', 'n', 'U', 'p',
-          0, 0, 'P', 'i', 'n',
-          'D', 'o', 'w', 'n', 0,
-          0, 0};
+        char response[] = {'P', 'i', 'n', 'U', 'p', 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
         response[5] = '0' + pinUp.group();
         response[6] = '0' + pinUp.pin();
         response[14] = '0' + pinDown.group();

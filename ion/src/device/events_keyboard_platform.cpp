@@ -24,6 +24,7 @@ Event getPlatformEvent() {
       return Events::USBEnumeration;
     }
   }
+  return Events::None;
 }
 
 }

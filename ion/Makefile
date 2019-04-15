@@ -42,13 +42,9 @@ tests += $(addprefix ion/test/,\
   utf8_decoder.cpp\
 )
 
-TEST_EXT_FLASH ?= 0
-ifeq ($(TEST_EXT_FLASH),1)
-SFLAGS += -DTEST_EXT_FLASH=1
-tests += ion/test/external_flash.cpp
 TEST_EXT_FLASH_REPROGRAM ?= 0
 SFLAGS += -DTEST_EXT_FLASH_REPROGRAM=$(TEST_EXT_FLASH_REPROGRAM)
-endif
+external_flash_tests += ion/test/external_flash.cpp
 
 ifdef ION_STORAGE_LOG
 SFLAGS += -DION_STORAGE_LOG=1

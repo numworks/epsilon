@@ -7,6 +7,16 @@ namespace Device {
 namespace Bench {
 namespace Command {
 
+void printPin(Ion::Device::Regs::GPIOPin pin, char * buffer) {
+  // WARNING: There should be enough space in buffer for 3 chars.
+  assert(pin.group() < 10);
+  assert(pin.pin() < 100);
+  buffer[0] = '0' + pin.group();
+  int tens = pin.pin()/10;
+  buffer[1] = '0' + tens;
+  buffer[2] = '0' + (pin.pin() - tens * 10);
+}
+
 void Pins(const char * input) {
   if (input != nullptr) {
     reply(sSyntaxError);
@@ -109,9 +119,8 @@ void Pins(const char * input) {
     pinDown.group().PUPDR()->setPull(pinDown.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
     Ion::Timing::msleep(10);
     if (pinDown.group().IDR()->get(pinDown.pin())) {
-      char response[] = {'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
-      response[7] = '0' + pinDown.group();
-      response[8] = '0' + pinDown.pin();
+      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', 0, 0, 0, 0};
+      printPin(pinDown, response + 18);
       reply(response);
       return;
     }
@@ -123,20 +132,17 @@ void Pins(const char * input) {
     pinUp.group().PUPDR()->setPull(pinUp.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Up);
     Ion::Timing::msleep(10); //TODO
     if (!(pinUp.group().IDR()->get(pinUp.pin()))) {
-      char response[] = {'P', 'i', 'n', 'U', 'p', 0, 0, 0};
-      response[5] = '0' + pinUp.group();
-      response[6] = '0' + pinUp.pin();
+      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 0};
+      printPin(pinUp, response + 24);
       reply(response);
       return;
     }
     for (int j = 0; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinDown = pins[j];
       if (pinDown.group().IDR()->get(pinDown.pin())) {
-        char response[] = {'P', 'i', 'n', 'U', 'p', 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
-        response[5] = '0' + pinUp.group();
-        response[6] = '0' + pinUp.pin();
-        response[14] = '0' + pinDown.group();
-        response[15] = '0' + pinDown.pin();
+        char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
+        printPin(pinUp, response + 24);
+        printPin(pinDown, response + 34);
         reply(response);
         return;
       }
@@ -150,9 +156,8 @@ void Pins(const char * input) {
     pinUp.group().PUPDR()->setPull(pinUp.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Up);
     Ion::Timing::msleep(10);
     if (!(pinUp.group().IDR()->get(pinUp.pin()))) {
-      char response[] = {'P', 'i', 'n', 'U', 'p', 0, 0, 0};
-      response[5] = '0' + pinUp.group();
-      response[6] = '0' + pinUp.pin();
+      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', 0, 0, 0, 0};
+      printPin(pinUp, response + 16);
       reply(response);
       return;
     }
@@ -164,20 +169,17 @@ void Pins(const char * input) {
     pinDown.group().PUPDR()->setPull(pinDown.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
     Ion::Timing::msleep(10); //TODO
     if (!(pinDown.group().IDR()->get(pinDown.pin()))) {
-      char response[] = {'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
-      response[7] = '0' + pinDown.group();
-      response[8] = '0' + pinDown.pin();
+      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0, 0};
+      printPin(pinDown, response + 24);
       reply(response);
       return;
     }
     for (int j = 0; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinUp = pins[j];
       if (pinUp.group().IDR()->get(pinUp.pin())) {
-        char response[] = {'P', 'i', 'n', 'U', 'p', 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
-        response[5] = '0' + pinUp.group();
-        response[6] = '0' + pinUp.pin();
-        response[14] = '0' + pinDown.group();
-        response[15] = '0' + pinDown.pin();
+        char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
+        printPin(pinUp, response + 22);
+        printPin(pinDown, response + 32);
         reply(response);
         return;
       }

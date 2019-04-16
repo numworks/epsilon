@@ -9,7 +9,7 @@ extern void * InitialisationVector;
 // Public Ion methods
 
 const char * Ion::fccId() {
-  return "2ALWP-N0101";
+  return "2ALWP-N0200";
 }
 
 // Private Ion::Device methods

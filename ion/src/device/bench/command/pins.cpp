@@ -17,6 +17,24 @@ void printPin(Ion::Device::Regs::GPIOPin pin, char * buffer) {
   buffer[2] = '0' + (pin.pin() - tens * 10);
 }
 
+enum class PinType : uint8_t {
+  PullUp,
+  PullDown,
+  OutputUp,
+  OutputDown
+};
+
+void setPin(Ion::Device::Regs::GPIOPin p, PinType type) {
+  if (type == PinType::PullUp || type == PinType::PullDown) {
+    p.group().MODER()->setMode(p.pin(), Ion::Device::Regs::GPIO::MODER::Mode::Input);
+    p.group().PUPDR()->setPull(p.pin(), type == PinType::PullUp ? Ion::Device::Regs::GPIO::PUPDR::Pull::Up : Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
+  } else {
+    assert(type == PinType::OutputUp || type == PinType::OutputUp);
+    p.group().MODER()->setMode(p.pin(), Ion::Device::Regs::GPIO::MODER::Mode::Output);
+    p.group().ODR()->set(p.pin(), type == PinType::OutputUp);
+  }
+}
+
 void Pins(const char * input) {
   if (input != nullptr) {
     reply(sSyntaxError);
@@ -115,76 +133,48 @@ void Pins(const char * input) {
 
   // Put all testable GPIO to pull down and verify they all read 0
   for (const Ion::Device::Regs::GPIOPin & pinDown : pins) {
-    pinDown.group().MODER()->setMode(pinDown.pin(), Ion::Device::Regs::GPIO::MODER::Mode::Input);
-    pinDown.group().PUPDR()->setPull(pinDown.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
-    Ion::Timing::msleep(10);
-    if (pinDown.group().IDR()->get(pinDown.pin())) {
-      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', 0, 0, 0, 0};
-      printPin(pinDown, response + 18);
-      reply(response);
-      return;
-    }
+    setPin(pinDown, PinType::PullDown);
   }
 
-  // Pull-up GPIOs one at a time and verify it does not impact other GPIOs
-  for (int i = 0; i < numberOfPins - 1; i++) {
-    const Ion::Device::Regs::GPIOPin & pinUp = pins[i];
-    pinUp.group().PUPDR()->setPull(pinUp.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Up);
+  // Put one GPIO at a time on output 1 and verify it does not impact other GPIOs
+  for (int i = 0; i < numberOfPins; i++) {
+    const Ion::Device::Regs::GPIOPin & currentPin = pins[i];
+    setPin(currentPin, PinType::OutputUp);
     Ion::Timing::msleep(10); //TODO
-    if (!(pinUp.group().IDR()->get(pinUp.pin()))) {
-      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 0};
-      printPin(pinUp, response + 24);
-      reply(response);
-      return;
-    }
-    for (int j = 0; j < numberOfPins; j++) {
+    for (int j = i+1; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinDown = pins[j];
       if (pinDown.group().IDR()->get(pinDown.pin())) {
         char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
-        printPin(pinUp, response + 24);
+        printPin(currentPin, response + 24);
         printPin(pinDown, response + 34);
         reply(response);
         return;
       }
     }
-    pinUp.group().PUPDR()->setPull(pinUp.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
+
+    // Put the pin on pull up for the next test
+    setPin(currentPin, PinType::PullUp);
   }
 
-  // Put all testable GPIO to pull up and verify they all read 1
-  for (const Ion::Device::Regs::GPIOPin & pinUp : pins) {
-    pinUp.group().MODER()->setMode(pinUp.pin(), Ion::Device::Regs::GPIO::MODER::Mode::Input);
-    pinUp.group().PUPDR()->setPull(pinUp.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Up);
-    Ion::Timing::msleep(10);
-    if (!(pinUp.group().IDR()->get(pinUp.pin()))) {
-      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', 0, 0, 0, 0};
-      printPin(pinUp, response + 16);
-      reply(response);
-      return;
-    }
-  }
+  /* All pins are in pull up. Put one GPIO at a time on output 0 and verify it
+   * does not impact other GPIOs. */
 
-  // Pull-down GPIOs one at a time and verify it does not impact other GPIOs
   for (int i = 0; i < numberOfPins - 1; i++) {
-    const Ion::Device::Regs::GPIOPin & pinDown = pins[i];
-    pinDown.group().PUPDR()->setPull(pinDown.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Down);
+    const Ion::Device::Regs::GPIOPin & currentPin = pins[i];
+    setPin(currentPin, PinType::OutputDown);
     Ion::Timing::msleep(10); //TODO
-    if (!(pinDown.group().IDR()->get(pinDown.pin()))) {
-      char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0, 0};
-      printPin(pinDown, response + 24);
-      reply(response);
-      return;
-    }
-    for (int j = 0; j < numberOfPins; j++) {
+    for (int j = i+1; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinUp = pins[j];
       if (pinUp.group().IDR()->get(pinUp.pin())) {
         char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
         printPin(pinUp, response + 22);
-        printPin(pinDown, response + 32);
+        printPin(currentPin, response + 32);
         reply(response);
         return;
       }
     }
-    pinDown.group().PUPDR()->setPull(pinDown.pin(), Ion::Device::Regs::GPIO::PUPDR::Pull::Up);
+    // Put the pin on pull down so that all pins are not in output up
+    setPin(currentPin, PinType::PullDown);
   }
 
   reply(sOK);

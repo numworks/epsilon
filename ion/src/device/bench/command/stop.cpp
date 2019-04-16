@@ -1,5 +1,7 @@
 #include "command.h"
-#include <ion.h>
+#include <drivers/power.h>
+#include <drivers/board.h>
+#include <drivers/wakeup.h>
 
 namespace Ion {
 namespace Device {
@@ -12,8 +14,13 @@ void Stop(const char * input) {
     return;
   }
   reply(sOK);
-  Ion::Timing::msleep(100);
-  Ion::Power::suspend(); //Ion::Power::stop(); TODO Decomment once the method exists
+  Device::Power::stopConfiguration();
+  Device::Board::shutdownPeripherals();
+  Device::WakeUp::onUSBPlugging();
+  Device::Board::shutdownClocks();
+  Device::Power::enterLowPowerMode();
+  Device::Board::initClocks();
+  Device::Board::initPeripherals();
 }
 
 }

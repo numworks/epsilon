@@ -1,2 +1,0 @@
-TOOLCHAIN ?= arm-gcc-m7f
-ION_KEYBOARD_LAYOUT = layout_B3

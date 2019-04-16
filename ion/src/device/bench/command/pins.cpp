@@ -11,7 +11,7 @@ void printPin(Ion::Device::Regs::GPIOPin pin, char * buffer) {
   // WARNING: There should be enough space in buffer for 3 chars.
   assert(pin.group() < 10);
   assert(pin.pin() < 100);
-  buffer[0] = '0' + pin.group();
+  buffer[0] = 'A' + pin.group();
   int tens = pin.pin()/10;
   buffer[1] = '0' + tens;
   buffer[2] = '0' + (pin.pin() - tens * 10);
@@ -42,11 +42,29 @@ void Pins(const char * input) {
   }
 
   /* We test all pins except:
+   * - A0:  KBD_ROW_B
+   * - A1:  KBD_ROW_A
+   * - A2:  KBD_ROW_C
+   * - A3:  KBD_ROW_D
+   * - A4:  KBD_ROW_E
+   * - A5:  KBD_ROW_F
+   * - A6:  KBD_ROW_G
+   * - A7:  KBD_ROW_H
+   * - A8:  KBD_ROW_I
    * - A9:  VBUS
+   * - A11: USB_D-
+   * - A12: USB_D+
+   * - B6:  QUADSPI_NCS
    * - B11: LCD_TE
+   * - C0:  KBD_COL_1
+   * - C1:  KBD_COL_2
+   * - C2:  KBD_COL_3
+   * - C3:  KBD_COL_4
+   * - C4:  KBD_COL_5
+   * - C5:  KBD_COL_6
    * - C6:  USART_TX
-   * - C7: USART_RX
-   * - E3:  BAT_CHRG */
+   * - C7:  USART_RX
+   * - E3:  BAT_CHRG  */
 
   const Ion::Device::Regs::GPIOPin pins[] = {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 2),  // QUADSPI_IO2
@@ -56,21 +74,6 @@ void Pins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 13), // Connected to nothing
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 14), // OSC32_IN
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 15), // OSC32_OUT
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 0),  // KBD_COL_1
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 1),  // KBD_COL_2
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 2),  // KBD_COL_3
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 3),  // KBD_COL_4
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 0),  // KBD_ROW_B
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 1),  // KBD_ROW_A
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 2),  // KBD_ROW_C
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 3),  // KBD_ROW_D
-
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 4),  // KBD_ROW_E
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 5),  // KBD_ROW_F
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 6),  // KBD_ROW_G
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 7),  // KBD_ROW_H
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 4),  // KBD_COL_5
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 5),  // KBD_COL_6
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 0),  // LED_BLUE
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 1),  // VBAT_SNS
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 2),  // QUADSPI_CLK
@@ -99,10 +102,7 @@ void Pins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 15), // LCD_D1
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 8),  // LCD_POW_EN
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 9),  // QUADSPI_IO0
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 8),  // KBD_ROW_I
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 10), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 11), // USB_D-
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 12), // USB_D+
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 13), // SWD_SWDIO
 
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 14), // SWD_SWCLK
@@ -121,7 +121,6 @@ void Pins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 3),  // SWD_SWO
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 4),  // LED_RED
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 5),  // LED_GREEN
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 6),  // QUADSPI_NCS
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 7),  // Connected to nothing
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 8),  // Connected to nothing
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 9),  // Connected to nothing
@@ -145,7 +144,7 @@ void Pins(const char * input) {
     for (int j = i+1; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinDown = pins[j];
       if (pinDown.group().IDR()->get(pinDown.pin())) {
-        char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
+        char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0, 0};
         printPin(currentPin, response + 24);
         printPin(pinDown, response + 34);
         reply(response);
@@ -166,8 +165,8 @@ void Pins(const char * input) {
     Ion::Timing::msleep(10); //TODO
     for (int j = i+1; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinUp = pins[j];
-      if (pinUp.group().IDR()->get(pinUp.pin())) {
-        char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0};
+      if (!pinUp.group().IDR()->get(pinUp.pin())) {
+        char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0, 0};
         printPin(pinUp, response + 22);
         printPin(currentPin, response + 32);
         reply(response);

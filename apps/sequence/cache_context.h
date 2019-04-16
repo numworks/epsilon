@@ -4,21 +4,22 @@
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
-#include <poincare/variable_context.h>
 #include "sequence_context.h"
 
 namespace Sequence {
 
 template<typename T>
-class CacheContext : public Poincare::VariableContext {
+class CacheContext : public Poincare::Context {
 public:
   CacheContext(Poincare::Context * parentContext);
   const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol, bool clone) override;
+  void setExpressionForSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context & context) override;
   void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
   int nameIndexForSymbol(const Poincare::Symbol & symbol);
   int rankIndexForSymbol(const Poincare::Symbol & symbol);
   T m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  Context * m_parentContext;
 };
 
 }

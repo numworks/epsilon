@@ -1,5 +1,7 @@
 #include "command.h"
-#include <ion.h>
+#include <drivers/power.h>
+#include <drivers/board.h>
+#include <drivers/wakeup.h>
 
 namespace Ion {
 namespace Device {
@@ -12,8 +14,10 @@ void Standby(const char * input) {
     return;
   }
   reply(sOK);
-  Ion::Timing::msleep(100);
-  //Ion::Power::standby(); TODO Decomment once the method exists
+  Device::Power::standbyConfiguration();
+  Device::Board::shutdown();
+  Device::Power::enterLowPowerMode();
+  assert(false);
 }
 
 }

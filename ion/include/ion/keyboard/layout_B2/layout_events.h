@@ -32,7 +32,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Alpha
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
-  U(), U(), T(":"), T(";"), T("\""), U(),
+  U(), U(), T(":"), T(";"), T("\""), T("%"),
   T("a"), T("b"), T("c"), T("d"), T("e"), T("f"),
   T("g"), T("h"), T("i"), T("j"), T("k"), T("l"),
   T("m"), T("n"), T("o"), T("p"), T("q"), U(),
@@ -77,7 +77,7 @@ static constexpr const char * s_nameForEvent[255] = {
   //Alpha,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-  nullptr, nullptr, "Colon", "SemiColon", "DoubleQuotes", nullptr,
+  nullptr, nullptr, "Colon", "SemiColon", "DoubleQuotes", "Percent",
   "LowerA", "LowerB", "LowerC", "LowerD", "LowerE", "LowerF",
   "LowerG", "LowerH", "LowerI", "LowerJ", "LowerK", "LowerL",
   "LowerM", "LowerN", "LowerO", "LowerP", "LowerQ", nullptr,

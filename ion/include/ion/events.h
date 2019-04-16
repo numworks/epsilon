@@ -144,6 +144,7 @@ constexpr Event Greater = Event::ShiftKey(Keyboard::Key::Square);
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);
 constexpr Event SemiColon = Event::AlphaKey(Keyboard::Key::Var);
 constexpr Event DoubleQuotes = Event::AlphaKey(Keyboard::Key::Toolbox);
+constexpr Event Percent = Event::AlphaKey(Keyboard::Key::Backspace);
 
 constexpr Event LowerA = Event::AlphaKey(Keyboard::Key::Exp);
 constexpr Event LowerB = Event::AlphaKey(Keyboard::Key::Ln);

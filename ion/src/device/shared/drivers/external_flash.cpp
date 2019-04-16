@@ -72,7 +72,8 @@ enum class Command : uint8_t {
   Erase64KbyteBlock = 0xD8,
   SetReadParameters = 0xC0,
   DeepPowerDown = 0xB9,
-  ReleaseDeepPowerDown = 0xAB
+  ReleaseDeepPowerDown = 0xAB,
+  ReadJEDECID = 0x9F
 };
 
 static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
@@ -419,6 +420,15 @@ void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
     lengthThatFitsInPage = PageSize;
     wait();
   }
+  set_as_memory_mapped();
+}
+
+void JDECid(uint8_t * manufacturerID, uint8_t * memoryType, uint8_t * capacityType) {
+  unset_memory_mapped_mode();
+  send_command(Command::ReadJEDECID);
+  *manufacturerID = QUADSPI.DR()->get();
+  *memoryType = QUADSPI.DR()->get();
+  *capacityType = QUADSPI.DR()->get();
   set_as_memory_mapped();
 }
 

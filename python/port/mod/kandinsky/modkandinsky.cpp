@@ -63,11 +63,13 @@ mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t color) {
   return mp_const_none;
 }
 
-mp_obj_t modkandinsky_draw_string(mp_obj_t text, mp_obj_t x, mp_obj_t y) {
-  const char * kdText = mp_obj_str_get_str(text);
-  KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
+mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
+  const char * text = mp_obj_str_get_str(args[0]);
+  KDPoint point(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
+  KDColor textColor = (n_args >= 4) ? ColorForTuple(args[3]) : KDColorBlack;
+  KDColor backgroundColor = (n_args >= 5) ? ColorForTuple(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::sharedContext()->drawString(kdText, point);
+  KDIonContext::sharedContext()->drawString(text, point, KDFont::LargeFont, textColor, backgroundColor);
   return mp_const_none;
 }
 

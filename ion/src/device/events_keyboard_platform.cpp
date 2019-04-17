@@ -13,7 +13,7 @@ Event getPlatformEvent() {
   bool usbPlugged = USB::isPlugged();
   if (usbPlugged != sLastUSBPlugged) {
     sLastUSBPlugged = usbPlugged;
-    return Events::USBPlug;
+    return USBPlug;
   }
 
   // Second, check if the USB device has been connected to an USB host
@@ -21,9 +21,11 @@ Event getPlatformEvent() {
   if (usbEnumerated != sLastUSBEnumerated) {
     sLastUSBEnumerated = usbEnumerated;
     if (usbEnumerated) {
-      return Events::USBEnumeration;
+      return USBEnumeration;
     }
   }
+
+  return None;
 }
 
 }

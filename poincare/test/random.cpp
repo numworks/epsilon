@@ -21,4 +21,7 @@ QUIZ_CASE(poincare_random_simplify) {
 
 QUIZ_CASE(poincare_randint_simplify) {
   assert_parsed_expression_simplify_to("1/randint(2,2)+1/2", "1");
+  assert_parsed_expression_simplify_to("randint(1, inf)", "undef");
+  assert_parsed_expression_simplify_to("randint(-inf, 3)", "undef");
+  assert_parsed_expression_simplify_to("randint(4, 3)", "undef");
 }

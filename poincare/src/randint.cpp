@@ -33,7 +33,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
-  if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b) {
+  if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b || std::isinf(a) || std::isinf(b)) {
     return Complex<T>::Undefined();
 
   }

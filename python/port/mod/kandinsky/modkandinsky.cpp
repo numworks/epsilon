@@ -69,3 +69,16 @@ mp_obj_t modkandinsky_draw_string(mp_obj_t text, mp_obj_t x, mp_obj_t y) {
   return mp_const_none;
 }
 
+mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->fillRect(
+    KDRect(
+      mp_obj_get_int(args[0]),
+      mp_obj_get_int(args[1]),
+      mp_obj_get_int(args[2]),
+      mp_obj_get_int(args[3])
+    ),
+    ColorForTuple(args[4])
+  );
+  return mp_const_none;
+}

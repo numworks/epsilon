@@ -44,41 +44,42 @@ mp_obj_t modkandinsky_color(mp_obj_t red, mp_obj_t green, mp_obj_t blue) {
   );
 }
 
+/* Calling ExecutionEnvironment::displaySandbox() hides the console and switches
+ * to another mode. So it's a good idea to retrieve and handle input parameters
+ * before calling displaySandbox, otherwise error messages (such as TypeError)
+ * won't be visible until the user comes back to the console screen. */
+
 mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
-  KDColor c = KDIonContext::sharedContext()->getPixel(
-    KDPoint(mp_obj_get_int(x), mp_obj_get_int(y))
-  );
+  KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
+  KDColor c = KDIonContext::sharedContext()->getPixel(point);
   return TupleForRGB(c.red(), c.green(), c.blue());
 }
 
 mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t color) {
+  KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
+  KDColor kdColor = ColorForTuple(color);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::sharedContext()->setPixel(
-    KDPoint(mp_obj_get_int(x), mp_obj_get_int(y)),
-    ColorForTuple(color)
-  );
+  KDIonContext::sharedContext()->setPixel(point, kdColor);
   return mp_const_none;
 }
 
 mp_obj_t modkandinsky_draw_string(mp_obj_t text, mp_obj_t x, mp_obj_t y) {
+  const char * kdText = mp_obj_str_get_str(text);
+  KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::sharedContext()->drawString(
-    mp_obj_str_get_str(text),
-    KDPoint(mp_obj_get_int(x), mp_obj_get_int(y))
-  );
+  KDIonContext::sharedContext()->drawString(kdText, point);
   return mp_const_none;
 }
 
 mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
-  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::sharedContext()->fillRect(
-    KDRect(
-      mp_obj_get_int(args[0]),
-      mp_obj_get_int(args[1]),
-      mp_obj_get_int(args[2]),
-      mp_obj_get_int(args[3])
-    ),
-    ColorForTuple(args[4])
+  KDRect rect(
+    mp_obj_get_int(args[0]),
+    mp_obj_get_int(args[1]),
+    mp_obj_get_int(args[2]),
+    mp_obj_get_int(args[3])
   );
+  KDColor color = ColorForTuple(args[4]);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+  KDIonContext::sharedContext()->fillRect(rect, color);
   return mp_const_none;
 }

@@ -63,6 +63,11 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
     name = b['name']
     subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in b['sections']] for item in sublist]+[elf_file, bin_file(b)])
     address = min([s['lma'] for s in b['sections']])
+    # We turn ITCM flash addresses to equivalent AXIM flash addresses because
+    # ITCM address cannot be written and are physically equivalent to AXIM flash
+    # addresses.
+    if (address >= 0x00200000 and address < 0x00210000):
+      address = address - 0x00200000 + 0x08000000
     targets.append({'address': address, 'name': name, 'data': open(bin_file(b)).read()})
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
   for b in blocks:

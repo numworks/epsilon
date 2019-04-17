@@ -71,6 +71,7 @@ class Expression : public TreeHandle {
   friend class PowerNode;
   friend class PredictionInterval;
   friend class Product;
+  friend class Randint;
   friend class RealPart;
   friend class Round;
   friend class SignFunction;

@@ -89,8 +89,7 @@ objs = $(call object_for,$(src))
 # Those can be built directly with make executable.exe as a shortcut. They also
 # depends on $(objs)
 
-executables = epsilon test flasher
-
+executables = epsilon test
 define rules_for_executable
 $$(BUILD_DIR)/$(1).$$(EXE): $$(objs)
 .PHONY: $(1).$$(EXE)

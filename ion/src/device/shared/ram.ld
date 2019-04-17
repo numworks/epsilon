@@ -1,7 +1,7 @@
 /* Create a firmware that runs from RAM.
  * Caution: ST's bootloader uses some RAM, so we want to stay off of that memory
- * region. Per AN2606, section 47, it's using 0x20003000 - 0x2003FFFF; We'll try
- * to play safe and avoid the first 32KB of RAM.
+ * region. Per AN2606, sections 31.1 and 36.1, it's using 16Kbytes form address
+ * 0x20000000. We'll try to play safe and avoid the first 32KB of RAM.
  *
  * This is used to:
  *  - Flash faster. Flashing using ST's ROMed DFU bootloader is reliable but

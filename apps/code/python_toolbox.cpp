@@ -99,7 +99,8 @@ const ToolboxMessageTree KandinskyModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetPixel, I18n::Message::PythonSetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColor, I18n::Message::PythonColor),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString)
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect)
 };
 
 const ToolboxMessageTree RandomModuleChildren[] = {
@@ -216,6 +217,7 @@ const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExp, I18n::Message::PythonExp),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExpm1, I18n::Message::PythonExpm1),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFabs, I18n::Message::PythonFabs),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFillRect, I18n::Message::PythonFillRect),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFloat, I18n::Message::PythonFloat),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFloor, I18n::Message::PythonFloor),
   ToolboxMessageTree::Leaf(I18n::Message::PythonTurtleCommandForward, I18n::Message::PythonTurtleForward),

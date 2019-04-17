@@ -42,3 +42,7 @@ bool micropython_port_interrupt_if_needed() {
   }
   return false;
 }
+
+int micropython_port_random() {
+  return Ion::random();
+}

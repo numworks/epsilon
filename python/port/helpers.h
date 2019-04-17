@@ -12,6 +12,7 @@ extern "C" {
 bool micropython_port_vm_hook_loop();
 bool micropython_port_interruptible_msleep(uint32_t delay);
 bool micropython_port_interrupt_if_needed();
+int micropython_port_random();
 
 #ifdef __cplusplus
 }

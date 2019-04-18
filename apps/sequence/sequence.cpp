@@ -92,7 +92,7 @@ bool Sequence::isDefined() {
     case Type::SingleRecurrence:
       return data->initialConditionSize(0) > 0 && value().size > metaDataSize() + data->initialConditionSize(0);
     default:
-      return data->initialConditionSize(0) > 0 && data->initialConditionSize(0) > 0 && value().size > metaDataSize() + data->initialConditionSize(0) + data->initialConditionSize(1);
+      return data->initialConditionSize(0) > 0 && data->initialConditionSize(1) > 0 && value().size > metaDataSize() + data->initialConditionSize(0) + data->initialConditionSize(1);
   }
 }
 

@@ -1,4 +1,5 @@
 #include "calculation_graph_controller.h"
+#include <apps/i18n.h>
 
 namespace Graph {
 

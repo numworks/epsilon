@@ -66,7 +66,7 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(batteryInsideX, 0, batteryInsideWidth, k_batteryHeight), Palette::YellowLight);
     KDRect frame((k_batteryWidth-k_flashWidth)/2, 0, k_flashWidth, k_flashHeight);
     ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, s_flashWorkingBuffer);
-  } else if (m_chargeState == Ion::Battery::Charge::LOW) {
+  } else if (m_chargeState == Ion::Battery::Charge::EMPTY || m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
     // Low: Quite empty battery
     ctx->fillRect(KDRect(batteryInsideX, 0, 2*k_elementWidth, k_batteryHeight), Palette::LowBattery);

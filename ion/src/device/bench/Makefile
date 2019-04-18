@@ -13,6 +13,7 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   command.cpp \
   display.cpp \
   exit.cpp \
+  external_flash_id.cpp \
   keyboard.cpp \
   led.cpp \
   mcu_serial.cpp \

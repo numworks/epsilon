@@ -22,6 +22,12 @@ const uint8_t tickMask[BatteryView::k_tickHeight][BatteryView::k_tickWidth] = {
 };
 
 bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
+  /* There is no specific battery picto for 'empty' battery as the whole device
+   * shut down. Still, there might be a redrawing of the window before shutting
+   * down so we handle this case as the 'low' battery one. Plus, we avoid
+   * trigerring a redrawing by not marking anything as dirty when switching
+   * from 'low' to 'empty' battery. */
+  chargeState = chargeState == Ion::Battery::Charge::EMPTY ? Ion::Battery::Charge::LOW : chargeState;
   if (chargeState != m_chargeState) {
     m_chargeState = chargeState;
     markRectAsDirty(bounds());
@@ -52,6 +58,7 @@ KDColor s_flashWorkingBuffer[BatteryView::k_flashHeight*BatteryView::k_flashWidt
 KDColor s_tickWorkingBuffer[BatteryView::k_tickHeight*BatteryView::k_tickWidth];
 
 void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
+  assert(m_chargeState != Ion::Battery::Charge::EMPTY);
   /* We draw from left to right. The middle part representing the battery
    *'content' depends on the charge */
 
@@ -66,7 +73,7 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->fillRect(KDRect(batteryInsideX, 0, batteryInsideWidth, k_batteryHeight), Palette::YellowLight);
     KDRect frame((k_batteryWidth-k_flashWidth)/2, 0, k_flashWidth, k_flashHeight);
     ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, s_flashWorkingBuffer);
-  } else if (m_chargeState == Ion::Battery::Charge::EMPTY || m_chargeState == Ion::Battery::Charge::LOW) {
+  } else if (m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
     // Low: Quite empty battery
     ctx->fillRect(KDRect(batteryInsideX, 0, 2*k_elementWidth, k_batteryHeight), Palette::LowBattery);

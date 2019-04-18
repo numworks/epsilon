@@ -99,7 +99,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
      * replaceWith. */
     HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
     p.replaceChild(*this, horizontalLayoutR, cursor);
-    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, true);
+    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
     if (putCursorInTheMiddle) {
       if (!horizontalLayoutR.isEmpty()) {
         cursor->setLayout(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));

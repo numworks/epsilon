@@ -16,6 +16,7 @@ void Charge(const char * input);
 void CRC(const char * input);
 void Display(const char * input);
 void Exit(const char * input);
+void ExternalFlashId(const char * input);
 void Keyboard(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);

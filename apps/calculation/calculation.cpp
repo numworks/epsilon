@@ -65,7 +65,6 @@ KDCoordinate Calculation::height(Context * context) {
     Layout exactLayout = createExactOutputLayout();
     float smallMargin = 2 * Metric::CommonSmallMargin;
     float lessSmallMargin = 4 * Metric::CommonSmallMargin;
-    int maxWidth = 290;
     bool singleLine = false;
     if (shouldOnlyDisplayExactOutput()) {
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();

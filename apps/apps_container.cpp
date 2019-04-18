@@ -312,6 +312,14 @@ void AppsContainer::displayExamModePopUp(bool activate) {
 }
 
 void AppsContainer::shutdownDueToLowBattery() {
+  if (Ion::Battery::level() != Ion::Battery::Charge::EMPTY) {
+  /* We early escape here. When the battery switches from LOW to EMPTY, it
+   * oscillates a few times before stabilizing to EMPTY. So we might call
+   * 'shutdownDueToLowBattery' but the battery level still answers LOW instead
+   * of EMPTY. We want to avoid uselessly redrawing the whole window in that
+   * case. */
+    return;
+  }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     Ion::Backlight::setBrightness(0);
     m_emptyBatteryWindow.redraw(true);

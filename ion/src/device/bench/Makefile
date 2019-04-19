@@ -15,10 +15,10 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   exit.cpp \
   external_flash_id.cpp \
   keyboard.cpp \
+  lcd_pins.o \
   led.cpp \
   mcu_serial.cpp \
   ping.cpp \
-  pins.o \
   print.cpp \
   reset.cpp \
   sleep.cpp \

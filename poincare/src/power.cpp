@@ -572,10 +572,22 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
    * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
    * This rule is true if:
    * - a > 0
-   * - in Real: when b and c are integers
-   * - in other modes: when c is integer
-   * (Warning: in real mode only c integer is not enough:
-   * ex: ((-2)^(1/2))^2 = unreal != -2)
+   * - c is an integer
+   *
+   * Warning 1: in real mode only c integer is not enough:
+   * ex: ((-2)^(1/2))^2 = unreal != -2
+   * We escape that case by returning 'unreal' if the a^b is complex.
+   *
+   * Warning 2: If we did not apply this rule on expressions of the form
+   * (a^b)^(-1), we would end up in infinite loop when factorizing an addition
+   * on the same denominator.
+   * For ex:
+   * 1+[tan(2)^1/2]^(-1) --> (tan(2)^1/2+tan(2)^1/2*[tan(2)^1/2]^(-1))/tan(2)^1/2
+   *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
+   *                     --> tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
+   *                     --> ...
+   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is an
+   * integer.
    */
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
@@ -584,11 +596,17 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     bool cInteger = (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne());
     if (aPositive || cInteger) {
-      // Check that the complex format is not Real or that b is an integer
-      bool bInteger = (p.childAtIndex(1).type() == ExpressionNode::Type::Rational && p.childAtIndex(1).convert<Rational>().integerDenominator().isOne());
-      if (aPositive || complexFormat != Preferences::ComplexFormat::Real || bInteger) {
-        return simplifyPowerPower(context, complexFormat, angleUnit, target);
+      /* If the complexFormat is real, we check that the inner power is defined
+       * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
+       * 'unreal'. */
+      if (complexFormat == Preferences::ComplexFormat::Real) {
+        Expression approximation = p.approximate<float>(context, complexFormat, angleUnit);
+        if (approximation.type() == ExpressionNode::Type::Unreal) {
+          replaceWithInPlace(approximation);
+          return approximation;
+        }
       }
+      return simplifyPowerPower(context, complexFormat, angleUnit, target);
     }
   }
   // Step 11: (a*b*c*...)^r ?

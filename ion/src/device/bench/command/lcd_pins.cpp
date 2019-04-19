@@ -82,7 +82,6 @@ void LCDPins(const char * input) {
   for (int i = 0; i < numberOfPins; i++) {
     const Ion::Device::Regs::GPIOPin & currentPin = LCDpins[i];
     setPin(currentPin, PinType::OutputUp);
-    Ion::Timing::msleep(10); //TODO
     for (int j = i+1; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinDown = LCDpins[j];
       if (pinDown.group().IDR()->get(pinDown.pin())) {
@@ -104,7 +103,6 @@ void LCDPins(const char * input) {
   for (int i = 0; i < numberOfPins - 1; i++) {
     const Ion::Device::Regs::GPIOPin & currentPin = LCDpins[i];
     setPin(currentPin, PinType::OutputDown);
-    Ion::Timing::msleep(10); //TODO
     for (int j = i+1; j < numberOfPins; j++) {
       const Ion::Device::Regs::GPIOPin & pinUp = LCDpins[j];
       if (!pinUp.group().IDR()->get(pinUp.pin())) {

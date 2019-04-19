@@ -35,7 +35,7 @@ void setPin(Ion::Device::Regs::GPIOPin p, PinType type) {
   }
 }
 
-void Pins(const char * input) {
+void LCDPins(const char * input) {
   if (input != nullptr) {
     reply(sSyntaxError);
     return;

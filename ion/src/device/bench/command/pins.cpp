@@ -41,42 +41,10 @@ void Pins(const char * input) {
     return;
   }
 
-  /* We test all pins except:
-   * - A0:  KBD_ROW_B
-   * - A1:  KBD_ROW_A
-   * - A2:  KBD_ROW_C
-   * - A3:  KBD_ROW_D
-   * - A4:  KBD_ROW_E
-   * - A5:  KBD_ROW_F
-   * - A6:  KBD_ROW_G
-   * - A7:  KBD_ROW_H
-   * - A8:  KBD_ROW_I
-   * - A9:  VBUS
-   * - A11: USB_D-
-   * - A12: USB_D+
-   * - B6:  QUADSPI_NCS
-   * - B11: LCD_TE
-   * - C0:  KBD_COL_1
-   * - C1:  KBD_COL_2
-   * - C2:  KBD_COL_3
-   * - C3:  KBD_COL_4
-   * - C4:  KBD_COL_5
-   * - C5:  KBD_COL_6
-   * - C6:  USART_TX
-   * - C7:  USART_RX
-   * - E3:  BAT_CHRG  */
+  /* We do not test PB11, the tearing effect pin, because is is driven by the
+   * LCD controller. */
 
-  const Ion::Device::Regs::GPIOPin pins[] = {
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 2),  // QUADSPI_IO2
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 4),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 5),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 6),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 13), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 14), // OSC32_IN
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 15), // OSC32_OUT
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 0),  // LED_BLUE
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 1),  // VBAT_SNS
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 2),  // QUADSPI_CLK
+  const Ion::Device::Regs::GPIOPin LCDpins[] = {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 7),  // LCD_D4
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 8),  // LCD_D5
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 9),  // LCD_D6
@@ -86,63 +54,37 @@ void Pins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 13), // LCD_D10
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 14), // LCD_D11
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 15), // LCD_D12
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 10), // Connected to nothing
-
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 12), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 13), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 14), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 15), // Connected to nothing
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 8),  // LCD_D13
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 9),  // LCD_D14
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 10), // LCD_D15
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 11), // LCD_DAT_INS
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 12), // QUAD_SPI_IO1
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 13), // QUAD_SPI_IO3
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 14), // LCD_D0
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 15), // LCD_D1
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 8),  // LCD_POW_EN
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 9),  // QUADSPI_IO0
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 10), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 13), // SWD_SWDIO
-
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 14), // SWD_SWCLK
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOA, 15), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 10), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 11), // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 12), // Connected to nothing
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 0),  // LCD_D2
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 1),  // LCD_D3
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 2),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 3),  // Connected to nothing
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 4),  // LCD_NOE
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 5),  // LCD_NWE
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 6),  // LCD_EXTC
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 7),  // LCD_CSX
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 3),  // SWD_SWO
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 4),  // LED_RED
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 5),  // LED_GREEN
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 7),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 8),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 9),  // Connected to nothing
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 0),  // LCD_LIGHT
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 1),  // LCD_RESET
   };
 
-  int numberOfPins = sizeof(pins)/sizeof(Ion::Device::Regs::GPIOPin);
+  int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin);
 
 
   // Put all testable GPIO to pull down and verify they all read 0
-  for (const Ion::Device::Regs::GPIOPin & pinDown : pins) {
+  for (const Ion::Device::Regs::GPIOPin & pinDown : LCDpins) {
     setPin(pinDown, PinType::PullDown);
   }
 
   // Put one GPIO at a time on output 1 and verify it does not impact other GPIOs
   for (int i = 0; i < numberOfPins; i++) {
-    const Ion::Device::Regs::GPIOPin & currentPin = pins[i];
+    const Ion::Device::Regs::GPIOPin & currentPin = LCDpins[i];
     setPin(currentPin, PinType::OutputUp);
     Ion::Timing::msleep(10); //TODO
     for (int j = i+1; j < numberOfPins; j++) {
-      const Ion::Device::Regs::GPIOPin & pinDown = pins[j];
+      const Ion::Device::Regs::GPIOPin & pinDown = LCDpins[j];
       if (pinDown.group().IDR()->get(pinDown.pin())) {
         char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'd', 'o', 'w', 'n', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0, 0};
         printPin(currentPin, response + 24);
@@ -160,11 +102,11 @@ void Pins(const char * input) {
    * does not impact other GPIOs. */
 
   for (int i = 0; i < numberOfPins - 1; i++) {
-    const Ion::Device::Regs::GPIOPin & currentPin = pins[i];
+    const Ion::Device::Regs::GPIOPin & currentPin = LCDpins[i];
     setPin(currentPin, PinType::OutputDown);
     Ion::Timing::msleep(10); //TODO
     for (int j = i+1; j < numberOfPins; j++) {
-      const Ion::Device::Regs::GPIOPin & pinUp = pins[j];
+      const Ion::Device::Regs::GPIOPin & pinUp = LCDpins[j];
       if (!pinUp.group().IDR()->get(pinUp.pin())) {
         char response[] = {'A', 'l', 'l', '_', 'p', 'i', 'n', 's', '_', 'u', 'p', ':', 'F', 'a', 'i', 'l', '_', 'P', 'i', 'n', 'U', 'p', 0, 0, 0, 'P', 'i', 'n', 'D', 'o', 'w', 'n', 0, 0, 0, 0};
         printPin(pinUp, response + 22);

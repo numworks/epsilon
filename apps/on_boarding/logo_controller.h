@@ -10,9 +10,12 @@ class LogoController : public ViewController, public Timer {
 public:
   LogoController();
   View * view() override;
+  void viewWillAppear() override;
+  void viewDidDisappear() override;
 private:
   bool fire() override;
   LogoView m_logoView;
+  KDColor m_previousLEDColor;
 };
 
 }

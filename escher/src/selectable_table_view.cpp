@@ -37,7 +37,7 @@ void SelectableTableView::selectColumn(int i) {
 void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
-  deselectTable();
+  deselectTable(false);
   /* FIXME: The problem with calling deselectTable is that at this point in time
    * the datasource's model is very likely to have changed. Therefore it's
    * rather complicated to get a pointer to the currently selected cell (in
@@ -45,7 +45,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
   /* As a workaround, datasources can reset the highlighted state in their
    * willDisplayCell callback. */
   TableView::layoutSubviews();
-  selectCellAtLocation(col, row, setFirstResponder);
+  selectCellAtLocation(col, row, setFirstResponder, false);
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -60,18 +60,18 @@ void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder)
   unhighlightSelectedCell();
 }
 
-void SelectableTableView::deselectTable() {
+void SelectableTableView::deselectTable(bool notifySelectableDelegate) {
   unhighlightSelectedCell();
   int previousSelectedCellX = selectedColumn();
   int previousSelectedCellY = selectedRow();
   selectColumn(0);
   selectRow(-1);
-  if (m_delegate) {
+  if (m_delegate && notifySelectableDelegate) {
     m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY);
   }
 }
 
-bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder) {
+bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool notifySelectableDelegate) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }
@@ -84,7 +84,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   selectColumn(i);
   selectRow(j);
 
-  if (m_delegate) {
+  if (m_delegate && notifySelectableDelegate) {
     m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
   }
 

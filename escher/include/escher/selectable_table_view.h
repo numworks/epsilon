@@ -29,8 +29,8 @@ public:
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual void didEnterResponderChain(Responder * previousFirstResponder) override;
   virtual void willExitResponderChain(Responder * nextFirstResponder) override;
-  void deselectTable();
-  bool selectCellAtLocation(int i, int j, bool setFirstResponder = true);
+  void deselectTable(bool notifySelectableDelegate = true);
+  bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool notifySelectableDelegate = true);
   HighlightCell * selectedCell();
 protected:
   SelectableTableViewDataSource * m_selectionDataSource;

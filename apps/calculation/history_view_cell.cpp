@@ -20,6 +20,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
   if (cell) {
     cell->setHighlighted(cell->isHighlighted());
   }
+  historyViewCellDidChangeSelection();
 }
 
 /* HistoryViewCell */
@@ -111,10 +112,7 @@ void HistoryViewCell::layoutSubviews() {
   ));
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation) {
-  if (*calculation == m_calculation) {
-    return;
-  }
+void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected) {
   m_calculation = *calculation;
   m_inputView.setLayout(calculation->createInputLayout());
   App * calculationApp = (App *)app();
@@ -124,11 +122,11 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   Poincare::Layout leftOutputLayout = Poincare::Layout();
   Poincare::Layout rightOutputLayout;
   Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
-  if (display == Calculation::DisplayOutput::ExactOnly) {
+  if (display == Calculation::DisplayOutput::ExactOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && !isSelected && calculation->toggleDisplayExact())) {
     rightOutputLayout = calculation->createExactOutputLayout();
   } else {
     rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
-    if (display == Calculation::DisplayOutput::ExactAndApproximate) {
+    if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && isSelected)) {
       leftOutputLayout = calculation->createExactOutputLayout();
     }
   }

@@ -106,6 +106,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+  if (previousSelectedCellY == selectedRow()) {
+    return;
+  }
   if (previousSelectedCellY == -1) {
     setSelectedSubviewType(SubviewType::Output);
   } else if (selectedRow() < previousSelectedCellY) {
@@ -139,7 +142,7 @@ int HistoryController::reusableCellCount(int type) {
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalculation(m_calculationStore->calculationAtIndex(index));
+  myCell->setCalculation(m_calculationStore->calculationAtIndex(index), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
   myCell->reloadCell();
 }
@@ -150,7 +153,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
   }
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   App * calculationApp = (App *)app();
-  return calculation->height(calculationApp->localContext()) + 4 * Metric::CommonSmallMargin;
+  return calculation->height(calculationApp->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

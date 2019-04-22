@@ -20,6 +20,10 @@ public:
   void setSelectedSubviewType(SubviewType subviewType, HistoryViewCell * cell = nullptr);
   SubviewType selectedSubviewType() { return m_selectedSubviewType; }
 private:
+  /* This method should belong to a delegate instead of a data source but as
+   * both the data source and the delegate will be the same controller, we
+   * avoid keeping 2 pointers in HistoryViewCell. */
+  virtual void historyViewCellDidChangeSelection() = 0;
   SubviewType m_selectedSubviewType;
 };
 
@@ -36,7 +40,8 @@ public:
   }
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
-  void setCalculation(Calculation * calculation);
+  Calculation * calculation() { return &m_calculation; }
+  void setCalculation(Calculation * calculation, bool isSelected = false);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

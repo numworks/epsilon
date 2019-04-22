@@ -28,6 +28,7 @@ public:
   void scrollToCell(int i, int j);
 private:
   CalculationSelectableTableView * selectableTableView();
+  void historyViewCellDidChangeSelection() override { m_selectableTableView.reloadData(); }
   constexpr static int k_maxNumberOfDisplayedRows = 5;
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];

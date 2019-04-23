@@ -126,7 +126,8 @@ void ScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message eq
 void ScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
   if (m_contentCell.leftExpressionView()->layout().isUninitialized()) {
     setSelectedSubviewPosition(SubviewPosition::Right);
-  } else {
+  }
+  if (m_contentCell.rightExpressionView()->layout().isUninitialized()) {
     setSelectedSubviewPosition(SubviewPosition::Left);
   }
 }

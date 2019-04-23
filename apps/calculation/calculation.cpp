@@ -19,6 +19,7 @@ Calculation::Calculation() :
   m_exactOutputText(),
   m_approximateOutputText(),
   m_height(-1),
+  m_selectedHeight(-1),
   m_equalSign(EqualSign::Unknown),
   m_toggleDisplayExact(false)
 {
@@ -60,32 +61,35 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
 }
 
 KDCoordinate Calculation::height(Context * context, bool isSelected) {
-  if (m_height < 0 || isSelected) {
-    KDCoordinate height;
+  KDCoordinate * memoizedHeight = isSelected ? &m_selectedHeight : &m_height;
+  if (*memoizedHeight < 0) {
+    DisplayOutput display = displayOutput(context);
     Layout inputLayout = createInputLayout();
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
-    Layout approximateLayout = createApproximateOutputLayout(context);
-    Layout exactLayout = createExactOutputLayout();
-    DisplayOutput display = displayOutput(context);
     if (display == DisplayOutput::ExactOnly || (!isSelected && display == DisplayOutput::ExactAndApproximateToggle && m_toggleDisplayExact)) {
-      KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
-      height = inputHeight+exactOutputHeight;
+      KDCoordinate exactOutputHeight = createExactOutputLayout().layoutSize().height();
+      *memoizedHeight = inputHeight+exactOutputHeight;
     } else if (display == DisplayOutput::ApproximateOnly || (!isSelected && display == DisplayOutput::ExactAndApproximateToggle && !m_toggleDisplayExact)) {
-      KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
-      height = inputHeight+approximateOutputHeight;
+      KDCoordinate approximateOutputHeight = createApproximateOutputLayout(context).layoutSize().height();
+      *memoizedHeight = inputHeight+approximateOutputHeight;
     } else {
       assert(display == DisplayOutput::ExactAndApproximate || (display == DisplayOutput::ExactAndApproximateToggle && isSelected));
+      Layout approximateLayout = createApproximateOutputLayout(context);
+      Layout exactLayout = createExactOutputLayout();
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = maxCoordinate(exactLayout.baseline(), approximateLayout.baseline()) + maxCoordinate(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
-      height = inputHeight + outputHeight;
+      *memoizedHeight = inputHeight + outputHeight;
     }
-    if (isSelected) {
-      return height;
+    /* For all display output except ExactAndApproximateToggle, the selected
+     * height and the usual height are identical. We update both heights in
+     * theses cases. */
+    if (display != DisplayOutput::ExactAndApproximateToggle) {
+      m_height = *memoizedHeight;
+      m_selectedHeight = *memoizedHeight;
     }
-    m_height = height;
   }
-  return m_height;
+  return *memoizedHeight;
 }
 
 const char * Calculation::inputText() {
@@ -125,6 +129,7 @@ bool Calculation::isEmpty() {
 void Calculation::tidy() {
   /* Uninitialized all Expression stored to free the Pool */
   m_height = -1;
+  m_selectedHeight = -1;
   m_equalSign = EqualSign::Unknown;
 }
 

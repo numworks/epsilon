@@ -1,13 +1,17 @@
 #include <escher/text_view.h>
 
 void TextView::setBackgroundColor(KDColor backgroundColor) {
-  m_backgroundColor = backgroundColor;
-  markRectAsDirty(bounds());
+  if (m_backgroundColor != backgroundColor) {
+    m_backgroundColor = backgroundColor;
+    markRectAsDirty(bounds());
+  }
 }
 
 void TextView::setTextColor(KDColor textColor) {
-  m_textColor = textColor;
-  markRectAsDirty(bounds());
+  if (m_textColor != textColor) {
+    m_textColor = textColor;
+    markRectAsDirty(bounds());
+  }
 }
 
 void TextView::setAlignment(float horizontalAlignment, float verticalAlignment) {

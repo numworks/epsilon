@@ -425,10 +425,16 @@ void WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
 
 void JDECid(uint8_t * manufacturerID, uint8_t * memoryType, uint8_t * capacityType) {
   unset_memory_mapped_mode();
-  send_command(Command::ReadJEDECID);
-  *manufacturerID = QUADSPI.DR()->get();
-  *memoryType = QUADSPI.DR()->get();
-  *capacityType = QUADSPI.DR()->get();
+  struct JEDECId {
+    uint8_t manufacturerID;
+    uint8_t memoryType;
+    uint8_t capacityType;
+  };
+  JEDECId id;
+  send_read_command(Command::ReadJEDECID, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&id), sizeof(id));
+  *manufacturerID = id.manufacturerID;
+  *memoryType = id.memoryType;
+  *capacityType = id.capacityType;
   set_as_memory_mapped();
 }
 

@@ -56,6 +56,7 @@ private:
   char m_exactOutputText[Constant::MaxSerializedExpressionSize];
   char m_approximateOutputText[Constant::MaxSerializedExpressionSize];
   KDCoordinate m_height;
+  KDCoordinate m_selectedHeight;
   EqualSign m_equalSign;
   bool m_toggleDisplayExact;
 };

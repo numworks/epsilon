@@ -1,5 +1,5 @@
 #include "lcd_data_test_controller.h"
-#include <ion/src/device/shared/drivers/display.h>
+#include <ion/display.h>
 
 using namespace Poincare;
 
@@ -106,7 +106,7 @@ int LCDDataTestController::numberOfNonColoredPixels(KDColor wantedColor) {
 }
 
 bool LCDDataTestController::testDisplayBlackWhite() {
-  Ion::Device::Display::HardwareTestPushBlackWhite();
+  Ion::Display::POSTPushBlackWhite();
   constexpr int stampHeight = Ion::Display::Height;
   constexpr int stampWidth = 2;
   static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");

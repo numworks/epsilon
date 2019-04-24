@@ -9,7 +9,7 @@ namespace OnBoarding {
 class LogoController : public ViewController, public Timer {
 public:
   LogoController();
-  View * view() override;
+  View * view() override { return &m_logoView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:

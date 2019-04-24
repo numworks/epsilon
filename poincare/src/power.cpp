@@ -138,7 +138,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(VerticalOffsetLayout::Builder(
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
-        VerticalOffsetLayoutNode::Type::Superscript),
+        VerticalOffsetLayoutNode::Position::Superscript),
       result.numberOfChildren(),
       result.numberOfChildren(),
       nullptr);

@@ -78,7 +78,7 @@ void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
       CodePointLayout::Builder(UCodePointScriptSmallE),
-      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
@@ -103,13 +103,13 @@ void LayoutCursor::addEmptySquareRootLayout() {
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
@@ -121,7 +121,7 @@ void LayoutCursor::addEmptyTenPowerLayout() {
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
         emptyLayout,
-        VerticalOffsetLayoutNode::Type::Superscript));
+        VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }

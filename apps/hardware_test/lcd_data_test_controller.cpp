@@ -112,18 +112,14 @@ bool LCDDataTestController::testDisplayBlackWhite() {
   static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
   static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
   static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-#warning LCD_DATA_hardware_test
-  // Test the following algo one we have a good screen
   KDColor stamp[stampWidth*stampHeight];
   int numberOfInvalidPixels = 0;
-  for (int i = 0; i < Ion::Display::Width; i++) {
-    for (int j = 0; j < Ion::Display::Height; j++) {
-      colorPixelBuffer(stamp, stampWidth * stampHeight, KDColorBlack);
-      Ion::Display::pullRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
-      for (int k = 0; k < stampWidth * stampHeight; k++) {
-        if (stamp[k] != (k%2 == 0 ? KDColorBlack : KDColorWhite)) {
-          numberOfInvalidPixels++;
-        }
+  for (int i = 0; i < Ion::Display::Width/stampWidth; i++) {
+    colorPixelBuffer(stamp, stampWidth * stampHeight, KDColorRed);
+    Ion::Display::pullRect(KDRect(i*stampWidth, 0, stampWidth, stampHeight), stamp);
+    for (int k = 0; k < stampWidth * stampHeight; k++) {
+      if (stamp[k] != ((k%2 == 0) ? KDColorWhite : KDColorBlack)) {
+        numberOfInvalidPixels++;
       }
     }
   }

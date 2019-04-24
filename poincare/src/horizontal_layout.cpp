@@ -309,7 +309,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   /* If the new child is also an horizontal layout, steal the children of the
    * new layout then destroy it. */
   bool oldWasAncestorOfNewLayout = newChild->hasAncestor(oldChild, false);
-  if (newChild->isHorizontal()) {
+  if (newChild->type() == LayoutNode::Type::HorizontalLayout) {
     int indexForInsertion = indexOfChild(oldChild);
     if (cursor != nullptr) {
       /* If the old layout is not an ancestor of the new layout, or if the
@@ -354,7 +354,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 // HorizontalLayout
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
-  if (l.isHorizontal()) {
+  if (l.type() == LayoutNode::Type::HorizontalLayout) {
     mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
     addChildAtIndex(l, index, numberOfChildren(), cursor, removeEmptyChildren);

@@ -127,9 +127,11 @@ void ScrollableExactApproximateExpressionsView::setSelectedSubviewPosition(Subvi
   m_contentCell.setSelectedSubviewPosition(subviewPosition);
   if (scrollToSelection) {
     if (subviewPosition == SubviewPosition::Left) {
+      // Scroll to the left extremity
       reloadScroll();
     } else {
-      scrollToContentRect(m_contentCell.bounds(), true);
+      // Scroll to the right extremity
+      scrollToContentPoint(KDPoint(m_contentCell.bounds().width(), 0), true);
     }
   }
 }

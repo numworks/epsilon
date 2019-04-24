@@ -20,6 +20,9 @@ public:
     m_font(font)
   {}
 
+  // Layout
+  Type type() const override { return Type::CodePointLayout; }
+
   // CodePointLayout
   CodePoint codePoint() const { return m_codePoint; }
   const KDFont * font() const { return m_font; }

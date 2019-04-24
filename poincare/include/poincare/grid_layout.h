@@ -22,6 +22,9 @@ public:
     m_numberOfColumns(0)
   {}
 
+  // Layout
+  Type type() const override { return Type::GridLayout; }
+
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
   virtual void setNumberOfRows(int numberOfRows) { m_numberOfRows = numberOfRows; }

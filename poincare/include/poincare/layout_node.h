@@ -16,6 +16,30 @@ public:
     Up,
     Down
   };
+  enum class Type : uint8_t {
+    AbsoluteValueLayout,
+    BinomialCoefficientLayout,
+    BracketPairLayout,
+    CeilingLayout,
+    CodePointLayout,
+    CondensedSumLayout,
+    ConjugateLayout,
+    EmptyLayout,
+    FloorLayout,
+    FractionLayout,
+    GridLayout,
+    HorizontalLayout,
+    IntegralLayout,
+    LeftParenthesisLayout,
+    LeftSquareBracketLayout,
+    MatrixLayout,
+    NthRootLayout,
+    ProductLayout,
+    RightParenthesisLayout,
+    RightSquareBracketLayout,
+    SumLayout,
+    VerticalOffsetLayout
+  };
 
   // Constructor
   LayoutNode() :
@@ -27,6 +51,9 @@ public:
     m_sized(false)
   {
   }
+
+  /* Poor man's RTTI */
+  virtual Type type() const = 0;
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);

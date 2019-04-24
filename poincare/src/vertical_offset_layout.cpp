@@ -192,7 +192,7 @@ KDSize VerticalOffsetLayoutNode::computeSize() {
   if (m_position == Position::Superscript) {
     LayoutNode * parentNode = parent();
     assert(parentNode != nullptr);
-    assert(parentNode->isHorizontal());
+    assert(parentNode->type() == Type::HorizontalLayout);
     int idxInParent = parentNode->indexOfChild(this);
     if (idxInParent < parentNode->numberOfChildren() - 1 && parentNode->childAtIndex(idxInParent + 1)->hasUpperLeftIndex()) {
       width += k_separationMargin;
@@ -220,13 +220,13 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child) {
 }
 
 bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  if (sibling->isVerticalOffset()) {
+  if (sibling->type() == Type::VerticalOffsetLayout) {
     VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
     if (verticalOffsetSibling->position() == Position::Superscript) {
       Layout rootLayout = root();
       Layout thisRef = Layout(this);
       Layout parentRef = Layout(parent());
-      assert(parentRef.isHorizontal());
+      assert(parentRef.type() == Type::HorizontalLayout);
       // Add the Left parenthesis
       int idxInParent = parentRef.indexOfChild(thisRef);
       int leftParenthesisIndex = idxInParent;
@@ -259,7 +259,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();
   assert(parentNode != nullptr);
-  assert(parentNode->isHorizontal());
+  assert(parentNode->type() == Type::HorizontalLayout);
   int idxInParent = parentNode->indexOfChild(this);
   assert(idxInParent > 0);
   return parentNode->childAtIndex(idxInParent - 1);

@@ -94,7 +94,7 @@ void Layout::replaceWith(Layout newChild, LayoutCursor * cursor) {
 void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
   Layout p = parent();
   assert(!p.isUninitialized());
-  if (!p.isHorizontal()) {
+  if (p.type() != LayoutNode::Type::HorizontalLayout) {
     /* One of the children to juxtapose might be "this", so we cannot just call
      * replaceWith. */
     HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
@@ -166,21 +166,21 @@ void Layout::addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor) 
   Layout rootLayout = root();
   Layout p = parent();
   assert(!p.isUninitialized());
-  if (p.isHorizontal()) {
+  if (p.type() == LayoutNode::Type::HorizontalLayout) {
     int indexInParent = p.indexOfChild(*this);
     int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
 
     /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
      * handle the insertion of the new sibling. Do not enter the special case if
      * "this" is a VerticalOffsetLayout, to avoid an infinite loop. */
-    if (!isVerticalOffset()) {
+    if (type() != LayoutNode::Type::VerticalOffsetLayout) {
       Layout neighbour;
       if (cursor->position() == LayoutCursor::Position::Left && indexInParent > 0) {
         neighbour = p.childAtIndex(indexInParent - 1);
       } else if (cursor->position() == LayoutCursor::Position::Right && indexInParent < p.numberOfChildren() - 1) {
         neighbour = p.childAtIndex(indexInParent + 1);
       }
-      if (!neighbour.isUninitialized() && neighbour.isVerticalOffset()) {
+      if (!neighbour.isUninitialized() && neighbour.type() == LayoutNode::Type::VerticalOffsetLayout) {
         if (moveCursor) {
           cursor->setLayout(neighbour);
           cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
@@ -234,7 +234,7 @@ void  Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
 
 void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
   Layout p = parent();
-  if (p.isUninitialized() || !p.isHorizontal()) {
+  if (p.isUninitialized() || p.type() != LayoutNode::Type::HorizontalLayout) {
     return;
   }
   int idxInParent = p.indexOfChild(*this);
@@ -242,7 +242,7 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
   int numberOfOpenParenthesis = 0;
   bool canCollapse = true;
   Layout absorbingChild = childAtIndex(absorbingChildIndex);
-  if (absorbingChild.isUninitialized() || !absorbingChild.isHorizontal()) {
+  if (absorbingChild.isUninitialized() || absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
     return;
   }
   HorizontalLayout horizontalAbsorbingChild = HorizontalLayout(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
@@ -285,7 +285,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   Layout rootLayout = root();
   if (node()->shouldCollapseSiblingsOnRight()) {
     Layout absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
-    if (!absorbingChild.isHorizontal()) {
+    if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
       Layout horRef = HorizontalLayout::Builder();
       replaceChild(absorbingChild, horRef, cursor, true);
       horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
@@ -294,7 +294,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
     Layout absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
-    if (!absorbingChild.isHorizontal()) {
+    if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
       Layout horRef = HorizontalLayout::Builder();
       replaceChild(absorbingChild, horRef, cursor, true);
       horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);

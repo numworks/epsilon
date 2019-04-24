@@ -10,6 +10,9 @@ class FractionLayoutNode /*final*/ : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::FractionLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

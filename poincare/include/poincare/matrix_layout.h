@@ -26,7 +26,6 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void willAddSiblingToEmptyChildAtIndex(int childIndex) override;
-  bool isMatrix() const override { return true; }
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

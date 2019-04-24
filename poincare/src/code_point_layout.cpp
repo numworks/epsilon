@@ -49,7 +49,7 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goin
         int indexOfThis = parent.indexOfChild(thisRef);
         if (indexOfThis > 0) {
           Layout leftBrother = parent.childAtIndex(indexOfThis-1);
-          if (leftBrother.isCodePoint()
+          if (leftBrother.type() == Type::CodePointLayout
               && static_cast<CodePointLayout&>(leftBrother).codePoint() == UCodePointLatinLetterSmallCapitalE)
           {
             return true;

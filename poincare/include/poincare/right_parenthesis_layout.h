@@ -18,7 +18,6 @@ public:
 
   // LayoutNode
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
-  bool isRightParenthesis() const override { return true; }
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {

@@ -215,7 +215,7 @@ bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   bool changedSquares = false;
   Layout currentAncestor = Layout(parent());
   while (!currentAncestor.isUninitialized()) {
-    if (currentAncestor.isMatrix()) {
+    if (currentAncestor.type() == Type::MatrixLayout) {
       if (add) {
         MatrixLayout(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
       } else {

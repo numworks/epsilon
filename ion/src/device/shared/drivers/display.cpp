@@ -55,6 +55,11 @@ void waitForVBlank() {
   }
 }
 
+void POSTPushBlackWhite() {
+  setDrawingArea(KDRect(0,0,Ion::Display::Width, Ion::Display::Height), Orientation::Landscape);
+  pushBlackWhitePixels();
+}
+
 }
 }
 
@@ -381,14 +386,14 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
   send_command(Command::PixelFormatSet, 0x05);
 }
 
-void HardwareTestPushBlackWhite() {
-  setDrawingArea(KDRect(0,0,Ion::Display::Width, Ion::Display::Height), Orientation::Landscape);
+void pushBlackWhitePixels() {
   send_command(Command::MemoryWrite);
   int numberOfPixels = Ion::Display::Width * Ion::Display::Height;
   while (numberOfPixels--) {
     send_data(numberOfPixels % 2 == 0 ? KDColorBlack : KDColorWhite);
   }
 }
+
 
 }
 }

@@ -10,6 +10,10 @@ namespace Poincare {
 class LeftSquareBracketLayoutNode final : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
+
+  // Layout
+  Type type() const override { return Type::LeftSquareBracketLayout; }
+
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::CodePoint(buffer, bufferSize, '[');
   }

@@ -19,6 +19,9 @@ public:
     m_hasIndex(hasIndex)
   {}
 
+  // Layout
+  Type type() const override { return Type::NthRootLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

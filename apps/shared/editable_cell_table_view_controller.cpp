@@ -31,18 +31,15 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  int nbOfRows = numberOfRows();
-  int nbOfColumns = numberOfColumns();
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  for (int j = 0; j < numberOfColumns(); j++) {
-    selectableTableView()->reloadCellAtLocation(j, selectedRow());
-  }
-  if (nbOfRows != numberOfRows() || nbOfColumns != numberOfColumns()) {
-    selectableTableView()->reloadData();
-  }
+  /* At this point, a new cell is selected depending on the event, before the
+   * data is reloaded, which means that the right cell is selected but the data
+   * may be incorrect. The data is reloaded afterwards by the
+   * textFieldDidFinishEditing methods of the derived classes StoreController
+   * and ValuesController. */
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
   } else {

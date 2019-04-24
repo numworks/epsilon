@@ -32,7 +32,6 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool mustHaveLeftSibling() const override { return true; }
-  bool isVerticalOffset() const override { return true; }
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
   // TreeNode

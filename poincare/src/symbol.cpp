@@ -90,28 +90,28 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
         CodePointLayout::Builder('u'),
         VerticalOffsetLayout::Builder(
           CodePointLayout::Builder('n'),
-          VerticalOffsetLayoutNode::Type::Subscript));
+          VerticalOffsetLayoutNode::Position::Subscript));
   }
   if (strcmp(m_name, "u(n+1)") == 0) {
     return HorizontalLayout::Builder(
       CodePointLayout::Builder('u'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
-        VerticalOffsetLayoutNode::Type::Subscript));
+        VerticalOffsetLayoutNode::Position::Subscript));
   }
   if (strcmp(m_name, "v(n)") == 0) {
     return HorizontalLayout::Builder(
         CodePointLayout::Builder('v'),
         VerticalOffsetLayout::Builder(
           CodePointLayout::Builder('n'),
-          VerticalOffsetLayoutNode::Type::Subscript));
+          VerticalOffsetLayoutNode::Position::Subscript));
   }
   if (strcmp(m_name, "v(n+1)") == 0) {
     return HorizontalLayout::Builder(
       CodePointLayout::Builder('v'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("n+1", 3),
-          VerticalOffsetLayoutNode::Type::Subscript));
+          VerticalOffsetLayoutNode::Position::Subscript));
   }
   return LayoutHelper::String(m_name, strlen(m_name));
 }

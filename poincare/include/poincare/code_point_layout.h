@@ -31,7 +31,6 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool isCodePoint() const override { return true; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
   bool canBeOmittedMultiplicationLeftFactor() const override;
   bool canBeOmittedMultiplicationRightFactor() const override;

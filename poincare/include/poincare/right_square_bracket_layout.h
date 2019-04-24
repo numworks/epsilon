@@ -17,7 +17,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::CodePoint(buffer, bufferSize, ']');
   }
-  bool isRightBracket() const override { return true; }
 
   // TreeNode
   size_t size() const override { return sizeof(RightSquareBracketLayoutNode); }

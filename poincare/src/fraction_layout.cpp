@@ -133,13 +133,13 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Add a multiplication if omitted.
-  if (idxInParent > 0 && p->isHorizontal() && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
+  if (idxInParent > 0 && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
     numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
   bool addParenthesis = false;
-  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->isVerticalOffset()) {
+  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent + 1)->type() == Type::VerticalOffsetLayout) {
     addParenthesis = true;
     // Add parenthesis
     numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
@@ -157,7 +157,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   // Add a multiplication if omitted.
-  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->isHorizontal() && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
+  if (idxInParent >= 0 && idxInParent < (p->numberOfChildren() - 1) && p->type() == Type::HorizontalLayout && p->childAtIndex(idxInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
     numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointMiddleDot);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }

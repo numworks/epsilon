@@ -11,6 +11,9 @@ class RightParenthesisLayoutNode final : public ParenthesisLayoutNode {
 public:
   using ParenthesisLayoutNode::ParenthesisLayoutNode;
 
+  // Layout
+  Type type() const override { return Type::RightParenthesisLayout; }
+
   static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
   // LayoutNode

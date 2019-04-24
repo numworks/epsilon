@@ -18,6 +18,9 @@ public:
     m_position(position)
   {}
 
+  // Layout
+  Type type() const override { return Type::VerticalOffsetLayout; }
+
   // VerticalOffsetLayoutNode
   Position position() const { return m_position; }
 

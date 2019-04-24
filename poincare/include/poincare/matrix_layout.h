@@ -15,6 +15,9 @@ class MatrixLayoutNode final : public GridLayoutNode {
 public:
   using GridLayoutNode::GridLayoutNode;
 
+  // Layout
+  Type type() const override { return Type::MatrixLayout; }
+
   // MatrixLayoutNode
   void addGreySquares();
   void removeGreySquares();

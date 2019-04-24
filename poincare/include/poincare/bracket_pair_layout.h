@@ -10,6 +10,9 @@ class BracketPairLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::BracketPairLayout; }
+
   static void RenderWithChildSize(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
   // LayoutNode

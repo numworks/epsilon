@@ -8,18 +8,18 @@ namespace Poincare {
 
 class VerticalOffsetLayoutNode final : public LayoutNode {
 public:
-  enum class Type {
+  enum class Position {
     Subscript,
     Superscript
   };
 
-  VerticalOffsetLayoutNode(Type type = Type::Superscript) :
+  VerticalOffsetLayoutNode(Position position = Position::Superscript) :
     LayoutNode(),
-    m_type(type)
+    m_position(position)
   {}
 
   // VerticalOffsetLayoutNode
-  Type type() const { return m_type; }
+  Position position() const { return m_position; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -37,7 +37,7 @@ public:
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
-    stream << (m_type == Type::Subscript ? "Subscript" : "Superscript");
+    stream << (m_position == Position::Subscript ? "Subscript" : "Superscript");
   }
 #endif
 
@@ -53,12 +53,12 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
   LayoutNode * indiceLayout() { return childAtIndex(0); }
   LayoutNode * baseLayout();
-  Type m_type;
+  Position m_position;
 };
 
 class VerticalOffsetLayout final : public Layout {
 public:
-  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Type type);
+  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Position position);
   VerticalOffsetLayout() = delete;
 };
 

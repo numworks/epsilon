@@ -67,7 +67,7 @@ QUIZ_CASE(poincare_create_all_layouts) {
   EmptyLayout e23 = EmptyLayout::Builder();
   EmptyLayout e24 = EmptyLayout::Builder();
   SumLayout e25 = SumLayout::Builder(e21, e22, e23, e24);
-  VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::Position::Superscript);
 }
 
 Matrix BuildOneChildMatrix(Expression entry) {
@@ -141,7 +141,7 @@ QUIZ_CASE(poincare_parse_layouts) {
           CodePointLayout::Builder('3'),
           CodePointLayout::Builder('+'),
           CodePointLayout::Builder('4')),
-        VerticalOffsetLayoutNode::Type::Superscript));
+        VerticalOffsetLayoutNode::Position::Superscript));
   e = Power::Builder(
       Rational::Builder(2),
       Addition::Builder(
@@ -154,7 +154,7 @@ QUIZ_CASE(poincare_parse_layouts) {
   l1.addChildAtIndex(CodePointLayout::Builder('l'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(CodePointLayout::Builder('o'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(CodePointLayout::Builder('g'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::Type::Subscript), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
+  l1.addChildAtIndex(VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::Position::Subscript), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(LeftParenthesisLayout::Builder(), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(CodePointLayout::Builder('2'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
   l1.addChildAtIndex(RightParenthesisLayout::Builder(), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
@@ -189,7 +189,7 @@ QUIZ_CASE(poincare_parse_layouts) {
       CodePointLayout::Builder('2'),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::Type::Superscript),
+        VerticalOffsetLayoutNode::Position::Superscript),
       CodePointLayout::Builder('!'));
   e = Factorial::Builder(
       Power::Builder(
@@ -223,7 +223,7 @@ QUIZ_CASE(poincare_parse_layouts) {
         CodePointLayout::Builder('3'),
         VerticalOffsetLayout::Builder(
           CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::Type::Superscript),
+          VerticalOffsetLayoutNode::Position::Superscript),
         CodePointLayout::Builder('!')),
       CodePointLayout::Builder('7'),
       CodePointLayout::Builder('4'),
@@ -251,7 +251,7 @@ QUIZ_CASE(poincare_parse_layouts) {
           CodePointLayout::Builder('7'),
           CodePointLayout::Builder('4'),
           CodePointLayout::Builder('5')),
-        VerticalOffsetLayoutNode::Type::Superscript));
+        VerticalOffsetLayoutNode::Position::Superscript));
   m = BuildOneChildMatrix(
       Factorial::Builder(
         Rational::Builder(3)));
@@ -268,7 +268,7 @@ QUIZ_CASE(poincare_parse_layouts) {
       CodePointLayout::Builder(UCodePointScriptSmallE),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3'),
-        VerticalOffsetLayoutNode::Type::Superscript));
+        VerticalOffsetLayoutNode::Position::Superscript));
   e = Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3))));
   assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
   assert_parsed_layout_is(l, e);

@@ -18,6 +18,9 @@ public:
     m_numberOfChildren(0)
   {}
 
+  // Layout
+  Type type() const override { return Type::HorizontalLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

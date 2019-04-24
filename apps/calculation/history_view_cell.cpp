@@ -56,7 +56,6 @@ void HistoryViewCell::setHighlighted(bool highlight) {
       m_scrollableOutputView.evenOddCell()->setHighlighted(true);
     }
   }
-  reloadScroll();
 }
 
 Poincare::Layout HistoryViewCell::layout() const {
@@ -71,12 +70,20 @@ Poincare::Layout HistoryViewCell::layout() const {
 void HistoryViewCell::reloadCell() {
   m_scrollableOutputView.evenOddCell()->reloadCell();
   layoutSubviews();
-  reloadScroll();
-}
 
-void HistoryViewCell::reloadScroll() {
+  // Reload input scroll
   m_inputView.reloadScroll();
-  m_scrollableOutputView.reloadScroll();
+
+  /* Select the right output according to the calculation display output. This
+   * will reload the scroll to display the selected output. */
+  App * calculationApp = (App *)app();
+  Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
+  if (display == Calculation::DisplayOutput::ExactAndApproximate) {
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  } else {
+  assert(display == Calculation::DisplayOutput::ApproximateOnly || display == Calculation::DisplayOutput::ExactAndApproximateToggle || display == Calculation::DisplayOutput::ExactOnly);
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
+  }
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
@@ -133,14 +140,6 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected)
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
-
-  // Select the right output according to the calculation display output
-  if (display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && isSelected)) {
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
-  } else {
-    assert(display == Calculation::DisplayOutput::ExactOnly || display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && !isSelected));
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
-  }
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {

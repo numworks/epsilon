@@ -78,7 +78,7 @@ Poincare::Layout Sequence::nameLayout() {
   if (m_nameLayout.isUninitialized()) {
     m_nameLayout = HorizontalLayout::Builder(
         CodePointLayout::Builder(fullName()[0], KDFont::SmallFont),
-        VerticalOffsetLayout::Builder(CodePointLayout::Builder(Symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder(Symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Subscript)
       );
   }
   return m_nameLayout;
@@ -236,16 +236,16 @@ void Sequence::DefinitionModel::buildName(Sequence * sequence) {
   if (sequence->type() == Type::Explicit) {
     m_name = HorizontalLayout::Builder(
         CodePointLayout::Builder(name, k_layoutFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1, k_layoutFont), VerticalOffsetLayoutNode::Position::Subscript));
   } else if (sequence->type() == Type::SingleRecurrence) {
     m_name = HorizontalLayout::Builder(
         CodePointLayout::Builder(name, k_layoutFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3, k_layoutFont), VerticalOffsetLayoutNode::Position::Subscript));
   } else {
     assert(sequence->type() == Type::DoubleRecurrence);
     m_name = HorizontalLayout::Builder(
         CodePointLayout::Builder(name, k_layoutFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3, k_layoutFont), VerticalOffsetLayoutNode::Type::Subscript));
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3, k_layoutFont), VerticalOffsetLayoutNode::Position::Subscript));
   }
 }
 
@@ -273,7 +273,7 @@ void Sequence::InitialConditionModel::buildName(Sequence * sequence) {
   Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer), k_layoutFont);
   m_name = HorizontalLayout::Builder(
       CodePointLayout::Builder(sequence->fullName()[0], k_layoutFont),
-      VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Type::Subscript));
+      VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Position::Subscript));
 }
 
 template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;

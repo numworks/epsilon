@@ -92,7 +92,7 @@ HorizontalLayout LayoutHelper::CodePointString(const CodePoint * buffer, int buf
 
 Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   HorizontalLayout resultLayout = String("log", 3);
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Type::Subscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
   return resultLayout;

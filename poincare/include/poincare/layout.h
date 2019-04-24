@@ -24,6 +24,9 @@ public:
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
 
+  // Properties
+  LayoutNode::Type type() const { return node()->type(); }
+
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
     return node()->draw(ctx, p, expressionColor, backgroundColor);

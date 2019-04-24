@@ -1,6 +1,6 @@
 #include "logo_controller.h"
+#include "power_on_self_test.h"
 #include <ion/led.h>
-#include <ion/battery.h>
 
 namespace OnBoarding {
 
@@ -12,10 +12,6 @@ LogoController::LogoController() :
 {
 }
 
-View * LogoController::view() {
-  return &m_logoView;
-}
-
 bool LogoController::fire() {
   app()->dismissModalViewController();
   return true;
@@ -23,8 +19,7 @@ bool LogoController::fire() {
 
 void LogoController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_previousLEDColor = Ion::LED::getColor();
-  Ion::LED::setColor(Ion::Battery::level() == Ion::Battery::Charge::FULL ? KDColorGreen : KDColorRed);
+  m_previousLEDColor = PowerOnSelfTest::Perform();
 }
 
 void LogoController::viewDidDisappear() {

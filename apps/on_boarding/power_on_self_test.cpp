@@ -1,59 +1,56 @@
-#include "lcd_data_test_controller.h"
+#include "power_on_self_test.h"
+#include <ion/battery.h>
 #include <ion/display.h>
+#include <ion/led.h>
 
-using namespace Poincare;
+namespace OnBoarding {
 
-namespace HardwareTest {
+KDColor PowerOnSelfTest::Perform() {
+  KDColor previousLEDColor = Ion::LED::getColor();
+  if (!BatteryOK()) {
+    Ion::LED::setColor(KDColorRed);
+  } else {
+    Ion::LED::setColor(KDColorBlue);
+    /* If VBlank test fails, we end up in an infinite loop and the LED will be
+     * lit up in blue. */
+    if (VBlankOK() && LCDDataOK()) {
+      Ion::LED::setColor(KDColorGreen);
+    }
+  }
+  return previousLEDColor;
+}
 
-bool LCDDataTestController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK && strcmp(m_view.lcdDataStateTextView()->text(), k_lcdDataOKText) == 0) {
-    // Handled in WizardViewController
-    return false;
+bool PowerOnSelfTest::BatteryOK() {
+  return Ion::Battery::level() == Ion::Battery::Charge::FULL;
+}
+
+bool PowerOnSelfTest::VBlankOK() {
+  for (int i=0; i<6; i++) {
+    Ion::Display::waitForVBlank();
   }
   return true;
 }
 
-void LCDDataTestController::viewWillAppear() {
-  bool testOK = test();
-  m_view.lcdDataStateTextView()->setText(testOK ? k_lcdDataOKText : k_lcdDataFailTest);
-  m_view.setColor(testOK ? KDColorGreen : KDColorRed);
-}
-
-LCDDataTestController::ContentView::ContentView() :
-  SolidColorView(KDColorWhite),
-  m_lcdDataStateView(KDFont::LargeFont)
-{
-}
-
-void LCDDataTestController::ContentView::setColor(KDColor color) {
-  SolidColorView::setColor(color);
-  m_lcdDataStateView.setBackgroundColor(color);
-}
-
-void LCDDataTestController::ContentView::layoutSubviews() {
-  m_lcdDataStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-}
-
-void colorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c) {
-  for (int i = 0; i < numberOfPixels; i++) {
-    pixels[i] = c;
-  }
-}
-
-bool LCDDataTestController::test() {
+bool PowerOnSelfTest::LCDDataOK() {
   KDColor testColors[] = {
     KDColorRed, KDColorGreen, KDColorBlue,
     KDColor::RGB24(0xFFFF00), KDColor::RGB24(0xFF00FF), KDColor::RGB24(0x00FFFF),
     KDColorWhite, KDColorBlack};
   for (KDColor c : testColors) {
-    if (!testDisplayColor(c)) {
+    if (!TestDisplayColor(c)) {
       return false;
     }
   }
-  return testDisplayBlackWhite();
+  return TestDisplayBlackWhite();
 }
 
-bool LCDDataTestController::testDisplayColor(KDColor c) {
+void PowerOnSelfTest::ColorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c) {
+  for (int i = 0; i < numberOfPixels; i++) {
+    pixels[i] = c;
+  }
+}
+
+bool PowerOnSelfTest::TestDisplayColor(KDColor c) {
   constexpr int stampHeight = 10;
   constexpr int stampWidth = 10;
   static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
@@ -63,25 +60,25 @@ bool LCDDataTestController::testDisplayColor(KDColor c) {
   KDColor stamp[stampWidth*stampHeight];
 
   // Tiling test with pushRect
-  colorPixelBuffer(stamp, stampWidth * stampHeight, c);
+  ColorPixelBuffer(stamp, stampWidth * stampHeight, c);
   for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
     for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
       Ion::Display::pushRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
     }
   }
-  if (numberOfNonColoredPixels(c) > invalidPixelsLimit) {
+  if (NumberOfNonColoredPixels(c) > k_invalidPixelsLimit) {
     return false;
   }
 
   // Test with pushRectUniform
   Ion::Display::pushRectUniform(KDRect(KDPointZero, Ion::Display::Width, Ion::Display::Height), c);
-  if (numberOfNonColoredPixels(c) > invalidPixelsLimit) {
+  if (NumberOfNonColoredPixels(c) > k_invalidPixelsLimit) {
     return false;
   }
   return true;
 }
 
-int LCDDataTestController::numberOfNonColoredPixels(KDColor wantedColor) {
+int PowerOnSelfTest::NumberOfNonColoredPixels(KDColor wantedColor) {
   constexpr int stampHeight = 10;
   constexpr int stampWidth = 10;
   static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
@@ -93,7 +90,7 @@ int LCDDataTestController::numberOfNonColoredPixels(KDColor wantedColor) {
   int numberOfInvalidPixels = 0;
   for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
     for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
-      colorPixelBuffer(stamp, stampWidth * stampHeight, wantedColor == KDColorBlack ? KDColorRed : KDColorBlack);
+      ColorPixelBuffer(stamp, stampWidth * stampHeight, wantedColor == KDColorBlack ? KDColorRed : KDColorBlack);
       Ion::Display::pullRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
       for (int k = 0; k < stampWidth * stampHeight; k++) {
         if (stamp[k] != wantedColor) {
@@ -105,7 +102,7 @@ int LCDDataTestController::numberOfNonColoredPixels(KDColor wantedColor) {
   return numberOfInvalidPixels;
 }
 
-bool LCDDataTestController::testDisplayBlackWhite() {
+bool PowerOnSelfTest::TestDisplayBlackWhite() {
   Ion::Display::POSTPushBlackWhite();
   constexpr int stampHeight = Ion::Display::Height;
   constexpr int stampWidth = 2;
@@ -115,7 +112,7 @@ bool LCDDataTestController::testDisplayBlackWhite() {
   KDColor stamp[stampWidth*stampHeight];
   int numberOfInvalidPixels = 0;
   for (int i = 0; i < Ion::Display::Width/stampWidth; i++) {
-    colorPixelBuffer(stamp, stampWidth * stampHeight, KDColorRed);
+    ColorPixelBuffer(stamp, stampWidth * stampHeight, KDColorRed);
     Ion::Display::pullRect(KDRect(i*stampWidth, 0, stampWidth, stampHeight), stamp);
     for (int k = 0; k < stampWidth * stampHeight; k++) {
       if (stamp[k] != ((k%2 == 0) ? KDColorWhite : KDColorBlack)) {
@@ -123,7 +120,8 @@ bool LCDDataTestController::testDisplayBlackWhite() {
       }
     }
   }
-  return numberOfInvalidPixels <= invalidPixelsLimit;
+  return numberOfInvalidPixels <= k_invalidPixelsLimit;
 }
+
 
 }

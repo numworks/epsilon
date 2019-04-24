@@ -23,6 +23,9 @@ void pullRect(KDRect r, KDColor * pixels);
 
 void waitForVBlank();
 
+// For Power On Self Test
+void POSTPushBlackWhite();
+
 constexpr int Width = 320;
 constexpr int Height = 240;
 constexpr int WidthInTenthOfMillimeter = 576;

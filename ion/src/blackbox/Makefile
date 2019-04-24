@@ -16,6 +16,7 @@ src += $(addprefix ion/src/shared/, \
   timing.cpp \
   dummy/backlight.cpp \
   dummy/battery.cpp \
+  dummy/display.cpp \
   dummy/events_modifier.cpp \
   dummy/fcc_id.cpp \
   dummy/led.cpp \

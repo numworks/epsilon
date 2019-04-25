@@ -1,11 +1,13 @@
 #ifndef POINCARE_PRINT_INT_H
 #define POINCARE_PRINT_INT_H
 
+#include <stdint.h>
+
 namespace Poincare {
 
 namespace PrintInt {
 
-bool PadIntInBuffer(int integer, char * buffer, int bufferLength);
+bool PadIntInBuffer(uint32_t integer, char * buffer, int bufferLength);
 
 }
 

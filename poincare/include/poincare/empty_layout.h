@@ -15,6 +15,7 @@ public:
 
   // Layout
   Type type() const override { return Type::EmptyLayout; }
+  bool isIdenticalTo(Layout l) override;
 
   EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true) :
     LayoutNode(),

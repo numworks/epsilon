@@ -7,6 +7,19 @@
 
 namespace Poincare {
 
+bool LayoutNode::isIdenticalTo(Layout l) {
+  if (l.isUninitialized() || type() != l.type() || numberOfChildren() != l.numberOfChildren()) {
+    return false;
+  }
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Layout child = childAtIndex(i);
+    if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // Rendering
 
 void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

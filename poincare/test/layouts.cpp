@@ -273,3 +273,36 @@ QUIZ_CASE(poincare_parse_layouts) {
   assert_parsed_expression_is("2ℯ^(3)", Multiplication::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
   assert_parsed_layout_is(l, e);
 }
+
+QUIZ_CASE(poincare_layouts_comparison) {
+  Layout e0 = CodePointLayout::Builder('a');
+  Layout e1 = CodePointLayout::Builder('a');
+  Layout e2 = CodePointLayout::Builder('b');
+  quiz_assert(e0.isIdenticalTo(e1));
+  quiz_assert(!e0.isIdenticalTo(e2));
+
+  Layout e3 = EmptyLayout::Builder();
+  Layout e4 = EmptyLayout::Builder();
+  quiz_assert(e3.isIdenticalTo(e4));
+  quiz_assert(!e3.isIdenticalTo(e0));
+
+  Layout e5 = NthRootLayout::Builder(e0);
+  Layout e6 = NthRootLayout::Builder(e1);
+  Layout e7 = NthRootLayout::Builder(e2);
+  quiz_assert(e5.isIdenticalTo(e6));
+  quiz_assert(!e5.isIdenticalTo(e7));
+  quiz_assert(!e5.isIdenticalTo(e0));
+
+  Layout e8 = VerticalOffsetLayout::Builder(e5, VerticalOffsetLayoutNode::Position::Superscript);
+  Layout e9 = VerticalOffsetLayout::Builder(e6, VerticalOffsetLayoutNode::Position::Superscript);
+  Layout e10 = VerticalOffsetLayout::Builder(NthRootLayout::Builder(CodePointLayout::Builder('a')), VerticalOffsetLayoutNode::Position::Subscript);
+  quiz_assert(e8.isIdenticalTo(e9));
+  quiz_assert(!e8.isIdenticalTo(e10));
+  quiz_assert(!e8.isIdenticalTo(e0));
+
+  Layout e11 = SumLayout::Builder(e0, e3, e6, e2);
+  Layout e12 = SumLayout::Builder(CodePointLayout::Builder('a'), EmptyLayout::Builder(), NthRootLayout::Builder(CodePointLayout::Builder('a')), CodePointLayout::Builder('b'));
+  Layout e13 = ProductLayout::Builder(CodePointLayout::Builder('a'), EmptyLayout::Builder(), NthRootLayout::Builder(CodePointLayout::Builder('a')), CodePointLayout::Builder('b'));
+  quiz_assert(e11.isIdenticalTo(e12));
+  quiz_assert(!e11.isIdenticalTo(e13));
+}

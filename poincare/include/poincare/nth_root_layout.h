@@ -21,6 +21,7 @@ public:
 
   // Layout
   Type type() const override { return Type::NthRootLayout; }
+  bool isIdenticalTo(Layout l) override;
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

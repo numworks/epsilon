@@ -1,7 +1,6 @@
 # TODO
 src += $(addprefix ion/src/shared/, \
   crc32.cpp \
-  crc32_padded.cpp \
   events.cpp \
   events_keyboard.cpp \
   events_modifier.cpp \

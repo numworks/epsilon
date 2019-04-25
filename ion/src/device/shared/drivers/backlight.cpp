@@ -14,14 +14,20 @@
 namespace Ion {
 namespace Backlight {
 
-using namespace Ion::Device::Backlight;
-
 void setBrightness(uint8_t b) {
-  setLevel(b >> 4);
+  Ion::Device::Backlight::setLevel(b >> 4);
 }
 
 uint8_t brightness() {
-  return level() << 4;
+  return Ion::Device::Backlight::level() << 4;
+}
+
+void init() {
+  Ion::Device::Backlight::init();
+}
+
+void shutdown() {
+  Ion::Device::Backlight::shutdown();
 }
 
 }

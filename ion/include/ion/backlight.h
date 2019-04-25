@@ -7,6 +7,8 @@ namespace Ion {
 namespace Backlight {
 
 constexpr uint8_t MaxBrightness = 240;
+void init();
+void shutdown();
 void setBrightness(uint8_t b);
 uint8_t brightness();
 

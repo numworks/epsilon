@@ -1,7 +1,9 @@
 #include "power_on_self_test.h"
+#include <ion/backlight.h>
 #include <ion/battery.h>
 #include <ion/display.h>
 #include <ion/led.h>
+#include <ion/timing.h>
 
 namespace OnBoarding {
 
@@ -41,7 +43,15 @@ bool PowerOnSelfTest::LCDDataOK() {
       return false;
     }
   }
-  return TestDisplayBlackWhite();
+  bool result = TestDisplayBlackWhite();
+  /* If EPSILON_ONBOARDING_APP == 1, the backlight is not inited in
+   * Ion::Device::Board::initPeripherals, so that the LCD test is not visible to
+   * the user. We thus need to init the backlight after the test. Before, we
+   * push a white rect on the display to hide redrawing glitches. */
+  Ion::Display::pushRectUniform(KDRect(KDPointZero, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
+  Ion::Timing::msleep(100);
+  Ion::Backlight::init();
+  return result;
 }
 
 void PowerOnSelfTest::ColorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c) {

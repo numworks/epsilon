@@ -32,7 +32,9 @@ void initFPU() {
 
 void initPeripherals() {
   Display::init();
+#if EPSILON_ONBOARDING_APP == 0
   Backlight::init();
+#endif
   Keyboard::init();
   LED::init();
   Battery::init();

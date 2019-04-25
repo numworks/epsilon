@@ -31,6 +31,7 @@ class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   HistoryViewCell(Responder * parentResponder = nullptr);
   void reloadCell() override;
+  void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setDataSource(HistoryViewCellDataSource * dataSource) { m_dataSource = dataSource; }

@@ -6,7 +6,7 @@ namespace OnBoarding {
 
 LogoController::LogoController() :
   ViewController(nullptr),
-  Timer(10),
+  Timer(15),
   m_logoView(),
   m_previousLEDColor(KDColorBlack)
 {
@@ -18,8 +18,8 @@ bool LogoController::fire() {
 }
 
 void LogoController::viewWillAppear() {
-  ViewController::viewWillAppear();
   m_previousLEDColor = PowerOnSelfTest::Perform();
+  ViewController::viewWillAppear();
 }
 
 void LogoController::viewDidDisappear() {

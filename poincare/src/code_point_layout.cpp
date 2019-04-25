@@ -4,6 +4,14 @@
 
 namespace Poincare {
 
+bool CodePointLayoutNode::isIdenticalTo(Layout l) {
+  if (l.type() != Type::CodePointLayout) {
+    return false;
+  }
+  CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
+  return codePoint() == cpl.codePoint() && font() == cpl.font();
+}
+
 // LayoutNode
 void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right) {

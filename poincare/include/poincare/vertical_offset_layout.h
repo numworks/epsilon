@@ -20,6 +20,7 @@ public:
 
   // Layout
   Type type() const override { return Type::VerticalOffsetLayout; }
+  bool isIdenticalTo(Layout l) override;
 
   // VerticalOffsetLayoutNode
   Position position() const { return m_position; }

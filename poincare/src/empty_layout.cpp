@@ -5,6 +5,14 @@
 
 namespace Poincare {
 
+bool EmptyLayoutNode::isIdenticalTo(Layout l) {
+  if (l.type() != Type::EmptyLayout) {
+    return false;
+  }
+  EmptyLayoutNode * n = static_cast<EmptyLayoutNode *>(l.node());
+  return color() == n->color();
+}
+
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();

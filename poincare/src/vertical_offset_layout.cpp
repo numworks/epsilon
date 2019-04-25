@@ -8,6 +8,14 @@
 
 namespace Poincare {
 
+bool VerticalOffsetLayoutNode::isIdenticalTo(Layout l) {
+  if (l.type() != Type::VerticalOffsetLayout) {
+    return false;
+  }
+  VerticalOffsetLayoutNode * n = static_cast<VerticalOffsetLayoutNode *>(l.node());
+  return position() == n->position() && LayoutNode::isIdenticalTo(l);
+}
+
 void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Left)

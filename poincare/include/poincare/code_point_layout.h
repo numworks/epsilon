@@ -22,6 +22,7 @@ public:
 
   // Layout
   Type type() const override { return Type::CodePointLayout; }
+  bool isIdenticalTo(Layout l) override;
 
   // CodePointLayout
   CodePoint codePoint() const { return m_codePoint; }

@@ -19,7 +19,7 @@ namespace Board {
 
 using namespace Regs;
 
-void init() {
+void init(bool initBacklight) {
   initClocks();
 
   // Ensure right location of interrupt vectors
@@ -38,7 +38,7 @@ void init() {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
-  initPeripherals();
+  initPeripherals(initBacklight);
 }
 
 void initClocks() {

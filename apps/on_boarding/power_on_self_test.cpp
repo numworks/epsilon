@@ -44,10 +44,10 @@ bool PowerOnSelfTest::LCDDataOK() {
     }
   }
   bool result = TestDisplayBlackWhite();
-  /* If EPSILON_ONBOARDING_APP == 1, the backlight is not inited in
+  /* If EPSILON_ONBOARDING_APP == 1, the backlight is not initialized in
    * Ion::Device::Board::initPeripherals, so that the LCD test is not visible to
-   * the user. We thus need to init the backlight after the test. Before, we
-   * push a white rect on the display to hide redrawing glitches. */
+   * the user. We thus need to initialize the backlight after the test. Before,
+   * we push a white rect on the display to hide redrawing glitches. */
   Ion::Display::pushRectUniform(KDRect(KDPointZero, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
   Ion::Timing::msleep(100);
   Ion::Backlight::init();

@@ -21,7 +21,7 @@ void Sleep(const char * input) {
   Device::Power::enterLowPowerMode();
   Device::Board::setStandardFrequency(Device::Board::Frequency::High);
   Device::Board::initClocks();
-  Device::Board::initPeripherals();
+  Device::Board::initPeripherals(false);
 }
 
 }

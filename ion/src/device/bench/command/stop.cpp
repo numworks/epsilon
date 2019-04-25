@@ -20,7 +20,7 @@ void Stop(const char * input) {
   Device::Board::shutdownClocks();
   Device::Power::enterLowPowerMode();
   Device::Board::initClocks();
-  Device::Board::initPeripherals();
+  Device::Board::initPeripherals(false);
 }
 
 }

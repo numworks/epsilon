@@ -15,5 +15,3 @@ protected:
 };
 
 #endif
-
-

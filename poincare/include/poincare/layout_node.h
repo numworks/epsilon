@@ -55,6 +55,9 @@ public:
   /* Poor man's RTTI */
   virtual Type type() const = 0;
 
+  // Comparison
+  virtual bool isIdenticalTo(Layout l);
+
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   KDPoint origin();

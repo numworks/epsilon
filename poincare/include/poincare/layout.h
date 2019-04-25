@@ -26,6 +26,7 @@ public:
 
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
+  bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {

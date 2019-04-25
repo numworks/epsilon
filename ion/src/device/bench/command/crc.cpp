@@ -46,7 +46,7 @@ void CRC(const char * input) {
   // Disable the cache to make many cache accesses
   Ion::Device::Cache::disable();
 
-  uint32_t crc = Ion::crc32PaddedString(reinterpret_cast<const char *>(internal ? 0x08000000 : 0x90000000), length);
+  uint32_t crc = Ion::crc32Byte(reinterpret_cast<const uint8_t *>(internal ? 0x08000000 : 0x90000000), length);
 
   Ion::Device::Cache::enable();
 

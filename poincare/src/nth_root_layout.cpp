@@ -20,6 +20,14 @@ const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode
   {0xFF, 0xFF, 0xFF, 0xFF, 0x00},
 };
 
+bool NthRootLayoutNode::isIdenticalTo(Layout l) {
+  if (l.type() != Type::NthRootLayout) {
+    return false;
+  }
+  NthRootLayout & nrl = static_cast<NthRootLayout &>(l);
+  return hasUpperLeftIndex() == nrl.node()->hasUpperLeftIndex() && LayoutNode::isIdenticalTo(l);
+}
+
 void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->layoutNode() == radicandLayout()
     && cursor->position() == LayoutCursor::Position::Left)

@@ -20,7 +20,10 @@ public:
   SubviewPosition selectedSubviewPosition() {
     return m_contentCell.selectedSubviewPosition();
   }
-  void setSelectedSubviewPosition(SubviewPosition subviewPosition, bool reloadScroll = true);
+  void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
+    m_contentCell.setSelectedSubviewPosition(subviewPosition);
+  }
+  void reloadScroll();
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const {

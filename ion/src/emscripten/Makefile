@@ -6,7 +6,6 @@ src += $(addprefix ion/src/emscripten/, \
 
 src += $(addprefix ion/src/shared/, \
   crc32.cpp \
-  crc32_padded.cpp \
   events.cpp \
   events_modifier.cpp \
   power.cpp \

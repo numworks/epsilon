@@ -9,7 +9,6 @@ src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   console_stdio.cpp \
   crc32.cpp \
-  crc32_padded.cpp \
   events.cpp \
   power.cpp \
   random.cpp \

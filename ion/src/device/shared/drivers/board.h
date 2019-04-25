@@ -5,14 +5,14 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-void init();
+void init(bool initBacklight = true);
 void shutdown();
 
 void initFPU();
 void initClocks();
 void shutdownClocks(bool keepLEDAwake = false);
 
-void initPeripherals();
+void initPeripherals(bool initBacklight);
 void shutdownPeripherals(bool keepLEDAwake = false);
 
 enum class Frequency {

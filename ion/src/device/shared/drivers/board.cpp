@@ -30,11 +30,11 @@ void initFPU() {
   // FIXME: The pipeline should be flushed at this point
 }
 
-void initPeripherals() {
+void initPeripherals(bool initBacklight) {
   Display::init();
-#if EPSILON_ONBOARDING_APP == 0
-  Backlight::init();
-#endif
+  if (initBacklight) {
+    Backlight::init();
+  }
   Keyboard::init();
   LED::init();
   Battery::init();

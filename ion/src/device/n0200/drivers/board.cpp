@@ -85,7 +85,7 @@ void initMPU() {
   Cache::isb();
 }
 
-void init() {
+void init(bool initBacklight) {
   initFPU();
   initMPU();
   initClocks();
@@ -106,7 +106,7 @@ void init() {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
-  initPeripherals();
+  initPeripherals(initBacklight);
   // Initiate L1 cache after initiating the external flash
   Cache::enable();
 

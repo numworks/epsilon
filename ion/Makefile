@@ -22,7 +22,6 @@ initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
 src += $(addprefix ion/src/shared/, \
-  crc32_padded.cpp \
   decompress.cpp \
   events.cpp \
   led.cpp \

@@ -28,6 +28,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculation(),
+  m_calculationSelected(false),
   m_inputView(this),
   m_scrollableOutputView(this)
 {
@@ -120,15 +121,20 @@ void HistoryViewCell::layoutSubviews() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected) {
+  if (m_calculationSelected == isSelected && *calculation == m_calculation) {
+    return;
+  }
+  // Memoization
   m_calculation = *calculation;
-  m_inputView.setLayout(calculation->createInputLayout());
+  m_calculationSelected = isSelected;
   App * calculationApp = (App *)app();
+  Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
+  m_inputView.setLayout(calculation->createInputLayout());
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
   Poincare::Layout leftOutputLayout = Poincare::Layout();
   Poincare::Layout rightOutputLayout;
-  Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
   if (display == Calculation::DisplayOutput::ExactOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && !isSelected && calculation->toggleDisplayExact())) {
     rightOutputLayout = calculation->createExactOutputLayout();
   } else {

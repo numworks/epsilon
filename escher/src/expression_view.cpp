@@ -14,9 +14,13 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 {
 }
 
-void ExpressionView::setLayout(Layout layoutR) {
+bool ExpressionView::setLayout(Layout layoutR) {
+  if (m_layout.isIdenticalTo(layoutR)) {
+    return false;
+  }
   m_layout = layoutR;
   markRectAsDirty(bounds());
+  return true;
 }
 
 void ExpressionView::setBackgroundColor(KDColor backgroundColor) {

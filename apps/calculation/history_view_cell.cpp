@@ -19,6 +19,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
   m_selectedSubviewType = subviewType;
   if (cell) {
     cell->setHighlighted(cell->isHighlighted());
+    cell->cellDidSelectSubview(subviewType);
   }
   historyViewCellDidChangeSelection();
 }
@@ -72,18 +73,23 @@ void HistoryViewCell::reloadCell() {
   m_scrollableOutputView.evenOddCell()->reloadCell();
   layoutSubviews();
 
-  // Reload input scroll
+  // Reload subviews' scrolls
   m_inputView.reloadScroll();
+  m_scrollableOutputView.reloadScroll();
+}
 
-  /* Select the right output according to the calculation display output. This
-   * will reload the scroll to display the selected output. */
-  App * calculationApp = (App *)app();
-  Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
-  if (display == Calculation::DisplayOutput::ExactAndApproximate) {
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
-  } else {
-  assert(display == Calculation::DisplayOutput::ApproximateOnly || display == Calculation::DisplayOutput::ExactAndApproximateToggle || display == Calculation::DisplayOutput::ExactOnly);
-    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
+void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+  if (type == HistoryViewCellDataSource::SubviewType::Output) {
+    /* Select the right output according to the calculation display output. This
+     * will reload the scroll to display the selected output. */
+    App * calculationApp = (App *)app();
+    Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
+    if (display == Calculation::DisplayOutput::ExactAndApproximate) {
+      m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+    } else {
+      assert(display == Calculation::DisplayOutput::ApproximateOnly || display == Calculation::DisplayOutput::ExactAndApproximateToggle || display == Calculation::DisplayOutput::ExactOnly);
+      m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
+    }
   }
 }
 

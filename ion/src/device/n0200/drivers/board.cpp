@@ -109,8 +109,6 @@ void init(bool initBacklight) {
   initPeripherals(initBacklight);
   // Initiate L1 cache after initiating the external flash
   Cache::enable();
-
-  // TODO if EPSILON_DEVICE_BENCH, run bench? See n0100
 }
 
 void initClocks() {

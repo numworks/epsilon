@@ -30,7 +30,6 @@ private:
 class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   HistoryViewCell(Responder * parentResponder = nullptr);
-  void reloadCell() override;
   void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
@@ -50,6 +49,7 @@ public:
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  void reloadScroll();
   Calculation m_calculation;
   bool m_calculationSelected;
   ScrollableExpressionView m_inputView;

@@ -69,28 +69,30 @@ Poincare::Layout HistoryViewCell::layout() const {
   }
 }
 
-void HistoryViewCell::reloadCell() {
-  m_scrollableOutputView.evenOddCell()->reloadCell();
-  layoutSubviews();
-
-  // Reload subviews' scrolls
+void HistoryViewCell::reloadScroll() {
   m_inputView.reloadScroll();
   m_scrollableOutputView.reloadScroll();
 }
 
 void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+  App * calculationApp = (App *)app();
+  Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
   if (type == HistoryViewCellDataSource::SubviewType::Output) {
     /* Select the right output according to the calculation display output. This
      * will reload the scroll to display the selected output. */
-    App * calculationApp = (App *)app();
-    Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
-    if (display == Calculation::DisplayOutput::ExactAndApproximate) {
+    if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculation.toggleDisplayExact())) {
       m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
     } else {
-      assert(display == Calculation::DisplayOutput::ApproximateOnly || display == Calculation::DisplayOutput::ExactAndApproximateToggle || display == Calculation::DisplayOutput::ExactOnly);
+      assert(display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && !m_calculation.toggleDisplayExact()) || display == Calculation::DisplayOutput::ExactOnly);
       m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
     }
   }
+  /* The selected subview has changed. The displayed outputs might have changed.
+   * For example, for the calculation 1.2+2 --> 3.2, selecting the output would
+   * display 1.2+2 --> 16/5 = 3.2. */
+  setCalculation(&m_calculation, type == HistoryViewCellDataSource::SubviewType::Output);
+  // Reload scroll when switching from one subview to another
+  reloadScroll();
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
@@ -152,6 +154,11 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected)
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
+
+  /* The displayed input and outputs have changed. We need to re-layout the cell
+   * and re-initialize the scroll. */
+  layoutSubviews();
+  reloadScroll();
 }
 
 void HistoryViewCell::didBecomeFirstResponder() {

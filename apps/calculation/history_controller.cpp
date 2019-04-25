@@ -145,7 +145,7 @@ void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index)
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
   myCell->setCalculation(m_calculationStore->calculationAtIndex(index), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
-  myCell->reloadCell();
+  myCell->setHighlighted(myCell->isHighlighted());
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {
@@ -163,6 +163,12 @@ int HistoryController::typeAtLocation(int i, int j) {
 
 void HistoryController::scrollToCell(int i, int j) {
   m_selectableTableView.scrollToCell(i, j);
+}
+
+void HistoryController::historyViewCellDidChangeSelection() {
+  /* Update the whole table as the height of the selected cell row might have
+   * changed. */
+  m_selectableTableView.reloadData();
 }
 
 }

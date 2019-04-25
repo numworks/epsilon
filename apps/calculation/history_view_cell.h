@@ -50,6 +50,7 @@ public:
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   Calculation m_calculation;
+  bool m_calculationSelected;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

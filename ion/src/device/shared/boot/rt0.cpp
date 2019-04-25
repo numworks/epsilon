@@ -81,7 +81,14 @@ void start() {
   }
 #endif
 
-  Ion::Device::Board::init();
+  /* Init the board. If there is the on boarding app, do not initialize the
+   * backlight so that the user does not see the LCD tests. The backlight will
+   * be initialized after the Power-On Self-Test.*/
+#if EPSILON_ONBOARDING_APP == 0
+  Ion::Device::Board::init(true);
+#else
+  Ion::Device::Board::init(false);
+#endif
 
   non_inlined_ion_main();
 

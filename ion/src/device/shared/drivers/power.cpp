@@ -88,7 +88,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
   // Reset normal frequency
   Device::Board::setStandardFrequency(Device::Board::Frequency::High);
   Device::Board::initClocks();
-  Device::Board::initPeripherals();
+  Device::Board::initPeripherals(true);
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();
   /* If the USB has been unplugged while sleeping, the USB should have been

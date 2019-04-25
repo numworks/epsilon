@@ -4,14 +4,19 @@
 
 namespace Poincare {
 
-bool PrintInt::PadIntInBuffer(int integer, char * buffer, int bufferLength) {
+bool PrintInt::PadIntInBuffer(uint32_t integer, char * buffer, int bufferLength) {
   assert(integer >= 0);
-  int wantedLength = std::log10(integer*1.0);
+  int wantedLength = std::log10(integer*1.0)+1;
   if (wantedLength > bufferLength) {
     return false;
   }
-  for (int i = 0; i < bufferLength; i++) {
-    buffer[i] = '0' + ((int)(integer/std::pow(10.0, bufferLength - 1.0 - i))) - ((int)(integer/std::pow(10.0, bufferLength-i)))*10;
+  int modulo = 10;
+  for (int i = bufferLength - 1; i >= 0; i--) {
+    int c = integer % modulo;
+    buffer[i] = '0' + c;
+    integer = (integer - c) / modulo;
+    /* After all digits are written on the right of the buffer, integer is equal
+     * to 0 and the buffer is padded with 0 on the left. */
   }
   return true;
 }

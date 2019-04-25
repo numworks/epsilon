@@ -125,16 +125,13 @@ void ScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message eq
   m_contentCell.approximateSign()->setMessage(equalSignMessage);
 }
 
-void ScrollableExactApproximateExpressionsView::setSelectedSubviewPosition(SubviewPosition subviewPosition, bool scrollToSelection) {
-  m_contentCell.setSelectedSubviewPosition(subviewPosition);
-  if (scrollToSelection) {
-    if (subviewPosition == SubviewPosition::Left) {
-      // Scroll to the left extremity
-      reloadScroll();
-    } else {
-      // Scroll to the right extremity
-      scrollToContentPoint(KDPoint(m_contentCell.bounds().width(), 0), true);
-    }
+void ScrollableExactApproximateExpressionsView::reloadScroll() {
+  if (selectedSubviewPosition() == SubviewPosition::Left) {
+    // Scroll to the left extremity
+    ScrollableView::reloadScroll();
+  } else {
+    // Scroll to the right extremity
+    scrollToContentPoint(KDPoint(m_contentCell.bounds().width(), 0), true);
   }
 }
 
@@ -157,7 +154,7 @@ bool ScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event e
   if ((event == Ion::Events::Right && selectedSubviewPosition() == SubviewPosition::Left && rightExpressionIsVisible) ||
     (event == Ion::Events::Left && selectedSubviewPosition() == SubviewPosition::Right && leftExpressionIsVisible)) {
     SubviewPosition otherSubviewPosition = selectedSubviewPosition() == SubviewPosition::Left ? SubviewPosition::Right : SubviewPosition::Left;
-    setSelectedSubviewPosition(otherSubviewPosition, false);
+    setSelectedSubviewPosition(otherSubviewPosition);
     return true;
   }
   return ScrollableView::handleEvent(event);

@@ -141,7 +141,7 @@ void LayoutCursor::addXNTCodePointLayout() {
 void LayoutCursor::insertText(const char * text) {
   Layout newChild;
   Layout pointedChild;
-  UTF8Decoder decoder(text);
+  Ion::UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   if (codePoint == UCodePointNull) {
     return;

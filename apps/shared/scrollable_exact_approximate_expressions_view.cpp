@@ -25,6 +25,7 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setHighlighted(bool
   m_highlighted = highlight;
   m_leftExpressionView.setBackgroundColor(backgroundColor());
   m_rightExpressionView.setBackgroundColor(backgroundColor());
+  m_approximateSign.setBackgroundColor(backgroundColor());
   if (highlight) {
     if (m_selectedSubviewPosition == SubviewPosition::Left) {
       m_leftExpressionView.setBackgroundColor(Palette::Select);
@@ -34,15 +35,19 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setHighlighted(bool
   }
 }
 
-void ScrollableExactApproximateExpressionsView::ContentCell::reloadCell() {
-  setHighlighted(isHighlighted());
+void ScrollableExactApproximateExpressionsView::ContentCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
+  m_leftExpressionView.setBackgroundColor(backgroundColor());
+  m_rightExpressionView.setBackgroundColor(backgroundColor());
   m_approximateSign.setBackgroundColor(backgroundColor());
+}
+
+void ScrollableExactApproximateExpressionsView::ContentCell::reloadTextColor() {
   if (numberOfSubviews() == 1) {
     m_rightExpressionView.setTextColor(KDColorBlack);
   } else {
     m_rightExpressionView.setTextColor(Palette::GreyVeryDark);
   }
-  layoutSubviews();
 }
 
 KDSize ScrollableExactApproximateExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
@@ -117,6 +122,7 @@ void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout righ
   bool updateRightLayout = m_contentCell.rightExpressionView()->setLayout(rightLayout);
   bool updateLeftLayout = m_contentCell.leftExpressionView()->setLayout(leftLayout);
   if (updateRightLayout || updateLeftLayout) {
+    m_contentCell.reloadTextColor();
     m_contentCell.layoutSubviews();
   }
 }

@@ -203,7 +203,6 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   }
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
-  evenOddCell->reloadCell();
 }
 
 KDCoordinate SolutionsController::columnWidth(int i) {

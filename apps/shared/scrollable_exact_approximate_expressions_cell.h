@@ -17,7 +17,6 @@ public:
   }
   void setHighlighted(bool highlight) override;
   void setEven(bool even) override;
-  void reloadCell() override;
   void reloadScroll();
   Responder * responder() override {
     return this;

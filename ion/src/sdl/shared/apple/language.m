@@ -1,4 +1,4 @@
-#include "../shared/platform.h"
+#include "../platform.h"
 
 #include <Foundation/Foundation.h>
 

@@ -20,7 +20,7 @@ namespace Ion {
 
 namespace Power {
 
-void suspend(bool checkIfOnOffKeyReleased) {
+void __attribute__((noinline)) suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   bool plugged = USB::isPlugged();
 

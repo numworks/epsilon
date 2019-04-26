@@ -143,7 +143,7 @@ void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
     if (*m_modelVersion == 0 || numberOfCurves() == 1) {
-      initRangeParameters();
+      interactiveCurveViewRange()->setDefault();
     }
     *m_modelVersion = newModelVersion;
     didChangeRange(interactiveCurveViewRange());

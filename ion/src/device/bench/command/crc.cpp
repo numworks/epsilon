@@ -1,7 +1,8 @@
 #include "command.h"
 #include <ion.h>
-#include <poincare/print_float.h>
+#include <poincare/print_int.h>
 #include <drivers/cache.h>
+#include <cmath>
 
 namespace Ion {
 namespace Device {
@@ -52,8 +53,10 @@ void CRC(const char * input) {
 
   constexpr int bufferSize = 4+10+1; // crc is a uint32_t so 10 digits long.
   char buffer[bufferSize] = {'C', 'R', 'C', '=', 0};
-  constexpr int precision = 10;
-  Poincare::PrintFloat::convertFloatToText<float>(crc, buffer+4, bufferSize - 4, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+  int wantedLength = std::log10(crc*1.0)+1;
+  assert(wantedLength < bufferSize - 4);
+  Poincare::PrintInt::PadIntInBuffer(crc, buffer+4, wantedLength);
+  buffer[4+wantedLength] = 0;
 
   reply(buffer);
 }

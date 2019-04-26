@@ -45,7 +45,7 @@ public:
   View * view() override { return &m_selectableTableView; }
 
   /* SelectableTableViewDelegate*/
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   /* ExpressionModelListController */
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }

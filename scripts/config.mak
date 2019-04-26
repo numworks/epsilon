@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 10.0.0
-EPSILON_ONBOARDING_APP ?= 1
+EPSILON_ONBOARDING_APP ?= 0
 # Valid values are "none", "update", "beta"
 EPSILON_BOOT_PROMPT ?= none
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings

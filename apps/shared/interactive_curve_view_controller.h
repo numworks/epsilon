@@ -51,7 +51,10 @@ protected:
 
   OkView m_okView;
 private:
-  constexpr static float k_viewHeight = 174.0f;
+  /* The value 21 is the actual height of the ButtonRow, that is
+   * ButtonRowController::ContentView::k_plainStyleHeight + 1.
+   * That value is not public though. */
+  constexpr static float k_viewHeight = Ion::Display::Height - Metric::TitleBarHeight - Metric::TabHeight - 21;
   float estimatedBannerHeight() const;
   virtual int estimatedBannerNumberOfLines() const { return 1; }
 

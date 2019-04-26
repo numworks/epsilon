@@ -5,7 +5,7 @@
 namespace Ion {
 namespace Power {
 
-void standby() {
+void __attribute__((noinline)) standby() {
   Device::Power::waitUntilOnOffKeyReleased();
   Device::Power::standbyConfiguration();
   Device::Board::shutdown();

@@ -90,8 +90,9 @@ $(BUILD_DIR)/app/epsilon.ipa: $(SIMULATOR_APP_DEPS) $(BUILD_DIR)/app/entitlement
 	$(call rule_label,ZIP)
 	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload
 
-.PHONY: epsilon.ipa
-epsilon.ipa: $(BUILD_DIR)/app/epsilon.ipa
+ifndef ARCH
+DEFAULT := $(BUILD_DIR)/app/epsilon.ipa
+endif
 
 ifeq ($(APPLE_PLATFORM),ios-simulator)
 .PHONY: epsilon_run

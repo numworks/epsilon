@@ -27,15 +27,24 @@ void abort() {
 #endif
 }
 
-/* By default, the compiler is free to inline any function call he wants. If the
- * compiler decides to inline some functions that make use of VFP registers, it
- * will need to push VFP them onto the stack in calling function's prologue.
- * Problem: in start()'s prologue, we would never had a chance to enable the FPU
- * since this function is the first thing called after reset.
- * We can safely assume that neither memcpy, memset, nor any Ion::Device::init*
- * method will use floating-point numbers, but ion_main very well can.
- * To make sure ion_main's potential usage of VFP registers doesn't bubble-up to
- * start(), we isolate it in its very own non-inlined function call. */
+/* This additional function call 'non_inlined_ion_main' serves two purposes:
+ * - By default, the compiler is free to inline any function call he wants. If
+ *   the compiler decides to inline some functions that make use of VFP
+ *   registers, it will need to push VFP them onto the stack in calling
+ *   function's prologue.
+ *   Problem: in start()'s prologue, we would never had a chance to enable the
+ *   FPU since this function is the first thing called after reset.
+ *   We can safely assume that neither memcpy, memset, nor any Ion::Device::init*
+ *   method will use floating-point numbers, but ion_main very well can.
+ *   To make sure ion_main's potential usage of VFP registers doesn't bubble-up to
+ *   start(), we isolate it in its very own non-inlined function call.
+ * - To avoid jumping on the external flash when it is shut down, we ensure
+ *   there is no symbol references from the internal flash to the external
+ *   flash except the jump to ion_main. In order to do that, we isolate this
+ *   jump in a symbol that we link in a special section separated from the
+ *   internal flash section. We can than forbid cross references from the
+ *   internal flash to the external flash. */
+
 static void __attribute__((noinline)) non_inlined_ion_main() {
   return ion_main(0, nullptr);
 }

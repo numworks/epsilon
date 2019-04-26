@@ -4,6 +4,8 @@
 #include "code_point.h"
 #include <stddef.h>
 
+namespace Ion {
+
 namespace UTF8Helper {
 
 // Returns the number of occurences of a code point in a string
@@ -69,5 +71,7 @@ const char * CodePointAtGlyphOffset(const char * buffer, int position);
 size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position);
 
 };
+
+}
 
 #endif

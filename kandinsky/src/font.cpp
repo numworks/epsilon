@@ -12,7 +12,7 @@ KDSize KDFont::stringSizeUntil(const char * text, const char * limit) const {
   }
   KDSize stringSize = KDSize(0, m_glyphSize.height());
 
-  UTF8Decoder decoder(text);
+  Ion::UTF8Decoder decoder(text);
   const char * currentStringPosition = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull && (limit == nullptr || currentStringPosition < limit)) {

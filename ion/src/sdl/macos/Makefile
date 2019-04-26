@@ -31,4 +31,6 @@ $(call simulator_app_resource,app.icns): $(SIMULATOR_ICONS) | $$(@D)/.
 
 SIMULATOR_APP_DEPS += $(call simulator_app_resource,app.icns)
 
-$(BUILD_DIR)/app/Epsilon.app: $(SIMULATOR_APP_DEPS)
+ifndef ARCH
+DEFAULT := $(SIMULATOR_APP_DEPS)
+endif

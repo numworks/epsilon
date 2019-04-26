@@ -5,7 +5,9 @@ include scripts/config.mak
 
 object_for = $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 
-default: $(BUILD_DIR)/epsilon.$(EXE)
+# Define the default recipe
+
+default:
 
 # Define a standard rule helper
 # If passed a last parameter value of with_local_version, we also define an
@@ -84,6 +86,10 @@ objs = $(call object_for,$(src))
 # Load platform-specific targets
 # We include them before the standard ones to give them precedence.
 -include scripts/targets.$(PLATFORM).mak
+
+# Fill in the default recipe
+DEFAULT ?= $(BUILD_DIR)/epsilon.$(EXE)
+default: $(DEFAULT)
 
 # Define rules for executables
 # Those can be built directly with make executable.exe as a shortcut. They also

@@ -110,8 +110,6 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
 
 void FunctionGraphController::initRangeParameters() {
   interactiveCurveViewRange()->setDefault();
-  initCursorParameters();
-  selectFunctionWithCursor(0);
 }
 
 double FunctionGraphController::defaultCursorAbscissa() {

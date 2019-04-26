@@ -74,18 +74,23 @@ void HistoryViewCell::reloadScroll() {
   m_scrollableOutputView.reloadScroll();
 }
 
-void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+void HistoryViewCell::reloadOutputSelection() {
   App * calculationApp = (App *)app();
   Calculation::DisplayOutput display = m_calculation.displayOutput(calculationApp->localContext());
+  /* Select the right output according to the calculation display output. This
+   * will reload the scroll to display the selected output. */
+  if (display == Calculation::DisplayOutput::ExactAndApproximate) {
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+  } else {
+    assert(display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle) || display == Calculation::DisplayOutput::ExactOnly);
+    m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
+  }
+}
+
+void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type) {
+  // Init output selection
   if (type == HistoryViewCellDataSource::SubviewType::Output) {
-    /* Select the right output according to the calculation display output. This
-     * will reload the scroll to display the selected output. */
-    if (display == Calculation::DisplayOutput::ExactAndApproximate) {
-      m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
-    } else {
-      assert(display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle) || display == Calculation::DisplayOutput::ExactOnly);
-      m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
-    }
+    reloadOutputSelection();
   }
   /* The selected subview has changed. The displayed outputs might have changed.
    * For example, for the calculation 1.2+2 --> 3.2, selecting the output would

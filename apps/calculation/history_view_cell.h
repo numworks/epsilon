@@ -50,6 +50,7 @@ public:
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
+  void reloadOutputSelection();
   Calculation m_calculation;
   bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;

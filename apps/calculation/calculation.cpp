@@ -18,6 +18,7 @@ Calculation::Calculation() :
   m_inputText(),
   m_exactOutputText(),
   m_approximateOutputText(),
+  m_displayOutput(DisplayOutput::Unknown),
   m_height(-1),
   m_expandedHeight(-1),
   m_equalSign(EqualSign::Unknown)
@@ -127,6 +128,7 @@ bool Calculation::isEmpty() {
 
 void Calculation::tidy() {
   /* Uninitialized all Expression stored to free the Pool */
+  m_displayOutput = DisplayOutput::Unknown;
   m_height = -1;
   m_expandedHeight = -1;
   m_equalSign = EqualSign::Unknown;
@@ -165,29 +167,33 @@ Layout Calculation::createApproximateOutputLayout(Context * context) {
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
-  if (shouldOnlyDisplayExactOutput()) {
-    return DisplayOutput::ExactOnly;
+  if (m_displayOutput != DisplayOutput::Unknown) {
+    return m_displayOutput;
   }
-  if (exactOutput().recursivelyMatches([](const Expression e, Context & c, bool replaceSymbols) {
+  if (shouldOnlyDisplayExactOutput()) {
+    m_displayOutput = DisplayOutput::ExactOnly;
+  } else if (exactOutput().recursivelyMatches([](const Expression e, Context & c, bool replaceSymbols) {
         /* If the exact result contains one of the following types, do not
          * display it. */
         ExpressionNode::Type t = e.type();
         return (t == ExpressionNode::Type::Random) || (t == ExpressionNode::Type::Round);},
         *context, true))
   {
-    return DisplayOutput::ApproximateOnly;
+    m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts
      * too, do not display the exact result. If the two layouts are not equal
      * because of the number of significant digits, we display both. */
-    return exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? DisplayOutput::ApproximateOnly : DisplayOutput::ExactAndApproximate;
+    m_displayOutput = exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? DisplayOutput::ApproximateOnly : DisplayOutput::ExactAndApproximate;
   } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
     // If the approximate result is 'unreal' or the exact result is 'undef'
-    return DisplayOutput::ApproximateOnly;
+    m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (input().isApproximate(*context) || exactOutput().isApproximate(*context)) {
-    return DisplayOutput::ExactAndApproximateToggle;
+    m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
+  } else {
+    m_displayOutput = DisplayOutput::ExactAndApproximate;
   }
-  return DisplayOutput::ExactAndApproximate;
+  return m_displayOutput;
 }
 
 bool Calculation::shouldOnlyDisplayExactOutput() {

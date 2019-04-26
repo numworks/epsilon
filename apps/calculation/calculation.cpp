@@ -19,7 +19,7 @@ Calculation::Calculation() :
   m_exactOutputText(),
   m_approximateOutputText(),
   m_height(-1),
-  m_selectedHeight(-1),
+  m_expandedHeight(-1),
   m_equalSign(EqualSign::Unknown)
 {
 }
@@ -59,8 +59,8 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
-KDCoordinate Calculation::height(Context * context, bool isSelected) {
-  KDCoordinate * memoizedHeight = isSelected ? &m_selectedHeight : &m_height;
+KDCoordinate Calculation::height(Context * context, bool expanded) {
+  KDCoordinate * memoizedHeight = expanded ? &m_expandedHeight : &m_height;
   if (*memoizedHeight < 0) {
     DisplayOutput display = displayOutput(context);
     Layout inputLayout = createInputLayout();
@@ -68,11 +68,11 @@ KDCoordinate Calculation::height(Context * context, bool isSelected) {
     if (display == DisplayOutput::ExactOnly) {
       KDCoordinate exactOutputHeight = createExactOutputLayout().layoutSize().height();
       *memoizedHeight = inputHeight+exactOutputHeight;
-    } else if (display == DisplayOutput::ApproximateOnly || (!isSelected && display == DisplayOutput::ExactAndApproximateToggle)) {
+    } else if (display == DisplayOutput::ApproximateOnly || (!expanded && display == DisplayOutput::ExactAndApproximateToggle)) {
       KDCoordinate approximateOutputHeight = createApproximateOutputLayout(context).layoutSize().height();
       *memoizedHeight = inputHeight+approximateOutputHeight;
     } else {
-      assert(display == DisplayOutput::ExactAndApproximate || (display == DisplayOutput::ExactAndApproximateToggle && isSelected));
+      assert(display == DisplayOutput::ExactAndApproximate || (display == DisplayOutput::ExactAndApproximateToggle && expanded));
       Layout approximateLayout = createApproximateOutputLayout(context);
       Layout exactLayout = createExactOutputLayout();
       KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
@@ -85,7 +85,7 @@ KDCoordinate Calculation::height(Context * context, bool isSelected) {
      * theses cases. */
     if (display != DisplayOutput::ExactAndApproximateToggle) {
       m_height = *memoizedHeight;
-      m_selectedHeight = *memoizedHeight;
+      m_expandedHeight = *memoizedHeight;
     }
   }
   return *memoizedHeight;
@@ -128,7 +128,7 @@ bool Calculation::isEmpty() {
 void Calculation::tidy() {
   /* Uninitialized all Expression stored to free the Pool */
   m_height = -1;
-  m_selectedHeight = -1;
+  m_expandedHeight = -1;
   m_equalSign = EqualSign::Unknown;
 }
 

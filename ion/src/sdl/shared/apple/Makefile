@@ -32,8 +32,10 @@ ifndef SIMULATOR_ICON_SIZES
   $(error SIMULATOR_ICON_SIZES should be defined)
 endif
 
-SIMULATOR_ASSETS_PATH = $(BUILD_DIR)/app/assets/Assets.xcassets
-SIMULATOR_ICONSET = $(SIMULATOR_ASSETS_PATH)/AppIcon.appiconset
+ifndef SIMULATOR_ICONSET
+  $(error SIMULATOR_ICONSET should be defined)
+endif
+
 SIMULATOR_ICONS = $(addprefix $(SIMULATOR_ICONSET)/,$(addsuffix .png,$(addprefix icon_, $(SIMULATOR_ICON_SIZES))))
 
 $(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/sdl/assets/logo.svg | $$(@D)/.

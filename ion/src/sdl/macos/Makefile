@@ -13,6 +13,7 @@ SIMULATOR_ICON_SIZES = 16x16 32x32 64x64 128x128 256x256 512x512 1024x1024
 SIMULATOR_APP_BINARY_PATH = Contents/MacOS/
 SIMULATOR_APP_RESOURCE_PATH = Contents/Resources/
 SIMULATOR_APP_PLIST_PATH = Contents/
+SIMULATOR_ICONSET = $(BUILD_DIR)/app/assets/app.iconset
 
 include ion/src/sdl/shared/apple/Makefile
 

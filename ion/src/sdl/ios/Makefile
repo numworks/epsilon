@@ -32,6 +32,8 @@ endif
 
 SIMULATOR_ICON_SIZES = 20x20 29x29 40x40 40x40 40x40 58x58 58x58 60x60 76x76 \
   80x80 80x80 87x87 120x120 120x120 152x152 167x167 180x180 1024x1024
+SIMULATOR_ASSETS_PATH = $(BUILD_DIR)/app/assets/Assets.xcassets
+SIMULATOR_ICONSET = $(SIMULATOR_ASSETS_PATH)/AppIcon.appiconset
 
 include ion/src/sdl/shared/apple/Makefile
 
@@ -77,7 +79,7 @@ $(SIMULATOR_ICONSET)/Contents.json: ion/src/sdl/ios/icon_assets.json $(SIMULATOR
 
 $(call simulator_app_resource,Assets.car): $(SIMULATOR_ICONSET)/Contents.json | $$(@D)/.
 	$(call rule_label,ACTOOL)
-	$(Q) $(ACTOOL) --compile $(BUILD_DIR)/app/Payload/Epsilon.app --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --platform $(APPLE_SDK) --app-icon AppIcon --output-partial-info-plist $(BUILD_DIR)/app/assets/partial.plist $(BUILD_DIR)/app/assets/Assets.xcassets > /dev/null
+	$(Q) $(ACTOOL) --compile $(BUILD_DIR)/app/Payload/Epsilon.app --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --platform $(APPLE_SDK) --app-icon AppIcon --output-partial-info-plist $(BUILD_DIR)/app/assets/partial.plist $(SIMULATOR_ASSETS_PATH) > /dev/null
 
 SIMULATOR_APP_DEPS += $(call simulator_app_resource,\
   Assets.car \

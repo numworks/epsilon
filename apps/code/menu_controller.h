@@ -46,7 +46,7 @@ public:
   void willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index);
 
   /* SelectableTableViewDelegate */
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   /* TextFieldDelegate */
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;

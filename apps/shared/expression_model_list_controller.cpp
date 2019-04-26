@@ -16,11 +16,11 @@ ExpressionModelListController::ExpressionModelListController(Responder * parentR
   m_addNewModel.setMessage(text);
 }
 
-void ExpressionModelListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void ExpressionModelListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   int currentSelectedRow = selectedRow();
 
   // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
-  if (previousSelectedCellY >= 0 && previousSelectedCellY == previousSelectedCellY + 1) {
+  if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedCellY + 1) {
     /* We selected the cell under the previous cell. Shift the memoized cell
      * heights. */
     shiftMemoization(true);

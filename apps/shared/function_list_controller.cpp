@@ -214,11 +214,11 @@ void FunctionListController::willExitResponderChain(Responder * nextFirstRespond
 
 /* SelectableTableViewDelegate */
 
-void FunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void FunctionListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   // Update memoization of cell heights
-  ExpressionModelListController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY);
+  ExpressionModelListController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   // Do not select the cell left of the "addEmptyFunction" cell
-  if (isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
+  if (!withinTemporarySelection && isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
     t->selectCellAtLocation(1, numberOfRows()-1);
   }
 }

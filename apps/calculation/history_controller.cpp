@@ -105,8 +105,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellY == selectedRow()) {
+void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection || previousSelectedCellY == selectedRow()) {
     return;
   }
   HistoryViewCell * cell = static_cast<HistoryViewCell *>(t->selectedCell());

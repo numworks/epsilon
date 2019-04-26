@@ -35,7 +35,8 @@ private:
     ContentCell();
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
-    void reloadCell() override;
+    void setEven(bool even) override;
+    void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
     ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;

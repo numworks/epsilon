@@ -130,7 +130,7 @@ void FunctionGraphController::initCursorParameters() {
   functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
   if (interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->panToMakePointVisible(x, y, displayTopMarginRatio(), k_cursorRightMarginRatio, displayBottomMarginRatio(), k_cursorLeftMarginRatio);
+    interactiveCurveViewRange()->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   }
 }
 

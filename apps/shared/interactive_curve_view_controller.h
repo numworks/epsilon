@@ -13,11 +13,6 @@ class InteractiveCurveViewController : public SimpleInteractiveCurveViewControll
 public:
   InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
 
-  // InteractiveCurveViewRangeDelegate
-  float addMargin(float x, float range, bool isMin) override;
-  virtual float displayTopMarginRatio() = 0;
-  virtual float displayBottomMarginRatio() = 0;
-
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -53,6 +48,11 @@ protected:
 
   OkView m_okView;
 private:
+  // InteractiveCurveViewRangeDelegate
+  float addMargin(float x, float range, bool isMin) override;
+  virtual float displayTopMarginRatio() = 0;
+  virtual float displayBottomMarginRatio() = 0;
+
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;

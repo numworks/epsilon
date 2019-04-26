@@ -75,19 +75,6 @@ Poincare::Context * GraphController::globalContext() {
   return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
 }
 
-float GraphController::cursorBottomMarginRatio() {
-  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height()/2 + 2 + estimatedBannerHeight())/k_viewHeight;
-  return f;
-}
-
-float GraphController::estimatedBannerHeight() const {
-  if (selectedSeriesIndex() < 0) {
-    return KDFont::SmallFont->glyphSize().height() * 3;
-  }
-  float result = KDFont::SmallFont->glyphSize().height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
-  return result;
-}
-
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
@@ -382,13 +369,12 @@ int GraphController::numberOfCurves() const {
   return Store::k_numberOfSeries;
 }
 
-float GraphController::displayTopMarginRatio() {
-  return 0.12f; // cursorHeight/graphViewHeight
+int GraphController::estimatedBannerNumberOfLines() const {
+  return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
 }
 
-float GraphController::displayBottomMarginRatio() {
-  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight())/k_viewHeight;
-  return f;
+float GraphController::displayTopMarginRatio() {
+  return 0.12f; // cursorHeight/graphViewHeight
 }
 
 InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

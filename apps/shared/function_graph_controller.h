@@ -20,7 +20,6 @@ public:
 
 protected:
   float cursorTopMarginRatio() override { return 0.068f; }
-  float cursorBottomMarginRatio() override;
   void reloadBannerView() override;
   bool handleEnter() override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
@@ -29,8 +28,6 @@ protected:
   virtual FunctionStore * functionStore() const;
 
 private:
-  constexpr static float k_viewHeight = 174.0f; // TODO Taken from Regresssion/graph_controller. Maybe we should compute and/or put in common ?
-
   virtual FunctionGraphView * functionGraphView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
 
@@ -38,12 +35,9 @@ private:
   /* When y auto is ticked, we use a display margin to be ensure that the user
    * can move the cursor along the curve without panning the window */
   float displayTopMarginRatio() override { return 0.09f; } // cursorHeight/graphViewHeight
-  float displayBottomMarginRatio() override;
 
   // InteractiveCurveViewRangeDelegate
   InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
-  float estimatedBannerHeight() const;
-  virtual int estimatedBannerNumberOfLines() const { return 1; }
 
   // InteractiveCurveViewController
   void initCursorParameters() override;

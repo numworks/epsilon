@@ -55,24 +55,12 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
   *m_indexFunctionSelectedByCursor = functionIndex;
 }
 
-float FunctionGraphController::cursorBottomMarginRatio() {
-  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
-}
-
 void FunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), functionStore()->symbol());
-}
-
-float FunctionGraphController::displayBottomMarginRatio() {
-  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
-}
-
-float FunctionGraphController::estimatedBannerHeight() const {
-  return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

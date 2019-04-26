@@ -29,7 +29,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(SubviewType subviewType, 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculation(),
-  m_calculationSelected(false),
+  m_calculationExpanded(false),
   m_inputView(this),
   m_scrollableOutputView(this)
 {
@@ -128,13 +128,13 @@ void HistoryViewCell::layoutSubviews() {
   ));
 }
 
-void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected) {
-  if (m_calculationSelected == isSelected && *calculation == m_calculation) {
+void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
+  if (m_calculationExpanded == expanded && *calculation == m_calculation) {
     return;
   }
   // Memoization
   m_calculation = *calculation;
-  m_calculationSelected = isSelected;
+  m_calculationExpanded = expanded;
   App * calculationApp = (App *)app();
   Calculation::DisplayOutput display = calculation->displayOutput(calculationApp->localContext());
   m_inputView.setLayout(calculation->createInputLayout());
@@ -147,7 +147,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected)
     rightOutputLayout = calculation->createExactOutputLayout();
   } else {
     rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
-    if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && isSelected)) {
+    if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && expanded)) {
       leftOutputLayout = calculation->createExactOutputLayout();
     }
   }

@@ -38,7 +38,6 @@ public:
 protected:
   Responder * tabController() const;
   virtual StackViewController * stackController() const;
-  virtual void initRangeParameters() = 0;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;

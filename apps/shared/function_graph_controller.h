@@ -46,7 +46,6 @@ private:
   virtual int estimatedBannerNumberOfLines() const { return 1; }
 
   // InteractiveCurveViewController
-  void initRangeParameters() override;
   void initCursorParameters() override;
   bool moveCursorVertically(int direction) override;
   CurveView * curveView() override;

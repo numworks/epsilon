@@ -44,7 +44,6 @@ private:
   bool handleEnter() override;
 
   // InteractiveCurveViewController
-  void initRangeParameters() override;
   void initCursorParameters() override;
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;

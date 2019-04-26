@@ -80,10 +80,10 @@ void HistoryViewCell::cellDidSelectSubview(HistoryViewCellDataSource::SubviewTyp
   if (type == HistoryViewCellDataSource::SubviewType::Output) {
     /* Select the right output according to the calculation display output. This
      * will reload the scroll to display the selected output. */
-    if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && m_calculation.toggleDisplayExact())) {
+    if (display == Calculation::DisplayOutput::ExactAndApproximate) {
       m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
     } else {
-      assert(display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && !m_calculation.toggleDisplayExact()) || display == Calculation::DisplayOutput::ExactOnly);
+      assert(display == Calculation::DisplayOutput::ApproximateOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle) || display == Calculation::DisplayOutput::ExactOnly);
       m_scrollableOutputView.setSelectedSubviewPosition(Shared::ScrollableExactApproximateExpressionsView::SubviewPosition::Right);
     }
   }
@@ -143,7 +143,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool isSelected)
    * layout, calling to layoutSubviews() would fail. */
   Poincare::Layout leftOutputLayout = Poincare::Layout();
   Poincare::Layout rightOutputLayout;
-  if (display == Calculation::DisplayOutput::ExactOnly || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && !isSelected && calculation->toggleDisplayExact())) {
+  if (display == Calculation::DisplayOutput::ExactOnly) {
     rightOutputLayout = calculation->createExactOutputLayout();
   } else {
     rightOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());

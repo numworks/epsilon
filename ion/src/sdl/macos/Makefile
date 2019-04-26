@@ -27,7 +27,7 @@ $(call simulator_app_plist,Info.plist): ion/src/sdl/macos/Info.plist
 # macOS uses icns files
 
 $(call simulator_app_resource,app.icns): $(SIMULATOR_ICONS) | $$(@D)/.
-	$(call rule_label,ICONUTIL)
+	$(call rule_label,ICNUTIL)
 	$(Q) iconutil --convert icns --output $@ $(SIMULATOR_ICONSET)
 
 SIMULATOR_APP_DEPS += $(call simulator_app_resource,app.icns)

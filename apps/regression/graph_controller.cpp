@@ -266,10 +266,6 @@ bool GraphController::handleEnter() {
 }
 
 // InteractiveCurveViewController
-void GraphController::initRangeParameters() {
-  m_store->setDefault();
-}
-
 void GraphController::initCursorParameters() {
   if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
     *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);

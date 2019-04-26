@@ -65,7 +65,10 @@ void CalculationController::didBecomeFirstResponder() {
   TabTableController::didBecomeFirstResponder();
 }
 
-void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void CalculationController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   /* To prevent selecting cell with no content (top left corner of the table),
    * as soon as the selected cell is the top left corner, we either reselect
    * the previous cell or select the tab controller depending on from which cell

@@ -1,3 +1,5 @@
+namespace Ion {
+
 namespace Base64 {
 
 static constexpr char encodeTable[] = {
@@ -43,6 +45,8 @@ void encode(const unsigned char * input, unsigned int inputLength, char * output
     output[j++] = encodeTable[(input[i] & 0xF) << 2];
     output[j++] = Padding;
   }
+}
+
 }
 
 }

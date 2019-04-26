@@ -46,12 +46,19 @@ protected:
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
 
+  // SimpleInteractiveCurveViewController
+  float cursorBottomMarginRatio() override;
+
   OkView m_okView;
 private:
+  constexpr static float k_viewHeight = 174.0f;
+  float estimatedBannerHeight() const;
+  virtual int estimatedBannerNumberOfLines() const { return 1; }
+
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isMin) override;
   virtual float displayTopMarginRatio() = 0;
-  virtual float displayBottomMarginRatio() = 0;
+  float displayBottomMarginRatio();
 
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;

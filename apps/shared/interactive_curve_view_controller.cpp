@@ -247,4 +247,16 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
   return nextCurveIndex;
 }
 
+float InteractiveCurveViewController::cursorBottomMarginRatio() {
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
+}
+
+float InteractiveCurveViewController::estimatedBannerHeight() const {
+  return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
+}
+
+float InteractiveCurveViewController::displayBottomMarginRatio() {
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
+}
+
 }

@@ -1,5 +1,6 @@
 #include "vblank_test_controller.h"
 #include "../apps_container.h"
+#include <apps/shared/post_and_hardware_tests.h>
 
 using namespace Poincare;
 
@@ -19,6 +20,7 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
      * test might end up in an infinite loop, in which case "VBLANK fail" keeps
      * being displayed. If the test succeeds, the screen should change very
      * quickly to "VBLANK OK". */
+    Shared::POSTAndHardwareTests::VBlankOK();
     for (int i=0; i<6; i++) {
       Ion::Display::waitForVBlank();
     }

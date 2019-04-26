@@ -43,12 +43,6 @@ private:
   };
   constexpr static const char * k_lcdDataOKText = "LCD DATA: OK";
   constexpr static const char * k_lcdDataFailTest = "LCD DATA: FAIL";
-  constexpr static int invalidPixelsLimit = 2;
-
-  bool test();
-  bool testDisplayColor(KDColor c);
-  int numberOfNonColoredPixels(KDColor wantedColor);
-  bool testDisplayBlackWhite();
 
   ContentView m_view;
 };

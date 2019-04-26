@@ -32,7 +32,6 @@ private:
   constexpr static float k_viewHeight = 174.0f; // TODO Taken from Regresssion/graph_controller. Maybe we should compute and/or put in common ?
 
   virtual FunctionGraphView * functionGraphView() = 0;
-  virtual View * cursorView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
 
   // InteractiveCurveViewController

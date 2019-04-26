@@ -47,31 +47,55 @@ SECTIONS {
   } >INTERNAL_FLASH
 
   /* Internal flash memory */
+
+  /* We link 'non_inlined_ion_main' in a separate section from text.internal.
+   * Indeed, it is the only internal flash symbol that refers the external
+   * flash. This way we can assert that there are no cross references from the
+   * internal flash to the external flash. */
+  .text.internal_to_external : {
+    *(.text._ZL20non_inlined_ion_mainv)
+  } >INTERNAL_FLASH
+
   /* Use boot routine and required dependencies */
   /* We're relying on symbols being in their own sub-section. On GCC, this is
    * done with -fdata-sections -ffunction-sections */
   .text.internal : {
     . = ALIGN(4);
+    *(.text.__assert)
     *(.text.start)
     *(.text.abort)
     *(.text.isr_systick)
     *(.text.memcpy)
+    *(.text.strlen)
+    *(.text.strncmp)
+    *(.text.strlcpy)
+    *(.text.strcmp)
     *(.text.memset)
+    *(.text.memmove)
     *(.text._ZN3Ion*)
     *(.text._ZNV3Ion*)
     *(.text._ZNK3Ion*)
+    *(.text.LZ4_*)
     */libgcc.a:(.text)
   } >INTERNAL_FLASH
 
+
   .rodata.internal : {
     . = ALIGN(4);
+    *(.rodata.dfu_bootloader)
+    *(.rodata)
+    *(.rodata.str1.1)
     *(.rodata._ZN3Ion*)
+    *(.rodata._ZZN3Ion*)
+    *(.rodata._ZNK3Ion*)
+    *(.rodata._ZTVN3Ion6*)
     *(.rodata._ZN3KDColor*)
     *(.rodata._ZL11KDColor*)
     *(.rodata._ZL12KDColor*)
     *(.rodata._ZL13KDColor*)
   } >INTERNAL_FLASH
 
+  /* External flash memory */
   .text.external : {
     . = ALIGN(4);
     *(.text)
@@ -79,7 +103,6 @@ SECTIONS {
   } >EXTERNAL_FLASH
 
   .rodata.external : {
-    *(.rodata)
     *(.rodata.*)
   } >EXTERNAL_FLASH
 
@@ -143,3 +166,12 @@ SECTIONS {
     _stack_start = .;
   } >SRAM
 }
+
+NOCROSSREFS_TO(.text.external .text.internal);
+NOCROSSREFS_TO(.rodata.external .text.internal);
+NOCROSSREFS_TO(.text.external .rodata.internal);
+NOCROSSREFS_TO(.rodata.external .rodata.internal);
+NOCROSSREFS_TO(.text.external .isr_vector_table);
+NOCROSSREFS_TO(.rodata.external .isr_vector_table);
+NOCROSSREFS_TO(.text.external .header);
+NOCROSSREFS_TO(.rodata.external .header);

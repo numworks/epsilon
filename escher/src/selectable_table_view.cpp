@@ -37,7 +37,7 @@ void SelectableTableView::selectColumn(int i) {
 void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
-  deselectTable(false);
+  deselectTable(true);
   /* FIXME: The problem with calling deselectTable is that at this point in time
    * the datasource's model is very likely to have changed. Therefore it's
    * rather complicated to get a pointer to the currently selected cell (in
@@ -45,7 +45,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
   /* As a workaround, datasources can reset the highlighted state in their
    * willDisplayCell callback. */
   TableView::layoutSubviews();
-  selectCellAtLocation(col, row, setFirstResponder, false);
+  selectCellAtLocation(col, row, setFirstResponder, true);
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -60,18 +60,18 @@ void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder)
   unhighlightSelectedCell();
 }
 
-void SelectableTableView::deselectTable(bool notifySelectableDelegate) {
+void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   unhighlightSelectedCell();
   int previousSelectedCellX = selectedColumn();
   int previousSelectedCellY = selectedRow();
   selectColumn(0);
   selectRow(-1);
-  if (m_delegate && notifySelectableDelegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY);
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }
 }
 
-bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool notifySelectableDelegate) {
+bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }
@@ -84,8 +84,8 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   selectColumn(i);
   selectRow(j);
 
-  if (m_delegate && notifySelectableDelegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, previousX, previousY, withinTemporarySelection);
   }
 
   /* We need to scroll:

@@ -92,8 +92,8 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   return true;
 }
 
-void ListParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
+void ListParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection || (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow())) {
     return;
   }
   if (!hasInitialRankRow()) {

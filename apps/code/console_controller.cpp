@@ -245,7 +245,10 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
   }
 }
 
-void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   if (t->selectedRow() == m_consoleStore.numberOfLines()) {
     m_editCell.setEditing(true);
     return;

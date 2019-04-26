@@ -19,6 +19,7 @@ public:
   };
 
   enum class DisplayOutput : uint8_t {
+    Unknown,
     ExactOnly,
     ApproximateOnly,
     ExactAndApproximate,
@@ -53,6 +54,7 @@ private:
   char m_inputText[Constant::MaxSerializedExpressionSize];
   char m_exactOutputText[Constant::MaxSerializedExpressionSize];
   char m_approximateOutputText[Constant::MaxSerializedExpressionSize];
+  DisplayOutput m_displayOutput;
   KDCoordinate m_height;
   KDCoordinate m_expandedHeight;
   EqualSign m_equalSign;

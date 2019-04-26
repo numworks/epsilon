@@ -28,7 +28,6 @@ ViewController * FunctionGraphController::initialisationParameterController() {
 }
 
 void FunctionGraphController::viewWillAppear() {
-  functionGraphView()->setCursorView(cursorView());
   functionGraphView()->setBannerView(bannerView());
   functionGraphView()->setAreaHighlight(NAN,NAN);
 
@@ -57,7 +56,7 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
 }
 
 float FunctionGraphController::cursorBottomMarginRatio() {
-  return (cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
 }
 
 void FunctionGraphController::reloadBannerView() {
@@ -69,7 +68,7 @@ void FunctionGraphController::reloadBannerView() {
 }
 
 float FunctionGraphController::displayBottomMarginRatio() {
-  return (cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
 }
 
 float FunctionGraphController::estimatedBannerHeight() const {

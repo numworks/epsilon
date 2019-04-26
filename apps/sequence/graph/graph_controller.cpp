@@ -28,6 +28,11 @@ I18n::Message GraphController::emptyMessage() {
   return I18n::Message::NoActivatedSequence;
 }
 
+void GraphController::viewWillAppear() {
+  m_view.setCursorView(&m_cursorView);
+  FunctionGraphController::viewWillAppear();
+}
+
 float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();

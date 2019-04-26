@@ -16,6 +16,7 @@ class GraphController final : public Shared::FunctionGraphController {
 public:
   GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
+  void viewWillAppear() override;
   TermSumController * termSumController() { return &m_termSumController; }
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
@@ -28,9 +29,6 @@ private:
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   SequenceStore * functionStore() const override { return static_cast<SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
-  View * cursorView() override {
-    return &m_cursorView;
-  }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   Shared::CursorView m_cursorView;
   Shared::XYBannerView m_bannerView;

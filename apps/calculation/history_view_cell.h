@@ -40,7 +40,7 @@ public:
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
   Calculation * calculation() { return &m_calculation; }
-  void setCalculation(Calculation * calculation, bool isSelected = false);
+  void setCalculation(Calculation * calculation, bool expanded = false);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
@@ -51,7 +51,7 @@ private:
   constexpr static KDCoordinate k_resultWidth = 80;
   void reloadScroll();
   Calculation m_calculation;
-  bool m_calculationSelected;
+  bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

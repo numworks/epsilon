@@ -43,8 +43,6 @@ public:
   bool isEmpty();
   void tidy();
   DisplayOutput displayOutput(Poincare::Context * context);
-  bool toggleDisplayExact() const { return m_toggleDisplayExact; }
-  void setToggleDisplayExact(bool displayExact) { m_toggleDisplayExact = displayExact; }
   bool shouldOnlyDisplayExactOutput();
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 private:
@@ -58,7 +56,6 @@ private:
   KDCoordinate m_height;
   KDCoordinate m_selectedHeight;
   EqualSign m_equalSign;
-  bool m_toggleDisplayExact;
 };
 
 }

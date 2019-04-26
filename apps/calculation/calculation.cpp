@@ -20,8 +20,7 @@ Calculation::Calculation() :
   m_approximateOutputText(),
   m_height(-1),
   m_selectedHeight(-1),
-  m_equalSign(EqualSign::Unknown),
-  m_toggleDisplayExact(false)
+  m_equalSign(EqualSign::Unknown)
 {
 }
 
@@ -66,10 +65,10 @@ KDCoordinate Calculation::height(Context * context, bool isSelected) {
     DisplayOutput display = displayOutput(context);
     Layout inputLayout = createInputLayout();
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
-    if (display == DisplayOutput::ExactOnly || (!isSelected && display == DisplayOutput::ExactAndApproximateToggle && m_toggleDisplayExact)) {
+    if (display == DisplayOutput::ExactOnly) {
       KDCoordinate exactOutputHeight = createExactOutputLayout().layoutSize().height();
       *memoizedHeight = inputHeight+exactOutputHeight;
-    } else if (display == DisplayOutput::ApproximateOnly || (!isSelected && display == DisplayOutput::ExactAndApproximateToggle && !m_toggleDisplayExact)) {
+    } else if (display == DisplayOutput::ApproximateOnly || (!isSelected && display == DisplayOutput::ExactAndApproximateToggle)) {
       KDCoordinate approximateOutputHeight = createApproximateOutputLayout(context).layoutSize().height();
       *memoizedHeight = inputHeight+approximateOutputHeight;
     } else {

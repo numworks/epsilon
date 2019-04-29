@@ -2,3 +2,6 @@
 
 void Ion::Display::POSTPushBlackWhite() {
 }
+
+void Ion::Display::waitForVBlank() {
+}

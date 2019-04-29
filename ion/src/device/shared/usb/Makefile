@@ -76,6 +76,14 @@ dfu_src += $(addprefix ion/src/device/shared/drivers/, \
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/$(MODEL)/usb/dfu.ld
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(usb_src) $(dfu_src))
 
+# In order to link the dfu bootloader inside the epsilon firmware, we need to
+# turn the dfu binary (dfu.bin) into an elf object.
+# By default, 'objcpy' generates a section 'data' and two symbols to the
+# start and the end of the binary input respectively named:
+# - '_binary_[file name]_[file extension]_start'
+# - '_binary_[file name]_[file extension]_end'.
+# For our purpose, dfu.o can go in rodata section and we rename the start and
+# end of binary symbols: _dfu_bootloader_flash_[start/end]
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared/usb/dfu.bin
 	@echo "OBJCOPY $@"
 	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)

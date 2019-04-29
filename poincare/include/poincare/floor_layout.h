@@ -11,6 +11,10 @@ namespace Poincare {
 class FloorLayoutNode final : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
+
+  // Layout
+  Type type() const override { return Type::FloorLayout; }
+
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.name());
   }

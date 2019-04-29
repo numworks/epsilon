@@ -34,7 +34,6 @@ protected:
     void setHorizontalCellOverlap(KDCoordinate o) { m_horizontalCellOverlap = o; }
     void setVerticalCellOverlap(KDCoordinate o) { m_verticalCellOverlap = o; }
 
-    void scrollToCell(int i, int j) const;
     void reloadCellAtLocation(int i, int j);
     HighlightCell * cellAtLocation(int i, int j);
     TableViewDataSource * dataSource();
@@ -42,6 +41,7 @@ protected:
     int columnsScrollingOffset() const;
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
+    KDRect cellFrame(int i, int j) const;
     void layoutSubviews() override;
   protected:
 #if ESCHER_VIEW_LOGGING
@@ -54,9 +54,6 @@ protected:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
 
-    /* realCellWidth enables to handle list view for which
-     * TableViewDataSource->cellWidht = 0 */
-    KDRect cellFrame(int i, int j) const;
     /* These two methods transform an index (of subview for instance) into
      * coordinates that refer to the data source entire table */
     int absoluteColumnNumberFromSubviewIndex(int index) const;

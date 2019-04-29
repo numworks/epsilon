@@ -9,8 +9,11 @@ namespace Graph {
 
 CalculationParameterController::CalculationParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   ViewController(parentResponder),
+  m_preimageCell(I18n::Message::Preimage),
   m_selectableTableView(this),
   m_record(),
+  m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
+  m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
   m_integralGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -34,30 +37,35 @@ void CalculationParameterController::didBecomeFirstResponder() {
 }
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  int row = selectedRow();
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && row == 0)) {
     ViewController * controller = nullptr;
-    switch(selectedRow()) {
+    switch(row) {
       case 0:
+        m_preimageParameterController.setRecord(m_record);
+        controller = &m_preimageParameterController;
+        break;
+      case 1:
         m_intersectionGraphController.setRecord(m_record);
         controller = &m_intersectionGraphController;
         break;
-      case 1:
+      case 2:
         m_maximumGraphController.setRecord(m_record);
         controller = &m_maximumGraphController;
         break;
-      case 2:
+      case 3:
         m_minimumGraphController.setRecord(m_record);
         controller = &m_minimumGraphController;
         break;
-      case 3:
+      case 4:
         m_rootGraphController.setRecord(m_record);
         controller = &m_rootGraphController;
         break;
-      case 4:
+      case 5:
         m_tangentGraphController.setRecord(m_record);
         controller = &m_tangentGraphController;
         break;
-      case 5:
+      case 6:
         m_integralGraphController.setRecord(m_record);
         controller = &m_integralGraphController;
         break;
@@ -65,8 +73,10 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
         return false;
     }
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->pop();
-    stack->pop();
+    if (row > 0) {
+      stack->pop();
+      stack->pop();
+    }
     stack->push(controller);
     return true;
   }
@@ -79,28 +89,41 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CalculationParameterController::numberOfRows() {
+  constexpr int k_totalNumberOfCells = k_totalNumberOfReusableCells + 1;
   return k_totalNumberOfCells;
 };
 
-
-HighlightCell * CalculationParameterController::reusableCell(int index) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCells);
-  return &m_cells[index];
-}
-
-int CalculationParameterController::reusableCellCount() {
-  return k_totalNumberOfCells;
-}
-
-KDCoordinate CalculationParameterController::cellHeight() {
+KDCoordinate CalculationParameterController::rowHeight(int j) {
   return Metric::ParameterCellHeight;
 }
 
+HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
+  assert(index >= 0);
+  assert(index < reusableCellCount(type));
+  if (type == 0) {
+    return &m_cells[index];
+  }
+  assert(type == 1);
+  return &m_preimageCell;
+}
+
+int CalculationParameterController::reusableCellCount(int type) {
+  if (type == 0) {
+    return k_totalNumberOfReusableCells;
+  }
+  return 1;
+}
+
+int CalculationParameterController::typeAtLocation(int i, int j) {
+  assert(i == 0);
+  return j == 0;
+}
+
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message titles[k_totalNumberOfCells] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Tangent, I18n::Message::Integral};
-  myCell->setMessage(titles[index]);
+  if (cell != &m_preimageCell) {
+    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Tangent, I18n::Message::Integral};
+    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1]);
+  }
 }
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {

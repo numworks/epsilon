@@ -4,6 +4,14 @@
 
 namespace Poincare {
 
+bool CodePointLayoutNode::isIdenticalTo(Layout l) {
+  if (l.type() != Type::CodePointLayout) {
+    return false;
+  }
+  CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
+  return codePoint() == cpl.codePoint() && font() == cpl.font();
+}
+
 // LayoutNode
 void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right) {
@@ -49,7 +57,7 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goin
         int indexOfThis = parent.indexOfChild(thisRef);
         if (indexOfThis > 0) {
           Layout leftBrother = parent.childAtIndex(indexOfThis-1);
-          if (leftBrother.isCodePoint()
+          if (leftBrother.type() == Type::CodePointLayout
               && static_cast<CodePointLayout&>(leftBrother).codePoint() == UCodePointLatinLetterSmallCapitalE)
           {
             return true;

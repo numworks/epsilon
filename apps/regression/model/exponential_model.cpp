@@ -22,7 +22,7 @@ Layout ExponentialModel::layout() {
             CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
             CodePointLayout::Builder('X', k_layoutFont)
           ),
-          VerticalOffsetLayoutNode::Type::Superscript
+          VerticalOffsetLayoutNode::Position::Superscript
         )
     };
     m_layout = HorizontalLayout::Builder(layoutChildren, size);

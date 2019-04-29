@@ -11,6 +11,9 @@ class BinomialCoefficientLayoutNode final : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::BinomialCoefficientLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

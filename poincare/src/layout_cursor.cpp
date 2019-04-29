@@ -78,7 +78,7 @@ void LayoutCursor::addEmptyExponentialLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
       CodePointLayout::Builder(UCodePointScriptSmallE),
-      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
@@ -103,13 +103,13 @@ void LayoutCursor::addEmptySquareRootLayout() {
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
@@ -121,7 +121,7 @@ void LayoutCursor::addEmptyTenPowerLayout() {
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
         emptyLayout,
-        VerticalOffsetLayoutNode::Type::Superscript));
+        VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
 }
@@ -190,7 +190,7 @@ void LayoutCursor::insertText(const char * text) {
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(Layout l) {
-  bool layoutWillBeMerged = l.isHorizontal();
+  bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
   m_layout.addSibling(this, l, true);
   if (!layoutWillBeMerged) {
     l.collapseSiblings(this);
@@ -199,7 +199,7 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l) {
 
 void LayoutCursor::clearLayout() {
   Layout rootLayoutR = m_layout.root();
-  assert(rootLayoutR.isHorizontal());
+  assert(rootLayoutR.type() == LayoutNode::Type::HorizontalLayout);
   rootLayoutR.removeChildrenInPlace(rootLayoutR.numberOfChildren());
   m_layout = rootLayoutR;
 }
@@ -239,10 +239,10 @@ bool LayoutCursor::baseForNewPowerLayout() {
    * be the base of a new power layout: the base layout should be anything but
    * an horizontal layout with no child. */
   if (m_position == Position::Right) {
-    return !(m_layout.isHorizontal() && m_layout.numberOfChildren() == 0);
+    return !(m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0);
   } else {
     assert(m_position == Position::Left);
-    if (m_layout.isHorizontal()) {
+    if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
       return false;
     }
     if (m_layout.isEmpty()) {
@@ -254,7 +254,7 @@ bool LayoutCursor::baseForNewPowerLayout() {
     }
     LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
     if (equivalentLayoutCursor.layoutReference().isUninitialized()
-        || (equivalentLayoutCursor.layoutReference().isHorizontal()
+        || (equivalentLayoutCursor.layoutReference().type() == LayoutNode::Type::HorizontalLayout
           && equivalentLayoutCursor.position() == Position::Left))
     {
       return false;
@@ -285,7 +285,7 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   /* Change the visibility of the neighbouring empty layout: it might be either
    * an EmptyLayout or an HorizontalLayout with one child only, and this child
    * is an EmptyLayout. */
-  if (adjacentEmptyLayout.isHorizontal()) {
+  if (adjacentEmptyLayout.type() == LayoutNode::Type::HorizontalLayout) {
     static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.childAtIndex(0).node())->setVisible(show);
   } else {
     static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.node())->setVisible(show);

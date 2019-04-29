@@ -122,7 +122,7 @@ bool textRepresentsAnEquality(const char * text) {
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      return layout.isCodePoint() && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '='; });
+      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '='; });
   return !match.isUninitialized();
 }
 

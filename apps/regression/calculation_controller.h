@@ -29,7 +29,7 @@ public:
   void didBecomeFirstResponder() override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override;

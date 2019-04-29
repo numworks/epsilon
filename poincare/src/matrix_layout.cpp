@@ -180,7 +180,7 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
       }
       if (childIndex % m_numberOfColumns == correspondingColumn) {
         if (lastLayoutOfRow->isEmpty()) {
-          if (!lastLayoutOfRow->isHorizontal()) {
+          if (lastLayoutOfRow->type() != Type::HorizontalLayout) {
             static_cast<EmptyLayoutNode *>(lastLayoutOfRow)->setColor(EmptyLayoutNode::Color::Yellow);
           } else {
             assert(lastLayoutOfRow->numberOfChildren() == 1);
@@ -203,7 +203,7 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
         break;
       }
       if (lastLayoutOfColumn->isEmpty()) {
-        if (!lastLayoutOfColumn->isHorizontal()) {
+        if (lastLayoutOfColumn->type() != Type::HorizontalLayout) {
           static_cast<EmptyLayoutNode *>(lastLayoutOfColumn)->setColor(EmptyLayoutNode::Color::Yellow);
         } else {
           assert(lastLayoutOfColumn->numberOfChildren() == 1);
@@ -253,7 +253,7 @@ bool MatrixLayoutNode::hasGreySquares() const {
   }
   LayoutNode * lastChild = const_cast<MatrixLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
   if (lastChild->isEmpty()
-      && !lastChild->isHorizontal()
+      && lastChild->type() != Type::HorizontalLayout
       && (static_cast<EmptyLayoutNode *>(lastChild))->color() == EmptyLayoutNode::Color::Grey)
   {
     assert(isRowEmpty(m_numberOfRows - 1));

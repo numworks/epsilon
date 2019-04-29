@@ -5,7 +5,12 @@ class SelectableTableView;
 
 class SelectableTableViewDelegate {
 public:
-  virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY);
+  /* withinTemporarySelection flag indicates when the selection change happens
+   * in a temporary deselection: indeed, when reloading the data of the table,
+   * we deselect the table before re-layouting the entire table and re-select
+   * the previous selected cell. We might implement different course of action
+   * when the selection change is 'real' or within temporary selection. */
+  virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false);
 };
 
 #endif

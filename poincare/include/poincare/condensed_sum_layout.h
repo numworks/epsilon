@@ -13,6 +13,9 @@ class CondensedSumLayoutNode /*final*/ : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::CondensedSumLayout; }
+
   /* CondensedSumLayout is only used in apps/shared/sum_graph_controller.cpp, in
    * a view with no cursor. */
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }

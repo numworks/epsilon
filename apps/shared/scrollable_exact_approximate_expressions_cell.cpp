@@ -21,15 +21,12 @@ void ScrollableExactApproximateExpressionsCell::setEven(bool even) {
   m_view.evenOddCell()->setEven(even);
 }
 
-void ScrollableExactApproximateExpressionsCell::reloadCell() {
-  m_view.evenOddCell()->reloadCell();
-}
-
 void ScrollableExactApproximateExpressionsCell::reloadScroll() {
   m_view.reloadScroll();
 }
 
 void ScrollableExactApproximateExpressionsCell::didBecomeFirstResponder() {
+  m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
   app()->setFirstResponder(&m_view);
 }
 

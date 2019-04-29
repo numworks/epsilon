@@ -124,7 +124,7 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout::Builder(
         CodePointLayout::Builder(nextName[0], font),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Type::Subscript)
+        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), font), VerticalOffsetLayoutNode::Position::Subscript)
       );
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setLayout(m_layouts[j]);

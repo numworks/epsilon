@@ -8,9 +8,9 @@ namespace Sequence {
 
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
-  VariableContext("n", parentContext),
   m_values{{NAN, NAN},
-    {NAN, NAN}}
+    {NAN, NAN}},
+  m_parentContext(parentContext)
 {
 }
 
@@ -24,7 +24,12 @@ const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & sym
     Symbol s = const_cast<Symbol &>(static_cast<const Symbol &>(symbol));
     return Float<T>::Builder(m_values[nameIndexForSymbol(s)][rankIndexForSymbol(s)]);
   }
-  return VariableContext::expressionForSymbol(symbol, clone);
+  return m_parentContext->expressionForSymbol(symbol, clone);
+}
+
+template<typename T>
+void CacheContext<T>::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
+  m_parentContext->setExpressionForSymbol(expression, symbol, context);
 }
 
 template<typename T>

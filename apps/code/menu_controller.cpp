@@ -272,8 +272,8 @@ void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, in
   (static_cast<ScriptNameCell *>(cell))->textField()->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
-void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddScriptRow) {
+void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (!withinTemporarySelection && selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddScriptRow) {
     t->selectCellAtLocation(0, numberOfRows()-1);
   }
 }

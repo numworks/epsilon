@@ -24,10 +24,11 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate rowHeight(int j) override;
   int typeAtLocation(int i, int j) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
   void scrollToCell(int i, int j);
 private:
   CalculationSelectableTableView * selectableTableView();
+  void historyViewCellDidChangeSelection() override;
   constexpr static int k_maxNumberOfDisplayedRows = 5;
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];

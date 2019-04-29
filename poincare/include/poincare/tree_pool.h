@@ -44,7 +44,7 @@ public:
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream);
-  void log() { treeLog(std::cout); }
+  __attribute__((__used__)) void log() { treeLog(std::cout); }
 #endif
   int numberOfNodes() const;
 

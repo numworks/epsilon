@@ -105,20 +105,23 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection || previousSelectedCellY == selectedRow()) {
+    return;
+  }
+  HistoryViewCell * cell = static_cast<HistoryViewCell *>(t->selectedCell());
   if (previousSelectedCellY == -1) {
-    setSelectedSubviewType(SubviewType::Output);
+    setSelectedSubviewType(SubviewType::Output, cell);
   } else if (selectedRow() < previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Output);
+    setSelectedSubviewType(SubviewType::Output, cell);
   } else if (selectedRow() > previousSelectedCellY) {
-    setSelectedSubviewType(SubviewType::Input);
+    setSelectedSubviewType(SubviewType::Input, cell);
   }
   HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
   if (selectedCell == nullptr) {
     return;
   }
   app()->setFirstResponder(selectedCell);
-  selectedCell->reloadCell();
 }
 
 int HistoryController::numberOfRows() {
@@ -139,9 +142,9 @@ int HistoryController::reusableCellCount(int type) {
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalculation(m_calculationStore->calculationAtIndex(index));
+  myCell->setCalculation(m_calculationStore->calculationAtIndex(index), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
-  myCell->reloadCell();
+  myCell->setHighlighted(myCell->isHighlighted());
 }
 
 KDCoordinate HistoryController::rowHeight(int j) {
@@ -150,7 +153,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
   }
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
   App * calculationApp = (App *)app();
-  return calculation->height(calculationApp->localContext()) + 4 * Metric::CommonSmallMargin;
+  return calculation->height(calculationApp->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {
@@ -159,6 +162,12 @@ int HistoryController::typeAtLocation(int i, int j) {
 
 void HistoryController::scrollToCell(int i, int j) {
   m_selectableTableView.scrollToCell(i, j);
+}
+
+void HistoryController::historyViewCellDidChangeSelection() {
+  /* Update the whole table as the height of the selected cell row might have
+   * changed. */
+  m_selectableTableView.reloadData();
 }
 
 }

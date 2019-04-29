@@ -28,7 +28,7 @@ Layout LogisticModel::layout() {
       CodePointLayout::Builder('e', k_layoutFont),
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(exponentLayoutChildren, exponentSize),
-          VerticalOffsetLayoutNode::Type::Superscript
+          VerticalOffsetLayoutNode::Position::Superscript
         )
     };
     m_layout = FractionLayout::Builder(

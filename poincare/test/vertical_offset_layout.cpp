@@ -11,7 +11,7 @@ QUIZ_CASE(poincare_vertical_offset_layout_serialize) {
     CodePointLayout::Builder('2'),
       VerticalOffsetLayout::Builder(
         LayoutHelper::String("x+5", 3),
-        VerticalOffsetLayoutNode::Type::Superscript
+        VerticalOffsetLayoutNode::Position::Superscript
       )
     );
   assert(UCodePointLeftSuperscript == '\x12');

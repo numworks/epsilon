@@ -28,8 +28,9 @@ void LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
-  m_expressionView.setLayout(h);
-  m_cursor.setLayout(h);
+  if (m_expressionView.setLayout(h)) {
+    m_cursor.setLayout(h);
+  }
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -136,10 +137,10 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
           /* Special case: if the text is "random()", the cursor should not be set
            * inside the parentheses. */
           pointedLayout = resultLayout;
-        } else if (resultLayout.isHorizontal()) {
+        } else if (resultLayout.type() == LayoutNode::Type::HorizontalLayout) {
           pointedLayout = resultLayout.recursivelyMatches(
               [](Poincare::Layout layout) {
-              return layout.isLeftParenthesis() || layout.isEmpty();});
+              return layout.type() == LayoutNode::Type::LeftParenthesisLayout || layout.isEmpty();});
         }
       }
       /* Insert the layout. If pointedLayout is uninitialized, the cursor will
@@ -294,7 +295,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Layout pointedLayoutR, bo
   // Handle empty layouts
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
 
-  bool layoutWillBeMerged = layoutR.isHorizontal();
+  bool layoutWillBeMerged = layoutR.type() == LayoutNode::Type::HorizontalLayout;
   Layout lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
   // Add the layout

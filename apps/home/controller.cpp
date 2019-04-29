@@ -134,7 +134,10 @@ int Controller::numberOfIcons() {
   return m_container->numberOfApps() - 1;
 }
 
-void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   /* If the number of apps (including home) is != 3*n+1, when we display the
    * lowest icons, the other(s) are empty. As no icon is thus redrawn on the
    * previous ones, the cell is not cleaned. We need to redraw a white rect on

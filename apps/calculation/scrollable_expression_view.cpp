@@ -17,6 +17,10 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
   );
 }
 
+Poincare::Layout ScrollableExpressionView::layout() const {
+  return m_expressionView.layout();
+}
+
 void ScrollableExpressionView::setLayout(Layout layout) {
   m_expressionView.setLayout(layout);
 }

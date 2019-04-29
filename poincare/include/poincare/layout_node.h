@@ -16,6 +16,30 @@ public:
     Up,
     Down
   };
+  enum class Type : uint8_t {
+    AbsoluteValueLayout,
+    BinomialCoefficientLayout,
+    BracketPairLayout,
+    CeilingLayout,
+    CodePointLayout,
+    CondensedSumLayout,
+    ConjugateLayout,
+    EmptyLayout,
+    FloorLayout,
+    FractionLayout,
+    GridLayout,
+    HorizontalLayout,
+    IntegralLayout,
+    LeftParenthesisLayout,
+    LeftSquareBracketLayout,
+    MatrixLayout,
+    NthRootLayout,
+    ProductLayout,
+    RightParenthesisLayout,
+    RightSquareBracketLayout,
+    SumLayout,
+    VerticalOffsetLayout
+  };
 
   // Constructor
   LayoutNode() :
@@ -27,6 +51,12 @@ public:
     m_sized(false)
   {
   }
+
+  /* Poor man's RTTI */
+  virtual Type type() const = 0;
+
+  // Comparison
+  virtual bool isIdenticalTo(Layout l);
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -93,17 +123,9 @@ public:
    * returns true, because |3|2 means |3|*2. A '+' CodePointLayout returns false,
    * because +'something' nevers means +*'something'. */
   virtual bool mustHaveLeftSibling() const { return false; }
-  virtual bool isVerticalOffset() const { return false; }
   /* For now, mustHaveLeftSibling and isVerticalOffset behave the same, but code
    * is clearer with different names. */
-  virtual bool isHorizontal() const { return false; }
-  virtual bool isLeftParenthesis() const { return false; }
-  virtual bool isRightParenthesis() const { return false; }
-  virtual bool isLeftBracket() const { return false; }
-  virtual bool isRightBracket() const { return false; }
   virtual bool isEmpty() const { return false; }
-  virtual bool isMatrix() const { return false; }
-  virtual bool isCodePoint() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual CodePoint XNTCodePoint() const {
     LayoutNode * p = parent();

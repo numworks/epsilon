@@ -14,6 +14,9 @@ public:
 
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::IntegralLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

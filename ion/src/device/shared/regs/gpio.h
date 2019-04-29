@@ -17,7 +17,7 @@ public:
       AlternateFunction = 2,
       Analog = 3
     };
-    Mode getMode(int index) { return (Mode)getBitRange(2*index+1, 2*index); }
+    Mode getMode(int index) volatile { return (Mode)getBitRange(2*index+1, 2*index); }
     void setMode(int index, Mode mode) volatile { setBitRange(2*index+1, 2*index, (uint32_t)mode); }
   };
 

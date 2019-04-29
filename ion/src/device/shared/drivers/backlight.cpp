@@ -26,6 +26,10 @@ void init() {
   Ion::Device::Backlight::init();
 }
 
+bool isInitialized() {
+  return Ion::Device::Backlight::isInitialized();
+}
+
 void shutdown() {
   Ion::Device::Backlight::shutdown();
 }
@@ -47,6 +51,10 @@ void init() {
   Config::BacklightPin.group().MODER()->setMode(Config::BacklightPin.pin(), GPIO::MODER::Mode::Output);
   sLevel = 0xF;
   resume();
+}
+
+bool isInitialized() {
+  return Config::BacklightPin.group().MODER()->getMode(Config::BacklightPin.pin()) == GPIO::MODER::Mode::Output;
 }
 
 void shutdown() {

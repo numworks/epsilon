@@ -8,6 +8,7 @@ namespace Device {
 namespace Backlight {
 
 void init();
+bool isInitialized();
 void shutdown();
 void suspend();
 void resume();

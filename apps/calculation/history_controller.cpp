@@ -122,7 +122,6 @@ void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int
     return;
   }
   app()->setFirstResponder(selectedCell);
-  selectedCell->reloadCell();
 }
 
 int HistoryController::numberOfRows() {

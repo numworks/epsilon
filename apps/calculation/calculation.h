@@ -19,9 +19,11 @@ public:
   };
 
   enum class DisplayOutput : uint8_t {
+    Unknown,
     ExactOnly,
     ApproximateOnly,
-    ExactAndApproximate
+    ExactAndApproximate,
+    ExactAndApproximateToggle
   };
 
   Calculation();
@@ -29,7 +31,7 @@ public:
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
   void setContent(const char * c, Poincare::Context * context, Poincare::Expression ansExpression);
-  KDCoordinate height(Poincare::Context * context);
+  KDCoordinate height(Poincare::Context * context, bool expanded = false);
   const char * inputText();
   const char * exactOutputText();
   const char * approximateOutputText();
@@ -52,7 +54,9 @@ private:
   char m_inputText[Constant::MaxSerializedExpressionSize];
   char m_exactOutputText[Constant::MaxSerializedExpressionSize];
   char m_approximateOutputText[Constant::MaxSerializedExpressionSize];
+  DisplayOutput m_displayOutput;
   KDCoordinate m_height;
+  KDCoordinate m_expandedHeight;
   EqualSign m_equalSign;
 };
 

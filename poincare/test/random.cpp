@@ -20,12 +20,8 @@ QUIZ_CASE(poincare_random_simplify) {
 }
 
 QUIZ_CASE(poincare_randint_simplify) {
-  assert_parsed_expression_simplify_to("1/randint(3,10)+1/3+1/4", "1/randint(3,10)+7/12");
-  assert_parsed_expression_simplify_to("randint(3,10)+randint(3,10)", "randint(3,10)+randint(3,10)");
-  assert_parsed_expression_simplify_to("randint(3,10)-randint(3,10)", "-randint(3,10)+randint(3,10)");
-  assert_parsed_expression_simplify_to("1/randint(3,10)+1/3+1/4+1/randint(3,10)", "1/randint(3,10)+1/randint(3,10)+7/12");
-  assert_parsed_expression_simplify_to("randint(3,10)×randint(3,10)", "randint(3,10)×randint(3,10)");
-  assert_parsed_expression_simplify_to("randint(3,10)/randint(3,10)", "randint(3,10)/randint(3,10)");
-  assert_parsed_expression_simplify_to("3^randint(3,10)×3^randint(3,10)", "3^randint(3,10)×3^randint(3,10)");
-  assert_parsed_expression_simplify_to("randint(3,10)×ln(2)×3+randint(3,10)×ln(2)×5", "5×ln(2)×randint(3,10)+3×ln(2)×randint(3,10)");
+  assert_parsed_expression_simplify_to("1/randint(2,2)+1/2", "1");
+  assert_parsed_expression_simplify_to("randint(1, inf)", "undef");
+  assert_parsed_expression_simplify_to("randint(-inf, 3)", "undef");
+  assert_parsed_expression_simplify_to("randint(4, 3)", "undef");
 }

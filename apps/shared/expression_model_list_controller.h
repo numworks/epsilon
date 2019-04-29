@@ -13,7 +13,7 @@ public:
 protected:
   static constexpr KDCoordinate k_expressionMargin = 5;
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   // TableViewDataSource
   virtual int numberOfExpressionRows();
   KDCoordinate memoizedRowHeight(int j);

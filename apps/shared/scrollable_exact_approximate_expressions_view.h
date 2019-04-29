@@ -23,6 +23,7 @@ public:
   void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
     m_contentCell.setSelectedSubviewPosition(subviewPosition);
   }
+  void reloadScroll();
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const {
@@ -34,7 +35,8 @@ private:
     ContentCell();
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
-    void reloadCell() override;
+    void setEven(bool even) override;
+    void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
     ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;

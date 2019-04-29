@@ -25,7 +25,7 @@ public:
   virtual HighlightCell * reusableCell(int index) override;
   virtual int reusableCellCount() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   int numberOfIcons();
   class ContentView : public View {

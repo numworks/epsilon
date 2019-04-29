@@ -19,7 +19,7 @@ Layout PowerModel::layout() {
       CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
           CodePointLayout::Builder('b', k_layoutFont),
-          VerticalOffsetLayoutNode::Type::Superscript
+          VerticalOffsetLayoutNode::Position::Superscript
         ),
       };
     m_layout = HorizontalLayout::Builder(layoutChildren, size);

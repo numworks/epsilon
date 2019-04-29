@@ -1,9 +1,13 @@
 #include <poincare/randint.h>
 #include <poincare/complex.h>
-#include <poincare/random.h>
-#include <ion.h>
+#include <poincare/infinity.h>
+#include <poincare/integer.h>
 #include <poincare/layout_helper.h>
+#include <poincare/random.h>
+#include <poincare/rational.h>
+#include <poincare/undefined.h>
 #include <poincare/serialization_helper.h>
+#include <ion.h>
 
 extern "C" {
 #include <assert.h>
@@ -29,7 +33,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T a = aInput.toScalar();
   T b = bInput.toScalar();
-  if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b) {
+  if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b || std::isinf(a) || std::isinf(b)) {
     return Complex<T>::Undefined();
 
   }
@@ -37,5 +41,26 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   return Complex<T>::Builder(result);
 }
 
+Expression RandintNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+  return Randint(this).shallowReduce(context, complexFormat, angleUnit, target);
+}
+
+Expression Randint::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+  Expression e = Expression::defaultShallowReduce();
+  if (e.isUndefined()) {
+    return e;
+  }
+  float eval = approximateToScalar<float>(context, complexFormat, angleUnit);
+  Expression result;
+  if (std::isnan(eval)) {
+    result = Undefined::Builder();
+  } else if (std::isinf(eval)) {
+    result = Infinity::Builder(eval < 0);
+  } else {
+    result = Rational::Builder(Integer((int)eval));
+  }
+  replaceWithInPlace(result);
+  return result;
+}
 
 }

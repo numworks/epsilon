@@ -104,7 +104,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("permute(10, 4)", "5040", User, Radian, Cartesian);
   // TODO: prediction is not simplified yet
   //assert_parsed_expression_simplify_to("prediction(-2,-3)", "prediction(-2)", User, Radian, Cartesian);
-  assert_parsed_expression_simplify_to("randint(2,4)", "randint(2,4)", User, Radian, Cartesian);
+  assert_parsed_expression_simplify_to("randint(2,2)", "2", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("random()", "random()", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian, Cartesian);

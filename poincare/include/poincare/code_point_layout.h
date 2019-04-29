@@ -20,6 +20,10 @@ public:
     m_font(font)
   {}
 
+  // Layout
+  Type type() const override { return Type::CodePointLayout; }
+  bool isIdenticalTo(Layout l) override;
+
   // CodePointLayout
   CodePoint codePoint() const { return m_codePoint; }
   const KDFont * font() const { return m_font; }
@@ -28,7 +32,6 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool isCodePoint() const override { return true; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
   bool canBeOmittedMultiplicationLeftFactor() const override;
   bool canBeOmittedMultiplicationRightFactor() const override;

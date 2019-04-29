@@ -21,9 +21,6 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
      * being displayed. If the test succeeds, the screen should change very
      * quickly to "VBLANK OK". */
     Shared::POSTAndHardwareTests::VBlankOK();
-    for (int i=0; i<6; i++) {
-      Ion::Display::waitForVBlank();
-    }
     m_view.setColor(KDColorGreen);
     m_view.vBlankStateTextView()->setText(k_vBlankOKText);
   }

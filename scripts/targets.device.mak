@@ -63,17 +63,32 @@ endif
 
 #TODO Do not build all apps... Put elsewhere?
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
-$(BUILD_DIR)/bench.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-$(BUILD_DIR)/bench.$(EXE): $(objs) $(call object_for,$(bench_src))
+$(BUILD_DIR)/benchRAM.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
+$(BUILD_DIR)/benchRAM.$(EXE): $(objs) $(call object_for,$(bench_src))
 else
-$(BUILD_DIR)/bench.$(EXE):
+$(BUILD_DIR)/benchRAM.$(EXE):
 	@echo "Error: bench.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
 endif
+
+#TODO Do not build all apps... Put elsewhere?
+ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
+$(BUILD_DIR)/benchFlash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
+$(BUILD_DIR)/benchFlash.$(EXE): $(objs) $(call object_for,$(bench_src))
+else
+$(BUILD_DIR)/benchFlash.$(EXE):
+	@echo "Error: benchFlash.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
+endif
+
 
 .PHONY: %_two_binaries
 %_two_binaries: %.elf
 	@echo "Building an internal and an external binary for     $<"
 	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external $< $(basename $<).external.bin
 	$(Q) $(OBJCOPY) -O binary -j .isr_vector_table -j .header -j .text.internal -j .rodata.internal -j .init_array -j .data $< $(basename $<).internal.bin
+
+.PRECIOUS: $(BUILD_DIR)/benchFlash.bin $(BUILD_DIR)/benchRAM.bin $(BUILD_DIR)/epsilon.internal.bin $(BUILD_DIR)/epsilon.external.bin
+.PHONY: $(BUILD_DIR)/bench_files
+$(BUILD_DIR)/bench_files: $(BUILD_DIR)/epsilon_two_binaries $(BUILD_DIR)/benchRAM.bin $(BUILD_DIR)/benchFlash.bin
+	@echo "Building epsilon.internal.bin, epsilon.external.bin, benchRAM.bin and benchFlash.bin"
 
 include scripts/targets.device.$(MODEL).mak

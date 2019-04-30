@@ -19,8 +19,25 @@
 namespace Ion {
 
 namespace Power {
+void __attribute__((noinline)) internal_flash_suspend(bool isLEDActive) {
+  // Shutdown the external flash
+  Device::ExternalFlash::shutdown();
+  // Shutdown all clocks (except the ones used by LED if active)
+  Device::Board::shutdownClocks(isLEDActive);
 
-void __attribute__((noinline)) suspend(bool checkIfOnOffKeyReleased) {
+  Device::Power::enterLowPowerMode();
+
+  /* A hardware event triggered a wake up, we determine if the device should
+   * wake up. We wake up when:
+   * - only the power key was down
+   * - the unplugged device was plugged
+   * - the battery stopped charging */
+  Device::Board::initClocks();
+  // Init external flash
+  Device::ExternalFlash::init();
+}
+
+void suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   bool plugged = USB::isPlugged();
 
@@ -55,16 +72,7 @@ void __attribute__((noinline)) suspend(bool checkIfOnOffKeyReleased) {
      * - Stop charging */
     Device::Power::configWakeUp();
 
-    // Shutdown all clocks (except the ones used by LED if active)
-    Device::Board::shutdownClocks(isLEDActive);
-
-    Device::Power::enterLowPowerMode();
-
-    /* A hardware event triggered a wake up, we determine if the device should
-     * wake up. We wake up when:
-     * - only the power key was down
-     * - the unplugged device was plugged */
-    Device::Board::initClocks();
+    internal_flash_suspend(isLEDActive);
 
     // Check power key
     Device::Keyboard::init();

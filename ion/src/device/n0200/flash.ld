@@ -94,6 +94,9 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Power17enterLowPowerModeEv)
     *(.text._ZN3Ion6Device5Board14shutdownClocksEb)
 
+    /* 'suspend' dependencies '*/
+    *(.text._ZN3Ion5Power22internal_flash_suspendEb)
+
     /* Optimization */
     */libgcc.a:(.text)
   } >INTERNAL_FLASH

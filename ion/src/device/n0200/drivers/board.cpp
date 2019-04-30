@@ -1,6 +1,7 @@
 #include <drivers/board.h>
 #include <drivers/cache.h>
 #include <drivers/config/clocks.h>
+#include <drivers/external_flash.h>
 #include <regs/regs.h>
 #include <ion.h>
 
@@ -85,7 +86,7 @@ void initMPU() {
   Cache::isb();
 }
 
-void init(bool initBacklight) {
+void init() {
   initFPU();
   initMPU();
   initClocks();
@@ -106,7 +107,7 @@ void init(bool initBacklight) {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
-  initPeripherals(initBacklight);
+  ExternalFlash::init();
   // Initiate L1 cache after initiating the external flash
   Cache::enable();
 }

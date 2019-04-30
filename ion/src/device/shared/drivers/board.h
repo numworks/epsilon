@@ -5,7 +5,7 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-void init(bool initBacklight = true);
+void init();
 void shutdown();
 
 void initFPU();

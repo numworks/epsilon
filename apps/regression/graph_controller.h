@@ -52,7 +52,6 @@ private:
   int estimatedBannerNumberOfLines() const override;
 
   // InteractiveCurveViewRangeDelegate
-  float displayTopMarginRatio() override;
   Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
 
   Shared::CursorView m_crossCursorView;

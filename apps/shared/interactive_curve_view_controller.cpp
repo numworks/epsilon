@@ -61,9 +61,11 @@ float InteractiveCurveViewController::addMargin(float x, float range, bool isMin
    * topRatioBefore = topRatioAfter, we would create too small margins and the
    * controller might need to pan right after a Y auto calibration. */
 
-  assert(displayBottomMarginRatio()+displayTopMarginRatio() < 1); // Assertion so that the formula is correct
-  float ratioDenominator = 1-displayBottomMarginRatio()-displayTopMarginRatio();
-  float ratio = isMin ? -displayBottomMarginRatio() : displayTopMarginRatio();
+  float topMarginRatio = cursorTopMarginRatio();
+  float bottomMarginRatio = cursorBottomMarginRatio();
+  assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
+  float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
+  float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
   ratio = ratio / ratioDenominator;
   return x+ratio*range;
 }
@@ -253,10 +255,6 @@ float InteractiveCurveViewController::cursorBottomMarginRatio() {
 
 float InteractiveCurveViewController::estimatedBannerHeight() const {
   return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
-}
-
-float InteractiveCurveViewController::displayBottomMarginRatio() {
-  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
 }
 
 }

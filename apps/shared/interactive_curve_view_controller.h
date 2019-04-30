@@ -60,8 +60,6 @@ private:
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isMin) override;
-  virtual float displayTopMarginRatio() = 0;
-  float displayBottomMarginRatio();
 
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;

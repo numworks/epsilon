@@ -373,10 +373,6 @@ int GraphController::estimatedBannerNumberOfLines() const {
   return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
 }
 
-float GraphController::displayTopMarginRatio() {
-  return 0.12f; // cursorHeight/graphViewHeight
-}
-
 InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
   float minY = FLT_MAX;
   float maxY = -FLT_MAX;

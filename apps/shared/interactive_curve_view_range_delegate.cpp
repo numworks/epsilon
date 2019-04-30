@@ -6,6 +6,9 @@
 namespace Shared {
 
 bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  /* When y auto is ticked, top and bottom margins are added to ensure that
+   * the cursor can be move along the curve, in the current x-range,
+   * without panning the window. */
   if (!interactiveCurveViewRange->yAuto()) {
     return false;
   }

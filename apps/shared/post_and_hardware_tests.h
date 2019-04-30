@@ -9,14 +9,16 @@ class POSTAndHardwareTests {
 public:
   static bool BatteryOK();
   static bool VBlankOK();
+  static bool FastLCDDataOK();
   static bool LCDDataOK();
-
 private:
   constexpr static int k_invalidPixelsLimit = 2;
-  static bool TestDisplayColor(KDColor c);
+  static void ColorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c);
+  static bool TestDisplayColorTiling(KDColor c);
+  static bool TestDisplayColorUniform(KDColor c);
   static int NumberOfNonColoredPixels(KDColor wantedColor);
   static bool TestDisplayBlackWhite();
-  static void ColorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c);
+  static bool TestDisplayMulticolor();
 };
 
 }

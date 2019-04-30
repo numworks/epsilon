@@ -13,7 +13,7 @@ KDColor PowerOnSelfTest::Perform() {
     /* If VBlank test fails, we end up in an infinite loop and the LED will be
      * lit up in blue. */
     if (Shared::POSTAndHardwareTests::VBlankOK()
-        && Shared::POSTAndHardwareTests::LCDDataOK())
+        && Shared::POSTAndHardwareTests::FastLCDDataOK())
     {
       Ion::LED::setColor(KDColorGreen);
     }

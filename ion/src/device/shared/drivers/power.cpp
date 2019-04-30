@@ -87,7 +87,6 @@ void __attribute__((noinline)) suspend(bool checkIfOnOffKeyReleased) {
 
   // Reset normal frequency
   Device::Board::setStandardFrequency(Device::Board::Frequency::High);
-  Device::Board::initClocks();
   Device::Board::initPeripherals(true);
   // Update LED according to plug and charge state
   LED::updateColorWithPlugAndCharge();

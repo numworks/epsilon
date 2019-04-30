@@ -8,7 +8,8 @@ LogoController::LogoController() :
   ViewController(nullptr),
   Timer(15),
   m_logoView(),
-  m_previousLEDColor(KDColorBlack)
+  m_previousLEDColor(KDColorBlack),
+  m_didPerformTests(false)
 {
 }
 
@@ -26,8 +27,10 @@ void LogoController::viewWillAppear() {
    * mandatory for the end-user.*/
   bool backlightInitialized = Ion::Backlight::isInitialized();
   if (Ion::USB::isPlugged() || backlightInitialized) {
+    m_didPerformTests = false;
     m_previousLEDColor = Ion::LED::getColor();
   } else {
+    m_didPerformTests = true;
     m_previousLEDColor = PowerOnSelfTest::Perform();
     /* If EPSILON_ONBOARDING_APP == 1, the backlight is not initialized in
      * Ion::Device::Board::initPeripherals, so that the LCD test is not visible to
@@ -43,7 +46,9 @@ void LogoController::viewWillAppear() {
 }
 
 void LogoController::viewDidDisappear() {
-  Ion::LED::setColor(m_previousLEDColor);
+  if (m_didPerformTests) {
+    Ion::LED::setColor(m_previousLEDColor);
+  }
   ViewController::viewDidDisappear();
 }
 

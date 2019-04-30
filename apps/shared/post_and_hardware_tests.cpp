@@ -1,7 +1,6 @@
 #include "post_and_hardware_tests.h"
 #include <ion/backlight.h>
 #include <ion/battery.h>
-#include <ion/display.h>
 #include <ion/timing.h>
 
 namespace Shared {
@@ -58,51 +57,32 @@ void POSTAndHardwareTests::ColorPixelBuffer(KDColor * pixels, int numberOfPixels
 }
 
 bool POSTAndHardwareTests::TestDisplayColorTiling(KDColor c) {
-  constexpr int stampHeight = 10;
-  constexpr int stampWidth = 10;
-  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-
-  KDColor stamp[stampWidth*stampHeight];
+  KDColor stamp[k_stampWidth*k_stampHeight];
 
   // Tiling test with pushRect
-  ColorPixelBuffer(stamp, stampWidth * stampHeight, c);
-  for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
-    for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
-      Ion::Display::pushRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
+  ColorPixelBuffer(stamp, k_stampWidth * k_stampHeight, c);
+  for (int i = 0; i < Ion::Display::Width / k_stampWidth; i++) {
+    for (int j = 0; j < Ion::Display::Height / k_stampHeight; j++) {
+      Ion::Display::pushRect(KDRect(i * k_stampWidth, j * k_stampHeight, k_stampWidth, k_stampHeight), stamp);
     }
   }
   return NumberOfNonColoredPixels(c) <= k_invalidPixelsLimit;
 }
 
 bool POSTAndHardwareTests::TestDisplayColorUniform(KDColor c) {
-  constexpr int stampHeight = 10;
-  constexpr int stampWidth = 10;
-  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-
   // Test with pushRectUniform
   Ion::Display::pushRectUniform(KDRect(KDPointZero, Ion::Display::Width, Ion::Display::Height), c);
   return NumberOfNonColoredPixels(c) < k_invalidPixelsLimit;
 }
 
 int POSTAndHardwareTests::NumberOfNonColoredPixels(KDColor wantedColor) {
-  constexpr int stampHeight = 10;
-  constexpr int stampWidth = 10;
-  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-
-  KDColor stamp[stampWidth*stampHeight];
-
+  KDColor stamp[k_stampWidth*k_stampHeight];
   int numberOfInvalidPixels = 0;
-  for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
-    for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
-      ColorPixelBuffer(stamp, stampWidth * stampHeight, wantedColor == KDColorBlack ? KDColorRed : KDColorBlack);
-      Ion::Display::pullRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
-      for (int k = 0; k < stampWidth * stampHeight; k++) {
+  for (int i = 0; i < Ion::Display::Width / k_stampWidth; i++) {
+    for (int j = 0; j < Ion::Display::Height / k_stampHeight; j++) {
+      ColorPixelBuffer(stamp, k_stampWidth * k_stampHeight, wantedColor == KDColorBlack ? KDColorRed : KDColorBlack);
+      Ion::Display::pullRect(KDRect(i * k_stampWidth, j * k_stampHeight, k_stampWidth, k_stampHeight), stamp);
+      for (int k = 0; k < k_stampWidth * k_stampHeight; k++) {
         if (stamp[k] != wantedColor) {
           numberOfInvalidPixels++;
         }
@@ -114,17 +94,12 @@ int POSTAndHardwareTests::NumberOfNonColoredPixels(KDColor wantedColor) {
 
 bool POSTAndHardwareTests::TestDisplayBlackWhite() {
   Ion::Display::POSTPushBlackWhite();
-  constexpr int stampHeight = Ion::Display::Height;
-  constexpr int stampWidth = 2;
-  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-  KDColor stamp[stampWidth*stampHeight];
+  KDColor stamp[k_stampWidth*k_stampHeight];
   int numberOfInvalidPixels = 0;
-  for (int i = 0; i < Ion::Display::Width/stampWidth; i++) {
-    ColorPixelBuffer(stamp, stampWidth * stampHeight, KDColorRed);
-    Ion::Display::pullRect(KDRect(i*stampWidth, 0, stampWidth, stampHeight), stamp);
-    for (int k = 0; k < stampWidth * stampHeight; k++) {
+  for (int i = 0; i < Ion::Display::Width/k_stampWidth; i++) {
+    ColorPixelBuffer(stamp, k_stampWidth * k_stampHeight, KDColorRed);
+    Ion::Display::pullRect(KDRect(i*k_stampWidth, 0, k_stampWidth, k_stampHeight), stamp);
+    for (int k = 0; k < k_stampWidth * k_stampHeight; k++) {
       if (stamp[k] != ((k%2 == 0) ? KDColorWhite : KDColorBlack)) {
         numberOfInvalidPixels++;
       }
@@ -142,31 +117,24 @@ KDColor colorSequence(bool reset) {
 }
 
 bool POSTAndHardwareTests::TestDisplayMulticolor() {
-  constexpr int stampHeight = 10;
-  constexpr int stampWidth = 10;
-  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
-
-  constexpr int numberOfPixels = stampWidth*stampHeight;
+  constexpr int numberOfPixels = k_stampWidth*k_stampHeight;
   KDColor stamp[numberOfPixels];
-
   colorSequence(true);
   // Multi-colouring of the display
-  for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
-    for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
+  for (int i = 0; i < Ion::Display::Width / k_stampWidth; i++) {
+    for (int j = 0; j < Ion::Display::Height / k_stampHeight; j++) {
       for (int k = 0; k < numberOfPixels; k++) {
         stamp[k] = colorSequence(false);
       }
-      Ion::Display::pushRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
+      Ion::Display::pushRect(KDRect(i * k_stampWidth, j * k_stampHeight, k_stampWidth, k_stampHeight), stamp);
     }
   }
   // Check the data is ok
   colorSequence(true);
   int numberOfInvalidPixels = 0;
-  for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
-    for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
-      Ion::Display::pullRect(KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight), stamp);
+  for (int i = 0; i < Ion::Display::Width / k_stampWidth; i++) {
+    for (int j = 0; j < Ion::Display::Height / k_stampHeight; j++) {
+      Ion::Display::pullRect(KDRect(i * k_stampWidth, j * k_stampHeight, k_stampWidth, k_stampHeight), stamp);
       for (int k = 0; k < numberOfPixels; k++) {
         if (stamp[k] != colorSequence(false)) {
           numberOfInvalidPixels++;

@@ -27,7 +27,23 @@ void abort() {
 #endif
 }
 
-/* This additional function call 'non_inlined_ion_main' serves two purposes:
+/* In order to ensure that this method is execute from the external flash, we
+ * forbid inlining it.*/
+
+static void __attribute__((noinline)) external_flash_start() {
+  /* Init the peripherals. If there is the on boarding app, do not initialize the
+   * backlight so that the user does not see the LCD tests. The backlight will
+   * be initialized after the Power-On Self-Test.*/
+#if EPSILON_ONBOARDING_APP == 0
+  Ion::Device::Board::initPeripherals(true);
+#else
+  Ion::Device::Board::initPeripherals(false);
+#endif
+
+  return ion_main(0, nullptr);
+}
+
+/* This additional function call 'jump_to_external_flash' serves two purposes:
  * - By default, the compiler is free to inline any function call he wants. If
  *   the compiler decides to inline some functions that make use of VFP
  *   registers, it will need to push VFP them onto the stack in calling
@@ -40,16 +56,20 @@ void abort() {
  *   start(), we isolate it in its very own non-inlined function call.
  * - To avoid jumping on the external flash when it is shut down, we ensure
  *   there is no symbol references from the internal flash to the external
- *   flash except the jump to ion_main. In order to do that, we isolate this
+ *   flash except this jump. In order to do that, we isolate this
  *   jump in a symbol that we link in a special section separated from the
  *   internal flash section. We can than forbid cross references from the
  *   internal flash to the external flash. */
 
-static void __attribute__((noinline)) non_inlined_ion_main() {
-  return ion_main(0, nullptr);
+static void __attribute__((noinline)) jump_to_external_flash() {
+  external_flash_start();
 }
 
-void start() {
+/* When 'start' is executed, the external flash is supposed to be shutdown. We
+ * thus forbid inlining to prevent executing this code from external flash
+ * (just in case 'start' was to be called from the external flash). */
+
+void __attribute__((noinline)) start() {
   /* This is where execution starts after reset.
    * Many things are not initialized yet so the code here has to pay attention. */
 
@@ -90,16 +110,12 @@ void start() {
   }
 #endif
 
-  /* Init the board. If there is the on boarding app, do not initialize the
-   * backlight so that the user does not see the LCD tests. The backlight will
-   * be initialized after the Power-On Self-Test.*/
-#if EPSILON_ONBOARDING_APP == 0
-  Ion::Device::Board::init(true);
-#else
-  Ion::Device::Board::init(false);
-#endif
+  Ion::Device::Board::init();
 
-  non_inlined_ion_main();
+  /* At this point, we initialized clocks and the external flash but no other
+   * peripherals. */
+
+  jump_to_external_flash();
 
   abort();
 }

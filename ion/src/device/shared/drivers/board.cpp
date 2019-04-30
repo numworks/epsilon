@@ -42,11 +42,9 @@ void initPeripherals(bool initBacklight) {
   Console::init();
   SWD::init();
   Timing::init();
-  ExternalFlash::init();
 }
 
 void shutdownPeripherals(bool keepLEDAwake) {
-  ExternalFlash::shutdown();
   Timing::shutdown();
   SWD::shutdown();
   Console::shutdown();

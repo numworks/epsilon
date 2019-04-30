@@ -48,12 +48,12 @@ SECTIONS {
 
   /* Internal flash memory */
 
-  /* We link 'non_inlined_ion_main' in a separate section from text.internal.
+  /* We link 'jump_to_external_flash' in a separate section from text.internal.
    * Indeed, it is the only internal flash symbol that refers the external
    * flash. This way we can assert that there are no cross references from the
    * internal flash to the external flash. */
   .text.internal_to_external : {
-    *(.text._ZL20non_inlined_ion_mainv)
+    *(.text._ZL22jump_to_external_flashv)
   } >INTERNAL_FLASH
 
   /* Use boot routine and required dependencies */
@@ -61,38 +61,44 @@ SECTIONS {
    * done with -fdata-sections -ffunction-sections */
   .text.internal : {
     . = ALIGN(4);
-    *(.text.__assert)
-    *(.text.start)
     *(.text.abort)
     *(.text.isr_systick)
+    *(.text.__assert)
     *(.text.memcpy)
+    *(.text.memset)
+    /*
     *(.text.strlen)
     *(.text.strncmp)
     *(.text.strlcpy)
     *(.text.strcmp)
-    *(.text.memset)
     *(.text.memmove)
-    *(.text._ZN3Ion*)
-    *(.text._ZNV3Ion*)
-    *(.text._ZNK3Ion*)
-    *(.text.LZ4_*)
+    */
+    /* 'start' dependecies */
+    *(.text.start)
+    *(.text._ZN3Ion6Device5Board4initEv)
+    *(.text._ZN3Ion6Device5Board7initFPUEv)
+    *(.text._ZN3Ion6Device5Board7initMPUEv)
+    *(.text._ZN3Ion6Device5Board10initClocksEv)
+    *(.text._ZNV3Ion6Device4Regs8Register*)
+    *(.text._ZN3Ion6Device4Regs8Register*)
+    *(.text._ZNK3Ion6Device4Regs9AFGPIOPin*)
+    *(.text._ZN3Ion6Device13ExternalFlash*)
+    *(.text._ZN3Ion6Device5Cache*)
+    *(.text._ZN3Ion6Timing6usleepEj)
+
+    /* 'abort' dependcies */
+    *(.text._ZN3Ion6Device5Reset4coreEv)
+
+    /**(.text._ZN3Ion5Power7suspendEb)*/
+
+    /* Optimization */
     */libgcc.a:(.text)
   } >INTERNAL_FLASH
 
 
   .rodata.internal : {
     . = ALIGN(4);
-    *(.rodata.dfu_bootloader)
-    *(.rodata)
-    *(.rodata.str1.1)
-    *(.rodata._ZN3Ion*)
-    *(.rodata._ZZN3Ion*)
-    *(.rodata._ZNK3Ion*)
-    *(.rodata._ZTVN3Ion6*)
-    *(.rodata._ZN3KDColor*)
-    *(.rodata._ZL11KDColor*)
-    *(.rodata._ZL12KDColor*)
-    *(.rodata._ZL13KDColor*)
+    *(.rodata._ZN3Ion6Device13ExternalFlash*)
   } >INTERNAL_FLASH
 
   /* External flash memory */
@@ -103,6 +109,7 @@ SECTIONS {
   } >EXTERNAL_FLASH
 
   .rodata.external : {
+    *(.rodata)
     *(.rodata.*)
   } >EXTERNAL_FLASH
 

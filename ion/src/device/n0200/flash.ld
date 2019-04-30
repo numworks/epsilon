@@ -61,6 +61,7 @@ SECTIONS {
    * done with -fdata-sections -ffunction-sections */
   .text.internal : {
     . = ALIGN(4);
+    *(.text.start)
     *(.text.abort)
     *(.text.isr_systick)
     *(.text.__assert)
@@ -73,8 +74,7 @@ SECTIONS {
     *(.text.strcmp)
     *(.text.memmove)
     */
-    /* 'start' dependecies */
-    *(.text.start)
+    /* 'start' dependencies */
     *(.text._ZN3Ion6Device5Board4initEv)
     *(.text._ZN3Ion6Device5Board7initFPUEv)
     *(.text._ZN3Ion6Device5Board7initMPUEv)
@@ -86,10 +86,13 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Cache*)
     *(.text._ZN3Ion6Timing6usleepEj)
 
-    /* 'abort' dependcies */
+    /* 'abort' dependencies */
     *(.text._ZN3Ion6Device5Reset4coreEv)
 
-    /**(.text._ZN3Ion5Power7suspendEb)*/
+    /* 'standby' dependencies '*/
+    *(.text._ZN3Ion5Power22internal_flash_standbyEv)
+    *(.text._ZN3Ion6Device5Power17enterLowPowerModeEv)
+    *(.text._ZN3Ion6Device5Board14shutdownClocksEb)
 
     /* Optimization */
     */libgcc.a:(.text)

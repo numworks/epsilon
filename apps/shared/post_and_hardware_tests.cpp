@@ -33,7 +33,8 @@ bool POSTAndHardwareTests::LCDDataOK() {
   KDColor testColors[] = {
     KDColorRed, KDColorGreen, KDColorBlue,
     KDColor::RGB24(0xFFFF00), KDColor::RGB24(0xFF00FF), KDColor::RGB24(0x00FFFF),
-    KDColorWhite, KDColorBlack};
+    KDColorWhite
+  };
   for (KDColor c : testColors) {
     if (!TestDisplayColorTiling(c)) {
       return false;

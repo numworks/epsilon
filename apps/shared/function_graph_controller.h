@@ -31,11 +31,6 @@ private:
   virtual FunctionGraphView * functionGraphView() = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
 
-  // InteractiveCurveViewController
-  /* When y auto is ticked, we use a display margin to be ensure that the user
-   * can move the cursor along the curve without panning the window */
-  float displayTopMarginRatio() override { return 0.09f; } // cursorHeight/graphViewHeight
-
   // InteractiveCurveViewRangeDelegate
   InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
 

@@ -16,6 +16,7 @@ private:
   bool fire() override;
   LogoView m_logoView;
   KDColor m_previousLEDColor;
+  bool m_didPerformTests;
 };
 
 }

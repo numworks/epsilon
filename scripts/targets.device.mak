@@ -88,7 +88,12 @@ endif
 
 .PRECIOUS: $(BUILD_DIR)/benchFlash.bin $(BUILD_DIR)/benchRAM.bin $(BUILD_DIR)/epsilon.internal.bin $(BUILD_DIR)/epsilon.external.bin
 .PHONY: $(BUILD_DIR)/bench_files
+ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
 $(BUILD_DIR)/bench_files: $(BUILD_DIR)/epsilon_two_binaries $(BUILD_DIR)/benchRAM.bin $(BUILD_DIR)/benchFlash.bin
 	@echo "Building epsilon.internal.bin, epsilon.external.bin, benchRAM.bin and benchFlash.bin"
+else
+$(BUILD_DIR)/bench_files:
+	@echo "Error: bench_files require EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
+endif
 
 include scripts/targets.device.$(MODEL).mak

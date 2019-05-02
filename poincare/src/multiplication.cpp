@@ -450,7 +450,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       // Check that other children don't match inf
       bool infiniteFactor = false;
       for (int i = 1; i < numberOfChildren(); i++) {
-        infiniteFactor = childAtIndex(i).recursivelyMatchesInfinity(context);
+        infiniteFactor = childAtIndex(i).recursivelyMatches(Expression::IsInfinity, context);
         if (infiniteFactor) {
           break;
         }

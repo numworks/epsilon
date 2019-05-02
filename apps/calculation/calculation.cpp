@@ -172,17 +172,17 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   }
   if (shouldOnlyDisplayExactOutput()) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (exactOutput().recursivelyMatches([](const Expression e, Context & c) {
-        /* If the exact result contains one of the following types, do not
-         * display it. */
-        ExpressionNode::Type t = e.type();
-        return (t == ExpressionNode::Type::Random) || (t == ExpressionNode::Type::Round);},
+  } else if (input().recursivelyMatches(
+        [](const Expression e, Context & c) {
+          /* If the input contains:
+           * - Random
+           * - Round
+           * or involves a Matrix, we only display the approximate output. */
+          ExpressionNode::Type t = e.type();
+          return (t == ExpressionNode::Type::Random) || (t == ExpressionNode::Type::Round) || Expression::IsMatrix(e, c);
+        },
         *context, true))
   {
-    m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (exactOutput().recursivelyMatches(Expression::IsMatrix, *context, false)) {
-    /* We do not need to replace symbols here because we recursively test the
-     * exact output where symbol have already been replaced. */
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts

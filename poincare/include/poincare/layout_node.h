@@ -56,7 +56,7 @@ public:
   virtual Type type() const = 0;
 
   // Comparison
-  virtual bool isIdenticalTo(Layout l);
+  bool isIdenticalTo(Layout l);
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -141,6 +141,8 @@ public:
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
 
 protected:
+  virtual bool protectedIsIdenticalTo(Layout l);
+
   // Tree navigation
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
 

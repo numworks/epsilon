@@ -97,8 +97,7 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context, bool
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
       return e.type() == ExpressionNode::Type::Decimal
-      || e.type() == ExpressionNode::Type::Float
-        || IsMatrix(e, context, replaceSymbols)
+        || e.type() == ExpressionNode::Type::Float
         || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
             && replaceSymbols
             && SymbolAbstract::matches(

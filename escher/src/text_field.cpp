@@ -359,10 +359,11 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
   /* Let's assume everything before the cursor is nested correctly, which is
    * reasonable if the expression is being entered left-to-right. */
   const char * text = this->text();
+  assert(text == m_contentView.draftTextBuffer());
   const char * location = cursorLocation();
-  UTF8Decoder decoder(text, text + (location - m_contentView.draftTextBuffer()));
+  UTF8Decoder decoder(text, location);
   unsigned level = 0;
-  while (location > m_contentView.draftTextBuffer()) {
+  while (location > text) {
     CodePoint c = decoder.previousCodePoint();
     location = decoder.stringPosition();
     switch (c) {
@@ -373,14 +374,14 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
           break;
         }
         // Skip over whitespace.
-        while (location > m_contentView.draftTextBuffer() && decoder.previousCodePoint() == ' ') {
+        while (location > text && decoder.previousCodePoint() == ' ') {
           location = decoder.stringPosition();
         }
         // We found the next innermost function we are currently in.
         for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
           const char * name = sFunctions[i].name;
           size_t length = strlen(name);
-          if (location >= (m_contentView.draftTextBuffer() + length) && memcmp(&text[(location - m_contentView.draftTextBuffer()) - length], name, length) == 0) {
+          if ((location >= text + length) && memcmp(&text[(location - text) - length], name, length) == 0) {
             return sFunctions[i].xnt;
           }
         }

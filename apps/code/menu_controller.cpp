@@ -273,7 +273,7 @@ void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, in
 }
 
 void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  if (!withinTemporarySelection && selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddScriptRow) {
+  if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddScriptRow) {
     t->selectCellAtLocation(0, numberOfRows()-1);
   }
 }

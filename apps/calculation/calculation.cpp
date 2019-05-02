@@ -172,7 +172,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   }
   if (shouldOnlyDisplayExactOutput()) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (exactOutput().recursivelyMatches([](const Expression e, Context & c, bool replaceSymbols) {
+  } else if (exactOutput().recursivelyMatches([](const Expression e, Context & c) {
         /* If the exact result contains one of the following types, do not
          * display it. */
         ExpressionNode::Type t = e.type();
@@ -192,7 +192,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
     // If the approximate result is 'unreal' or the exact result is 'undef'
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (input().isApproximate(*context) || exactOutput().isApproximate(*context)) {
+  } else if (input().recursivelyMatches(Expression::IsApproximate, *context) || exactOutput().recursivelyMatches(Expression::IsApproximate, *context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;

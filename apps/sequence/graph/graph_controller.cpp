@@ -64,7 +64,7 @@ bool GraphController::textFieldDidFinishEditing(TextField * textField, const cha
   if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  floatBody = std::round(floatBody);
+  floatBody = std::fmax(0, std::round(floatBody));
   double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);

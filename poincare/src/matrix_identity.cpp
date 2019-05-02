@@ -28,7 +28,9 @@ Evaluation<T> MatrixIdentityNode::templatedApproximate(Context& context, Prefere
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   T r = input.toScalar(); // Undefined if the child is not real
   if (!std::isnan(r) && !std::isinf(r) && r > 0 // The child is defined and positive
-      && std::ceil(r) ==  std::floor(r)) { // The child is an integer
+      && std::ceil(r) == std::floor(r) // The child is an integer
+      &&  r < ((float) INT_MAX)) // The child is not too big
+  {
     return MatrixComplex<T>::CreateIdentity((int)r);
   }
   return Complex<T>::Undefined();

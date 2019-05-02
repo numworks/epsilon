@@ -377,6 +377,7 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
         while (location > text && decoder.previousCodePoint() == ' ') {
           location = decoder.stringPosition();
         }
+        location = decoder.stringPosition();
         // We found the next innermost function we are currently in.
         for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
           const char * name = sFunctions[i].name;

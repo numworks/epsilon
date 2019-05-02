@@ -129,7 +129,7 @@ void HistoryViewCell::layoutSubviews() {
     maxCoordinate(0, maxFrameWidth - outputSize.width()),
     inputSize.height(),
     minCoordinate(maxFrameWidth, outputSize.width()),
-    bounds().height() - inputSize.height()
+    outputSize.height()
   ));
 }
 

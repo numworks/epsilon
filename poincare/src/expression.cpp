@@ -83,8 +83,12 @@ bool Expression::isRationalOne() const {
 }
 
 bool Expression::recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols) const {
-  if (test(*this, context, replaceSymbols)) {
+  if (test(*this, context)) {
     return true;
+  }
+  ExpressionNode::Type t = type();
+  if (replaceSymbols && (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function)) {
+    return SymbolAbstract::matches(convert<const SymbolAbstract>(), test, context);
   }
   for (int i = 0; i < this->numberOfChildren(); i++) {
     if (childAtIndex(i).recursivelyMatches(test, context, replaceSymbols)) {
@@ -94,57 +98,26 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context, bool
   return false;
 }
 
-bool Expression::isApproximate(Context & context) const {
-  return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
-      return e.type() == ExpressionNode::Type::Decimal
-        || e.type() == ExpressionNode::Type::Float
-        || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
-            && replaceSymbols
-            && SymbolAbstract::matches(
-                static_cast<const SymbolAbstract&>(e),
-                [](const Expression e, Context & context, bool replaceSymbols) {
-                  return e.isApproximate(context);
-                },
-                context));
-        }, context, true);
+bool Expression::IsApproximate(const Expression e, Context & context) {
+  return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float;
 }
 
-bool Expression::IsRandom(const Expression e, Context & context, bool replaceSymbols) {
-  return e.isRandom()
-    || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
-        && replaceSymbols
-        && SymbolAbstract::matches(
-            static_cast<const Symbol&>(e),
-            [](const Expression e, Context & context, bool replaceSymbols) {
-              return e.recursivelyMatches(
-                  [](const Expression e, Context & context, bool replaceSymbols) {
-                    return Expression::IsRandom(e, context, replaceSymbols);
-                  },
-                  context, replaceSymbols);
-            },
-            context));
+bool Expression::IsRandom(const Expression e, Context & context) {
+  return e.isRandom();
 }
 
-bool Expression::IsMatrix(const Expression e, Context & context, bool replaceSymbols) {
+bool Expression::IsMatrix(const Expression e, Context & context) {
   return e.type() == ExpressionNode::Type::Matrix
     || e.type() == ExpressionNode::Type::ConfidenceInterval
     || e.type() == ExpressionNode::Type::MatrixDimension
     || e.type() == ExpressionNode::Type::PredictionInterval
     || e.type() == ExpressionNode::Type::MatrixInverse
-    || e.type() == ExpressionNode::Type::MatrixTranspose
     || e.type() == ExpressionNode::Type::MatrixIdentity
-    || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
-        && replaceSymbols
-        && SymbolAbstract::matches(
-            static_cast<const Symbol&>(e),
-            [](const Expression e, Context & context, bool replaceSymbols) {
-              return e.recursivelyMatches(
-                  [](const Expression e, Context & context, bool replaceSymbols) {
-                    return Expression::IsMatrix(e, context, replaceSymbols);
-                  },
-                  context, replaceSymbols);
-            },
-            context));
+    || e.type() == ExpressionNode::Type::MatrixTranspose;
+}
+
+bool Expression::IsInfinity(const Expression e, Context & context) {
+  return e.type() == ExpressionNode::Type::Infinity;
 }
 
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
@@ -192,7 +165,7 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
         /* degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
-        assert(!recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.isUndefined(); }, context, true));
+        assert(!recursivelyMatches([](const Expression e, Context & context) { return e.isUndefined(); }, context, true));
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
@@ -260,7 +233,7 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 }
 
 bool Expression::hasReplaceableSymbols(Context & context) const {
-  return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) {
+  return recursivelyMatches([](const Expression e, Context & context) {
       return (e.type() == ExpressionNode::Type::Symbol
           && !static_cast<const Symbol &>(e).isSystemSymbol()
           && !context.expressionForSymbol(static_cast<const Symbol &>(e), false).isUninitialized())
@@ -366,7 +339,7 @@ Preferences::ComplexFormat Expression::UpdatedComplexFormatWithTextInput(Prefere
 }
 
 Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & exp, Context & context) {
-  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, true)) {
+  if (complexFormat == Preferences::ComplexFormat::Real && exp.recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, true)) {
     return Preferences::ComplexFormat::Cartesian;
   }
   return complexFormat;
@@ -557,10 +530,12 @@ Expression Expression::reduce(Context & context, Preferences::ComplexFormat comp
 Expression Expression::deepReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
 #if MATRIX_EXACT_REDUCING
 #else
-  if (IsMatrix(*this, context, true)) {
+#if 0
+  if (IsMatrix(*this, context)) {
     sSimplificationHasBeenInterrupted = true;
     return *this;
   }
+#endif
 #endif
 
   deepReduceChildren(context, complexFormat, angleUnit, target, symbolicComputation);

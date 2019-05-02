@@ -180,6 +180,10 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
         *context, true))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
+  } else if (exactOutput().recursivelyMatches(Expression::IsMatrix, *context, false)) {
+    /* We do not need to replace symbols here because we recursively test the
+     * exact output where symbol have already been replaced. */
+    m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     /* If the exact and approximate results' texts are equal and their layouts
      * too, do not display the exact result. If the two layouts are not equal

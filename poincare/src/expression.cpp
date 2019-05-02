@@ -133,6 +133,7 @@ bool Expression::IsMatrix(const Expression e, Context & context, bool replaceSym
     || e.type() == ExpressionNode::Type::PredictionInterval
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixTranspose
+    || e.type() == ExpressionNode::Type::MatrixIdentity
     || ((e.type() == ExpressionNode::Type::Symbol || e.type() == ExpressionNode::Type::Function)
         && replaceSymbols
         && SymbolAbstract::matches(

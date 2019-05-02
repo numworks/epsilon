@@ -21,7 +21,12 @@ KDSize BannerView::minimalSizeForOptimalDisplay() const {
 }
 
 void BannerView::layoutSubviews() {
-  assert(!m_frame.isEmpty());
+  if (m_frame.isEmpty()) {
+    /* If the frame has not been set yet, there is no point in layouting the
+     * subviews.
+     * TODO: Do not call layout Subviews if the frame has not been set? */
+    return;
+  }
   /* We iterate on subviews, adding their width until we exceed the view bound.
   * The last subview that exceeds the bound is recorded as the first subview of
   * the next line. For the current line, we scan again the subviews and frame

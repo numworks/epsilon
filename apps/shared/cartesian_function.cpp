@@ -74,7 +74,7 @@ int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSi
   if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {
     return numberOfChars;
   }
-  memmove(firstParenthesis + derivativeSize, firstParenthesis, buffer + numberOfChars - firstParenthesis);
+  memmove(firstParenthesis + derivativeSize, firstParenthesis, numberOfChars - (firstParenthesis - buffer) + 1);
   UTF8Decoder::CodePointToChars('\'', firstParenthesis, derivativeSize);
   return numberOfChars + derivativeSize;
 }

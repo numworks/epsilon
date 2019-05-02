@@ -15,7 +15,7 @@ Context * TextFieldDelegateApp::localContext() {
 }
 
 char TextFieldDelegateApp::XNT() {
-  return 'X';
+  return 'x';
 }
 
 bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

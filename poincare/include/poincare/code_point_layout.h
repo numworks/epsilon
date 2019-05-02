@@ -22,7 +22,6 @@ public:
 
   // Layout
   Type type() const override { return Type::CodePointLayout; }
-  bool isIdenticalTo(Layout l) override;
 
   // CodePointLayout
   CodePoint codePoint() const { return m_codePoint; }
@@ -63,6 +62,7 @@ protected:
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   bool isMultiplicationCodePoint() const;
+  bool protectedIsIdenticalTo(Layout l) override;
   CodePoint m_codePoint;
   const KDFont * m_font;
 };

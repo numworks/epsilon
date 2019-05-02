@@ -81,6 +81,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Board10initClocksEv)
     *(.text._ZNV3Ion6Device4Regs*)
     *(.text._ZN3Ion6Device4Regs*)
+    *(.text.*3Ion6Device4Regs4GPIO5PUPDR*)
     *(.text._ZNK3Ion6Device4Regs9AFGPIOPin*)
     *(.text._ZN3Ion6Device13ExternalFlash*)
     *(.text._ZN3Ion6Device5Cache*)
@@ -105,6 +106,9 @@ SECTIONS {
   .rodata.internal : {
     . = ALIGN(4);
     *(.rodata._ZN3Ion6Device13ExternalFlash*)
+    /* 'start' dependencies */
+    *(.rodata._ZN3Ion6Device4RegsL5GPIOAE)
+    *(.rodata._ZN3Ion6Device4RegsL5GPIOBE)
   } >INTERNAL_FLASH
 
   /* External flash memory */

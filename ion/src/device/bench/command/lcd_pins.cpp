@@ -73,7 +73,7 @@ void LCDPins(const char * input) {
   int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin);
 
 
-  // Put all testable GPIO to pull down and verify they all read 0
+  // Put all testable GPIO to pull down
   for (const Ion::Device::Regs::GPIOPin & pinDown : LCDpins) {
     setPin(pinDown, PinType::PullDown);
   }

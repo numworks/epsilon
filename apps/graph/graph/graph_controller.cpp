@@ -70,7 +70,7 @@ BannerView * GraphController::bannerView() {
 
 void GraphController::reloadBannerView() {
   FunctionGraphController::reloadBannerView();
-  if (functionStore()->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
+  if (!m_displayDerivativeInBanner) {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());

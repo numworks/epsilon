@@ -69,9 +69,7 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
 }
 
 void FunctionGraphController::reloadBannerView() {
-  if (functionStore()->numberOfActiveFunctions() == 0) {
-    return;
-  }
+  assert(functionStore()->numberOfActiveFunctions() > 0);
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore());
 }
@@ -82,16 +80,11 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
   float xMax = interactiveCurveViewRange->xMax();
-  if (functionStore()->numberOfActiveFunctions() <= 0) {
-    InteractiveCurveViewRangeDelegate::Range range;
-    range.min = xMin;
-    range.max = xMax;
-    return range;
-  }
   /* In practice, a step smaller than a pixel's width is needed for sampling
    * the values of a function. Otherwise some relevant extremal values may be
    * missed. */
   const float step = curveView()->pixelWidth() / 2;
+  assert(functionStore()->numberOfActiveFunctions() > 0);
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     /* Scan x-range from the middle to the extrema in order to get balanced

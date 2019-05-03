@@ -17,8 +17,6 @@ namespace Shared {
 SumGraphController::SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_step(Step::FirstParameter),
-  m_startSum(NAN),
-  m_endSum(NAN),
   m_record(),
   m_graphRange(range),
   m_graphView(graphView),
@@ -37,12 +35,9 @@ void SumGraphController::viewWillAppear() {
   m_graphView->setAreaHighlight(NAN, NAN);
   m_graphView->reload();
 
-  m_startSum = m_cursor->x();
-  m_endSum = NAN;
   m_step = Step::FirstParameter;
   reloadBannerView();
 }
-
 
 void SumGraphController::didEnterResponderChain(Responder * previousFirstResponder) {
   Container::activeApp()->setFirstResponder(m_legendView.textField());
@@ -72,12 +67,8 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
-  if (m_step == Step::FirstParameter) {
-    m_startSum = m_cursor->x();
-  }
   if (m_step == Step::SecondParameter) {
-    m_endSum = m_cursor->x();
-    m_graphView->setAreaHighlight(m_startSum, m_endSum);
+    m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
   }
   m_legendView.setEditableZone(m_cursor->x());
   m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
@@ -121,8 +112,8 @@ bool SumGraphController::handleEnter() {
     stack->pop();
   } else {
     if (m_step == Step::FirstParameter) {
+      m_startSum = m_cursor->x();
       m_graphView->setAreaHighlight(m_startSum, m_startSum);
-      m_endSum = m_startSum;
     } else {
       m_graphView->setAreaHighlightColor(true);
       m_graphView->setCursorView(nullptr);
@@ -136,19 +127,21 @@ bool SumGraphController::handleEnter() {
 
 void SumGraphController::reloadBannerView() {
   m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
+  double endSum = NAN;
   double result;
   Poincare::Layout functionLayout;
   if (m_step == Step::Result) {
+    endSum = m_cursor->x();
     FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
     ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-    result = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
+    result = function->sumBetweenBounds(m_startSum, endSum, myApp->localContext());
     functionLayout = createFunctionLayout(function);
   } else {
     m_legendView.setEditableZone(m_cursor->x());
     result = NAN;
   }
-  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, result, functionLayout);
+  m_legendView.setSumSymbol(m_step, m_startSum, endSum, result, functionLayout);
 }
 
 /* Legend View */

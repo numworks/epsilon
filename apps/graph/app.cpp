@@ -23,7 +23,7 @@ const Image * App::Descriptor::icon() {
 App::Snapshot::Snapshot() :
   Shared::FunctionApp::Snapshot::Snapshot(),
   m_functionStore(),
-  m_graphRange(&m_cursor)
+  m_graphRange()
 {
 }
 

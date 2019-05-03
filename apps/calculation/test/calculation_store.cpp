@@ -63,7 +63,7 @@ QUIZ_CASE(calculation_ans) {
 
   store.push("ans+0.22", &globalContext);
   lastCalculation = store.calculationAtIndex(2);
-  quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ApproximateOnly);
+  quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
 
   store.deleteAll();

@@ -223,7 +223,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
     replaceWithInPlace(result);
     return result;
   }
-  bool infiniteArg = c.recursivelyMatchesInfinity(context);
+  bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, context);
   // log(x,x)->1 with x != inf and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
     Expression result = infiniteArg ? Undefined::Builder().convert<Expression>() : Rational::Builder(1).convert<Expression>();
@@ -241,7 +241,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::Comple
     const Rational r = static_cast<Rational &>(c);
     // log(0, x) = -inf if x > 1 && x != inf || inf x < 1 || undef if x < 0
     if (r.isZero()) {
-      bool infiniteBase = b.recursivelyMatchesInfinity(context);
+      bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, context);
       // Special case: log(0,inf) -> undef
       if (infiniteBase) {
         Expression result = Undefined::Builder();

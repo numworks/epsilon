@@ -15,7 +15,6 @@ public:
 
   // Layout
   Type type() const override { return Type::EmptyLayout; }
-  bool isIdenticalTo(Layout l) override;
 
   EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, const KDFont * font = KDFont::LargeFont, bool margins = true) :
     LayoutNode(),
@@ -67,6 +66,7 @@ private:
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  bool protectedIsIdenticalTo(Layout l) override;
 
   bool m_isVisible;
   Color m_color;

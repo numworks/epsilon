@@ -218,7 +218,7 @@ void FunctionListController::tableViewDidChangeSelection(SelectableTableView * t
   // Update memoization of cell heights
   ExpressionModelListController::tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   // Do not select the cell left of the "addEmptyFunction" cell
-  if (!withinTemporarySelection && isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
+  if (isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
     t->selectCellAtLocation(1, numberOfRows()-1);
   }
 }

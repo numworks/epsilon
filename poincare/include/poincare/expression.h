@@ -129,13 +129,14 @@ public:
   bool isRationalZero() const;
   bool isRationalOne() const;
   bool isRandom() const { return node()->isRandom(); }
-  static bool IsRandom(const Expression e, Context & context, bool replaceSymbols);
-  typedef bool (*ExpressionTest)(const Expression e, Context & context, bool replaceSymbols);
-  bool recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols) const;
-  bool isApproximate(Context & context) const;
-  bool recursivelyMatchesInfinity(Context & context) { return recursivelyMatches([](const Expression e, Context & context, bool replaceSymbols) { return e.type() == ExpressionNode::Type::Infinity; }, context, true); }
-  static bool IsMatrix(const Expression e, Context & context, bool replaceSymbols);
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
+  typedef bool (*ExpressionTest)(const Expression e, Context & context);
+  bool recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols = true) const;
+  // Set of ExpressionTest that can be used with recursivelyMatches
+  static bool IsApproximate(const Expression e, Context & context);
+  static bool IsRandom(const Expression e, Context & context);
+  static bool IsMatrix(const Expression e, Context & context);
+  static bool IsInfinity(const Expression e, Context & context);
   /* 'characteristicXRange' tries to assess the range on x where the expression
    * (considered as a function on x) has an interesting evolution. For example,
    * the period of the function on 'x' if it is periodic. If

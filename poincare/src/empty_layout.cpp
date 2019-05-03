@@ -5,14 +5,6 @@
 
 namespace Poincare {
 
-bool EmptyLayoutNode::isIdenticalTo(Layout l) {
-  if (l.type() != Type::EmptyLayout) {
-    return false;
-  }
-  EmptyLayoutNode * n = static_cast<EmptyLayoutNode *>(l.node());
-  return color() == n->color();
-}
-
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();
@@ -100,6 +92,12 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
   }
+}
+
+bool EmptyLayoutNode::protectedIsIdenticalTo(Layout l) {
+  assert(l.type() == Type::EmptyLayout);
+  EmptyLayoutNode * n = static_cast<EmptyLayoutNode *>(l.node());
+  return color() == n->color();
 }
 
 EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}

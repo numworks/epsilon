@@ -17,7 +17,7 @@ static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regressio
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
-  InteractiveCurveViewRange(nullptr),
+  InteractiveCurveViewRange(),
   DoublePairStore(),
   m_seriesChecksum{0, 0, 0},
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)

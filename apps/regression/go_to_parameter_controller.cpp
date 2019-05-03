@@ -40,22 +40,12 @@ double GoToParameterController::parameterAtIndex(int index) {
 bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   int series = m_graphController->selectedSeriesIndex();
-  if (std::fabs(f) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
   Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
   double unknown = m_xPrediction ?
     m_store->yValueForXValue(series, f, globContext) :
     m_store->xValueForYValue(series, f, globContext);
 
-  // Forbidden value
-  if (std::fabs(unknown) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-
-  if (std::isnan(unknown)) {
+  if (std::isnan(unknown) || std::isinf(unknown)) {
     if (!m_xPrediction) {
       double x = m_cursor->x();
       unknown = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
@@ -77,7 +67,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     double yFromX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), unknown);
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
      * because of computation precision. y2 migth thus be invalid. */
-    if (std::fabs(yFromX) > k_maxDisplayableFloat || std::isnan(yFromX)) {
+    if (std::isnan(yFromX) || std::isinf(yFromX)) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

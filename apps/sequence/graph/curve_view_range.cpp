@@ -8,8 +8,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
-CurveViewRange::CurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate) :
-  InteractiveCurveViewRange(cursor, delegate)
+CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
+  InteractiveCurveViewRange(delegate)
 {
   m_xMin = -k_displayLeftMarginRatio * m_xMax;
 }

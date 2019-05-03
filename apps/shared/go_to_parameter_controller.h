@@ -14,7 +14,6 @@ public:
   int numberOfRows() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
-  constexpr static double k_maxDisplayableFloat = 1E8;
   CurveViewCursor * m_cursor;
   InteractiveCurveViewRange * m_graphRange;
 private:

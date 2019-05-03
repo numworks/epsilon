@@ -20,7 +20,6 @@ public:
 
   // Layout
   Type type() const override { return Type::VerticalOffsetLayout; }
-  bool isIdenticalTo(Layout l) override;
 
   // VerticalOffsetLayoutNode
   Position position() const { return m_position; }
@@ -54,6 +53,7 @@ private:
   constexpr static KDCoordinate k_separationMargin = 5;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+  bool protectedIsIdenticalTo(Layout l) override;
   LayoutNode * indiceLayout() { return childAtIndex(0); }
   LayoutNode * baseLayout();
   Position m_position;

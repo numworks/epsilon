@@ -138,8 +138,10 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   }
   assert(numberOfRows*numberOfColumns <= k_maxNumberOfCoefficients);
   int dim = numberOfRows;
-  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  T operands[k_maxNumberOfCoefficients*(3/2)]; // inv dimensions: dim x (2*dim)
+  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix
+   * (A is squared with less than k_maxNumberOfCoefficients so (A|I) has less than
+   * 2*k_maxNumberOfCoefficients */
+  T operands[2*k_maxNumberOfCoefficients];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       operands[i*2*dim+j] = array[i*numberOfColumns+j];

@@ -4,6 +4,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
+#include <limits.h>
 
 namespace Poincare {
 

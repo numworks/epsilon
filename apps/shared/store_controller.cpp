@@ -95,25 +95,13 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     }
     return true;
   }
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
-    return false;
+  bool didFinishEditing = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
+  if (didFinishEditing) {
+    // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
+    // See Shared::ValuesController::textFieldDidFinishEditing
+    selectableTableView()->reloadData();
   }
-  if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-  // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
-  selectableTableView()->reloadData();
-  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
-  } else {
-    selectableTableView()->handleEvent(event);
-  }
-  return true;
+  return didFinishEditing;
 }
 
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {

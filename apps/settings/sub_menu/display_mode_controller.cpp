@@ -76,10 +76,9 @@ bool DisplayModeController::textFieldShouldFinishEditing(TextField * textField, 
 }
 
 bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  Context * globalContext = textFieldDelegateApp()->localContext();
-  float floatBody = PoincareHelpers::ApproximateToScalar<float>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    floatBody = PrintFloat::k_numberOfPrintedSignificantDigits;
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
   }
   if (floatBody < 1) {
    floatBody = 1;

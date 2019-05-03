@@ -8,16 +8,13 @@
 namespace Poincare {
 
 bool LayoutNode::isIdenticalTo(Layout l) {
-  if (l.isUninitialized() || type() != l.type() || numberOfChildren() != l.numberOfChildren()) {
+  if (l.isUninitialized() || type() != l.type()) {
     return false;
   }
-  for (int i = 0; i < numberOfChildren(); i++) {
-    Layout child = childAtIndex(i);
-    if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
-      return false;
-    }
+  if (identifier() == l.identifier()) {
+    return true;
   }
-  return true;
+  return protectedIsIdenticalTo(l);
 }
 
 // Rendering
@@ -139,7 +136,20 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
   return isCollapsable(&numberOfOpenParentheses, false);
 }
 
-// Private
+// Protected and private
+
+bool LayoutNode::protectedIsIdenticalTo(Layout l) {
+  if (numberOfChildren() != l.numberOfChildren()) {
+    return false;
+  }
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Layout child = childAtIndex(i);
+    if (!childAtIndex(i)->isIdenticalTo(l.childAtIndex(i))) {
+      return false;
+    }
+  }
+  return true;
+}
 
 void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (!equivalentPositionVisited) {

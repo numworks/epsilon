@@ -9,7 +9,7 @@ using namespace Poincare;
 namespace Shared {
 
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
-  SimpleInteractiveCurveViewController(parentResponder, interactiveRange, curveView, cursor),
+  SimpleInteractiveCurveViewController(parentResponder, cursor),
   ButtonRowDelegate(header, nullptr),
   m_modelVersion(modelVersion),
   m_rangeVersion(rangeVersion),
@@ -61,9 +61,11 @@ float InteractiveCurveViewController::addMargin(float x, float range, bool isMin
    * topRatioBefore = topRatioAfter, we would create too small margins and the
    * controller might need to pan right after a Y auto calibration. */
 
-  assert(displayBottomMarginRatio()+displayTopMarginRatio() < 1); // Assertion so that the formula is correct
-  float ratioDenominator = 1-displayBottomMarginRatio()-displayTopMarginRatio();
-  float ratio = isMin ? -displayBottomMarginRatio() : displayTopMarginRatio();
+  float topMarginRatio = cursorTopMarginRatio();
+  float bottomMarginRatio = cursorBottomMarginRatio();
+  assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
+  float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
+  float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
   ratio = ratio / ratioDenominator;
   return x+ratio*range;
 }
@@ -89,24 +91,25 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (SimpleInteractiveCurveViewController::handleEvent(event)) {
-    return true;
-  }
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
     if (moveCursorVertically(direction)) {
+      interactiveCurveViewRange()->panToMakePointVisible(
+        m_cursor->x(), m_cursor->y(),
+        cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio
+      );
       reloadBannerView();
       curveView()->reload();
       return true;
     }
-    if (event == Ion::Events::Down) {
-      return false;
+    if (event == Ion::Events::Up) {
+      curveView()->selectMainView(false);
+      header()->setSelectedButton(0);
+      return true;
     }
-    curveView()->selectMainView(false);
-    header()->setSelectedButton(0);
-    return true;
+    return false;
   }
-  return false;
+  return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
 void InteractiveCurveViewController::didBecomeFirstResponder() {
@@ -143,7 +146,7 @@ void InteractiveCurveViewController::viewWillAppear() {
   uint32_t newModelVersion = modelVersion();
   if (*m_modelVersion != newModelVersion) {
     if (*m_modelVersion == 0 || numberOfCurves() == 1) {
-      initRangeParameters();
+      interactiveCurveViewRange()->setDefault();
     }
     *m_modelVersion = newModelVersion;
     didChangeRange(interactiveCurveViewRange());
@@ -171,11 +174,6 @@ void InteractiveCurveViewController::viewDidDisappear() {
   *m_rangeVersion = rangeVersion();
 }
 
-void InteractiveCurveViewController::didEnterResponderChain(Responder * previousFirstResponder) {
-  reloadBannerView();
-  curveView()->reload();
-}
-
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     curveView()->selectMainView(false);
@@ -184,12 +182,43 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
   }
 }
 
+bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
+  }
+  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, y);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  reloadBannerView();
+  curveView()->reload();
+  return true;
+}
+
+bool InteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if ((event == Ion::Events::Plus || event == Ion::Events::Minus) && !textField->isEditing()) {
+    return handleEvent(event);
+  }
+  return SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(textField, event);
+}
+
 Responder * InteractiveCurveViewController::tabController() const{
   return (stackController()->parentResponder());
 }
 
 StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+}
+
+bool InteractiveCurveViewController::isCursorVisible() {
+  InteractiveCurveViewRange * range = interactiveCurveViewRange();
+  float xRange = range->xMax() - range->xMin();
+  float yRange = range->yMax() - range->yMin();
+  return
+    m_cursor->x() >= range->xMin() +  k_cursorLeftMarginRatio   * xRange &&
+    m_cursor->x() <= range->xMax() - k_cursorRightMarginRatio   * xRange &&
+    m_cursor->y() >= range->yMin() +  cursorBottomMarginRatio() * yRange &&
+    m_cursor->y() <= range->yMax() -     cursorTopMarginRatio() * yRange;
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context) const {
@@ -245,6 +274,14 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     }
   }
   return nextCurveIndex;
+}
+
+float InteractiveCurveViewController::cursorBottomMarginRatio() {
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
+}
+
+float InteractiveCurveViewController::estimatedBannerHeight() const {
+  return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
 }
 
 }

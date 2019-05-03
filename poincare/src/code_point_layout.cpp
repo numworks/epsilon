@@ -4,14 +4,6 @@
 
 namespace Poincare {
 
-bool CodePointLayoutNode::isIdenticalTo(Layout l) {
-  if (l.type() != Type::CodePointLayout) {
-    return false;
-  }
-  CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
-  return codePoint() == cpl.codePoint() && font() == cpl.font();
-}
-
 // LayoutNode
 void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right) {
@@ -104,6 +96,12 @@ bool CodePointLayoutNode::isMultiplicationCodePoint() const {
   return m_codePoint == '*'
     || m_codePoint == UCodePointMultiplicationSign
     || m_codePoint == UCodePointMiddleDot;
+}
+
+bool CodePointLayoutNode::protectedIsIdenticalTo(Layout l) {
+  assert(l.type() == Type::CodePointLayout);
+  CodePointLayout & cpl = static_cast<CodePointLayout &>(l);
+  return codePoint() == cpl.codePoint() && font() == cpl.font();
 }
 
 CodePointLayout CodePointLayout::Builder(CodePoint c, const KDFont * font) {

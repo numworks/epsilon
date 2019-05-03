@@ -49,7 +49,7 @@ int MultipleDataView::numberOfSubviews() const {
 
 View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
-    return editableBannerView();
+    return bannerView();
   }
   int seriesIndex = 0;
   int nonEmptySeriesIndex = -1;
@@ -68,7 +68,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
 
 void MultipleDataView::layoutSubviews() {
   // We need to set the banner width first, so its height can be computed
-  editableBannerView()->setFrame(KDRect(0, 0, bounds().width(), 0));
+  bannerView()->setFrame(KDRect(0, 0, bounds().width(), 0));
   layoutDataSubviews();
   layoutBanner();
 }
@@ -76,7 +76,7 @@ void MultipleDataView::layoutSubviews() {
 void MultipleDataView::layoutDataSubviews() {
   int numberDataSubviews = m_store->numberOfNonEmptySeries();
   assert(numberDataSubviews > 0);
-  KDCoordinate bannerHeight = bannerFrame().height();
+  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberDataSubviews + 1; // +1 to make sure that all pixel rows are drawn
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
@@ -95,18 +95,18 @@ void MultipleDataView::changeDataViewSelection(int index, bool select) {
 }
 
 KDRect MultipleDataView::bannerFrame() const {
-  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
+  KDCoordinate bannerHeight = const_cast<MultipleDataView *>(this)->bannerView()->minimalSizeForOptimalDisplay().height();
   KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
   return frame;
 }
 
 void MultipleDataView::layoutBanner() {
-  KDCoordinate bannerHeight = bannerFrame().height();
+  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
   if (m_displayBanner) {
-    editableBannerView()->setFrame(bannerFrame());
+    bannerView()->setFrame(bannerFrame());
   } else {
     KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), 0);
-    editableBannerView()->setFrame(frame);
+    bannerView()->setFrame(frame);
   }
 }
 

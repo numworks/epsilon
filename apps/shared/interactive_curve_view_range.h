@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include "memoized_curve_view_range.h"
-#include "curve_view_cursor.h"
 #include "interactive_curve_view_range_delegate.h"
 #include <ion/display.h>
 #include <float.h>
@@ -13,15 +12,13 @@ namespace Shared {
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   constexpr static float k_minFloat = 1E-4f;
-  InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate = nullptr) :
+  InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
     m_yAuto(true),
-    m_delegate(delegate),
-    m_cursor(cursor)
+    m_delegate(delegate)
   {}
 
   void setDelegate(InteractiveCurveViewRangeDelegate * delegate) { m_delegate = delegate; }
-  void setCursor(CurveViewCursor * cursor) { m_cursor = cursor; }
   uint32_t rangeChecksum() override;
 
   bool yAuto() const { return m_yAuto; }
@@ -42,7 +39,6 @@ public:
   virtual void setDefault();
   void centerAxisAround(Axis axis, float position);
   void panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
-  bool isCursorVisible(float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation);
 protected:
   bool m_yAuto;
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
@@ -64,7 +60,6 @@ private:
   constexpr static float k_lowerMaxFloat = 9E+7f;
   constexpr static float k_maxRatioPositionRange = 1E5f;
   void notifyRangeChange();
-  CurveViewCursor * m_cursor;
 };
 
 static_assert(InteractiveCurveViewRange::k_minFloat >= FLT_EPSILON, "InteractiveCurveViewRange's minimal float range is lower than float precision, it might draw uglily curves such as cos(x)^2+sin(x)^2");

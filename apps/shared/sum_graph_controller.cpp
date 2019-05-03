@@ -1,7 +1,8 @@
 #include "sum_graph_controller.h"
 #include "function_app.h"
 #include "../apps_container.h"
-#include <poincare_layouts.h>
+#include <poincare/empty_layout.h>
+#include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
 #include "poincare_helpers.h"
 
@@ -14,7 +15,7 @@ using namespace Poincare;
 namespace Shared {
 
 SumGraphController::SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
-  SimpleInteractiveCurveViewController(parentResponder, range, graphView, cursor),
+  SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_step(Step::FirstParameter),
   m_startSum(NAN),
   m_endSum(NAN),
@@ -27,7 +28,7 @@ SumGraphController::SumGraphController(Responder * parentResponder, InputEventHa
 }
 
 void SumGraphController::viewWillAppear() {
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
   m_graphView->setOkView(nullptr);
@@ -39,9 +40,7 @@ void SumGraphController::viewWillAppear() {
   m_startSum = m_cursor->x();
   m_endSum = NAN;
   m_step = Step::FirstParameter;
-  m_legendView.setLegendMessage(legendMessageAtStep(Step::FirstParameter), Step::FirstParameter);
-  m_legendView.setEditableZone(m_startSum);
-  m_legendView.setSumSymbol(m_step);
+  reloadBannerView();
 }
 
 
@@ -50,54 +49,21 @@ void SumGraphController::didEnterResponderChain(Responder * previousFirstRespond
 }
 
 bool SumGraphController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Plus || event == Ion::Events::Minus) {
-    return handleZoom(event);
-  }
-  if ((int)m_step > 1 && event != Ion::Events::OK && event != Ion::Events::EXE && event != Ion::Events::Back) {
-    return false;
-  }
-  if (event == Ion::Events::Left && !m_legendView.textField()->isEditing()) {
-    if ((int)m_step > 0 && m_startSum >= m_cursor->x()) {
-      return false;
-    }
-    if (moveCursorHorizontallyToPosition(cursorNextStep(m_cursor->x(), -1))) {
-      m_graphView->reload();
-      return true;
-    }
-    return false;
-  }
-  if (event == Ion::Events::Right && !m_legendView.textField()->isEditing()) {
-    if (moveCursorHorizontallyToPosition(cursorNextStep(m_cursor->x(), 1))) {
-      m_graphView->reload();
-      return true;
-    }
-    return false;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnter();
-  }
-  if (event == Ion::Events::Back && (int)m_step > 0) {
+  if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step-1);
-    m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
     if (m_step == Step::SecondParameter) {
       app()->setFirstResponder(m_legendView.textField());
       m_graphView->setAreaHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
-      m_endSum = m_cursor->x();
-      m_legendView.setEditableZone(m_endSum);
-      m_legendView.setSumSymbol(m_step, m_startSum);
     }
     if (m_step == Step::FirstParameter) {
       m_graphView->setAreaHighlight(NAN,NAN);
       moveCursorHorizontallyToPosition(m_startSum);
-      m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
-      m_legendView.setEditableZone(m_startSum);
-      m_legendView.setSumSymbol(m_step);
-      m_graphView->reload();
     }
+    reloadBannerView();
     return true;
   }
-  return false;
+  return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
 bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
@@ -108,14 +74,14 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   m_cursor->moveTo(x, y);
   if (m_step == Step::FirstParameter) {
     m_startSum = m_cursor->x();
-    m_legendView.setEditableZone(m_startSum);
   }
   if (m_step == Step::SecondParameter) {
-    m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
     m_endSum = m_cursor->x();
-    m_legendView.setEditableZone(m_endSum);
+    m_graphView->setAreaHighlight(m_startSum, m_endSum);
   }
-  m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_legendView.setEditableZone(m_cursor->x());
+  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  m_graphView->reload();
   return true;
 }
 
@@ -125,80 +91,65 @@ void SumGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  if (m_step == Step::SecondParameter && floatBody < m_startSum) {
+  if ((m_step == Step::SecondParameter && floatBody < m_startSum) || !moveCursorHorizontallyToPosition(floatBody)) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  if (moveCursorHorizontallyToPosition(floatBody)) {
-    handleEnter();
-    m_graphView->reload();
-    return true;
-  }
-  app()->displayWarning(I18n::Message::ForbiddenValue);
-  return false;
+  return handleEnter();
 }
 
-bool SumGraphController::textFieldDidAbortEditing(TextField * textField) {
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-  double parameter = NAN;
-  switch(m_step) {
-    case Step::FirstParameter:
-      parameter = m_startSum;
-      break;
-    case Step::SecondParameter:
-      parameter = m_endSum;
-      break;
-    default:
-      assert(false);
-  }
-  PrintFloat::convertFloatToText<double>(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-  textField->setText(buffer);
-  return true;
-}
-
-bool SumGraphController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
-    return handleEnter();
-  }
+bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
   if (m_step == Step::Result) {
-    return handleEvent(event);
+    return false;
   }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+  const double oldPosition = m_cursor->x();
+  int direction = event == Ion::Events::Left ? -1 : 1;
+  double newPosition = cursorNextStep(oldPosition, direction);
+  if (m_step == Step::SecondParameter && newPosition < m_startSum) {
+    newPosition = m_startSum;
+  }
+  return moveCursorHorizontallyToPosition(newPosition);
 }
 
 bool SumGraphController::handleEnter() {
   if (m_step == Step::Result) {
     StackViewController * stack = (StackViewController *)parentResponder();
     stack->pop();
-    return true;
+  } else {
+    if (m_step == Step::FirstParameter) {
+      m_graphView->setAreaHighlight(m_startSum, m_startSum);
+      m_endSum = m_startSum;
+    } else {
+      m_graphView->setAreaHighlightColor(true);
+      m_graphView->setCursorView(nullptr);
+      app()->setFirstResponder(this);
+    }
+    m_step = (Step)((int)m_step+1);
+    reloadBannerView();
   }
-  if (m_step == Step::FirstParameter) {
-    m_step = Step::SecondParameter;
-    m_graphView->setAreaHighlight(m_startSum,m_startSum);
-    m_endSum = m_cursor->x();
-    m_legendView.setEditableZone(m_endSum);
-    m_legendView.setSumSymbol(m_step, m_startSum);
-    m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
-    return true;
-  }
-  m_step = (Step)((int)m_step+1);
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  assert(!m_record.isNull());
-  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-  double sum = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
-  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, createFunctionLayout(function));
-  m_legendView.setLegendMessage(I18n::Message::Default, m_step);
-  m_graphView->setAreaHighlightColor(true);
-  m_graphView->setCursorView(nullptr);
-  myApp->setFirstResponder(this);
   return true;
+}
+
+void SumGraphController::reloadBannerView() {
+  m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
+  double result;
+  Poincare::Layout functionLayout;
+  if (m_step == Step::Result) {
+    FunctionApp * myApp = static_cast<FunctionApp *>(app());
+    assert(!m_record.isNull());
+    ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+    result = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
+    functionLayout = createFunctionLayout(function);
+  } else {
+    m_legendView.setEditableZone(m_cursor->x());
+    result = NAN;
+    functionLayout = Poincare::Layout();
+  }
+  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, result, functionLayout);
 }
 
 /* Legend View */
@@ -248,7 +199,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   } else {
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    Layout start = LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
+    Layout start = LayoutHelper::String(buffer, strlen(buffer), k_font);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     Layout end = LayoutHelper::String(buffer, strlen(buffer), k_font);
     m_sumLayout = CondensedSumLayout::Builder(
@@ -269,10 +220,6 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     m_sum.setAlignment(0.0f, 0.5f);
   }
   layoutSubviews(step);
-}
-
-int SumGraphController::LegendView::numberOfSubviews() const {
-  return 3;
 }
 
 View * SumGraphController::LegendView::subviewAtIndex(int index) {
@@ -303,17 +250,12 @@ void SumGraphController::LegendView::layoutSubviews(Step step) {
     m_legend.setFrame(KDRectZero);
   }
 
-  KDSize largeCharSize = KDFont::LargeFont->glyphSize();
-  switch(step) {
-    case Step::FirstParameter:
-      m_editableZone.setFrame(KDRect(2*largeCharSize.width(), k_symbolHeightMargin+k_sigmaHeight/2, editableZoneWidth(), editableZoneHeight()));
-      return;
-    case Step::SecondParameter:
-      m_editableZone.setFrame(KDRect(2*largeCharSize.width(), k_symbolHeightMargin+k_sigmaHeight/2-editableZoneHeight(), editableZoneWidth(), editableZoneHeight()));
-      return;
-    default:
-      m_editableZone.setFrame(KDRectZero);
-  }
+  KDRect frame = (step == Step::Result) ? KDRectZero : KDRect(
+    2 * KDFont::LargeFont->glyphSize().width(),
+    k_symbolHeightMargin + k_sigmaHeight/2 - (step == Step::SecondParameter) * editableZoneHeight(),
+    editableZoneWidth(), editableZoneHeight()
+  );
+  m_editableZone.setFrame(frame);
 }
 
 }

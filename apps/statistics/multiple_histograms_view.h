@@ -16,7 +16,7 @@ public:
   MultipleHistogramsView(HistogramController * controller, Store * store);
   // MultipleDataView
   int seriesOfSubviewAtIndex(int index) override;
-  const HistogramBannerView * bannerView() const override { return &m_bannerView; }
+  HistogramBannerView * bannerView() override { return &m_bannerView; }
   HistogramView * dataViewAtIndex(int index) override;
 private:
   void layoutSubviews() override;

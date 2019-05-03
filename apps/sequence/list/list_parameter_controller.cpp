@@ -72,14 +72,11 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   static float maxFirstIndex = std::pow(10.0f, Sequence::k_initialRankNumberOfDigits) - 1.0f;
   /* -1 to take into account a double recursive sequence, which has
    * SecondIndex = FirstIndex + 1 */
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  float floatBody = PoincareHelpers::ApproximateToScalar<float>(text, *globalContext);
-  int index = std::round(floatBody);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
+  int index = std::round(floatBody);
   if (index < 0  || floatBody >= maxFirstIndex) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;

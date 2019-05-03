@@ -212,11 +212,8 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField, 
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  App * probaApp = (App *)app();
-  Context * globalContext = probaApp->container()->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && selectedColumn() == 2) {

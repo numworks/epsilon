@@ -6,8 +6,8 @@ namespace Shared {
 class CurveViewCursor {
 public:
   CurveViewCursor();
-  double x();
-  double y();
+  double x() const { return m_x; }
+  double y() const { return m_y; }
   void moveTo(double x, double y);
 private:
   static double clipped(double f, bool canBeInfinite);

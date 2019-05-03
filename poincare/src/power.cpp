@@ -384,7 +384,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       }
     }
     // 1^x = 1 if x != ±inf
-    if (a.isOne() && !childAtIndex(1).recursivelyMatchesInfinity(context)) {
+    if (a.isOne() && !childAtIndex(1).recursivelyMatches(Expression::IsInfinity, context)) {
       Expression result = Rational::Builder(1);
       replaceWithInPlace(result);
       return result;

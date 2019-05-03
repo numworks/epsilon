@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
-  FunctionCurveParameterController(graphRange, cursor),
+  FunctionCurveParameterController(),
   m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor, I18n::Message::X),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),

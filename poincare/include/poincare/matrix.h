@@ -84,10 +84,9 @@ public:
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
   Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
-private:
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
-
+private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }

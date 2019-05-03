@@ -7,6 +7,7 @@
 #include <poincare/layout_cursor.h>
 
 namespace Poincare {
+
 Layout Layout::clone() const {
   if (isUninitialized()) {
     return Layout();

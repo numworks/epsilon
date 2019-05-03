@@ -7,7 +7,7 @@ namespace Sequence {
 
 class CurveViewRange : public Shared::InteractiveCurveViewRange {
 public:
-  CurveViewRange(Shared::CurveViewCursor * cursor, Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
+  CurveViewRange(Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
   void roundAbscissa() override;
   void normalize() override;
   void setTrigonometric() override;

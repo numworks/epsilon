@@ -13,11 +13,6 @@ class InteractiveCurveViewController : public SimpleInteractiveCurveViewControll
 public:
   InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
 
-  // InteractiveCurveViewRangeDelegate
-  float addMargin(float x, float range, bool isMin) override;
-  virtual float displayTopMarginRatio() = 0;
-  virtual float displayBottomMarginRatio() = 0;
-
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -33,27 +28,41 @@ public:
 
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   Responder * tabController() const;
   virtual StackViewController * stackController() const;
-  virtual void initRangeParameters() = 0;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
-  virtual bool isCursorVisible() = 0;
+  bool isCursorVisible();
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context) const;
-  virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const { assert(false); return false; }
-  virtual double yValue(int curveIndex, double x, Poincare::Context * context) const { assert(false); return 0; }
+  virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex) const = 0;
+  virtual int selectedCurveIndex() const = 0;
+  virtual double yValue(int curveIndex, double x, Poincare::Context * context) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
 
+  // SimpleInteractiveCurveViewController
+  float cursorBottomMarginRatio() override;
+
   OkView m_okView;
 private:
+  /* The value 21 is the actual height of the ButtonRow, that is
+   * ButtonRowController::ContentView::k_plainStyleHeight + 1.
+   * That value is not public though. */
+  constexpr static float k_viewHeight = Ion::Display::Height - Metric::TitleBarHeight - Metric::TabHeight - 21;
+  float estimatedBannerHeight() const;
+  virtual int estimatedBannerNumberOfLines() const { return 1; }
+
+  // InteractiveCurveViewRangeDelegate
+  float addMargin(float x, float range, bool isMin) override;
+
   uint32_t * m_modelVersion;
   uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;

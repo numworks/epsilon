@@ -25,14 +25,6 @@ bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, do
   FunctionApp * myApp = (FunctionApp *)app();
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   float y = function->evaluateAtAbscissa(f, myApp->localContext());
-  if (std::fabs(f) > k_maxDisplayableFloat || std::fabs(y) > k_maxDisplayableFloat) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
-    return false;
-  }
-  if (std::isnan(y) || std::isinf(y)) {
-    app()->displayWarning(I18n::Message::ValueNotReachedByFunction);
-    return false;
-  }
   m_cursor->moveTo(f, y);
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());

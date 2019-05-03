@@ -1,7 +1,6 @@
 #include "graph_controller.h"
 #include "../shared/poincare_helpers.h"
 #include "../apps_container.h"
-#include <kandinsky/font.h>
 #include <cmath>
 
 using namespace Poincare;
@@ -17,7 +16,7 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, modelVersion, rangeVersion),
   m_crossCursorView(),
   m_roundCursorView(),
-  m_bannerView(),
+  m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView, this),
   m_store(store),
   m_initialisationParameterController(this, m_store),
@@ -28,7 +27,6 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_modelType[i] = (Model::Type) -1;
   }
-  m_store->setCursor(m_cursor);
   m_store->setDelegate(this);
 }
 
@@ -45,16 +43,43 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
-  InteractiveCurveViewController::viewWillAppear();
-  if (m_modelType[*m_selectedSeriesIndex] != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
-    initCursorParameters();
-  }
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_modelType[i] = m_store->seriesRegressionType(*m_selectedSeriesIndex);
-  }
+  /* At this point, there is at least one non-empty series.
+   * However, before the graph view appears for the very first time,
+   * *m_selectedSeriesIndex is set to -1. Thus one needs to select a series.
+   * TODO Perhaps the three following lines should be moved elsewhere. */
   if (*m_selectedSeriesIndex < 0) {
     *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
   }
+
+  /* Both the GraphController and the Store hold the Model::Type of each
+   * series. The values differ in two cases:
+   *  1) the very first time the graph view appears
+   *  2) when the user selects another Model::Type for a series.
+   * where we decide to place the cursor at a default position. */
+  if (m_modelType[*m_selectedSeriesIndex] != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
+    initCursorParameters();
+  }
+
+  /* Equalize the Model::Type of each series between the GraphController and
+   * the Store.
+   * TODO In passing, one may probably avoid keeping the Model::Type of each
+   * series in two places:
+   *  1) call initCursorParameters elsewhere the very first time the graph view
+   *     appears,
+   *  2) take into account the Model::Type in the computation of the
+   *     storeChecksum in order to detect any change in the series and in
+   *     their model types. */
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    m_modelType[i] = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  }
+
+  /* The following
+   *   - calls initCursorParameters() if necessary,
+   *   - reloads the bannerView and the curveView. */
+  InteractiveCurveViewController::viewWillAppear();
+
+  /* Since *m_selectedDotIndex is altered by initCursorParameters(),
+   * the following must absolutely come at the end. */
   if (*m_selectedDotIndex >= 0) {
     m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
   } else {
@@ -75,26 +100,9 @@ Poincare::Context * GraphController::globalContext() {
   return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
 }
 
-float GraphController::cursorBottomMarginRatio() {
-  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height()/2 + 2 + estimatedBannerHeight())/k_viewHeight;
-  return f;
-}
-
-float GraphController::estimatedBannerHeight() const {
-  if (selectedSeriesIndex() < 0) {
-    return KDFont::SmallFont->glyphSize().height() * 3;
-  }
-  float result = KDFont::SmallFont->glyphSize().height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
-  return result;
-}
-
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
-  if (*m_selectedSeriesIndex < 0) {
-    return;
-  }
-
   // Set point equals: "P(...) ="
   constexpr size_t bufferSize = k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
@@ -113,10 +121,9 @@ void GraphController::reloadBannerView() {
   legend = ")  ";
   strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 0);
+  m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
-  numberOfChar = 0;
   legend = "x=";
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
@@ -125,14 +132,15 @@ void GraphController::reloadBannerView() {
     legend = "x\xCC\x85=";
     x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   }
-  numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  m_bannerView.abscissaSymbol()->setText(legend);
+
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 1);
+  m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
   numberOfChar = 0;
@@ -149,15 +157,15 @@ void GraphController::reloadBannerView() {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 2);
+  m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
-  Model * model = m_store->modelForSeries(selectedSeriesIndex());
+  Model * model = m_store->modelForSeries(*m_selectedSeriesIndex);
   I18n::Message formula = model->formulaMessage();
-  m_bannerView.setMessageAtIndex(formula, 3);
+  m_bannerView.regressionTypeView()->setMessage(formula);
 
   // Get the coefficients
-  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
+  double * coefficients = m_store->coefficientsForSeries(*m_selectedSeriesIndex, globalContext());
   bool coefficientsAreDefined = true;
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     if (std::isnan(coefficients[i])) {
@@ -167,19 +175,18 @@ void GraphController::reloadBannerView() {
   }
   if (!coefficientsAreDefined) {
     // Force the "Data not suitable" message to be on the next line
-    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width/(m_bannerView.font()->glyphSize().width())- strlen(I18n::translate(formula)), 0);
+    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
     numberOfChar = 0;
     for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
       buffer[numberOfChar++] = ' ';
     }
     buffer[numberOfChar] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 4);
+    m_bannerView.subTextAtIndex(0)->setText(buffer);
 
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-    m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 5);
-    for (int i = 6; i < m_bannerView.numberOfTextviews(); i++) {
-      char empty[] = {0};
-      m_bannerView.setLegendAtIndex(empty, i);
+    m_bannerView.subTextAtIndex(1)->setText(const_cast<char *>(dataNotSuitableMessage));
+    for (int i = 2; i < m_bannerView.numberOfsubTexts(); i++) {
+      m_bannerView.subTextAtIndex(i)->setText("");
     }
     return;
   }
@@ -191,11 +198,11 @@ void GraphController::reloadBannerView() {
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 4 + i);
+    m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
 
-  if (m_store->seriesRegressionType(selectedSeriesIndex()) == Model::Type::Linear) {
+  if (m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::Linear) {
     // Set "r=..."
     numberOfChar = 0;
     legend = " r=";
@@ -203,7 +210,7 @@ void GraphController::reloadBannerView() {
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength+10] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 6);
+    m_bannerView.subTextAtIndex(2)->setText(buffer);
 
     // Set "r2=..."
     numberOfChar = 0;
@@ -212,19 +219,20 @@ void GraphController::reloadBannerView() {
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 7);
+    m_bannerView.subTextAtIndex(3)->setText(buffer);
 
     // Clean the last subview
     buffer[0] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 8);
+    m_bannerView.subTextAtIndex(4)->setText(buffer);
 
   } else {
     // Empty all non used subviews
-    for (int i = 4+model->numberOfCoefficients(); i < m_bannerView.numberOfTextviews(); i++) {
+    for (int i = model->numberOfCoefficients(); i < m_bannerView.numberOfsubTexts(); i++) {
       buffer[0] = 0;
-      m_bannerView.setLegendAtIndex(buffer, i);
+      m_bannerView.subTextAtIndex(i)->setText(buffer);
     }
   }
+  m_bannerView.reload();
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
@@ -233,13 +241,11 @@ bool GraphController::moveCursorHorizontally(int direction) {
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
       m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     return false;
@@ -248,7 +254,6 @@ bool GraphController::moveCursorHorizontally(int direction) {
     m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   double y = yValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, y);
-  m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 
@@ -266,14 +271,7 @@ bool GraphController::handleEnter() {
 }
 
 // InteractiveCurveViewController
-void GraphController::initRangeParameters() {
-  m_store->setDefault();
-}
-
 void GraphController::initCursorParameters() {
-  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
-    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
-  }
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   m_cursor->moveTo(x, y);
@@ -333,7 +331,6 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
     m_cursor->moveTo(x, yValue(*m_selectedSeriesIndex, x, context));
-    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     return true;
   }
 
@@ -345,11 +342,9 @@ bool GraphController::moveCursorVertically(int direction) {
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       // Select the mean dot
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     } else {
       // Select a data point dot
       m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     }
     return true;
   }
@@ -364,10 +359,6 @@ uint32_t GraphController::modelVersion() {
 
 uint32_t GraphController::rangeVersion() {
   return m_store->rangeChecksum();
-}
-
-bool GraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {
@@ -386,13 +377,8 @@ int GraphController::numberOfCurves() const {
   return Store::k_numberOfSeries;
 }
 
-float GraphController::displayTopMarginRatio() {
-  return 0.12f; // cursorHeight/graphViewHeight
-}
-
-float GraphController::displayBottomMarginRatio() {
-  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight())/k_viewHeight;
-  return f;
+int GraphController::estimatedBannerNumberOfLines() const {
+  return (selectedSeriesIndex() < 0) ? 3 : m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
 }
 
 InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

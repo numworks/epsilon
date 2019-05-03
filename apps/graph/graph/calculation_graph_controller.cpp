@@ -7,19 +7,14 @@ using namespace Poincare;
 namespace Graph {
 
 CalculationGraphController::CalculationGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, I18n::Message defaultMessage) :
-  ViewController(parentResponder),
+  SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_graphView(graphView),
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),
-  m_cursor(cursor),
   m_record(),
-  m_defaultBannerView(KDFont::SmallFont, defaultMessage, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_defaultBannerView(BannerView::Font(), defaultMessage, 0.5f, 0.5f, BannerView::TextColor(), BannerView::BackgroundColor()),
   m_isActive(false)
 {
-}
-
-View * CalculationGraphController::view() {
-  return m_graphView;
 }
 
 void CalculationGraphController::viewWillAppear() {
@@ -32,28 +27,12 @@ void CalculationGraphController::viewWillAppear() {
   } else {
     m_isActive = true;
     m_cursor->moveTo(pointOfInterest.abscissa, pointOfInterest.value);
-    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, SimpleInteractiveCurveViewController::k_cursorRightMarginRatio, k_cursorBottomMarginRatio, SimpleInteractiveCurveViewController::k_cursorLeftMarginRatio);
+    m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+    m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
   }
   m_graphView->setOkView(nullptr);
   m_graphView->reload();
-}
-
-bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->pop();
-    return true;
-  }
-  if (m_isActive && (event == Ion::Events::Right || event == Ion::Events::Left)) {
-    int direction = event == Ion::Events::Right ? 1 : -1;
-    if (moveCursor(direction)) {
-      reloadBannerView();
-      m_graphView->reload();
-      return true;
-    }
-  }
-  return false;
 }
 
 void CalculationGraphController::setRecord(Ion::Storage::Record record) {
@@ -62,18 +41,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void CalculationGraphController::reloadBannerView() {
-  m_bannerView->setNumberOfSubviews(2);
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), CartesianFunction::Symbol());
-}
-
-bool CalculationGraphController::moveCursor(int direction) {
-  Expression::Coordinate2D newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
-  if (std::isnan(newPointOfInterest.abscissa)) {
-    return false;
-  }
-  m_cursor->moveTo(newPointOfInterest.abscissa, newPointOfInterest.value);
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, SimpleInteractiveCurveViewController::k_cursorRightMarginRatio, k_cursorBottomMarginRatio, SimpleInteractiveCurveViewController::k_cursorLeftMarginRatio);
-  return true;
 }
 
 Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
@@ -87,6 +55,28 @@ Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetF
 CartesianFunctionStore * CalculationGraphController::functionStore() const {
   App * a = static_cast<App *>(app());
   return a->functionStore();
+}
+
+bool CalculationGraphController::handleLeftRightEvent(Ion::Events::Event event) {
+  if (!m_isActive) {
+    return false;
+  }
+  return SimpleInteractiveCurveViewController::handleLeftRightEvent(event);
+}
+
+bool CalculationGraphController::handleEnter() {
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  stack->pop();
+  return true;
+}
+
+bool CalculationGraphController::moveCursorHorizontally(int direction) {
+  Expression::Coordinate2D newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
+  if (std::isnan(newPointOfInterest.abscissa)) {
+    return false;
+  }
+  m_cursor->moveTo(newPointOfInterest.abscissa, newPointOfInterest.value);
+  return true;
 }
 
 }

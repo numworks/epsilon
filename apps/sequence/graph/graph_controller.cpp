@@ -12,7 +12,7 @@ static inline int maxInt(int x, int y) { return (x > y ? x : y); }
 
 GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
-  m_bannerView(),
+  m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
   m_curveParameterController(inputEventHandlerDelegate, this, graphRange, m_cursor),
@@ -26,6 +26,11 @@ I18n::Message GraphController::emptyMessage() {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
+}
+
+void GraphController::viewWillAppear() {
+  m_view.setCursorView(&m_cursorView);
+  FunctionGraphController::viewWillAppear();
 }
 
 float GraphController::interestingXMin() const {
@@ -54,6 +59,20 @@ float GraphController::interestingXHalfRange() const {
   return nmax - nmin;
 }
 
+bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
+  }
+  floatBody = std::fmax(0, std::round(floatBody));
+  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, y);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  reloadBannerView();
+  m_view.reload();
+  return true;
+}
+
 bool GraphController::handleEnter() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   m_termSumController.setRecord(record);
@@ -79,7 +98,6 @@ bool GraphController::moveCursorHorizontally(int direction) {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
-  m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 

@@ -424,11 +424,24 @@ void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, 
     memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, length);
     return;
   }
-  memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, spaceLeft-1);
+  /* The text to append is too long for the buffer. We need to split it in
+   * chunks. We take special care not to break in the middle of code points! */
+  int maxAppendedTextLength = spaceLeft-1; // we keep the last char to null-terminate the buffer
+  int appendedTextLength = 0;
+  UTF8Decoder decoder(text);
+  while (decoder.stringPosition() - text <= maxAppendedTextLength) {
+    appendedTextLength = decoder.stringPosition() - text;
+    decoder.nextCodePoint();
+  }
+  memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, appendedTextLength);
+  // The last char of m_outputAccumulationBuffer is kept to 0 to ensure a null-terminated text.
+  assert(endOfAccumulatedText+appendedTextLength < k_outputAccumulationBufferSize);
+  m_outputAccumulationBuffer[endOfAccumulatedText+appendedTextLength] = 0;
   flushOutputAccumulationBufferToStore();
-  appendTextToOutputAccumulationBuffer(&text[spaceLeft-1], length - (spaceLeft - 1));
+  appendTextToOutputAccumulationBuffer(&text[appendedTextLength], length - appendedTextLength);
 }
 
+// TODO: is it really needed? Maybe discard to optimize?
 void ConsoleController::emptyOutputAccumulationBuffer() {
   for (int i = 0; i < k_outputAccumulationBufferSize; i++) {
     m_outputAccumulationBuffer[i] = 0;

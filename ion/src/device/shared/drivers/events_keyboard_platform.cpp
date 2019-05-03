@@ -37,7 +37,7 @@ Event getPlatformEvent() {
     return Events::BatteryCharging;
   }
 
-  return Events::None;
+  return None;
 }
 
 }

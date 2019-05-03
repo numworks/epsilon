@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Graph {
 
 TangentGraphController::TangentGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor) :
-  SimpleInteractiveCurveViewController(parentResponder, curveViewRange, graphView, cursor),
+  SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_graphView(graphView),
   m_bannerView(bannerView),
   m_graphRange(curveViewRange),
@@ -21,12 +21,36 @@ const char * TangentGraphController::title() {
 }
 
 void TangentGraphController::viewWillAppear() {
-  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   m_graphView->drawTangent(true);
   m_graphView->setOkView(nullptr);
   m_graphView->selectMainView(true);
+  m_bannerView->setNumberOfSubviews(BannerView::k_numberOfSubviews);
   reloadBannerView();
   m_graphView->reload();
+}
+
+void TangentGraphController::didBecomeFirstResponder() {
+  if (curveView()->isMainViewSelected()) {
+    m_bannerView->abscissaValue()->setParentResponder(this);
+    m_bannerView->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    app()->setFirstResponder(m_bannerView->abscissaValue());
+  }
+}
+
+bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+    return false;
+  }
+  App * myApp = static_cast<App *>(app());
+  ExpiringPointer<CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
+  double y = function->evaluateAtAbscissa(floatBody, textFieldDelegateApp()->localContext());
+  m_cursor->moveTo(floatBody, y);
+  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  reloadBannerView();
+  curveView()->reload();
+  return true;
 }
 
 void TangentGraphController::setRecord(Ion::Storage::Record record) {
@@ -35,7 +59,6 @@ void TangentGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void TangentGraphController::reloadBannerView() {
-  m_bannerView->setNumberOfSubviews(6);
   if (m_record.isNull()) {
     return;
   }
@@ -49,18 +72,19 @@ void TangentGraphController::reloadBannerView() {
   ExpiringPointer<CartesianFunction> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  m_bannerView->setLegendAtIndex(buffer, 4);
+  m_bannerView->aView()->setText(buffer);
 
   legend = "b=";
   legendLength = strlcpy(buffer, legend, bufferSize);
   y = -y*m_cursor->x()+function->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  m_bannerView->setLegendAtIndex(buffer, 5);
+  m_bannerView->bView()->setText(buffer);
+  m_bannerView->reload();
 }
 
 bool TangentGraphController::moveCursorHorizontally(int direction) {
   App * myApp = static_cast<App *>(app());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, myApp);
 }
 
 bool TangentGraphController::handleEnter() {

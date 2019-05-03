@@ -8,16 +8,18 @@ namespace Shared {
 class BannerView : public View {
 public:
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
-  void setLegendAtIndex(char * text, int index);
-  void setMessageAtIndex(I18n::Message text, int index);
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  void reload() { layoutSubviews(); }
+  static constexpr const KDFont * Font() { return KDFont::SmallFont; }
+  static constexpr KDColor TextColor() { return KDColorBlack; }
+  static constexpr KDColor BackgroundColor() { return Palette::GreyMiddle; }
 private:
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  static constexpr KDCoordinate LineSpacing = 2;
+  int numberOfSubviews() const override = 0;
+  View * subviewAtIndex(int index) override = 0;
   void layoutSubviews() override;
   int numberOfLines() const;
-  virtual TextView * textViewAtIndex(int i) const = 0;
-  virtual MessageTextView * messageTextViewAtIndex(int i) const;
 };
 
 }

@@ -19,7 +19,6 @@ public:
   void selectDataView(int index);
   void deselectDataView(int index);
   virtual Shared::CurveView * dataViewAtIndex(int index) = 0;
-  Shared::BannerView * editableBannerView() { return const_cast<Shared::BannerView *>(bannerView()); }
 
   // Index/series
   int indexOfSubviewAtSeries(int series);
@@ -32,7 +31,7 @@ public:
   // View
   int numberOfSubviews() const override;
 protected:
-  virtual const Shared::BannerView * bannerView() const = 0;
+  virtual Shared::BannerView * bannerView() = 0;
   void layoutSubviews() override;
   virtual void layoutDataSubviews();
   View * subviewAtIndex(int index) override;

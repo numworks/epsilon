@@ -3,7 +3,6 @@ app_headers += apps/sequence/app.h
 
 app_src += $(addprefix apps/sequence/,\
   app.cpp \
-  graph/banner_view.cpp \
   graph/curve_parameter_controller.cpp \
   graph/curve_view_range.cpp \
   graph/go_to_parameter_controller.cpp \

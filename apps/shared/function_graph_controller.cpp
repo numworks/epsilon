@@ -27,8 +27,17 @@ ViewController * FunctionGraphController::initialisationParameterController() {
   return &m_initialisationParameterController;
 }
 
+void FunctionGraphController::didBecomeFirstResponder() {
+  if (curveView()->isMainViewSelected()) {
+    bannerView()->abscissaValue()->setParentResponder(this);
+    bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    app()->setFirstResponder(bannerView()->abscissaValue());
+  } else {
+    InteractiveCurveViewController::didBecomeFirstResponder();
+  }
+}
+
 void FunctionGraphController::viewWillAppear() {
-  functionGraphView()->setCursorView(cursorView());
   functionGraphView()->setBannerView(bannerView());
   functionGraphView()->setAreaHighlight(NAN,NAN);
 
@@ -56,24 +65,12 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
   *m_indexFunctionSelectedByCursor = functionIndex;
 }
 
-float FunctionGraphController::cursorBottomMarginRatio() {
-  return (cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
-}
-
 void FunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), functionStore()->symbol());
-}
-
-float FunctionGraphController::displayBottomMarginRatio() {
-  return (cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight()) / k_viewHeight;
-}
-
-float FunctionGraphController::estimatedBannerHeight() const {
-  return BannerView::HeightGivenNumberOfLines(estimatedBannerNumberOfLines());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
@@ -109,12 +106,6 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   return range;
 }
 
-void FunctionGraphController::initRangeParameters() {
-  interactiveCurveViewRange()->setDefault();
-  initCursorParameters();
-  selectFunctionWithCursor(0);
-}
-
 double FunctionGraphController::defaultCursorAbscissa() {
   return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
 }
@@ -137,7 +128,7 @@ void FunctionGraphController::initCursorParameters() {
   functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
   selectFunctionWithCursor(functionIndex);
   if (interactiveCurveViewRange()->yAuto()) {
-    interactiveCurveViewRange()->panToMakePointVisible(x, y, displayTopMarginRatio(), k_cursorRightMarginRatio, displayBottomMarginRatio(), k_cursorLeftMarginRatio);
+    interactiveCurveViewRange()->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   }
 }
 
@@ -151,7 +142,6 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   }
   selectFunctionWithCursor(nextActiveFunctionIndex);
   m_cursor->moveTo(m_cursor->x(), yValue(nextActiveFunctionIndex, m_cursor->x(), context));
-  interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 
@@ -165,10 +155,6 @@ uint32_t FunctionGraphController::modelVersion() {
 
 uint32_t FunctionGraphController::rangeVersion() {
   return interactiveCurveViewRange()->rangeChecksum();
-}
-
-bool FunctionGraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
 }
 
 bool FunctionGraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex) const {

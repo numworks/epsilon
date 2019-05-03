@@ -24,12 +24,12 @@ static inline void InsertSpacesAtLocation(int spacesCount, char * buffer, int bu
   assert(strlen(buffer) + spacesCount < bufferSize);
 
   size_t sizeToMove = strlen(buffer) + 1;
-  size_t spaceCharSize = Ion::UTF8Decoder::CharSizeOfCodePoint(' ');
+  size_t spaceCharSize = UTF8Decoder::CharSizeOfCodePoint(' ');
   size_t spacesLength = spacesCount * spaceCharSize;
   memmove(buffer + spacesLength, buffer, sizeToMove);
   for (int i = 0; i < spacesCount; i++) {
     int spaceOffset = i * spaceCharSize;
-    Ion::UTF8Decoder::CodePointToChars(' ', buffer + spaceOffset, bufferSize - spaceOffset);
+    UTF8Decoder::CodePointToChars(' ', buffer + spaceOffset, bufferSize - spaceOffset);
   }
 }
 
@@ -44,20 +44,20 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
     // Compute the indentation
     int spacesCount = indentationBeforeCursor();
     const char * teaxtAreaBuffer = contentView()->text();
-    if (cursorLocation() > teaxtAreaBuffer && Ion::UTF8Helper::PreviousCodePointIs(teaxtAreaBuffer, cursorLocation(), ':')) {
+    if (cursorLocation() > teaxtAreaBuffer && UTF8Helper::PreviousCodePointIs(teaxtAreaBuffer, cursorLocation(), ':')) {
       spacesCount += k_indentationSpaces;
     }
 
     // Check the text will not overflow the buffer
-    int totalIndentationSize = Ion::UTF8Helper::CountOccurrences(text, '\n') * spacesCount;
+    int totalIndentationSize = UTF8Helper::CountOccurrences(text, '\n') * spacesCount;
     if (contentView()->getText()->textLength() + textLength + totalIndentationSize >= contentView()->getText()->bufferSize() || textLength == 0) {
       return false;
     }
 
-    Ion::UTF8Helper::PerformAtCodePoints(
+    UTF8Helper::PerformAtCodePoints(
         buffer, '\n',
         [](int codePointOffset, void * text, int indentation) {
-          int offset = codePointOffset + Ion::UTF8Decoder::CharSizeOfCodePoint('\n');
+          int offset = codePointOffset + UTF8Decoder::CharSizeOfCodePoint('\n');
           InsertSpacesAtLocation(indentation, (char *)text + offset, TextField::maxBufferSize() - offset); //TODO
         },
         [](int c1, void * c2, int c3) {},
@@ -67,7 +67,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(buffer);
 
   // Remove the Empty code points
-  Ion::UTF8Helper::RemoveCodePoint(buffer, UCodePointEmpty, &cursorPositionInCommand);
+  UTF8Helper::RemoveCodePoint(buffer, UCodePointEmpty, &cursorPositionInCommand);
 
   // Insert the text
   if (insertTextAtLocation(buffer, cursorLocation())) {
@@ -88,14 +88,14 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       assert(cursorLocation() == text());
       return false;
     }
-    Ion::UTF8Decoder decoder(text(), cursorLocation());
+    UTF8Decoder decoder(text(), cursorLocation());
     decoder.previousCodePoint();
     return setCursorLocation(decoder.stringPosition());
   } else if (event == Ion::Events::Right) {
-    if (Ion::UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
+    if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
       return false;
     }
-    Ion::UTF8Decoder decoder(cursorLocation());
+    UTF8Decoder decoder(cursorLocation());
     decoder.nextCodePoint();
     return setCursorLocation(decoder.stringPosition());
   } else if (event == Ion::Events::Up) {
@@ -135,7 +135,7 @@ int TextArea::indentationBeforeCursor() const {
   /* Compute the number of spaces at the beginning of the line. Increase the
    * indentation size when encountering spaces, reset it to 0 when encountering
    * another code point, until reaching the beginning of the line. */
-  Ion::UTF8Helper::PerformAtCodePoints(const_cast<TextArea *>(this)->contentView()->text(), ' ',
+  UTF8Helper::PerformAtCodePoints(const_cast<TextArea *>(this)->contentView()->text(), ' ',
       [](int codePointOffset, void * indentationSize, int context){
         int * castedSize = (int *) indentationSize;
         *castedSize = *castedSize + 1;
@@ -157,7 +157,7 @@ const char * TextArea::Text::pointerAtPosition(Position p) {
   int y = 0;
   for (Line l : *this) {
     if (p.line() == y) {
-      const char * result = Ion::UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
+      const char * result = UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
       return minPointer(result, l.text() + l.charLength());
     }
     y++;
@@ -171,7 +171,7 @@ TextArea::Text::Position TextArea::Text::positionAtPointer(const char * p) const
   size_t y = 0;
   for (Line l : *this) {
     if (l.contains(p)) {
-      size_t x = Ion::UTF8Helper::GlyphOffsetAtCodePoint(l.text(), p);
+      size_t x = UTF8Helper::GlyphOffsetAtCodePoint(l.text(), p);
       return Position(x, y);
     }
     y++;
@@ -197,12 +197,12 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces, char * location)
   assert(strlen(m_buffer) + numberOfSpaces < m_bufferSize);
 
   size_t sizeToMove = strlen(location) + 1;
-  size_t spaceCharSize = Ion::UTF8Decoder::CharSizeOfCodePoint(' ');
+  size_t spaceCharSize = UTF8Decoder::CharSizeOfCodePoint(' ');
   size_t spacesSize = numberOfSpaces * spaceCharSize;
   assert(location + spacesSize + sizeToMove <= m_buffer + m_bufferSize);
   memmove(location + spacesSize, location, sizeToMove);
   for (int i = 0; i < numberOfSpaces; i++) {
-    Ion::UTF8Decoder::CodePointToChars(' ', location+i*spaceCharSize, (m_buffer + m_bufferSize) - location);
+    UTF8Decoder::CodePointToChars(' ', location+i*spaceCharSize, (m_buffer + m_bufferSize) - location);
   }
 }
 
@@ -211,7 +211,7 @@ CodePoint TextArea::Text::removeCodePoint(char * * position) {
   assert(m_buffer <= *position && *position < m_buffer + m_bufferSize);
 
   CodePoint removedCodePoint = 0;
-  int removedSize = Ion::UTF8Helper::RemovePreviousCodePoint(m_buffer, *position, &removedCodePoint);
+  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_buffer, *position, &removedCodePoint);
   assert(removedSize > 0);
 
   // Set the new cursor position
@@ -225,7 +225,7 @@ size_t TextArea::Text::removeRemainingLine(const char * location, int direction)
   assert(direction > 0 || location > m_buffer);
   assert(direction < 0 || location < m_buffer + m_bufferSize);
 
-  Ion::UTF8Decoder decoder(m_buffer, location);
+  UTF8Decoder decoder(m_buffer, location);
   const char * codePointPosition = decoder.stringPosition();
   CodePoint nextCodePoint = direction > 0 ? decoder.nextCodePoint() : decoder.previousCodePoint();
   if (direction < 0) {
@@ -271,7 +271,7 @@ TextArea::Text::Line::Line(const char * text) :
   m_charLength(0)
 {
   if (m_text != nullptr) {
-    m_charLength = Ion::UTF8Helper::CodePointSearch(text, '\n') - m_text;
+    m_charLength = UTF8Helper::CodePointSearch(text, '\n') - m_text;
   }
 }
 
@@ -283,17 +283,17 @@ bool TextArea::Text::Line::contains(const char * c) const {
   return (c >= m_text)
     && ((c < m_text + m_charLength)
         || (c == m_text + m_charLength
-          && (Ion::UTF8Helper::CodePointIs(c, 0)
-            || Ion::UTF8Helper::CodePointIs(c, '\n')))) ;
+          && (UTF8Helper::CodePointIs(c, 0)
+            || UTF8Helper::CodePointIs(c, '\n')))) ;
 }
 
 /* TextArea::Text::LineIterator */
 
 TextArea::Text::LineIterator & TextArea::Text::LineIterator::operator++() {
   const char * last = m_line.text() + m_line.charLength();
-  assert(Ion::UTF8Helper::CodePointIs(last, 0) || Ion::UTF8Helper::CodePointIs(last, '\n'));
-  assert(Ion::UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
-  m_line = Line(Ion::UTF8Helper::CodePointIs(last, 0) ? nullptr : last + 1);
+  assert(UTF8Helper::CodePointIs(last, 0) || UTF8Helper::CodePointIs(last, '\n'));
+  assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
+  m_line = Line(UTF8Helper::CodePointIs(last, 0) ? nullptr : last + 1);
   return *this;
 }
 
@@ -378,7 +378,7 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
   bool lineBreak = false;
 
   // Scan for \n and 0
-  const char * nullLocation = Ion::UTF8Helper::PerformAtCodePoints(
+  const char * nullLocation = UTF8Helper::PerformAtCodePoints(
       text, '\n',
       [](int codePointOffset, void * lineBreak, int indentation) {
         *((bool *)lineBreak) = true;
@@ -386,7 +386,7 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
       [](int c1, void * c2, int c3) { },
       &lineBreak, 0);
 
-  assert(Ion::UTF8Helper::CodePointIs(nullLocation, 0));
+  assert(UTF8Helper::CodePointIs(nullLocation, 0));
   m_text.insertText(text, nullLocation - text, const_cast<char *>(location));
   reloadRectFromPosition(location, lineBreak);
   return true;

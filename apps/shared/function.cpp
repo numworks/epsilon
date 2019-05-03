@@ -17,9 +17,9 @@ constexpr char Function::k_parenthesedArgument[];
 bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * error) {
   assert(baseName[0] != 0);
 
-  Ion::UTF8Decoder decoder(baseName);
+  UTF8Decoder decoder(baseName);
   CodePoint c = decoder.nextCodePoint();
-  if (Ion::UTF8Helper::CodePointIsNumber(c)) {
+  if (UTF8Helper::CodePointIsNumber(c)) {
     // The name cannot start with a number
     if (error != nullptr) {
       *error = NameNotCompliantError::NameCannotStartWithNumber;
@@ -29,9 +29,9 @@ bool Function::BaseNameCompliant(const char * baseName, NameNotCompliantError * 
 
   // The name should only have allowed characters
   while (c != UCodePointNull) {
-    if (!(Ion::UTF8Helper::CodePointIsUpperCaseLetter(c)
-        || Ion::UTF8Helper::CodePointIsLowerCaseLetter(c)
-        || Ion::UTF8Helper::CodePointIsNumber(c))
+    if (!(UTF8Helper::CodePointIsUpperCaseLetter(c)
+        || UTF8Helper::CodePointIsLowerCaseLetter(c)
+        || UTF8Helper::CodePointIsNumber(c))
         || c == '_')
     {
       if (error != nullptr) {
@@ -65,13 +65,13 @@ void Function::setActive(bool active) {
 }
 
 int Function::nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) {
-  assert(Ion::UTF8Decoder::CharSizeOfCodePoint(arg) == 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint(arg) == 1);
   const char * functionName = fullName();
   size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
   int result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
   int bufferRemainingSize = bufferSize - (baseNameLength+1);
   if (bufferRemainingSize > 0) {
-    Ion::UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferRemainingSize);
+    UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferRemainingSize);
   }
   return result;
 }

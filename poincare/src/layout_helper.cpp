@@ -57,7 +57,7 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
 HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
-  Ion::UTF8Decoder decoder(buffer);
+  UTF8Decoder decoder(buffer);
   const char * currentPointer = buffer;
   CodePoint codePoint = decoder.nextCodePoint();
   const char * nextPointer = decoder.stringPosition();

@@ -313,7 +313,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
     assert(defaultNameLength < bufferSize);
-    assert(Ion::UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberedDefaultName[defaultNameLength++] = '.';
     strlcpy(numberedDefaultName + defaultNameLength, ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
     /* If there are already scripts named script1.py, script2.py,... until

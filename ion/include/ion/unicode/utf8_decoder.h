@@ -28,8 +28,6 @@
  *     glyphs such as accentuated letters.
  */
 
-namespace Ion {
-
 class UTF8Decoder {
 public:
   UTF8Decoder(const char * string, const char * initialPosition = nullptr) :
@@ -47,7 +45,5 @@ private:
   const char * const m_string;
   const char * m_stringPosition;
 };
-
-}
 
 #endif

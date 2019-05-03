@@ -115,14 +115,14 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, const char 
   *overridenByteLocation = overridenByte;
   m_currentDraftTextLength += textSize;
 
-  Ion::UTF8Decoder decoder(m_draftTextBuffer);
+  UTF8Decoder decoder(m_draftTextBuffer);
   const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
   assert(!codePoint.isCombining());
   while (codePoint != UCodePointNull) {
     assert(codePointPointer < m_draftTextBuffer + m_textBufferSize);
     if (codePoint == '\n') {
-      assert(Ion::UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
+      assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
       *(const_cast<char *>(codePointPointer)) = 0;
       m_currentDraftTextLength = codePointPointer - m_draftTextBuffer;
       break;
@@ -154,7 +154,7 @@ bool TextField::ContentView::removeCodePoint() {
   }
   // Remove the code point if possible
   CodePoint removedCodePoint = 0;
-  int removedSize = Ion::UTF8Helper::RemovePreviousCodePoint(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
+  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
   if (removedSize == 0) {
     assert(cursorLocation() == m_draftTextBuffer);
     return false;
@@ -360,7 +360,7 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
    * reasonable if the expression is being entered left-to-right. */
   const char * text = this->text();
   const char * location = cursorLocation();
-  Ion::UTF8Decoder decoder(text, text + (location - m_contentView.draftTextBuffer()));
+  UTF8Decoder decoder(text, text + (location - m_contentView.draftTextBuffer()));
   unsigned level = 0;
   while (location > m_contentView.draftTextBuffer()) {
     CodePoint c = decoder.previousCodePoint();
@@ -433,7 +433,7 @@ void TextField::scrollToCursor() {
 bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left && isEditing() && cursorLocation() > m_contentView.draftTextBuffer()) {
     assert(isEditing());
-    Ion::UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
+    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
     decoder.previousCodePoint();
     return setCursorLocation(decoder.stringPosition());
   }
@@ -443,7 +443,7 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Right && isEditing() && cursorLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
     assert(isEditing());
-    Ion::UTF8Decoder decoder(cursorLocation());
+    UTF8Decoder decoder(cursorLocation());
     decoder.nextCodePoint();
     return setCursorLocation(decoder.stringPosition());
   }
@@ -473,7 +473,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   // Remove the Empty code points
   constexpr int bufferSize = TextField::maxBufferSize();
   char buffer[bufferSize];
-  Ion::UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
+  UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
 
   const char * nextCursorLocation = m_contentView.draftTextBuffer() + draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {

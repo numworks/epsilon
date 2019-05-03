@@ -213,7 +213,7 @@ void print_expression(const Expression e, int indentationLevel) {
       break;
     case ExpressionNode::Type::Symbol:
       std::cout << "Symbol(";
-      Ion::UTF8Decoder decoder(static_cast<const Symbol &>(e).name());
+      UTF8Decoder decoder(static_cast<const Symbol &>(e).name());
       CodePoint firstCodePoint = decoder.nextCodePoint();
       switch (firstCodePoint) {
         case UCodePointGreekSmallLetterPi:

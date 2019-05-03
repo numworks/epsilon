@@ -5,7 +5,7 @@
 namespace TextInputHelpers {
 
 const char * CursorPositionInCommand(const char * text) {
-  Ion::UTF8Decoder decoder(text);
+  UTF8Decoder decoder(text);
   const char * currentPointer = text;
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {

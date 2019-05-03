@@ -1,8 +1,6 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
 
-namespace Ion {
-
 static inline int leading_ones(uint8_t value) {
   for (int i=0; i<8; i++) {
     if (!(value & 0x80)) {
@@ -108,6 +106,4 @@ size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferSi
   }
   assert(i == charCount);
   return charCount;
-}
-
 }

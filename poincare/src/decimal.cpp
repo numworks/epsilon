@@ -143,7 +143,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
 
   // Assert that m is not +/-inf
   assert(strcmp(tempBuffer, Infinity::Name()) != 0);
-  assert(!(Ion::UTF8Helper::CodePointIs(tempBuffer, '-') && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
+  assert(!(UTF8Helper::CodePointIs(tempBuffer, '-') && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
 
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
@@ -176,12 +176,12 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
        * We should use the UTF8Helper to manipulate chars, but it is clearer to
        * manipulate chars directly, so we just put assumptions on the char size
        * of the code points we manipuate. */
-      assert(Ion::UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       currentChar++;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
       int decimalMarkerPosition = currentChar;
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
-      assert(Ion::UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) == 1);
+      assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) == 1);
       buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
       buffer[decimalMarkerPosition] = '.';
     }
@@ -195,8 +195,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     return currentChar;
   }
   /* Case 1: Decimal mode */
-  assert(Ion::UTF8Decoder::CharSizeOfCodePoint('.') == 1);
-  assert(Ion::UTF8Decoder::CharSizeOfCodePoint('0') == 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
   strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, maxInt(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
@@ -213,7 +213,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       buffer[i+1] = buffer[i];
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
-    assert(Ion::UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
@@ -237,7 +237,7 @@ template<typename T> T DecimalNode::templatedApproximate() const {
 }
 
 int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
-  if (exponentLength > 0 && Ion::UTF8Helper::CodePointIs(exponent, '-')) {
+  if (exponentLength > 0 && UTF8Helper::CodePointIs(exponent, '-')) {
     exponent++;
     exponentNegative = true;
     exponentLength--;
@@ -263,7 +263,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   if (integralPart == integralPartEnd) {
     const char * fractionalPartEnd = fractionalPart + fractionalPartLength;
     if (fractionalPart != nullptr) {
-      while (Ion::UTF8Helper::CodePointIs(fractionalPart, '0') && fractionalPart < fractionalPartEnd) {
+      while (UTF8Helper::CodePointIs(fractionalPart, '0') && fractionalPart < fractionalPartEnd) {
         fractionalPart++;
         exp--;
       }
@@ -281,7 +281,7 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   Integer zero(0);
   Integer base(10);
   // Get rid of useless preceeding 0s
-  while (Ion::UTF8Helper::CodePointIs(integralPart, '0') && integralPartLength > 1) {
+  while (UTF8Helper::CodePointIs(integralPart, '0') && integralPartLength > 1) {
     integralPart++;
     integralPartLength--;
   }
@@ -292,9 +292,9 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   Integer numerator(integralPart, integralPartLength, false);
   assert(!numerator.isOverflow());
   // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
-  if (fractionalPart != nullptr && integralPartLength == 1 && Ion::UTF8Helper::CodePointIs(integralPart, '0')) {
+  if (fractionalPart != nullptr && integralPartLength == 1 && UTF8Helper::CodePointIs(integralPart, '0')) {
     integralPartLength = 0;
-    while (Ion::UTF8Helper::CodePointIs(fractionalPart, '0')) {
+    while (UTF8Helper::CodePointIs(fractionalPart, '0')) {
       fractionalPart++;
       fractionalPartLength--;
     }

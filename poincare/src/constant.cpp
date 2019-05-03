@@ -44,7 +44,7 @@ int rankOfConstant(CodePoint c) {
 }
 
 CodePoint ConstantNode::codePoint() const {
-  Ion::UTF8Decoder decoder = Ion::UTF8Decoder(m_name);
+  UTF8Decoder decoder = UTF8Decoder(m_name);
   CodePoint result = decoder.nextCodePoint();
   assert(decoder.nextCodePoint() == UCodePointNull);
   return result;
@@ -86,7 +86,7 @@ Expression ConstantNode::shallowReduce(Context & context, Preferences::ComplexFo
 }
 
 bool ConstantNode::isConstantCodePoint(CodePoint c) const {
-  Ion::UTF8Decoder decoder(m_name);
+  UTF8Decoder decoder(m_name);
   bool result = (decoder.nextCodePoint() == c);
   assert(decoder.nextCodePoint() == UCodePointNull);
   return result;

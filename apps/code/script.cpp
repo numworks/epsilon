@@ -46,9 +46,9 @@ bool Script::nameCompliant(const char * name) {
    * We do not allow upper cases in the script names because script names are
    * used in the URLs of the NumWorks workshop website and we do not want
    * problems with case sensitivity. */
-  Ion::UTF8Decoder decoder(name);
+  UTF8Decoder decoder(name);
   CodePoint c = decoder.nextCodePoint();
-  if (c == UCodePointNull || !(Ion::UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || c == '.')) {
+  if (c == UCodePointNull || !(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || c == '.')) {
     /* The name cannot be empty. Its first letter must be in [a-z_] or the
      * extension dot. */
     return false;
@@ -57,7 +57,7 @@ bool Script::nameCompliant(const char * name) {
     if (c == '.' && strcmp(decoder.stringPosition(), ScriptStore::k_scriptExtension) == 0) {
       return true;
     }
-    if (!(Ion::UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || Ion::UTF8Helper::CodePointIsNumber(c))) {
+    if (!(UTF8Helper::CodePointIsLowerCaseLetter(c) || c == '_' || UTF8Helper::CodePointIsNumber(c))) {
       return false;
     }
     c = decoder.nextCodePoint();

@@ -2,13 +2,13 @@
 #include <ion/unicode/utf8_decoder.h>
 
 void assert_decodes_to(const char * string, CodePoint c) {
-  Ion::UTF8Decoder d(string);
+  UTF8Decoder d(string);
   quiz_assert(d.nextCodePoint() == c);
   quiz_assert(d.nextCodePoint() == 0);
 }
 
 void assert_previous_code_point_is_to(const char * string, const char * stringPosition, CodePoint c) {
-  Ion::UTF8Decoder d(string, stringPosition);
+  UTF8Decoder d(string, stringPosition);
   quiz_assert(d.previousCodePoint() == c);
 }
 

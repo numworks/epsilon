@@ -57,7 +57,7 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     /* TODO decode here to encode again in handleEventWithText? */
     constexpr int bufferSize = CodePoint::MaxCodePointCharLength+1;
     char buffer[bufferSize];
-    size_t length = Ion::UTF8Decoder::CodePointToChars(field->XNTCodePoint(XNT()), buffer, bufferSize);
+    size_t length = UTF8Decoder::CodePointToChars(field->XNTCodePoint(XNT()), buffer, bufferSize);
     assert(length < bufferSize - 1);
     buffer[length] = 0;
     return field->handleEventWithText(buffer);

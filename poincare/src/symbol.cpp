@@ -151,7 +151,7 @@ Expression Symbol::UntypedBuilder(const char * name, size_t length, Context * co
 }
 
 bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
-  bool result = Ion::UTF8Helper::CodePointIs(m_name, unknownSymbol);
+  bool result = UTF8Helper::CodePointIs(m_name, unknownSymbol);
   if (result) {
     assert(m_name[1] == 0);
   }
@@ -161,7 +161,7 @@ bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
 Symbol Symbol::Builder(CodePoint name) {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
-  int codePointSize = Ion::UTF8Decoder::CodePointToChars(name, buffer, bufferSize);
+  int codePointSize = UTF8Decoder::CodePointToChars(name, buffer, bufferSize);
   assert(codePointSize <= bufferSize);
   return Symbol::Builder(buffer, codePointSize);
 }

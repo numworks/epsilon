@@ -39,7 +39,7 @@ static int serializeChild(
   // Write the child with parentheses if needed
   bool addParentheses = parentNode->childNeedsParenthesis(childNode);
   if (addParentheses) {
-    numberOfChar += Ion::UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -50,7 +50,7 @@ static int serializeChild(
     return bufferSize-1;
   }
   if (addParentheses) {
-    numberOfChar += Ion::UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
   }
   if (numberOfChar >= bufferSize-1) {
     assert(buffer[bufferSize - 1] == 0);
@@ -134,7 +134,7 @@ int SerializationHelper::Prefix(
   }
 
   // Add the opening parenthese
-  numberOfChar += Ion::UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
+  numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -155,7 +155,7 @@ int SerializationHelper::Prefix(
 
     // Write the remaining children, separated with commas
     for (int i = firstChildIndex + 1; i < childrenCount; i++) {
-      numberOfChar += Ion::UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
+      numberOfChar += UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
       }
@@ -168,7 +168,7 @@ int SerializationHelper::Prefix(
   }
 
   // Add the closing parenthese
-  numberOfChar += Ion::UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
+  numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -183,7 +183,7 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
       return result;
     }
   }
-  size_t size = Ion::UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
+  size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
   if (size <= bufferSize - 1) {
     buffer[size] = 0;
   } else {

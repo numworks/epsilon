@@ -330,7 +330,7 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   }
   if (event.hasText() && strlen(event.text()) == 1 ) {
     char c = event.text()[0];
-    if (Ion::UTF8Helper::CodePointIsLetter(c)) {
+    if (UTF8Helper::CodePointIsLetter(c)) {
       scrollToLetter(c);
       return true;
     }
@@ -390,7 +390,7 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 }
 
 void PythonToolbox::scrollToLetter(char letter) {
-  assert(Ion::UTF8Helper::CodePointIsLetter(letter));
+  assert(UTF8Helper::CodePointIsLetter(letter));
   /* We look for a child MessageTree that starts with the wanted letter. If we
    * do not find one, we scroll to the first child MessageTree that starts with
    * a letter higher than the wanted letter. */
@@ -402,7 +402,7 @@ void PythonToolbox::scrollToLetter(char letter) {
       index = i;
       break;
     }
-    if (index < 0 && l >= lowerLetter && Ion::UTF8Helper::CodePointIsLowerCaseLetter(l)) {
+    if (index < 0 && l >= lowerLetter && UTF8Helper::CodePointIsLowerCaseLetter(l)) {
       index = i;
     }
   }

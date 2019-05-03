@@ -41,7 +41,7 @@ static bool shouldAddObject(const char * name, int maxLength) {
     return false;
   }
   assert(name != nullptr);
-  if (Ion::UTF8Helper::CodePointIs(name, '_')) {
+  if (UTF8Helper::CodePointIs(name, '_')) {
     return false;
   }
   return true;

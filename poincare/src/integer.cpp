@@ -139,7 +139,7 @@ Integer::Integer(double_native_int_t i) {
 Integer::Integer(const char * digits, size_t length, bool negative) :
   Integer(0)
 {
-  if (digits != nullptr && Ion::UTF8Helper::CodePointIs(digits, '-')) {
+  if (digits != nullptr && UTF8Helper::CodePointIs(digits, '-')) {
     negative = true;
     digits++;
     length--;
@@ -208,8 +208,8 @@ Layout Integer::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
   assert(numberOfChars >= 1);
-  if ((int)Ion::UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
-    Ion::UTF8Decoder decoder = Ion::UTF8Decoder(buffer);
+  if ((int)UTF8Decoder::CharSizeOfCodePoint(buffer[0]) == numberOfChars) {
+    UTF8Decoder decoder = UTF8Decoder(buffer);
     return CodePointLayout::Builder(decoder.nextCodePoint());
   }
   return LayoutHelper::String(buffer, numberOfChars);

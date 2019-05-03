@@ -3,8 +3,6 @@
 #include <string.h>
 #include <assert.h>
 
-namespace Ion {
-
 namespace UTF8Helper {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
@@ -329,6 +327,4 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {
 }
 
 
-}
-
-}
+};

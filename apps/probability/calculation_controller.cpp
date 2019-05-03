@@ -298,7 +298,7 @@ void CalculationController::updateTitle() {
     if (currentChar >= k_titleBufferSize) {
       break;
     }
-    currentChar += Ion::UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
+    currentChar += UTF8Decoder::CodePointToChars(' ', m_titleBuffer + currentChar, k_titleBufferSize - currentChar);
   }
   m_titleBuffer[minInt(currentChar, k_titleBufferSize) - 1] = 0;
 }

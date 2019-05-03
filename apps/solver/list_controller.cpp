@@ -116,7 +116,7 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
 
 bool textRepresentsAnEquality(const char * text) {
   char equal = '=';
-  return Ion::UTF8Helper::CodePointIs(Ion::UTF8Helper::CodePointSearch(text, equal), equal);
+  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, equal), equal);
 }
 
 bool layoutRepresentsAnEquality(Poincare::Layout l) {

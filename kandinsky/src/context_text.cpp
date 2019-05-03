@@ -12,7 +12,7 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
 
   KDFont::GlyphBuffer glyphBuffer;
 
-  Ion::UTF8Decoder decoder(text);
+  UTF8Decoder decoder(text);
   const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull && (maxByteLength < 0 || codePointPointer < text + maxByteLength)) {

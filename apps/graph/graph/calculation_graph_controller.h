@@ -31,7 +31,6 @@ protected:
   bool m_isActive;
 private:
   bool handleZoom(Ion::Events::Event event) override { return false; }
-  bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction, bool fast = false) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }

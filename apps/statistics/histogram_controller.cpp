@@ -110,18 +110,18 @@ void HistogramController::reloadBannerView() {
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
 
-  numberOfChar+= Ion::UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
+  numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
-  numberOfChar+= Ion::UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
+  numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Padding
   for (int i = numberOfChar; i < k_maxIntervalLegendLength; i++) {
-    numberOfChar+= Ion::UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
+    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxIntervalLegendLength] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 1);
@@ -139,7 +139,7 @@ void HistogramController::reloadBannerView() {
   }
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    numberOfChar+= Ion::UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
+    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxLegendLength] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 3);
@@ -156,7 +156,7 @@ void HistogramController::reloadBannerView() {
   }
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    numberOfChar+= Ion::UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
+    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
   }
   buffer[k_maxLegendLength] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 5);

@@ -99,8 +99,8 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
   LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
   if (!m_pythonDelegate->isPythonUser(this)) {
-    const char * lineStart = Ion::UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
-    const char * lineEnd = Ion::UTF8Helper::CodePointAtGlyphOffset(text, toColumn);
+    const char * lineStart = UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
+    const char * lineEnd = UTF8Helper::CodePointAtGlyphOffset(text, toColumn);
     drawStringAt(
       ctx,
       line,
@@ -119,8 +119,8 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
      * basis. This can work, however the MicroPython lexer won't accept a line
      * starting with a whitespace. So we're discarding leading whitespaces
      * beforehand. */
-    const char * firstNonSpace = Ion::UTF8Helper::NotCodePointSearch(text, ' ');
-    if (Ion::UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
+    if (UTF8Helper::CodePointIs(firstNonSpace, UCodePointNull)) {
       nlr_pop();
       return;
     }
@@ -136,7 +136,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       tokenLength = TokenLength(lex);
       LOG_DRAW("Draw \"%.*s\" for token %d\n", tokenLength, tokenFrom, lex->tok_kind);
       drawStringAt(ctx, line,
-        Ion::UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
+        UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
         tokenFrom,
         tokenLength,
         TokenColor(lex->tok_kind),
@@ -151,7 +151,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     if (tokenFrom < text + byteLength) {
       LOG_DRAW("Draw comment \"%.*s\" from %d\n", byteLength - (tokenFrom - text), firstNonSpace, tokenFrom);
       drawStringAt(ctx, line,
-          Ion::UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
+          UTF8Helper::GlyphOffsetAtCodePoint(text, tokenFrom),
           tokenFrom,
           text + byteLength - tokenFrom,
           CommentColor,

@@ -1,6 +1,7 @@
 #include <ion/events.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <layout_events.h>
 #include "display.h"
 
 namespace Ion {

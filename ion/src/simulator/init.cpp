@@ -10,6 +10,7 @@ extern "C" {
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
+#include <layout_events.h>
 
 #include "display/fltklcd.h"
 #include "keyboard/fltkkbd.h"

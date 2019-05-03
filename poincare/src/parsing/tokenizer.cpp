@@ -14,7 +14,7 @@ static inline bool isDigit(const CodePoint c) {
 }
 
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, CodePoint context, bool * testResult) {
-  Ion::UTF8Decoder decoder(m_text);
+  UTF8Decoder decoder(m_text);
   CodePoint c = decoder.nextCodePoint();
   const char * nextTextPosition = decoder.stringPosition();
   bool shouldPop = popTest(c, context);
@@ -68,7 +68,7 @@ Token Tokenizer::popNumber() {
   const char * fractionalPartText = m_text;
   size_t fractionalPartLength = 0;
 
-  assert(integralPartLength > 0 || Ion::UTF8Helper::CodePointIs(m_text, '.'));
+  assert(integralPartLength > 0 || UTF8Helper::CodePointIs(m_text, '.'));
   if (canPopCodePoint('.')) {
     fractionalPartText = m_text;
     fractionalPartLength = popDigits();
@@ -177,7 +177,7 @@ Token Tokenizer::popToken() {
     Token result(Token::Identifier);
     // TODO compute size manually?
     constexpr int squareRootCharLength = 3;
-    assert(Ion::UTF8Decoder::CharSizeOfCodePoint(UCodePointSquareRoot) == squareRootCharLength);
+    assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSquareRoot) == squareRootCharLength);
     result.setString(start, squareRootCharLength);
     return result;
   }

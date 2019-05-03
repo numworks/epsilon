@@ -8,7 +8,7 @@ namespace Shared {
 namespace ToolboxHelpers {
 
 int CursorIndexInCommandText(const char * text) {
-  Ion::UTF8Decoder decoder(text);
+  UTF8Decoder decoder(text);
   size_t index = 0;
   const char * currentPointer = text;
   CodePoint codePoint = decoder.nextCodePoint();
@@ -39,7 +39,7 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
   bool insideQuote = false;
   bool argumentAlreadyReplaced = false;
 
-  Ion::UTF8Decoder decoder(command);
+  UTF8Decoder decoder(command);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
     if (codePoint == ')') {
@@ -59,10 +59,10 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      index += Ion::UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
+      index += UTF8Decoder::CodePointToChars(codePoint, buffer + index, bufferSize - index);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
-        index += Ion::UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
+        index += UTF8Decoder::CodePointToChars(UCodePointEmpty, buffer + index, bufferSize - index);
         argumentAlreadyReplaced = true;
       }
     }

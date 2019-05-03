@@ -70,9 +70,9 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */
     const char * text = textArea->text();
-    const char * firstNonSpace = Ion::UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
     assert(firstNonSpace >= text);
-    if (Ion::UTF8Helper::CodePointIs(firstNonSpace, '\n') && ((text - firstNonSpace)/Ion::UTF8Decoder::CharSizeOfCodePoint(' ')) >= k_indentationSpacesNumber) {
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n') && ((text - firstNonSpace)/UTF8Decoder::CharSizeOfCodePoint(' ')) >= k_indentationSpacesNumber) {
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
         textArea->removeCodePoint();
       }
@@ -82,10 +82,10 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     /* If the cursor is on the left of the text of a line, a space triggers an
      * indentation. */
     const char * text = textArea->text();
-    const char * firstNonSpace = Ion::UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
     assert(firstNonSpace >= text);
-    if (Ion::UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
-      assert(Ion::UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
+      assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
       char indentationBuffer[k_indentationSpacesNumber+1];
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
         indentationBuffer[i] = ' ';

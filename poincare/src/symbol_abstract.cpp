@@ -48,7 +48,7 @@ T SymbolAbstract::Builder(const char * name, int length) {
 }
 
 size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t len) {
-  return Ion::UTF8Helper::CopyUntilCodePoint(dst, len, src, '.');
+  return UTF8Helper::CopyUntilCodePoint(dst, len, src, '.');
 }
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test, Context & context) {

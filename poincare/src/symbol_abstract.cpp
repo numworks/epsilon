@@ -53,7 +53,7 @@ size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t le
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTest test, Context & context) {
   Expression e = SymbolAbstract::Expand(symbol, context, false);
-  return !e.isUninitialized() && test(e, context, false);
+  return !e.isUninitialized() && e.recursivelyMatches(test, context, false);
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context & context, bool clone) {

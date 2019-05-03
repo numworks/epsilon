@@ -185,7 +185,7 @@ QUIZ_CASE(poincare_user_variable_properties) {
   Shared::GlobalContext context;
 
   assert_parsed_expression_evaluates_to<double>("[[1]]→a", "[[1]]");
-  quiz_assert(Poincare::Expression::IsMatrix(Symbol::Builder('a'), context));
+  quiz_assert(Symbol::Builder('a').recursivelyMatches(Expression::IsMatrix, context));
 
   assert_parsed_expression_evaluates_to<double>("1.2→b", "1.2");
   quiz_assert(Symbol::Builder('b').recursivelyMatches(Expression::IsApproximate, context, true));
@@ -195,7 +195,7 @@ QUIZ_CASE(poincare_user_variable_properties) {
    * TODO: use parse_and_simplify when matrix are simplified. */
 
   assert_parsed_expression_evaluates_to<double>("[[x]]→f(x)", "[[undef]]");
-  quiz_assert(Poincare::Expression::IsMatrix(Function::Builder("f", 1, Symbol::Builder('x')), context));
+  quiz_assert(Function::Builder("f", 1, Symbol::Builder('x')).recursivelyMatches(Poincare::Expression::IsMatrix, context));
   assert_parsed_expression_evaluates_to<double>("0.2*x→g(x)", "undef");
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, context, true));
 

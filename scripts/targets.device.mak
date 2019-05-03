@@ -79,11 +79,15 @@ $(BUILD_DIR)/benchFlash.$(EXE):
 	@echo "Error: benchFlash.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
 endif
 
-
+ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH)$(EPSILON_ONBOARDING_APP)$(EPSILON_BOOT_PROMPT),001update)
 .PHONY: %_two_binaries
 %_two_binaries: %.elf
 	@echo "Building an internal and an external binary for     $<"
 	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external $< $(basename $<).external.bin
-	$(Q) $(OBJCOPY) -O binary -j .isr_vector_table -j .header -j .text.internal -j .rodata.internal -j .init_array -j .data $< $(basename $<).internal.bin
+	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external $< $(basename $<).internal.bin
+else
+%_two_binaries:
+	@echo "Error: two_binaries requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=0 EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update"
+endif
 
 include scripts/targets.device.$(MODEL).mak

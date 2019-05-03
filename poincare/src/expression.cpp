@@ -530,12 +530,10 @@ Expression Expression::reduce(Context & context, Preferences::ComplexFormat comp
 Expression Expression::deepReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
 #if MATRIX_EXACT_REDUCING
 #else
-#if 0
   if (IsMatrix(*this, context)) {
     sSimplificationHasBeenInterrupted = true;
     return *this;
   }
-#endif
 #endif
 
   deepReduceChildren(context, complexFormat, angleUnit, target, symbolicComputation);

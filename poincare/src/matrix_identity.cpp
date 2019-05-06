@@ -27,18 +27,12 @@ int MatrixIdentityNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 template<typename T>
 Evaluation<T> MatrixIdentityNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
-  // Check if the child is an integer
-  if (input.type() == EvaluationNode<T>::Type::Complex) {
-    // The child is a complex
-    std::complex<T> c = static_cast<Complex<T>&>(input).stdComplex();
-    T im = c.imag();
-    T re = c.real();
-    if ((im == 0.0 || std::isnan(im)) // The child is a real
-        && (!std::isnan(re) && re > 0) // The child is positive
-        && (std::ceil(re) ==  std::floor(re))) // The child is an integer
-    {
-      return MatrixComplex<T>::CreateIdentity((int)re);
-    }
+  T r = input.toScalar(); // Undefined if the child is not real
+  if (!std::isnan(r) && !std::isinf(r) && r > 0 // The child is defined and positive
+      && std::ceil(r) == std::floor(r) // The child is an integer
+      &&  r < ((float) INT_MAX)) // The child is not too big
+  {
+    return MatrixComplex<T>::CreateIdentity((int)r);
   }
   return Complex<T>::Undefined();
 }

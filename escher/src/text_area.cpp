@@ -72,7 +72,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   // Insert the text
   if (insertTextAtLocation(buffer, cursorLocation())) {
     // Set the cursor location
-    const char * nextCursorLocation = cursorLocation() + (forceCursorRightOfText ? strlen(buffer) : cursorPositionInCommand - text);
+    const char * nextCursorLocation = cursorLocation() + (forceCursorRightOfText ? strlen(buffer) : cursorPositionInCommand - buffer);
     setCursorLocation(nextCursorLocation);
   }
   return true;

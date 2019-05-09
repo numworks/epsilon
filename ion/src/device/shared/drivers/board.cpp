@@ -30,7 +30,20 @@ void initFPU() {
   // FIXME: The pipeline should be flushed at this point
 }
 
+void initCompensationCell() {
+  /* The output speed of some GPIO pins is set to high, in which case,
+   * the compensation cell should be enabled. */
+  SYSCFG.CMPCR()->setCMP_PD(true);
+  while (!SYSCFG.CMPCR()->getREADY()) {
+  }
+}
+
+void shutdownCompensationCell() {
+  SYSCFG.CMPCR()->setCMP_PD(false);
+}
+
 void initPeripherals(bool initBacklight) {
+  initCompensationCell();
   Display::init();
   if (initBacklight) {
     Backlight::init();
@@ -56,6 +69,7 @@ void shutdownPeripherals(bool keepLEDAwake) {
   Keyboard::shutdown();
   Backlight::shutdown();
   Display::shutdown();
+  shutdownCompensationCell();
 }
 
 static Frequency sStandardFrequency = Frequency::High;

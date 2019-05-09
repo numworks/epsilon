@@ -222,7 +222,7 @@ TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode * node) {
     GhostNode * ghost = new (pool->alloc(sizeof(GhostNode))) GhostNode();
     ghost->rename(pool->generateIdentifier(), false);
     ghost->retain();
-    assert((char *)ghost == (char *)node->next() + i*sizeof(GhostNode));
+    assert((char *)ghost == (char *)node->next() + i*Helpers::AlignedSize(sizeof(GhostNode), ByteAlignment));
   }
   node->rename(pool->generateIdentifier(), false);
   return TreeHandle(node);

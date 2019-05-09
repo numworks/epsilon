@@ -32,11 +32,17 @@ public:
   public:
     void setEXTI(int index, GPIO gpio) volatile { setBitRange(4*(index-8)+3, 4*(index-8), (uint32_t)gpio); }
   };
+  class CMPCR : Register32 {
+  public:
+    REGS_BOOL_FIELD(CMP_PD, 0);
+    REGS_BOOL_FIELD(READY, 8);
+  };
   constexpr SYSCFG() {};
   REGS_REGISTER_AT(MEMRMP, 0x00);
   REGS_REGISTER_AT(EXTICR1, 0x08);
   REGS_REGISTER_AT(EXTICR2, 0x0C);
   REGS_REGISTER_AT(EXTICR3, 0x10);
+  REGS_REGISTER_AT(CMPCR, 0x20);
 private:
   constexpr uint32_t Base() const {
     return 0x40013800;

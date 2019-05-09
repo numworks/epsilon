@@ -43,11 +43,10 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
-  /* At this point, there is at least one non-empty series.
-   * However, before the graph view appears for the very first time,
-   * *m_selectedSeriesIndex is set to -1. Thus one needs to select a series.
-   * TODO Perhaps the three following lines should be moved elsewhere. */
-  if (*m_selectedSeriesIndex < 0) {
+  /* At this point, some series might have been removed from the model. We need
+   * to reinitialize the selected series index if the current selection is
+   * either null (right after construction) or refering a removed series. */
+  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
     *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
   }
 

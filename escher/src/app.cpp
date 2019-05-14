@@ -33,7 +33,6 @@ App::App(Container * container, Snapshot * snapshot, ViewController * rootViewCo
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(this, rootViewController),
-  m_container(container),
   m_firstResponder(nullptr),
   m_snapshot(snapshot),
   m_warningController(this, warningMessage)
@@ -99,10 +98,6 @@ void App::dismissModalViewController() {
 void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2, bool specialExitKeys) {
   m_warningController.setLabel(warningMessage1, warningMessage2, specialExitKeys);
   displayModalViewController(&m_warningController, 0.5f, 0.5f);
-}
-
-const Container * App::container() const {
-  return m_container;
 }
 
 void App::didBecomeActive(Window * window) {

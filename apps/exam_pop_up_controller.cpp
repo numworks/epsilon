@@ -47,8 +47,7 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
 
 ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_cancelButton(parentResponder, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    ExamPopUpController * controller = (ExamPopUpController *)context;
-    Container * container = (Container *)controller->app()->container();
+    AppsContainer * container = AppsContainer::sharedAppsContainer();
     container->activeApp()->dismissModalViewController();
     return true;
   }, parentResponder), KDFont::SmallFont),
@@ -56,7 +55,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     ExamPopUpController * controller = (ExamPopUpController *)context;
     GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Deactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
-    AppsContainer * container = (AppsContainer *)controller->app()->container();
+    AppsContainer * container = AppsContainer::sharedAppsContainer();
     if (controller->isActivatingExamMode()) {
       container->reset();
       Ion::LED::setColor(KDColorRed);

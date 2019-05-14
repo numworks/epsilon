@@ -17,7 +17,7 @@ void LanguageController::reinitOnBoarding() {
 
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (Shared::LanguageController::handleEvent(event)) {
-    AppsContainer * appsContainer = (AppsContainer *)app()->container();
+    AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
 #ifdef EPSILON_BOOT_PROMPT
     app()->displayModalViewController(appsContainer->promptController(), 0.5f, 0.5f);
 #else

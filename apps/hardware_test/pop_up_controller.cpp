@@ -39,8 +39,7 @@ PopUpController::ContentView::ContentView(Responder * parentResponder) :
     return true;
   }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
-    PopUpController::ContentView * view = (PopUpController::ContentView *)context;
-    AppsContainer * appsContainer = (AppsContainer *)view->app()->container();
+    AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
     bool switched = appsContainer->switchTo(appsContainer->hardwareTestAppSnapshot());
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.

@@ -38,7 +38,7 @@ void ListController::renameSelectedFunction() {
   computeTitlesColumnWidth(true);
   selectableTableView()->reloadData();
 
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   TextFieldFunctionTitleCell * selectedTitleCell = (TextFieldFunctionTitleCell *)(selectableTableView()->selectedCell());
   selectedTitleCell->setHorizontalAlignment(1.0f);
   app()->setFirstResponder(selectedTitleCell);
@@ -91,7 +91,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
     if (selectTab) {
       m_selectableTableView.parentResponder()->handleEvent(event);
     }
-    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+    AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
@@ -122,7 +122,7 @@ bool ListController::textFieldDidAbortEditing(TextField * textField) {
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
   app()->setFirstResponder(&m_selectableTableView);
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 

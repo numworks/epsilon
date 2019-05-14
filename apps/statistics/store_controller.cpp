@@ -22,7 +22,7 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 }
 
 StoreContext * StoreController::storeContext() {
-  m_statisticsContext.setParentContext(const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  m_statisticsContext.setParentContext(AppsContainer::sharedAppsContainer()->globalContext());
   return &m_statisticsContext;
 }
 

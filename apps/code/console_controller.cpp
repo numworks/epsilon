@@ -90,7 +90,7 @@ void ConsoleController::terminateInputLoop() {
 }
 
 const char * ConsoleController::inputText(const char * prompt) {
-  AppsContainer * a = (AppsContainer *)(app()->container());
+  AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
   m_inputRunLoopActive = true;
 
   const char * promptText = prompt;
@@ -119,10 +119,10 @@ const char * ConsoleController::inputText(const char * prompt) {
   // Reload the history
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  a->redrawWindow();
+  appsContainer->redrawWindow();
 
   // Launch a new input loop
-  a->runWhile([](void * a){
+  appsContainer->runWhile([](void * a){
       ConsoleController * c = static_cast<ConsoleController *>(a);
       return c->inputRunLoopActive();
   }, this);

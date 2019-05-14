@@ -1,6 +1,5 @@
 #include "app.h"
 #include <apps/i18n.h>
-#include "../apps_container.h"
 
 extern "C" {
 #include <assert.h>
@@ -27,7 +26,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_controller, I18n::Message::Warning),
-  m_controller(&m_modalViewController, (AppsContainer *)container, snapshot)
+  m_controller(&m_modalViewController, snapshot)
 {
 }
 

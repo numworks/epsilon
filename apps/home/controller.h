@@ -10,7 +10,7 @@ namespace Home {
 
 class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
 public:
-  Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource);
+  Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource);
 
   View * view() override;
 
@@ -40,7 +40,6 @@ private:
     void layoutSubviews() override;
     SelectableTableView m_selectableTableView;
   };
-  AppsContainer * m_container;
   static constexpr KDCoordinate k_sideMargin = 4;
   static constexpr KDCoordinate k_bottomMargin = 14;
   static constexpr KDCoordinate k_indicatorMargin = 61;

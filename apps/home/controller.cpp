@@ -47,9 +47,8 @@ void Controller::ContentView::layoutSubviews() {
   m_selectableTableView.setFrame(bounds());
 }
 
-Controller::Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource) :
+Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource) :
   ViewController(parentResponder),
-  m_container(container),
   m_view(this, selectionDataSource),
   m_selectionDataSource(selectionDataSource)
 {
@@ -57,7 +56,8 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container,
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    bool switched = m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
+    AppsContainer * container = AppsContainer::sharedAppsContainer();
+    bool switched = container->switchTo(container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
     return true;
@@ -119,22 +119,25 @@ int Controller::reusableCellCount() {
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
+  AppsContainer * container = AppsContainer::sharedAppsContainer();
   int appIndex = (j*k_numberOfColumns+i)+1;
-  if (appIndex >= m_container->numberOfApps()) {
+  if (appIndex >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = m_container->appSnapshotAtIndex(appIndex)->descriptor();
+    ::App::Descriptor * descriptor = container->appSnapshotAtIndex(appIndex)->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }
 
 int Controller::numberOfIcons() {
-  assert(m_container->numberOfApps() > 0);
-  return m_container->numberOfApps() - 1;
+  AppsContainer * container = AppsContainer::sharedAppsContainer();
+  assert(container->numberOfApps() > 0);
+  return container->numberOfApps() - 1;
 }
 
 void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  AppsContainer * container = AppsContainer::sharedAppsContainer();
   if (withinTemporarySelection) {
     return;
   }
@@ -147,7 +150,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * background complete redrawing but the code is a bit
    * clumsy. */
   if (t->selectedRow() == numberOfRows()-1) {
-    m_view.reloadBottomRow(this, m_container->numberOfApps()-1, k_numberOfColumns);
+    m_view.reloadBottomRow(this, container->numberOfApps()-1, k_numberOfColumns);
   }
   /* To prevent the selectable table view to select cells that are unvisible,
    * we reselect the previous selected cell as soon as the selected cell is
@@ -155,7 +158,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
   int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
-  if (appIndex >= m_container->numberOfApps()) {
+  if (appIndex >= container->numberOfApps()) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }
 }

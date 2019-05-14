@@ -258,7 +258,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
+  AppsContainer * appsContainer = (AppsContainer *)app()->container();
   int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
   (void) nbOfVariables; // Remove compilation warning of nused variable
   assert(nbOfVariables >= 0);

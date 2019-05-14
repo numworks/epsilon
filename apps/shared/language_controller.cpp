@@ -43,8 +43,7 @@ bool LanguageController::handleEvent(Ion::Events::Event event) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(selectedRow()+1));
     /* We need to reload the whole title bar in order to translate both the
      * "Settings" title and the degree preference. */
-    AppsContainer * myContainer = (AppsContainer * )app()->container();
-    myContainer->reloadTitleBarView();
+    AppsContainer::sharedAppsContainer()->reloadTitleBarView();
     return true;
   }
   return false;

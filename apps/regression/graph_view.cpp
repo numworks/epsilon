@@ -8,12 +8,11 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView, Responder * controller) :
+GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(store, cursor, bannerView, cursorView),
   m_store(store),
   m_xLabels{},
-  m_yLabels{},
-  m_controller(controller)
+  m_yLabels{}
 {
 }
 

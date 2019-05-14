@@ -77,7 +77,7 @@ char App::XNT() {
 }
 
 NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = container()->variableBoxController();
+  VariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->setSender(textInput);
   varBox->lockDeleteEvent(VariableBoxController::Page::Function);
   return varBox;

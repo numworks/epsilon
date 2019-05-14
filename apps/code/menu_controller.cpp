@@ -121,7 +121,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
 void MenuController::renameSelectedScript() {
   assert(m_selectableTableView.selectedRow() >= 0);
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
   ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
   app()->setFirstResponder(myCell);
@@ -338,7 +338,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     m_selectableTableView.selectedCell()->setHighlighted(true);
     reloadConsole();
     app()->setFirstResponder(&m_selectableTableView);
-    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+    AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Script::ErrorStatus::NameTaken) {
     app()->displayWarning(I18n::Message::NameTaken);
@@ -422,7 +422,7 @@ bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
     app()->setFirstResponder(&m_selectableTableView);
   }
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 

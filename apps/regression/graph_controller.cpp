@@ -97,7 +97,7 @@ void GraphController::selectRegressionCurve() {
 // Private
 
 Poincare::Context * GraphController::globalContext() {
-  return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 // SimpleInteractiveCurveViewController

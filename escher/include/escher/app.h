@@ -57,7 +57,6 @@ public:
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
   void displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message) 0, bool specialExitKeys = false);
-  const Container * container() const;
   uint8_t m_magic; // Poor man's RTTI
 
   virtual void didBecomeActive(Window * window);
@@ -69,7 +68,6 @@ protected:
   App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
   ModalViewController m_modalViewController;
 private:
-  Container * m_container;
   Responder * m_firstResponder;
   Snapshot * m_snapshot;
   WarningController m_warningController;

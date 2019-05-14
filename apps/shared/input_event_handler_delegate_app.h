@@ -14,7 +14,6 @@ public:
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 protected:
   InputEventHandlerDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
-  AppsContainer * container();
 };
 
 }

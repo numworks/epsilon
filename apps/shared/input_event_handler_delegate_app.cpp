@@ -14,7 +14,7 @@ InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Container * container
 }
 
 AppsContainer * InputEventHandlerDelegateApp::container() {
-  return (AppsContainer *)(app()->container());
+  return static_cast<AppsContainer *>(const_cast<Container *>(::App::container()));
 }
 
 Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler(InputEventHandler * textInput) {

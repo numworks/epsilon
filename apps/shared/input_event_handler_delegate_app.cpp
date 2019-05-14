@@ -13,18 +13,14 @@ InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Container * container
 {
 }
 
-AppsContainer * InputEventHandlerDelegateApp::container() {
-  return static_cast<AppsContainer *>(const_cast<Container *>(::App::container()));
-}
-
 Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  Toolbox * toolbox = container()->mathToolbox();
+  Toolbox * toolbox = AppsContainer::sharedAppsContainer()->mathToolbox();
   toolbox->setSender(textInput);
   return toolbox;
 }
 
 NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = container()->variableBoxController();
+  VariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->setSender(textInput);
   varBox->lockDeleteEvent(VariableBoxController::Page::RootMenu);
   return varBox;

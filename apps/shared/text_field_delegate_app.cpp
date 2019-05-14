@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Shared {
 
 Context * TextFieldDelegateApp::localContext() {
-  return container()->globalContext();
+  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 char TextFieldDelegateApp::XNT() {

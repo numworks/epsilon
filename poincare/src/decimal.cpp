@@ -287,6 +287,7 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   }
   //TODO: set a FLAG to tell that a rounding happened?
   bool rounding = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits && integralPart[PrintFloat::k_numberOfStoredSignificantDigits] >= '5';
+  bool correctExponentAfterRoundingUp = true;
   // Cap the length of the integralPart
   integralPartLength = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits : integralPartLength;
   Integer numerator(integralPart, integralPartLength, false);
@@ -301,13 +302,20 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   }
   rounding |= integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits && fractionalPart[PrintFloat::k_numberOfStoredSignificantDigits-integralPartLength] >= '5';
   fractionalPartLength = integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits - integralPartLength : fractionalPartLength;
+  while (correctExponentAfterRoundingUp && integralPartLength-- > 0) {
+    correctExponentAfterRoundingUp = *(integralPart++) == '9';
+  }
   for (int i = 0; i < fractionalPartLength; i++) {
     numerator = Integer::Multiplication(numerator, base);
     assert(*fractionalPart >= '0' && *fractionalPart <= '9');
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
+    correctExponentAfterRoundingUp = *fractionalPart == '9';
     fractionalPart++;
   }
-  numerator = rounding ? Integer::Addition(numerator, Integer(1)) : numerator;
+  if (rounding) {
+    numerator = Integer::Addition(numerator, Integer(1));
+    exponent += correctExponentAfterRoundingUp;
+  }
   exponent = numerator.isZero() ? 0 : exponent;
   return Decimal::Builder(numerator, exponent);
 }

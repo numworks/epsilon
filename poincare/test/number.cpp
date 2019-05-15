@@ -27,6 +27,7 @@ QUIZ_CASE(poincare_number_parser) {
   assert_parsed_expression_is("123456789012345.2", Decimal::Builder(Integer("12345678901235"), 14));
   assert_parsed_expression_is("123456789012341.2", Decimal::Builder(Integer("12345678901234"), 14));
   assert_parsed_expression_is("12.34567", Decimal::Builder(Integer("1234567"), 1));
+  assert_parsed_expression_is("0.999999999999999", Decimal::Builder(Integer("1"),0));
 
   // Infinity
   assert_parsed_expression_is("23ᴇ1000", Infinity::Builder(false));

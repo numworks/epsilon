@@ -28,7 +28,7 @@ App::Snapshot::Snapshot() :
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -72,8 +72,8 @@ void App::Snapshot::setOpt(const char * name, char * value) {
 }
 #endif
 
-App::App(Container * container, Snapshot * snapshot) :
-  Shared::InputEventHandlerDelegateApp(container, snapshot, &m_codeStackViewController),
+App::App(Snapshot * snapshot) :
+  Shared::InputEventHandlerDelegateApp(snapshot, &m_codeStackViewController),
   m_pythonHeap{},
   m_pythonUser(nullptr),
   m_consoleController(nullptr, this, snapshot->scriptStore()

@@ -34,7 +34,7 @@ public:
   bool storeExpressionAllowed() const override { return true; }
   char XNT() override;
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   HistoryController m_historyController;
   EditExpressionController m_editExpressionController;
 };

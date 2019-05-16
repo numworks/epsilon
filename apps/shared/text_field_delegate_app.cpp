@@ -52,8 +52,8 @@ bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) 
 
 /* Protected */
 
-TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  InputEventHandlerDelegateApp(container, snapshot, rootViewController),
+TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
+  InputEventHandlerDelegateApp(snapshot, rootViewController),
   TextFieldDelegate()
 {
 }

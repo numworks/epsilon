@@ -29,7 +29,7 @@ void App::Snapshot::reset() {
 void App::Snapshot::tidy() {
 }
 
-App::App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
+App::App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
   Responder(nullptr),
   m_magic(Magic),
   m_modalViewController(this, rootViewController),

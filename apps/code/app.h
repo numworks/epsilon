@@ -75,7 +75,7 @@ private:
   char m_pythonHeap[k_pythonHeapSize];
   const void * m_pythonUser;
 
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   ConsoleController m_consoleController;
   ButtonRowController m_listFooter;
   MenuController m_menuController;

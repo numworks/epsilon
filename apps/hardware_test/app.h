@@ -34,7 +34,7 @@ private:
     SerialNumberController m_serialNumberController;
   };
 
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   WizardViewController m_wizardViewController;
 };
 

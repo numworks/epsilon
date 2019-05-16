@@ -65,7 +65,7 @@ public:
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
 protected:
-  App(Container * container, Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
+  App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0);
   ModalViewController m_modalViewController;
 private:
   Responder * m_firstResponder;

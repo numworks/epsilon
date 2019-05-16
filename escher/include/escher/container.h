@@ -17,6 +17,10 @@
 
 class Container : public RunLoop {
 public:
+  static Container * sharedContainer() {
+    assert(s_sharedContainer);
+    return s_sharedContainer;
+  }
   Container();
   virtual ~Container();
   Container(const Container& other) = delete;
@@ -30,6 +34,9 @@ public:
   virtual bool switchTo(App::Snapshot * snapshot);
 protected:
   virtual Window * window() = 0;
+  void setSharedContainer(Container * container) {
+    s_sharedContainer = container;
+  }
 private:
   void step();
   int numberOfTimers() override;
@@ -37,6 +44,7 @@ private:
   virtual int numberOfContainerTimers();
   virtual Timer * containerTimerAtIndex(int i);
   App * m_activeApp;
+  static Container * s_sharedContainer;
 };
 
 #endif

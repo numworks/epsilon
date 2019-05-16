@@ -1,6 +1,5 @@
 #include <escher/responder.h>
-#include <escher/app.h>
-#include <escher/metric.h>
+#include <escher/container.h>
 #include <assert.h>
 
 Responder::Responder(Responder * parentResponder) :
@@ -63,12 +62,6 @@ Responder * Responder::commonAncestorWith(Responder * responder) {
   return s;
 }
 
-/* We assume the app is the root parent. */
 App * Responder::app() const {
-  const Responder * rootResponder = this;
-  while (rootResponder->parentResponder() != nullptr) {
-    rootResponder = rootResponder->parentResponder();
-  }
-   App * result = (App *)rootResponder;
-  return result;
+  return Container::sharedContainer()->activeApp();
 }

@@ -7,8 +7,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  ::App(container, snapshot, rootViewController, I18n::Message::Warning),
+InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
+  ::App(snapshot, rootViewController, I18n::Message::Warning),
   InputEventHandlerDelegate()
 {
 }

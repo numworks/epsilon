@@ -20,7 +20,7 @@ public:
   bool isAcceptableText(const char * text);
   bool hasUndefinedValue(const char * text, double & value);
 protected:
-  TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
   bool isFinishingEvent(Ion::Events::Event event);
   virtual bool isAcceptableExpression(const Poincare::Expression expression);

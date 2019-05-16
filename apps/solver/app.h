@@ -35,7 +35,7 @@ public:
   void willBecomeInactive() override;
   char XNT() override;
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   SolutionsController m_solutionsController;
   IntervalController m_intervalController;
   AlternateEmptyViewController m_alternateEmptyViewController;

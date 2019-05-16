@@ -55,7 +55,7 @@ public:
     Page m_activePage;
   };
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   CalculationController m_calculationController;
   ParametersController m_parametersController;
   LawController m_lawController;

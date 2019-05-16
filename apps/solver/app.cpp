@@ -24,7 +24,7 @@ App::Snapshot::Snapshot() :
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -42,8 +42,8 @@ void App::Snapshot::tidy() {
   m_equationStore.tidy();
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  ExpressionFieldDelegateApp(container, snapshot, &m_inputViewController),
+App::App(Snapshot * snapshot) :
+  ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
   m_solutionsController(&m_alternateEmptyViewController, snapshot->equationStore()),
   m_intervalController(nullptr, this, snapshot->equationStore()),
   m_alternateEmptyViewController(nullptr, &m_solutionsController, &m_solutionsController),

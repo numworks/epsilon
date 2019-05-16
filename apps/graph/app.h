@@ -35,7 +35,7 @@ public:
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

@@ -23,7 +23,7 @@ const Image * App::Descriptor::icon() {
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 void App::Snapshot::reset() {
@@ -39,8 +39,8 @@ void App::Snapshot::tidy() {
   m_calculationStore.tidy();
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  ExpressionFieldDelegateApp(container, snapshot, &m_editExpressionController),
+App::App(Snapshot * snapshot) :
+  ExpressionFieldDelegateApp(snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
   m_editExpressionController(&m_modalViewController, this, &m_historyController, snapshot->calculationStore())
 {

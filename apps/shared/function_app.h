@@ -39,8 +39,8 @@ public:
   void willBecomeInactive() override;
 
 protected:
-  FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-    ExpressionFieldDelegateApp(container, snapshot, rootViewController)
+  FunctionApp(Snapshot * snapshot, ViewController * rootViewController) :
+    ExpressionFieldDelegateApp(snapshot, rootViewController)
   {}
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;

@@ -16,7 +16,7 @@ I18n::Message App::Descriptor::upperName() {
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -24,8 +24,8 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_controller, I18n::Message::Warning),
+App::App(Snapshot * snapshot) :
+  ::App(snapshot, &m_controller, I18n::Message::Warning),
   m_controller(&m_modalViewController, snapshot)
 {
 }

@@ -7,8 +7,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  TextFieldDelegateApp(container, snapshot, rootViewController),
+ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
+  TextFieldDelegateApp(snapshot, rootViewController),
   LayoutFieldDelegate()
 {
 }

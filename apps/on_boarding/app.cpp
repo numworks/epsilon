@@ -4,7 +4,7 @@
 namespace OnBoarding {
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -12,8 +12,8 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_languageController),
+App::App(Snapshot * snapshot) :
+  ::App(snapshot, &m_languageController),
   m_languageController(&m_modalViewController, &m_logoController),
   m_logoController()
 {

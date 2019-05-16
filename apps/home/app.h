@@ -21,7 +21,7 @@ public:
     Descriptor * descriptor() override;
   };
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   Controller m_controller;
 };
 

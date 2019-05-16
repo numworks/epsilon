@@ -13,7 +13,7 @@ public:
   Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 protected:
-  InputEventHandlerDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  InputEventHandlerDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
 };
 
 }

@@ -45,7 +45,6 @@ public:
   /* The destructor has to be virtual. Otherwise calling a destructor on an
    * App * pointing to a Derived App would have undefined behaviour. */
   virtual ~App() = default;
-  constexpr static uint8_t Magic = 0xA8;
   Snapshot * snapshot();
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
@@ -57,7 +56,6 @@ public:
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
   void displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message) 0, bool specialExitKeys = false);
-  uint8_t m_magic; // Poor man's RTTI
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();

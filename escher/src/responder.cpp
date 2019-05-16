@@ -69,10 +69,6 @@ App * Responder::app() const {
   while (rootResponder->parentResponder() != nullptr) {
     rootResponder = rootResponder->parentResponder();
   }
-  /* If we used RTTI we could use a dynamic_cast, which would be a lot more
-   * safe, as such:
-   * return dynamic_cast<App *>(rootResponder); */
    App * result = (App *)rootResponder;
-   assert(result->m_magic == App::Magic); // Poor man's RTTI
   return result;
 }

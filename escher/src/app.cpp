@@ -31,7 +31,6 @@ void App::Snapshot::tidy() {
 
 App::App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage) :
   Responder(nullptr),
-  m_magic(Magic),
   m_modalViewController(this, rootViewController),
   m_firstResponder(nullptr),
   m_snapshot(snapshot),

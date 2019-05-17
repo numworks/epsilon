@@ -64,8 +64,8 @@ AppsContainer::AppsContainer() :
 #elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   m_promptController(sPromptMessages, sPromptColors, 6),
 #endif
-  m_batteryTimer(BatteryTimer(this)),
-  m_suspendTimer(SuspendTimer(this)),
+  m_batteryTimer(),
+  m_suspendTimer(),
   m_backlightDimmingTimer(),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),

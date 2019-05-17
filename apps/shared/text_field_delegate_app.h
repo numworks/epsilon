@@ -6,8 +6,6 @@
 #include "input_event_handler_delegate_app.h"
 #include <apps/i18n.h>
 
-class AppsContainer;
-
 namespace Shared {
 
 class TextFieldDelegateApp : public InputEventHandlerDelegateApp, public TextFieldDelegate {

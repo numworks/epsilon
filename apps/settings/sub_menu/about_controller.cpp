@@ -1,9 +1,6 @@
 #include "about_controller.h"
-#include "../../apps_container.h"
 #include <assert.h>
 #include <cmath>
-
-using namespace Shared;
 
 namespace Settings {
 

@@ -1,5 +1,4 @@
 #include "app.h"
-#include "../apps_container.h"
 #include "code_icon.h"
 #include <apps/i18n.h>
 #include "helpers.h"

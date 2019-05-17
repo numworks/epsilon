@@ -1,6 +1,5 @@
 #include "edit_expression_controller.h"
 #include "app.h"
-#include "../apps_container.h"
 #include <ion/display.h>
 #include <poincare/preferences.h>
 #include <assert.h>

@@ -4,8 +4,6 @@
 #include <escher.h>
 #include "controller.h"
 
-class AppsContainer;
-
 namespace Home {
 
 class App : public ::App {

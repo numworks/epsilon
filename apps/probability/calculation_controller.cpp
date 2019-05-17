@@ -1,6 +1,5 @@
 #include "calculation_controller.h"
 #include "../constant.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "app.h"
 #include "calculation/discrete_calculation.h"

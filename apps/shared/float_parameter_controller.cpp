@@ -1,6 +1,5 @@
 #include "float_parameter_controller.h"
 #include "../constant.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>

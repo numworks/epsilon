@@ -1,7 +1,6 @@
 #include "values_controller.h"
 #include "function_app.h"
 #include "../constant.h"
-#include "../apps_container.h"
 #include "poincare_helpers.h"
 #include <assert.h>
 
@@ -342,4 +341,3 @@ FunctionStore * ValuesController::functionStore() const {
 }
 
 }
-

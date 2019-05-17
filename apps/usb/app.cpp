@@ -1,5 +1,5 @@
 #include "app.h"
-#include "../apps_container.h"
+#include <apps/i18n.h>
 #include <assert.h>
 
 namespace USB {

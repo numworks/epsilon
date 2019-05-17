@@ -1,7 +1,6 @@
 #include "list_parameter_controller.h"
 #include "list_controller.h"
 #include "../app.h"
-#include "../../apps_container.h"
 #include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;

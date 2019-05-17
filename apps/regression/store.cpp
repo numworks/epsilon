@@ -1,6 +1,5 @@
 #include "store.h"
 #include "linear_model_helper.h"
-#include "apps/apps_container.h"
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <float.h>

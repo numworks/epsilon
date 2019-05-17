@@ -3,8 +3,6 @@
 
 #include <escher.h>
 
-class AppsContainer;
-
 namespace Shared {
 
 class InputEventHandlerDelegateApp : public ::App, public InputEventHandlerDelegate {

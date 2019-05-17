@@ -8,8 +8,6 @@
 #include "battery_test_controller.h"
 #include "serial_number_controller.h"
 
-class AppsContainer;
-
 namespace HardwareTest {
 
 class App : public ::App {

@@ -1,5 +1,4 @@
 #include "editable_cell_table_view_controller.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "../constant.h"
 #include "text_field_delegate_app.h"

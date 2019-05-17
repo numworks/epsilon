@@ -446,7 +446,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       /* Step 2: Approximation
        * We compute the approximate expression from the Cartesian form to avoid
        * unprecision. For example, if the result is the ComplexCartesian(a,b),
-       * the final expression is goind to be sqrt(a^2+b^2)*exp(i*arctan(b/a)...
+       * the final expression is going to be sqrt(a^2+b^2)*exp(i*atan(b/a)...
        * in Polar ComplexFormat. If we approximate this expression instead of
        * ComplexCartesian(a,b), we are going to loose precision on the resulting
        * complex.*/

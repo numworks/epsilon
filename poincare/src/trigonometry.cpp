@@ -99,14 +99,14 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     return lookup;
   }
 
-  // Step 2. Look for an expression of type "cos(arccos(x))", return x
+  // Step 2. Look for an expression of type "cos(acos(x))", return x
   if (AreInverseFunctions(e, e.childAtIndex(0))) {
     Expression result = e.childAtIndex(0).childAtIndex(0);
     e.replaceWithInPlace(result);
     return result;
   }
 
-  // Step 3. Look for an expression of type "cos(arcsin(x))" or "sin(arccos(x)), return sqrt(1-x^2)
+  // Step 3. Look for an expression of type "cos(asin(x))" or "sin(acos(x)), return sqrt(1-x^2)
   // These equalities are true on complexes
   if ((e.type() == ExpressionNode::Type::Cosine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine) || (e.type() == ExpressionNode::Type::Sine && e.childAtIndex(0).type() == ExpressionNode::Type::ArcCosine)) {
     Expression sqrt =
@@ -131,9 +131,9 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
     return sqrt.shallowReduce(context, complexFormat, angleUnit, target);
   }
 
-  // Step 4. Look for an expression of type "cos(arctan(x))" or "sin(arctan(x))"
-  // cos(arctan(x)) --> 1/sqrt(1+x^2)
-  // sin(arctan(x)) --> x/sqrt(1+x^2)
+  // Step 4. Look for an expression of type "cos(atan(x))" or "sin(atan(x))"
+  // cos(atan(x)) --> 1/sqrt(1+x^2)
+  // sin(atan(x)) --> x/sqrt(1+x^2)
   // These equalities are true on complexes
   if ((e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine) && e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
@@ -252,7 +252,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   assert(isInverseTrigonometryFunction(e));
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180;
 
-  // Step 1. Look for an expression of type "arccos(cos(x))", return x
+  // Step 1. Look for an expression of type "acos(cos(x))", return x
   if (AreInverseFunctions(e.childAtIndex(0), e)) {
     float trigoOp = e.childAtIndex(0).childAtIndex(0).node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if ((e.type() == ExpressionNode::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
@@ -264,7 +264,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     }
   }
 
-  // Step 2. Special case for arctan(sin(x)/cos(x))
+  // Step 2. Special case for atan(sin(x)/cos(x))
   if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
     float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
@@ -274,7 +274,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
     }
   }
 
-  // Step 3. Look for an expression of type "arctan(1/x), return sign(x)*π/2-arctan(x)
+  // Step 3. Look for an expression of type "atan(1/x), return sign(x)*π/2-atan(x)
   if (e.type() == ExpressionNode::Type::ArcTangent && e.childAtIndex(0).type() == ExpressionNode::Type::Power && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     Expression x = e.childAtIndex(0).childAtIndex(0);
     /* This equality is not true if x = 0. We apply it under certain conditions:
@@ -310,8 +310,8 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
    */
   Expression p = e.parent();
   bool letArcFunctionAtRoot = !p.isUninitialized() && isDirectTrigonometryFunction(p);
-  /* Step 5. Handle opposite argument: arccos(-x) = π-arcos(x),
-   * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) *
+  /* Step 5. Handle opposite argument: acos(-x) = π-acos(x),
+   * asin(-x) = -asin(x), atan(-x)= -atan(x) *
    */
   if (!letArcFunctionAtRoot) {
     Expression positiveArg = e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);

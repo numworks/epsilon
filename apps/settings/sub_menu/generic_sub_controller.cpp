@@ -1,10 +1,8 @@
 #include "generic_sub_controller.h"
-#include "../../apps_container.h"
 #include <assert.h>
 #include <cmath>
 
 using namespace Poincare;
-using namespace Shared;
 
 namespace Settings {
 

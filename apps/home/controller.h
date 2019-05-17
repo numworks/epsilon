@@ -4,8 +4,6 @@
 #include <escher.h>
 #include "app_cell.h"
 
-class AppsContainer;
-
 namespace Home {
 
 class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {

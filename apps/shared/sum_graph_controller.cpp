@@ -1,6 +1,5 @@
 #include "sum_graph_controller.h"
 #include "function_app.h"
-#include "../apps_container.h"
 #include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>

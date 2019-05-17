@@ -6,8 +6,6 @@
 #include "curve_view_cursor.h"
 #include "interval.h"
 
-class AppsContainer;
-
 namespace Shared {
 
 class FunctionApp : public ExpressionFieldDelegateApp {

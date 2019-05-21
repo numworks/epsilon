@@ -144,9 +144,10 @@ static inline void startDMAUpload(const KDColor * src, bool incrementSrc, uint16
 #endif
 
 void initGPIO() {
+  constexpr GPIO::OSPEEDR::OutputSpeed FSMCPinsSpeed = GPIO::OSPEEDR::OutputSpeed::Medium;
   // All the FSMC GPIO pins use the alternate function number 12
   for(const GPIOPin & g : Config::FSMCPins) {
-    g.group().OSPEEDR()->setOutputSpeed(g.pin(), Config::FSMCPinsSpeed);
+    g.group().OSPEEDR()->setOutputSpeed(g.pin(), FSMCPinsSpeed);
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
     g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF12);
   }
@@ -164,7 +165,7 @@ void initGPIO() {
   Config::ExtendedCommandPin.group().ODR()->set(Config::ExtendedCommandPin.pin(), true);
 
   // Turn on the Tearing Effect pin
-  Config::TearingEffectPin.group().OSPEEDR()->setOutputSpeed(Config::TearingEffectPin.pin(), Config::FSMCPinsSpeed);
+  Config::TearingEffectPin.group().OSPEEDR()->setOutputSpeed(Config::TearingEffectPin.pin(), FSMCPinsSpeed);
   Config::TearingEffectPin.group().MODER()->setMode(Config::TearingEffectPin.pin(), GPIO::MODER::Mode::Input);
   Config::TearingEffectPin.group().PUPDR()->setPull(Config::TearingEffectPin.pin(), GPIO::PUPDR::Pull::None);
 

@@ -23,8 +23,6 @@ constexpr static GPIOPin ResetPin = GPIOPin(GPIOE, 1);
 constexpr static GPIOPin ExtendedCommandPin = GPIOPin(GPIOD, 6);
 constexpr static GPIOPin TearingEffectPin = GPIOPin(GPIOB, 11);
 
-constexpr static GPIO::OSPEEDR::OutputSpeed FSMCPinsSpeed = GPIO::OSPEEDR::OutputSpeed::High;
-
 constexpr static DMA DMAEngine = DMA2;
 constexpr static int DMAStream = 0;
 

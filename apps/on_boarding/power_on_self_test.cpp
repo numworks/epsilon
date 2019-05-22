@@ -6,10 +6,7 @@ namespace OnBoarding {
 
 KDColor PowerOnSelfTest::Perform() {
   KDColor previousLEDColor = Ion::LED::getColor();
-
-  /* Light up the LED in blue now. If VBlank test fails, we end up in an
-   * infinite loop and the LED will still be lit up in blue. */
-  Ion::LED::setColor(KDColorBlue);
+  KDColor resultColor = KDColorGreen;
 
   // Screen tests
   bool screenTestsOK = Shared::POSTAndHardwareTests::VBlankOK() && Shared::POSTAndHardwareTests::LCDDataOK(k_LCDTestIterationsCount);
@@ -19,12 +16,15 @@ KDColor PowerOnSelfTest::Perform() {
   Ion::Display::pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
   Ion::Display::waitForVBlank();
 
+  // Battery test
   if (screenTestsOK) {
-    // Battery test
-    bool batteryTestOK = Shared::POSTAndHardwareTests::BatteryOK();
-    Ion::LED::setColor(batteryTestOK ? KDColorGreen : KDColorRed);
+    if (!Shared::POSTAndHardwareTests::BatteryOK()) {
+      resultColor = KDColorRed;
+    }
+  } else {
+    resultColor = KDColorBlue;
   }
-
+  Ion::LED::setColor(resultColor);
   return previousLEDColor;
 }
 

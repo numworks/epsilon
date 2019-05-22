@@ -329,6 +329,12 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
     Ion::Backlight::setBrightness(0);
+    if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Deactivate) {
+      /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
+       * low battery event happened during the Power-On Self-Test, a LED might
+       * have stayed lit up. */
+      Ion::LED::setColor(KDColorBlack);
+    }
     m_emptyBatteryWindow.redraw(true);
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();

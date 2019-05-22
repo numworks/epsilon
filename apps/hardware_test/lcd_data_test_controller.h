@@ -8,15 +8,14 @@ namespace HardwareTest {
 
 class LCDDataTestController : public ViewController {
 
-/* There are three types of tests, where a pattern is pushed to the screen and
- * the number of invalid pixels then counted.
- *   - Test 1: Tile the screen with color patches. Tiling increases the number
- *   of border mistakes.
- *   - Test 2: Push one color to the whole screen in one step. It shows errors
- *   that appear on large and fast pushes.
- *   - Test 3: Color the screen by alterning one pixel black and one pixel
- *   white (maximal data difference), at maximal data writing speed.
- * Tests 1 and 2 are done for a few different colors. */
+/* We want to test that:
+ * - Command/data switching is OK,
+ * - Data is correctly sent,
+ * - There are no short-circuits between the data wires.
+ * We thus send a tiled pattern (to test command/data switching), where each
+ * tile is a checker of a color and its contrary (to tests that Data is sent
+ * OK). To test each of the 16 data wires for short-circuits, we use 16 colors:
+ * 2**k with 0 <= k < 16. */
 
 public:
   LCDDataTestController(Responder * parentResponder) :
@@ -43,6 +42,7 @@ private:
   };
   constexpr static const char * k_lcdDataOKText = "LCD DATA: OK";
   constexpr static const char * k_lcdDataFailTest = "LCD DATA: FAIL";
+  constexpr static int k_LCDTestIterationsCount = 20;
 
   ContentView m_view;
 };

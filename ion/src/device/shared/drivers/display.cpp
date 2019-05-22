@@ -55,9 +55,17 @@ void waitForVBlank() {
   }
 }
 
-void POSTPushBlackWhite() {
-  setDrawingArea(KDRect(0,0,Ion::Display::Width, Ion::Display::Height), Orientation::Landscape);
-  pushBlackWhitePixels();
+void POSTPushMulticolor(int shift, int tileSize) {
+  const int maxI = Ion::Display::Width / tileSize;
+  const int maxJ = Ion::Display::Height / tileSize;
+  for (int i = 0; i < maxI; i++) {
+    for (int j = 0; j < maxJ; j++) {
+      uint16_t k = (i+j+shift) % 16;
+      uint16_t color = 1 << k;
+      setDrawingArea(KDRect(i*tileSize,j*tileSize,tileSize, tileSize), Orientation::Landscape);
+      pushColorAndContraryPixels(color, tileSize*tileSize);
+    }
+  }
 }
 
 }
@@ -391,11 +399,12 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
   send_command(Command::PixelFormatSet, 0x05);
 }
 
-void pushBlackWhitePixels() {
+void pushColorAndContraryPixels(uint16_t value, int count) {
   send_command(Command::MemoryWrite);
-  int numberOfPixels = Ion::Display::Width * Ion::Display::Height;
-  while (numberOfPixels--) {
-    send_data(numberOfPixels % 2 == 0 ? KDColorBlack : KDColorWhite);
+  uint16_t color = value;
+  while (count-- > 0) {
+    send_data(color);
+    color ^= 0xFFFF;
   }
 }
 

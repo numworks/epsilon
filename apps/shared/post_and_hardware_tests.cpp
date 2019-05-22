@@ -10,10 +10,11 @@ bool POSTAndHardwareTests::BatteryOK() {
 }
 
 bool POSTAndHardwareTests::VBlankOK() {
+  bool result = true;
   for (int i=0; i<3; i++) {
-    Ion::Display::waitForVBlank();
+    result = result && Ion::Display::waitForVBlank();
   }
-  return true;
+  return result;
 }
 
 bool POSTAndHardwareTests::LCDDataOK(int numberOfIterations) {

@@ -12,23 +12,14 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
       // Handled in WizardViewController
       return false;
     }
-    assert(strcmp(m_view.vBlankStateTextView()->text(), k_vBlankLaunchTest) == 0);
-    m_view.setColor(KDColorRed);
-    m_view.vBlankStateTextView()->setText(k_vBlankFailTest);
-    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->redrawWindow();
-    /* We redraw the window with "VBLANK FAIL" before lauching the test. This
-     * test might end up in an infinite loop, in which case "VBLANK fail" keeps
-     * being displayed. If the test succeeds, the screen should change very
-     * quickly to "VBLANK OK". */
-    Shared::POSTAndHardwareTests::VBlankOK();
-    m_view.setColor(KDColorGreen);
-    m_view.vBlankStateTextView()->setText(k_vBlankOKText);
   }
   return true;
 }
 
 void VBlankTestController::viewWillAppear() {
-  m_view.vBlankStateTextView()->setText(k_vBlankLaunchTest);
+  bool testOK = Shared::POSTAndHardwareTests::VBlankOK();
+  m_view.setColor(testOK ? KDColorGreen : KDColorRed);
+  m_view.vBlankStateTextView()->setText(testOK ? k_vBlankOKText : k_vBlankFailTest);
 }
 
 VBlankTestController::ContentView::ContentView() :

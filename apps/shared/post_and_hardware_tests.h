@@ -10,21 +10,13 @@ class POSTAndHardwareTests {
 public:
   static bool BatteryOK();
   static bool VBlankOK();
-  static bool FastLCDDataOK();
-  static bool LCDDataOK();
+  static bool LCDDataOK(int numberOfIterations);
 private:
-  constexpr static int k_stampHeight = 10;
-  constexpr static int k_stampWidth = 10;
+  constexpr static int k_stampSize = 8;
   constexpr static int k_invalidPixelsLimit = 2;
-  static_assert(Ion::Display::Width % k_stampWidth == 0, "Stamps must tesselate the display");
-  static_assert(Ion::Display::Height % k_stampHeight == 0, "Stamps must tesselate the display");
-  static_assert(k_stampHeight % 2 == 0 || k_stampWidth % 2 == 0, "Even number of XOR needed.");
-  static void ColorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c);
-  static bool TestDisplayColorTiling(KDColor c);
-  static bool TestDisplayColorUniform(KDColor c);
-  static int NumberOfNonColoredPixels(KDColor wantedColor);
-  static bool TestDisplayBlackWhite();
-  static bool TestDisplayMulticolor();
+  static_assert(Ion::Display::Width % k_stampSize == 0, "Stamps must tesselate the display");
+  static_assert(Ion::Display::Height % k_stampSize == 0, "Stamps must tesselate the display");
+  static_assert(k_stampSize % 2 == 0, "Even number of XOR needed.");
 };
 
 }

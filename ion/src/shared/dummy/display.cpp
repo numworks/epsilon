@@ -3,5 +3,6 @@
 void Ion::Display::POSTPushMulticolor(int shift, int tileSize) {
 }
 
-void Ion::Display::waitForVBlank() {
+bool Ion::Display::waitForVBlank() {
+  return true;
 }

@@ -71,7 +71,8 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
   m_messageTextView1(KDFont::SmallFont, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
   m_messageTextView2(KDFont::SmallFont, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView3(KDFont::SmallFont, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)
+  m_messageTextView3(KDFont::SmallFont, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
+  m_messageTextView4(KDFont::SmallFont, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)
 {
 }
 
@@ -101,15 +102,17 @@ void ExamPopUpController::ContentView::setMessages(bool activingExamMode) {
     m_messageTextView1.setMessage(I18n::Message::ActiveExamModeMessage1);
     m_messageTextView2.setMessage(I18n::Message::ActiveExamModeMessage2);
     m_messageTextView3.setMessage(I18n::Message::ActiveExamModeMessage3);
+    m_messageTextView4.setMessage(I18n::Message::ActiveExamModeMessage4);
   } else {
     m_messageTextView1.setMessage(I18n::Message::ExitExamMode1);
     m_messageTextView2.setMessage(I18n::Message::ExitExamMode2);
     m_messageTextView3.setMessage(I18n::Message::Default);
+    m_messageTextView4.setMessage(I18n::Message::Default);
   }
 }
 
 int ExamPopUpController::ContentView::numberOfSubviews() const {
-  return 6;
+  return 7;
 }
 
 View * ExamPopUpController::ContentView::subviewAtIndex(int index) {
@@ -123,8 +126,10 @@ View * ExamPopUpController::ContentView::subviewAtIndex(int index) {
     case 3:
       return &m_messageTextView3;
     case 4:
-      return &m_cancelButton;
+      return &m_messageTextView4;
     case 5:
+      return &m_cancelButton;
+    case 6:
       return &m_okButton;
     default:
       assert(false);
@@ -140,6 +145,7 @@ void ExamPopUpController::ContentView::layoutSubviews() {
   m_messageTextView1.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+textHeight, width, textHeight));
   m_messageTextView2.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+2*textHeight, width, textHeight));
   m_messageTextView3.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+3*textHeight, width, textHeight));
+  m_messageTextView4.setFrame(KDRect(0, k_topMargin+k_paragraphHeight+4*textHeight, width, textHeight));
   m_cancelButton.setFrame(KDRect(k_buttonMargin, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight));
   m_okButton.setFrame(KDRect(2*k_buttonMargin+(width-3*k_buttonMargin)/2, height-k_buttonMargin-k_buttonHeight, (width-3*k_buttonMargin)/2, k_buttonHeight));
 }

@@ -43,6 +43,7 @@ private:
     MessageTextView m_messageTextView1;
     MessageTextView m_messageTextView2;
     MessageTextView m_messageTextView3;
+    MessageTextView m_messageTextView4;
   };
   ContentView m_contentView;
   bool m_isActivatingExamMode;

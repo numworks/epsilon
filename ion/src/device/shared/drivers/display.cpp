@@ -386,6 +386,16 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
   send_command(Command::PixelFormatSet, 0x05);
 }
 
+uint32_t panelIdentifier() {
+  send_command(Command::ReadDisplayID);
+  receive_data(); // Dummy read, per datasheet
+  uint8_t id1 = receive_data();
+  uint8_t id2 = receive_data();
+  uint8_t id3 = receive_data();
+
+  return (id1 << 16) | (id2 << 8) | id3;
+}
+
 void pushBlackWhitePixels() {
   send_command(Command::MemoryWrite);
   int numberOfPixels = Ion::Display::Width * Ion::Display::Height;

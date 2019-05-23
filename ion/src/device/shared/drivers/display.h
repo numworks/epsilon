@@ -32,10 +32,12 @@ void waitForPendingDMAUploadCompletion();
 void pushPixels(const KDColor * pixels, size_t numberOfPixels);
 void pushColor(KDColor color, size_t numberOfPixels);
 void pullPixels(KDColor * pixels, size_t numberOfPixels);
+uint32_t panelIdentifier();
 
 enum class Command : uint16_t {
   Nop = 0x00,
   Reset = 0x01,
+  ReadDisplayID = 0x04,
   SleepIn = 0x10,
   SleepOut = 0x11,
   DisplayInversionOff = 0x20,

@@ -55,7 +55,7 @@ using namespace Regs;
  * the operation is stalled until enough data is present or until the transfer is complete, whichever happens first. */
 
 enum class Command : uint8_t {
-  ReadStatusRegister = 0x05,
+  ReadStatusRegister1 = 0x05,
   WriteStatusRegister2 = 0x31,
   WriteEnable = 0x06,
   ReadData = 0x03,
@@ -138,7 +138,7 @@ static inline void send_read_command(Command c, uint8_t * address, uint8_t * dat
 static inline void wait(QUADSPI::CCR::OperatingMode operatingMode = DefaultOperatingMode) {
   ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
   do {
-    send_read_command(Command::ReadStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
+    send_read_command(Command::ReadStatusRegister1, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&statusRegister1), sizeof(statusRegister1), operatingMode);
   } while (statusRegister1.getBUSY());
 }
 

@@ -93,6 +93,13 @@ static inline void send_command(Command c, Args... d) {
   send_data(d...);
 }
 
+static void send_long_command(Command c, int length, const uint8_t * data) {
+  send_command(c);
+  for (int i=0; i<length; i++) {
+    send_data(data[i]);
+  }
+}
+
 void init() {
 #if USE_DMA
   initDMA();
@@ -267,6 +274,18 @@ void initPanel() {
   send_command(Command::PixelFormatSet, 0x05);
   send_command(Command::TearingEffectLineOn, 0x00);
   send_command(Command::FrameRateControl, 0x1E); // 40 Hz frame rate
+
+  // Calibration
+  const uint8_t * gammaCalibration = nullptr;
+  uint32_t panelId = panelIdentifier();
+  if (panelId == 0x4E4101) {
+    const uint8_t calibration[] = {0xF0, 0x8, 0x12, 0x9, 0xC, 0x1A, 0x36, 0x57, 0x43, 0x29, 0x19, 0x15, 0x2D, 0x32};
+    gammaCalibration = calibration;
+  }
+  if (gammaCalibration != nullptr) {
+    send_long_command(Command::PositiveVoltageGammaControl, 14, gammaCalibration);
+    send_long_command(Command::NegativeVoltageGammaControl, 14, gammaCalibration);
+  }
 
   if (Config::DisplayInversion) {
     send_command(Command::DisplayInversionOn);

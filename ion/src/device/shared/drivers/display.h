@@ -65,7 +65,7 @@ static volatile Command * const CommandAddress = (Command *)(FSMCBankAddress);
 static volatile uint16_t * const DataAddress = (uint16_t *)(FSMCBankAddress | (1<<(FSMCDataCommandAddressBit+1)));
 
 // For Power On Self tests
-void pushBlackWhitePixels();
+void pushColorAndContraryPixels(uint16_t color, int count);
 
 }
 }

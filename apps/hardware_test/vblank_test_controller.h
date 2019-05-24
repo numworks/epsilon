@@ -32,7 +32,6 @@ private:
   };
   constexpr static const char * k_vBlankOKText = "VBLANK: OK";
   constexpr static const char * k_vBlankFailTest = "VBLANK: FAIL";
-  constexpr static const char * k_vBlankLaunchTest = "Launch VBLANK test";
   ContentView m_view;
 };
 

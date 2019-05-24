@@ -21,15 +21,15 @@ void pushRect(KDRect r, const KDColor * pixels);
 void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor * pixels);
 
-void waitForVBlank();
-
-// For Power On Self Test
-void POSTPushBlackWhite();
+bool waitForVBlank();
 
 constexpr int Width = 320;
 constexpr int Height = 240;
 constexpr int WidthInTenthOfMillimeter = 576;
 constexpr int HeightInTenthOfMillimeter = 432;
+
+// For Power On Self tests
+void POSTPushMulticolor(int shift, int tileSize);
 
 }
 }

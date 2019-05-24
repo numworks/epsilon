@@ -44,20 +44,59 @@ void pullRect(KDRect r, KDColor * pixels) {
   pullPixels(pixels, r.width()*r.height());
 }
 
-void waitForVBlank() {
-  // We want to return as soon as the TE line is transitionning from "DOWN" to "UP"
-  while (Config::TearingEffectPin.group().IDR()->get(Config::TearingEffectPin.pin())) {
-    // Loop while high, exit when low
-    // Wait for zero
+bool waitForVBlank() {
+  /* Min screen frequency is 40Hz so the maximal period is T = 1/40Hz = 25ms.
+   * If after T ms, we still do not have a VBlank event, just return. */
+  constexpr uint64_t timeoutDelta = 50;
+  uint64_t startTime = Timing::millis();
+  uint64_t timeout = startTime + timeoutDelta;
+
+  /* If current time is big enough, currentTime + timeout wraps aroud the
+   * uint64_t. We need to take this into account when computing the terminating
+   * event.
+   *
+   * NO WRAP |----------------|++++++++++|------|
+   *         0           startTime    timeout   max uint64_t
+   *
+   * WRAP    |++++|----------------------|++++++|
+   *         0  timeout              startTime  max uint64_t
+   */
+  bool noWrap = startTime < timeout;
+
+  /* We want to return at the beginning of a high signal, so we wait for the
+   * signal to be low then high. */
+  bool wasLow = false;
+
+  uint64_t currentTime = startTime;
+  while (noWrap ?
+      (currentTime >= startTime && currentTime < timeout) :
+      (currentTime >= startTime || currentTime < timeout))
+  {
+    if (!wasLow) {
+      wasLow = !Config::TearingEffectPin.group().IDR()->get(Config::TearingEffectPin.pin());
+    }
+    if (wasLow) {
+      if (Config::TearingEffectPin.group().IDR()->get(Config::TearingEffectPin.pin())) {
+        return true;
+      }
+    }
+    currentTime = Timing::millis();
+    // TODO: sleep?
   }
-  while (!Config::TearingEffectPin.group().IDR()->get(Config::TearingEffectPin.pin())) {
-    // Loop while low, exit when high
-  }
+  return false;
 }
 
-void POSTPushBlackWhite() {
-  setDrawingArea(KDRect(0,0,Ion::Display::Width, Ion::Display::Height), Orientation::Landscape);
-  pushBlackWhitePixels();
+void POSTPushMulticolor(int shift, int tileSize) {
+  const int maxI = Ion::Display::Width / tileSize;
+  const int maxJ = Ion::Display::Height / tileSize;
+  for (int i = 0; i < maxI; i++) {
+    for (int j = 0; j < maxJ; j++) {
+      uint16_t k = (i+j+shift) % 16;
+      uint16_t color = 1 << k;
+      setDrawingArea(KDRect(i*tileSize,j*tileSize,tileSize, tileSize), Orientation::Landscape);
+      pushColorAndContraryPixels(color, tileSize*tileSize);
+    }
+  }
 }
 
 }
@@ -151,8 +190,10 @@ static inline void startDMAUpload(const KDColor * src, bool incrementSrc, uint16
 #endif
 
 void initGPIO() {
+  constexpr GPIO::OSPEEDR::OutputSpeed FSMCPinsSpeed = GPIO::OSPEEDR::OutputSpeed::Medium;
   // All the FSMC GPIO pins use the alternate function number 12
   for(const GPIOPin & g : Config::FSMCPins) {
+    g.group().OSPEEDR()->setOutputSpeed(g.pin(), FSMCPinsSpeed);
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::AlternateFunction);
     g.group().AFR()->setAlternateFunction(g.pin(), GPIO::AFR::AlternateFunction::AF12);
   }
@@ -170,6 +211,7 @@ void initGPIO() {
   Config::ExtendedCommandPin.group().ODR()->set(Config::ExtendedCommandPin.pin(), true);
 
   // Turn on the Tearing Effect pin
+  Config::TearingEffectPin.group().OSPEEDR()->setOutputSpeed(Config::TearingEffectPin.pin(), FSMCPinsSpeed);
   Config::TearingEffectPin.group().MODER()->setMode(Config::TearingEffectPin.pin(), GPIO::MODER::Mode::Input);
   Config::TearingEffectPin.group().PUPDR()->setPull(Config::TearingEffectPin.pin(), GPIO::PUPDR::Pull::None);
 
@@ -179,6 +221,7 @@ void initGPIO() {
 void shutdownGPIO() {
   // All the FSMC GPIO pins use the alternate function number 12
   for(const GPIOPin & g : Config::FSMCPins) {
+    g.group().OSPEEDR()->setOutputSpeed(g.pin(), GPIO::OSPEEDR::OutputSpeed::Low);
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }
@@ -192,6 +235,7 @@ void shutdownGPIO() {
   Config::ExtendedCommandPin.group().MODER()->setMode(Config::ExtendedCommandPin.pin(), GPIO::MODER::Mode::Analog);
   Config::ExtendedCommandPin.group().PUPDR()->setPull(Config::ExtendedCommandPin.pin(), GPIO::PUPDR::Pull::None);
 
+  Config::TearingEffectPin.group().OSPEEDR()->setOutputSpeed(Config::TearingEffectPin.pin(), GPIO::OSPEEDR::OutputSpeed::Low);
   Config::TearingEffectPin.group().MODER()->setMode(Config::TearingEffectPin.pin(), GPIO::MODER::Mode::Analog);
 }
 
@@ -415,11 +459,12 @@ uint32_t panelIdentifier() {
   return (id1 << 16) | (id2 << 8) | id3;
 }
 
-void pushBlackWhitePixels() {
+void pushColorAndContraryPixels(uint16_t value, int count) {
   send_command(Command::MemoryWrite);
-  int numberOfPixels = Ion::Display::Width * Ion::Display::Height;
-  while (numberOfPixels--) {
-    send_data(numberOfPixels % 2 == 0 ? KDColorBlack : KDColorWhite);
+  uint16_t color = value;
+  while (count-- > 0) {
+    send_data(color);
+    color ^= 0xFFFF;
   }
 }
 

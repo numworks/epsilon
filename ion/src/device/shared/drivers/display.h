@@ -51,7 +51,9 @@ enum class Command : uint16_t {
   TearingEffectLineOn = 0x35,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
-  FrameRateControl = 0xC6
+  FrameRateControl = 0xC6,
+  PositiveVoltageGammaControl = 0xE0,
+  NegativeVoltageGammaControl = 0xE1
 };
 
 constexpr static int FSMCMemoryBank = 1;

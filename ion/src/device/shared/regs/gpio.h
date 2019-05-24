@@ -32,7 +32,13 @@ public:
   };
 
   class OSPEEDR : Register32 {
-  // Datasheet, page 120, table 58
+  /* All GPIOs have speed selection to better manage internal noise, power
+   * consumption and electromagnetic emission.
+   * Refer to the product datasheets for the values of OSPEEDR bits versus
+   * VDD range and external capacitive load.
+   * For maximum frequencies above 50 MHz and VDD > 2.4 V, it is recommended to
+   * enable the compensation cell for slew-rate control on I/O rise/fall time
+   * commutation to reduce the I/O noise on power supply. */
   public:
     enum class OutputSpeed {
       Low = 0,

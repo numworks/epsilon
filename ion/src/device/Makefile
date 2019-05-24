@@ -11,8 +11,11 @@ src += $(addprefix ion/src/shared/, \
   events_modifier.cpp \
 )
 
+# If you need to benchmark execution, you can replace events_keyboard with
+# events_benchmark.
 # If you need to profile execution, you can replace events_keyboard with
 # events_replay.o and dummy/events_modifier.o
+
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
 $(call object_for,$(ion_device_src) $(dfu_src) $(usb_src) $(bench_src)): SFLAGS += $(ION_DEVICE_SFLAGS)

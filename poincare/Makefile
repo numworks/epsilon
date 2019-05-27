@@ -158,6 +158,7 @@ tests += $(addprefix poincare/test/,\
   infinity.cpp\
   integer.cpp\
   layouts.cpp\
+  layout_cursor.cpp\
   logarithm.cpp\
   matrix.cpp\
   multiplication.cpp\

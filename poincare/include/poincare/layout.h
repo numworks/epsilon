@@ -8,6 +8,7 @@
 namespace Poincare {
 
 class LayoutCursor;
+class Expression;
 
 class Layout : public TreeHandle {
   friend class GridLayoutNode;
@@ -59,7 +60,11 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
   bool removeGreySquaresFromAllMatrixAncestors() { return node()->removeGreySquaresFromAllMatrixAncestors(); }
   bool addGreySquaresToAllMatrixAncestors() { return node()->addGreySquaresToAllMatrixAncestors(); }
-  Layout layoutToPointWhenInserting() { return Layout(node()->layoutToPointWhenInserting()); }
+  Layout layoutToPointWhenInserting(Expression * correspondingExpression) {
+    // Pointer to correspondingExpr because expression.h includes layout.h
+    assert(correspondingExpression != nullptr);
+    return Layout(node()->layoutToPointWhenInserting(correspondingExpression));
+  }
 
   // Cursor
   LayoutCursor cursor() const;

@@ -53,7 +53,7 @@ private:
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
   void scrollRightOfLayout(Poincare::Layout layoutR);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Layout pointedLayout, bool forceCursorRightOfLayout = false);
+  void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false);
 
   class ContentView : public View {
   public:

@@ -39,6 +39,7 @@ void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expre
 
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = Poincare::ExpressionNode::ReductionTarget::User, Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::AngleUnit::Radian, Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::ComplexFormat::Cartesian);
 void assert_parsed_expression_serialize_to(Poincare::Expression expression, const char * serializedExpression, Poincare::Preferences::PrintFloatMode mode = DecimalMode, int numberOfSignifiantDigits = 7);
+void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout);
 
 
 // Layouts

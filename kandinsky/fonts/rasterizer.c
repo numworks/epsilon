@@ -192,6 +192,7 @@ int main(int argc, char * argv[]) {
   int greyscaleBitsPerPixel = 4;
 
   int sizeOfUncompressedGlyphBuffer = glyph_width * glyph_height * greyscaleBitsPerPixel/8;
+  ENSURE(8*sizeOfUncompressedGlyphBuffer == glyph_width * glyph_height * greyscaleBitsPerPixel, "Error: the glyph size (%dx%d@%dbpp) cannot fit in an integral number of bytes", glyph_width, glyph_height, greyscaleBitsPerPixel);
   uint8_t * uncompressedGlyphBuffer = (uint8_t *)malloc(sizeOfUncompressedGlyphBuffer);
 
   uint16_t glyphDataOffset[NumberOfCodePoints+1];
@@ -218,8 +219,8 @@ int main(int argc, char * argv[]) {
         }
       }
     }
-    ENSURE(accumulator == 0, "Discarded accumulator data");
-    ENSURE(numberOfValuesAccumulated == 0, "Discarded accumulator data");
+    ENSURE(accumulator == 0, "Discarded accumulator data (accumulator = %d)", accumulator);
+    ENSURE(numberOfValuesAccumulated == 0, "Discarded accumulator data (numberOfValuesAccumulated = %d)", numberOfValuesAccumulated);
     ENSURE(uncompressedGlyphBufferIndex == sizeOfUncompressedGlyphBuffer, "Error filling uncompressed buffer, only %d out of %d", uncompressedGlyphBufferIndex, sizeOfUncompressedGlyphBuffer);
 
     int sizeOfCompressedGlyphBuffer = LZ4_compress_HC(

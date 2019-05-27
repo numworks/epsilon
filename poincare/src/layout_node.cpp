@@ -110,6 +110,11 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   // WARNING: Do no use "this" afterwards
 }
 
+LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+  assert(correspondingExpression != nullptr);
+  return numberOfChildren() > 0 ? childAtIndex(0) : this;
+}
+
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force) {
     Layout(this).replaceChildWithEmpty(Layout(l), cursor);

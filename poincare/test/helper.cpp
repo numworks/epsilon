@@ -193,6 +193,11 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
   quiz_assert(strcmp(expressionLayout, buffer) == 0);
 }
 
+void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout) {
+  Layout l = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  quiz_assert(l.isIdenticalTo(layout));
+}
+
 void assert_expression_layout_serialize_to(Poincare::Layout layout, const char * serialization) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];

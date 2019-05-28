@@ -54,5 +54,5 @@ $(call rule_for, \
 )
 endef
 
-$(eval $(call raster_font,SmallFont,10,8,13))
+$(eval $(call raster_font,SmallFont,12,7,14))
 $(eval $(call raster_font,LargeFont,16,10,18))

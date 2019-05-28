@@ -45,7 +45,6 @@ bool POSTAndHardwareTests::LCDDataOK() {
   for (int iteration = 0; iteration < k_numberOfTilingLCDIterations; iteration++) {
     Ion::Display::POSTPushMulticolor(iteration, k_stampSize);
     KDColor stamp[k_stampSize*k_stampSize];
-    int numberOfInvalidPixels = 0;
     for (int i = 0; i < Ion::Display::Width / k_stampSize; i++) {
       for (int j = 0; j < Ion::Display::Height / k_stampSize; j++) {
         Ion::Display::pullRect(KDRect(i * k_stampSize, j * k_stampSize, k_stampSize, k_stampSize), stamp);
@@ -53,10 +52,7 @@ bool POSTAndHardwareTests::LCDDataOK() {
         uint16_t color = (uint16_t)(1 << shift);
         for (int k = 0; k < k_stampSize*k_stampSize; k++) {
           if (stamp[k] != color) {
-            numberOfInvalidPixels++;
-            if (numberOfInvalidPixels > k_invalidPixelsLimit) {
-              return false;
-            }
+            return false;
           }
           color ^= 0xFFFF;
         }

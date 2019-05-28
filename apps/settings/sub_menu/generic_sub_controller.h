@@ -17,7 +17,7 @@ public:
   KDCoordinate rowHeight(int j) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-  int typeAtLocation(int i, int j) override;
+  virtual int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void setMessageTreeModel(const MessageTree * messageTreeModel);
   void viewWillAppear() override;

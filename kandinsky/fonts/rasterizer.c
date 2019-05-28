@@ -36,6 +36,7 @@ typedef struct {
 } image_t;
 
 #ifdef GENERATE_PNG
+#define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
 void writeImageToPNGFile(image_t * image, char * filename);
 #endif

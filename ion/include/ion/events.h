@@ -139,6 +139,18 @@ constexpr Event Equal = Event::ShiftKey(Keyboard::Key::Pi);
 constexpr Event Lower = Event::ShiftKey(Keyboard::Key::Sqrt);
 constexpr Event Greater = Event::ShiftKey(Keyboard::Key::Square);
 
+constexpr Event ShiftSeven = Event::ShiftKey(Keyboard::Key::Seven);
+constexpr Event ShiftEight = Event::ShiftKey(Keyboard::Key::Eight);
+constexpr Event ShiftNine = Event::ShiftKey(Keyboard::Key::Nine);
+
+constexpr Event ShiftFour = Event::ShiftKey(Keyboard::Key::Four);
+constexpr Event ShiftFive = Event::ShiftKey(Keyboard::Key::Five);
+constexpr Event ShiftSix = Event::ShiftKey(Keyboard::Key::Six);
+
+constexpr Event ShiftOne = Event::ShiftKey(Keyboard::Key::One);
+constexpr Event ShiftTwo = Event::ShiftKey(Keyboard::Key::Two);
+constexpr Event ShiftThree = Event::ShiftKey(Keyboard::Key::Three);
+
 // Alpha
 
 constexpr Event Colon = Event::AlphaKey(Keyboard::Key::XNT);

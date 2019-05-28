@@ -113,6 +113,7 @@ int main(int argc, char * argv[]) {
     if (belowBaseline > maxBelowBaseline) {
       maxBelowBaseline = belowBaseline;
     }
+    // printf("Codepoint %04x : %dx%d\n", codePoint, width, aboveBaseline+belowBaseline);
   }
 
   int glyph_width = maxWidth-1;

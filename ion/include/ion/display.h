@@ -29,7 +29,7 @@ constexpr int WidthInTenthOfMillimeter = 576;
 constexpr int HeightInTenthOfMillimeter = 432;
 
 // For Power On Self tests
-void POSTPushMulticolor(int shift, int tileSize);
+void POSTPushMulticolor(int tileSize);
 
 }
 }

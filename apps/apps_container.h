@@ -45,7 +45,7 @@ public:
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PopUpController * promptController();
-  void redrawWindow();
+  void redrawWindow(bool force = false);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
   // Ion::StorageDelegate

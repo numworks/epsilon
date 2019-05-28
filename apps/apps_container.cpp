@@ -105,6 +105,7 @@ void AppsContainer::suspend(bool checkIfOnOffKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
+  GlobalPreferences *globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   bool alphaLockWantsRedraw = updateAlphaLock();
   bool didProcessEvent = false;
 
@@ -146,6 +147,35 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
     }
   } else {
+    if (globalPreferences->accessibilityMagnify()) {
+      bool changedZoom = true;
+
+      if (event == Ion::Events::ShiftOne) {
+        globalPreferences->setAccessibilityMagnifyPosition(1);
+      } else if (event == Ion::Events::ShiftTwo) {
+        globalPreferences->setAccessibilityMagnifyPosition(2);
+      } else if (event == Ion::Events::ShiftThree) {
+        globalPreferences->setAccessibilityMagnifyPosition(3);
+      } else if (event == Ion::Events::ShiftFour) {
+        globalPreferences->setAccessibilityMagnifyPosition(4);
+      } else if (event == Ion::Events::ShiftFive) {
+        globalPreferences->setAccessibilityMagnifyPosition(5);
+      } else if (event == Ion::Events::ShiftSix) {
+        globalPreferences->setAccessibilityMagnifyPosition(6);
+      } else if (event == Ion::Events::ShiftSeven) {
+        globalPreferences->setAccessibilityMagnifyPosition(7);
+      } else if (event == Ion::Events::ShiftEight) {
+        globalPreferences->setAccessibilityMagnifyPosition(8);
+      } else if (event == Ion::Events::ShiftNine) {
+        globalPreferences->setAccessibilityMagnifyPosition(9);
+      } else {
+        changedZoom = false;
+      }
+      if (changedZoom) {
+        redrawWindow(true);
+        return true;
+      }
+    }
     didProcessEvent = Container::dispatchEvent(event);
   }
 
@@ -188,6 +218,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     suspend(true);
     return true;
   }
+
   return false;
 }
 
@@ -312,8 +343,8 @@ OnBoarding::PopUpController * AppsContainer::promptController() {
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow() {
-  m_window.redraw();
+void AppsContainer::redrawWindow(bool force) {
+  m_window.redraw(force);
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {

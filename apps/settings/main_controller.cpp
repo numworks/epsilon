@@ -15,6 +15,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
+  m_accessibilityController(this),
   m_examModeController(this),
   m_aboutController(this)
 {
@@ -74,6 +75,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       subController = &m_examModeController;
     } else if (rowIndex == 7 + hasPrompt()) {
       subController = &m_aboutController;
+    } else if (rowIndex == 8 + hasPrompt()) {
+      subController = &m_accessibilityController;
     } else {
       subController = &m_preferencesController;
     }

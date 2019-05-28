@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "settings_message_tree.h"
 #include "sub_menu/about_controller.h"
+#include "sub_menu/accessibility_controller.h"
 #include "sub_menu/display_mode_controller.h"
 #include "sub_menu/exam_mode_controller.h"
 #include "sub_menu/language_controller.h"
@@ -39,6 +40,7 @@ private:
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LanguageController m_languageController;
+  AccessibilityController m_accessibilityController;
   ExamModeController m_examModeController;
   AboutController m_aboutController;
 

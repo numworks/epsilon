@@ -2,6 +2,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <escher/view.h>
+#include <apps/global_preferences.h>
 
 View::View() :
   m_frame(KDRectZero),
@@ -58,8 +59,37 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     KDRect absRect = rectNeedingRedraw.translatedBy(absOrigin);
     KDRect absClippingRect = absoluteVisibleFrame().intersectedWith(absRect);
     KDContext * ctx = KDIonContext::sharedContext();
+
+    KDPostProcessInvertContext invert;
+    KDPostProcessZoomContext zoom;
+    KDPostProcessGammaContext gamma;
+
+    if (GlobalPreferences::sharedGlobalPreferences()->accessibilityInvertColors()) {
+      invert.setTarget(ctx);
+      ctx = &invert;
+    }
+    if (GlobalPreferences::sharedGlobalPreferences()->accessibilityMagnify() && !GlobalPreferences::sharedGlobalPreferences()->accessibilityInhibitMagnify()) {
+      int position = GlobalPreferences::sharedGlobalPreferences()->accessibilityMagnifyPosition()-1;
+      zoom.setTarget(ctx);
+      zoom.setTargetArea(KDRect(0,0,320,240));
+      zoom.setViewingArea(KDRect(80*(position%3),120-60*(position/3),160,120));
+      ctx = &zoom;
+    }
+    if (GlobalPreferences::sharedGlobalPreferences()->accessibilityGamma()) {
+      float red = GlobalPreferences::sharedGlobalPreferences()->accessibilityGammaRed();
+      float green = GlobalPreferences::sharedGlobalPreferences()->accessibilityGammaGreen();
+      float blue = GlobalPreferences::sharedGlobalPreferences()->accessibilityGammaBlue();
+      red = 0.25 + 1.5 * (red / (float)GlobalPreferences::NumberOfGammaStates);
+      green = 0.25 + 1.5 * (green / (float)GlobalPreferences::NumberOfGammaStates);
+      blue = 0.25 + 1.5 * (blue / (float)GlobalPreferences::NumberOfGammaStates);
+      gamma.setGamma(red, green, blue);
+      gamma.setTarget(ctx);
+      ctx = &gamma;
+    }
+
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(absClippingRect);
+
     this->drawRect(ctx, rectNeedingRedraw);
   }
   // This initializes the area that has been redrawn.

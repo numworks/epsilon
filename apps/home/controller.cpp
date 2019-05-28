@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "app.h"
 #include "../apps_container.h"
+#include "../global_preferences.h"
 extern "C" {
 #include <assert.h>
 }
@@ -85,6 +86,11 @@ void Controller::didBecomeFirstResponder() {
 }
 
 void Controller::viewWillAppear() {
+  GlobalPreferences::sharedGlobalPreferences()->setAccessibilityInhibitMagnify(true);
+}
+
+void Controller::viewDidDisappear() {
+  GlobalPreferences::sharedGlobalPreferences()->setAccessibilityInhibitMagnify(false);
 }
 
 View * Controller::view() {

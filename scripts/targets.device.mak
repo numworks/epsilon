@@ -34,7 +34,7 @@
 	@echo "==============================="
 
 .PHONY: %_flash
-%_flash: %.bin
+%_flash: ./build/device/%.bin
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press the RESET button the back of your device."

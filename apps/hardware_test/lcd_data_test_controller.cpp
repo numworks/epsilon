@@ -15,7 +15,7 @@ bool LCDDataTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void LCDDataTestController::viewWillAppear() {
-  bool testOK = Shared::POSTAndHardwareTests::LCDDataOK(k_LCDTestIterationsCount);
+  bool testOK = Shared::POSTAndHardwareTests::LCDDataOK();
   m_view.lcdDataStateTextView()->setText(testOK ? k_lcdDataOKText : k_lcdDataFailTest);
   m_view.setColor(testOK ? KDColorGreen : KDColorRed);
 }

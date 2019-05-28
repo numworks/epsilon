@@ -38,11 +38,11 @@ bool POSTAndHardwareTests::TextLCDTestOK() {
   return true;
 }
 
-bool POSTAndHardwareTests::LCDDataOK(int numberOfIterations) {
+bool POSTAndHardwareTests::LCDDataOK() {
   if (!TextLCDTestOK()) {
     return false;
   }
-  for (int iteration = 0; iteration < numberOfIterations; iteration++) {
+  for (int iteration = 0; iteration < k_numberOfTilingLCDIterations; iteration++) {
     Ion::Display::POSTPushMulticolor(iteration, k_stampSize);
     KDColor stamp[k_stampSize*k_stampSize];
     int numberOfInvalidPixels = 0;

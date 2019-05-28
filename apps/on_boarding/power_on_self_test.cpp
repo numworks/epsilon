@@ -9,7 +9,7 @@ KDColor PowerOnSelfTest::Perform() {
   KDColor resultColor = KDColorGreen;
 
   // Screen tests
-  bool screenTestsOK = Shared::POSTAndHardwareTests::VBlankOK() && Shared::POSTAndHardwareTests::LCDDataOK(k_LCDTestIterationsCount);
+  bool screenTestsOK = Shared::POSTAndHardwareTests::VBlankOK() && Shared::POSTAndHardwareTests::TextLCDTestOK();
 
   // We push a white screen so that the LCD Data test is invisible for the user.
   Ion::Display::waitForVBlank();

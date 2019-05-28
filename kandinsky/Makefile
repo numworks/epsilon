@@ -49,7 +49,7 @@ define raster_font
 $(call rule_for, \
   RASTER, \
   kandinsky/fonts/$(1).cpp, \
-  kandinsky/fonts/$(1).otf $$(RASTERIZER), \
+  kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
   $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $(if $(HAS_LIBPNG),$$(basename $$@).png) \
 )
 endef

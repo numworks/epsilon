@@ -19,44 +19,27 @@ bool POSTAndHardwareTests::VBlankOK() {
   return result;
 }
 
-void ColorPixelBuffer(KDColor * pixels, int numberOfPixels, KDColor c) {
-  for (int i = 0; i < numberOfPixels; i++) {
-    pixels[i] = c;
+bool POSTAndHardwareTests::TextLCDTestOK() {
+  const char * text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const KDFont * font = KDFont::SmallFont;
+  KDCoordinate glyphHeight = font->glyphSize().height();
+
+  // Fill the screen
+  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
+    KDIonContext::sharedContext()->drawString(text, KDPoint(0, i * glyphHeight), font);
   }
-}
 
-bool POSTAndHardwareTests::WhiteTilingLCDTestOK() {
-  constexpr int numberOfPixels = k_stampSize * k_stampSize;
-  KDColor whiteStamp[numberOfPixels];
-  KDColor pullStamp[numberOfPixels];
-
-  ColorPixelBuffer(whiteStamp, numberOfPixels, KDColorWhite);
-
-  // Tiling test with pushRect
-  KDColor wantedColor = KDColorWhite;
-  int numberOfInvalidPixels = 0;
-  for (int i = 0; i < Ion::Display::Width / k_stampSize; i++) {
-    for (int j = 0; j < Ion::Display::Height / k_stampSize; j++) {
-      // Push the color
-      Ion::Display::pushRect(KDRect(i * k_stampSize, j * k_stampSize, k_stampSize, k_stampSize), whiteStamp);
-      // Pull the display
-      ColorPixelBuffer(pullStamp, numberOfPixels, KDColorRed);
-      Ion::Display::pullRect(KDRect(i * k_stampSize, j * k_stampSize, k_stampSize, k_stampSize), pullStamp);
-      for (int k = 0; k < numberOfPixels; k++) {
-        if (pullStamp[k] != wantedColor) {
-          numberOfInvalidPixels++;
-          if (numberOfInvalidPixels > k_invalidPixelsLimit) {
-            return false;
-          }
-        }
-      }
+  // Check the drawing
+  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
+    if (!KDIonContext::sharedContext()->checkDrawnString(text, KDPoint(0, i * glyphHeight), font)) {
+      return false;
     }
   }
   return true;
 }
 
 bool POSTAndHardwareTests::LCDDataOK(int numberOfIterations) {
-  if (!TextLCDTestOK() || !WhiteTilingLCDTestOK()) {
+  if (!TextLCDTestOK()) {
     return false;
   }
   for (int iteration = 0; iteration < numberOfIterations; iteration++) {
@@ -82,25 +65,5 @@ bool POSTAndHardwareTests::LCDDataOK(int numberOfIterations) {
   }
   return true;
 }
-
-bool POSTAndHardwareTests::TextLCDTestOK() {
-  const char * text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  const KDFont * font = KDFont::SmallFont;
-  KDCoordinate glyphHeight = font->glyphSize().height();
-
-  // Fill the screen
-  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
-    KDIonContext::sharedContext()->drawString(text, KDPoint(0, i * glyphHeight), font);
-  }
-
-  // Check the drawing
-  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
-    if (!KDIonContext::sharedContext()->checkDrawnString(text, KDPoint(0, i * glyphHeight), font)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 
 }

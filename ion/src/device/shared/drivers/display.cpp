@@ -86,12 +86,12 @@ bool waitForVBlank() {
   return false;
 }
 
-void POSTPushMulticolor(int shift, int tileSize) {
+void POSTPushMulticolor(int tileSize) {
   const int maxI = Ion::Display::Width / tileSize;
   const int maxJ = Ion::Display::Height / tileSize;
   for (int i = 0; i < maxI; i++) {
     for (int j = 0; j < maxJ; j++) {
-      uint16_t k = (i+j+shift) % 16;
+      uint16_t k = (i+j) % 16;
       uint16_t color = 1 << k;
       setDrawingArea(KDRect(i*tileSize,j*tileSize,tileSize, tileSize), Orientation::Landscape);
       pushColorAndContraryPixels(color, tileSize*tileSize);

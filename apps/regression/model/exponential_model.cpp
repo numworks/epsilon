@@ -1,5 +1,6 @@
 #include "exponential_model.h"
 #include "../store.h"
+#include "../linear_model_helper.h"
 #include <math.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
@@ -81,8 +82,9 @@ void ExponentialModel::fit(Store * store, int series, double * modelCoefficients
   const double meanOfXY = sumOfXY / numberOfPoints;
   const double variance = meanOfXX - meanOfX * meanOfX;
   const double covariance = meanOfXY - meanOfX * meanOfY;
-  modelCoefficients[1] = covariance / variance;
-  modelCoefficients[0] = sign * exp(meanOfY - modelCoefficients[1] * meanOfX);
+  modelCoefficients[1] = LinearModelHelper::Slope(covariance, variance);
+  modelCoefficients[0] =
+    sign * exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, modelCoefficients[1]));
 }
 
 double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

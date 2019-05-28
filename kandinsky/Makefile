@@ -16,8 +16,8 @@ src += $(addprefix kandinsky/src/,\
 )
 
 src += $(addprefix kandinsky/fonts/, \
-  LargeSourcePixel.ttf \
-  SmallSourcePixel.ttf \
+  LargeFont.ttf \
+  SmallFont.ttf \
 )
 
 tests += $(addprefix kandinsky/test/,\
@@ -31,8 +31,6 @@ RASTERIZER_LDFLAGS := $(shell pkg-config freetype2 --libs)
 
 HAS_LIBPNG := $(shell pkg-config libpng --exists && echo 1)
 ifeq ($(HAS_LIBPNG),1)
-  small_font_files += kandinsky/src/small_font.png
-  large_font_files += kandinsky/src/large_font.png
   RASTERIZER_CFLAGS += $(shell pkg-config libpng --cflags) -DGENERATE_PNG=1
   RASTERIZER_LDFLAGS += $(shell pkg-config libpng --libs)
 endif
@@ -51,10 +49,10 @@ define raster_font
 $(call rule_for, \
   RASTER, \
   kandinsky/fonts/$(1).cpp, \
-  kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
+  kandinsky/fonts/$(1).otf $$(RASTERIZER), \
   $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $(if $(HAS_LIBPNG),$$(basename $$@).png) \
 )
 endef
 
-$(eval $(call raster_font,SmallSourcePixel,10,8,13))
-$(eval $(call raster_font,LargeSourcePixel,16,10,18))
+$(eval $(call raster_font,SmallFont,10,8,13))
+$(eval $(call raster_font,LargeFont,16,10,18))

@@ -2,6 +2,8 @@
 #include <ion/backlight.h>
 #include <ion/battery.h>
 #include <ion/timing.h>
+#include <kandinsky/font.h>
+#include <kandinsky/ion_context.h>
 
 namespace Shared {
 
@@ -54,7 +56,7 @@ bool POSTAndHardwareTests::WhiteTilingLCDTestOK() {
 }
 
 bool POSTAndHardwareTests::LCDDataOK(int numberOfIterations) {
-  if (!WhiteTilingLCDTestOK()) {
+  if (!TextLCDTestOK() || !WhiteTilingLCDTestOK()) {
     return false;
   }
   for (int iteration = 0; iteration < numberOfIterations; iteration++) {
@@ -80,5 +82,25 @@ bool POSTAndHardwareTests::LCDDataOK(int numberOfIterations) {
   }
   return true;
 }
+
+bool POSTAndHardwareTests::TextLCDTestOK() {
+  const char * text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  const KDFont * font = KDFont::SmallFont;
+  KDCoordinate glyphHeight = font->glyphSize().height();
+
+  // Fill the screen
+  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
+    KDIonContext::sharedContext()->drawString(text, KDPoint(0, i * glyphHeight), font);
+  }
+
+  // Check the drawing
+  for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
+    if (!KDIonContext::sharedContext()->checkDrawnString(text, KDPoint(0, i * glyphHeight), font)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 
 }

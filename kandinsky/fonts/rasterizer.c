@@ -48,9 +48,9 @@ int main(int argc, char * argv[]) {
   FT_Face face;
   image_t bitmap_image;
 
-  int expectedNumberOfArguments = 6;
+  int expectedNumberOfArguments = 8;
 #ifdef GENERATE_PNG
-  expectedNumberOfArguments = 7;
+  expectedNumberOfArguments = 9;
 #endif
   if (argc != expectedNumberOfArguments) {
 #ifdef GENERATE_PNG
@@ -61,6 +61,8 @@ int main(int argc, char * argv[]) {
     fprintf(stderr, "  font_file: Path of the font file to load\n");
     fprintf(stderr, "  glyph_width: Width of bitmap glyphs, in pixels\n");
     fprintf(stderr, "  glyph_height: Height of bitmap glyphs, in pixels\n");
+    fprintf(stderr, "  packed_glyph_width: Minimal glyph width in pixels. Pass 0 if unsure.\n");
+    fprintf(stderr, "  packed_glyph_height: Minimal glyph height in pixels. Pass 0 if unsure.\n");
     fprintf(stderr, "  font_name: name of the loaded font\n");
     fprintf(stderr, "  output_cpp: Name of the generated C source file\n");
 #ifdef GENERATE_PNG
@@ -72,10 +74,12 @@ int main(int argc, char * argv[]) {
   char * font_file = argv[1];
   int requested_glyph_width = atoi(argv[2]);
   int requested_glyph_height = atoi(argv[3]);
-  char * font_name = argv[4];
-  char * output_cpp = argv[5];
+  int packed_glyph_width = atoi(argv[4]);
+  int packed_glyph_height = atoi(argv[5]);
+  char * font_name = argv[6];
+  char * output_cpp = argv[7];
 #ifdef GENERATE_PNG
-  char * output_png = argv[6];
+  char * output_png = argv[8];
 #endif
 
   ENSURE(!FT_Init_FreeType(&library), "Initializing library");
@@ -111,8 +115,17 @@ int main(int argc, char * argv[]) {
   }
 
   int glyph_width = maxWidth-1;
+  if (packed_glyph_width != 0) {
+    ENSURE(glyph_width == packed_glyph_width, "Expecting a packed glyph width of %d but got %d instead", packed_glyph_width, glyph_width);
+  } else {
+    printf("Computed packed_glyph_width = %d\n", glyph_width);
+  }
   int glyph_height = maxAboveBaseline+maxBelowBaseline;
-  //printf("Actual glyph size = %dx%d\n", glyph_width, glyph_height);
+  if (packed_glyph_height != 0) {
+    ENSURE(glyph_height == packed_glyph_height, "Expecting a packed glyph height of %d but got %d instead", packed_glyph_height, glyph_height);
+  } else {
+    printf("Computed packed_glyph_height = %d\n", glyph_height);
+  }
 
   int grid_size = 1;
   int grid_width = 20;

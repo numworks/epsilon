@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <assert.h>
+#include <drivers/config/usb.h>
 #include "dfu_interface.h"
 #include "stack/device.h"
 #include "stack/descriptor/bos_descriptor.h"
@@ -93,7 +94,7 @@ public:
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),
-    m_interfaceStringDescriptor("@Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg/0x90000000/64*064Kg,64*064Kg"),
+    m_interfaceStringDescriptor(Config::InterfaceStringDescriptor),
     //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"),
     /* Switch to this descriptor to use dfu-util to write in the SRAM.
      * FIXME Should be an alternate Interface. */

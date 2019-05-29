@@ -14,7 +14,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Snapshot * snapshot) :
   ::App(snapshot, &m_languageController),
-  m_languageController(&m_modalViewController, &m_logoController),
+  m_languageController(&m_modalViewController),
   m_logoController()
 {
 }

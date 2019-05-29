@@ -9,10 +9,8 @@ namespace OnBoarding {
 
 class LanguageController : public Shared::LanguageController {
 public:
-  LanguageController(Responder * parentResponder, LogoController * logoController);
+  LanguageController(Responder * parentResponder);
   bool handleEvent(Ion::Events::Event event) override;
-private:
-  LogoController * m_logoController;
 };
 
 }

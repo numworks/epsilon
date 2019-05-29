@@ -20,6 +20,7 @@ public:
   void didBecomeActive(Window * window) override;
 private:
   App(Snapshot * snapshot);
+  void reinitOnBoarding();
   LanguageController m_languageController;
   LogoController m_logoController;
 };

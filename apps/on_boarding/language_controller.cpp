@@ -10,11 +10,6 @@ LanguageController::LanguageController(Responder * parentResponder, LogoControll
 {
 }
 
-void LanguageController::reinitOnBoarding() {
-  resetSelection();
-  app()->displayModalViewController(m_logoController, 0.5f, 0.5f);
-}
-
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (Shared::LanguageController::handleEvent(event)) {
     AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();

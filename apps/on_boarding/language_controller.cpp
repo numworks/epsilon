@@ -4,9 +4,8 @@
 
 namespace OnBoarding {
 
-LanguageController::LanguageController(Responder * parentResponder, LogoController * logoController) :
-  Shared::LanguageController(parentResponder, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2),
-  m_logoController(logoController)
+LanguageController::LanguageController(Responder * parentResponder) :
+  Shared::LanguageController(parentResponder, (Ion::Display::Height - I18n::NumberOfLanguages*Metric::ParameterCellHeight)/2)
 {
 }
 

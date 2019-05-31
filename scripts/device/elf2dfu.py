@@ -60,6 +60,8 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
      print_sections(b['sections'])
   targets = []
   for b in blocks:
+    if (not b['sections']):
+      continue
     name = b['name']
     subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in b['sections']] for item in sublist]+[elf_file, bin_file(b)])
     address = min([s['lma'] for s in b['sections']])

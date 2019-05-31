@@ -52,12 +52,11 @@ void CRC(const char * input) {
   Ion::Device::Cache::enable();
 
   constexpr int bufferSize = 4+10+1; // crc is a uint32_t so 10 digits long.
-  char buffer[bufferSize] = {'C', 'R', 'C', '=', 0};
-  int wantedLength = std::log10(crc*1.0)+1;
-  assert(wantedLength < bufferSize - 4);
-  Poincare::PrintInt::PadIntInBuffer(crc, buffer+4, wantedLength);
-  buffer[4+wantedLength] = 0;
-
+  char buffer[bufferSize] = {'C', 'R', 'C', '='};
+  for (int i  = 4; i < bufferSize; i++) {
+    buffer[i] = 0;
+  }
+  Poincare::PrintInt::Left(crc, buffer+4, bufferSize - 4 - 1);
   reply(buffer);
 }
 

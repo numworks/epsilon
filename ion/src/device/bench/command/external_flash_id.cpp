@@ -23,9 +23,9 @@ void ExternalFlashId(const char * input) {
   uint8_t memoryType = 0;
   uint8_t capacityType = 0;
   Ion::Device::ExternalFlash::JDECid(&manufacturerID, &memoryType, &capacityType);
-  Poincare::PrintInt::PadIntInBuffer(manufacturerID, response + firstNumberIndex, numberLength);
-  Poincare::PrintInt::PadIntInBuffer(memoryType, response + firstNumberIndex + numberLength, numberLength);
-  Poincare::PrintInt::PadIntInBuffer(capacityType, response + firstNumberIndex + 2*numberLength, numberLength);
+  Poincare::PrintInt::Right(manufacturerID, response + firstNumberIndex, numberLength);
+  Poincare::PrintInt::Right(memoryType, response + firstNumberIndex + numberLength, numberLength);
+  Poincare::PrintInt::Right(capacityType, response + firstNumberIndex + 2*numberLength, numberLength);
   response[bufferSize -1] = 0;
   reply(response);
 }

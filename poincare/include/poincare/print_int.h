@@ -7,7 +7,8 @@ namespace Poincare {
 
 namespace PrintInt {
 
-bool PadIntInBuffer(uint32_t integer, char * buffer, int bufferLength);
+bool Left(uint32_t integer, char * buffer, int bufferLength);
+bool Right(uint32_t integer, char * buffer, int bufferLength);
 
 }
 

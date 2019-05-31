@@ -80,14 +80,10 @@ Event getEvent(int * timeout) {
     for (int i = 0; i < numberOfScenari; i++) {
       constexpr int bufferLength = 50;
       char buffer[bufferLength];
-      Poincare::PrintInt::PadIntInBuffer(timings[i], buffer, bufferLength);
+      Poincare::PrintInt::Left(timings[i], buffer, bufferLength);
       //buffer[50-1-3] = 0; // convert from ms to s without generating _udivmoddi4 (long long division)
-      char * bufferPointer = buffer;
-      while (*bufferPointer == '0') {
-        bufferPointer++;
-      }
       ctx->drawString(scenari[i].name(), KDPoint(0, line_y), font);
-      ctx->drawString(bufferPointer, KDPoint(200, line_y), font);
+      ctx->drawString(buffer, KDPoint(200, line_y), font);
       line_y += line_height;
     }
     while (1) {

@@ -24,6 +24,7 @@ void MCUSerial(const char * input);
 void Ping(const char * input);
 void Print(const char * input);
 void Reset(const char * input);
+void ScreenID(const char * input);
 void Sleep(const char * input);
 void Stop(const char * input);
 void Standby(const char * input);

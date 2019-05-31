@@ -23,6 +23,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("PING", Command::Ping),
   CommandHandler("PRINT", Command::Print),
   CommandHandler("RESET", Command::Reset),
+  CommandHandler("SCREEN_ID", Command::ScreenID),
   CommandHandler("SLEEP", Command::Sleep),
   CommandHandler("STOP", Command::Stop),
   CommandHandler("STANDBY", Command::Standby),

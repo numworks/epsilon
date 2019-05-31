@@ -21,6 +21,7 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   ping.cpp \
   print.cpp \
   reset.cpp \
+  screen_id.cpp \
   sleep.cpp \
   stop.cpp \
   standby.cpp \

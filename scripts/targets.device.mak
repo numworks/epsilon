@@ -67,7 +67,7 @@ $(BUILD_DIR)/benchRAM.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/benchRAM.$(EXE): $(objs) $(call object_for,$(bench_src))
 else
 $(BUILD_DIR)/benchRAM.$(EXE):
-	@echo "Error: bench.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
+	@echo "Error: benchRAM.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
 endif
 
 #TODO Do not build all apps... Put elsewhere?

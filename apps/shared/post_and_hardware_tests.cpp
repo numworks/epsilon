@@ -13,7 +13,7 @@ bool POSTAndHardwareTests::BatteryOK() {
 
 bool POSTAndHardwareTests::VBlankOK() {
   bool result = true;
-  for (int i=0; i<3; i++) {
+  for (int i = 0; i < 3; i++) {
     result = result && Ion::Display::waitForVBlank();
   }
   return result;

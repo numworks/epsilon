@@ -46,7 +46,7 @@ public:
   /* The destructor has to be virtual. Otherwise calling a destructor on an
    * App * pointing to a Derived App would have undefined behaviour. */
   virtual ~App() = default;
-  Snapshot * snapshot();
+  Snapshot * snapshot() const { return m_snapshot; }
   void setFirstResponder(Responder * responder);
   Responder * firstResponder();
   virtual bool processEvent(Ion::Events::Event event);

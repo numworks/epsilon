@@ -85,6 +85,9 @@ ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH)$(EPSILON_ONBOARDING_APP)$(EP
 	@echo "Building an internal and an external binary for     $<"
 	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external $< $(basename $<).external.bin
 	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external $< $(basename $<).internal.bin
+	@echo "Padding $(basename $<).external.bin and $(basename $<).internal.bin"
+	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).external.bin
+	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).internal.bin
 else
 %_two_binaries:
 	@echo "Error: two_binaries requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=0 EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update"

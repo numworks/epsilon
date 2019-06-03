@@ -251,6 +251,19 @@ public:
 #endif
   };
 
+  class SSCGR : public Register32 {
+  public:
+    using Register32::Register32;
+    REGS_FIELD(MODPER, uint16_t, 12, 0);
+    REGS_FIELD(INCSTEP, uint16_t, 27, 13);
+    enum class SPREADSEL {
+      CenterSpread = 0,
+      DownSpread = 1
+    };
+    void setSPREADSEL(SPREADSEL s) volatile { setBitRange(30, 30, (uint8_t)s); }
+    REGS_BOOL_FIELD(SSCGEN, 31);
+  };
+
   class DCKCFGR2 : Register32 {
   public:
     REGS_BOOL_FIELD(CK48MSEL, 27);
@@ -272,6 +285,7 @@ public:
   REGS_REGISTER_AT(AHB3LPENR, 0x58);
   REGS_REGISTER_AT(APB1LPENR, 0x60);
   REGS_REGISTER_AT(APB2LPENR, 0x64);
+  REGS_REGISTER_AT(SSCGR, 0x80);
   REGS_REGISTER_AT(DCKCFGR2, 0x94);
 private:
   constexpr uint32_t Base() const {

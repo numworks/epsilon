@@ -134,9 +134,20 @@ void initClocks() {
   // Enable PWR peripheral clock
   RCC.APB1ENR()->setPWREN(true);
 
+  /* To pass electromagnetic compatibility tests, we activate the Spread
+   * Spectrum clock generation, which adds jitter to the PLL clock in order to
+   * "lower peak-energy on the central frequency" and its harmonics.
+   * It must be done before enabling the PLL. */
+  class RCC::SSCGR sscgr(0); // Reset value
+  sscgr.setMODPER(Clocks::Config::SSCG_MODPER);
+  sscgr.setINCSTEP(Clocks::Config::SSCG_INCSTEP);
+  sscgr.setSPREADSEL(RCC::SSCGR::SPREADSEL::CenterSpread);
+  sscgr.setSSCGEN(true);
+  RCC.SSCGR()->set(sscgr);
+
   /* Given the crystal used on our device, the HSE will oscillate at 8 MHz. By
    * piping it through a phase-locked loop (PLL) we can derive other frequencies
-   * for use in different parts of the system.  */
+   * for use in different parts of the system. */
 
   // Configure the PLL ratios and use HSE as a PLL input
   RCC.PLLCFGR()->setPLLM(Clocks::Config::PLL_M);

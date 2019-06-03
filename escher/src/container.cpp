@@ -40,10 +40,6 @@ bool Container::switchTo(App::Snapshot * snapshot) {
   return true;
 }
 
-App * Container::activeApp() {
-  return m_activeApp;
-}
-
 bool Container::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::TimerFire ) {
     window()->redraw();

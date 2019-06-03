@@ -47,6 +47,19 @@ constexpr static int APB1LowFrequency = HCLKLowFrequency/APB1Prescaler;
 constexpr static int APB1TimerLowFrequency = 2*APB1LowFrequency;
 
 constexpr static Regs::RCC::CFGR::APBPrescaler APB2PrescalerReg = Regs::RCC::CFGR::APBPrescaler::AHBDividedBy2;
+
+/* According to AN4850 about Spread Spectrum clock generation
+ * MODPER = round[HSE/(4 x fMOD)] with fMOD the target modulation frequency. */
+constexpr static int fMod = 8; // in KHz. Must be <= 10KHz
+constexpr static uint32_t SSCG_MODPER = HSE*1000/(4*fMod); // *1000 to put HSE in KHz
+/* According to the USB specification 2, "For full-speed only functions, the
+ * required data-rate when transmitting (TFDRATE) is 12.000 Mb/s ±0.25%". */
+constexpr static double modulationDepth = 0.25; // Must be (0.25% <= md <= 2%)
+// INCSTEP = round[(2^15 -1)xmdxPLLN)/(100x5xMODPER)
+constexpr static uint32_t SSCG_INCSTEP = (32767*modulationDepth*PLL_N)/(1.0*100*5*SSCG_MODPER);
+static_assert(SSCG_MODPER == 250, "SSCG_MODPER changed");
+static_assert(SSCG_INCSTEP == 25, "SSCG_INCSTEP changed");
+static_assert(SSCG_INCSTEP * SSCG_MODPER < 32767, "Wrong values for the Spread spectrun clock generator");
 }
 }
 }

@@ -8,6 +8,7 @@
 #include <escher/timer.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
+#include <ion/storage.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -70,6 +71,9 @@ private:
   Snapshot * m_snapshot;
   WarningController m_warningController;
 };
+
+// Make sure App * app() is reachable by anyone including only app.h
+#include <escher/container.h>
 
 #endif
 

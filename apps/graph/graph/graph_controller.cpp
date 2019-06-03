@@ -7,7 +7,7 @@ namespace Graph {
 
 static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
-GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
@@ -43,10 +43,9 @@ void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
 
 float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    float fRange = f->expressionReduced(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
+    float fRange = f->expressionReduced(app()->localContext()).characteristicXRange(*(app()->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
     }
@@ -74,14 +73,12 @@ void GraphController::reloadBannerView() {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  App * myApp = static_cast<App *>(app());
-  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, myApp);
+  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, app());
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  App * myApp = static_cast<App *>(app());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, myApp);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, app());
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {

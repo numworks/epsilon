@@ -58,7 +58,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     saveScript();
     return false;
   }
-  if (static_cast<App *>(app())->textInputDidReceiveEvent(textArea, event)) {
+  if (app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
   if (event == Ion::Events::EXE) {
@@ -109,13 +109,13 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 }
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = static_cast<App *>(app())->variableBoxController();
+  VariableBoxController * varBox = app()->variableBoxController();
   varBox->loadFunctionsAndVariables();
   return varBox;
 }
 
 InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() {
-  return static_cast<App *>(app());
+  return app();
 }
 
 StackViewController * EditorController::stackController() {

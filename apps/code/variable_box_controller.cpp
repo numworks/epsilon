@@ -33,7 +33,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
    * environment where Python has already been inited. This way, we do not
    * deinit Python when leaving the VariableBoxController, so we do not lose the
    * environment that was loaded when entering the VariableBoxController. */
-  assert(static_cast<App *>(app())->pythonIsInited());
+  assert(app()->pythonIsInited());
 }
 
 static bool shouldAddObject(const char * name, int maxLength) {

@@ -36,7 +36,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
 }
 
 ConsoleController * MenuController::consoleController() {
-  return static_cast<App *>(app())->consoleController();
+  return app()->consoleController();
 }
 
 StackViewController * MenuController::stackViewController() {

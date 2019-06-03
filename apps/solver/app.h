@@ -45,6 +45,10 @@ private:
   InputViewController m_inputViewController;
 };
 
+inline App * app() {
+  return static_cast<App *>(::app());
+}
+
 }
 
 #endif

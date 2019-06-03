@@ -63,7 +63,7 @@ private:
   StackViewController m_stackViewController;
 };
 
-App * app() {
+inline App * app() {
   return static_cast<App *>(::app());
 }
 

@@ -17,6 +17,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("EXIT", Command::Exit),
   CommandHandler("EXTERNAL_FLASH_ID", Command::ExternalFlashId),
   CommandHandler("KEYBOARD", Command::Keyboard),
+  CommandHandler("LCD_DATA", Command::LCDData),
   CommandHandler("LCD_PINS", Command::LCDPins),
   CommandHandler("LED", Command::LED),
   CommandHandler("MCU_SERIAL", Command::MCUSerial),

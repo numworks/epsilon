@@ -1,6 +1,7 @@
 #include "values_controller.h"
 #include <assert.h>
 #include "../../constant.h"
+#include "../app.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -142,15 +143,14 @@ FunctionParameterController * ValuesController::functionParameterController() {
 }
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   bool isDerivative = isDerivativeColumn(columnIndex);
   /* isDerivativeColumn uses expiring pointers, so "function" must be created
    * after the isDerivativeColumn call, else it will expire. */
   Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   if (isDerivative) {
-    return function->approximateDerivative(abscissa, myApp->localContext());
+    return function->approximateDerivative(abscissa, app()->localContext());
   }
-  return function->evaluateAtAbscissa(abscissa, myApp->localContext());
+  return function->evaluateAtAbscissa(abscissa, app()->localContext());
 }
 
 void ValuesController::updateNumberOfColumns() {

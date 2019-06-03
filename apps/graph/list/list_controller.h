@@ -29,9 +29,7 @@ private:
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override {
-    return static_cast<Shared::TextFieldDelegateApp *>(app());
-  }
+  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   void setFunctionNameInTextField(Shared::ExpiringPointer<Shared::Function> function, TextField * textField);
   TextFieldFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfDisplayableRows];

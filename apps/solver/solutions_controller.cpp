@@ -105,11 +105,10 @@ View * SolutionsController::view() {
 
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
-  App * solverApp = static_cast<App *>(app());
   bool requireWarning = false;
   if (m_equationStore->type() == EquationStore::Type::Monovariable) {
     m_contentView.setWarningMessages(I18n::Message::OnlyFirstSolutionsDisplayed0, I18n::Message::OnlyFirstSolutionsDisplayed1);
-    requireWarning = m_equationStore->haveMoreApproximationSolutions(solverApp->localContext());
+    requireWarning = m_equationStore->haveMoreApproximationSolutions(app()->localContext());
   } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && m_equationStore->numberOfSolutions() == 1) {
     assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real);
     m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);

@@ -82,8 +82,7 @@ KDCoordinate DerivativeParameterController::cellHeight() {
 }
 
 CartesianFunctionStore * DerivativeParameterController::functionStore() {
-  App * a = static_cast<App *>(app());
-  return a->functionStore();
+  return app()->functionStore();
 }
 
 }

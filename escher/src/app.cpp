@@ -101,7 +101,6 @@ void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMes
 
 void App::didBecomeActive(Window * window) {
   View * view = m_modalViewController.view();
-  assert(m_modalViewController.app() == this);
   m_modalViewController.initView();
   window->setContentView(view);
   m_modalViewController.viewWillAppear();

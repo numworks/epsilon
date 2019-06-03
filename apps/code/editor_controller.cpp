@@ -58,7 +58,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     saveScript();
     return false;
   }
-  if (static_cast<App *>(textArea->app())->textInputDidReceiveEvent(textArea, event)) {
+  if (static_cast<App *>(app())->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
   if (event == Ion::Events::EXE) {

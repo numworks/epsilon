@@ -54,6 +54,7 @@ public:
     char m_calculation[k_calculationSize];
     Page m_activePage;
   };
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(::App::snapshot()); }
 private:
   App(Snapshot * snapshot);
   CalculationController m_calculationController;

@@ -79,8 +79,7 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
 }
 
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
-  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
-  snapshot->setActivePage(App::Snapshot::Page::Calculations);
+  app()->snapshot()->setActivePage(App::Snapshot::Page::Calculations);
   updateTitle();
   reloadLawCurveView();
   m_selectableTableView.reloadData();

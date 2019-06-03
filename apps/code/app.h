@@ -84,6 +84,10 @@ private:
   VariableBoxController m_variableBoxController;
 };
 
+inline App * app() {
+  return static_cast<App *>(::app());
+}
+
 }
 
 #endif

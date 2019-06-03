@@ -107,10 +107,9 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
     // Replace UCodePointUnknownN with 'n'
     replaceUnknownSymbolWithReadableSymbol(initialText);
   }
-  App * myApp = (App *)app();
-  InputViewController * inputController = myApp->inputViewController();
+  InputViewController * inputController = app()->inputViewController();
   // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
+  app()->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
       inputController->edit(this, event, this, initialText,
@@ -160,15 +159,15 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return (App *)app();
+  return app();
 }
 
 ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return (App *)app();
+  return app();
 }
 
 InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
-  return (App *)app();
+  return app();
 }
 
 ListParameterController * ListController::parameterController() {
@@ -280,7 +279,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 
 void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
+  app()->localContext()->resetCache();
   Sequence * sequence = static_cast<Sequence *>(model.pointer());
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
@@ -308,7 +307,7 @@ void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHan
 bool ListController::removeModelRow(Ion::Storage::Record record) {
   Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
+  app()->localContext()->resetCache();
   return true;
 }
 

@@ -189,4 +189,8 @@ void ListController::setFunctionNameInTextField(ExpiringPointer<Function> functi
   textField->setText(bufferName);
 }
 
+Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {
+  return app();
+}
+
 }

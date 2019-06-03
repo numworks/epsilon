@@ -45,16 +45,14 @@ void CalculationGraphController::reloadBannerView() {
 }
 
 Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
-  App * myApp = static_cast<App *>(app());
   double step = m_graphRange->xGridUnit()/10.0;
   step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
-  return computeNewPointOfInterest(start, step, max, myApp->localContext());
+  return computeNewPointOfInterest(start, step, max, app()->localContext());
 }
 
 CartesianFunctionStore * CalculationGraphController::functionStore() const {
-  App * a = static_cast<App *>(app());
-  return a->functionStore();
+  return app()->functionStore();
 }
 
 bool CalculationGraphController::handleLeftRightEvent(Ion::Events::Event event) {

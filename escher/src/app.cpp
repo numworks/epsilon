@@ -38,10 +38,6 @@ App::App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message
 {
 }
 
-App::Snapshot * App::snapshot() {
-  return m_snapshot;
-}
-
 bool App::processEvent(Ion::Events::Event event) {
   Responder * responder = m_firstResponder;
   bool didHandleEvent = false;

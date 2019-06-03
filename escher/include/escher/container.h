@@ -29,7 +29,7 @@ public:
   Container& operator=(Container&& other) = delete;
   virtual void * currentAppBuffer() = 0;
   virtual void run();
-  App * activeApp();
+  App * activeApp() { return m_activeApp; }
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   virtual bool switchTo(App::Snapshot * snapshot);
 protected:

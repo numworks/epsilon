@@ -12,12 +12,7 @@ void VBlank(const char * input) {
     reply(sSyntaxError);
     return;
   }
-
-  for (int i=0; i<6; i++) {
-    Ion::Display::waitForVBlank();
-  }
-
-  reply(sOK);
+  reply(Shared::POSTAndHardwareTests::VBlankOK() ? sOK : sKO);
 }
 
 }

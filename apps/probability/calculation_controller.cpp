@@ -267,7 +267,7 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
 }
 
 TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
-  return (App *)app();
+  return app();
 }
 
 void CalculationController::updateTitle() {

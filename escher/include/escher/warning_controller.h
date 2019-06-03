@@ -1,10 +1,10 @@
 #ifndef ESCHER_WARNING_CONTROLLER_H
 #define ESCHER_WARNING_CONTROLLER_H
 
-#include <escher/view_controller.h>
+#include <escher/i18n.h>
 #include <escher/message_text_view.h>
 #include <escher/solid_color_view.h>
-#include <escher/i18n.h>
+#include <escher/view_controller.h>
 
 class WarningController : public ViewController {
 public:

@@ -2,6 +2,7 @@
 #include <apps/i18n.h>
 #include "../apps_container.h"
 #include <assert.h>
+#include <escher/app.h>
 
 namespace HardwareTest {
 
@@ -34,8 +35,7 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 PopUpController::ContentView::ContentView(Responder * parentResponder) :
   Responder(parentResponder),
   m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    PopUpController::ContentView * view = (PopUpController::ContentView *)context;
-    view->app()->dismissModalViewController();
+    app()->dismissModalViewController();
     return true;
   }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {

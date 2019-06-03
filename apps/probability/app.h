@@ -63,6 +63,10 @@ private:
   StackViewController m_stackViewController;
 };
 
+App * app() {
+  return static_cast<App *>(::app());
+}
+
 }
 
 #endif

@@ -1,3 +1,4 @@
+#include <escher/app.h>
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>

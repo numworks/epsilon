@@ -61,7 +61,3 @@ Responder * Responder::commonAncestorWith(Responder * responder) {
   }
   return s;
 }
-
-App * Responder::app() const {
-  return Container::sharedContainer()->activeApp();
-}

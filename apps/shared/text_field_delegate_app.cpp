@@ -25,7 +25,7 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!isAcceptableText(textField->text())) {
-      textField->app()->displayWarning(I18n::Message::SyntaxError);
+      displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }

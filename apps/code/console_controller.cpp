@@ -290,7 +290,7 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
       return true;
     }
   }
-  return static_cast<App *>(textField->app())->textInputDidReceiveEvent(textField, event);
+  return static_cast<App *>(app())->textInputDidReceiveEvent(textField, event);
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

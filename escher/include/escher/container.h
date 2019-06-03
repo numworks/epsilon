@@ -47,4 +47,8 @@ private:
   static Container * s_sharedContainer;
 };
 
+App * app() {
+  return Container::sharedContainer()->activeApp();
+}
+
 #endif

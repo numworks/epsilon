@@ -57,6 +57,10 @@ private:
   RegressionController m_regressionController;
 };
 
+inline App * app() {
+  return static_cast<App *>(::app());
+}
+
 }
 
 #endif

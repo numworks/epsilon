@@ -175,7 +175,7 @@ void ListController::resolveEquations() {
     app()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  EquationStore::Error e = m_equationStore->exactSolve(static_cast<App *>(app())->localContext());
+  EquationStore::Error e = m_equationStore->exactSolve(app()->localContext());
   switch (e) {
     case EquationStore::Error::EquationUndefined:
       app()->displayWarning(I18n::Message::UndefinedEquation);
@@ -192,16 +192,14 @@ void ListController::resolveEquations() {
     case EquationStore::Error::RequireApproximateSolution:
     {
       StackViewController * stack = stackController();
-      App * solverApp = static_cast<App *>(app());
-      stack->push(solverApp->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
     default:
     {
       assert(e == EquationStore::Error::NoError);
       StackViewController * stack = stackController();
-      App * solverApp = static_cast<App *>(app());
-      stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
  }
 }
@@ -231,11 +229,11 @@ SelectableTableView * ListController::selectableTableView() {
 }
 
 Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return static_cast<App *>(app());
+  return app();
 }
 
 Shared::ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return static_cast<App *>(app());
+  return app();
 }
 
 StackViewController * ListController::stackController() const {
@@ -243,7 +241,7 @@ StackViewController * ListController::stackController() const {
 }
 
 InputViewController * ListController::inputController() {
-  return static_cast<App *>(app())->inputViewController();
+  return app()->inputViewController();
 }
 
 }

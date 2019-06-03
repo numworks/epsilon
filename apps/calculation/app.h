@@ -39,6 +39,10 @@ private:
   EditExpressionController m_editExpressionController;
 };
 
+inline App * app() {
+  return static_cast<App *>(::app());
+}
+
 }
 
 #endif

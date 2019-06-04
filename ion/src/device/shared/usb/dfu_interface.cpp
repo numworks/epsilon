@@ -5,6 +5,7 @@
 #include <drivers/external_flash.h>
 #include <drivers/config/flash.h>
 #include <drivers/config/external_flash.h>
+#include <ion/timing.h>
 
 namespace Ion {
 namespace Device {
@@ -64,6 +65,14 @@ void DFUInterface::wholeDataSentCallback(SetupPacket * request, uint8_t * transf
   if (request->bRequest() == (uint8_t) DFURequest::GetStatus) {
     // Do any needed action after the GetStatus request.
     if (m_state == State::dfuMANIFEST) {
+      /* If we leave the DFU and reset immediately, dfu-util outputs an error:
+       * "File downloaded successfully
+       *  dfu-util: Error during download get_status"
+       * If we sleep 1us here, there is no error. We put 1ms for security.
+       * This error might be due to the USB connection being cut too soon after
+       * the last USB exchange, so the host does not have time to process the
+       * answer received for the last GetStatus request. */
+      Ion::Timing::msleep(1);
       // Leave DFU routine: Leave DFU, reset device, jump to application code
       leaveDFUAndReset();
     } else if (m_state == State::dfuDNBUSY) {

@@ -36,9 +36,10 @@ public:
   // http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
   class VTOR : Register32 {
   public:
-    void setVTOR(void *address) volatile { setBitRange(29, 9, (uint32_t)address >> 9); }
+    void setVTOR(void *address) volatile {
+      assert(address & 0xC00001FF == 0);
+      setBitRange(29, 9, (uint32_t)address >> 9); }
   };
-
 
   // Application Interrupt and Reset Control Register
   // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/Cihehdge.html

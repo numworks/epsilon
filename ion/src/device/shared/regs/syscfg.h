@@ -2,7 +2,7 @@
 #define REGS_SYSCFG_H
 
 #include "register.h"
-
+#include <regs/config/syscfg.h>
 #include "gpio.h"
 
 namespace Ion {
@@ -11,6 +11,7 @@ namespace Regs {
 
 class SYSCFG {
 public:
+#if REGS_SYSCFG_CONFIG_F412
   class MEMRMP : Register32 {
   public:
     enum class MemMode : uint8_t {
@@ -20,6 +21,7 @@ public:
     };
     REGS_FIELD(MEM_MODE, MemMode, 1, 0);
   };
+#endif
   class EXTICR1 : Register32 {
   public:
     void setEXTI(int index, GPIO gpio) volatile { setBitRange(4*index+3, 4*index, (uint32_t)gpio); }
@@ -38,7 +40,9 @@ public:
     REGS_BOOL_FIELD(READY, 8);
   };
   constexpr SYSCFG() {};
+#if REGS_SYSCFG_CONFIG_F412
   REGS_REGISTER_AT(MEMRMP, 0x00);
+#endif
   REGS_REGISTER_AT(EXTICR1, 0x08);
   REGS_REGISTER_AT(EXTICR2, 0x0C);
   REGS_REGISTER_AT(EXTICR3, 0x10);

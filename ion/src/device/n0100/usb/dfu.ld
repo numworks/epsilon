@@ -27,7 +27,7 @@ MEMORY {
 
 /* The DFU needs to know to which address it should jump to after a leave
  * command. This address is used in Ion::Device::Reset::jump(). */
-_isr_start = 0x08000000;
+_jump_reset_address = 0x08000000;
 
 SECTIONS {
   .text : {

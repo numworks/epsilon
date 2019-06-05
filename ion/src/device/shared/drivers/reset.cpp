@@ -4,7 +4,7 @@
 #include <drivers/board.h>
 #include <drivers/external_flash.h>
 
-extern void * _isr_start;
+extern void * _jump_reset_address;
 
 namespace Ion {
 namespace Device {
@@ -30,7 +30,7 @@ void jump() {
    * real reset would. These operations should be made at once, otherwise the C
    * compiler might emit some instructions that modify the stack inbetween. */
 
-  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(&_isr_start);
+  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(&_jump_reset_address);
   uint32_t * resetHandlerAddress = stackPointerAddress + 1;
 
   asm volatile (

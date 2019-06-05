@@ -56,6 +56,8 @@ using namespace Regs;
 
 enum class Command : uint8_t {
   ReadStatusRegister1 = 0x05,
+  ReadStatusRegister2 = 0x35,
+  WriteStatusRegister = 0x01,
   WriteStatusRegister2 = 0x31,
   WriteEnable = 0x06,
   ReadData = 0x03,
@@ -80,15 +82,15 @@ static constexpr uint8_t NumberOfAddressBitsIn64KbyteBlock = 16;
 
 class ExternalFlashStatusRegister {
 public:
-  class StatusRegister1 : Register8 {
+  class StatusRegister1 : public Register8 {
   public:
     using Register8::Register8;
     REGS_BOOL_FIELD_R(BUSY, 0);
   };
-  class StatusRegister2 : Register8 {
+  class StatusRegister2 : public Register8 {
   public:
     using Register8::Register8;
-    REGS_BOOL_FIELD_W(QE, 1);
+    REGS_BOOL_FIELD(QE, 1);
   };
 };
 
@@ -372,11 +374,27 @@ int SectorAtAddress(uint32_t address) {
   return i;
 }
 
+void unlockFlash() {
+  // Warning: unset_memory_mapped_mode must be called before
+  send_command(Command::WriteEnable);
+  wait();
+  ExternalFlashStatusRegister::StatusRegister1 statusRegister1(0);
+  ExternalFlashStatusRegister::StatusRegister2 statusRegister2(0);
+  ExternalFlashStatusRegister::StatusRegister2 currentStatusRegister2(0);
+  send_read_command(Command::ReadStatusRegister2, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(&currentStatusRegister2), sizeof(currentStatusRegister2));
+  statusRegister2.setQE(currentStatusRegister2.getQE());
+
+  uint8_t registers[] = {statusRegister1.get(), statusRegister2.get()};
+  send_write_command(Command::WriteStatusRegister, reinterpret_cast<uint8_t *>(FlashAddressSpaceSize), reinterpret_cast<uint8_t *>(registers), sizeof(registers));
+  wait();
+}
+
 void MassErase() {
   if (Config::NumberOfSectors == 0) {
     return;
   }
   unset_memory_mapped_mode();
+  unlockFlash();
   send_command(Command::WriteEnable);
   wait();
   send_command(Command::ChipErase);
@@ -387,6 +405,7 @@ void MassErase() {
 void EraseSector(int i) {
   assert(i >= 0 && i < Config::NumberOfSectors);
   unset_memory_mapped_mode();
+  unlockFlash();
   send_command(Command::WriteEnable);
   wait();
   send_write_command(Command::Erase64KbyteBlock, reinterpret_cast<uint8_t *>(i << NumberOfAddressBitsIn64KbyteBlock), nullptr, 0);

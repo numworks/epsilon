@@ -36,7 +36,14 @@ void setPin(Ion::Device::Regs::GPIOPin p, PinType type) {
 }
 
 void LCDPins(const char * input) {
-  if (input != nullptr) {
+  if (input == nullptr) {
+    reply(sSyntaxError);
+    return;
+  }
+  bool checkTEPin = true;
+  if (strcmp(input, "WithoutTE") == 0) {
+    checkTEPin = false;
+  } else if (strcmp(input, "WithTE") != 0) {
     reply(sSyntaxError);
     return;
   }
@@ -68,10 +75,10 @@ void LCDPins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 6),  // LCD_EXTC
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 7),  // LCD_CSX
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 1),  // LCD_RESET
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 11),  // LCD_RESET
   };
 
-  int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin);
-
+  int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin) - (checkTEPin ? 0 : 1);
 
   // Put all testable GPIO to pull down
   for (const Ion::Device::Regs::GPIOPin & pinDown : LCDpins) {

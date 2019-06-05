@@ -3,7 +3,7 @@
  * The job of this code is to implement the "ion_key_state" function.
  *
  * The keyboard is a matrix that is laid out as follow:
- * (K_B2 and K_B3 are respectively specific to N0100 and N0200
+ * (K_B2 and K_B3 are respectively specific to N0100 and N0110
  *
  *      |  PC0 |  PC1 | PC2  | PC3  | PC4  | PC5  |
  * -----+------+------+------+------+------+------+

@@ -70,9 +70,19 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */
     const char * text = textArea->text();
-    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
+    const char * cursorLocation = textArea->cursorLocation();
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, cursorLocation);
     assert(firstNonSpace >= text);
-    if (UTF8Helper::CodePointIs(firstNonSpace, '\n') && ((text - firstNonSpace)/UTF8Decoder::CharSizeOfCodePoint(' ')) >= k_indentationSpacesNumber) {
+    bool cursorIsPrecededOnTheLineBySpacesOnly = false;
+    size_t numberOfSpaces = cursorLocation - firstNonSpace;
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
+      cursorIsPrecededOnTheLineBySpacesOnly = true;
+      numberOfSpaces -= UTF8Decoder::CharSizeOfCodePoint('\n');
+    } else if (firstNonSpace == text) {
+      cursorIsPrecededOnTheLineBySpacesOnly = true;
+    }
+    numberOfSpaces = numberOfSpaces / UTF8Decoder::CharSizeOfCodePoint(' ');
+    if (cursorIsPrecededOnTheLineBySpacesOnly && numberOfSpaces >= k_indentationSpacesNumber) {
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
         textArea->removeCodePoint();
       }

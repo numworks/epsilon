@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0200_CONFIG_KEYBOARD_H
-#define ION_DEVICE_N0200_CONFIG_KEYBOARD_H
+#ifndef ION_DEVICE_N0110_CONFIG_KEYBOARD_H
+#define ION_DEVICE_N0110_CONFIG_KEYBOARD_H
 
 #include <regs/regs.h>
 #include <ion/keyboard.h>

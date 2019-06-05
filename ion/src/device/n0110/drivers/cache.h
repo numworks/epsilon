@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0200_CACHE_H
-#define ION_DEVICE_N0200_CACHE_H
+#ifndef ION_DEVICE_N0110_CACHE_H
+#define ION_DEVICE_N0110_CACHE_H
 
 #include <regs/regs.h>
 

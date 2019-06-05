@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0200_CONFIG_SWD_H
-#define ION_DEVICE_N0200_CONFIG_SWD_H
+#ifndef ION_DEVICE_N0110_CONFIG_SWD_H
+#define ION_DEVICE_N0110_CONFIG_SWD_H
 
 #include <regs/regs.h>
 

@@ -1,7 +1,6 @@
 #ifndef SHARED_LAYOUT_FIELD_DELEGATE_H
 #define SHARED_LAYOUT_FIELD_DELEGATE_H
 
-#include <escher/layout_field_delegate.h>
 #include "expression_field_delegate_app.h"
 
 namespace Shared {
@@ -14,7 +13,9 @@ public:
   bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
 private:
-  virtual ExpressionFieldDelegateApp * expressionFieldDelegateApp() = 0;
+  ExpressionFieldDelegateApp * expressionFieldDelegateApp() {
+    return static_cast<ExpressionFieldDelegateApp *>(::app());
+  }
 };
 
 }

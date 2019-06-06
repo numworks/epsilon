@@ -6,7 +6,6 @@
 #include <escher/invocation.h>
 #include <escher/i18n.h>
 #include <escher/button.h>
-#include <escher/app.h>
 #include <assert.h>
 
 class ButtonRowDelegate;
@@ -48,7 +47,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    bool setSelectedButton(int selectedButton, App * app);
+    bool setSelectedButton(int selectedButton);
     int selectedButton() const { return m_selectedButton; }
     ViewController * mainViewController() const { return m_mainViewController; }
     ButtonRowDelegate * buttonRowDelegate() const { return m_delegate; }

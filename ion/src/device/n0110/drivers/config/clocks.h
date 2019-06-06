@@ -35,6 +35,7 @@ constexpr static int AHBPrescaler = 1;
 constexpr static Regs::RCC::CFGR::AHBPrescaler AHBLowFrequencyPrescalerReg = Regs::RCC::CFGR::AHBPrescaler::SysClkDividedBy8;
 constexpr static int AHBLowFrequencyPrescaler = 8;
 constexpr static int HCLKFrequency = SYSCLKFrequency/AHBPrescaler;
+static_assert(HCLKFrequency == 192, "HCLK frequency changed!");
 constexpr static int HCLKLowFrequency = SYSCLKFrequency/AHBLowFrequencyPrescaler;
 constexpr static int AHBFrequency = HCLKFrequency;
 //constexpr static int AHBLowFrequency = HCLKLowFrequency;

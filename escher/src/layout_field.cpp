@@ -174,7 +174,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
-  if (handleBoxEvent(app(), event)) {
+  if (handleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
     }

@@ -7,6 +7,22 @@
 constexpr int KeyboardRows = 9;
 constexpr int KeyboardColumns = 6;
 
+int get_font_number(const char * font_name){
+    // Load strings from system
+    int font_count = Fl::set_fonts();
+    // Search requested font in face table
+    for (int i = 0; i < font_count; i++)
+    {
+        // If found return the index in the face table
+        if (strcmp(Fl::get_font_name(i), font_name)==0)
+        {
+            return i;
+        }
+    }  
+    // Else return 0, which should be the default sans serif font
+    return 0;  
+}
+
 static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
   "\u25c1",   "\u25b3",     "\u25bd",   "\u25b7",  "OK",     "\u21ba",
   "Home",   "Power",  "",       "",       "",       "",
@@ -52,6 +68,7 @@ static bool shouldRepeatKey(Ion::Keyboard::Key k) {
 }
 
 void FltkKbd::initButtons(int x, int y, int w, int h) {
+  int font_number = get_font_number("Arial Unicode MS");
   assert(KeyboardRows * KeyboardColumns == Ion::Keyboard::NumberOfKeys);
   int keyWidth = w / KeyboardColumns;
   int keyHeight = h / KeyboardRows;
@@ -60,8 +77,10 @@ void FltkKbd::initButtons(int x, int y, int w, int h) {
     int keyY = y + (k / KeyboardColumns) * keyHeight;
     if (shouldRepeatKey((Ion::Keyboard::Key)k)) {
       m_buttons[k] = new Fl_Repeat_Button(keyX, keyY, keyWidth, keyHeight, kCharForKey[k]);
+      m_buttons[k]->labelfont(font_number);
     } else {
       m_buttons[k] = new Fl_Button(keyX, keyY, keyWidth, keyHeight, kCharForKey[k]);
+      m_buttons[k]->labelfont(font_number);
     }
 #if defined(_WIN32) || defined(_WIN64)
     m_buttons[k]->labelfont(FL_SYMBOL);

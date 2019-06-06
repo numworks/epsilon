@@ -38,7 +38,6 @@ public:
   /* ViewController */
   View * view() override { return &m_equationListView; }
   /* Text/Layout Field Delegate */
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;

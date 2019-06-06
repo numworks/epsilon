@@ -2,9 +2,11 @@
 #define SHARED_TEXT_FIELD_DELEGATE_APP_H
 
 #include <poincare/context.h>
-#include <escher.h>
 #include "input_event_handler_delegate_app.h"
+#include <escher/text_field_delegate.h>
 #include <apps/i18n.h>
+
+class EditableField;
 
 namespace Shared {
 

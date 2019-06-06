@@ -1,6 +1,8 @@
 #ifndef ESCHER_TEXT_FIELD_DELEGATE_H
 #define ESCHER_TEXT_FIELD_DELEGATE_H
 
+#include <ion/events.h>
+
 class TextField;
 
 class TextFieldDelegate {

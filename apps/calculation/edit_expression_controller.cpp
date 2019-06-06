@@ -108,10 +108,6 @@ void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutFi
   }
 }
 
-TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
-  return app();
-}
-
 void EditExpressionController::reloadView() {
   ((ContentView *)view())->reload();
   m_historyController->reload();

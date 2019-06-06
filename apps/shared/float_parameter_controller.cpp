@@ -1,7 +1,6 @@
 #include "float_parameter_controller.h"
 #include "../constant.h"
 #include "../shared/poincare_helpers.h"
-#include "text_field_delegate_app.h"
 #include <assert.h>
 #include <cmath>
 
@@ -136,10 +135,6 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     m_selectableTableView.handleEvent(event);
   }
   return true;
-}
-
-TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
-  return (TextFieldDelegateApp *)app();
 }
 
 int FloatParameterController::activeCell() {

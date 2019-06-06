@@ -158,10 +158,6 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
   return (error == Ion::Storage::Record::ErrorStatus::None);
 }
 
-TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return app();
-}
-
 ListParameterController * ListController::parameterController() {
   return &m_parameterController;
 }

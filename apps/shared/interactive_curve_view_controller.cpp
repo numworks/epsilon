@@ -1,5 +1,4 @@
 #include "interactive_curve_view_controller.h"
-#include "text_field_delegate_app.h"
 #include <cmath>
 #include <float.h>
 #include <assert.h>

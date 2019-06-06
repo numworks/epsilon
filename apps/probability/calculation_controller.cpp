@@ -266,10 +266,6 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
   m_calculation->setLaw(m_law);
 }
 
-TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
-  return app();
-}
-
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_law->numberOfParameter(); index++) {

@@ -1,4 +1,3 @@
-#include <escher/app.h>
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
 #include <escher/text_input_helpers.h>
@@ -97,7 +96,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
 bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
-  } else if (handleBoxEvent(app(), event)) {
+  } else if (handleBoxEvent(event)) {
     return true;
   } else if (event == Ion::Events::Left) {
     return TextInput::moveCursorLeft();

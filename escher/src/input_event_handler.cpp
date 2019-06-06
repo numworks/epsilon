@@ -4,7 +4,7 @@
 #include <escher/toolbox.h>
 #include <escher/metric.h>
 
-bool InputEventHandler::handleBoxEvent(App * app, Ion::Events::Event event) {
+bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
   NestedMenuController * box = nullptr;
   if (m_inputEventHandlerDelegate) {
     box = event == Ion::Events::Toolbox ? m_inputEventHandlerDelegate->toolboxForInputEventHandler(this) : box;
@@ -12,7 +12,7 @@ bool InputEventHandler::handleBoxEvent(App * app, Ion::Events::Event event) {
   }
   if (box) {
     box->setSender(this);
-    app->displayModalViewController(box, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    app()->displayModalViewController(box, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
   return false;

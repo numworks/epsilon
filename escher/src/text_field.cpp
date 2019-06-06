@@ -1,4 +1,3 @@
-#include <escher/app.h>
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
@@ -278,7 +277,7 @@ void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
 
 bool TextField::privateHandleEvent(Ion::Events::Event event) {
   // Handle Toolbox or Var event
-  if (handleBoxEvent(app(), event)) {
+  if (handleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
     }

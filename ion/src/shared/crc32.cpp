@@ -1,15 +1,5 @@
 #include <ion.h>
 
-constexpr uint32_t polynomial = 0x04C11DB7;
-
-static uint32_t crc32(uint32_t crc, uint8_t data) {
-    crc ^= data << 24;
-    for (int i=8; i--;) {
-      crc = crc & 0x80000000 ? ((crc<<1)^polynomial) : (crc << 1);
-    }
-    return crc;
-}
-
 uint32_t crc32Helper(const uint8_t * data, size_t length, bool wordAccess) {
   size_t uint32ByteLength = sizeof(uint32_t)/sizeof(uint8_t);
   uint32_t crc = 0xFFFFFFFF;
@@ -20,11 +10,11 @@ uint32_t crc32Helper(const uint8_t * data, size_t length, bool wordAccess) {
     // FIXME: Assumes little-endian byte order!
     for (int j = uint32ByteLength-1; j >= 0; j--) {
       // scan byte by byte to avoid alignment issue when building for emscripten platform
-      crc = crc32(crc, data[i*uint32ByteLength+j]);
+      crc = Ion::crc32EatByte(crc, data[i*uint32ByteLength+j]);
     }
   }
   for (int i = (int) wordLength * uint32ByteLength; i < byteLength; i++) {
-    crc = crc32(crc, data[i]);
+    crc = Ion::crc32EatByte(crc, data[i]);
   }
   return crc;
 }

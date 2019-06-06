@@ -6,6 +6,7 @@ namespace Ion {
 using namespace Device::Regs;
 
 uint32_t crc32Byte(const uint8_t * data, size_t length) {
+  uint32_t result = 0;
   bool initialCRCEngineState = RCC.AHB1ENR()->getCRCEN();
   RCC.AHB1ENR()->setCRCEN(true);
   CRC.CR()->setRESET(true);
@@ -18,12 +19,20 @@ uint32_t crc32Byte(const uint8_t * data, size_t length) {
     CRC.DR_WordAccess()->set(*((uint32_t *)data));
     data += 4;
   }
-  // Scanning the remaining data with byte accesses
+
+#if REGS_CRC_CONFIG_BYTE_ACCESS
+  // Scan the remaining data with byte accesses
   while (data < end) {
     CRC.DR_ByteAccess()->set(*data++);
   }
+  result = CRC.DR_WordAccess()->get();
+#else
+  result = CRC.DR_WordAccess()->get();
+  while (data < end) {
+    result = Ion::crc32EatByte(result, *data++);
+  }
+#endif
 
-  uint32_t result = CRC.DR_WordAccess()->get();
   RCC.AHB1ENR()->setCRCEN(initialCRCEngineState);
   return result;
 }

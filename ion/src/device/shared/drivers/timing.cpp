@@ -2,6 +2,7 @@
 #include "board.h"
 #include <ion/timing.h>
 #include <drivers/config/timing.h>
+#include <drivers/config/clocks.h>
 
 namespace Ion {
 
@@ -43,7 +44,11 @@ using namespace Regs;
 volatile uint64_t MillisElapsed = 0;
 
 void init() {
-  CORTEX.SYST_RVR()->setRELOAD(Config::SysTickPerMillisecond - 1); // Remove 1 because the counter resets *after* counting to 0
+  /* Systick clock source is the CPU clock HCLK divided by 8. To get 1 ms
+   * systick overflow, we need to set it to :
+   * (HCLK (MHz) * 1 000 000 / 8 )/ 1000 (ms/s) = HCLK (MHz) * 1000 / 8. */
+  constexpr int SysTickPerMillisecond = Ion::Device::Clocks::Config::HCLKFrequency * 1000 / 8;
+  CORTEX.SYST_RVR()->setRELOAD(SysTickPerMillisecond - 1); // Remove 1 because the counter resets *after* counting to 0
   CORTEX.SYST_CVR()->setCURRENT(0);
   CORTEX.SYST_CSR()->setCLKSOURCE(CORTEX::SYST_CSR::CLKSOURCE::AHB_DIV8);
   CORTEX.SYST_CSR()->setTICKINT(true);

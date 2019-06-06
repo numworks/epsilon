@@ -114,10 +114,6 @@ VariableBoxController * EditorController::variableBoxForInputEventHandler(InputE
   return varBox;
 }
 
-InputEventHandlerDelegateApp * EditorController::inputEventHandlerDelegateApp() {
-  return app();
-}
-
 StackViewController * EditorController::stackController() {
   return static_cast<StackViewController *>(parentResponder());
 }

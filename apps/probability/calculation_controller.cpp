@@ -211,7 +211,7 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField, 
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (app()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   if (m_calculation->type() != Calculation::Type::FiniteIntegral && selectedColumn() == 2) {

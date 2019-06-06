@@ -39,7 +39,7 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
      * this cut. We followed the convention chosen by the lib c++ of llvm on
      * ]-inf+0i, -1+0i[ (warning: asin takes the other side of the cut values on
      * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
-     * asin(-x) = -asin(x) and tan(arcsin(x)) = x/sqrt(1-x^2). */
+     * asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2). */
     if (c.imag() == 0 && c.real() > 1) {
       result.imag(-result.imag()); // other side of the cut
     }

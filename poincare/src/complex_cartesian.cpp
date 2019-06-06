@@ -140,8 +140,8 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
   Expression a = real();
   Expression b = imag();
   if (!b.isRationalZero()) {
-    // if b != 0, argument = sign(b) * Pi/2 - arctan(a/b)
-    // First, compute arctan(a/b) or (Pi/180)*arctan(a/b)
+    // if b != 0, argument = sign(b) * π/2 - atan(a/b)
+    // First, compute atan(a/b) or (π/180)*atan(a/b)
     Expression divab = Division::Builder(a, b.clone());
     Expression arcTangent = ArcTangent::Builder(divab);
     divab.shallowReduce(context, complexFormat, angleUnit, target);
@@ -150,7 +150,7 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
       arcTangent.shallowReduce(context, complexFormat, angleUnit, target);
       arcTangent = temp;
     }
-    // Then, compute sign(b) * Pi/2 - arctan(a/b)
+    // Then, compute sign(b) * π/2 - atan(a/b)
     Expression signb = SignFunction::Builder(b);
     Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::Builder(UCodePointGreekSmallLetterPi));
     signb.shallowReduce(context, complexFormat, angleUnit, target);
@@ -159,7 +159,7 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
     arcTangent.shallowReduce(context, complexFormat, angleUnit, target);
     return sub;
   } else {
-    // if b == 0, argument = (1-sign(a))*Pi/2
+    // if b == 0, argument = (1-sign(a))*π/2
     Expression signa = SignFunction::Builder(a).shallowReduce(context, complexFormat, angleUnit, target);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
     signa.shallowReduce(context, complexFormat, angleUnit, target);

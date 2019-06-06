@@ -6,6 +6,7 @@
 
 namespace Poincare {
 
+class Expression;
 class LayoutCursor;
 class Layout;
 
@@ -102,9 +103,7 @@ public:
   virtual void deleteBeforeCursor(LayoutCursor * cursor);
 
   // Other
-  virtual LayoutNode * layoutToPointWhenInserting() {
-    return numberOfChildren() > 0 ? childAtIndex(0) : this;
-  }
+  virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression);
   bool removeGreySquaresFromAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(false); }
   bool addGreySquaresToAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(true); }
   /* A layout has text if it is not empty and it is not an horizontal layout

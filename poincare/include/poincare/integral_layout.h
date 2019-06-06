@@ -24,7 +24,7 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  LayoutNode * layoutToPointWhenInserting() override { return lowerBoundLayout(); }
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
   CodePoint XNTCodePoint() const override { return 'x'; }
 
   // TreeNode

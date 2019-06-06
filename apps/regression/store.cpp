@@ -1,4 +1,5 @@
 #include "store.h"
+#include "linear_model_helper.h"
 #include "apps/apps_container.h"
 #include <poincare/preferences.h>
 #include <assert.h>
@@ -238,11 +239,11 @@ double Store::covariance(int series) const {
 }
 
 double Store::slope(int series) const {
-  return covariance(series)/varianceOfColumn(series, 0);
+  return LinearModelHelper::Slope(covariance(series), varianceOfColumn(series, 0));
 }
 
 double Store::yIntercept(int series) const {
-  return meanOfColumn(series, 1) - slope(series)*meanOfColumn(series, 0);
+  return LinearModelHelper::YIntercept(meanOfColumn(series, 1), meanOfColumn(series, 0), slope(series));
 }
 
 double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {

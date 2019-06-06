@@ -26,6 +26,7 @@ public:
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   bool isEmpty() const override { return m_numberOfChildren == 1 && const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->isEmpty(); }

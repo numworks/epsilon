@@ -13,6 +13,7 @@ app_src += $(addprefix apps/regression/,\
   graph_options_controller.cpp \
   graph_view.cpp \
   initialisation_parameter_controller.cpp \
+  linear_model_helper.cpp \
   regression_context.cpp \
   regression_controller.cpp \
   store.cpp \

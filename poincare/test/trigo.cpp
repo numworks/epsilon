@@ -513,22 +513,22 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("atan(√(3))", "60", User, Degree);
   assert_parsed_expression_simplify_to("atan(1/x)", "(π×sign(x)-2×atan(x))/2", User, Degree);
 
-  // cos(arcsin)
+  // cos(asin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "√(-x^2+1)", User, Degree);
   assert_parsed_expression_simplify_to("cos(asin(-x))", "√(-x^2+1)", User, Degree);
-  // cos(arctan)
+  // cos(atan)
   assert_parsed_expression_simplify_to("cos(atan(x))", "1/√(x^2+1)", User, Degree);
   assert_parsed_expression_simplify_to("cos(atan(-x))", "1/√(x^2+1)", User, Degree);
-  // sin(arccos)
+  // sin(acos)
   assert_parsed_expression_simplify_to("sin(acos(x))", "√(-x^2+1)", User, Degree);
   assert_parsed_expression_simplify_to("sin(acos(-x))", "√(-x^2+1)", User, Degree);
-  // sin(arctan)
+  // sin(atan)
   assert_parsed_expression_simplify_to("sin(atan(x))", "x/√(x^2+1)", User, Degree);
   assert_parsed_expression_simplify_to("sin(atan(-x))", "-x/√(x^2+1)", User, Degree);
-  // tan(arccos)
+  // tan(acos)
   assert_parsed_expression_simplify_to("tan(acos(x))", "√(-x^2+1)/x", User, Degree);
   assert_parsed_expression_simplify_to("tan(acos(-x))", "-√(-x^2+1)/x", User, Degree);
-  // tan(arcsin)
+  // tan(asin)
   assert_parsed_expression_simplify_to("tan(asin(x))", "x/√(-x^2+1)", User, Degree);
   assert_parsed_expression_simplify_to("tan(asin(-x))", "-x/√(-x^2+1)", User, Degree);
 }

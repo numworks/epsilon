@@ -164,6 +164,21 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
+LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+  assert(correspondingExpression != nullptr);
+  if (correspondingExpression->numberOfChildren() > 0) {
+    Layout layoutToPointTo = Layout(this).recursivelyMatches(
+      [](Poincare::Layout layout) {
+        return layout.type() == LayoutNode::Type::LeftParenthesisLayout || layout.isEmpty();
+      }
+    );
+    if (!layoutToPointTo.isUninitialized()) {
+      return layoutToPointTo.node();
+    }
+  }
+  return this;
+}
+
 int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
     if (bufferSize == 0) {

@@ -1,7 +1,6 @@
 #include "editable_cell_table_view_controller.h"
 #include "../shared/poincare_helpers.h"
 #include "../constant.h"
-#include "text_field_delegate_app.h"
 #include <assert.h>
 #include <cmath>
 
@@ -110,10 +109,6 @@ void EditableCellTableViewController::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
-}
-
-TextFieldDelegateApp * EditableCellTableViewController::textFieldDelegateApp() {
-  return (TextFieldDelegateApp *)app();
 }
 
 }

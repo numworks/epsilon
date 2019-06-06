@@ -228,10 +228,6 @@ SelectableTableView * ListController::selectableTableView() {
   return m_equationListView.selectableTableView();
 }
 
-Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return app();
-}
-
 StackViewController * ListController::stackController() const {
   return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }

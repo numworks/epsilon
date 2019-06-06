@@ -48,8 +48,8 @@ void LCDPins(const char * input) {
     return;
   }
 
-  /* We do not test PB11, the tearing effect pin, because is is driven by the
-   * LCD controller. */
+  /* We do not always test PB11, the tearing effect pin, because is is driven by
+   * the LCD controller. */
 
   const Ion::Device::Regs::GPIOPin LCDpins[] = {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 7),  // LCD_D4
@@ -75,7 +75,7 @@ void LCDPins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 6),  // LCD_EXTC
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 7),  // LCD_CSX
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 1),  // LCD_RESET
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 11),  // LCD_RESET
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 11), // LCD_TE // Must be the last Pin
   };
 
   int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin) - (checkTEPin ? 0 : 1);

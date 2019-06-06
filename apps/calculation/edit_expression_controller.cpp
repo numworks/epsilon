@@ -69,7 +69,7 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
-  return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
+  return app()->textFieldDidReceiveEvent(textField, event);
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
@@ -85,7 +85,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layout
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
-  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
+  return app()->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {

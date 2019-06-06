@@ -62,11 +62,11 @@ float GraphController::interestingXHalfRange() const {
 
 bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (app()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  double y = yValue(selectedCurveIndex(), floatBody, app()->localContext());
   m_cursor->moveTo(floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();

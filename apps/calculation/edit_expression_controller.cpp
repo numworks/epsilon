@@ -112,10 +112,6 @@ TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
   return app();
 }
 
-ExpressionFieldDelegateApp * EditExpressionController::expressionFieldDelegateApp() {
-  return app();
-}
-
 void EditExpressionController::reloadView() {
   ((ContentView *)view())->reload();
   m_historyController->reload();

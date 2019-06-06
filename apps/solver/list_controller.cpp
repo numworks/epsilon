@@ -232,10 +232,6 @@ Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {
   return app();
 }
 
-Shared::ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return app();
-}
-
 StackViewController * ListController::stackController() const {
   return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }

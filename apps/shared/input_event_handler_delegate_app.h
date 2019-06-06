@@ -1,7 +1,8 @@
 #ifndef SHARED_INPUT_EVENT_HANDLER_DELEGATE_APP_H
 #define SHARED_INPUT_EVENT_HANDLER_DELEGATE_APP_H
 
-#include <escher.h>
+#include <escher/app.h>
+#include <escher/input_event_handler_delegate.h>
 
 namespace Shared {
 

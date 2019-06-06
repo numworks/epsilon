@@ -33,18 +33,18 @@ void TangentGraphController::viewWillAppear() {
 void TangentGraphController::didBecomeFirstResponder() {
   if (curveView()->isMainViewSelected()) {
     m_bannerView->abscissaValue()->setParentResponder(this);
-    m_bannerView->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
+    m_bannerView->abscissaValue()->setDelegates(app(), this);
     app()->setFirstResponder(m_bannerView->abscissaValue());
   }
 }
 
 bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (app()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   ExpiringPointer<CartesianFunction> function = app()->functionStore()->modelForRecord(m_record);
-  double y = function->evaluateAtAbscissa(floatBody, textFieldDelegateApp()->localContext());
+  double y = function->evaluateAtAbscissa(floatBody, app()->localContext());
   m_cursor->moveTo(floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();

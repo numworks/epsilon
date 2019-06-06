@@ -30,7 +30,6 @@ private:
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  Shared::InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() override;
   ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;

@@ -166,10 +166,6 @@ ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
   return app();
 }
 
-InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
-  return app();
-}
-
 ListParameterController * ListController::parameterController() {
   return &m_parameterController;
 }

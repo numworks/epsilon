@@ -28,7 +28,6 @@ public:
 private:
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;

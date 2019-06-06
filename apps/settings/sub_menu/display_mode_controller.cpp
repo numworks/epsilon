@@ -95,8 +95,4 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
   return true;
 }
 
-Shared::TextFieldDelegateApp * DisplayModeController::textFieldDelegateApp() {
-  return app();
-}
-
 }

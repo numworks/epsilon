@@ -148,10 +148,6 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-TextFieldDelegateApp * ListParameterController::textFieldDelegateApp() {
-  return app();
-}
-
 int ListParameterController::totalNumberOfCells() const {
   if (hasInitialRankRow()) {
     return k_totalNumberOfCell;

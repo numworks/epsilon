@@ -1,5 +1,4 @@
 #include "go_to_parameter_controller.h"
-#include "text_field_delegate_app.h"
 #include <assert.h>
 
 namespace Shared {

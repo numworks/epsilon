@@ -2,7 +2,6 @@
 #define SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/app.h>
 #include "text_field_delegate.h"
 #include "interactive_curve_view_range.h"
 #include "curve_view_cursor.h"
@@ -21,9 +20,6 @@ public:
   bool textFieldDidAbortEditing(TextField * textField) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
-  TextFieldDelegateApp * textFieldDelegateApp() override {
-    return static_cast<TextFieldDelegateApp *>(app());
-  }
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
   virtual float cursorTopMarginRatio() { return 0.07f; }   // (cursorHeight/2)/graphViewHeight

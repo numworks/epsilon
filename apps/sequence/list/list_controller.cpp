@@ -162,10 +162,6 @@ TextFieldDelegateApp * ListController::textFieldDelegateApp() {
   return app();
 }
 
-ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return app();
-}
-
 ListParameterController * ListController::parameterController() {
   return &m_parameterController;
 }

@@ -40,18 +40,23 @@ void LCDPins(const char * input) {
     reply(sSyntaxError);
     return;
   }
-  bool checkTEPin = true;
-  if (strcmp(input, "WithoutTE") == 0) {
-    checkTEPin = false;
-  } else if (strcmp(input, "WithTE") != 0) {
+  bool checkPowPin = true;
+  if (strcmp(input, "WithoutPowPin") == 0) {
+    checkPowPin = false;
+  } else if (strcmp(input, "WithPowPin") != 0) {
     reply(sSyntaxError);
     return;
   }
 
-  /* We do not always test PB11, the tearing effect pin, because is is driven by
-   * the LCD controller. */
-
+  /* If a screen is connected, we do not test checkPowPin: others pins might be
+   * affected if we power up the screen. */
   const Ion::Device::Regs::GPIOPin LCDpins[] = {
+    /* Put TE first. If it is after RESET, there is a bug:
+     * "All_pins_up:Fail_PinUpB11PinDownE01".
+     * TODO: investigate... */
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 11), // LCD_TE
+
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 1),  // LCD_RESET
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 7),  // LCD_D4
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 8),  // LCD_D5
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 9),  // LCD_D6
@@ -61,28 +66,29 @@ void LCDPins(const char * input) {
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 13), // LCD_D10
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 14), // LCD_D11
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 15), // LCD_D12
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 8),  // LCD_D13
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 9),  // LCD_D14
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 10), // LCD_D15
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 11), // LCD_DAT_INS
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 14), // LCD_D0
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 15), // LCD_D1
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 8),  // LCD_POW_EN
+
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 0),  // LCD_D2
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 1),  // LCD_D3
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 4),  // LCD_NOE
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 5),  // LCD_NWE
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 6),  // LCD_EXTC
     Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 7),  // LCD_CSX
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOE, 1),  // LCD_RESET
-    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOB, 11), // LCD_TE // Must be the last Pin
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 8),  // LCD_D13
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 9),  // LCD_D14
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 10), // LCD_D15
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 11), // LCD_DAT_INS
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 14), // LCD_D0
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOD, 15), // LCD_D1
+
+    Ion::Device::Regs::GPIOPin(Ion::Device::Regs::GPIOC, 8),  // LCD_POW_EN    // Must be the last Pin
   };
 
-  int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin) - (checkTEPin ? 0 : 1);
+  int numberOfPins = sizeof(LCDpins)/sizeof(Ion::Device::Regs::GPIOPin) - (checkPowPin ? 0 : 1);
 
   // Put all testable GPIO to pull down
-  for (const Ion::Device::Regs::GPIOPin & pinDown : LCDpins) {
-    setPin(pinDown, PinType::PullDown);
+  for (int i = 0; i < numberOfPins; i++) {
+    const Ion::Device::Regs::GPIOPin & currentPin = LCDpins[i];
+    setPin(currentPin, PinType::PullDown);
   }
 
   // Put one GPIO at a time on output 1 and verify it does not impact other GPIOs

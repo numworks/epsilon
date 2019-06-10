@@ -4,10 +4,6 @@
 
 namespace Probability {
 
-float Law::xGridUnit() {
-  return computeGridUnit(Axis::X, xMax() - xMin());
-}
-
 double Law::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (!isContinuous()) {
     int end = std::round(x);

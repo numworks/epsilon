@@ -15,10 +15,6 @@ uint32_t CurveViewRange::rangeChecksum() {
   return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
-float CurveViewRange::yGridUnit() {
-  return 0.0f;
-}
-
 float CurveViewRange::computeGridUnit(Axis axis, float range) {
   int a = 0;
   int b = 0;

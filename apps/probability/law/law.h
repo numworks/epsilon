@@ -22,7 +22,6 @@ public:
   virtual I18n::Message title() = 0;
   virtual Type type() const = 0;
   virtual bool isContinuous() const = 0;
-  float xGridUnit() override;
   virtual int numberOfParameter() = 0;
   virtual float parameterValueAtIndex(int index) = 0;
   virtual I18n::Message parameterNameAtIndex(int index) = 0;

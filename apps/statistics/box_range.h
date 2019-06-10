@@ -13,7 +13,6 @@ public:
   float xMax() override;
   float yMin() override { return -k_displayBottomMarginRatio; }
   float yMax() override { return 1.0f+k_displayTopMarginRatio; }
-  float xGridUnit() override;
 private:
   constexpr static float k_displayTopMarginRatio = 0.05f;
   constexpr static float k_displayRightMarginRatio = 0.2f;

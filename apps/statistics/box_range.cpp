@@ -21,8 +21,4 @@ float BoxRange::xMax() {
   return max + k_displayRightMarginRatio*(max - min);
 }
 
-float BoxRange::xGridUnit() {
-  return computeGridUnit(Axis::X, xMax() - xMin());
-}
-
 }

@@ -27,20 +27,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     Ion::Storage::Record record = m_functionStore->activeRecordAtIndex(i);
     ExpiringPointer<CartesianFunction> f = m_functionStore->modelForRecord(record);;
 
-    /* Draw function (color the area under curve of the selected function) */
-    if (record == m_selectedRecord) {
-      drawCurve(ctx, rect, [](float t, void * model, void * context) {
-        CartesianFunction * f = (CartesianFunction *)model;
-        Poincare::Context * c = (Poincare::Context *)context;
-        return f->evaluateAtAbscissa(t, c);
-      }, f.operator->(), context(), f->color(), true, m_highlightedStart, m_highlightedEnd);
-    } else {
-      drawCurve(ctx, rect, [](float t, void * model, void * context) {
-        CartesianFunction * f = (CartesianFunction *)model;
-        Poincare::Context * c = (Poincare::Context *)context;
-        return f->evaluateAtAbscissa(t, c);
-      }, f.operator->(), context(), f->color());
-    }
+    /* Draw function */
+    drawCurve(ctx, rect, [](float t, void * model, void * context) {
+      CartesianFunction * f = (CartesianFunction *)model;
+      Poincare::Context * c = (Poincare::Context *)context;
+      return f->evaluateAtAbscissa(t, c);
+    }, f.operator->(), context(), f->color(), record == m_selectedRecord, m_highlightedStart, m_highlightedEnd);
 
     /* Draw tangent */
     if (m_tangent && record == m_selectedRecord) {

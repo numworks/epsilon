@@ -17,6 +17,7 @@ void Stop(const char * input) {
   Device::Power::stopConfiguration();
   Device::Board::shutdownPeripherals();
   Device::WakeUp::onUSBPlugging();
+  Device::ExternalFlash::shutdown();
   Device::Board::shutdownClocks();
   Device::Power::enterLowPowerMode();
   Device::Board::initClocks();

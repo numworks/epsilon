@@ -73,7 +73,7 @@ dfu_src += $(addprefix ion/src/device/shared/drivers/, \
   wakeup.cpp \
 )
 
-$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/$(MODEL)/usb/dfu.ld
+$(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: LDSCRIPT = ion/src/device/shared/usb/dfu.ld
 $(BUILD_DIR)/ion/src/device/shared/usb/dfu.elf: $(call object_for,$(usb_src) $(dfu_src))
 
 # In order to link the dfu bootloader inside the epsilon firmware, we need to

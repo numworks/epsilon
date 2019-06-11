@@ -54,7 +54,7 @@ openocd:
 # fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
 $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o: SFLAGS += $(ION_DEVICE_SFLAGS)
-$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/ram20032000.ld
+$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram20032000.ld
 $(BUILD_DIR)/flasher.$(EXE): $(objs) $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o
 else
 $(BUILD_DIR)/flasher.$(EXE):
@@ -63,7 +63,7 @@ endif
 
 #TODO Do not build all apps... Put elsewhere?
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
-$(BUILD_DIR)/benchRAM.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/ram20008000-20032000.ld
+$(BUILD_DIR)/benchRAM.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram20008000-20032000.ld
 $(BUILD_DIR)/benchRAM.$(EXE): $(objs) $(call object_for,$(bench_src))
 else
 $(BUILD_DIR)/benchRAM.$(EXE):

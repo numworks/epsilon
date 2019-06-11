@@ -30,7 +30,6 @@ SECTIONS {
      * We're generating the ISR vector table in code because it's very
      * convenient: using function pointers, we can easily point to the service
      * routine for each interrupt. */
-   _jump_reset_address = .;
     KEEP(*(.isr_vector_table))
   } >FLASH
 

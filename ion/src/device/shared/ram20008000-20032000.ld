@@ -20,10 +20,10 @@ MEMORY {
  * overwritten (for instance, vtables that live in the .rodata section). */
 
 STACK_SIZE = 32K;
-_jump_reset_address = 0x00200000;
 
 SECTIONS {
   .isr_vector_table ORIGIN(RAM_BUFFER) : {
+    _isr_start = .; /* Used in ion/src/device/bench/command/reset.cpp */
     KEEP(*(.isr_vector_table))
   } >RAM_BUFFER
 

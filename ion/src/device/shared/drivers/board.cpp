@@ -18,11 +18,6 @@ namespace Board {
 
 using namespace Regs;
 
-void shutdown() {
-  shutdownPeripherals();
-  shutdownClocks();
-}
-
 void initFPU() {
 // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BABDBFBJ.html
   CORTEX.CPACR()->setAccess(10, CORTEX::CPACR::Access::Full);

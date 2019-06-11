@@ -20,7 +20,7 @@ MEMORY {
  * overwritten (for instance, vtables that live in the .rodata section). */
 
 STACK_SIZE = 32K;
-_jump_reset_address = 0x00200000;
+_core_reset_address = 0x00200000;
 
 SECTIONS {
   .isr_vector_table ORIGIN(RAM_BUFFER) : {

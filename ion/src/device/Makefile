@@ -18,7 +18,7 @@ src += $(addprefix ion/src/shared/, \
 
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
-$(call object_for,$(ion_device_src) $(dfu_src) $(usb_src) $(bench_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
+$(call object_for,$(ion_device_src) $(dfu_src) $(flasher_src) $(usb_src) $(bench_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
 src += $(ion_device_src)
 
 # When using the register.h C++ file in production mode, we expect the compiler

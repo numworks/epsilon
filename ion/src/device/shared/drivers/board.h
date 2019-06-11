@@ -6,7 +6,6 @@ namespace Device {
 namespace Board {
 
 void init();
-void shutdown();
 
 void initFPU();
 void initClocks();

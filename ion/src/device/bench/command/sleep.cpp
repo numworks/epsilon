@@ -17,6 +17,7 @@ void Sleep(const char * input) {
   Device::Power::sleepConfiguration();
   Device::Board::shutdownPeripherals();
   Device::WakeUp::onUSBPlugging();
+  Device::ExternalFlash::shutdown();
   Device::Board::shutdownClocks();
   Device::Power::enterLowPowerMode();
   Device::Board::setStandardFrequency(Device::Board::Frequency::High);

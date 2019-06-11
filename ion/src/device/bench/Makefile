@@ -14,6 +14,7 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   display.cpp \
   exit.cpp \
   external_flash_id.cpp \
+  jump.o \
   keyboard.cpp \
   lcd_data.o \
   lcd_pins.o \
@@ -21,7 +22,6 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   mcu_serial.cpp \
   ping.cpp \
   print.cpp \
-  reset.cpp \
   screen_id.cpp \
   sleep.cpp \
   stop.cpp \

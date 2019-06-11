@@ -15,13 +15,13 @@ void core() {
   CORTEX.AIRCR()->requestReset();
 }
 
-void jump(uint32_t jumpIsrVectorAddress) {
-  // Disable cache before reset
-  Ion::Device::Cache::disableDCache();
-  Ion::Device::Cache::disableICache();
+/* We isolate the jump code that needs to be executed from the internal
+ * flash (because the external flash is then shut down). We forbid
+ * inlining these instructions in the external flash. */
 
-  /* Shutdown all clocks and periherals to mimic a hardware reset. */
-  Board::shutdown();
+void __attribute__((noinline)) internal_flash_jump(uint32_t jumpIsrVectorAddress) {
+  ExternalFlash::shutdown();
+  Board::shutdownClocks();
 
   /* Jump to the reset service routine after having reset the stack pointer.
    * Both addresses are fetched from the base of the Flash memory, just like a
@@ -37,6 +37,17 @@ void jump(uint32_t jumpIsrVectorAddress) {
       [stackPointer] "r" (*stackPointerAddress),
       [resetHandler] "r" (*resetHandlerAddress)
   );
+}
+
+void jump(uint32_t jumpIsrVectorAddress) {
+  // Disable cache before reset
+  Ion::Device::Cache::disableDCache();
+  Ion::Device::Cache::disableICache();
+
+  /* Shutdown all clocks and periherals to mimic a hardware reset. */
+  Board::shutdownPeripherals();
+  internal_flash_jump(jumpIsrVectorAddress);
+
 }
 
 }

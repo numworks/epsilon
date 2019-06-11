@@ -97,6 +97,9 @@ SECTIONS {
     /* 'suspend' dependencies '*/
     *(.text._ZN3Ion5Power22internal_flash_suspendEb)
 
+    /* 'Reset::jump' dependencies '*/
+    *(.text._ZN3Ion6Device5Reset19internal_flash_jumpEj)
+
     /* Optimization */
     */libgcc.a:(.text)
   } >INTERNAL_FLASH

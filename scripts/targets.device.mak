@@ -53,9 +53,15 @@ openocd:
 # The flasher target is defined here because otherwise $(objs) has not been
 # fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
+ifdef EPSILON_FLASHER_VERBOSE
+$(call object_for,ion/src/$(PLATFORM)/shared/usb/flasher.cpp): SFLAGS += -DEPSILON_FLASHER_VERBOSE=$(EPSILON_FLASHER_VERBOSE)
 $(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Wl,ion/src/$(PLATFORM)/shared/ramConfig20030000.ld
 $(BUILD_DIR)/flasher.$(EXE): $(objs) $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o
+else
+$(BUILD_DIR)/flasher.$(EXE):
+	@echo "Error: flasher requires EPSILON_FLASHER_VERBOSE to be set to 0 or 1"
+endif
 else
 $(BUILD_DIR)/flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"

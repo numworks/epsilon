@@ -53,7 +53,6 @@ openocd:
 # The flasher target is defined here because otherwise $(objs) has not been
 # fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
-$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o: SFLAGS += $(ION_DEVICE_SFLAGS)
 $(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Wl,ion/src/$(PLATFORM)/shared/ramConfig20030000.ld
 $(BUILD_DIR)/flasher.$(EXE): $(objs) $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o

@@ -29,7 +29,7 @@ void Calculator::PollAndReset(bool exitWithKeyboard) {
     c.detach();
   }
   if (c.resetOnDisconnect()) {
-    c.leave();
+    c.leave(c.addressPointer());
   }
 }
 

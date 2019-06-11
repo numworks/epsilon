@@ -30,6 +30,7 @@ public:
     m_bInterfaceAlternateSetting(bInterfaceAlternateSetting)
   {
   }
+  uint32_t addressPointer() const { return m_addressPointer; }
   void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
   void wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
 

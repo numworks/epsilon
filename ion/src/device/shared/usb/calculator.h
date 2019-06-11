@@ -114,6 +114,7 @@ public:
     m_dfuInterface(this, &m_ep0, k_dfuInterfaceAlternateSetting)
   {
   }
+  uint32_t addressPointer() const { return m_dfuInterface.addressPointer(); }
 protected:
   virtual Descriptor * descriptor(uint8_t type, uint8_t index) override;
   virtual void setActiveConfiguration(uint8_t configurationIndex) override {

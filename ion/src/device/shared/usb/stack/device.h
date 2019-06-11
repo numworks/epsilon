@@ -23,7 +23,7 @@ public:
   void poll();
   bool isSoftDisconnected() const;
   void detach();
-  void leave();
+  void leave(uint32_t leaveAddress);
   bool resetOnDisconnect() { return m_resetOnDisconnect; }
   void setResetOnDisconnect(bool reset) { m_resetOnDisconnect = reset; }
 protected:

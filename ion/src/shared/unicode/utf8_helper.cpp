@@ -326,5 +326,20 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {
   return glyphIndex;
 }
 
+size_t StringGlyphLength(const char * s, int maxSize) {
+  if (maxSize == 0) {
+    return 0;
+  }
+  UTF8Decoder decoder(s);
+  CodePoint codePoint = decoder.nextCodePoint();
+  size_t glyphIndex = 0;
+  while (codePoint != UCodePointNull && (maxSize < 0 || ((decoder.stringPosition() - s) <= maxSize))) {
+    if (!codePoint.isCombining()) {
+      glyphIndex++;
+    }
+    codePoint = decoder.nextCodePoint();
+  }
+  return glyphIndex;
+}
 
-};
+}

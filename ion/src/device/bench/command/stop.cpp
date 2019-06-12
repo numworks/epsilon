@@ -1,6 +1,7 @@
 #include "command.h"
-#include <drivers/power.h>
 #include <drivers/board.h>
+#include <drivers/external_flash.h>
+#include <drivers/power.h>
 #include <drivers/wakeup.h>
 
 namespace Ion {

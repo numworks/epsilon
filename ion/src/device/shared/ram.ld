@@ -5,6 +5,8 @@
  *  a small "flasher" in RAM, and run it from there.
  *  - Run the bench software from the RAM. */
 
+INCLUDE config/ram.ld
+
 /* Caution: ST's bootloader uses some RAM, so we want to stay off of that memory
  * region. Per AN2606, sections 31.1 and 36.1, it's using 16Kbytes form address
  * 0x20000000. We'll try to play safe and avoid the first 32KB of RAM.*/

@@ -38,7 +38,7 @@ public:
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
 protected:
-  CurveViewRange * curveViewRange() { return m_curveViewRange; }
+  CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   virtual float samplingRatio() const;

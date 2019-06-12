@@ -82,12 +82,11 @@ void CurveViewRange::setDefault() {
   if (m_delegate == nullptr) {
     return;
   }
+  m_yAuto = true;
   float interestingXMin = m_delegate->interestingXMin();
   float interestingXRange = m_delegate->interestingXHalfRange();
-  m_xMin = interestingXMin - k_displayLeftMarginRatio * interestingXRange;
   m_xMax = interestingXMin + interestingXRange;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
-  setYAuto(true);
+  setXMin(interestingXMin - k_displayLeftMarginRatio * interestingXRange);
 }
 
 }

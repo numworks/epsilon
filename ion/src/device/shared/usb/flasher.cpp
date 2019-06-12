@@ -35,7 +35,7 @@ void ion_main(int argc, char * argv[]) {
     currentHeight += margin;
     const char * title = sMessages[i][0];
     KDSize titleSize = KDFont::LargeFont->stringSize(title);
-    ctx->drawString(title, KDPoint((Ion::Display::Width-titleSize.width())/2, currentHeight), KDFont::LargeFont, KDColor::RGB24(0xffb734));
+    ctx->drawString(title, KDPoint((Ion::Display::Width-titleSize.width())/2, currentHeight), KDFont::LargeFont);
     currentHeight += 2*titleSize.height();
     for (int j = 1; j < sNumberOfMessages; j++) {
       const char * message = sMessages[i][j];

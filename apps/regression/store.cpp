@@ -140,6 +140,7 @@ int Store::nextDot(int series, int direction, int dot) {
 /* Window */
 
 void Store::setDefault() {
+  m_yAuto = true;
   float minX = FLT_MAX;
   float maxX = -FLT_MAX;
   for (int series = 0; series < k_numberOfSeries; series++) {
@@ -151,7 +152,6 @@ void Store::setDefault() {
   float range = maxX - minX;
   setXMin(minX - k_displayHorizontalMarginRatio*range);
   setXMax(maxX + k_displayHorizontalMarginRatio*range);
-  setYAuto(true);
 }
 
 /* Series */

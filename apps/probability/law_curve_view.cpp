@@ -48,7 +48,7 @@ float LawCurveView::EvaluateAtAbscissa(float abscissa, void * model, void * cont
 void LawCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const {
   // Save the previous curve view range
   LawCurveView * constCastedThis = const_cast<LawCurveView *>(this);
-  CurveViewRange * previousRange = constCastedThis->curveViewRange();
+  CurveViewRange * previousRange = curveViewRange();
 
   // Draw a centered reduced normal curve
   NormalLaw n;

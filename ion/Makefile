@@ -34,6 +34,7 @@ tests += $(addprefix ion/test/,\
   keyboard.cpp\
   storage.cpp\
   utf8_decoder.cpp\
+  utf8_helper.cpp\
 )
 
 ifdef ION_STORAGE_LOG

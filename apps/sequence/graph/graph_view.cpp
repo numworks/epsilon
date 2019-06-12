@@ -22,7 +22,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
     /* We draw a dot at every integer if WindowRange/Resolution < 1. Otherwise,
      * we draw a dot at every step where step is an integer wider than 1. */
-    float windowRange = pixelToFloat(Axis::Horizontal, bounds().width()) - pixelToFloat(Axis::Horizontal, 0);
+    float windowRange = curveViewRange()->xMax() - curveViewRange()->xMin();
     int step = std::ceil(windowRange/resolution());
     for (int x = rectXMin; x < rectXMax; x += step) {
       float y = s->evaluateAtAbscissa((float)x, context());

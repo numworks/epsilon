@@ -15,7 +15,7 @@ uint32_t CurveViewRange::rangeChecksum() {
   return Ion::crc32Word((uint32_t *)data, dataLengthInBytes/sizeof(uint32_t));
 }
 
-float CurveViewRange::computeGridUnit(Axis axis, float range) {
+float CurveViewRange::computeGridUnit(Axis axis, float range) const {
   int a = 0;
   int b = 0;
   float maxNumberOfUnits = (axis == Axis::X) ? k_maxNumberOfXGridUnits : k_maxNumberOfYGridUnits;

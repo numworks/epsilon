@@ -9,12 +9,12 @@ class MemoizedCurveViewRange : public CurveViewRange {
 public:
   MemoizedCurveViewRange();
   //CurveViewWindow
-  float xMin() override { return m_xMin; }
-  float xMax() override { return m_xMax; }
-  float yMin() override { return m_yMin; }
-  float yMax() override { return m_yMax; }
-  float xGridUnit() override { return m_xGridUnit; }
-  float yGridUnit() override { return m_yGridUnit; }
+  float xMin() const override { return m_xMin; }
+  float xMax() const override { return m_xMax; }
+  float yMin() const override { return m_yMin; }
+  float yMax() const override { return m_yMax; }
+  float xGridUnit() const override { return m_xGridUnit; }
+  float yGridUnit() const override { return m_yGridUnit; }
   virtual void setXMin(float f);
   virtual void setXMax(float f);
   virtual void setYMin(float f);

@@ -5,16 +5,16 @@
 
 namespace Probability {
 
-float PoissonLaw::xMin() {
+float PoissonLaw::xMin() const {
   return -k_displayLeftMarginRatio * xMax();
 }
 
-float PoissonLaw::xMax() {
+float PoissonLaw::xMax() const {
   assert(m_parameter1 != 0);
   return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);
 }
 
-float PoissonLaw::yMax() {
+float PoissonLaw::yMax() const {
   int maxAbscissa = (int)m_parameter1;
   assert(maxAbscissa >= 0.0f);
   float result = evaluateAtAbscissa(maxAbscissa);

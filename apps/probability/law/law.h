@@ -44,7 +44,7 @@ protected:
   constexpr static float k_displayRightMarginRatio = 0.05f;
 private:
   constexpr static float k_displayBottomMarginRatio = 0.2f;
-  float yMin() override;
+  float yMin() const override;
 };
 
 }

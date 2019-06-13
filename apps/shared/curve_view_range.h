@@ -13,13 +13,13 @@ public:
   };
   virtual uint32_t rangeChecksum();
 
-  virtual float xMin() = 0;
-  virtual float xMax() = 0;
-  virtual float yMin() = 0;
-  virtual float yMax() = 0;
-  virtual float xGridUnit() { return computeGridUnit(Axis::X, xMax() - xMin()); }
-  virtual float yGridUnit() { return 0.0f; }
-  float computeGridUnit(Axis axis, float range);
+  virtual float xMin() const = 0;
+  virtual float xMax() const = 0;
+  virtual float yMin() const = 0;
+  virtual float yMax() const = 0;
+  virtual float xGridUnit() const { return computeGridUnit(Axis::X, xMax() - xMin()); }
+  virtual float yGridUnit() const { return 0.0f; }
+  float computeGridUnit(Axis axis, float range) const;
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
 private:

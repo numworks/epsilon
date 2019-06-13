@@ -7,7 +7,7 @@
 
 namespace Probability {
 
-float NormalLaw::yMax() {
+float NormalLaw::yMax() const {
   float maxAbscissa = m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
   if (std::isnan(result) || result <= 0.0f) {

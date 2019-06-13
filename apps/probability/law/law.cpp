@@ -126,7 +126,7 @@ double Law::evaluateAtDiscreteAbscissa(int k) const {
   return 0.0;
 }
 
-float Law::yMin() {
+float Law::yMin() const {
   return -k_displayBottomMarginRatio * yMax();
 }
 

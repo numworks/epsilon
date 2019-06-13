@@ -11,9 +11,9 @@ public:
   I18n::Message title() override { return I18n::Message::NormalLaw; }
   Type type() const override { return Type::Normal; }
   bool isContinuous() const override { return true; }
-  float xMin() override { return xExtremum(true); }
-  float xMax() override { return xExtremum(false); }
-  float yMax() override;
+  float xMin() const override { return xExtremum(true); }
+  float xMax() const override { return xExtremum(false); }
+  float yMax() const override;
   I18n::Message parameterNameAtIndex(int index) override;
   I18n::Message parameterDefinitionAtIndex(int index) override;
   float evaluateAtAbscissa(float x) const override;

@@ -79,7 +79,7 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
 {
   m_delta2Layout = HorizontalLayout::Builder(VerticalOffsetLayout::Builder(CodePointLayout::Builder('2', KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Superscript), LayoutHelper::String("-4ac", 4, KDFont::SmallFont));
   const char * deltaB = "Δ=b";
-  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDFont::SmallFont), 0, false);
+  static_cast<HorizontalLayout&>(m_delta2Layout).addOrMergeChildAtIndex(LayoutHelper::String(deltaB, strlen(deltaB), KDFont::SmallFont), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }

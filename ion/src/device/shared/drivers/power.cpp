@@ -55,7 +55,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
      * - Stop charging */
     Device::Power::configWakeUp();
 
-    Device::Power::internal_flash_suspend(isLEDActive);
+    Device::Power::internalFlashSuspend(isLEDActive);
 
     // Check power key
     Device::Keyboard::init();
@@ -100,7 +100,7 @@ namespace Power {
 // Public Power methods
 using namespace Device::Regs;
 
-void __attribute__((noinline)) internal_flash_suspend(bool isLEDActive) {
+void __attribute__((noinline)) internalFlashSuspend(bool isLEDActive) {
   // Shutdown the external flash
   Device::ExternalFlash::shutdown();
   // Shutdown all clocks (except the ones used by LED if active)
@@ -118,7 +118,7 @@ void __attribute__((noinline)) internal_flash_suspend(bool isLEDActive) {
   Device::ExternalFlash::init();
 }
 
-void __attribute__((noinline)) internal_flash_standby() {
+void __attribute__((noinline)) internalFlashStandby() {
   Device::ExternalFlash::shutdown();
   Device::Board::shutdownClocks();
   Device::Power::enterLowPowerMode();

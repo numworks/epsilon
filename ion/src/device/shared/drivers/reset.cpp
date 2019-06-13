@@ -19,7 +19,7 @@ void core() {
  * flash (because the external flash is then shut down). We forbid
  * inlining these instructions in the external flash. */
 
-void __attribute__((noinline)) internal_flash_jump(uint32_t jumpIsrVectorAddress) {
+void __attribute__((noinline)) internalFlashJump(uint32_t jumpIsrVectorAddress) {
   ExternalFlash::shutdown();
   Board::shutdownClocks();
 
@@ -46,7 +46,7 @@ void jump(uint32_t jumpIsrVectorAddress) {
 
   /* Shutdown all clocks and periherals to mimic a hardware reset. */
   Board::shutdownPeripherals();
-  internal_flash_jump(jumpIsrVectorAddress);
+  internalFlashJump(jumpIsrVectorAddress);
 
 }
 

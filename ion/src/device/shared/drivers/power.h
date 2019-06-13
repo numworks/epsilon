@@ -5,8 +5,8 @@ namespace Ion {
 namespace Device {
 namespace Power {
 
-void internal_flash_suspend(bool isLEDActive = false);
-void internal_flash_standby();
+void internalFlashSuspend(bool isLEDActive = false);
+void internalFlashStandby();
 void configWakeUp();
 
 void sleepConfiguration();

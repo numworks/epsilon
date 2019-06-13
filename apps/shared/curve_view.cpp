@@ -502,7 +502,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   const float xStep = pixelWidth();
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
@@ -516,19 +516,21 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
       return;
     }
     previousY = y;
-    y = evaluation(x, model, context);
+    y = yEvaluation(x, model, context);
     if (std::isnan(y)|| std::isinf(y)) {
       continue;
     }
     if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    jointDots(ctx, rect, evaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
   }
 }
 
 void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter yEvaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
-  drawCurve(ctx, rect, yEvaluation, model, context, color, colorUnderCurve, colorLowerBound, colorUpperBound);
+  drawCurve(ctx, rect, [](float t, void * model, void * context) {
+        return t;
+      }, yEvaluation, model, context, color, colorUnderCurve, colorLowerBound, colorUpperBound);
 }
 
 void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
@@ -569,7 +571,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   }
 }
 
-void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
+void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
   float puf = floatToPixel(Axis::Horizontal, u);
@@ -583,7 +585,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   }
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
-  float cy = evaluation(cx, model, context);
+  float cy = yEvaluation(cx, model, context);
   if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */
@@ -591,8 +593,8 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     return;
   }
   if (maxNumberOfRecursion > 0) {
-    jointDots(ctx, rect, evaluation, model, context, x, y, cx, cy, color, maxNumberOfRecursion-1);
-    jointDots(ctx, rect, evaluation, model, context, cx, cy, u, v, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, x, y, cx, cy, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, cx, cy, u, v, color, maxNumberOfRecursion-1);
   }
 }
 

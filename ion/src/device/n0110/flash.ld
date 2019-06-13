@@ -90,12 +90,12 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Reset4coreEv)
 
     /* 'standby' dependencies '*/
-    *(.text._ZN3Ion5Power22internal_flash_standbyEv)
+    *(.text._ZN3Ion6Device5Power22internal_flash_standbyEv)
     *(.text._ZN3Ion6Device5Power17enterLowPowerModeEv)
     *(.text._ZN3Ion6Device5Board14shutdownClocksEb)
 
     /* 'suspend' dependencies '*/
-    *(.text._ZN3Ion5Power22internal_flash_suspendEb)
+    *(.text._ZN3Ion6Device5Power22internal_flash_suspendEb)
 
     /* 'Reset::jump' dependencies '*/
     *(.text._ZN3Ion6Device5Reset19internal_flash_jumpEj)

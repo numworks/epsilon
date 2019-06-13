@@ -17,6 +17,8 @@ public:
   virtual float xMax() const = 0;
   virtual float yMin() const = 0;
   virtual float yMax() const = 0;
+  const float xCenter() const { return (xMin() + xMax()) / 2; }
+  const float yCenter() const { return (yMin() + yMax()) / 2; }
   virtual float xGridUnit() const { return computeGridUnit(Axis::X, xMax() - xMin()); }
   virtual float yGridUnit() const { return 0.0f; }
   float computeGridUnit(Axis axis, float range) const;

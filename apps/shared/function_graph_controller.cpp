@@ -118,7 +118,7 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
 }
 
 double FunctionGraphController::defaultCursorT() {
-  return 0.0; //TODO LEA (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+  return 0.0; //TODO LEA interactiveCurveViewRange()->xCenter();
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {

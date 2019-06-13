@@ -71,8 +71,8 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   if (ratio*std::fabs(xMax-xMin) < k_minFloat || ratio*std::fabs(yMax-yMin) < k_minFloat) {
     return;
   }
-  float centerX = std::isnan(x) || std::isinf(x) ? (xMax+xMin)/2: x;
-  float centerY = std::isnan(y) || std::isinf(y) ? (yMax+yMin)/2: y;
+  float centerX = std::isnan(x) || std::isinf(x) ? xCenter() : x;
+  float centerY = std::isnan(y) || std::isinf(y) ? yCenter() : y;
   float newXMin = clipped(centerX*(1.0f-ratio)+ratio*xMin, false);
   float newXMax = clipped(centerX*(1.0f-ratio)+ratio*xMax, true);
   m_yAuto = false;
@@ -101,10 +101,8 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 
 void InteractiveCurveViewRange::roundAbscissa() {
   // Set x range
-  float xMin = m_xMin;
-  float xMax = m_xMax;
-  float newXMin = clipped(std::round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
-  float newXMax = clipped(std::round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
+  float newXMin = clipped(std::round(xCenter()) - (float)Ion::Display::Width/2.0f, false);
+  float newXMax = clipped(std::round(xCenter()) + (float)Ion::Display::Width/2.0f-1.0f, true);
   if (std::isnan(newXMin) || std::isnan(newXMax)) {
     return;
   }
@@ -117,21 +115,17 @@ void InteractiveCurveViewRange::roundAbscissa() {
 void InteractiveCurveViewRange::normalize() {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 units. */
-  float xMin = m_xMin;
-  float xMax = m_xMax;
-  float yMin = m_yMin;
-  float yMax = m_yMax;
   m_yAuto = false;
   // Set x range
-  float newXMin = clipped((xMin+xMax)/2 - NormalizedXHalfRange(), false);
-  float newXMax = clipped((xMin+xMax)/2 + NormalizedXHalfRange(), true);
+  float newXMin = clipped(xCenter() - NormalizedXHalfRange(), false);
+  float newXMax = clipped(xCenter() + NormalizedXHalfRange(), true);
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMax = newXMax;
     MemoizedCurveViewRange::setXMin(newXMin);
   }
   // Set y range
-  float newYMin = clipped((yMin+yMax)/2 - NormalizedYHalfRange(), false);
-  float newYMax = clipped((yMin+yMax)/2 + NormalizedYHalfRange(), true);
+  float newYMin = clipped(yCenter() - NormalizedYHalfRange(), false);
+  float newYMax = clipped(yCenter() + NormalizedYHalfRange(), true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMax = newYMax;
     MemoizedCurveViewRange::setYMin(newYMin);

@@ -15,7 +15,7 @@ CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
 }
 
 void CurveViewRange::roundAbscissa() {
-  int roundedXMean = std::round((m_xMin+m_xMax)/2);
+  int roundedXMean = std::round(xCenter());
   float halfScreenWidth = ((float)Ion::Display::Width)/2.0f;
   float newXMin = clipped(roundedXMean - halfScreenWidth, false);
   float newXMax = clipped(roundedXMean + halfScreenWidth - 1.0f, true);
@@ -36,8 +36,8 @@ void CurveViewRange::roundAbscissa() {
 }
 
 void CurveViewRange::normalize() {
-  float xMean = (m_xMin+m_xMax)/2;
-  float yMean = (m_yMin+m_yMax)/2;
+  float xMean = xCenter();
+  float yMean = yCenter();
 
   // Compute the X
   float newXMin = clipped(xMean - NormalizedXHalfRange(), false);

@@ -6,7 +6,7 @@
 
 namespace TextInputHelpers {
 
-const char * CursorPositionInCommand(const char * text);
+const char * CursorPositionInCommand(const char * text, const char * stoppingPosition = nullptr);
 /* Returns the pointer to the char that should be right of the cursor, which is
  * the first char between :
  *   - The first EmptyChar (which is the position of the first argument)

@@ -110,7 +110,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   *(dst + minInt(bufferIndex, dstSize - 1)) = 0;
 }
 
-void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate) {
+void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate, const char * stoppingPosition) {
   UTF8Decoder decoder(buffer);
   const char * currentPointer = buffer;
   CodePoint codePoint = decoder.nextCodePoint();
@@ -118,7 +118,7 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate)
   size_t bufferIndex = 0;
   size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
 
-  while (codePoint != UCodePointNull) {
+  while (codePoint != UCodePointNull && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
     if (codePoint != c) {
       int copySize = nextPointer - currentPointer;
       memmove(buffer + bufferIndex, currentPointer, copySize);
@@ -131,7 +131,16 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate)
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
   }
-  *(buffer + bufferIndex) = 0;
+  if (codePoint == UCodePointNull) {
+    *(buffer + bufferIndex) = 0;
+  } else {
+    assert(stoppingPosition != nullptr);
+    // Find the null-terminating code point
+    const char * nullTermination = CodePointSearch(currentPointer, UCodePointNull);
+    /* Copy what remains of the buffer after the stopping position for code
+     * point removal */
+    memmove(buffer + bufferIndex, stoppingPosition, nullTermination - stoppingPosition + 1);
+  }
 }
 
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
@@ -150,7 +159,7 @@ size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoin
   return copySize;
 }
 
-const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt, CodePoint stoppingCodePoint, bool goingRight, const char * initialPosition) {
+const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt1, int contextInt2, CodePoint stoppingCodePoint, bool goingRight, const char * initialPosition, const char * stoppingPosition) {
   /* If we are decoding towards the left, we must have a starting position. If
    * we are decoding towards the right, the starting position is the start of
    * string. */
@@ -162,22 +171,22 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
      * translations. We can do a classic char search. */
     if (goingRight) {
       const char * i = s;
-      while (*i != stoppingCodePoint && *i != 0) {
+      while (*i != stoppingCodePoint && *i != 0 && i != stoppingPosition) {
         if (*i == c) {
-          actionCodePoint(i - s, contextPointer, contextInt);
+          actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         } else {
-          actionOtherCodePoint(i - s, contextPointer, contextInt);
+          actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
         }
         i++;
       }
       return i;
     }
     const char * i = initialPosition - 1;
-    while (i >= s && *i != stoppingCodePoint) {
+    while (i >= s && *i != stoppingCodePoint && i != stoppingPosition) {
       if (*i == c) {
-        actionCodePoint(i - s, contextPointer, contextInt);
+        actionCodePoint(i - s, contextPointer, contextInt1, contextInt2);
       } else {
-        actionOtherCodePoint(i - s, contextPointer, contextInt);
+        actionOtherCodePoint(i - s, contextPointer, contextInt1, contextInt2);
       }
       i--;
     }
@@ -188,11 +197,11 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
     UTF8Decoder decoder(s);
     const char * codePointPointer = decoder.stringPosition();
     CodePoint codePoint = decoder.nextCodePoint();
-    while (codePoint != stoppingCodePoint && codePoint != UCodePointNull) {
+    while (codePoint != stoppingCodePoint && codePoint != UCodePointNull && codePointPointer != stoppingPosition) {
       if (codePoint == c) {
-        actionCodePoint(codePointPointer - s, contextPointer, contextInt);
+        actionCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
       } else {
-        actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt);
+        actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
       }
       codePointPointer = decoder.stringPosition();
       codePoint = decoder.nextCodePoint();
@@ -206,11 +215,11 @@ const char * PerformAtCodePoints(const char * s, CodePoint c, CodePointAction ac
   UTF8Decoder decoder(s, initialPosition);
   CodePoint codePoint = decoder.previousCodePoint();
   const char * codePointPointer = decoder.stringPosition();
-  while (codePointPointer >= s && codePoint != stoppingCodePoint) {
+  while (codePointPointer >= s && codePoint != stoppingCodePoint && codePointPointer != stoppingPosition) {
     if (codePoint == c) {
-      actionCodePoint(codePointPointer - s, contextPointer, contextInt);
+      actionCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
     } else {
-      actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt);
+      actionOtherCodePoint(codePointPointer - s, contextPointer, contextInt1, contextInt2);
     }
     if (codePointPointer > s) {
       codePoint = decoder.previousCodePoint();
@@ -326,5 +335,20 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {
   return glyphIndex;
 }
 
+size_t StringGlyphLength(const char * s, int maxSize) {
+  if (maxSize == 0) {
+    return 0;
+  }
+  UTF8Decoder decoder(s);
+  CodePoint codePoint = decoder.nextCodePoint();
+  size_t glyphIndex = 0;
+  while (codePoint != UCodePointNull && (maxSize < 0 || ((decoder.stringPosition() - s) <= maxSize))) {
+    if (!codePoint.isCombining()) {
+      glyphIndex++;
+    }
+    codePoint = decoder.nextCodePoint();
+  }
+  return glyphIndex;
+}
 
-};
+}

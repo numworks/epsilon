@@ -67,7 +67,7 @@ static_assert(Ion::Display::WidthInTenthOfMillimeter == 576, "Use the new screen
 static_assert(Ion::Display::HeightInTenthOfMillimeter == 432, "Use the new screen height to compute Shared::InteractiveCurveViewRange::NormalizedYHalfRange");
 
 typedef void (InteractiveCurveViewRange::*ParameterSetterPointer)(float);
-typedef float (InteractiveCurveViewRange::*ParameterGetterPointer)();
+typedef float (InteractiveCurveViewRange::*ParameterGetterPointer)() const;
 typedef void (InteractiveCurveViewRange::*RangeMethodPointer)();
 
 }

@@ -22,13 +22,13 @@ I18n::Message BinomialLaw::parameterDefinitionAtIndex(int index) {
   }
 }
 
-float BinomialLaw::xMin() {
+float BinomialLaw::xMin() const {
   float min = 0.0f;
   float max = m_parameter1 > 0.0f ? m_parameter1 : 1.0f;
   return min - k_displayLeftMarginRatio * (max - min);
 }
 
-float BinomialLaw::xMax() {
+float BinomialLaw::xMax() const {
   float min = 0.0f;
   float max = m_parameter1;
   if (max <= min) {
@@ -37,7 +37,7 @@ float BinomialLaw::xMax() {
   return max + k_displayRightMarginRatio*(max - min);
 }
 
-float BinomialLaw::yMax() {
+float BinomialLaw::yMax() const {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
   if (result <= 0.0f || std::isnan(result)) {

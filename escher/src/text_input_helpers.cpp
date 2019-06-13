@@ -4,11 +4,12 @@
 
 namespace TextInputHelpers {
 
-const char * CursorPositionInCommand(const char * text) {
+const char * CursorPositionInCommand(const char * text, const char * stoppingPosition) {
+  assert(stoppingPosition == nullptr || text <= stoppingPosition);
   UTF8Decoder decoder(text);
   const char * currentPointer = text;
   CodePoint codePoint = decoder.nextCodePoint();
-  while (codePoint != UCodePointNull) {
+  while ((stoppingPosition == nullptr || currentPointer < stoppingPosition) && codePoint != UCodePointNull) {
     if (codePoint == UCodePointEmpty) {
       return currentPointer;
     }

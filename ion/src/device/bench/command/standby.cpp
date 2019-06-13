@@ -15,9 +15,9 @@ void Standby(const char * input) {
     return;
   }
   reply(sOK);
-  Device::Power::standbyConfiguration();
-  Device::Board::shutdownPeripherals();
-  Device::Power::internal_flash_standby();
+  /* We can use Power::standby as the OnOff key is not down in the bench
+   * (standby wait until OnOff key is released before entering standby mode). */
+  Power::standby();
   assert(false);
 }
 

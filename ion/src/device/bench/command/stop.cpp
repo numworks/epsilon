@@ -18,7 +18,7 @@ void Stop(const char * input) {
   Device::Power::stopConfiguration();
   Device::Board::shutdownPeripherals();
   Device::WakeUp::onUSBPlugging();
-  Device::Power::internal_flash_suspend();
+  Device::Power::internalFlashSuspend();
   Device::Board::initPeripherals(false);
 }
 

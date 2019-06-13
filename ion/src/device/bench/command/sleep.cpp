@@ -18,7 +18,7 @@ void Sleep(const char * input) {
   Device::Power::sleepConfiguration();
   Device::Board::shutdownPeripherals();
   Device::WakeUp::onUSBPlugging();
-  Device::Power::internal_flash_suspend();
+  Device::Power::internalFlashSuspend();
   Device::Board::setStandardFrequency(Device::Board::Frequency::High);
   Device::Board::initPeripherals(false);
 }

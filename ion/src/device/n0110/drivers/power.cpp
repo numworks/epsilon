@@ -12,7 +12,7 @@ void standby() {
   Device::Power::waitUntilOnOffKeyReleased();
   Device::Power::standbyConfiguration();
   Device::Board::shutdownPeripherals();
-  Device::Power::internal_flash_standby();
+  Device::Power::internalFlashStandby();
 }
 
 }

@@ -10,7 +10,7 @@ void standby() {
   Device::Power::stopConfiguration();
   Device::Board::shutdownPeripherals();
   Device::WakeUp::onOnOffKeyDown();
-  Device::Power::internal_flash_standby();
+  Device::Power::internalFlashStandby();
 }
 
 }

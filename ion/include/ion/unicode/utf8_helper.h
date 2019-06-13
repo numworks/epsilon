@@ -24,7 +24,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
 
 /* Remove all code points c. and update an index that should be lower if code
  * points where removed before it. Ensure null-termination of dst. */
-void RemoveCodePoint(char * buffer, CodePoint c, const char * * indexToDUpdate = nullptr);
+void RemoveCodePoint(char * buffer, CodePoint c, const char * * indexToDUpdate = nullptr, const char * stoppingPosition = nullptr);
 
 /* Copy src into dst until end of dst or code point c, with null termination. Return the length of the copy */
 size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c);
@@ -50,8 +50,19 @@ size_t CopyUntilCodePoint(char * dst, size_t dstSize, const char * src, CodePoin
  *    ^start of string  ^r             ^initialPosition
  *
  * */
-typedef void (*CodePointAction)(int codePointOffset, void * contextPointer, int contextInt);
-const char * PerformAtCodePoints(const char * string, CodePoint c, CodePointAction actionCodePoint, CodePointAction actionOtherCodePoint, void * contextPointer, int contextInt, CodePoint stoppingCodePoint = UCodePointNull, bool goingRight = true, const char * initialPosition = nullptr);
+typedef void (*CodePointAction)(int codePointOffset, void * contextPointer, int contextInt1, int contextInt2);
+const char * PerformAtCodePoints(
+    const char * string,
+    CodePoint c,
+    CodePointAction actionCodePoint,
+    CodePointAction actionOtherCodePoint,
+    void * contextPointer,
+    int contextInt1,
+    int contextInt2 = -1,
+    CodePoint stoppingCodePoint = UCodePointNull,
+    bool goingRight = true,
+    const char * initialPosition = nullptr,
+    const char * stoppingPosition = nullptr);
 
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);

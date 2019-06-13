@@ -4,11 +4,11 @@
 
 namespace Probability {
 
-float ExponentialLaw::xMin() {
+float ExponentialLaw::xMin() const {
   return - k_displayLeftMarginRatio * xMax();
 }
 
-float ExponentialLaw::xMax() {
+float ExponentialLaw::xMax() const {
   assert(m_parameter1 != 0.0f);
   float result = 5.0f/m_parameter1;
   if (result <= 0.0f) {
@@ -17,7 +17,7 @@ float ExponentialLaw::xMax() {
   return result * (1.0f + k_displayRightMarginRatio);
 }
 
-float ExponentialLaw::yMax() {
+float ExponentialLaw::yMax() const {
   float result = m_parameter1;
   if (result <= 0.0f || std::isnan(result)) {
     result = 1.0f;

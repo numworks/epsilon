@@ -9,10 +9,10 @@ namespace Statistics {
 class BoxRange : public Shared::CurveViewRange {
 public:
   BoxRange(Store * store);
-  float xMin() override;
-  float xMax() override;
-  float yMin() override { return -k_displayBottomMarginRatio; }
-  float yMax() override { return 1.0f+k_displayTopMarginRatio; }
+  float xMin() const override;
+  float xMax() const override;
+  float yMin() const override { return -k_displayBottomMarginRatio; }
+  float yMax() const override { return 1.0f+k_displayTopMarginRatio; }
 private:
   constexpr static float k_displayTopMarginRatio = 0.05f;
   constexpr static float k_displayRightMarginRatio = 0.2f;

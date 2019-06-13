@@ -7,14 +7,14 @@ BoxRange::BoxRange(Store * store) :
 {
 }
 
-float BoxRange::xMin() {
+float BoxRange::xMin() const {
   float min = m_store->minValueForAllSeries();
   float max = m_store->maxValueForAllSeries();
   max = min >= max ? min + 1 : max;
   return min - k_displayLeftMarginRatio*(max-min);
 }
 
-float BoxRange::xMax() {
+float BoxRange::xMax() const {
   float min = m_store->minValueForAllSeries();
   float max = m_store->maxValueForAllSeries();
   max = min >= max ? min + 1 : max;

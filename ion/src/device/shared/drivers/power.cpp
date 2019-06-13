@@ -19,23 +19,6 @@
 namespace Ion {
 
 namespace Power {
-void __attribute__((noinline)) internal_flash_suspend(bool isLEDActive) {
-  // Shutdown the external flash
-  Device::ExternalFlash::shutdown();
-  // Shutdown all clocks (except the ones used by LED if active)
-  Device::Board::shutdownClocks(isLEDActive);
-
-  Device::Power::enterLowPowerMode();
-
-  /* A hardware event triggered a wake up, we determine if the device should
-   * wake up. We wake up when:
-   * - only the power key was down
-   * - the unplugged device was plugged
-   * - the battery stopped charging */
-  Device::Board::initClocks();
-  // Init external flash
-  Device::ExternalFlash::init();
-}
 
 void suspend(bool checkIfOnOffKeyReleased) {
   bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
@@ -72,7 +55,7 @@ void suspend(bool checkIfOnOffKeyReleased) {
      * - Stop charging */
     Device::Power::configWakeUp();
 
-    internal_flash_suspend(isLEDActive);
+    Device::Power::internal_flash_suspend(isLEDActive);
 
     // Check power key
     Device::Keyboard::init();
@@ -116,6 +99,31 @@ namespace Power {
 
 // Public Power methods
 using namespace Device::Regs;
+
+void __attribute__((noinline)) internal_flash_suspend(bool isLEDActive) {
+  // Shutdown the external flash
+  Device::ExternalFlash::shutdown();
+  // Shutdown all clocks (except the ones used by LED if active)
+  Device::Board::shutdownClocks(isLEDActive);
+
+  Device::Power::enterLowPowerMode();
+
+  /* A hardware event triggered a wake up, we determine if the device should
+   * wake up. We wake up when:
+   * - only the power key was down
+   * - the unplugged device was plugged
+   * - the battery stopped charging */
+  Device::Board::initClocks();
+  // Init external flash
+  Device::ExternalFlash::init();
+}
+
+void __attribute__((noinline)) internal_flash_standby() {
+  Device::ExternalFlash::shutdown();
+  Device::Board::shutdownClocks();
+  Device::Power::enterLowPowerMode();
+  Device::Reset::core();
+}
 
 void configWakeUp() {
   Device::WakeUp::onOnOffKeyDown();

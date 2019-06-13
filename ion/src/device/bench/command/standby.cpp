@@ -17,9 +17,7 @@ void Standby(const char * input) {
   reply(sOK);
   Device::Power::standbyConfiguration();
   Device::Board::shutdownPeripherals();
-  Device::ExternalFlash::shutdown();
-  Device::Board::shutdownClocks();
-  Device::Power::enterLowPowerMode();
+  Device::Power::internal_flash_standby();
   assert(false);
 }
 

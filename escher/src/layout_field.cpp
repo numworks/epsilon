@@ -287,25 +287,37 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   cursor->showEmptyLayoutIfNeeded();
 
   bool layoutWillBeMerged = layoutR.type() == LayoutNode::Type::HorizontalLayout;
-  Layout lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
-
-  // Find the layout where the cursor will point
-  assert(!correspondingExpression.isUninitialized());
-  Layout cursorLayout = forceCursorRightOfLayout ? layoutR : layoutR.layoutToPointWhenInserting(&correspondingExpression);
-  assert(!cursorLayout.isUninitialized());
+  Layout lastMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
   // Add the layout. This puts the cursor at the right of the added layout
   cursor->addLayoutAndMoveCursor(layoutR);
 
   /* Move the cursor if needed.
-   * If the layout to point to has been merged, it means that only its children
-   * have been inserted in the layout, so we must not move the cursor to the
-   * parent. In this case, addLayoutAndMoveCursor made the cursor point to the
-   * last merged child, which is what is wanted.
-   * For other cases, move the cursor to the computed layout. */
-  if (!(layoutWillBeMerged && cursorLayout == layoutR)) {
-    cursor->setLayout(cursorLayout);
-    cursor->setPosition(LayoutCursor::Position::Right);
+   *
+   * If forceCursorRightOfLayout is true, there is no need to move the cursor
+   * because it already points to the right of the added layout.
+   *
+   * If the layout to point to has been merged, only its children have been
+   * inserted in the layout, so we must not move the cursor to the parent.
+   * addLayoutAndMoveCursor made the cursor point to the last merged child,
+   * which is what is wanted.
+   *
+   * For other cases, move the cursor to the layout indicated by
+   * layoutToPointWhenInserting. This pointed layout cannot be computed before
+   * adding layoutR, because addLayoutAndMoveCursor might have changed layoutR's
+   * children.
+   * For instance, if we add an absolute value with an empty child left of a 0,
+   * the empty child is deleted and the 0 is collapsed into the absolute value.
+   * Sketch of the situation, ' being the cursor:
+   *  Initial layout:   '0
+   *  "abs(x)" pressed in the toolbox => |•| is added, • being an empty layout
+   *  Final layout: |0'|
+   * */
+
+  if (!forceCursorRightOfLayout && !layoutWillBeMerged) {
+    assert(!correspondingExpression.isUninitialized());
+    m_contentView.cursor()->setLayout(layoutR.layoutToPointWhenInserting(&correspondingExpression));
+    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
 
   // Handle matrices

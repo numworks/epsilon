@@ -361,9 +361,10 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
+  // strippedEditedText array needs to be in the same scope as editedText
+  char strippedEditedText[k_maxMessageSize];
   if (node->stripInsertedText()) {
     int strippedEditedTextMaxLength = strlen(editedText)+1;
-    char strippedEditedText[k_maxMessageSize];
     assert(strippedEditedTextMaxLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText, strippedEditedTextMaxLength, true);
     editedText = strippedEditedText;

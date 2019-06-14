@@ -340,13 +340,16 @@ size_t StringGlyphLength(const char * s, int maxSize) {
     return 0;
   }
   UTF8Decoder decoder(s);
-  CodePoint codePoint = decoder.nextCodePoint();
+  CodePoint codePoint = 0;
   size_t glyphIndex = 0;
-  while (codePoint != UCodePointNull && (maxSize < 0 || ((decoder.stringPosition() - s) <= maxSize))) {
+  while (maxSize < 0 || ((decoder.stringPosition() - s) < maxSize)) {
+    codePoint = decoder.nextCodePoint();
+    if (codePoint == UCodePointNull) {
+      break;
+    }
     if (!codePoint.isCombining()) {
       glyphIndex++;
     }
-    codePoint = decoder.nextCodePoint();
   }
   return glyphIndex;
 }

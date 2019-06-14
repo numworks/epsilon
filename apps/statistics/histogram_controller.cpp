@@ -1,6 +1,7 @@
 #include "histogram_controller.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/text_helpers.h"
 #include "app.h"
 #include <cmath>
 #include <assert.h>
@@ -90,20 +91,6 @@ Responder * HistogramController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
-void pad(char * buffer, int bufferSize, int * currentNumberOfChar, int maxGlyphLengthWithPadding) {
-  assert(*currentNumberOfChar <= bufferSize);
-  size_t currentGlyphLength = UTF8Helper::StringGlyphLength(buffer, *currentNumberOfChar);
-  bool addedPadding = false;
-  while (currentGlyphLength < maxGlyphLengthWithPadding && *currentNumberOfChar < bufferSize) {
-    *currentNumberOfChar = *currentNumberOfChar + UTF8Decoder::CodePointToChars(' ', buffer + *currentNumberOfChar, bufferSize - *currentNumberOfChar);
-    addedPadding = true;
-    currentGlyphLength++;
-  }
-  if (addedPadding) {
-    buffer[*currentNumberOfChar-1] = 0;
-  }
-}
-
 void HistogramController::reloadBannerView() {
   if (selectedSeriesIndex() < 0) {
     return;
@@ -134,7 +121,7 @@ void HistogramController::reloadBannerView() {
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Padding
-  pad(buffer, bufferSize, &numberOfChar, k_maxIntervalLegendLength);
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxIntervalLegendLength);
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
@@ -149,7 +136,7 @@ void HistogramController::reloadBannerView() {
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
-  pad(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
@@ -163,7 +150,7 @@ void HistogramController::reloadBannerView() {
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
-  pad(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();

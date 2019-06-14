@@ -1,8 +1,6 @@
 #include "command.h"
-#include <drivers/board.h>
-#include <drivers/external_flash.h>
-#include <drivers/power.h>
-#include <drivers/wakeup.h>
+#include <ion/power.h>
+#include <assert.h>
 
 namespace Ion {
 namespace Device {
@@ -17,7 +15,7 @@ void Standby(const char * input) {
   reply(sOK);
   /* We can use Power::standby as the OnOff key is not down in the bench
    * (standby wait until OnOff key is released before entering standby mode). */
-  Power::standby();
+  Ion::Power::standby();
   assert(false);
 }
 

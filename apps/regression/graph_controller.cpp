@@ -1,5 +1,6 @@
 #include "graph_controller.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/text_helpers.h"
 #include "../apps_container.h"
 #include <cmath>
 
@@ -119,7 +120,6 @@ void GraphController::reloadBannerView() {
   }
   legend = ")  ";
   strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
-  buffer[k_maxLegendLength] = 0;
   m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
@@ -134,11 +134,8 @@ void GraphController::reloadBannerView() {
   m_bannerView.abscissaSymbol()->setText(legend);
 
   numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxLegendLength] = 0;
+  // Padding
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
@@ -152,10 +149,8 @@ void GraphController::reloadBannerView() {
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxLegendLength] = 0;
+  // Padding
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
@@ -176,10 +171,8 @@ void GraphController::reloadBannerView() {
     // Force the "Data not suitable" message to be on the next line
     int numberOfCharToCompleteLine = maxInt(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
     numberOfChar = 0;
-    for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
-      buffer[numberOfChar++] = ' ';
-    }
-    buffer[numberOfChar] = 0;
+    // Padding
+    Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, numberOfCharToCompleteLine - 1);
     m_bannerView.subTextAtIndex(0)->setText(buffer);
 
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
@@ -196,7 +189,6 @@ void GraphController::reloadBannerView() {
     legend = leg;
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    buffer[k_maxLegendLength] = 0;
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
@@ -208,7 +200,6 @@ void GraphController::reloadBannerView() {
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    buffer[k_maxLegendLength+10] = 0;
     m_bannerView.subTextAtIndex(2)->setText(buffer);
 
     // Set "r2=..."
@@ -217,7 +208,6 @@ void GraphController::reloadBannerView() {
     double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
     numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    buffer[k_maxLegendLength] = 0;
     m_bannerView.subTextAtIndex(3)->setText(buffer);
 
     // Clean the last subview

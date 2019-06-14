@@ -64,6 +64,7 @@ app_src += $(addprefix apps/shared/,\
   text_field_delegate.cpp \
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
+  text_helpers.cpp \
   toolbox_helpers.cpp \
   values_controller.cpp \
   values_function_parameter_controller.cpp \

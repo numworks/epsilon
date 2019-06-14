@@ -111,15 +111,15 @@ void GraphController::reloadBannerView() {
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
-    numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
+    numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else if (*m_selectedDotIndex < 0) {
     legend = I18n::translate(I18n::Message::Reg);
-    numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
+    numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else {
-    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
   legend = ")  ";
-  strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
+  strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
@@ -133,7 +133,7 @@ void GraphController::reloadBannerView() {
   }
   m_bannerView.abscissaSymbol()->setText(legend);
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, Constant::MediumNumberOfSignificantDigits);
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.abscissaValue()->setText(buffer);
@@ -148,7 +148,7 @@ void GraphController::reloadBannerView() {
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, Constant::MediumNumberOfSignificantDigits);
   // Padding
   Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.ordinateView()->setText(buffer);
@@ -188,7 +188,7 @@ void GraphController::reloadBannerView() {
     char leg[] = {' ', coefficientName, '=', 0};
     legend = leg;
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
@@ -199,7 +199,7 @@ void GraphController::reloadBannerView() {
     legend = " r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(2)->setText(buffer);
 
     // Set "r2=..."
@@ -207,7 +207,7 @@ void GraphController::reloadBannerView() {
     legend = " r2=";
     double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(3)->setText(buffer);
 
     // Clean the last subview

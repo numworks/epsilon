@@ -8,7 +8,7 @@ static Turtle sTurtle;
 
 void modturtle_gc_collect() {
   // Mark the shared sTurtle object as a GC root
-  gc_collect_root((void **)&sTurtle, sizeof(Turtle));
+  gc_collect_root((void **)&sTurtle, sizeof(Turtle)/sizeof(void *));
 }
 
 void modturtle_view_did_disappear() {

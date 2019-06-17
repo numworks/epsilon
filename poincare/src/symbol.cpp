@@ -161,9 +161,10 @@ bool SymbolNode::isUnknown(CodePoint unknownSymbol) const {
 Symbol Symbol::Builder(CodePoint name) {
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
-  int codePointSize = UTF8Decoder::CodePointToChars(name, buffer, bufferSize);
-  assert(codePointSize <= bufferSize);
-  return Symbol::Builder(buffer, codePointSize);
+  int codePointLength = UTF8Decoder::CodePointToChars(name, buffer, bufferSize);
+  assert(codePointLength < bufferSize);
+  buffer[codePointLength] = 0;
+  return Symbol::Builder(buffer, codePointLength);
 }
 
 bool Symbol::isSeriesSymbol(const char * c) {

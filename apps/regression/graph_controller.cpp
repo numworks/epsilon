@@ -180,6 +180,7 @@ void GraphController::reloadBannerView() {
     for (int i = 2; i < m_bannerView.numberOfsubTexts(); i++) {
       m_bannerView.subTextAtIndex(i)->setText("");
     }
+    m_bannerView.reload();
     return;
   }
   char coefficientName = 'a';

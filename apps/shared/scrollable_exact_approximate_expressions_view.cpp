@@ -124,6 +124,7 @@ void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::Layout righ
   if (updateRightLayout || updateLeftLayout) {
     m_contentCell.reloadTextColor();
     m_contentCell.layoutSubviews();
+    reloadScroll();
   }
 }
 

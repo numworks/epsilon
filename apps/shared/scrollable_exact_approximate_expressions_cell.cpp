@@ -10,6 +10,11 @@ ScrollableExactApproximateExpressionsCell::ScrollableExactApproximateExpressions
 {
 }
 
+void ScrollableExactApproximateExpressionsCell::setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout) {
+  m_view.setLayouts(approximateLayout, exactLayout);
+  m_view.setSelectedSubviewPosition(ScrollableExactApproximateExpressionsView::SubviewPosition::Left);
+}
+
 void ScrollableExactApproximateExpressionsCell::setHighlighted(bool highlight) {
   m_view.evenOddCell()->setHighlighted(highlight);
   reloadScroll();

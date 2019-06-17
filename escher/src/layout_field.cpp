@@ -289,6 +289,22 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   bool layoutWillBeMerged = layoutR.type() == LayoutNode::Type::HorizontalLayout;
   Layout lastMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
+  // If the layout will be merged, find now where the cursor will point
+  assert(!correspondingExpression.isUninitialized());
+  Layout cursorMergedLayout = Layout();
+  if (layoutWillBeMerged) {
+    if (forceCursorRightOfLayout) {
+      cursorMergedLayout = lastMergedLayoutChild;
+    } else {
+      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
+      if (cursorMergedLayout == layoutR) {
+        /* LayoutR will not be inserted in the layout, so point to its last
+         * child instead. It is visually equivalent. */
+        cursorMergedLayout = lastMergedLayoutChild;
+      }
+    }
+  }
+
   // Add the layout. This puts the cursor at the right of the added layout
   cursor->addLayoutAndMoveCursor(layoutR);
 
@@ -298,9 +314,9 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
    * because it already points to the right of the added layout.
    *
    * If the layout to point to has been merged, only its children have been
-   * inserted in the layout, so we must not move the cursor to the parent.
-   * addLayoutAndMoveCursor made the cursor point to the last merged child,
-   * which is what is wanted.
+   * inserted in the layout. We already computed where the cursor should point,
+   * because we cannot compute this now that the children are merged in between
+   * another layout's children.
    *
    * For other cases, move the cursor to the layout indicated by
    * layoutToPointWhenInserting. This pointed layout cannot be computed before
@@ -312,11 +328,19 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
    *  Initial layout:   '0
    *  "abs(x)" pressed in the toolbox => |•| is added, • being an empty layout
    *  Final layout: |0'|
+   *
+   * Fortunately, merged layouts' children are not modified by the merge, so it
+   * is ok to compute their pointed layout before adding them.
    * */
 
-  if (!forceCursorRightOfLayout && !layoutWillBeMerged) {
-    assert(!correspondingExpression.isUninitialized());
-    m_contentView.cursor()->setLayout(layoutR.layoutToPointWhenInserting(&correspondingExpression));
+  if (!forceCursorRightOfLayout) {
+    if (!layoutWillBeMerged) {
+      assert(cursorMergedLayout.isUninitialized());
+      assert(!correspondingExpression.isUninitialized());
+      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
+    }
+    assert(!cursorMergedLayout.isUninitialized());
+    m_contentView.cursor()->setLayout(cursorMergedLayout);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
 

@@ -306,12 +306,13 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
       fractionalPartLength--;
     }
   }
-  rounding |= integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits && fractionalPart[PrintFloat::k_numberOfStoredSignificantDigits-integralPartLength] >= '5';
+  rounding |= fractionalPart && integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits && fractionalPart[PrintFloat::k_numberOfStoredSignificantDigits-integralPartLength] >= '5';
   fractionalPartLength = integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits - integralPartLength : fractionalPartLength;
   while (incrementExponentAfterRoundingUp && integralPartLength-- > 0) {
     incrementExponentAfterRoundingUp = (*(integralPart++) == '9');
   }
   for (int i = 0; i < fractionalPartLength; i++) {
+    assert(fractionalPart);
     numerator = Integer::Multiplication(numerator, base);
     assert(*fractionalPart >= '0' && *fractionalPart <= '9');
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));

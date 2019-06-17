@@ -52,6 +52,7 @@ void BannerView::layoutSubviews() {
         x += width;
       }
       // Next line
+      assert(subviewPreviousLine);
       y += subviewPreviousLine->minimalSizeForOptimalDisplay().height() + LineSpacing;
       remainingWidth = lineWidth;
       indexOfFirstViewOfCurrentLine = i;

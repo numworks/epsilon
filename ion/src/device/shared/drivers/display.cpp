@@ -240,7 +240,16 @@ void shutdownGPIO() {
 }
 
 static inline int nsToCycles(int nanoseconds) {
+  // Fix for bad screens
+#define FIX_BAD_LCD 1
+#if FIX_BAD_LCD
+  constexpr double BaseFrequency = 96.0;
+  double configFrequency = 1.0*Config::HCLKFrequencyInMHz;
+  int baseFrequencyCycles = (nanoseconds*BaseFrequency)/1000 + 1;
+  return baseFrequencyCycles * (configFrequency/BaseFrequency);
+#else
   return (nanoseconds*Config::HCLKFrequencyInMHz)/1000 + 1;
+#endif
 }
 
 void initFSMC() {

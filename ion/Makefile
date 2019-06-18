@@ -25,7 +25,6 @@ src += $(addprefix ion/src/shared/, \
   crc32_eat_byte.cpp \
   decompress.cpp \
   events.cpp \
-  led.cpp \
   platform_info.cpp \
   storage.cpp \
   unicode/utf8_decoder.cpp\

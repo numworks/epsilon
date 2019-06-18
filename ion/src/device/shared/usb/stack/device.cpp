@@ -1,4 +1,6 @@
 #include "device.h"
+#include <drivers/config/flash.h>
+#include <drivers/reset.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -87,6 +89,14 @@ bool Device::isSoftDisconnected() const {
 void Device::detach() {
   // Get in soft-disconnected state
   OTG.DCTL()->setSDIS(true);
+}
+
+void Device::leave(uint32_t leaveAddress) {
+  if (leaveAddress == Ion::Device::Flash::Config::StartAddress) {
+    Ion::Device::Reset::coreWhilePlugged();
+  } else {
+    Ion::Device::Reset::jump(leaveAddress);
+  }
 }
 
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {

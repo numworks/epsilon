@@ -69,21 +69,21 @@ endif
 
 #TODO Do not build all apps... Put elsewhere?
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
-$(BUILD_DIR)/benchRAM.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
-$(BUILD_DIR)/benchRAM.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-$(BUILD_DIR)/benchRAM.$(EXE): $(objs) $(call object_for,$(bench_src))
+$(BUILD_DIR)/bench.ram.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
+$(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
+$(BUILD_DIR)/bench.ram.$(EXE): $(objs) $(call object_for,$(bench_src))
 else
-$(BUILD_DIR)/benchRAM.$(EXE):
-	@echo "Error: benchRAM.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
+$(BUILD_DIR)/bench.ram.$(EXE):
+	@echo "Error: bench.ram.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
 endif
 
 #TODO Do not build all apps... Put elsewhere?
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),11)
-$(BUILD_DIR)/benchFlash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
-$(BUILD_DIR)/benchFlash.$(EXE): $(objs) $(call object_for,$(bench_src))
+$(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
+$(BUILD_DIR)/bench.flash.$(EXE): $(objs) $(call object_for,$(bench_src))
 else
-$(BUILD_DIR)/benchFlash.$(EXE):
-	@echo "Error: benchFlash.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
+$(BUILD_DIR)/bench.flash.$(EXE):
+	@echo "Error: bench.flash.bin requires EPSILON_DEVICE_BENCH=1 EPSILON_USB_DFU_XIP=1"
 endif
 
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH)$(EPSILON_ONBOARDING_APP)$(EPSILON_BOOT_PROMPT),001update)
@@ -99,5 +99,24 @@ else
 %_two_binaries:
 	@echo "Error: two_binaries requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=0 EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update"
 endif
+
+.PHONY: binpack
+binpack:
+	rm -rf build/binpack
+	mkdir -p build/binpack
+	make clean
+	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=0 EPSILON_FLASHER_VERBOSE=0 $(BUILD_DIR)/flasher.bin
+	cp $(BUILD_DIR)/flasher.bin build/binpack
+	make clean
+	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=1 $(BUILD_DIR)/bench.flash.bin
+	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=1 $(BUILD_DIR)/bench.ram.bin
+	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin build/binpack
+	make clean
+	make -j8 EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=0 EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update $(BUILD_DIR)/epsilon_two_binaries
+	cp $(BUILD_DIR)/epsilon.internal.bin $(BUILD_DIR)/epsilon.external.bin build/binpack
+	make clean
+	cd build && for binary in flasher.bin bench.flash.bin bench.ram.bin epsilon.internal.bin epsilon.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
+	rm -rf build/binpack
 
 include scripts/targets.device.$(MODEL).mak

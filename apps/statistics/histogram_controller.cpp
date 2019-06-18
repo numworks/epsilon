@@ -1,6 +1,7 @@
 #include "histogram_controller.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/text_helpers.h"
 #include "app.h"
 #include <cmath>
 #include <assert.h>
@@ -107,7 +108,7 @@ void HistogramController::reloadBannerView() {
   // Add lower bound
   if (selectedSeriesIndex() >= 0) {
     double lowerBound = m_store->startOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
 
   numberOfChar+= UTF8Decoder::CodePointToChars(';', buffer + numberOfChar, bufferSize - numberOfChar);
@@ -115,15 +116,12 @@ void HistogramController::reloadBannerView() {
   // Add upper bound
   if (selectedSeriesIndex() >= 0) {
     double upperBound = m_store->endOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   numberOfChar+= UTF8Decoder::CodePointToChars('[', buffer + numberOfChar, bufferSize - numberOfChar);
 
   // Padding
-  for (int i = numberOfChar; i < k_maxIntervalLegendLength; i++) {
-    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
-  }
-  buffer[k_maxIntervalLegendLength] = 0;
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxIntervalLegendLength);
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Add Size Data
@@ -135,13 +133,10 @@ void HistogramController::reloadBannerView() {
   double size = 0;
   if (selectedSeriesIndex() >= 0) {
     size = m_store->heightOfBarAtIndex(selectedSeriesIndex(), *m_selectedBarIndex);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, bufferSize-numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
-  }
-  buffer[k_maxLegendLength] = 0;
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_view.bannerView()->sizeView()->setText(buffer);
 
   // Add Frequency Data
@@ -152,13 +147,10 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
   if (selectedSeriesIndex() >= 0) {
     double frequency = size/m_store->sumOfOccurrences(selectedSeriesIndex());
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    numberOfChar+= UTF8Decoder::CodePointToChars(' ', buffer + numberOfChar, bufferSize - numberOfChar);
-  }
-  buffer[k_maxLegendLength] = 0;
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   m_view.bannerView()->reload();

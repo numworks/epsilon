@@ -1,5 +1,6 @@
 #include "graph_controller.h"
 #include "../shared/poincare_helpers.h"
+#include "../shared/text_helpers.h"
 #include "../apps_container.h"
 #include <cmath>
 
@@ -110,16 +111,15 @@ void GraphController::reloadBannerView() {
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
-    numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
+    numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else if (*m_selectedDotIndex < 0) {
     legend = I18n::translate(I18n::Message::Reg);
-    numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
+    numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else {
-    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
   legend = ")  ";
-  strlcpy(buffer+numberOfChar, legend, bufferSize - numberOfChar);
-  buffer[k_maxLegendLength] = 0;
+  strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
 
   // Set "x=..." or "xmean=..."
@@ -133,12 +133,9 @@ void GraphController::reloadBannerView() {
   }
   m_bannerView.abscissaSymbol()->setText(legend);
 
-  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxLegendLength] = 0;
+  numberOfChar = PoincareHelpers::ConvertFloatToText<double>(x, buffer, bufferSize, Constant::MediumNumberOfSignificantDigits);
+  // Padding
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.abscissaValue()->setText(buffer);
 
   // Set "y=..." or "ymean=..."
@@ -151,11 +148,9 @@ void GraphController::reloadBannerView() {
     y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   numberOfChar += strlcpy(buffer, legend, bufferSize);
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
-    buffer[numberOfChar++] = ' ';
-  }
-  buffer[k_maxLegendLength] = 0;
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize - numberOfChar, Constant::MediumNumberOfSignificantDigits);
+  // Padding
+  Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, k_maxLegendLength);
   m_bannerView.ordinateView()->setText(buffer);
 
   // Set formula
@@ -176,10 +171,8 @@ void GraphController::reloadBannerView() {
     // Force the "Data not suitable" message to be on the next line
     int numberOfCharToCompleteLine = maxInt(Ion::Display::Width / BannerView::Font()->glyphSize().width() - strlen(I18n::translate(formula)), 0);
     numberOfChar = 0;
-    for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
-      buffer[numberOfChar++] = ' ';
-    }
-    buffer[numberOfChar] = 0;
+    // Padding
+    Shared::TextHelpers::PadWithSpaces(buffer, bufferSize, &numberOfChar, numberOfCharToCompleteLine - 1);
     m_bannerView.subTextAtIndex(0)->setText(buffer);
 
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
@@ -187,6 +180,7 @@ void GraphController::reloadBannerView() {
     for (int i = 2; i < m_bannerView.numberOfsubTexts(); i++) {
       m_bannerView.subTextAtIndex(i)->setText("");
     }
+    m_bannerView.reload();
     return;
   }
   char coefficientName = 'a';
@@ -195,8 +189,7 @@ void GraphController::reloadBannerView() {
     char leg[] = {' ', coefficientName, '=', 0};
     legend = leg;
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    buffer[k_maxLegendLength] = 0;
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(i)->setText(buffer);
     coefficientName++;
   }
@@ -207,8 +200,7 @@ void GraphController::reloadBannerView() {
     legend = " r=";
     double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    buffer[k_maxLegendLength+10] = 0;
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(2)->setText(buffer);
 
     // Set "r2=..."
@@ -216,8 +208,7 @@ void GraphController::reloadBannerView() {
     legend = " r2=";
     double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
     numberOfChar += strlcpy(buffer, legend, bufferSize);
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    buffer[k_maxLegendLength] = 0;
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer + numberOfChar, bufferSize - numberOfChar, Constant::LargeNumberOfSignificantDigits);
     m_bannerView.subTextAtIndex(3)->setText(buffer);
 
     // Clean the last subview

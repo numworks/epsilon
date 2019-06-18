@@ -95,7 +95,7 @@ const ToolboxMessageTree MathModuleChildren[] = {
 const ToolboxMessageTree KandinskyModuleChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportKandinsky, I18n::Message::PythonImportKandinsky, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandImportFromKandinsky, I18n::Message::PythonImportFromKandinsky, false),
-  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKandinskyFunction, I18n::Message::PythonKandinskyFunction, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandKandinskyFunction, I18n::Message::PythonKandinskyFunction, false, I18n::Message::PythonCommandKandinskyFunctionWithoutArg),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSetPixel, I18n::Message::PythonSetPixel),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColor, I18n::Message::PythonColor),
@@ -361,9 +361,10 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = (ToolboxMessageTree *)m_messageTreeModel->children(selectedRow);
   const char * editedText = I18n::translate(node->insertedText());
+  // strippedEditedText array needs to be in the same scope as editedText
+  char strippedEditedText[k_maxMessageSize];
   if (node->stripInsertedText()) {
     int strippedEditedTextMaxLength = strlen(editedText)+1;
-    char strippedEditedText[k_maxMessageSize];
     assert(strippedEditedTextMaxLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText, strippedEditedTextMaxLength, true);
     editedText = strippedEditedText;

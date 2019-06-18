@@ -41,7 +41,11 @@ public:
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
-   * representing a Function. */
+   * representing a Function. We want to avoid padding which would:
+   * - increase the size of the storage file
+   * - introduce junk memory zone which are then crc-ed in Storage::checksum
+   *   creating dependency on uninitialized values. */
+#pragma pack(push,1)
   class FunctionRecordDataBuffer {
   public:
     FunctionRecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
@@ -59,6 +63,7 @@ protected:
     KDColor m_color;
     bool m_active;
   };
+#pragma pack(pop)
 private:
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const;
   FunctionRecordDataBuffer * recordData() const;

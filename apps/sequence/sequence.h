@@ -70,7 +70,9 @@ private:
   constexpr static double k_maxNumberOfTermsInSum = 100000.0;
 
   /* SequenceRecordDataBuffer is the layout of the data buffer of Record
-   * representing a Sequence. */
+   * representing a Sequence. See comment on
+   * Shared::Function::FunctionRecordDataBuffer about packing. */
+#pragma pack(push,1)
   class SequenceRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
     SequenceRecordDataBuffer(KDColor color) :
@@ -91,13 +93,13 @@ private:
       assert(conditionIndex >= 0 && conditionIndex < 2);
       m_initialConditionSizes[conditionIndex] = size;
     }
-
   private:
     static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::k_storageSize, "Potential overflows of Sequence initial condition sizes");
     Type m_type;
     uint8_t m_initialRank;
     uint16_t m_initialConditionSizes[2];
   };
+#pragma pack(pop)
 
   class SequenceModel : public Shared::ExpressionModel {
   public:

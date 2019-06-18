@@ -503,7 +503,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
   const float xStep = pixelWidth();
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
@@ -527,13 +527,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     if (x <= rectMin || std::isnan(evaluation(x-xStep, model, context))) {
       continue;
     }
-    if (continuously) {
-      float puf = floatToPixel(Axis::Horizontal, x - xStep);
-      float pvf = floatToPixel(Axis::Vertical, evaluation(x-xStep, model, context));
-      straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
-    } else {
-      jointDots(ctx, rect, evaluation, model, context, x - xStep, evaluation(x-xStep, model, context), x, y, color, k_maxNumberOfIterations);
-    }
+    jointDots(ctx, rect, evaluation, model, context, x - xStep, evaluation(x-xStep, model, context), x, y, color, k_maxNumberOfIterations);
   }
 }
 

@@ -122,7 +122,7 @@ void __attribute__((noinline)) internalFlashStandby() {
   Device::ExternalFlash::shutdown();
   Device::Board::shutdownClocks();
   Device::Power::enterLowPowerMode();
-  Device::Reset::core();
+  Device::Reset::coreWhilePlugged();
 }
 
 void configWakeUp() {

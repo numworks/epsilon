@@ -19,3 +19,16 @@ void standby() {
 
 }
 }
+
+namespace Ion {
+namespace Device {
+namespace Power {
+
+void configWakeUp() {
+  Device::WakeUp::onOnOffKeyDown();
+  Device::WakeUp::onUSBPlugging();
+}
+
+}
+}
+}

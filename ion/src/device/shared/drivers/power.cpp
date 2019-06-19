@@ -10,7 +10,6 @@
 #include <drivers/power.h>
 #include <drivers/usb.h>
 #include <drivers/reset.h>
-#include <drivers/wakeup.h>
 #include <regs/regs.h>
 #include <regs/config/pwr.h>
 #include <regs/config/rcc.h>
@@ -123,12 +122,6 @@ void __attribute__((noinline)) internalFlashStandby() {
   Device::Board::shutdownClocks();
   Device::Power::enterLowPowerMode();
   Device::Reset::coreWhilePlugged();
-}
-
-void configWakeUp() {
-  Device::WakeUp::onOnOffKeyDown();
-  Device::WakeUp::onUSBPlugging();
-  Device::WakeUp::onChargingEvent();
 }
 
 void stopConfiguration() {

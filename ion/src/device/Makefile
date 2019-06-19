@@ -1,6 +1,7 @@
 # Makefile belows should augment $(ion_device_src)
 include ion/src/device/shared/Makefile
 include ion/src/device/bench/Makefile
+include ion/src/device/flasher/Makefile
 include ion/src/device/$(MODEL)/Makefile
 
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"

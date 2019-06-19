@@ -508,13 +508,16 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
 
+  float previousY = NAN;
+  float y = NAN;
   for (float x = rectMin; x < rectMax; x += xStep) {
     /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
      * the infinite loop. */
     if (x == x-xStep || x == x+xStep) {
       return;
     }
-    float y = evaluation(x, model, context);
+    previousY = y;
+    y = evaluation(x, model, context);
     if (std::isnan(y)|| std::isinf(y)) {
       continue;
     }
@@ -524,10 +527,10 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     stampAtLocation(ctx, rect, pxf, pyf, color);
-    if (x <= rectMin || std::isnan(evaluation(x-xStep, model, context))) {
+    if (std::isnan(previousY)) {
       continue;
     }
-    jointDots(ctx, rect, evaluation, model, context, x - xStep, evaluation(x-xStep, model, context), x, y, color, k_maxNumberOfIterations);
+    jointDots(ctx, rect, evaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
   }
 }
 

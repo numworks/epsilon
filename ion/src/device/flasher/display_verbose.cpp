@@ -1,8 +1,8 @@
-#include "../usb/calculator.h"
 #include <ion.h>
 #include <kandinsky.h>
 
-#if EPSILON_FLASHER_VERBOSE
+namespace Flasher {
+namespace Display {
 
 constexpr static int sNumberOfMessages = 5;
 constexpr static int sNumberOfLanguages = 2;
@@ -20,11 +20,8 @@ constexpr static const char * sMessages[sNumberOfLanguages][sNumberOfMessages] =
     "votre ordinateur pour continuer."}
 };
 
-#endif
-
-void ion_main(int argc, char * argv[]) {
+void init() {
   KDRect screen = KDRect(0,0,Ion::Display::Width,Ion::Display::Height);
-#if EPSILON_FLASHER_VERBOSE
   Ion::Display::pushRectUniform(screen, KDColorWhite);
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->setOrigin(KDPointZero);
@@ -44,13 +41,7 @@ void ion_main(int argc, char * argv[]) {
       currentHeight += messageSize.height();
     }
   }
-#else
-  Ion::Display::pushRectUniform(screen, KDColor::RGB24(0xFFFF00));
-#endif
-  while (true) {
-    Ion::USB::enable();
-    while (!Ion::USB::isEnumerated()) {
-    }
-    Ion::Device::USB::Calculator::PollAndReset(false);
-  }
+}
+
+}
 }

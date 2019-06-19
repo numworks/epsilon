@@ -18,7 +18,7 @@ extern "C" {
   extern cxx_constructor _init_array_end;
 }
 
-void abort() {
+void __attribute__((noinline)) abort() {
 #if DEBUG
   while (1) {
   }
@@ -120,6 +120,6 @@ void __attribute__((noinline)) start() {
   abort();
 }
 
-void __attribute__((interrupt)) isr_systick() {
+void __attribute__((interrupt, noinline)) isr_systick() {
   Ion::Device::Timing::MillisElapsed++;
 }

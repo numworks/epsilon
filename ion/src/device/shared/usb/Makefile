@@ -29,10 +29,6 @@ usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
   webusb_platform_descriptor.cpp\
 )
 
-flasher_src += $(addprefix ion/src/device/shared/usb/, \
-  flasher.cpp \
-)
-
 EPSILON_USB_DFU_XIP ?= 0
 
 ifeq ($(EPSILON_USB_DFU_XIP),1)

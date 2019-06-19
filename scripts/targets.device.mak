@@ -53,17 +53,12 @@ openocd:
 # The flasher target is defined here because otherwise $(objs) has not been
 # fully filled
 ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
-ifdef EPSILON_FLASHER_VERBOSE
-$(call object_for,ion/src/$(PLATFORM)/shared/usb/flasher.cpp): SFLAGS += -DEPSILON_FLASHER_VERBOSE=$(EPSILON_FLASHER_VERBOSE)
-$(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
-$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-$(BUILD_DIR)/flasher.$(EXE): $(objs) $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/usb/flasher.o
+$(BUILD_DIR)/flasher.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
+$(BUILD_DIR)/flasher.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
+$(BUILD_DIR)/flasher.light.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_light.o $(objs) $(call object_for,$(flasher_src))
+$(BUILD_DIR)/flasher.verbose.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_verbose.o $(objs) $(call object_for,$(flasher_src))
 else
-$(BUILD_DIR)/flasher.$(EXE):
-	@echo "Error: flasher requires EPSILON_FLASHER_VERBOSE to be set to 0 or 1"
-endif
-else
-$(BUILD_DIR)/flasher.$(EXE):
+$(BUILD_DIR)/flasher.%.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"
 endif
 
@@ -105,8 +100,8 @@ binpack:
 	rm -rf build/binpack
 	mkdir -p build/binpack
 	make clean
-	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=0 EPSILON_FLASHER_VERBOSE=0 $(BUILD_DIR)/flasher.bin
-	cp $(BUILD_DIR)/flasher.bin build/binpack
+	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=0 $(BUILD_DIR)/flasher.light.bin
+	cp $(BUILD_DIR)/flasher.light.bin build/binpack
 	make clean
 	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=1 $(BUILD_DIR)/bench.flash.bin
 	make -j8 EPSILON_USB_DFU_XIP=1 EPSILON_DEVICE_BENCH=1 $(BUILD_DIR)/bench.ram.bin
@@ -115,7 +110,7 @@ binpack:
 	make -j8 EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=0 EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update $(BUILD_DIR)/epsilon_two_binaries
 	cp $(BUILD_DIR)/epsilon.internal.bin $(BUILD_DIR)/epsilon.external.bin build/binpack
 	make clean
-	cd build && for binary in flasher.bin bench.flash.bin bench.ram.bin epsilon.internal.bin epsilon.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.internal.bin epsilon.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
 	rm -rf build/binpack
 

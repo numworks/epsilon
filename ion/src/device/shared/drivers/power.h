@@ -11,7 +11,6 @@ void configWakeUp();
 
 void sleepConfiguration();
 void stopConfiguration();
-void standbyConfiguration();
 
 void waitUntilOnOffKeyReleased();
 void enterLowPowerMode();

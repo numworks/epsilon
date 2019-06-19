@@ -507,23 +507,27 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
 
+  float previousX = NAN;
+  float x = NAN;
   float previousY = NAN;
   float y = NAN;
-  for (float x = rectMin; x < rectMax; x += xStep) {
+  for (float t = rectMin; t < rectMax; t += xStep) {
     /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
      * the infinite loop. */
-    if (x == x-xStep || x == x+xStep) {
+    if (t == t-xStep || t == t+xStep) {
       return;
     }
+    previousX = x;
+    x = xEvaluation(t, model, context);
     previousY = y;
-    y = yEvaluation(x, model, context);
-    if (std::isnan(y)|| std::isinf(y)) {
+    y = yEvaluation(t, model, context);
+    if (std::isnan(x) || std::isinf(x) || std::isnan(y) || std::isinf(y)) {
       continue;
     }
     if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, x - xStep, x - xStep, previousY, x, x, y, color, k_maxNumberOfIterations);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, t - xStep, previousX, previousY, t, x, y, color, k_maxNumberOfIterations);
   }
 }
 
@@ -578,17 +582,17 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   float pvf = floatToPixel(Axis::Vertical, v);
   const float deltaX = pxf - puf;
   const float deltaY = pyf - pvf;
-  if (std::isnan(y) || deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
+  if (std::isnan(x) || std::isnan(y) || deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
     // the dots are already joined
     stampAtLocation(ctx, rect, puf, pvf, color);
     return;
   }
-  // C is the dot whose abscissa is between x and u
+  // Middle point
   float ct = (t + s)/2.0f;
-  float cx = (x + u)/2.0f;
-  float cy = yEvaluation(cx, model, context);
-  if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
-    /* As the middle dot is vertically between the two dots, we assume that we
+  float cx = xEvaluation(ct, model, context);
+  float cy = yEvaluation(ct, model, context);
+  if (((x <= cx && cx <= u) || (u <= cx && cx <= x)) && ((y <= cy && cy <= v) || (v <= cy && cy <= y))) {
+    /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
     straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
     return;

@@ -93,6 +93,7 @@ SECTIONS {
     *(.text._ZN3Ion6Device5Power20internalFlashStandbyEv)
     *(.text._ZN3Ion6Device5Power17enterLowPowerModeEv)
     *(.text._ZN3Ion6Device5Board14shutdownClocksEb)
+    *(.text._ZN3Ion6Device5Reset16coreWhilePluggedEv)
 
     /* 'suspend' dependencies '*/
     *(.text._ZN3Ion6Device5Power20internalFlashSuspendEb)

@@ -1,6 +1,7 @@
 #include <drivers/board.h>
 #include <drivers/power.h>
 #include <drivers/keyboard.h>
+#include <drivers/wakeup.h>
 #include <regs/regs.h>
 
 namespace Ion {
@@ -23,6 +24,12 @@ void standby() {
 namespace Ion {
 namespace Device {
 namespace Power {
+
+void configWakeUp() {
+  Device::WakeUp::onOnOffKeyDown();
+  Device::WakeUp::onUSBPlugging();
+  Device::WakeUp::onChargingEvent();
+}
 
 // Public Power methods
 using namespace Device::Regs;

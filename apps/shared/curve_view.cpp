@@ -523,7 +523,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, x - xStep, x - xStep, previousY, x, x, y, color, k_maxNumberOfIterations);
   }
 }
 
@@ -571,7 +571,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   }
 }
 
-void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
+void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter xEvaluation, EvaluateModelWithParameter yEvaluation, void * model, void * context, float t, float x, float y, float s, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
   float puf = floatToPixel(Axis::Horizontal, u);
@@ -584,6 +584,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     return;
   }
   // C is the dot whose abscissa is between x and u
+  float ct = (t + s)/2.0f;
   float cx = (x + u)/2.0f;
   float cy = yEvaluation(cx, model, context);
   if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
@@ -593,8 +594,8 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     return;
   }
   if (maxNumberOfRecursion > 0) {
-    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, x, y, cx, cy, color, maxNumberOfRecursion-1);
-    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, cx, cy, u, v, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, t, x, y, ct, cx, cy, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, xEvaluation, yEvaluation, model, context, ct, cx, cy, s, u, v, color, maxNumberOfRecursion-1);
   }
 }
 

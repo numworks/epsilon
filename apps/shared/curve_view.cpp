@@ -616,14 +616,17 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
 }
 
 void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const {
-  if (pyf <= pvf) {
-    for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
-      float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
-      stampAtLocation(ctx, rect, pmf, pnf, color);
-    }
-    return;
+  const float deltaX = pxf - puf;
+  const float deltaY = pyf - pvf;
+  const float normsRatio = std::sqrt(deltaX*deltaX + deltaY*deltaY) / (circleDiameter / 2.0f);
+  const float stepX = deltaX / normsRatio ;
+  const float stepY = deltaY / normsRatio;
+  const int numberOfStamps = std::floor(normsRatio);
+  for (int i = 0; i < numberOfStamps; i++) {
+    stampAtLocation(ctx, rect, puf, pvf, color);
+    puf += stepX;
+    pvf += stepY;
   }
-  straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
 }
 
 void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {

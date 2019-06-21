@@ -99,18 +99,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (handleBoxEvent(app(), event)) {
     return true;
   } else if (event == Ion::Events::Left) {
-    if (cursorLocation() <= text()) {
-      assert(cursorLocation() == text());
-      return false;
-    }
-    UTF8Decoder decoder(text(), cursorLocation());
-    return setCursorLocation(decoder.previousGlyphPosition());
+    return TextInput::moveCursorLeft();
   } else if (event == Ion::Events::Right) {
-    if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
-      return false;
-    }
-    UTF8Decoder decoder(cursorLocation());
-    return setCursorLocation(decoder.nextGlyphPosition());
+    return TextInput::moveCursorRight();
   } else if (event == Ion::Events::Up) {
     contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {

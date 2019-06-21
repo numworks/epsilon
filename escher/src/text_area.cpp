@@ -104,15 +104,13 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       return false;
     }
     UTF8Decoder decoder(text(), cursorLocation());
-    decoder.previousCodePoint();
-    return setCursorLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.previousGlyphPosition());
   } else if (event == Ion::Events::Right) {
     if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
       return false;
     }
     UTF8Decoder decoder(cursorLocation());
-    decoder.nextCodePoint();
-    return setCursorLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.nextGlyphPosition());
   } else if (event == Ion::Events::Up) {
     contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {

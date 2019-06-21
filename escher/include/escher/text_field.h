@@ -55,7 +55,7 @@ protected:
      * the maximum buffer capacity) and false is returned. */
     bool insertTextAtLocation(const char * text, const char * location) override; // TODO
     KDSize minimalSizeForOptimalDisplay() const override;
-    bool removeCodePoint() override;
+    bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     void willModifyTextBuffer();
     void didModifyTextBuffer();

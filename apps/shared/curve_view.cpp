@@ -619,31 +619,37 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
 }
 
 void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
-  // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize - FLT_EPSILON || pyf > m_frame.height()+stampSize + FLT_EPSILON) {
-    return;
-  }
-  /* When converting floats to KDCoordinate, we need to add -1 if the float is
-   * negative, otherwise all floats in ]-1.0;1.0[ are converted to 0 and there
-   * is a blob for x = 0. Try for instance f(x)=cos(x), the blob is at the
-   * intersection of the curve with the left of the screen. */
-  KDCoordinate px = pxf + (pxf >= 0 ? 0 : -1);
-  KDCoordinate py = pyf + (pyf >= 0 ? 0 : -1);
-  KDRect stampRect(px-(circleDiameter-2)/2, py-(circleDiameter-2)/2, stampSize, stampSize);
+  /* The (pxf, pyf) coordinates are not generally locating the center of a
+   * pixel. We use stampMask, which is one pixel wider and higher than
+   * stampSize, in order to cover stampRect without aligning the pixels. Then
+   * shiftedMask is computed so that each pixel is the average of the values of
+   * the four pixels of stampMask by which it is covered, proportionally to the
+   * area of the intersection with each of those.
+   *
+   * In order to compute the coordinates (px, py) of the top-left pixel of
+   * stampRect, we consider that stampMask is centered at the provided point
+   * (pxf,pyf) which is then translated to the center of the top-left pixel of
+   * stampMask.
+   */
+  pxf -= (stampSize + 1 - 1)/2.0f;
+  pyf -= (stampSize + 1 - 1)/2.0f;
+  const KDCoordinate px = std::ceil(pxf);
+  const KDCoordinate py = std::ceil(pyf);
+  KDRect stampRect(px, py, stampSize, stampSize);
   if (!rect.intersects(stampRect)) {
     return;
   }
   uint8_t shiftedMask[stampSize][stampSize];
   KDColor workingBuffer[stampSize*stampSize];
-  float dx = pxf - std::floor(pxf);
-  float dy = pyf - std::floor(pyf);
+  const float dx = px - pxf;
+  const float dy = py - pyf;
   /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
    * dx and dy would be rounded to one tenth or one hundredth to choose the
    * right shifted mask. */
   for (int i=0; i<stampSize; i++) {
     for (int j=0; j<stampSize; j++) {
-      shiftedMask[i][j] = dx * (stampMask[i][j]*dy+stampMask[i+1][j]*(1.0f-dy))
-        + (1.0f-dx) * (stampMask[i][j+1]*dy + stampMask[i+1][j+1]*(1.0f-dy));
+      shiftedMask[j][i] = (1.0f - dx) * (stampMask[j][i]*(1.0-dy)+stampMask[j+1][i]*dy)
+        + dx * (stampMask[j][i+1]*(1.0f-dy) + stampMask[j+1][i+1]*dy);
     }
   }
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);

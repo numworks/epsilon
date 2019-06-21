@@ -436,8 +436,7 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left && isEditing() && cursorLocation() > m_contentView.draftTextBuffer()) {
     assert(isEditing());
     UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
-    decoder.previousCodePoint();
-    return setCursorLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.previousGlyphPosition());
   }
   if (event == Ion::Events::ShiftLeft && isEditing()) {
     assert(isEditing());
@@ -446,8 +445,7 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right && isEditing() && cursorLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
     assert(isEditing());
     UTF8Decoder decoder(cursorLocation());
-    decoder.nextCodePoint();
-    return setCursorLocation(decoder.stringPosition());
+    return setCursorLocation(decoder.nextGlyphPosition());
   }
   if (event == Ion::Events::ShiftRight && isEditing()) {
     assert(isEditing());

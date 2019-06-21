@@ -11,7 +11,7 @@ public:
   TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}
   void setFont(const KDFont * font) { contentView()->setFont(font); }
   const char * text() const { return nonEditableContentView()->text(); }
-  bool removeCodePoint();
+  bool removePreviousGlyph();
   const char * cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
@@ -30,7 +30,7 @@ protected:
     void setCursorLocation(const char * cursorLocation);
     virtual const char * text() const = 0;
     virtual bool insertTextAtLocation(const char * text, const char * location) = 0;
-    virtual bool removeCodePoint() = 0;
+    virtual bool removePreviousGlyph() = 0;
     virtual bool removeEndOfLine() = 0;
     KDRect cursorRect();
   protected:

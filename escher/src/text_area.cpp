@@ -120,7 +120,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::ShiftRight) {
     contentView()->moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
-    return removeCodePoint();
+    return removePreviousGlyph();
   } else if (event.hasText()) {
     return handleEventWithText(event.text());
   } else if (event == Ion::Events::EXE) {
@@ -219,12 +219,12 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces, char * location)
   }
 }
 
-CodePoint TextArea::Text::removeCodePoint(char * * position) {
+CodePoint TextArea::Text::removePreviousGlyph(char * * position) {
   assert(m_buffer != nullptr);
   assert(m_buffer <= *position && *position < m_buffer + m_bufferSize);
 
   CodePoint removedCodePoint = 0;
-  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_buffer, *position, &removedCodePoint);
+  int removedSize = UTF8Helper::RemovePreviousGlyph(m_buffer, *position, &removedCodePoint);
   assert(removedSize > 0);
 
   // Set the new cursor position
@@ -405,14 +405,14 @@ bool TextArea::TextArea::ContentView::insertTextAtLocation(const char * text, co
   return true;
 }
 
-bool TextArea::TextArea::ContentView::removeCodePoint() {
+bool TextArea::TextArea::ContentView::removePreviousGlyph() {
   if (cursorLocation() <= text()) {
     assert(cursorLocation() == text());
     return false;
   }
   bool lineBreak = false;
   char * cursorLoc = const_cast<char *>(cursorLocation());
-  lineBreak = m_text.removeCodePoint(&cursorLoc) == '\n';
+  lineBreak = m_text.removePreviousGlyph(&cursorLoc) == '\n';
   setCursorLocation(cursorLoc); // Update the cursor
   layoutSubviews(); // Reposition the cursor
   reloadRectFromPosition(cursorLocation(), lineBreak);

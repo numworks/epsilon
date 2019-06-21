@@ -38,6 +38,8 @@ public:
   }
   CodePoint nextCodePoint();
   CodePoint previousCodePoint();
+  const char * nextGlyphPosition();
+  const char * previousGlyphPosition();
   const char * stringPosition() const { return m_stringPosition; }
   static size_t CharSizeOfCodePoint(CodePoint c);
   static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferSize);

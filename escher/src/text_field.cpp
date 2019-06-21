@@ -144,7 +144,7 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   return stringSize;
 }
 
-bool TextField::ContentView::removeCodePoint() {
+bool TextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
   if (m_horizontalAlignment > 0.0f) {
@@ -152,9 +152,9 @@ bool TextField::ContentView::removeCodePoint() {
      *  will not clean the first char. */
     reloadRectFromPosition(m_draftTextBuffer);
   }
-  // Remove the code point if possible
+  // Remove the glyph if possible
   CodePoint removedCodePoint = 0;
-  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
+  int removedSize = UTF8Helper::RemovePreviousGlyph(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
   if (removedSize == 0) {
     assert(cursorLocation() == m_draftTextBuffer);
     return false;
@@ -325,7 +325,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
-    return removeCodePoint();
+    return removePreviousGlyph();
   }
   if (event == Ion::Events::Back && isEditing()) {
     setEditing(false, m_hasTwoBuffers);

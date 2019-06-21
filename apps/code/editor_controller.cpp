@@ -84,7 +84,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     numberOfSpaces = numberOfSpaces / UTF8Decoder::CharSizeOfCodePoint(' ');
     if (cursorIsPrecededOnTheLineBySpacesOnly && numberOfSpaces >= k_indentationSpacesNumber) {
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
-        textArea->removeCodePoint();
+        textArea->removePreviousGlyph();
       }
       return true;
     }

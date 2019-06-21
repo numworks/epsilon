@@ -50,8 +50,8 @@ KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool
 
 /* TextInput */
 
-bool TextInput::removeCodePoint() {
-  contentView()->removeCodePoint();
+bool TextInput::removePreviousGlyph() {
+  contentView()->removePreviousGlyph();
   scrollToCursor();
   return true;
 }

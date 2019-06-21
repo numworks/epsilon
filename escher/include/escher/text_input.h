@@ -50,7 +50,7 @@ protected:
     virtual const char * editedText() const = 0;
     virtual size_t editedTextLength() const = 0;
   };
-protected:
+
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity) and false is returned. */
@@ -60,6 +60,8 @@ protected:
     return const_cast<ContentView *>(nonEditableContentView());
   }
   virtual const ContentView * nonEditableContentView() const = 0;
+  bool moveCursorLeft();
+  bool moveCursorRight();
 private:
   virtual void willSetCursorLocation(const char * * location) {}
   virtual bool privateRemoveEndOfLine();

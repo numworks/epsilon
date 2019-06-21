@@ -96,6 +96,23 @@ bool TextInput::removeEndOfLine() {
   return false;
 }
 
+bool TextInput::moveCursorLeft() {
+  if (cursorLocation() <= text()) {
+    assert(cursorLocation() == text());
+    return false;
+  }
+  UTF8Decoder decoder(text(), cursorLocation());
+  return setCursorLocation(decoder.previousGlyphPosition());
+}
+
+bool TextInput::moveCursorRight() {
+  if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
+    return false;
+  }
+  UTF8Decoder decoder(cursorLocation());
+  return setCursorLocation(decoder.nextGlyphPosition());
+}
+
 bool TextInput::privateRemoveEndOfLine() {
   return contentView()->removeEndOfLine();
 }

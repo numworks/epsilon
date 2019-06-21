@@ -432,23 +432,21 @@ void TextField::scrollToCursor() {
 }
 
 bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left && isEditing() && cursorLocation() > m_contentView.draftTextBuffer()) {
-    assert(isEditing());
-    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
-    return setCursorLocation(decoder.previousGlyphPosition());
+  if (!isEditing()) {
+    return false;
   }
-  if (event == Ion::Events::ShiftLeft && isEditing()) {
-    assert(isEditing());
-    return setCursorLocation(m_contentView.draftTextBuffer());
+  const char * draftBuffer = m_contentView.draftTextBuffer();
+  if (event == Ion::Events::Left && cursorLocation() > draftBuffer) {
+    return TextInput::moveCursorLeft();
   }
-  if (event == Ion::Events::Right && isEditing() && cursorLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
-    assert(isEditing());
-    UTF8Decoder decoder(cursorLocation());
-    return setCursorLocation(decoder.nextGlyphPosition());
+  if (event == Ion::Events::Right && cursorLocation() < draftBuffer + draftTextLength()) {
+    return TextInput::moveCursorRight();
   }
-  if (event == Ion::Events::ShiftRight && isEditing()) {
-    assert(isEditing());
-    return setCursorLocation(m_contentView.draftTextBuffer() + draftTextLength());
+  if (event == Ion::Events::ShiftLeft) {
+    return setCursorLocation(draftBuffer);
+  }
+  if (event == Ion::Events::ShiftRight) {
+    return setCursorLocation(draftBuffer + draftTextLength());
   }
   return false;
 }

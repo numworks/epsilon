@@ -267,7 +267,6 @@ bool CodePointIsNumber(CodePoint c) {
 }
 
 int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
-  assert(c != nullptr);
   if (location <= text) {
     assert(location == text);
     return 0;
@@ -276,7 +275,9 @@ int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
   // Find the previous glyph
   UTF8Decoder decoder(text, location);
   const char * previousGlyphPos = decoder.previousGlyphPosition();
-  *c = decoder.nextCodePoint();
+  if (c != nullptr) {
+    *c = decoder.nextCodePoint();
+  }
 
   // Shift the buffer
   int shiftedSize = location - previousGlyphPos;

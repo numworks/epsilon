@@ -149,12 +149,11 @@ bool TextField::ContentView::removePreviousGlyph() {
 
   if (m_horizontalAlignment > 0.0f) {
     /* Reload the view. If we do it later, the text beins supposedly shorter, we
-     *  will not clean the first char. */
+     * will not clean the first char. */
     reloadRectFromPosition(m_draftTextBuffer);
   }
   // Remove the glyph if possible
-  CodePoint removedCodePoint = 0;
-  int removedSize = UTF8Helper::RemovePreviousGlyph(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
+  int removedSize = UTF8Helper::RemovePreviousGlyph(m_draftTextBuffer, const_cast<char *>(cursorLocation()));
   if (removedSize == 0) {
     assert(cursorLocation() == m_draftTextBuffer);
     return false;

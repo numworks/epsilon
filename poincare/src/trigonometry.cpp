@@ -23,11 +23,13 @@ namespace Poincare {
 
 static constexpr double s_pi[] = {
   180.0,
+  200.0,
   M_PI
 };
 
 static constexpr int s_piDivisor[] {
   180,
+  200,
   1
 };
 
@@ -209,7 +211,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Constant
         && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isPi()
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
-      || (angleUnit == Preferences::AngleUnit::Degree
+      || ((angleUnit == Preferences::AngleUnit::Degree || angleUnit == Preferences::AngleUnit::Gradian)
         && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))
   {
     Rational r = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0).childAtIndex(0).convert<Rational>() : e.childAtIndex(0).convert<Rational>();
@@ -364,6 +366,9 @@ std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Preferenc
   if (angleUnit == Preferences::AngleUnit::Degree) {
     return c * std::complex<T>(M_PI/180.0);
   }
+  else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    return c * std::complex<T>(M_PI/200.0);
+  }
   return c;
 }
  
@@ -371,6 +376,9 @@ template <typename T>
 std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Degree) {
     return c * std::complex<T>(180/M_PI);
+  }
+  else if (angleUnit == Preferences::AngleUnit::Gradian) {
+    return c * std::complex<T>(200/M_PI);
   }
   return c;
 }

@@ -145,8 +145,8 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
     Expression divab = Division::Builder(a, b.clone());
     Expression arcTangent = ArcTangent::Builder(divab);
     divab.shallowReduce(context, complexFormat, angleUnit, target);
-    if (angleUnit == Preferences::AngleUnit::Degree) {
-      Expression temp = arcTangent.degreeToRadian();
+    if (angleUnit != Preferences::AngleUnit::Radian) {
+      Expression temp = arcTangent.angleUnitToRadian(angleUnit);
       arcTangent.shallowReduce(context, complexFormat, angleUnit, target);
       arcTangent = temp;
     }
@@ -347,8 +347,8 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & con
   thc.shallowReduce(context, complexFormat, angleUnit, target);
   dlnr.shallowReduce(context, complexFormat, angleUnit, target);
 
-  if (angleUnit == Preferences::AngleUnit::Degree) {
-    Expression temp = argument.radianToDegree();
+  if (angleUnit != Preferences::AngleUnit::Radian) {
+    Expression temp = argument.radianToAngleUnit(angleUnit);
     argument.shallowReduce(context, complexFormat, angleUnit, target);
     argument = temp;
   }

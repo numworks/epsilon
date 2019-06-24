@@ -2,6 +2,11 @@
 
 namespace Poincare {
 
+static constexpr TrigonometryCheatTable::Type s_targetType[] = {
+  TrigonometryCheatTable::Type::AngleInDegrees,
+  TrigonometryCheatTable::Type::AngleInRadians
+};
+
 Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUninitialized, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const {
   Expression e = Expression::Parse(m_expression);
   if (assertNotUninitialized) {
@@ -23,7 +28,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
       || type == ExpressionNode::Type::ArcTangent);
 
   // Compute the input and output types
-  Type angleUnitType = angleUnit == Preferences::AngleUnit::Radian ? Type::AngleInRadians : Type::AngleInDegrees;
+  Type angleUnitType = s_targetType[(int)angleUnit];
   Type trigonometricFunctionType;
   if (type == ExpressionNode::Type::Cosine || type == ExpressionNode::Type::ArcCosine) {
     trigonometricFunctionType = Type::Cosine;

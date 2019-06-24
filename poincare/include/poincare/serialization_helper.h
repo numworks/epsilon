@@ -31,7 +31,8 @@ namespace SerializationHelper {
       Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
-      bool writeFirstChild = true);
+      int firstChildIndex = 0,
+      int lastChildIndex = -1);
 
   // Write one code point in a buffer and a null-terminating char
   int CodePoint(char * buffer, int bufferSize, CodePoint c);

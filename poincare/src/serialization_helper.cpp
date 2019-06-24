@@ -20,7 +20,7 @@ static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
   return false;
 }
 
-static int serializeChild(
+int SerializationHelper::SerializeChild(
     const TreeNode * childNode,
     const TreeNode * parentNode,
     char * buffer,
@@ -83,7 +83,7 @@ int SerializationHelper::Infix(
   assert(numberOfChildren > 0);
 
   // Write the first child, with parentheses if needed
-  numberOfChar+= serializeChild(node->childAtIndex(firstChildIndex), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
+  numberOfChar+= SerializeChild(node->childAtIndex(firstChildIndex), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
   if (numberOfChar >= bufferSize-1) {
     assert(buffer[bufferSize - 1] == 0);
     return bufferSize-1;
@@ -98,7 +98,7 @@ int SerializationHelper::Infix(
       return bufferSize-1;
     }
     // Write the child, with parentheses if needed
-    numberOfChar+= serializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
+    numberOfChar+= SerializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
     if (numberOfChar >= bufferSize-1) {
       assert(buffer[bufferSize - 1] == 0);
       return bufferSize-1;

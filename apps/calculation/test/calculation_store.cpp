@@ -77,10 +77,12 @@ void assertCalculationDisplay(const char * input, ::Calculation::Calculation::Di
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
-    quiz_assert(strcmp(lastCalculation->exactOutputText(), exactOutput) == 0);
+    constexpr int bufferSize = 500;
+    char buffer[bufferSize];
+    quiz_assert(strcmpWithSystemParentheses(lastCalculation->exactOutputText(), exactOutput) == 0);
   }
   if (approximateOutput) {
-    quiz_assert(strcmp(lastCalculation->approximateOutputText(), approximateOutput) == 0);
+    quiz_assert(strcmpWithSystemParentheses(lastCalculation->approximateOutputText(), approximateOutput) == 0);
   }
   store->deleteAll();
 }

@@ -41,6 +41,28 @@ bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression g
   return identical;
 }
 
+bool isLeftParenthesisCodePoint(CodePoint c) {
+  return (c == UCodePointLeftSystemParenthesis) || (c == '(');
+}
+
+bool isRightParenthesisCodePoint(CodePoint c) {
+  return (c == UCodePointRightSystemParenthesis) || (c == ')');
+}
+
+int strcmpWithSystemParentheses(const char * s1, const char * s2) {
+  quiz_assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis) == 1);
+  quiz_assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis) == 1);
+   while(*s1 != 0
+      && ((*s1 == *s2)
+        || (isLeftParenthesisCodePoint(*s1) && isLeftParenthesisCodePoint(*s2))
+        || (isRightParenthesisCodePoint(*s1) && isRightParenthesisCodePoint(*s2))))
+  {
+    s1++;
+    s2++;
+  }
+  return (*(unsigned char *)s1) - (*(unsigned char *)s2);
+}
+
 Expression parse_expression(const char * expression, bool canBeUnparsable) {
   quiz_print(expression);
   Expression result = Expression::Parse(expression);
@@ -98,13 +120,14 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   print_expression(e, 0);
 #endif
   Expression m = process(e, globalContext, target, complexFormat, angleUnit);
-  char buffer[500];
-  m.serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialize to: " << buffer << " ----"  << endl;
   cout << "----- compared to: " << result << " ----\n"  << endl;
 #endif
-  quiz_assert(strcmp(buffer, result) == 0);
+  quiz_assert(strcmpWithSystemParentheses(buffer, result) == 0);
 }
 
 template<typename T>
@@ -190,7 +213,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialized to: " << buffer << " ----\n"  << endl;
 #endif
-  quiz_assert(strcmp(expressionLayout, buffer) == 0);
+  quiz_assert(strcmpWithSystemParentheses(expressionLayout, buffer) == 0);
 }
 
 void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout) {
@@ -207,7 +230,7 @@ void assert_expression_layout_serialize_to(Poincare::Layout layout, const char *
   cout << "---- serialized to: " << buffer << " ----"  << endl;
   cout << "----- compared to: " << serialization << " ----\n"  << endl;
 #endif
-  quiz_assert(strcmp(serialization, buffer) == 0);
+  quiz_assert(strcmpWithSystemParentheses(serialization, buffer) == 0);
 }
 
 template void assert_parsed_expression_evaluates_to<float>(char const*, char const *, Poincare::ExpressionNode::ReductionTarget, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);

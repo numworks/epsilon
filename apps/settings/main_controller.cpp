@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Settings {
 
-const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Radian)};
+const SettingsMessageTree angleChildren[3] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Gradians),SettingsMessageTree(I18n::Message::Radian)};
 const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
 const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
@@ -19,7 +19,7 @@ const SettingsMessageTree menu[9] =
 #else
 const SettingsMessageTree menu[8] =
 #endif
-  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
+  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 3),
     SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
     SettingsMessageTree(I18n::Message::EditionMode, editionModeChildren, 2),
     SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 3),

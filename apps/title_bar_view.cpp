@@ -90,6 +90,8 @@ void TitleBarView::refreshPreferences() {
   }
   if (preferences->angleUnit() == Preferences::AngleUnit::Radian) {
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), bufferSize - numberOfChar);
+  } else if (preferences->angleUnit() == Preferences::AngleUnit::Gradian) {
+    numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Gon), bufferSize - numberOfChar);
   } else {
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Deg), bufferSize - numberOfChar);
   }

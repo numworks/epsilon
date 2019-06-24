@@ -157,6 +157,25 @@ QUIZ_CASE(poincare_parse_layouts) {
         Rational::Builder(4)));
   assert_parsed_layout_is(l, e);
 
+  // 2^(3+4)!
+  l = HorizontalLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayout::Builder(
+        HorizontalLayout::Builder(
+          CodePointLayout::Builder('3'),
+          CodePointLayout::Builder('+'),
+          CodePointLayout::Builder('4')),
+        VerticalOffsetLayoutNode::Position::Superscript),
+      CodePointLayout::Builder('!'));
+  e = Factorial::Builder(
+      Power::Builder(
+        Rational::Builder(2),
+        Addition::Builder(
+          Rational::Builder(3),
+          Rational::Builder(4))));
+  assert_parsed_layout_is(l, e);
+
+
   // log_3(2)
   HorizontalLayout l1 = HorizontalLayout::Builder();
   l1.addChildAtIndex(CodePointLayout::Builder('l'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);

@@ -31,7 +31,6 @@ namespace SerializationHelper {
       Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
-      int firstChildIndex = 0,
       int lastChildIndex = -1);
 
   int SerializeChild(

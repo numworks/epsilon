@@ -52,6 +52,7 @@ private:
   void parseEmpty(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseBang(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parsePlus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMinus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -74,6 +75,7 @@ private:
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
+  void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
   // Data members
   Status m_status;

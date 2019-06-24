@@ -40,16 +40,16 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   }
   if (type == EquationStore::Type::LinearSystem) {
     for (int i = 0; i < numberOfSolutions; i++) {
-      quiz_assert(strcmp(equationStore.variableAtIndex(i),variables[i]) == 0);
+      quiz_assert(strcmpWithSystemParentheses(equationStore.variableAtIndex(i),variables[i]) == 0);
     }
   } else {
-    quiz_assert(strcmp(equationStore.variableAtIndex(0), variables[0]) == 0);
+    quiz_assert(strcmpWithSystemParentheses(equationStore.variableAtIndex(0), variables[0]) == 0);
   }
   constexpr int bufferSize = 200;
   char buffer[bufferSize];
   for (int i = 0; i < numberOfSolutions; i++) {
     equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, bufferSize);
-    quiz_assert(strcmp(buffer, solutions[i]) == 0);
+    quiz_assert(strcmpWithSystemParentheses(buffer, solutions[i]) == 0);
   }
   equationStore.removeAll();
 }

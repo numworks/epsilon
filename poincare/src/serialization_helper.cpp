@@ -117,7 +117,6 @@ int SerializationHelper::Prefix(
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
-    int firstChildIndex,
     int lastChildIndex)
 {
   {
@@ -142,22 +141,16 @@ int SerializationHelper::Prefix(
 
   int childrenCount = node->numberOfChildren();
   if (childrenCount > 0) {
-    assert(childrenCount > firstChildIndex);
     int lastIndex = lastChildIndex < 0 ? childrenCount - 1 : lastChildIndex;
-    assert(firstChildIndex <= lastIndex);
 
-    // Write the first child
-    numberOfChar += node->childAtIndex(firstChildIndex)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
-    if (numberOfChar >= bufferSize-1) {
-      assert(buffer[bufferSize - 1] == 0);
-      return bufferSize-1;
-    }
-
-    // Write the remaining children, separated with commas
-    for (int i = firstChildIndex + 1; i <= lastIndex; i++) {
-      numberOfChar += UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
-      if (numberOfChar >= bufferSize-1) {
-        return bufferSize-1;
+    // Write the children, separated with commas
+    for (int i = 0; i <= lastIndex; i++) {
+      if (i != 0) {
+        // Write the comma
+        numberOfChar += UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
+        if (numberOfChar >= bufferSize-1) {
+          return bufferSize-1;
+        }
       }
       numberOfChar += node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
       if (numberOfChar >= bufferSize-1) {

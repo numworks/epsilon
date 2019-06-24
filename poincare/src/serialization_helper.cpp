@@ -117,7 +117,8 @@ int SerializationHelper::Prefix(
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
-    bool writeFirstChild)
+    int firstChildIndex,
+    int lastChildIndex)
 {
   {
     int result = 0;
@@ -133,18 +134,17 @@ int SerializationHelper::Prefix(
     return bufferSize-1;
   }
 
-  // Add the opening parenthese
-  numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
+  // Add the opening parenthesis
+  numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
 
   int childrenCount = node->numberOfChildren();
   if (childrenCount > 0) {
-    if (!writeFirstChild) {
-      assert(childrenCount > 1);
-    }
-    int firstChildIndex = writeFirstChild ? 0 : 1;
+    assert(childrenCount > firstChildIndex);
+    int lastIndex = lastChildIndex < 0 ? childrenCount - 1 : lastChildIndex;
+    assert(firstChildIndex <= lastIndex);
 
     // Write the first child
     numberOfChar += node->childAtIndex(firstChildIndex)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
@@ -154,7 +154,7 @@ int SerializationHelper::Prefix(
     }
 
     // Write the remaining children, separated with commas
-    for (int i = firstChildIndex + 1; i < childrenCount; i++) {
+    for (int i = firstChildIndex + 1; i <= lastIndex; i++) {
       numberOfChar += UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar);
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
@@ -167,8 +167,8 @@ int SerializationHelper::Prefix(
     }
   }
 
-  // Add the closing parenthese
-  numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
+  // Add the closing parenthesis
+  numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }

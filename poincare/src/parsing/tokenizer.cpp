@@ -138,6 +138,12 @@ Token Tokenizer::popToken() {
   if (c == UCodePointMultiplicationSign || c == UCodePointMiddleDot) {
     return Token(Token::Times);
   }
+  if (c == UCodePointLeftSystemParenthesis) {
+    return Token(Token::LeftSystemParenthesis);
+  }
+  if (c == UCodePointRightSystemParenthesis) {
+    return Token(Token::RightSystemParenthesis);
+  }
   if (c == '^') {
     return Token(Token::Caret);
   }

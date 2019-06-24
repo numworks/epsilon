@@ -28,6 +28,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   // On R
   assert_parsed_expression_evaluates_to<double>("cos(2)", "-4.1614683654714ᴇ-1", System, Radian);
   assert_parsed_expression_evaluates_to<double>("cos(2)", "0.9993908270191", System, Degree);
+  assert_parsed_expression_evaluates_to<double>("cos(2)", "9.9950656036573ᴇ-1", System, Gradian);
   // Oscillator
   assert_parsed_expression_evaluates_to<float>("cos(π/2)", "0", System, Radian);
   assert_parsed_expression_evaluates_to<double>("cos(3×π/2)", "0", System, Radian);
@@ -49,6 +50,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   // On R
   assert_parsed_expression_evaluates_to<double>("sin(2)", "9.0929742682568ᴇ-1", System, Radian);
   assert_parsed_expression_evaluates_to<double>("sin(2)", "3.4899496702501ᴇ-2", System, Degree);
+  assert_parsed_expression_evaluates_to<double>("sin(2)", "3.1410759078128ᴇ-2", System, Gradian);
   // Oscillator
   assert_parsed_expression_evaluates_to<float>("sin(π/2)", "1", System, Radian);
   assert_parsed_expression_evaluates_to<double>("sin(3×π/2)", "-1", System, Radian);
@@ -71,6 +73,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   // On R
   assert_parsed_expression_evaluates_to<double>("tan(2)", "-2.1850398632615", System, Radian);
   assert_parsed_expression_evaluates_to<double>("tan(2)", "3.4920769491748ᴇ-2", System, Degree);
+  assert_parsed_expression_evaluates_to<double>("tan(2)", "3.1426266043351ᴇ-2", System, Gradian);
   // Tangent-style
   assert_parsed_expression_evaluates_to<float>("tan(π/2)", Undefined::Name(), System, Radian);
   assert_parsed_expression_evaluates_to<double>("tan(3×π/2)", Undefined::Name(), System, Radian);
@@ -95,6 +98,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("acos(0.5)", "1.0471975511966", System, Radian);
   assert_parsed_expression_evaluates_to<double>("acos(0.03)", "1.5407918249714", System, Radian);
   assert_parsed_expression_evaluates_to<double>("acos(0.5)", "60", System, Degree);
+  assert_parsed_expression_evaluates_to<double>("acos(0.5)", "66.666666666667", System, Gradian);
   // On [1, inf[
   assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248×𝐢", System, Radian);
   assert_parsed_expression_evaluates_to<double>("acos(2)", "75.456129290217×𝐢", System, Degree);
@@ -117,6 +121,9 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("acos(0)", "90", System, Degree);
   assert_parsed_expression_evaluates_to<float>("acos(-1)", "180", System, Degree);
   assert_parsed_expression_evaluates_to<double>("acos(1)", "0", System, Degree);
+  assert_parsed_expression_evaluates_to<double>("acos(0)", "100", System, Gradian);
+  assert_parsed_expression_evaluates_to<float>("acos(-1)", "200", System, Gradian);
+  assert_parsed_expression_evaluates_to<double>("acos(1)", "0", System, Gradian);
 
   /* asin: [-1,1]    -> R
    *       ]-inf,-1[ -> -π/2+R×i (odd)

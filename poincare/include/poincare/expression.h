@@ -212,8 +212,8 @@ public:
   Expression reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
-  Expression radianToDegree();
-  Expression degreeToRadian();
+  Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
+  Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
 
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation

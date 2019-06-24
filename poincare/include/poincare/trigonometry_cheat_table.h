@@ -23,10 +23,11 @@ public:
   constexpr static int k_numberOfEntries = 37;
   enum class Type {
     AngleInDegrees = 0,
-    AngleInRadians = 1,
-    Cosine = 2,
-    Sine = 3,
-    Tangent = 4
+    AngleInGradians = 1,
+    AngleInRadians = 2,
+    Cosine = 3,
+    Sine = 4,
+    Tangent = 5
   };
   static const TrigonometryCheatTable * Table();
   Expression simplify(const Expression e, ExpressionNode::Type type, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const;
@@ -50,8 +51,8 @@ private:
     };
     // END OF PAIR CLASS
 
-    constexpr Row(Pair angleInRadians, Pair angleInDegrees, Pair sine, Pair cosine, Pair tangent) :
-      m_pairs{angleInRadians, angleInDegrees, sine, cosine, tangent} {}
+    constexpr Row(Pair angleInRadians, Pair angleInGradians, Pair angleInDegrees, Pair sine, Pair cosine, Pair tangent) :
+      m_pairs{angleInRadians, angleInGradians, angleInDegrees, sine, cosine, tangent} {}
     float floatForType(Type t) const {
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
       return m_pairs[(int)t].value();
@@ -61,7 +62,7 @@ private:
       return m_pairs[(int)t].reducedExpression(assertNotUninitialized, context, complexFormat, angleUnit, target);
     }
   private:
-    constexpr static int k_numberOfPairs = 5;
+    constexpr static int k_numberOfPairs = 6;
     const Pair m_pairs[k_numberOfPairs];
   };
   // END OF ROW CLASS

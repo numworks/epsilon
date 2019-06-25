@@ -310,8 +310,9 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
 
   /* Move the cursor if needed.
    *
-   * If forceCursorRightOfLayout is true, there is no need to move the cursor
-   * because it already points to the right of the added layout.
+   * If forceCursorRightOfLayout is true and the layout has been merged, there
+   * is no need to move the cursor because it already points to the right of the
+   * added layouts.
    *
    * If the layout to point to has been merged, only its children have been
    * inserted in the layout. We already computed where the cursor should point,
@@ -341,6 +342,9 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
     }
     assert(!cursorMergedLayout.isUninitialized());
     m_contentView.cursor()->setLayout(cursorMergedLayout);
+    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
+  } else if (!layoutWillBeMerged) {
+    m_contentView.cursor()->setLayout(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
 

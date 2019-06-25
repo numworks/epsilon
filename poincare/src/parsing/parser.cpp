@@ -412,9 +412,13 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     m_status = Status::Error; // Identifier name too long.
     return;
   }
-  if (!popTokenIfType(Token::LeftParenthesis) && !popTokenIfType(Token::LeftSystemParenthesis)) {
-    leftHandSide = Symbol::Builder(name, length);
-    return;
+  bool poppedParenthesisIsSystem = false;
+  if (!popTokenIfType(Token::LeftParenthesis)) {
+    if (!popTokenIfType(Token::LeftSystemParenthesis)) {
+      leftHandSide = Symbol::Builder(name, length);
+      return;
+    }
+    poppedParenthesisIsSystem = true;
   }
   Expression parameter = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
@@ -428,10 +432,13 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
   parameter = parameter.childAtIndex(0);
   if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
     m_status = Status::Error; // Function and variable must have distinct names.
-  } else if (!popTokenIfType(Token::RightParenthesis) && !popTokenIfType(Token::RightSystemParenthesis)) {
-    m_status = Status::Error; // Right parenthesis missing.
   } else {
-    leftHandSide = Function::Builder(name, length, parameter);
+    Token::Type correspondingRightParenthesis = poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis : Token::Type::RightParenthesis;
+    if (!popTokenIfType(correspondingRightParenthesis)) {
+      m_status = Status::Error; // Right parenthesis missing or wrong type of right parenthesis
+    } else {
+      leftHandSide = Function::Builder(name, length, parameter);
+    }
   }
 }
 
@@ -455,19 +462,24 @@ void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType
 }
 
 Expression Parser::parseFunctionParameters() {
-  if (!popTokenIfType(Token::LeftParenthesis) && !popTokenIfType(Token::LeftSystemParenthesis)) {
-    m_status = Status::Error; // Left parenthesis missing.
-    return Expression();
+  bool poppedParenthesisIsSystem = false;
+  if (!popTokenIfType(Token::LeftParenthesis)) {
+    if (!popTokenIfType(Token::LeftSystemParenthesis)) {
+      m_status = Status::Error; // Left parenthesis missing.
+      return Expression();
+    }
+    poppedParenthesisIsSystem = true;
   }
-  if (popTokenIfType(Token::RightParenthesis) || popTokenIfType(Token::RightSystemParenthesis) ) {
+  Token::Type correspondingRightParenthesis = poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis : Token::Type::RightParenthesis;
+  if (popTokenIfType(correspondingRightParenthesis)) {
     return Matrix::Builder(); // The function has no parameter.
   }
   Expression commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
     return Expression();
   }
-  if (!popTokenIfType(Token::RightParenthesis) && !popTokenIfType(Token::RightSystemParenthesis)) {
-    m_status = Status::Error; // Right parenthesis missing.
+  if (!popTokenIfType(correspondingRightParenthesis)) {
+    m_status = Status::Error; // Right parenthesis missing or wrong type of right parenthesis
     return Expression();
   }
   return commaSeparatedList;

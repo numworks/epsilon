@@ -15,7 +15,6 @@ ListParameterController::ListParameterController(::InputEventHandlerDelegate * i
   m_typeParameterController(this, listController, TableCell::Layout::Horizontal, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin)
 {
-  static_cast<ExpressionView *>(m_typeCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 const char * ListParameterController::title() {

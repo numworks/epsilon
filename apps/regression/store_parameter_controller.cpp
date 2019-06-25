@@ -10,7 +10,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_changeRegressionCell(I18n::Message::Regression),
   m_lastSelectionIsRegression(false)
 {
-  static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 void StoreParameterController::viewWillAppear() {

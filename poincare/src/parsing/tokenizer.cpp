@@ -145,13 +145,10 @@ Token Tokenizer::popToken() {
     return Token(Token::RightSystemParenthesis);
   }
   if (c == '^') {
+    if (canPopCodePoint(UCodePointLeftSystemParenthesis)) {
+      return Token(Token::CaretWithParenthesis);
+    }
     return Token(Token::Caret);
-  }
-  if (c == UCodePointLeftSuperscript) {
-    return Token(Token::LeftSuperscript);
-  }
-  if (c == UCodePointRightSuperscript) {
-    return Token(Token::RightSuperscript);
   }
   if (c == '!') {
     return Token(Token::Bang);

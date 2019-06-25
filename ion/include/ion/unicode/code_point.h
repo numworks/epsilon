@@ -28,10 +28,8 @@ static constexpr CodePoint UCodePointLineFeed                 = 0xa;
 
 // 0x11 to 0x15 are not used, so we can use them for another purpose
 static constexpr CodePoint UCodePointEmpty                    = 0x11; // Used to be parsed into EmptyExpression
-static constexpr CodePoint UCodePointLeftSuperscript          = 0x12; // Used to parse Power
-static constexpr CodePoint UCodePointRightSuperscript         = 0x13; // Used to parse Power
-static constexpr CodePoint UCodePointLeftSystemParenthesis    = 0x14; // Used for serialization
-static constexpr CodePoint UCodePointRightSystemParenthesis   = 0x15; // Used for serialization
+static constexpr CodePoint UCodePointLeftSystemParenthesis    = 0x12; // Used for serialization
+static constexpr CodePoint UCodePointRightSystemParenthesis   = 0x13; // Used for serialization
 
 static constexpr CodePoint UCodePointMiddleDot                = 0xb7;    // ·
 static constexpr CodePoint UCodePointMultiplicationSign       = 0xd7;    // ×

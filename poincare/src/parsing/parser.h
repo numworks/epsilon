@@ -60,6 +60,7 @@ private:
   void parseSlash(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);

@@ -423,4 +423,18 @@ QUIZ_CASE(poincare_unparsable_layouts) {
         HorizontalLayout::Builder(children, childrenCount));
     assert_layout_is_not_parsed(l);
   }
+
+  {
+    // |3)+(1|
+    constexpr int childrenCount = 5;
+    Layout children[childrenCount] = {
+      CodePointLayout::Builder('3'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder('+'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('1')};
+
+    Layout l = AbsoluteValueLayout::Builder(HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
 }

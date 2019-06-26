@@ -417,6 +417,9 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, const char * name,
     return;
   }
   bool poppedParenthesisIsSystem = false;
+  /* If the identifier is followed by parentheses it is a function, else it is a
+   * symbol. The parentheses can be system parentheses, if serialized using
+   * SerializationHelper::Prefix. */
   if (!popTokenIfType(Token::LeftParenthesis)) {
     if (!popTokenIfType(Token::LeftSystemParenthesis)) {
       leftHandSide = Symbol::Builder(name, length);
@@ -467,6 +470,8 @@ void Parser::parseIdentifier(Expression & leftHandSide, Token::Type stoppingType
 
 Expression Parser::parseFunctionParameters() {
   bool poppedParenthesisIsSystem = false;
+  /* The function parentheses can be system parentheses, if serialized using
+   * SerializationHelper::Prefix.*/
   if (!popTokenIfType(Token::LeftParenthesis)) {
     if (!popTokenIfType(Token::LeftSystemParenthesis)) {
       m_status = Status::Error; // Left parenthesis missing.

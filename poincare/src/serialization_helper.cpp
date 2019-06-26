@@ -80,6 +80,9 @@ int InfixPrefix(
 
   int numberOfChar = 0;
 
+  /* For Prefix, we use system parentheses so that, for instance, |3)+(1| is not
+   * parsable after serialization.*/
+
   if (prefix) {
     // Prefix: Copy the operator name
     numberOfChar = strlcpy(buffer, operatorName, bufferSize);

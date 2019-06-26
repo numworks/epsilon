@@ -215,6 +215,10 @@ void Parser::parseCaret(Expression & leftHandSide, Token::Type stoppingType) {
 }
 
 void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType) {
+  /* When parsing 2^(4) ! (with system parentheses), the factorial should stay
+   * out of the power. To do this, we tokenized ^( as one token that should be
+   * matched by a closing parenthesis. Otherwise, the ! would take precendence
+   * over the power. */
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Power must have a left operand
     return;

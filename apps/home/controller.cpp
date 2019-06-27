@@ -80,8 +80,6 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 void Controller::didBecomeFirstResponder() {
   if (m_selectionDataSource->selectedRow() == -1) {
     m_selectionDataSource->selectCellAtLocation(0, 0);
-  } else {
-    m_selectionDataSource->selectCellAtLocation(m_selectionDataSource->selectedColumn(), m_selectionDataSource->selectedRow());
   }
   app()->setFirstResponder(m_view.selectableTableView());
 }

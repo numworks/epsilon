@@ -19,10 +19,17 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
   };
+  Snapshot * snapshot() const {
+    return static_cast<Snapshot *>(::App::snapshot());
+  }
 private:
   App(Snapshot * snapshot);
   Controller m_controller;
 };
+
+inline App * app() {
+  return static_cast<App *>(::app());
+}
 
 }
 

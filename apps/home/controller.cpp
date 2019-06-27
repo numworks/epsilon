@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "app.h"
 #include "../apps_container.h"
 extern "C" {
 #include <assert.h>
@@ -49,15 +50,14 @@ void Controller::ContentView::layoutSubviews() {
 
 Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource) :
   ViewController(parentResponder),
-  m_view(this, selectionDataSource),
-  m_selectionDataSource(selectionDataSource)
+  m_view(this, selectionDataSource)
 {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer * container = AppsContainer::sharedAppsContainer();
-    bool switched = container->switchTo(container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
+    bool switched = container->switchTo(container->appSnapshotAtIndex(selectionDataSource()->selectedRow()*k_numberOfColumns+selectionDataSource()->selectedColumn()+1));
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
     return true;
@@ -67,11 +67,11 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return m_view.selectableTableView()->selectCellAtLocation(0,0);
   }
 
-  if (event == Ion::Events::Right && m_selectionDataSource->selectedRow() < numberOfRows()) {
-    return m_view.selectableTableView()->selectCellAtLocation(0, m_selectionDataSource->selectedRow()+1);
+  if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows()) {
+    return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow()+1);
   }
-  if (event == Ion::Events::Left && m_selectionDataSource->selectedRow() > 0) {
-    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns()-1, m_selectionDataSource->selectedRow()-1);
+  if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
+    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns()-1, selectionDataSource()->selectedRow()-1);
   }
 
   return false;
@@ -156,6 +156,10 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
   if (appIndex >= container->numberOfApps()) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }
+}
+
+SelectableTableViewDataSource * Controller::selectionDataSource() const {
+  return app()->snapshot();
 }
 
 }

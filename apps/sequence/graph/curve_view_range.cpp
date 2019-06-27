@@ -19,16 +19,16 @@ void CurveViewRange::roundAbscissa() {
   float halfScreenWidth = ((float)Ion::Display::Width)/2.0f;
   float newXMin = clipped(roundedXMean - halfScreenWidth, false);
   float newXMax = clipped(roundedXMean + halfScreenWidth - 1.0f, true);
+  float interestingXMin = m_delegate->interestingXMin();
+  if (newXMin < interestingXMin) {
+    newXMin = interestingXMin - k_displayLeftMarginRatio * (float)Ion::Display::Width;
+    newXMax = newXMin + (float)Ion::Display::Width;
+  }
   if (std::isnan(newXMin) || std::isnan(newXMax)) {
     return;
   }
   m_xMin = newXMin;
   m_xMax = newXMax;
-  float interestingXMin = m_delegate->interestingXMin();
-  if (m_xMin < interestingXMin) {
-    m_xMin = interestingXMin - k_displayLeftMarginRatio * (float)Ion::Display::Width;
-    m_xMax = m_xMin + (float)Ion::Display::Width;
-  }
   m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
@@ -42,15 +42,15 @@ void CurveViewRange::normalize() {
   // Compute the X
   float newXMin = clipped(xMean - NormalizedXHalfRange(), false);
   float newXMax = clipped(xMean + NormalizedXHalfRange(), true);
+  float interestingXMin = m_delegate->interestingXMin();
+  if (newXMin < interestingXMin) {
+    newXMin = interestingXMin -k_displayLeftMarginRatio*2.0f*NormalizedXHalfRange();
+    newXMax = newXMin + 2.0f*NormalizedXHalfRange();
+  }
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMin = newXMin;
     m_xMax = newXMax;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
-  }
-  float interestingXMin = m_delegate->interestingXMin();
-  if (m_xMin < interestingXMin) {
-    m_xMin = interestingXMin -k_displayLeftMarginRatio*2.0f*NormalizedXHalfRange();
-    m_xMax = m_xMin + 2.0f*NormalizedXHalfRange();
   }
 
   // Compute the Y

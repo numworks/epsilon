@@ -28,10 +28,7 @@ void CurveViewRange::roundAbscissa() {
     return;
   }
   m_xMax = newXMax;
-  MemoizedCurveViewRange::setXMin(newXMin);
-  if (m_delegate) {
-    m_delegate->didChangeRange(this);
-  }
+  setXMin(newXMin);
 }
 
 void CurveViewRange::normalize() {

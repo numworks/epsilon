@@ -26,6 +26,7 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   int numberOfIcons();
+  SelectableTableViewDataSource * selectionDataSource() const;
   class ContentView : public View {
   public:
     ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource);
@@ -47,7 +48,6 @@ private:
   static constexpr int k_cellWidth = 104;
   ContentView m_view;
   AppCell m_cells[k_maxNumberOfCells];
-  SelectableTableViewDataSource * m_selectionDataSource;
 };
 
 }

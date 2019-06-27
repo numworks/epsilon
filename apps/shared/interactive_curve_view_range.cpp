@@ -107,9 +107,7 @@ void InteractiveCurveViewRange::roundAbscissa() {
     return;
   }
   m_xMax = newXMax;
-  MemoizedCurveViewRange::setXMin(newXMin);
-  // Set y range
-  notifyRangeChange();
+  setXMin(newXMin);
 }
 
 void InteractiveCurveViewRange::normalize() {

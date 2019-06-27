@@ -24,7 +24,6 @@ public:
   public:
     Snapshot();
     App * unpack(Container * container) override;
-    void reset() override;
     Descriptor * descriptor() override;
     SequenceStore * functionStore() override { return &m_sequenceStore; }
     CurveViewRange * graphRange() { return &m_graphRange; }

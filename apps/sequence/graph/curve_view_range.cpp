@@ -27,9 +27,8 @@ void CurveViewRange::roundAbscissa() {
   if (std::isnan(newXMin) || std::isnan(newXMax)) {
     return;
   }
-  m_xMin = newXMin;
   m_xMax = newXMax;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
+  MemoizedCurveViewRange::setXMin(newXMin);
   if (m_delegate) {
     m_delegate->didChangeRange(this);
   }
@@ -48,9 +47,8 @@ void CurveViewRange::normalize() {
     newXMax = newXMin + 2.0f*NormalizedXHalfRange();
   }
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
-    m_xMin = newXMin;
     m_xMax = newXMax;
-    m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
+    MemoizedCurveViewRange::setXMin(newXMin);
   }
 
   // Compute the Y
@@ -58,24 +56,21 @@ void CurveViewRange::normalize() {
   float newYMin = clipped(yMean - NormalizedYHalfRange(), false);
   float newYMax = clipped(yMean + NormalizedYHalfRange(), true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
-    m_yMin = newYMin;
     m_yMax = newYMax;
-    m_yGridUnit = computeGridUnit(Axis::Y, m_yMax - m_yMin);
+    MemoizedCurveViewRange::setYMin(newYMin);
   }
 }
 
 void CurveViewRange::setTrigonometric() {
   float interestingXMin = m_delegate->interestingXMin();
   float interestingXRange = Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Degree ? 1200.0f : 21.0f;
-  m_xMin = interestingXMin - k_displayLeftMarginRatio * interestingXRange;
   m_xMax = interestingXMin + interestingXRange;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMax - m_xMin);
+  MemoizedCurveViewRange::setXMin(interestingXMin - k_displayLeftMarginRatio * interestingXRange);
 
   m_yAuto = false;
   constexpr float y = 1.6f;
-  m_yMin = -y;
   m_yMax = y;
-  m_yGridUnit = computeGridUnit(Axis::Y, m_yMax - m_yMin);
+  MemoizedCurveViewRange::setYMin(-y);
 }
 
 void CurveViewRange::setDefault() {

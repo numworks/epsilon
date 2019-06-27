@@ -56,12 +56,21 @@ const char * CodePointSearch(const char * s, CodePoint c) {
 }
 
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, const char * initialPosition) {
-  // TODO LEA: optimize for one byte long c?
-  if (goingLeft) {
-    assert(initialPosition != nullptr);
-    if (initialPosition == s) {
-      return s;
+  if (goingLeft && initialPosition == s) {
+    return s;
+  }
+  assert(goingLeft || initialPosition == nullptr);
+  assert(!goingLeft || initialPosition != nullptr);
+  if (UTF8Decoder::CharSizeOfCodePoint(c) == 1) {
+    /* The code points are one char long, so they are equal to their char
+     * translations. We can do a classic char search. */
+    const char * codePointPointer = goingLeft ? initialPosition - 1 : s;
+    while ((goingLeft ?codePointPointer > s : *codePointPointer != 0) && *codePointPointer == c) {
+      codePointPointer += goingLeft ? -1 : 1;
     }
+    return codePointPointer;
+  }
+  if (goingLeft) {
     UTF8Decoder decoder(s, initialPosition);
     CodePoint codePoint = decoder.previousCodePoint();
     const char * codePointPointer = decoder.stringPosition();
@@ -71,7 +80,6 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
     }
     return codePointPointer;
   }
-  assert(!goingLeft && initialPosition == nullptr);
   UTF8Decoder decoder(s);
   const char * codePointPointer = decoder.stringPosition();
   CodePoint codePoint = decoder.nextCodePoint();

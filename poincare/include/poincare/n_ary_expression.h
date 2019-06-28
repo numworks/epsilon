@@ -3,6 +3,8 @@
 
 #include <poincare/expression.h>
 
+// NAryExpressions are additions and multiplications
+
 namespace Poincare {
 
 class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpressionNode?

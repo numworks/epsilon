@@ -21,6 +21,7 @@ public:
   virtual void setYMax(float f);
 
 protected:
+  float defaultRangeLengthFor(float position) const;
   // Window bounds of the data
   float m_xMin;
   float m_xMax;

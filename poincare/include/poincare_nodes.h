@@ -1,8 +1,6 @@
 #ifndef POINCARE_NODES_H
 #define POINCARE_NODES_H
 
-#define MATRICES_ARE_DEFINED 1
-
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>

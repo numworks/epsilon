@@ -2,7 +2,7 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/n_ary_expression_node.h>
+#include <poincare/n_ary_expression.h>
 
 namespace Poincare {
 

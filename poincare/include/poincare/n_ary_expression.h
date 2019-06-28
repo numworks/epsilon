@@ -1,5 +1,5 @@
-#ifndef POINCARE_N_ARY_EXPRESSION_NODE_H
-#define POINCARE_N_ARY_EXPRESSION_NODE_H
+#ifndef POINCARE_N_ARY_EXPRESSION_H
+#define POINCARE_N_ARY_EXPRESSION_H
 
 #include <poincare/expression.h>
 

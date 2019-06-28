@@ -2,7 +2,7 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/n_ary_expression_node.h>
+#include <poincare/n_ary_expression.h>
 #include <poincare/rational.h>
 
 namespace Poincare {

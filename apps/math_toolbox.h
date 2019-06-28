@@ -1,7 +1,6 @@
 #ifndef APPS_MATH_TOOLBOX_H
 #define APPS_MATH_TOOLBOX_H
 
-#define MATRICES_ARE_DEFINED 1
 #include <escher.h>
 #include <apps/i18n.h>
 

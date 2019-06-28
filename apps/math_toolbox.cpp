@@ -37,7 +37,6 @@ const ToolboxMessageTree arithmeticChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient)
 };
 
-#if MATRICES_ARE_DEFINED
 const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, false, I18n::Message::MatrixCommand),
   ToolboxMessageTree::Leaf(I18n::Message::IndentityCommandWithArg, I18n::Message::Identity),
@@ -47,7 +46,6 @@ const ToolboxMessageTree matricesChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::TraceCommandWithArg, I18n::Message::Trace),
   ToolboxMessageTree::Leaf(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension)
 };
-#endif
 
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree listsChildren[] = {
@@ -88,9 +86,7 @@ const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::ComplexNumber, complexChildren),
   ToolboxMessageTree::Node(I18n::Message::Probability, probabilityChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticChildren),
-#if MATRICES_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Matrices, matricesChildren),
-#endif
 #if LIST_ARE_DEFINED
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
 #endif

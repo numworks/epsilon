@@ -5,14 +5,11 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_matrix_evaluate) {
-#if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("[[1,2,3][4,5,6]]", "[[1,2,3][4,5,6]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2,3][4,5,6]]", "[[1,2,3][4,5,6]]");
-#endif
 }
 
 QUIZ_CASE(poincare_matrix_simplify) {
-#if MATRICES_ARE_DEFINED
 #if MATRIX_EXACT_REDUCING
   // Addition Matrix
   assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", "[[2,3,4][5,6,7]]");
@@ -103,6 +100,5 @@ QUIZ_CASE(poincare_matrix_simplify) {
   assert_parsed_expression_simplify_to("tan([[P/3,0][P/7,P/6]])", "[[R(3),0][tan(P/7),R(3)/3]]");
 #else
   assert_parsed_expression_simplify_to("R([[4,2][P/7,1]])", "R([[4,2][P/7,1]])");
-#endif
 #endif
 }

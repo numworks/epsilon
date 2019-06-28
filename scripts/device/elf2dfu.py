@@ -50,7 +50,8 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
   external_address_prefix = "9"; # External addresses start with 0x9
   # We don't sort sections on their names (.external, .internal) but on their
   # addresses because some sections like dfu_entry_point can either be the
-  # internal or the external flash depending on build flags (ie EPSILON_USB_DFU_XIP)
+  # internal or the external flash depending on which targets is built (ie
+  # flasher executes dfu in place but epsilon executes dfu relocated in RAM)
   external_block = {'name': "external", 'sections': loadable_sections(elf_file, external_address_prefix)}
   internal_block = {'name': "internal", 'sections': [s for s in loadable_sections(elf_file) if s not in external_block['sections']]}
   blocks = [external_block, internal_block]

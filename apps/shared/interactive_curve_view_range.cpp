@@ -158,7 +158,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   if (axis == Axis::X) {
     float range = m_xMax - m_xMin;
     if (std::fabs(position/range) > k_maxRatioPositionRange) {
-      range = std::pow(10.0f, std::floor(std::log10(std::fabs(position)))-1.0f);
+      range = defaultRangeLengthFor(position);
     }
     m_xMax = clipped(position + range/2.0f, true);
     MemoizedCurveViewRange::setXMin(clipped(position - range/2.0f, false));
@@ -166,7 +166,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
     m_yAuto = false;
     float range = m_yMax - m_yMin;
     if (std::fabs(position/range) > k_maxRatioPositionRange) {
-      range = std::pow(10.0f, std::floor(std::log10(std::fabs(position)))-1.0f);
+      range = defaultRangeLengthFor(position);
     }
     m_yMax = clipped(position + range/2.0f, true);
     MemoizedCurveViewRange::setYMin(clipped(position - range/2.0f, false));

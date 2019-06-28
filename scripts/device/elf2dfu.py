@@ -54,14 +54,13 @@ def elf2dfu(elf_file, usb_vid_pid, dfu_file, verbose):
   external_block = {'name': "external", 'sections': loadable_sections(elf_file, external_address_prefix)}
   internal_block = {'name': "internal", 'sections': [s for s in loadable_sections(elf_file) if s not in external_block['sections']]}
   blocks = [external_block, internal_block]
+  blocks = [b for b in blocks if b['sections']]
   if verbose:
     for b in blocks:
      print(b['name'])
      print_sections(b['sections'])
   targets = []
   for b in blocks:
-    if (not b['sections']):
-      continue
     name = b['name']
     subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in b['sections']] for item in sublist]+[elf_file, bin_file(b)])
     address = min([s['lma'] for s in b['sections']])

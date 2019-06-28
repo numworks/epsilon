@@ -48,33 +48,6 @@ Layout CubicModel::layout() {
   return m_layout;
 }
 
-Expression CubicModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  Expression addChildren[] = {
-    Multiplication::Builder(
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(3.0))),
-    Multiplication::Builder(
-      Number::DecimalNumber(b),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(2.0))),
-    Multiplication::Builder(
-      Number::DecimalNumber(c),
-      Symbol::Builder('x')),
-    Number::DecimalNumber(d)
-    };
-  // a*x^3+b*x^2+c*x+d
-  Expression result = Addition::Builder(addChildren, 4);
-  PoincareHelpers::Simplify(&result, *context);
-  return result;
-}
-
 double CubicModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -102,6 +75,32 @@ double CubicModel::partialDerivate(double * modelCoefficients, int derivateCoeff
   }
   assert(false);
   return 0.0;
+}
+
+Expression CubicModel::expression(double * modelCoefficients) {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  Expression addChildren[] = {
+    Multiplication::Builder(
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(3.0))),
+    Multiplication::Builder(
+      Number::DecimalNumber(b),
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(2.0))),
+    Multiplication::Builder(
+      Number::DecimalNumber(c),
+      Symbol::Builder('x')),
+    Number::DecimalNumber(d)
+    };
+  // a*x^3+b*x^2+c*x+d
+  Expression result = Addition::Builder(addChildren, 4);
+  return result;
 }
 
 }

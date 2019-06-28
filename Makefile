@@ -81,6 +81,8 @@ objs = $(call object_for,$(src))
 # but allows correct yet optimal incremental builds.
 -include $(objs:.o=.d)
 
+executables = epsilon test
+
 #define platform generic targets
 
 $(BUILD_DIR)/epsilon.$(EXE): $(objs) $(call object_for,$(ion_device_dfu_relocated_src) $(epsilon_src))
@@ -91,17 +93,7 @@ $(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(objs) $(call o
 # We include them before the standard ones to give them precedence.
 -include scripts/targets.$(PLATFORM).mak
 
-# Define rules for executables
-# Those can be built directly with make executable.exe as a shortcut. They also
-# depends on $(objs)
-
-executables = epsilon test
-define rules_for_executable
-.PHONY: $(1).$$(EXE)
-$(1).$$(EXE): $$(BUILD_DIR)/$(1).$$(EXE)
-endef
-
-$(foreach executable,$(executables),$(eval $(call rules_for_executable,$(executable))))
+$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(EXE))))
 
 # Define standard compilation rules
 

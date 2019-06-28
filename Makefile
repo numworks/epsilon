@@ -72,22 +72,23 @@ include scripts/struct_layout/Makefile
 include scripts/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-objs = $(call object_for,$(src))
-.SECONDARY: $(objs)
+all_src = src ion_device_dfu_relocated_src ion_device_dfu_xip flasher_src bench_src epsilon_src runner_src tests
+all_objs = $(call object_for,$(all_src))
+.SECONDARY: $(all_objs)
 
 # Load source-based dependencies
 # Compilers can generate Makefiles that states the dependencies of a given
 # objet to other source and headers. This serve no purpose for a clean build,
 # but allows correct yet optimal incremental builds.
--include $(objs:.o=.d)
+-include $(all_objs:.o=.d)
 
 executables = epsilon test
 
 #define platform generic targets
 
-$(BUILD_DIR)/epsilon.$(EXE): $(objs) $(call object_for,$(ion_device_dfu_relocated_src) $(epsilon_src))
+$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(src) $(ion_device_dfu_relocated_src) $(epsilon_src))
 
-$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(objs) $(call object_for,$(ion_device_dfu_relocated_src) $(tests) $(runner_src))
+$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_for,$(src) $(ion_device_dfu_relocated_src) $(tests) $(runner_src))
 
 # Load platform-specific targets
 # We include them before the standard ones to give them precedence.

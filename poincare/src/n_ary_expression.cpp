@@ -1,4 +1,4 @@
-#include <poincare/n_ary_expression_node.h>
+#include <poincare/n_ary_expression.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>

@@ -45,12 +45,12 @@ Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat 
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
+
   Expression op = childAtIndex(0);
   if (op.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
+
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());

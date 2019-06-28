@@ -41,14 +41,10 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexF
   if (e.isUndefined()) {
     return e;
   }
-#if MATRIX_EXACT_REDUCING
-#if 0
-  if (c->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-#endif
   Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
+  }
   if (c.isReal(context)) {
     float app = c.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
     if (!std::isnan(app) &&

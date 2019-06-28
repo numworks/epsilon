@@ -56,11 +56,9 @@ Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexForm
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   return Trigonometry::shallowReduceInverseFunction(*this, context, complexFormat, angleUnit, target);
 }
 

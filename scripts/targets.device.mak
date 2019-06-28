@@ -1,12 +1,17 @@
-%.dfu: %.$(EXE)
+executables += flasher.light flasher.verbose bench.RAM bench.flash
+extensions = dfu hex bin
+
+$(foreach extension,$(extensions),$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(extension)))))
+
+$(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.$(EXE)
 	@echo "DFUSE   $@"
 	$(Q) $(PYTHON) scripts/device/elf2dfu.py $< $@
 
-%.hex: %.$(EXE)
+$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.$(EXE)
 	@echo "OBJCOPY $@"
 	$(Q) $(OBJCOPY) -O ihex $< $@
 
-%.bin: %.$(EXE)
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.$(EXE)
 	@echo "OBJCOPY $@"
 	$(Q) $(OBJCOPY) -O binary $< $@
 # We pad the device binary files because there was a bug in an older version of

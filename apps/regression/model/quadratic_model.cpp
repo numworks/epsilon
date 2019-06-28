@@ -40,27 +40,6 @@ Layout QuadraticModel::layout() {
   return m_layout;
 }
 
-Expression QuadraticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  // a*x^2+b*x+c
-  Expression addChildren[] = {
-    Multiplication::Builder(
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(2.0))),
-    Multiplication::Builder(
-      Number::DecimalNumber(b),
-      Symbol::Builder('x')),
-    Number::DecimalNumber(c)
-  };
-  Expression result = Addition::Builder(addChildren, 3);
-  PoincareHelpers::Simplify(&result, *context);
-  return result;
-}
-
 double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -83,6 +62,26 @@ double QuadraticModel::partialDerivate(double * modelCoefficients, int derivateC
   }
   assert(false);
   return 0.0;
+}
+
+Expression QuadraticModel::expression(double * modelCoefficients) {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  // a*x^2+b*x+c
+  Expression addChildren[] = {
+    Multiplication::Builder(
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder('x'),
+        Decimal::Builder(2.0))),
+    Multiplication::Builder(
+      Number::DecimalNumber(b),
+      Symbol::Builder('x')),
+    Number::DecimalNumber(c)
+  };
+  Expression result = Addition::Builder(addChildren, 3);
+  return result;
 }
 
 }

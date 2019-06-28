@@ -119,6 +119,7 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
   UTF8Decoder decoder(buffer);
   const char * currentPointer = buffer;
   CodePoint codePoint = decoder.nextCodePoint();
+  const char * initialPointerToUpdate =  *pointerToUpdate;
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
   size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
@@ -128,7 +129,7 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
       int copySize = nextPointer - currentPointer;
       memmove(buffer + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
-    } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {
+    } else if (pointerToUpdate != nullptr && currentPointer < initialPointerToUpdate) {
       assert(*pointerToUpdate - buffer >= codePointCharSize);
       *pointerToUpdate = *pointerToUpdate - codePointCharSize;
     }

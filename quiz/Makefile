@@ -20,9 +20,5 @@ runner_src += $(addprefix quiz/src/, \
 
 runner_src += $(symbols_file)
 
-runner_objs = $(call object_for,$(runner_src))
-$(runner_objs): SFLAGS += -Iquiz/src
+$(call object_for,$(runner_src)): SFLAGS += -Iquiz/src
 $(BUILD_DIR)/quiz/src/%_symbols.o: SFLAGS += -Iquiz/src
-
-
-$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(runner_objs) $(call object_for,$(tests))

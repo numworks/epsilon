@@ -94,6 +94,4 @@ all_app_src = $(app_src) $(epsilon_src)
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(epsilon_src))
-
 src += $(app_src)

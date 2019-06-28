@@ -29,15 +29,11 @@ usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
   webusb_platform_descriptor.cpp\
 )
 
-EPSILON_USB_DFU_XIP ?= 0
+# Sources required to execute DFU in place
+ion_device_dfu_xip_src += ion/src/device/shared/usb/dfu_xip.cpp
+ion_device_dfu_xip_src += $(usb_src)
 
-ifeq ($(EPSILON_USB_DFU_XIP),1)
-
-ion_device_src += ion/src/device/shared/usb/dfu_xip.cpp
-ion_device_src += $(usb_src)
-
-else
-
+# Sources required to execute DFU in RAM
 dfu_src += liba/src/assert.c
 dfu_src += liba/src/strlen.c
 dfu_src += liba/src/strlcpy.c
@@ -86,7 +82,5 @@ $(BUILD_DIR)/ion/src/device/shared/usb/dfu.o: $(BUILD_DIR)/ion/src/device/shared
 	@echo "OBJCOPY $@"
 	$(Q) cd $(dir $<) ; $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata.dfu_bootloader --redefine-sym _binary_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_dfu_bin_end=_dfu_bootloader_flash_end $(notdir $<) $(notdir $@)
 
-ion_device_src += ion/src/device/shared/usb/dfu.cpp
-ion_device_src += ion/src/device/shared/usb/dfu_relocated.cpp
-
-endif
+ion_device_dfu_relocated_src += ion/src/device/shared/usb/dfu.cpp
+ion_device_dfu_relocated_src += ion/src/device/shared/usb/dfu_relocated.cpp

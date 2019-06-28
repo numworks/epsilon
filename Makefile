@@ -81,6 +81,12 @@ objs = $(call object_for,$(src))
 # but allows correct yet optimal incremental builds.
 -include $(objs:.o=.d)
 
+#define platform generic targets
+
+$(BUILD_DIR)/epsilon.$(EXE): $(objs) $(call object_for,$(ion_device_dfu_relocated_src) $(epsilon_src))
+
+$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(objs) $(call object_for,$(ion_device_dfu_relocated_src) $(tests) $(runner_src))
+
 # Load platform-specific targets
 # We include them before the standard ones to give them precedence.
 -include scripts/targets.$(PLATFORM).mak
@@ -91,7 +97,6 @@ objs = $(call object_for,$(src))
 
 executables = epsilon test
 define rules_for_executable
-$$(BUILD_DIR)/$(1).$$(EXE): $$(objs)
 .PHONY: $(1).$$(EXE)
 $(1).$$(EXE): $$(BUILD_DIR)/$(1).$$(EXE)
 endef

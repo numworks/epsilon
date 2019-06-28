@@ -9,6 +9,8 @@
 
 class TextArea : public TextInput, public InputEventHandler {
 public:
+  static constexpr int k_indentationSpaces = 2;
+
   TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
@@ -124,7 +126,6 @@ protected:
 
   ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
 private:
-  static constexpr int k_indentationSpaces = 2;
   TextAreaDelegate * m_delegate;
 };
 

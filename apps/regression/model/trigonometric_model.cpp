@@ -24,27 +24,6 @@ Layout TrigonometricModel::layout() {
   return m_layout;
 }
 
-Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  // a*sin(bx+c)+d
-  Expression result =
-    Addition::Builder(
-      Multiplication::Builder(
-        Number::DecimalNumber(a),
-        Sine::Builder(
-          Addition::Builder(
-            Multiplication::Builder(
-              Number::DecimalNumber(b),
-              Symbol::Builder('x')),
-            Number::DecimalNumber(c)))),
-      Number::DecimalNumber(d));
-  PoincareHelpers::Simplify(&result, *context);
-  return result;
-}
-
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -77,6 +56,26 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   }
   assert(false);
   return 0.0;
+}
+
+Expression TrigonometricModel::expression(double * modelCoefficients) {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  // a*sin(bx+c)+d
+  Expression result =
+    Addition::Builder(
+      Multiplication::Builder(
+        Number::DecimalNumber(a),
+        Sine::Builder(
+          Addition::Builder(
+            Multiplication::Builder(
+              Number::DecimalNumber(b),
+              Symbol::Builder('x')),
+            Number::DecimalNumber(c)))),
+      Number::DecimalNumber(d));
+  return result;
 }
 
 }

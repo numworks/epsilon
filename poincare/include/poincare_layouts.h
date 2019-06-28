@@ -1,8 +1,6 @@
 #ifndef POINCARE_LAYOUTS_H
 #define POINCARE_LAYOUTS_H
 
-#define MATRICES_ARE_DEFINED 1
-
 #include <poincare/absolute_value_layout.h>
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/bracket_pair_layout.h>

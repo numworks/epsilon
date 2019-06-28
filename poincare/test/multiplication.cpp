@@ -8,15 +8,12 @@ using namespace Poincare;
 QUIZ_CASE(poincare_multiplication_evaluate) {
   assert_parsed_expression_evaluates_to<float>("1×2", "2");
   assert_parsed_expression_evaluates_to<double>("(3+𝐢)×(4+𝐢)", "11+7×𝐢");
-
-#if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]×2", "[[2,4][6,8][10,12]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2+𝐢][3,4][5,6]]×(3+𝐢)", "[[3+𝐢,5+5×𝐢][9+3×𝐢,12+4×𝐢][15+5×𝐢,18+6×𝐢]]");
   assert_parsed_expression_evaluates_to<float>("2×[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
   assert_parsed_expression_evaluates_to<double>("(3+𝐢)×[[1,2+𝐢][3,4][5,6]]", "[[3+𝐢,5+5×𝐢][9+3×𝐢,12+4×𝐢][15+5×𝐢,18+6×𝐢]]");
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]×[[1,2,3,4][5,6,7,8]]", "[[11,14,17,20][23,30,37,44][35,46,57,68]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2+𝐢][3,4][5,6]]×[[1,2+𝐢,3,4][5,6+𝐢,7,8]]", "[[11+5×𝐢,13+9×𝐢,17+7×𝐢,20+8×𝐢][23,30+7×𝐢,37,44][35,46+11×𝐢,57,68]]");
-#endif
 }
 
 QUIZ_CASE(poincare_multiplication_simplify) {

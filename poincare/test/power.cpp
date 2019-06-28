@@ -19,10 +19,8 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384×𝐢", System, Radian, Cartesian, 12);
   assert_parsed_expression_evaluates_to<double>("(-0.1)^4", "0.0001", System, Radian, Cartesian, 12);
 
-#if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4]]^(-3)", "[[-14.75,6.75][10.125,-4.625]]", System, Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("[[1,2][3,4]]^3", "[[37,54][81,118]]");
-#endif
   assert_parsed_expression_evaluates_to<float>("0^2", "0");
   assert_parsed_expression_evaluates_to<double>("𝐢^𝐢", "2.0787957635076ᴇ-1");
   assert_parsed_expression_evaluates_to<float>("1.0066666666667^60", "1.48985", System, Radian, Cartesian, 6);

@@ -36,5 +36,3 @@ $(BUILD_DIR)/ion/src/device/display.o: SFLAGS+=-O3
 $(BUILD_DIR)/ion/src/device/swd.o: SFLAGS+=-O3
 endif
 endif
-
-#objs += $(addprefix ion/src/device/keyboard/, keyboard.o)

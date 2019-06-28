@@ -55,12 +55,12 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.$(EXE)
 openocd:
 	openocd -f scripts/$(PLATFORM)/openocd.$(MODEL).cfg
 
-# The flasher target is defined here because otherwise $(objs) has not been
+# The flasher target is defined here because otherwise $(src) has not been
 # fully filled
 ifeq ($(EPSILON_DEVICE_BENCH),0)
 $(BUILD_DIR)/flasher.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
 $(BUILD_DIR)/flasher.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-flasher_objs = $(objs) $(call object_for,$(flasher_src)) $(call object_for,$(ion_device_dfu_xip_src))
+flasher_objs = $(call object_for,$(src) $(flasher_src) $(ion_device_dfu_xip_src))
 $(BUILD_DIR)/flasher.light.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_light.o $(flasher_objs)
 $(BUILD_DIR)/flasher.verbose.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_verbose.o  $(flasher_objs)
 else
@@ -73,7 +73,7 @@ ifeq ($(EPSILON_DEVICE_BENCH),1)
 $(BUILD_DIR)/bench.ram.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
 $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
-$(BUILD_DIR)/bench.%.$(EXE): $(objs) $(call object_for,$(bench_src)) $(call object_for,$(ion_device_dfu_xip_src))
+$(BUILD_DIR)/bench.%.$(EXE): $(call object_for,$(src) $(bench_src) $(ion_device_dfu_xip_src))
 else
 $(BUILD_DIR)/bench.ram.$(EXE):
 	@echo "Error: bench.*.bin requires EPSILON_DEVICE_BENCH=1"

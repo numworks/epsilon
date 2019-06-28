@@ -20,8 +20,7 @@ public:
   const float xCenter() const { return (xMin() + xMax()) / 2; }
   const float yCenter() const { return (yMin() + yMax()) / 2; }
   virtual float xGridUnit() const { return computeGridUnit(Axis::X, xMax() - xMin()); }
-  virtual float yGridUnit() const { return 0.0f; }
-  float computeGridUnit(Axis axis, float range) const;
+  virtual float yGridUnit() const { return computeGridUnit(Axis::Y, yMax() - yMin()); }
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
 private:
@@ -33,6 +32,7 @@ private:
   constexpr static float k_smallGridUnitMantissa = 1.0f;
   constexpr static float k_mediumGridUnitMantissa = 2.0f;
   constexpr static float k_largeGridUnitMantissa = 5.0f;
+  float computeGridUnit(Axis axis, float range) const;
 };
 
 }

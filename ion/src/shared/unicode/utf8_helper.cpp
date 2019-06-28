@@ -90,7 +90,7 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
   return codePointPointer;
 }
 
-void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c, const char * * pointerToUpdate) {
+void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePoint c) {
   if (dstSize <= 0) {
     return;
   }
@@ -107,9 +107,6 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
       int copySize = minInt(nextPointer - currentPointer, dstSize - bufferIndex);
       memcpy(dst + bufferIndex, currentPointer, copySize);
       bufferIndex+= copySize;
-    } else if (pointerToUpdate != nullptr && currentPointer < *pointerToUpdate) {
-      assert(*pointerToUpdate - src >= codePointCharSize);
-      *pointerToUpdate = *pointerToUpdate - codePointCharSize;
     }
     currentPointer = nextPointer;
     codePoint = decoder.nextCodePoint();

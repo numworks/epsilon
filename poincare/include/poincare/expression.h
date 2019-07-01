@@ -133,9 +133,11 @@ public:
   typedef bool (*ExpressionTest)(const Expression e, Context & context);
   bool recursivelyMatches(ExpressionTest test, Context & context, bool replaceSymbols = true) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
+  static bool IsNAry(const Expression e, Context & context);
   static bool IsApproximate(const Expression e, Context & context);
   static bool IsRandom(const Expression e, Context & context);
   static bool IsMatrix(const Expression e, Context & context);
+  static bool SortedIsMatrix(const Expression e, Context & context);
   static bool IsInfinity(const Expression e, Context & context);
   /* 'characteristicXRange' tries to assess the range on x where the expression
    * (considered as a function on x) has an interesting evolution. For example,

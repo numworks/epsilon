@@ -11,6 +11,7 @@ constexpr Expression::FunctionHelper HyperbolicArcSine::s_functionHelper;
 Layout HyperbolicArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.name());
 }
+
 int HyperbolicArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.name());
 }
@@ -28,7 +29,6 @@ Complex<T> HyperbolicArcSineNode::computeOnComplex(const std::complex<T> c, Pref
   }
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
-
 
 template Complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcSineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);

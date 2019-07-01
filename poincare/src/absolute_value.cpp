@@ -1,7 +1,6 @@
 #include <poincare/absolute_value.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
 #include <poincare/absolute_value_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/multiplication.h>
@@ -28,7 +27,7 @@ int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return AbsoluteValue(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return AbsoluteValue(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -36,14 +35,14 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context * context, Pre
   return *this;
 }
 
-Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression AbsoluteValue::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.isReal(context)) {
     float app = c.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();

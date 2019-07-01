@@ -4,7 +4,7 @@
 #include <poincare/subtraction.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/nth_root_layout.h>
 #include <poincare/division.h>
 #include <poincare/sign_function.h>
@@ -39,11 +39,10 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
 }
 
 Expression SquareRootNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return SquareRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return SquareRoot(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-
-Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -57,7 +56,7 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::ComplexForm
 #endif
   Power p = Power::Builder(childAtIndex(0), Rational::Builder(1, 2));
   replaceWithInPlace(p);
-  return p.shallowReduce(context, complexFormat, angleUnit, target);
+  return p.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 }

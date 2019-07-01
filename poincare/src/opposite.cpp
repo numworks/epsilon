@@ -7,7 +7,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 extern "C" {
 #include <cmath>
 #include <assert.h>

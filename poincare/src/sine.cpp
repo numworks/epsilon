@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <cmath>
 
 namespace Poincare {
@@ -31,11 +31,11 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
 }
 
 Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Sine(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return Sine(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 
-Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -43,7 +43,7 @@ Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat com
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
 }

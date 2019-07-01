@@ -1,13 +1,13 @@
 #include <poincare/hyperbolic_trigonometric_function.h>
-#include <poincare/simplification_helper.h>
+
 
 namespace Poincare {
 
 Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit);
+  return HyperbolicTrigonometricFunction(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -16,7 +16,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Pre
   }
   Expression c = childAtIndex(0);
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   return *this;
 }

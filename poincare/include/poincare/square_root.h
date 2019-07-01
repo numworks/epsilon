@@ -42,7 +42,7 @@ public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(&child, 1); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("√", 1, &UntypedBuilderOneChild<SquareRoot>);
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
 };
 
 }

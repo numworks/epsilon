@@ -2,7 +2,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <assert.h>
 #include <cmath>
 
@@ -21,11 +21,10 @@ int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression RealPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return RealPart(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return RealPart(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-
-Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -34,7 +33,7 @@ Expression RealPart::shallowReduce(Context & context, Preferences::ComplexFormat
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.isReal(context)) {
     replaceWithInPlace(c);

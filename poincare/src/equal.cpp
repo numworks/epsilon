@@ -20,7 +20,7 @@ extern "C" {
 }
 namespace Poincare {
 
-Expression EqualNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression EqualNode::shallowReduce(ReductionContext reductionContext) {
   return Equal(this).shallowReduce();
 }
 
@@ -37,12 +37,12 @@ int EqualNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 }
 
 template<typename T>
-Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> EqualNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Complex<T>::Undefined();
 }
 
 
-Expression Equal::standardEquation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Equal::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
   return sub.reduce(context, complexFormat, angleUnit);
 }

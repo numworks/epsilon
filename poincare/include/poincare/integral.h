@@ -20,21 +20,21 @@ public:
 
   // ExpressionNode
   Type type() const override { return Type::Integral; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
 
   // Complex
-  bool isReal(Context & context) const override { return true; }
+  bool isReal(Context * context) const override { return true; }
 
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
- template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+ template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   template<typename T>
   struct DetailedResult
   {
@@ -43,12 +43,12 @@ private:
   };
   constexpr static int k_maxNumberOfIterations = 20;
 #ifdef LAGRANGE_METHOD
-  template<typename T> T lagrangeGaussQuadrature(T a, T b, Context Context & context, Preferences::AngleUnit angleUnit context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T lagrangeGaussQuadrature(T a, T b, Context Context * context, Preferences::AngleUnit angleUnit context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #else
-  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
-  template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T functionValueAtAbscissa(T x, Context * xcontext, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Integral final : public ParameteredExpression {
@@ -60,7 +60,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
 
   // Expression
-  Expression shallowReduce(Context & context);
+  Expression shallowReduce(Context * context);
 };
 
 }

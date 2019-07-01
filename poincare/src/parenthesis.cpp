@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-int ParenthesisNode::polynomialDegree(Context & context, const char * symbolName) const {
+int ParenthesisNode::polynomialDegree(Context * context, const char * symbolName) const {
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
@@ -16,12 +16,12 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-Expression ParenthesisNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression ParenthesisNode::shallowReduce(ReductionContext reductionContext) {
   return Parenthesis(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ParenthesisNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
 }
 

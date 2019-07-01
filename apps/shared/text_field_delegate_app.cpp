@@ -45,7 +45,7 @@ bool TextFieldDelegateApp::isAcceptableText(const char * text) {
 }
 
 bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) {
-  value = PoincareHelpers::ApproximateToScalar<double>(text, *localContext());
+  value = PoincareHelpers::ApproximateToScalar<double>(text, localContext());
   bool isUndefined = std::isnan(value) || std::isinf(value);
   if (isUndefined) {
     displayWarning(I18n::Message::UndefinedValue);

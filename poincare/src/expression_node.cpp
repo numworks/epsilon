@@ -22,12 +22,12 @@ Expression ExpressionNode::replaceUnknown(const Symbol & symbol, const Symbol & 
   return Expression(this).defaultReplaceUnknown(symbol, unknownSymbol);
 }
 
-Expression ExpressionNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ExpressionNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(false);
   return Expression();
 }
 
-int ExpressionNode::polynomialDegree(Context & context, const char * symbolName) const {
+int ExpressionNode::polynomialDegree(Context * context, const char * symbolName) const {
   for (ExpressionNode * c : children()) {
     if (c->polynomialDegree(context, symbolName) != 0) {
       return -1;
@@ -36,15 +36,15 @@ int ExpressionNode::polynomialDegree(Context & context, const char * symbolName)
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+int ExpressionNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context & context) {
+Expression ExpressionNode::shallowReplaceReplaceableSymbols(Context * context) {
   return Expression(this).defaultReplaceReplaceableSymbols(context);
 }
 
-int ExpressionNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
  int numberOfVariables = 0;
   for (ExpressionNode * c : children()) {
    int n = c->getVariables(context, isVariable, variables, maxSizeVariable);
@@ -56,7 +56,7 @@ int ExpressionNode::getVariables(Context & context, isVariableTest isVariable, c
  return numberOfVariables;
 }
 
-float ExpressionNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float ExpressionNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   /* A expression has a characteristic range if at least one of its childAtIndex has
    * one and the other are x-independant. We keep the biggest interesting range
    * among the childAtIndex interesting ranges. */
@@ -108,15 +108,15 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool a
   return 0;
 }
 
-void ExpressionNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
-  Expression(this).defaultDeepReduceChildren(context, complexFormat, angleUnit, target, symbolicComputation);
+void ExpressionNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  Expression(this).defaultDeepReduceChildren(reductionContext);
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression ExpressionNode::shallowReduce(ReductionContext reductionContext) {
   return Expression(this).defaultShallowReduce();
 }
 
-Expression ExpressionNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ExpressionNode::shallowBeautify(ReductionContext reductionContext) {
   return Expression(this).defaultShallowBeautify();
 }
 
@@ -133,7 +133,7 @@ void ExpressionNode::setChildrenInPlace(Expression other) {
   Expression(this).defaultSetChildrenInPlace(other);
 }
 
-Expression ExpressionNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Expression();
 }
 

@@ -144,32 +144,32 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, unSymbol);
       ctx.setValueForSymbol(vn, vnSymbol);
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)n, ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)n, &ctx);
     }
     case Type::SingleRecurrence:
     {
       if (n == initialRank()) {
-        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), *sqctx);
+        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), sqctx);
       }
       ctx.setValueForSymbol(un, un1Symbol);
       ctx.setValueForSymbol(unm1, unSymbol);
       ctx.setValueForSymbol(vn, vn1Symbol);
       ctx.setValueForSymbol(vnm1, vnSymbol);
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-1), ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-1), &ctx);
     }
     default:
     {
       if (n == initialRank()) {
-        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), *sqctx);
+        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), sqctx);
       }
       if (n == initialRank()+1) {
-        return PoincareHelpers::ApproximateToScalar<T>(secondInitialConditionExpressionReduced(sqctx), *sqctx);
+        return PoincareHelpers::ApproximateToScalar<T>(secondInitialConditionExpressionReduced(sqctx), sqctx);
       }
       ctx.setValueForSymbol(unm1, un1Symbol);
       ctx.setValueForSymbol(unm2, unSymbol);
       ctx.setValueForSymbol(vnm1, vn1Symbol);
       ctx.setValueForSymbol(vnm2, vnSymbol);
-      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-2), ctx);
+      return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-2), &ctx);
     }
   }
 }

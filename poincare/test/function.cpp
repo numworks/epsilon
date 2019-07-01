@@ -11,7 +11,7 @@ using namespace Poincare;
 template<typename T>
 void assert_exp_is_bounded(Expression exp, T lowBound, T upBound, bool upBoundIncluded = false) {
   Shared::GlobalContext globalContext;
-  T result = exp.approximateToScalar<T>(globalContext, Cartesian, Radian);
+  T result = exp.approximateToScalar<T>(&globalContext, Cartesian, Radian);
   quiz_assert(result >= lowBound);
   quiz_assert(result < upBound || (result == upBound && upBoundIncluded));
 }

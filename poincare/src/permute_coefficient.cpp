@@ -23,12 +23,12 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression PermuteCoefficientNode::shallowReduce(ReductionContext reductionContext) {
   return PermuteCoefficient(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();

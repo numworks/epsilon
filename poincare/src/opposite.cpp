@@ -16,7 +16,7 @@ extern "C" {
 
 namespace Poincare {
 
-int OppositeNode::polynomialDegree(Context & context, const char * symbolName) const {
+int OppositeNode::polynomialDegree(Context * context, const char * symbolName) const {
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
@@ -67,13 +67,13 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Opposite(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression OppositeNode::shallowReduce(ReductionContext reductionContext) {
+  return Opposite(this).shallowReduce(reductionContext);
 }
 
 /* Simplification */
 
-Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Opposite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression result = Expression::defaultShallowReduce();
   if (result.isUndefined()) {
     return result;
@@ -81,7 +81,7 @@ Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat
   Expression child = result.childAtIndex(0);
   result = Multiplication::Builder(Rational::Builder(-1), child);
   replaceWithInPlace(result);
-  return result.shallowReduce(context, complexFormat, angleUnit, target);
+  return result.shallowReduce(reductionContext);
 }
 
 }

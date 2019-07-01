@@ -23,7 +23,7 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context & context) const override;
+  bool isReal(Context * context) const override;
 
   // Expression Properties
   Type type() const override { return Type::Constant; }
@@ -34,8 +34,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Approximation */
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
   /* Symbol properties */
   bool isPi() const { return isConstantCodePoint(UCodePointGreekSmallLetterPi); }
@@ -47,12 +47,12 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
 private:
   char m_name[0]; // MUST be the last member variable
 
   size_t nodeSize() const override { return sizeof(ConstantNode); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   bool isConstantCodePoint(CodePoint c) const;
 };
 
@@ -67,7 +67,7 @@ public:
   bool isIComplex() const { return node()->isIComplex(); }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
 private:
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }

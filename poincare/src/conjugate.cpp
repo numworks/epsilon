@@ -23,8 +23,8 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.name());
 }
 
-Expression ConjugateNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Conjugate(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression ConjugateNode::shallowReduce(ReductionContext reductionContext) {
+  return Conjugate(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -32,7 +32,7 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(std::conj(c));
 }
 
-Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -41,9 +41,9 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
-  if (c.isReal(context)) {
+  if (c.isReal(reductionContext.context())) {
     replaceWithInPlace(c);
     return c;
   }
@@ -51,7 +51,7 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Multiplication m = Multiplication::Builder(Rational::Builder(-1), complexChild.imag());
     complexChild.replaceChildAtIndexInPlace(1, m);
-    m.shallowReduce(context, complexFormat, angleUnit, target);
+    m.shallowReduce(reductionContext);
     replaceWithInPlace(complexChild);
     return complexChild;
   }

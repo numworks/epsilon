@@ -15,7 +15,7 @@ constexpr Expression::FunctionHelper Integral::s_functionHelper;
 
 int IntegralNode::numberOfChildren() const { return Integral::s_functionHelper.numberOfChildren(); }
 
-int IntegralNode::polynomialDegree(Context & context, const char * symbolName) const {
+int IntegralNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(1)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(2)->polynomialDegree(context, symbolName) == 0
@@ -39,12 +39,12 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name());
 }
 
-Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Integral(this).shallowReduce(context);
+Expression IntegralNode::shallowReduce(ReductionContext reductionContext) {
+  return Integral(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
-Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> IntegralNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> bInput = childAtIndex(3)->approximate(T(), context, complexFormat, angleUnit);
   T a = aInput.toScalar();
@@ -61,18 +61,18 @@ Evaluation<T> IntegralNode::templatedApproximate(Context & context, Preferences:
 }
 
 template<typename T>
-T IntegralNode::functionValueAtAbscissa(T x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+T IntegralNode::functionValueAtAbscissa(T x, Context * xcontext, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
   assert(childAtIndex(1)->type() == Type::Symbol);
-  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
+  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), xcontext);
   variableContext.setApproximationForVariable<T>(x);
-  return childAtIndex(0)->approximate(T(), variableContext, complexFormat, angleUnit).toScalar();
+  return childAtIndex(0)->approximate(T(), &variableContext, complexFormat, angleUnit).toScalar();
 }
 
 #ifdef LAGRANGE_METHOD
 
 template<typename T>
-T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   /* We here use Gauss-Legendre quadrature with n = 5
    * Gauss-Legendre abscissae and weights can be found in
    * C/C++ library source code. */
@@ -103,7 +103,7 @@ T IntegralNode::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences
 #else
 
 template<typename T>
-IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -187,7 +187,7 @@ IntegralNode::DetailedResult<T> IntegralNode::kronrodGaussQuadrature(T a, T b, C
 }
 
 template<typename T>
-T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (Expression::ShouldStopProcessing()) {
     return NAN;
   }
@@ -213,7 +213,7 @@ Expression Integral::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-Expression Integral::shallowReduce(Context & context) {
+Expression Integral::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

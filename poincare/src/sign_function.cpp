@@ -18,7 +18,7 @@ ExpressionNode::Sign SignFunctionNode::sign(Context * context) const {
   return childAtIndex(0)->sign(context);
 }
 
-Expression SignFunctionNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression SignFunctionNode::setSign(Sign s, ReductionContext reductionContext) {
  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   SignFunction sign(this);
   Rational r = Rational::Builder(s == ExpressionNode::Sign::Positive ? 1 : -1);
@@ -34,8 +34,8 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SignFunction::s_functionHelper.name());
 }
 
-Expression SignFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return SignFunction(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression SignFunctionNode::shallowReduce(ReductionContext reductionContext) {
+  return SignFunction(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -53,7 +53,7 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 
-Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -62,23 +62,23 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFo
   }
   Expression child = childAtIndex(0);
   if (child.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
   Rational resultSign = Rational::Builder(1);
-  ExpressionNode::Sign s = child.sign(&context);
+  ExpressionNode::Sign s = child.sign(reductionContext.context());
   if (s == ExpressionNode::Sign::Negative) {
     resultSign = Rational::Builder(-1);
   } else {
-    Evaluation<float> childApproximated = child.node()->approximate(1.0f, context, complexFormat, angleUnit);
+    Evaluation<float> childApproximated = child.node()->approximate(1.0f, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // c's approximation has no sign (c is complex or NAN)
-      if (target == ExpressionNode::ReductionTarget::User && s == ExpressionNode::Sign::Positive) {
+      if (reductionContext.target() == ExpressionNode::ReductionTarget::User && s == ExpressionNode::Sign::Positive) {
         // For the user, we want sign(abs(x)) = 1
       } else {
         // sign(-x) = -sign(x)
-        Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
+        Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(reductionContext);
         if (oppChild.isUninitialized()) {
           return *this;
         }

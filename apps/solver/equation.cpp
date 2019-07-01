@@ -18,7 +18,7 @@ Equation::Equation(Ion::Storage::Record record) :
 }
 
 bool Equation::containsIComplex(Context * context) const {
-  return expressionClone().recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, *context, true);
+  return expressionClone().recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, true);
 }
 
 Expression Equation::Model::standardForm(const Storage::Record * record, Context * context) const {
@@ -28,13 +28,13 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
       m_standardForm = Unreal::Builder();
       return m_standardForm;
     }
-    if (e.recursivelyMatches([](const Expression e, Context & context) { return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context); }, *context, true)) {
+    if (e.recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context); }, context, true)) {
       m_standardForm = Undefined::Builder();
       return m_standardForm;
     }
     if (e.type() == ExpressionNode::Type::Equal) {
       Preferences * preferences = Preferences::sharedPreferences();
-      m_standardForm = static_cast<const Equal&>(e).standardEquation(*context, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionClone(record), *context), preferences->angleUnit());
+      m_standardForm = static_cast<const Equal&>(e).standardEquation(context, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionClone(record), context), preferences->angleUnit());
     } else {
       assert(e.type() == ExpressionNode::Type::Rational && static_cast<const Rational&>(e).isOne());
       // The equality was reduced which means the equality was always true.

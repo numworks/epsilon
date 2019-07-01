@@ -12,8 +12,8 @@ constexpr Expression::FunctionHelper MatrixIdentity::s_functionHelper;
 
 int MatrixIdentityNode::numberOfChildren() const { return MatrixIdentity::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixIdentityNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return MatrixIdentity(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression MatrixIdentityNode::shallowReduce(ReductionContext reductionContext) {
+  return MatrixIdentity(this).shallowReduce(reductionContext);
 }
 
 Layout MatrixIdentityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -25,7 +25,7 @@ int MatrixIdentityNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 template<typename T>
-Evaluation<T> MatrixIdentityNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixIdentityNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   T r = input.toScalar(); // Undefined if the child is not real
   if (!std::isnan(r) && !std::isinf(r) && r > 0 // The child is defined and positive
@@ -38,7 +38,7 @@ Evaluation<T> MatrixIdentityNode::templatedApproximate(Context& context, Prefere
 }
 
 
-Expression MatrixIdentity::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

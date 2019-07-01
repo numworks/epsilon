@@ -15,7 +15,7 @@ void assert_parsed_expression_sign(const char * expression, Poincare::Expression
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  e = e.reduce(globalContext, complexFormat, Degree);
+  e = e.reduce(&globalContext, complexFormat, Degree);
   quiz_assert(e.sign(&globalContext) == sign);
 }
 
@@ -67,11 +67,11 @@ QUIZ_CASE(poincare_polynomial_degree) {
 void assert_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   Shared::GlobalContext globalContext;
   quiz_assert(!e.isUninitialized());
-  e = e.reduce(globalContext, Preferences::ComplexFormat::Cartesian, angleUnit);
+  e = e.reduce(&globalContext, Preferences::ComplexFormat::Cartesian, angleUnit);
   if (std::isnan(range)) {
-    quiz_assert(std::isnan(e.characteristicXRange(globalContext, angleUnit)));
+    quiz_assert(std::isnan(e.characteristicXRange(&globalContext, angleUnit)));
   } else {
-    quiz_assert(std::fabs(e.characteristicXRange(globalContext, angleUnit) - range) < 0.0000001f);
+    quiz_assert(std::fabs(e.characteristicXRange(&globalContext, angleUnit) - range) < 0.0000001f);
   }
 }
 
@@ -97,7 +97,7 @@ void assert_parsed_expression_has_variables(const char * expression, const char 
   constexpr static int k_maxVariableSize = Poincare::SymbolAbstract::k_maxNameSize;
   char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
   Shared::GlobalContext globalContext;
-  int numberOfVariables = e.getVariables(globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
+  int numberOfVariables = e.getVariables(&globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
   quiz_assert(trueNumberOfVariables == numberOfVariables);
   if (numberOfVariables < 0) {
     // Too many variables
@@ -133,14 +133,14 @@ void assert_parsed_expression_has_polynomial_coefficient(const char * expression
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  e = e.reduce(globalContext, complexFormat, angleUnit);
+  e = e.reduce(&globalContext, complexFormat, angleUnit);
   Expression coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
-  int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, globalContext, complexFormat, Radian);
+  int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, &globalContext, complexFormat, Radian);
   for (int i = 0; i <= d; i++) {
     Expression f = parse_expression(coefficients[i]);
     quiz_assert(!f.isUninitialized());
-    coefficientBuffer[i] = coefficientBuffer[i].reduce(globalContext, complexFormat, angleUnit);
-    f = f.reduce(globalContext, complexFormat, angleUnit);
+    coefficientBuffer[i] = coefficientBuffer[i].reduce(&globalContext, complexFormat, angleUnit);
+    f = f.reduce(&globalContext, complexFormat, angleUnit);
     quiz_assert(coefficientBuffer[i].isIdenticalTo(f));
   }
   quiz_assert(coefficients[d+1] == 0);

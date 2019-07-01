@@ -25,12 +25,12 @@ int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ConfidenceInterval::s_functionHelper.name());
 }
 
-Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ConfidenceInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression ConfidenceIntervalNode::shallowReduce(ReductionContext reductionContext) {
+  return ConfidenceInterval(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f = static_cast<Complex<T> &>(fInput).toScalar();
@@ -52,8 +52,7 @@ int SimplePredictionIntervalNode::serialize(char * buffer, int bufferSize, Prefe
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SimplePredictionInterval::s_functionHelper.name());
 }
 
-
-Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -62,7 +61,7 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
+  if (SortedIsMatrix(c0, reductionContext.context()) || SortedIsMatrix(c1, reductionContext.context())) {
     return Undefined::Builder();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {
@@ -93,7 +92,7 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   matrix.addChildAtIndexInPlace(Addition::Builder(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
+  matrix.deepReduceChildren(reductionContext);
   return matrix;
 }
 

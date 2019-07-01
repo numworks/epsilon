@@ -24,8 +24,8 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.name());
 }
 
-Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ComplexArgument(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression ComplexArgumentNode::shallowReduce(ReductionContext reductionContext) {
+  return ComplexArgument(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -34,7 +34,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
 }
 
 
-Expression ComplexArgument::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -43,11 +43,11 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
-  bool real = c.isReal(context);
+  bool real = c.isReal(reductionContext.context());
   if (real) {
-    float app = c.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
+    float app = c.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
     if (!std::isnan(app) && app >= Expression::Epsilon<float>()) {
       // arg(x) = 0 if x > 0
       Expression result = Rational::Builder(0);
@@ -62,9 +62,9 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
   }
   if (real || c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational::Builder(0)) : static_cast<ComplexCartesian &>(c);
-    Expression childArg = complexChild.argument(context, complexFormat, angleUnit, target, symbolicComputation);
+    Expression childArg = complexChild.argument(reductionContext);
     replaceWithInPlace(childArg);
-    return childArg.shallowReduce(context, complexFormat, angleUnit, target);
+    return childArg.shallowReduce(reductionContext);
   }
   return *this;
 }

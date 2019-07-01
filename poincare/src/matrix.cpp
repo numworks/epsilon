@@ -18,7 +18,7 @@ void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfColumns(newNumberOfChildren);
 }
 
-int MatrixNode::polynomialDegree(Context & context, const char * symbolName) const {
+int MatrixNode::polynomialDegree(Context * context, const char * symbolName) const {
   return -1;
 }
 
@@ -82,7 +82,7 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 template<typename T>
-Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   for (ExpressionNode * c : children()) {
     matrix.addChildAtIndexInPlace(c->approximate(T(), context, complexFormat, angleUnit), matrix.numberOfChildren(), matrix.numberOfChildren());
@@ -111,7 +111,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
   setDimensions(previousNumberOfRows + 1, previousNumberOfColumns == 0 ? t.numberOfChildren() : previousNumberOfColumns);
 }
 
-int Matrix::rank(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace) {
+int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
   m = m.rowCanonize(context, complexFormat, angleUnit);
   int rank = m.numberOfRows();
@@ -165,10 +165,11 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication determinant) {
+Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication determinant) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
-  deepReduceChildren(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+  deepReduceChildren(systemReductionContext);
 
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -194,17 +195,21 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
           swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
-        if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational::Builder(-1), 0, determinant.numberOfChildren()); }
+        if (!determinant.isUninitialized()) {
+          determinant.addChildAtIndexInPlace(Rational::Builder(-1), 0, determinant.numberOfChildren());
+        }
       }
       /* Set to 1 M[h][k] by linear combination */
       Expression divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
-      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(divisor.clone(), 0, determinant.numberOfChildren()); }
+      if (!determinant.isUninitialized()) {
+        determinant.addChildAtIndexInPlace(divisor.clone(), 0, determinant.numberOfChildren());
+      }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h*n+j, newOpHJ);
-        newOpHJ = newOpHJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+        newOpHJ = newOpHJ.shallowReduce(systemReductionContext);
       }
       replaceChildInPlace(divisor, Rational::Builder(1));
 
@@ -216,8 +221,8 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::ComplexFormat complex
           Expression opIJ = matrixChild(i, j);
           Expression newOpIJ = Subtraction::Builder(opIJ, Multiplication::Builder(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
-          newOpIJ.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
-          newOpIJ = newOpIJ.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+          newOpIJ.childAtIndex(1).shallowReduce(systemReductionContext);
+          newOpIJ = newOpIJ.shallowReduce(systemReductionContext);
         }
         replaceChildAtIndexInPlace(i*n+k, Rational::Builder(0));
       }
@@ -305,7 +310,7 @@ Matrix Matrix::CreateIdentity(int dim) {
   return matrix;
 }
 
-Expression Matrix::inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Matrix::inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (m_numberOfRows != m_numberOfColumns) {
     return Undefined::Builder();
   }

@@ -12,7 +12,7 @@ using namespace Poincare;
 
 static inline void assert_approximation_equals(const Expression i, float f) {
   Shared::GlobalContext c;
-  quiz_assert(i.approximateToScalar<float>(c, Cartesian, Degree) == f);
+  quiz_assert(i.approximateToScalar<float>(&c, Cartesian, Degree) == f);
 }
 
 static inline void assert_parsed_expression_is_equal_to(const char * exp, Expression e) {

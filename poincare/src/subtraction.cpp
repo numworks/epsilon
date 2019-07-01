@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-int SubtractionNode::polynomialDegree(Context & context, const char * symbolName) const {
+int SubtractionNode::polynomialDegree(Context * context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * e : children()) {
     int d = e->polynomialDegree(context, symbolName);
@@ -52,20 +52,20 @@ template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix
   return result;
 }
 
-Expression SubtractionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Subtraction(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
+  return Subtraction(this).shallowReduce(reductionContext);
 }
 
-Expression Subtraction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
   Expression m = Multiplication::Builder(Rational::Builder(-1), childAtIndex(1));
   Addition a = Addition::Builder(childAtIndex(0), m);
-  m = m.shallowReduce(context, complexFormat, angleUnit, target);
+  m = m.shallowReduce(reductionContext);
   replaceWithInPlace(a);
-  return a.shallowReduce(context, complexFormat, angleUnit, target);
+  return a.shallowReduce(reductionContext);
 }
 
 }

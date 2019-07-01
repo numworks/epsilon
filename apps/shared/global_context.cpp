@@ -62,7 +62,7 @@ const Expression GlobalContext::expressionForSymbol(const SymbolAbstract & symbo
   return ExpressionForSymbolAndRecord(symbol, r);
 }
 
-void GlobalContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
+void GlobalContext::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());

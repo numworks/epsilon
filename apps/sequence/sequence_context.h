@@ -48,7 +48,7 @@ public:
   const Poincare::Expression expressionForSymbol(const Poincare::SymbolAbstract & symbol, bool clone) override {
     return m_parentContext->expressionForSymbol(symbol, clone);
   }
-  void setExpressionForSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context & context) override {
+  void setExpressionForSymbol(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol, Poincare::Context * context) override {
     m_parentContext->setExpressionForSymbol(expression, symbol, context);
   }
   template<typename T> T valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) const {

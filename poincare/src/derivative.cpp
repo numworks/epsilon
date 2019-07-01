@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper Derivative::s_functionHelper;
 
 int DerivativeNode::numberOfChildren() const { return Derivative::s_functionHelper.numberOfChildren(); }
 
-int DerivativeNode::polynomialDegree(Context & context, const char * symbolName) const {
+int DerivativeNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (childAtIndex(0)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(1)->polynomialDegree(context, symbolName) == 0
       && childAtIndex(2)->polynomialDegree(context, symbolName) == 0)
@@ -34,12 +34,12 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.name());
 }
 
-Expression DerivativeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Derivative(this).shallowReduce(context);
+Expression DerivativeNode::shallowReduce(ReductionContext reductionContext) {
+  return Derivative(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
-Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> DerivativeNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   Evaluation<T> evaluationArgumentInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
@@ -69,23 +69,23 @@ Evaluation<T> DerivativeNode::templatedApproximate(Context& context, Preferences
 }
 
 template<typename T>
-T DerivativeNode::approximateWithArgument(T x, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+T DerivativeNode::approximateWithArgument(T x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(childAtIndex(1)->type() == Type::Symbol);
-  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), &context);
+  VariableContext variableContext = VariableContext(static_cast<SymbolNode *>(childAtIndex(1))->name(), context);
   variableContext.setApproximationForVariable<T>(x);
   // Here we cannot use Expression::approximateWithValueForSymbol which would reset the sApproximationEncounteredComplex flag
-  return childAtIndex(0)->approximate(T(), variableContext, complexFormat, angleUnit).toScalar();
+  return childAtIndex(0)->approximate(T(), &variableContext, complexFormat, angleUnit).toScalar();
 }
 
 template<typename T>
-T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+T DerivativeNode::growthRateAroundAbscissa(T x, T h, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   T expressionPlus = approximateWithArgument(x+h, context, complexFormat, angleUnit);
   T expressionMinus = approximateWithArgument(x-h, context, complexFormat, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
 template<typename T>
-T DerivativeNode::riddersApproximation(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, T x, T h, T * error) const {
+T DerivativeNode::riddersApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
@@ -135,7 +135,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::ComplexFo
   return ans;
 }
 
-Expression Derivative::shallowReduce(Context & context) {
+Expression Derivative::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

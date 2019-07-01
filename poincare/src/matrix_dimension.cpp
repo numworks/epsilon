@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
 
 int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression MatrixDimensionNode::shallowReduce(ReductionContext reductionContext) {
   return MatrixDimension(this).shallowReduce();
 }
 
@@ -24,7 +24,7 @@ int MatrixDimensionNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixDimensionNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {

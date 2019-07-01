@@ -40,7 +40,7 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression IntegralNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Integral(this).shallowReduce();
+  return Integral(this).shallowReduce(context);
 }
 
 template<typename T>
@@ -213,22 +213,20 @@ Expression Integral::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-Expression Integral::shallowReduce() {
+Expression Integral::shallowReduce(Context & context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix
-      || childAtIndex(1).type() == ExpressionNode::Type::Matrix
-      || childAtIndex(2).type() == ExpressionNode::Type::Matrix
-      || childAtIndex(3).type() == ExpressionNode::Type::Matrix)
+  if (SortedIsMatrix(childAtIndex(0), context)
+      || SortedIsMatrix(childAtIndex(1), context)
+      || SortedIsMatrix(childAtIndex(2), context)
+      || SortedIsMatrix(childAtIndex(3), context))
   {
     return Undefined::Builder();
   }
-#endif
   return *this;
 }
 

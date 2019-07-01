@@ -54,7 +54,7 @@ public:
   static Expression UntypedBuilder(Expression children);
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
 
-  Expression shallowReduce();
+  Expression shallowReduce(Context & context);
 };
 
 }

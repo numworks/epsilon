@@ -265,7 +265,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     Power apow = Power::Builder(aclone, Rational::Builder(n-i));
     Power bpow = Power::Builder(bclone, Rational::Builder(i));
     Multiplication m = Multiplication::Builder(binom, apow, bpow);
-    binom.shallowReduce();
+    binom.shallowReduce(context);
     apow.shallowReduce(context, complexFormat, angleUnit, target);
     bpow.shallowReduce(context, complexFormat, angleUnit, target);
     if (i/2%2 == 1) {

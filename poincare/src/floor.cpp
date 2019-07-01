@@ -32,11 +32,10 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
 }
 
 Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Floor(this).shallowReduce();
+  return Floor(this).shallowReduce(context, angleUnit);
 }
 
-
-Expression Floor::shallowReduce() {
+Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -44,11 +43,9 @@ Expression Floor::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   if (c.type() == ExpressionNode::Type::Constant) {
     Constant s = static_cast<Constant &>(c);
     Expression result;

@@ -41,19 +41,12 @@ Expression Determinant::shallowReduce(Context & context) {
     }
   }
   Expression c0 = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
-  if (!op.recursivelyMatches(Expression::IsMatrix)) {
-    return replaceWith(op, true);
-  }
-  return this;
-#endif
-#endif
   // det(A) = A if A is not a matrix
-  if (!c0.recursivelyMatches(Expression::IsMatrix, context, true)) {
+  if (!SortedIsMatrix(c0, context)) {
     replaceWithInPlace(c0);
     return c0;
   }
+  //TODO LEA for matrix
   return *this;
 }
 

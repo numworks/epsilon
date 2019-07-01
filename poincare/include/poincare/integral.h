@@ -60,7 +60,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context & context);
 };
 
 }

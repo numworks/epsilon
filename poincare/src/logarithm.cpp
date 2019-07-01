@@ -11,7 +11,7 @@
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/constant.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -50,12 +50,12 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 template<>
 Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
-  return CommonLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return CommonLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<>
 Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
-  return Logarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return Logarithm(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<>
@@ -86,7 +86,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
   return Complex<U>::Builder(result);
 }
 
-Expression CommonLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
+Expression CommonLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -95,14 +95,14 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::Comple
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
   replaceWithInPlace(log);
-  return log.shallowReduce(context, complexFormat, angleUnit, target);
+  return log.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target){
+Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -161,7 +161,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
     Multiplication mult = Multiplication::Builder(y);
     replaceWithInPlace(mult);
     mult.addChildAtIndexInPlace(*this, 1, 1); // --> y*log(x,b)
-    shallowReduce(context, complexFormat, angleUnit, target); // reduce log (ie log(e, e) = 1)
+    shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation); // reduce log (ie log(e, e) = 1)
     return mult.shallowReduce(context, complexFormat, angleUnit, target);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
@@ -174,12 +174,12 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
         static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);
         a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
-        newLog.shallowReduce(context, complexFormat, angleUnit, target);
+        newLog.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
       }
     }
     if (a.numberOfChildren() > 0) {
       c.shallowReduce(context, complexFormat, angleUnit, target);
-      Expression reducedLastLog = shallowReduce(context, complexFormat, angleUnit, target);
+      Expression reducedLastLog = shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
       reducedLastLog.replaceWithInPlace(a);
       a.addChildAtIndexInPlace(reducedLastLog, a.numberOfChildren(), a.numberOfChildren());
       return a.shallowReduce(context, complexFormat, angleUnit, target);
@@ -205,7 +205,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
 
   // log(m) with m Matrix
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
 
   return *this;

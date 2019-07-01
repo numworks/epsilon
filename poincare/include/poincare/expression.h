@@ -213,6 +213,7 @@ public:
   void simplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation = true);
   Expression reduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
+  Expression mapOnMatrixChild(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
   static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context & context);
   Expression radianToDegree();
   Expression degreeToRadian();

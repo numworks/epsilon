@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <cmath>
 
 namespace Poincare {
@@ -45,11 +45,10 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
 }
 
 Expression ArcTangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ArcTangent(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return ArcTangent(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-
-Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -57,7 +56,7 @@ Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexForm
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   return Trigonometry::shallowReduceInverseFunction(*this, context, complexFormat, angleUnit, target);
 }

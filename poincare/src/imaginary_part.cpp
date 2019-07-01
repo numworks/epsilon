@@ -1,7 +1,7 @@
 #include <poincare/imaginary_part.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/complex_cartesian.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -21,10 +21,10 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 }
 
 Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -33,7 +33,7 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.isReal(context)) {
     Expression result = Rational::Builder(0);

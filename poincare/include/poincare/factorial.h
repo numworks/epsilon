@@ -54,7 +54,7 @@ public:
   Factorial(const FactorialNode * n) : Expression(n) {}
   static Factorial Builder(Expression child) { return TreeHandle::FixedArityBuilder<Factorial, FactorialNode>(&child, 1); }
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
   Expression shallowBeautify();
 private:
   constexpr static int k_maxOperandValue = 100;

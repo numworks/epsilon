@@ -29,7 +29,7 @@ int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 Expression NthRootNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return NthRoot(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return NthRoot(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<typename T>
@@ -64,7 +64,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::C
 }
 
 
-Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -80,7 +80,7 @@ Expression NthRoot::shallowReduce(Context & context, Preferences::ComplexFormat 
   Power p = Power::Builder(childAtIndex(0), invIndex);
   invIndex.shallowReduce(context, complexFormat, angleUnit, target);
   replaceWithInPlace(p);
-  return p.shallowReduce(context, complexFormat, angleUnit, target);
+  return p.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 }

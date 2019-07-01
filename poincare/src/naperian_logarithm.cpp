@@ -3,7 +3,7 @@
 #include <poincare/logarithm.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 
 namespace Poincare {
 
@@ -19,11 +19,11 @@ int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return NaperianLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return NaperianLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 
-Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -32,11 +32,11 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Comp
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   Logarithm l = Logarithm::Builder(c, Constant::Builder(UCodePointScriptSmallE));
   replaceWithInPlace(l);
-  return l.shallowReduce(context, complexFormat, angleUnit, target);
+  return l.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 }

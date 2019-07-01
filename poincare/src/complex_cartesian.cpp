@@ -136,7 +136,7 @@ Expression ComplexCartesian::norm(Context & context, Preferences::ComplexFormat 
   return n;
 }
 
-Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   Expression a = real();
   Expression b = imag();
   if (!b.isRationalZero()) {
@@ -160,7 +160,7 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
     return sub;
   } else {
     // if b == 0, argument = (1-sign(a))*π/2
-    Expression signa = SignFunction::Builder(a).shallowReduce(context, complexFormat, angleUnit, target);
+    Expression signa = SignFunction::Builder(a).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
     signa.shallowReduce(context, complexFormat, angleUnit, target);
     Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::Builder(UCodePointGreekSmallLetterPi), sub);
@@ -228,7 +228,7 @@ ComplexCartesian ComplexCartesian::squareRoot(Context & context, Preferences::Co
 }
 
 
-ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
@@ -266,8 +266,8 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     Power bpow = Power::Builder(bclone, Rational::Builder(i));
     Multiplication m = Multiplication::Builder(binom, apow, bpow);
     binom.shallowReduce(context);
-    apow.shallowReduce(context, complexFormat, angleUnit, target);
-    bpow.shallowReduce(context, complexFormat, angleUnit, target);
+    apow.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    bpow.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
     if (i/2%2 == 1) {
       m.addChildAtIndexInPlace(Rational::Builder(-1), 0, m.numberOfChildren());
     }
@@ -318,10 +318,10 @@ Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, Cont
   return m;
 }
 
-ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   Expression r = clone().convert<ComplexCartesian>().norm(context, complexFormat, angleUnit, target);
   Expression rclone = r.clone();
-  Expression th = argument(context, complexFormat, angleUnit, target);
+  Expression th = argument(context, complexFormat, angleUnit, target, symbolicComputation);
   Expression thclone = th.clone();
   Expression c = other.real();
   Expression d = other.imag();

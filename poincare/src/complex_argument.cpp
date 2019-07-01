@@ -2,7 +2,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/rational.h>
 #include <poincare/constant.h>
 extern "C" {
@@ -25,7 +25,7 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ComplexArgument(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return ComplexArgument(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<typename T>
@@ -34,7 +34,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
 }
 
 
-Expression ComplexArgument::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexArgument::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -43,7 +43,7 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   bool real = c.isReal(context);
   if (real) {
@@ -62,7 +62,7 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
   }
   if (real || c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = real ? ComplexCartesian::Builder(c, Rational::Builder(0)) : static_cast<ComplexCartesian &>(c);
-    Expression childArg = complexChild.argument(context, complexFormat, angleUnit, target);
+    Expression childArg = complexChild.argument(context, complexFormat, angleUnit, target, symbolicComputation);
     replaceWithInPlace(childArg);
     return childArg.shallowReduce(context, complexFormat, angleUnit, target);
   }

@@ -4,7 +4,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/opposite.h>
 #include <assert.h>
 #include <cmath>
@@ -24,7 +24,7 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 Expression ConjugateNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Conjugate(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return Conjugate(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<typename T>
@@ -32,7 +32,7 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(std::conj(c));
 }
 
-Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -41,7 +41,7 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::ComplexForma
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.isReal(context)) {
     replaceWithInPlace(c);

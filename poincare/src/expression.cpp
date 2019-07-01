@@ -477,7 +477,7 @@ void Expression::simplifyAndApproximate(Expression * simplifiedExpression, Expre
       ecomplex.clone().convert<ComplexCartesian>().norm(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation) :
       ecomplex.real();
     Expression tb = complexFormat == Preferences::ComplexFormat::Polar ?
-      ecomplex.argument(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation) :
+      ecomplex.argument(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User, symbolicComputation) :
       ecomplex.imag();
     ra = ra.deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
     tb = tb.deepBeautify(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
@@ -525,6 +525,21 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context & context)
     sSymbolReplacementsCountLock = false;
   }
   return e;
+}
+
+Expression Expression::mapOnMatrixChild(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+  assert(numberOfChildren() == 1 && childAtIndex(0).type() == ExpressionNode::Type::Matrix);
+  Expression c = childAtIndex(0);
+  Matrix matrix = Matrix::Builder();
+  for (int i = 0; i < c.numberOfChildren(); i++) {
+    Expression f = clone(); // TODO Avoid cloning because 'this' might be very big TODO LEA: emptyBuilder?
+    f.replaceChildAtIndexInPlace(0, c.childAtIndex(i));
+    matrix.addChildAtIndexInPlace(f, i, i);
+    f.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+  }
+  matrix.setDimensions(c.convert<Matrix>().numberOfRows(), c.convert<Matrix>().numberOfColumns());
+  replaceWithInPlace(matrix);
+  return matrix.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 Expression Expression::radianToDegree() {

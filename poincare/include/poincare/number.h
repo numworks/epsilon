@@ -25,7 +25,7 @@ public:
   double doubleApproximation() const;
 
   // Complex
-  bool isReal(Context & context) const override { return true; }
+  bool isReal(Context * context) const override { return true; }
 };
 
 class Number : public Expression {
@@ -51,7 +51,7 @@ public:
   ExpressionNode::Sign sign() { return Expression::sign(nullptr); }
   Number setSign(ExpressionNode::Sign s) {
     assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-    return Expression::setSign(s, nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User).convert<Number>();
+    return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User)).convert<Number>();
   }
 protected:
   Number() : Expression() {}

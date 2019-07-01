@@ -20,10 +20,10 @@ public:
 
   // Properties
   Type type() const override { return Type::Tangent; }
-  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
+  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
   // Complex
-  bool isReal(Context & context) const override { return childAtIndex(0)->isReal(context); }
+  bool isReal(Context * context) const override { return childAtIndex(0)->isReal(context); }
 
 private:
   // Layout
@@ -31,14 +31,14 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplication
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
 
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, complexFormat, angleUnit,computeOnComplex<float>);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, complexFormat, angleUnit, computeOnComplex<double>);
   }
 };
@@ -50,7 +50,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("tan", 1, &UntypedBuilderOneChild<Tangent>);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

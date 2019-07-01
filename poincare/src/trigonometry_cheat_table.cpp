@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUninitialized, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const {
+Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUninitialized, ExpressionNode::ReductionContext reductionContext) const {
   Expression e = Expression::Parse(m_expression);
   if (assertNotUninitialized) {
     assert(!e.isUninitialized());
@@ -11,10 +11,10 @@ Expression TrigonometryCheatTable::Row::Pair::reducedExpression(bool assertNotUn
       return Expression();
     }
   }
-  return e.deepReduce(context, complexFormat, angleUnit, target);
+  return e.deepReduce(reductionContext);
 }
 
-Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::Type type, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) const {
+Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::Type type, ExpressionNode::ReductionContext reductionContext) const {
   assert(type == ExpressionNode::Type::Sine
       || type == ExpressionNode::Type::Cosine
       || type == ExpressionNode::Type::Tangent
@@ -23,7 +23,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
       || type == ExpressionNode::Type::ArcTangent);
 
   // Compute the input and output types
-  Type angleUnitType = angleUnit == Preferences::AngleUnit::Radian ? Type::AngleInRadians : Type::AngleInDegrees;
+  Type angleUnitType = reductionContext.angleUnit() == Preferences::AngleUnit::Radian ? Type::AngleInRadians : Type::AngleInDegrees;
   Type trigonometricFunctionType;
   if (type == ExpressionNode::Type::Cosine || type == ExpressionNode::Type::ArcCosine) {
     trigonometricFunctionType = Type::Cosine;
@@ -53,7 +53,7 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
   }
 
   // Approximate e to quickly compare it to cheat table entries
-  float eValue = e.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();
+  float eValue = e.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
   if (std::isnan(eValue) || std::isinf(eValue)) {
     return Expression();
   }
@@ -64,9 +64,9 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
     }
     /* e's approximation matches a table entry, check that both expressions are
      * identical */
-    Expression input = expressionForTypeAtIndex(inputType, i, true, context, complexFormat, angleUnit, target);
+    Expression input = expressionForTypeAtIndex(inputType, i, true, reductionContext);
     if (input.isIdenticalTo(e)) {
-      return expressionForTypeAtIndex(outputType, i, false, context, complexFormat, angleUnit, target);
+      return expressionForTypeAtIndex(outputType, i, false, reductionContext);
     }
   }
   return Expression();

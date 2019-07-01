@@ -3,11 +3,11 @@
 
 namespace Poincare {
 
-Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return HyperbolicTrigonometricFunction(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression HyperbolicTrigonometricFunctionNode::shallowReduce(ReductionContext reductionContext) {
+  return HyperbolicTrigonometricFunction(this).shallowReduce(reductionContext);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -16,7 +16,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Pre
   }
   Expression c = childAtIndex(0);
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
   return *this;
 }

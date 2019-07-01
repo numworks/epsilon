@@ -23,32 +23,32 @@ public:
   Type type() const override { return Type::Symbol; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol) override;
-  int polynomialDegree(Context & context, const char * symbolName) const override;
-  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const override;
-  int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
-  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const override;
+  float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const override;
 
   // Complex
-  bool isReal(Context & context) const override;
+  bool isReal(Context * context) const override;
 
   /* Layout */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowReplaceReplaceableSymbols(Context & context) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowReplaceReplaceableSymbols(Context * context) override;
 
   /* Approximation */
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 
   bool isUnknown(CodePoint unknownSymbol) const;
 private:
   char m_name[0]; // MUST be the last member variable
 
   size_t nodeSize() const override { return sizeof(SymbolNode); }
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Symbol final : public SymbolAbstract {
@@ -71,11 +71,11 @@ public:
   static bool isRegressionSymbol(const char * c);
 
   // Expression
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
-  int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
-  Expression shallowReplaceReplaceableSymbols(Context & context);
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  Expression shallowReplaceReplaceableSymbols(Context * context);
 private:
   SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };

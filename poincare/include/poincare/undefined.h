@@ -17,18 +17,18 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context & context) const override { return false; }
+  bool isReal(Context * context) const override { return false; }
 
   // Properties
   Type type() const override { return Type::Undefined; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
-  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>();
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>();
   }
 

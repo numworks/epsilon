@@ -19,16 +19,16 @@
 
 namespace Poincare {
 
-Expression ComplexCartesianNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression ComplexCartesianNode::shallowReduce(ReductionContext reductionContext) {
   return ComplexCartesian(this).shallowReduce();
 }
 
-Expression ComplexCartesianNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return ComplexCartesian(this).shallowBeautify(context, complexFormat, angleUnit, target);
+Expression ComplexCartesianNode::shallowBeautify(ReductionContext reductionContext) {
+  return ComplexCartesian(this).shallowBeautify(reductionContext);
 }
 
 template<typename T>
-Complex<T> ComplexCartesianNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Complex<T> ComplexCartesianNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);
@@ -61,11 +61,11 @@ Expression ComplexCartesian::shallowReduce() {
   return *this;
 }
 
-Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexCartesian::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
-  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
-  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
+  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(reductionContext);
+  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(reductionContext);
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,
@@ -78,7 +78,7 @@ Expression ComplexCartesian::shallowBeautify(Context & context, Preferences::Com
   return e;
 }
 
-void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext) {
   if (e.type() == searchedType) {
     *factor = Rational::Builder(1);
     *argument = e.childAtIndex(0);
@@ -90,8 +90,8 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
         *argument = e.childAtIndex(i).childAtIndex(0);
         *factor = e.clone();
         static_cast<Multiplication *>(factor)->removeChildAtIndexInPlace(i);
-        *factor = factor->shallowReduce(context, complexFormat, angleUnit, target);
-        Expression positiveFactor = factor->makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
+        *factor = factor->shallowReduce(reductionContext);
+        Expression positiveFactor = factor->makePositiveAnyNegativeNumeralFactor(reductionContext);
         *factor = positiveFactor.isUninitialized() ? *factor : positiveFactor;
         return;
       }
@@ -99,44 +99,44 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
   }
 }
 
-Expression ComplexCartesian::squareNorm(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexCartesian::squareNorm(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression aFactor, bFactor, aArgument, bArgument;
-  factorAndArgumentOfFunction(a, ExpressionNode::Type::Cosine, &aFactor, &aArgument, context, complexFormat, angleUnit, target);
-  factorAndArgumentOfFunction(b, ExpressionNode::Type::Sine, &bFactor, &bArgument, context, complexFormat, angleUnit, target);
+  factorAndArgumentOfFunction(a, ExpressionNode::Type::Cosine, &aFactor, &aArgument, reductionContext);
+  factorAndArgumentOfFunction(b, ExpressionNode::Type::Sine, &bFactor, &bArgument, reductionContext);
   if (!aFactor.isUninitialized() && !aArgument.isUninitialized() && !bFactor.isUninitialized() && !bArgument.isUninitialized() && aFactor.isIdenticalTo(bFactor) && aArgument.isIdenticalTo(bArgument)) {
     Power result = Power::Builder(aFactor, Rational::Builder(2));
-    aFactor.shallowReduce(context, complexFormat, angleUnit, target);
+    aFactor.shallowReduce(reductionContext);
     return result;
   }
   Expression a2 = Power::Builder(a, Rational::Builder(2));
   Expression b2 = Power::Builder(b, Rational::Builder(2));
   Addition add = Addition::Builder(a2, b2);
-  a2.shallowReduce(context, complexFormat, angleUnit, target);
-  b2.shallowReduce(context, complexFormat, angleUnit, target);
+  a2.shallowReduce(reductionContext);
+  b2.shallowReduce(reductionContext);
   return add;
 }
 
-Expression ComplexCartesian::norm(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionContext) {
   if (imag().isRationalZero()) {
     Expression a = real();
-    ExpressionNode::Sign s = a.sign(&context);
+    ExpressionNode::Sign s = a.sign(reductionContext.context());
     if (s == ExpressionNode::Sign::Positive) {
       // Case 1: the expression is positive real
       return a;;
     } else if (s == ExpressionNode::Sign::Negative) {
       // Case 2: the argument is negative real
-      return a.setSign(ExpressionNode::Sign::Positive, &context, complexFormat, angleUnit, target);
+      return a.setSign(ExpressionNode::Sign::Positive, reductionContext);
     }
   }
-  Expression n2 = squareNorm(context, complexFormat, angleUnit, target);
+  Expression n2 = squareNorm(reductionContext);
   Expression n =  SquareRoot::Builder(n2);
-  n2.shallowReduce(context, complexFormat, angleUnit, target);
+  n2.shallowReduce(reductionContext);
   return n;
 }
 
-Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression ComplexCartesian::argument(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
   if (!b.isRationalZero()) {
@@ -144,91 +144,91 @@ Expression ComplexCartesian::argument(Context & context, Preferences::ComplexFor
     // First, compute atan(a/b) or (π/180)*atan(a/b)
     Expression divab = Division::Builder(a, b.clone());
     Expression arcTangent = ArcTangent::Builder(divab);
-    divab.shallowReduce(context, complexFormat, angleUnit, target);
-    if (angleUnit == Preferences::AngleUnit::Degree) {
+    divab.shallowReduce(reductionContext);
+    if (reductionContext.angleUnit() == Preferences::AngleUnit::Degree) {
       Expression temp = arcTangent.degreeToRadian();
-      arcTangent.shallowReduce(context, complexFormat, angleUnit, target);
+      arcTangent.shallowReduce(reductionContext);
       arcTangent = temp;
     }
     // Then, compute sign(b) * π/2 - atan(a/b)
     Expression signb = SignFunction::Builder(b);
     Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::Builder(UCodePointGreekSmallLetterPi));
-    signb.shallowReduce(context, complexFormat, angleUnit, target);
+    signb.shallowReduce(reductionContext);
     Expression sub = Subtraction::Builder(signbPi2, arcTangent);
-    signbPi2.shallowReduce(context, complexFormat, angleUnit, target);
-    arcTangent.shallowReduce(context, complexFormat, angleUnit, target);
+    signbPi2.shallowReduce(reductionContext);
+    arcTangent.shallowReduce(reductionContext);
     return sub;
   } else {
     // if b == 0, argument = (1-sign(a))*π/2
-    Expression signa = SignFunction::Builder(a).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    Expression signa = SignFunction::Builder(a).shallowReduce(reductionContext);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
-    signa.shallowReduce(context, complexFormat, angleUnit, target);
+    signa.shallowReduce(reductionContext);
     Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::Builder(UCodePointGreekSmallLetterPi), sub);
-    sub.shallowReduce(context, complexFormat, angleUnit, target);
+    sub.shallowReduce(reductionContext);
     return mul;
   }
 }
 
-ComplexCartesian ComplexCartesian::inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+ComplexCartesian ComplexCartesian::inverse(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
   // 1/(a+ib) = a/(a^2+b^2)+i*(-b/(a^2+b^2))
-  Expression denominatorReal = clone().convert<ComplexCartesian>().squareNorm(context, complexFormat, angleUnit, target);
+  Expression denominatorReal = clone().convert<ComplexCartesian>().squareNorm(reductionContext);
   Expression denominatorImag = denominatorReal.clone();
   Expression denominatorRealInv = Power::Builder(denominatorReal, Rational::Builder(-1));
-  denominatorReal.shallowReduce(context, complexFormat, angleUnit, target);
+  denominatorReal.shallowReduce(reductionContext);
   Expression denominatorImagInv = Power::Builder(denominatorImag, Rational::Builder(-1));
-  denominatorImag.shallowReduce(context, complexFormat, angleUnit, target);
+  denominatorImag.shallowReduce(reductionContext);
   Multiplication A = Multiplication::Builder(a, denominatorRealInv);
-  denominatorRealInv.shallowReduce(context, complexFormat, angleUnit, target);
+  denominatorRealInv.shallowReduce(reductionContext);
   Expression numeratorImag = Multiplication::Builder(Rational::Builder(-1), b);
   Multiplication B = Multiplication::Builder(numeratorImag, denominatorImagInv);
-  numeratorImag.shallowReduce(context, complexFormat, angleUnit, target);
-  denominatorImagInv.shallowReduce(context, complexFormat, angleUnit, target);
+  numeratorImag.shallowReduce(reductionContext);
+  denominatorImagInv.shallowReduce(reductionContext);
   ComplexCartesian result = ComplexCartesian::Builder(A,B);
-  A.shallowReduce(context, complexFormat, angleUnit, target);
-  B.shallowReduce(context, complexFormat, angleUnit, target);
+  A.shallowReduce(reductionContext);
+  B.shallowReduce(reductionContext);
   return result.interruptComputationIfManyNodes();
 }
 
-Multiplication ComplexCartesian::squareRootHelper(Expression e, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Multiplication ComplexCartesian::squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext) {
   //(1/2)*sqrt(2*e)
   Multiplication doubleE = Multiplication::Builder(Rational::Builder(2), e);
-  e.shallowReduce(context, complexFormat, angleUnit, target);
+  e.shallowReduce(reductionContext);
   Expression sqrt = SquareRoot::Builder(doubleE);
-  doubleE.shallowReduce(context, complexFormat, angleUnit, target);
+  doubleE.shallowReduce(reductionContext);
   Multiplication result = Multiplication::Builder(Rational::Builder(1,2), sqrt);
-  sqrt.shallowReduce(context, complexFormat, angleUnit, target);
+  sqrt.shallowReduce(reductionContext);
   return result;
 }
 
-ComplexCartesian ComplexCartesian::squareRoot(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+ComplexCartesian ComplexCartesian::squareRoot(ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
   // A: (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
   // B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))*sign(b)
-  Expression normA = clone().convert<ComplexCartesian>().norm(context, complexFormat, angleUnit, target);
+  Expression normA = clone().convert<ComplexCartesian>().norm(reductionContext);
   Expression normB = normA.clone();
   // A = (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
   Addition normAdda = Addition::Builder(normA, a.clone());
-  normA.shallowReduce(context, complexFormat, angleUnit, target);
-  Multiplication A = squareRootHelper(normAdda, context, complexFormat, angleUnit, target);
+  normA.shallowReduce(reductionContext);
+  Multiplication A = squareRootHelper(normAdda, reductionContext);
   // B = B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))
   Subtraction normSuba = Subtraction::Builder(normB, a);
-  normB.shallowReduce(context, complexFormat, angleUnit, target);
-  Multiplication B = squareRootHelper(normSuba, context, complexFormat, angleUnit, target);
+  normB.shallowReduce(reductionContext);
+  Multiplication B = squareRootHelper(normSuba, reductionContext);
   // B = B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))*sign(b)
   Expression signb = SignFunction::Builder(b);
   B.addChildAtIndexInPlace(signb, B.numberOfChildren(), B.numberOfChildren());
-  signb.shallowReduce(context, complexFormat, angleUnit, target);
+  signb.shallowReduce(reductionContext);
   ComplexCartesian result = ComplexCartesian::Builder(A, B);
-  A.shallowReduce(context, complexFormat, angleUnit, target);
-  B.shallowReduce(context, complexFormat, angleUnit, target);
+  A.shallowReduce(reductionContext);
+  B.shallowReduce(reductionContext);
   return result.interruptComputationIfManyNodes();
 }
 
 
-ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+ComplexCartesian ComplexCartesian::powerInteger(int n, ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
@@ -241,7 +241,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     Expression bpow = Power::Builder(b, Rational::Builder(n));
     if (n/2%2 == 1) {
       Expression temp = Multiplication::Builder(Rational::Builder(-1), bpow);
-      bpow.shallowReduce(context, complexFormat, angleUnit, target);
+      bpow.shallowReduce(reductionContext);
       bpow = temp;
     }
     if (n%2 == 0) {
@@ -249,7 +249,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     } else {
       result = ComplexCartesian::Builder(Rational::Builder(0), bpow);
     }
-    bpow.shallowReduce(context, complexFormat, angleUnit, target);
+    bpow.shallowReduce(reductionContext);
     return result;
   }
   // (a+ib) = a^n+i*b*a^(n-1)+(-1)*b^2*a^(n-2)+(-i)*b^3*a^(n-3)+b^3*a^(n-4)+...
@@ -265,9 +265,9 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     Power apow = Power::Builder(aclone, Rational::Builder(n-i));
     Power bpow = Power::Builder(bclone, Rational::Builder(i));
     Multiplication m = Multiplication::Builder(binom, apow, bpow);
-    binom.shallowReduce(context);
-    apow.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
-    bpow.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    binom.shallowReduce(reductionContext.context());
+    apow.shallowReduce(reductionContext);
+    bpow.shallowReduce(reductionContext);
     if (i/2%2 == 1) {
       m.addChildAtIndexInPlace(Rational::Builder(-1), 0, m.numberOfChildren());
     }
@@ -276,18 +276,18 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, Context & context, Prefer
     } else {
       B.addChildAtIndexInPlace(m, B.numberOfChildren(), B.numberOfChildren());
     }
-    m.shallowReduce(context, complexFormat, angleUnit, target);
+    m.shallowReduce(reductionContext);
     result = result.interruptComputationIfManyNodes();
     if (result.real().isUndefined()) {
       return result;
     }
   }
-  A.shallowReduce(context, complexFormat, angleUnit, target);
-  B.shallowReduce(context, complexFormat, angleUnit, target);
+  A.shallowReduce(reductionContext);
+  B.shallowReduce(reductionContext);
   return result;
 }
 
-ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, ExpressionNode::ReductionContext reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression c = other.real();
@@ -297,73 +297,73 @@ ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, Context & 
   Expression ac =  Multiplication::Builder(a.clone(), c.clone());
   Expression bd =  Multiplication::Builder(b.clone(), d.clone());
   Subtraction A = Subtraction::Builder(ac, bd);
-  ac.shallowReduce(context, complexFormat, angleUnit, target);
-  bd.shallowReduce(context, complexFormat, angleUnit, target);
+  ac.shallowReduce(reductionContext);
+  bd.shallowReduce(reductionContext);
   // Compute ad+bc
   Expression ad =  Multiplication::Builder(a, d);
   Expression bc =  Multiplication::Builder(b, c);
   Addition B = Addition::Builder(ad, bc);
-  ad.shallowReduce(context, complexFormat, angleUnit, target);
-  bc.shallowReduce(context, complexFormat, angleUnit, target);
+  ad.shallowReduce(reductionContext);
+  bc.shallowReduce(reductionContext);
   ComplexCartesian result = ComplexCartesian::Builder(A, B);
-  A.shallowReduce(context, complexFormat, angleUnit, target);
-  B.shallowReduce(context, complexFormat, angleUnit, target);
+  A.shallowReduce(reductionContext);
+  B.shallowReduce(reductionContext);
   return result.interruptComputationIfManyNodes();
 }
 
-Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, ExpressionNode::ReductionContext reductionContext) {
   Multiplication m = Multiplication::Builder(norm, trigo);
-  norm.shallowReduce(context, complexFormat, angleUnit, target);
-  trigo.shallowReduce(context, complexFormat, angleUnit, target);
+  norm.shallowReduce(reductionContext);
+  trigo.shallowReduce(reductionContext);
   return m;
 }
 
-ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
-  Expression r = clone().convert<ComplexCartesian>().norm(context, complexFormat, angleUnit, target);
+ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, ExpressionNode::ReductionContext reductionContext) {
+  Expression r = clone().convert<ComplexCartesian>().norm(reductionContext);
   Expression rclone = r.clone();
-  Expression th = argument(context, complexFormat, angleUnit, target, symbolicComputation);
+  Expression th = argument(reductionContext);
   Expression thclone = th.clone();
   Expression c = other.real();
   Expression d = other.imag();
   // R = r^c*e^(-th*d)
   Expression rpowc = Power::Builder(rclone, c.clone());
-  rclone.shallowReduce(context, complexFormat, angleUnit, target);
+  rclone.shallowReduce(reductionContext);
   Expression thmuld = Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
-  thclone.shallowReduce(context, complexFormat, angleUnit, target);
+  thclone.shallowReduce(reductionContext);
   Expression exp = Power::Builder(Constant::Builder(UCodePointScriptSmallE), thmuld);
-  thmuld.shallowReduce(context, complexFormat, angleUnit, target);
+  thmuld.shallowReduce(reductionContext);
   Multiplication norm = Multiplication::Builder(rpowc, exp);
-  rpowc.shallowReduce(context, complexFormat, angleUnit, target);
-  exp.shallowReduce(context, complexFormat, angleUnit, target);
+  rpowc.shallowReduce(reductionContext);
+  exp.shallowReduce(reductionContext);
 
   // TH = d*ln(r)+c*th
   Expression lnr = NaperianLogarithm::Builder(r);
-  r.shallowReduce(context, complexFormat, angleUnit, target);
+  r.shallowReduce(reductionContext);
   Multiplication dlnr = Multiplication::Builder(d, lnr);
-  lnr.shallowReduce(context, complexFormat, angleUnit, target);
+  lnr.shallowReduce(reductionContext);
   Multiplication thc = Multiplication::Builder(th, c);
-  th.shallowReduce(context, complexFormat, angleUnit, target);
+  th.shallowReduce(reductionContext);
   Expression argument = Addition::Builder(thc, dlnr);
-  thc.shallowReduce(context, complexFormat, angleUnit, target);
-  dlnr.shallowReduce(context, complexFormat, angleUnit, target);
+  thc.shallowReduce(reductionContext);
+  dlnr.shallowReduce(reductionContext);
 
-  if (angleUnit == Preferences::AngleUnit::Degree) {
+  if (reductionContext.angleUnit() == Preferences::AngleUnit::Degree) {
     Expression temp = argument.radianToDegree();
-    argument.shallowReduce(context, complexFormat, angleUnit, target);
+    argument.shallowReduce(reductionContext);
     argument = temp;
   }
   // Result = (norm*cos(argument), norm*sin(argument))
   Expression normClone = norm.clone();
   Expression argClone = argument.clone();
   Expression cos = Cosine::Builder(argClone);
-  argClone.shallowReduce(context, complexFormat, angleUnit, target);
-  Expression normcosarg = powerHelper(normClone, cos, context, complexFormat, angleUnit, target);
+  argClone.shallowReduce(reductionContext);
+  Expression normcosarg = powerHelper(normClone, cos, reductionContext);
   Expression sin = Sine::Builder(argument);
-  argument.shallowReduce(context, complexFormat, angleUnit, target);
-  Expression normsinarg = powerHelper(norm, sin, context, complexFormat, angleUnit, target);
+  argument.shallowReduce(reductionContext);
+  Expression normsinarg = powerHelper(norm, sin, reductionContext);
   ComplexCartesian result = ComplexCartesian::Builder(normcosarg, normsinarg);
-  normcosarg.shallowReduce(context, complexFormat, angleUnit, target);
-  normsinarg.shallowReduce(context, complexFormat, angleUnit, target);
+  normcosarg.shallowReduce(reductionContext);
+  normsinarg.shallowReduce(reductionContext);
   return result.interruptComputationIfManyNodes();
 }
 

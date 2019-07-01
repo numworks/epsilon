@@ -31,7 +31,7 @@ ExpressionNode::Sign MultiplicationNode::sign(Context * context) const {
   return (Sign)sign;
 }
 
-int MultiplicationNode::polynomialDegree(Context & context, const char * symbolName) const {
+int MultiplicationNode::polynomialDegree(Context * context, const char * symbolName) const {
   int degree = 0;
   for (ExpressionNode * c : children()) {
     int d = c->polynomialDegree(context, symbolName);
@@ -43,7 +43,7 @@ int MultiplicationNode::polynomialDegree(Context & context, const char * symbolN
   return degree;
 }
 
-int MultiplicationNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+int MultiplicationNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   return Multiplication(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
@@ -66,9 +66,9 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
-Expression MultiplicationNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression MultiplicationNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive);
-  return Multiplication(this).setSign(s, context, complexFormat, angleUnit, target);
+  return Multiplication(this).setSign(s, reductionContext);
 }
 
 bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
@@ -98,15 +98,15 @@ int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
-Expression MultiplicationNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Multiplication(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression MultiplicationNode::shallowReduce(ReductionContext reductionContext) {
+  return Multiplication(this).shallowReduce(reductionContext);
 }
 
-Expression MultiplicationNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Multiplication(this).shallowBeautify(context, complexFormat, angleUnit, target);
+Expression MultiplicationNode::shallowBeautify(ReductionContext reductionContext) {
+  return Multiplication(this).shallowBeautify(reductionContext);
 }
 
-Expression MultiplicationNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression MultiplicationNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   return Multiplication(this).denominator(context, complexFormat, angleUnit);
 }
 
@@ -125,21 +125,21 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
   }
 }
 
-Expression Multiplication::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Multiplication::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).sign(context) == ExpressionNode::Sign::Negative) {
-      replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, complexFormat, angleUnit, target));
+    if (childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, reductionContext));
     }
   }
-  return shallowReduce(*context, complexFormat, angleUnit, target);
+  return shallowReduce(reductionContext);
 }
 
-Expression Multiplication::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
-  return privateShallowReduce(context, complexFormat, angleUnit, target, true, true);
+Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  return privateShallowReduce(reductionContext, true, true);
 }
 
-Expression Multiplication::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Multiplication::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
@@ -147,7 +147,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
   // Step 1: Turn -n*A into -(n*A)
-  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, target);
+  Expression noNegativeNumeral = makePositiveAnyNegativeNumeralFactor(reductionContext);
   // If one negative numeral factor was made positive, we turn the expression in an Opposite
   if (!noNegativeNumeral.isUninitialized()) {
     Opposite o = Opposite::Builder();
@@ -158,9 +158,9 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
 
   /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
    * This also turns 2/3*a into 2*a*3^(-1) */
-  Expression thisExp = mergeNegativePower(context, complexFormat, angleUnit);
+  Expression thisExp = mergeNegativePower(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (thisExp.type() == ExpressionNode::Type::Power) {
-    return thisExp.shallowBeautify(context, complexFormat, angleUnit, target);
+    return thisExp.shallowBeautify(reductionContext);
   }
   assert(thisExp.type() == ExpressionNode::Type::Multiplication);
 
@@ -184,7 +184,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
     Expression denominatorOperand = childI.childAtIndex(0);
     removeChildInPlace(childI, childI.numberOfChildren());
 
-    Expression numeratorOperand = shallowReduce(context, complexFormat, angleUnit, target);
+    Expression numeratorOperand = shallowReduce(reductionContext);
     // Delete unnecessary parentheses on numerator
     if (numeratorOperand.type() == ExpressionNode::Type::Parenthesis) {
       Expression numeratorChild0 = numeratorOperand.childAtIndex(0);
@@ -196,12 +196,12 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Compl
     numeratorOperand.replaceWithInPlace(d);
     d.replaceChildAtIndexInPlace(0, numeratorOperand);
     d.replaceChildAtIndexInPlace(1, denominatorOperand);
-    return d.shallowBeautify(context, complexFormat, angleUnit, target);
+    return d.shallowBeautify(reductionContext);
   }
   return thisExp;
 }
 
-int Multiplication::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+int Multiplication::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(context, symbolName);
   if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
@@ -236,7 +236,7 @@ int Multiplication::getPolynomialCoefficients(Context & context, const char * sy
   return deg;
 }
 
-Expression Multiplication::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Multiplication::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   // WARNING: we do not want to change the expression but to create a new one.
   Multiplication thisClone = clone().convert<Multiplication>();
@@ -258,7 +258,7 @@ Expression Multiplication::denominator(Context & context, Preferences::ComplexFo
   return Expression();
 }
 
-Expression Multiplication::privateShallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool shouldExpand, bool canBeInterrupted) {
+Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
   {
     Expression e = Expression::defaultShallowReduce();;
     if (e.isUndefined()) {
@@ -326,7 +326,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
         for (int j = 0; j < n; j++) {
           Expression * mult = new Multiplication::Builder(currentMatrix->childAtIndex(j+om*i1), resultMatrix->childAtIndex(j*m+i2), true);
           static_cast<Addition *>(newMatrixOperands[e])->addOperand(mult);
-          mult->shallowReduce(context, complexFormat, angleUnit, target);
+          mult->shallowReduce(reductionContext);
         }
         Reduce(&newMatrixOperands[e], context, complexFormat, angleUnit, false);
       }
@@ -342,9 +342,9 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       Expression * entryI = resultMatrix->childAtIndex(i);
       resultMatrix->replaceOperand(entryI, m, false);
       m->addOperand(entryI);
-      m->shallowReduce(context, complexFormat, angleUnit, target);
+      m->shallowReduce(reductionContext);
     }
-    return replaceWith(resultMatrix, true)->shallowReduce(context, complexFormat, angleUnit, target);
+    return replaceWith(resultMatrix, true)->shallowReduce(reductionContext);
   }
 #endif
 #endif
@@ -356,7 +356,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
     Expression oi1 = childAtIndex(i+1);
-    if (oi.recursivelyMatches(Expression::IsRandom, context, true)) {
+    if (oi.recursivelyMatches(Expression::IsRandom, reductionContext.context(), true)) {
       // Do not factorize random or randint
       i++;
       continue;
@@ -371,11 +371,11 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
         shouldFactorizeBase = oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power;
       }
       if (shouldFactorizeBase) {
-        factorizeBase(i, i+1, context, complexFormat, angleUnit, target);
+        factorizeBase(i, i+1, reductionContext);
         continue;
       }
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
-      factorizeExponent(i, i+1, context, complexFormat, angleUnit, target);
+      factorizeExponent(i, i+1, reductionContext);
       continue;
     }
     i++;
@@ -385,7 +385,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
-  if (target == ExpressionNode::ReductionTarget::User) {
+  if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
     for (int i = 0; i < numberOfChildren(); i++) {
       Expression o1 = childAtIndex(i);
       if (Base(o1).type() == ExpressionNode::Type::Sine && TermHasNumeralExponent(o1)) {
@@ -395,7 +395,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
         for (int j = i+1; j < numberOfChildren(); j++) {
           Expression o2 = childAtIndex(j);
           if (Base(o2).type() == ExpressionNode::Type::Cosine && TermHasNumeralExponent(o2) && Base(o2).childAtIndex(0).isIdenticalTo(x)) {
-            factorizeSineAndCosine(i, j, context, complexFormat, angleUnit);
+            factorizeSineAndCosine(i, j, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
             break;
           }
         }
@@ -404,7 +404,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     /* Replacing sin/cos by tan factors may have mixed factors and factors are
      * guaranteed to be sorted (according ot SimplificationOrder) at the end of
      * shallowReduce */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
+    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
   }
 
   /* Step 5: We remove rational children that appeared in the middle of sorted
@@ -450,7 +450,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
       // Check that other children don't match inf
       bool infiniteFactor = false;
       for (int i = 1; i < numberOfChildren(); i++) {
-        infiniteFactor = childAtIndex(i).recursivelyMatches(Expression::IsInfinity, context);
+        infiniteFactor = childAtIndex(i).recursivelyMatches(Expression::IsInfinity, reductionContext.context());
         if (infiniteFactor) {
           break;
         }
@@ -473,14 +473,14 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b).
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
-  bool hasRandom = recursivelyMatches(Expression::IsRandom, context, true);
+  bool hasRandom = recursivelyMatches(Expression::IsRandom, reductionContext.context(), true);
   if (shouldExpand
       && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
       && !hasRandom)
   {
     for (int i = 0; i < numberOfChildren(); i++) {
       if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
-        return distributeOnOperandAtIndex(i, context, complexFormat, angleUnit, target);
+        return distributeOnOperandAtIndex(i, reductionContext);
       }
     }
   }
@@ -500,7 +500,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
    *   We can bubble up ComplexCartesian nodes.
    * Do not simplify if there are randoms !*/
-  if (!hasRandom && allChildrenAreReal(context) == 0) {
+  if (!hasRandom && allChildrenAreReal(reductionContext.context()) == 0) {
     int nbChildren = numberOfChildren();
     int i = nbChildren-1;
     // Children are sorted so ComplexCartesian nodes are at the end
@@ -515,7 +515,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
         // the Multiplication is sorted so ComplexCartesian nodes are the last ones
         break;
       }
-      child = child.multiply(static_cast<ComplexCartesian &>(e), context, complexFormat, angleUnit, target);
+      child = child.multiply(static_cast<ComplexCartesian &>(e), reductionContext);
       removeChildAtIndexInPlace(i);
       i--;
     }
@@ -528,8 +528,8 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     replaceWithInPlace(newComplexCartesian);
     newComplexCartesian.replaceChildAtIndexInPlace(0, real);
     newComplexCartesian.replaceChildAtIndexInPlace(1, imag);
-    real.shallowReduce(context, complexFormat, angleUnit, target);
-    imag.shallowReduce(context, complexFormat, angleUnit, target);
+    real.shallowReduce(reductionContext);
+    imag.shallowReduce(reductionContext);
     return newComplexCartesian.shallowReduce();
   }
 
@@ -549,7 +549,7 @@ void Multiplication::mergeMultiplicationChildrenInPlace() {
   }
 }
 
-void Multiplication::factorizeBase(int i, int j, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void Multiplication::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {
   /* This function factorizes two children which have a common base. For example
    * if this is Multiplication::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
    * and this turned into Multiplication::Builder(pi^5). */
@@ -558,10 +558,10 @@ void Multiplication::factorizeBase(int i, int j, Context & context, Preferences:
   // Step 1: Get rid of the child j
   removeChildAtIndexInPlace(j);
   // Step 2: Merge child j in child i by factorizing base
-  mergeInChildByFactorizingBase(i, e, context, complexFormat, angleUnit, target);
+  mergeInChildByFactorizingBase(i, e, reductionContext);
 }
 
-void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext) {
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base. */
 
@@ -569,10 +569,10 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Context 
   Expression s = Addition::Builder(CreateExponent(childAtIndex(i)), CreateExponent(e)); // pi^2*pi^3 -> pi^(2+3) -> pi^5
   // Step 2: Create the new Power
   Expression p = Power::Builder(Base(childAtIndex(i)), s); // pi^2*pi^-2 -> pi^0 -> 1
-  s.shallowReduce(context, complexFormat, angleUnit, target);
+  s.shallowReduce(reductionContext);
   // Step 3: Replace one of the child
   replaceChildAtIndexInPlace(i, p);
-  p = p.shallowReduce(context, complexFormat, angleUnit, target);
+  p = p.shallowReduce(reductionContext);
   /* Step 4: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
@@ -581,7 +581,7 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Context 
   }
 }
 
-void Multiplication::factorizeExponent(int i, int j, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+void Multiplication::factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext) {
   /* This function factorizes children which share a common exponent. For
    * example, it turns Multiplication::Builder(2^x,3^x) into Multiplication::Builder(6^x). */
 
@@ -592,8 +592,8 @@ void Multiplication::factorizeExponent(int i, int j, Context & context, Preferen
   // Step 3: Replace the other child
   childAtIndex(i).replaceChildAtIndexInPlace(0, m);
   // Step 4: Reduce expressions
-  m.shallowReduce(context, complexFormat, angleUnit, target);
-  Expression p = childAtIndex(i).shallowReduce(context, complexFormat, angleUnit, target); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
+  m.shallowReduce(reductionContext);
+  Expression p = childAtIndex(i).shallowReduce(reductionContext); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
   /* Step 5: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
@@ -602,7 +602,7 @@ void Multiplication::factorizeExponent(int i, int j, Context & context, Preferen
   }
 }
 
-Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Multiplication::distributeOnOperandAtIndex(int i, ExpressionNode::ReductionContext reductionContext) {
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
   assert(i >= 0 && i < numberOfChildren());
@@ -616,13 +616,13 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, 
     m.replaceChildAtIndexInPlace(i, childI.childAtIndex(j));
     // Reduce m: pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-    m.shallowReduce(context, complexFormat, angleUnit, target);
+    m.shallowReduce(reductionContext);
   }
   replaceWithInPlace(a);
-  return a.shallowReduce(context, complexFormat, angleUnit, target); // Order terms, put under a common denominator if needed
+  return a.shallowReduce(reductionContext); // Order terms, put under a common denominator if needed
 }
 
-void Multiplication::addMissingFactors(Expression factor, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+void Multiplication::addMissingFactors(Expression factor, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   if (factor.type() == ExpressionNode::Type::Multiplication) {
     for (int j = 0; j < factor.numberOfChildren(); j++) {
       addMissingFactors(factor.childAtIndex(j), context, complexFormat, angleUnit);
@@ -646,20 +646,21 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
   if (factor.type() != ExpressionNode::Type::Rational) {
     /* If factor is not a rational, we merge it with the child of identical
      * base if any. Otherwise, we add it as an new child. */
+    ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
-        Expression sub = Subtraction::Builder(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
-        if (sub.sign(&context) == ExpressionNode::Sign::Negative) { // index[0] < index[1]
+        Expression sub = Subtraction::Builder(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(reductionContext);
+        if (sub.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) { // index[0] < index[1]
           sub = Opposite::Builder(sub);
           if (factor.type() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
           } else {
             factor = Power::Builder(factor, sub);
           }
-          sub.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
-          mergeInChildByFactorizingBase(i, factor, context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
-        } else if (sub.sign(&context) == ExpressionNode::Sign::Unknown) {
-          mergeInChildByFactorizingBase(i, factor, context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+          sub.shallowReduce(reductionContext);
+          mergeInChildByFactorizingBase(i, factor, reductionContext);
+        } else if (sub.sign(reductionContext.context()) == ExpressionNode::Sign::Unknown) {
+          mergeInChildByFactorizingBase(i, factor, reductionContext);
         }
         return;
       }
@@ -669,7 +670,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
 }
 
-void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+void Multiplication::factorizeSineAndCosine(int i, int j, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -685,6 +686,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
   Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
   Number absQ = q.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
   Expression tan = Tangent::Builder(x.clone());
+  ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
   if (Number::NaturalOrder(absP, absQ) < 0) {
     // Replace sin(x) by tan(x) or sin(x)^p by tan(x)^p
     if (p.isRationalOne()) {
@@ -692,19 +694,19 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
     } else {
       replaceChildAtIndexInPlace(i, Power::Builder(tan, p));
     }
-    childAtIndex(i).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    childAtIndex(i).shallowReduce(userReductionContext);
     // Replace cos(x)^q by cos(x)^(p+q)
     replaceChildAtIndexInPlace(j, Power::Builder(Base(childAtIndex(j)), sumPQ));
-    childAtIndex(j).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    childAtIndex(j).shallowReduce(userReductionContext);
   } else {
     // Replace cos(x)^q by tan(x)^(-q)
     Expression newPower = Power::Builder(tan, Number::Multiplication(q, Rational::Builder(-1)));
-    newPower.childAtIndex(1).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    newPower.childAtIndex(1).shallowReduce(userReductionContext);
     replaceChildAtIndexInPlace(j, newPower);
-    newPower.shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    newPower.shallowReduce(userReductionContext);
     // Replace sin(x)^p by sin(x)^(p+q)
     replaceChildAtIndexInPlace(i, Power::Builder(Base(childAtIndex(i)), sumPQ));
-    childAtIndex(i).shallowReduce(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+    childAtIndex(i).shallowReduce(userReductionContext);
   }
 }
 
@@ -758,7 +760,7 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-Expression Multiplication::mergeNegativePower(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::mergeNegativePower(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   /* mergeNegativePower groups all factors that are power of form a^(-b) together
    * for instance, a^(-1)*b^(-c)*c = c*(a*b^c)^(-1) */
   Multiplication m = Multiplication::Builder();
@@ -777,7 +779,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::Co
   while (i < numberOfChildren()) {
     if (childAtIndex(i).type() == ExpressionNode::Type::Power) {
       Expression p = childAtIndex(i);
-      Expression positivePIndex = p.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User);
+      Expression positivePIndex = p.childAtIndex(1).makePositiveAnyNegativeNumeralFactor( ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::User));
       if (!positivePIndex.isUninitialized()) {
         // Remove a^(-b) from the Multiplication
         removeChildAtIndexInPlace(i);

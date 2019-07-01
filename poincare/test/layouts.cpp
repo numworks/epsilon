@@ -15,14 +15,14 @@ void assert_parsed_layout_is(Layout l, Poincare::Expression r) {
   l.serializeForParsing(buffer, bufferSize);
   Expression e = parse_expression(buffer);
   Expression eSimplified;
-  e.clone().simplifyAndApproximate(&eSimplified, nullptr, context, Cartesian, Degree);
+  e.clone().simplifyAndApproximate(&eSimplified, nullptr, &context, Cartesian, Degree);
   if (eSimplified.isUninitialized()) {
     /* In case the simplification is impossible (if there are matrices for
      * instance), use the non simplified expression */
     eSimplified = e;
   }
   Expression rSimplified;
-  r.clone().simplifyAndApproximate(&rSimplified, nullptr, context, Cartesian, Degree);
+  r.clone().simplifyAndApproximate(&rSimplified, nullptr, &context, Cartesian, Degree);
   if (rSimplified.isUninitialized()) {
     /* In case the simplification is impossible (if there are matrices for
      * instance), use the non simplified expression */

@@ -46,8 +46,7 @@ Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat 
     }
   }
 
-  Expression op = childAtIndex(0);
-  if (op.type() == ExpressionNode::Type::Matrix) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 

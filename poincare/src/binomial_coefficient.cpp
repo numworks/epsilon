@@ -15,7 +15,7 @@ constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
 Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return BinomialCoefficient(this).shallowReduce();
+  return BinomialCoefficient(this).shallowReduce(context);
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -54,7 +54,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 
-Expression BinomialCoefficient::shallowReduce() {
+Expression BinomialCoefficient::shallowReduce(Context & context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -63,11 +63,11 @@ Expression BinomialCoefficient::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return Undefined::Builder();
   }
-#endif
+
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (!r0.integerDenominator().isOne() || r0.isNegative()) {

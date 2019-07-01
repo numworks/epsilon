@@ -41,12 +41,10 @@ Expression Cosine::shallowReduce(Context & context, Preferences::ComplexFormat c
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  Expression op = childAtIndex(0);
-  if (op.type() == ExpressionNode::Type::Matrix) {
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
 }
 

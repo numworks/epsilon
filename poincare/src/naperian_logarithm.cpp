@@ -30,12 +30,11 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Comp
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
-  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder(UCodePointScriptSmallE));
+  Logarithm l = Logarithm::Builder(c, Constant::Builder(UCodePointScriptSmallE));
   replaceWithInPlace(l);
   return l.shallowReduce(context, complexFormat, angleUnit, target);
 }

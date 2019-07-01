@@ -62,11 +62,9 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Com
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return Undefined::Builder();
   }
-#endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {

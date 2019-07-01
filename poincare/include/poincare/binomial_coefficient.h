@@ -43,7 +43,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("binomial", 2, &UntypedBuilderTwoChildren<BinomialCoefficient>);
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context & context);
 private:
   constexpr static int k_maxNValue = 300;
 };

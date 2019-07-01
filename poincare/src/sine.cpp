@@ -42,12 +42,9 @@ Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat com
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  Expression op = childAtIndex(0);
-  if (op.type() == ExpressionNode::Type::Matrix) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
 }
 

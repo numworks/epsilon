@@ -35,7 +35,7 @@ int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
 }
 
 Expression DerivativeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Derivative(this).shallowReduce();
+  return Derivative(this).shallowReduce(context);
 }
 
 template<typename T>
@@ -135,18 +135,19 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::ComplexFo
   return ans;
 }
 
-Expression Derivative::shallowReduce() {
+Expression Derivative::shallowReduce(Context & context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || || childAtIndex(1).type() == ExpressionNode::Type::Matrix || childAtIndex(2).type() == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(childAtIndex(0), context)
+      || SortedIsMatrix(childAtIndex(1), context)
+      || SortedIsMatrix(childAtIndex(2), context))
+  {
     return Undefined::Builder();
   }
-#endif
   // TODO: to be implemented diff(+) -> +diff() etc
   return *this;
 }

@@ -48,7 +48,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("frac", 1, &UntypedBuilderOneChild<FracPart>);
 
-  Expression shallowReduce();
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

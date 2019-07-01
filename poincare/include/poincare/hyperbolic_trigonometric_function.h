@@ -18,7 +18,7 @@ private:
 class HyperbolicTrigonometricFunction : public Expression {
 public:
   HyperbolicTrigonometricFunction(const HyperbolicTrigonometricFunctionNode * n) : Expression(n) {}
-  Expression shallowReduce();
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

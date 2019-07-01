@@ -32,11 +32,9 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   if (c.isReal(context)) {
     Expression result = Rational::Builder(0);
     replaceWithInPlace(result);

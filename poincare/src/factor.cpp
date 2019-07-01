@@ -67,6 +67,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
 }
 
 Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  //TODO LEA Matrices?
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();

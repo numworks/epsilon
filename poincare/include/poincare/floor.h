@@ -48,7 +48,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("floor", 1, &UntypedBuilderOneChild<Floor>);
 
-  Expression shallowReduce();
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

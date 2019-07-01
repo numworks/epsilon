@@ -106,6 +106,10 @@ bool Expression::IsRandom(const Expression e, Context & context) {
   return e.isRandom();
 }
 
+bool Expression::IsNAry(const Expression e, Context & context) {
+  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::Multiplication;
+}
+
 bool Expression::IsMatrix(const Expression e, Context & context) {
   return e.type() == ExpressionNode::Type::Matrix
     || e.type() == ExpressionNode::Type::ConfidenceInterval
@@ -114,6 +118,17 @@ bool Expression::IsMatrix(const Expression e, Context & context) {
     || e.type() == ExpressionNode::Type::MatrixInverse
     || e.type() == ExpressionNode::Type::MatrixIdentity
     || e.type() == ExpressionNode::Type::MatrixTranspose;
+}
+
+bool Expression::SortedIsMatrix(const Expression e, Context & context) {
+  // TODO should we replace symbols?
+  if (IsMatrix(e, context)) {
+    return true;
+  }
+  if (IsNAry(e, context)) {
+    return NAryExpression::SortedIsMatrix(e, context);
+  }
+  return false;
 }
 
 bool Expression::IsInfinity(const Expression e, Context & context) {

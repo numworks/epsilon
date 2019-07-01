@@ -32,11 +32,11 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::C
 }
 
 Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Ceiling(this).shallowReduce();
+  return Ceiling(this).shallowReduce(context, angleUnit);
 }
 
 
-Expression Ceiling::shallowReduce() {
+Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -44,11 +44,9 @@ Expression Ceiling::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   if (c.type() == ExpressionNode::Type::Constant) {
     Constant s = static_cast<Constant&>(c);
     Expression result;

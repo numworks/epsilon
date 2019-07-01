@@ -94,13 +94,9 @@ Expression CommonLogarithm::shallowReduce(Context & context, Preferences::Comple
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
-#endif
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
   replaceWithInPlace(log);
   return log.shallowReduce(context, complexFormat, angleUnit, target);
@@ -113,14 +109,12 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
       return e;
     }
   }
-  Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
-  if (c.type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
+
+  if (SortedIsMatrix(childAtIndex(1), context)) {
     return Undefined::Builder();
   }
-#endif
-#endif
+
+  Expression c = childAtIndex(0);
   if (c.sign(&context) == ExpressionNode::Sign::Negative || childAtIndex(1).sign(&context) == ExpressionNode::Sign::Negative) {
     return *this;
   }
@@ -136,9 +130,12 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
    *   information on the parent which could later be a power of b.
    */
   bool letLogAtRoot = parentIsAPowerOfSameBase();
+  if (letLogAtRoot) {
+    return *this;
+  }
 
   // log(+inf, a) ?
-  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Infinity && c.sign(&context) == ExpressionNode::Sign::Positive) {
+  if (c.type() == ExpressionNode::Type::Infinity && c.sign(&context) == ExpressionNode::Sign::Positive) {
     Expression base = childAtIndex(1);
     // log(+inf, a) --> ±inf with a rational and a > 0
     if (base.type() == ExpressionNode::Type::Rational && !static_cast<Rational&>(base).isNegative() && !static_cast<Rational&>(base).isZero()) {
@@ -156,7 +153,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
   }
 
   // log(x^y, b)->y*log(x, b) if x>0
-  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive) {
+  if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(&context) == ExpressionNode::Sign::Positive) {
     Power p = static_cast<Power &>(c);
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
@@ -168,7 +165,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
     return mult.shallowReduce(context, complexFormat, angleUnit, target);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
-  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Multiplication) {
+  if (c.type() == ExpressionNode::Type::Multiplication) {
     Addition a = Addition::Builder();
     for (int i = 0; i < c.numberOfChildren()-1; i++) {
       Expression factor = c.childAtIndex(i);
@@ -189,7 +186,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
     }
   }
   // log(r) with r Rational
-  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Rational) {
+  if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational &>(c);
     Addition a = Addition::Builder();
     // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
@@ -205,6 +202,12 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::ComplexForma
     replaceWithInPlace(a);
     return a.shallowReduce(context, complexFormat, angleUnit, target);
   }
+
+  // log(m) with m Matrix
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
+  }
+
   return *this;
 }
 

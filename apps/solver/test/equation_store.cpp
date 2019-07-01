@@ -255,7 +255,7 @@ QUIZ_CASE(equation_and_symbolic_computation) {
 
   // -3->a
   Shared::GlobalContext globalContext;
-  Expression::ParseAndSimplify("-3→a", globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
+  Expression::ParseAndSimplify("-3→a", &globalContext, Preferences::ComplexFormat::Polar, Preferences::AngleUnit::Degree);
 
   // x+a = 0 : x = 3
   const char * variables[] = {"x", ""};

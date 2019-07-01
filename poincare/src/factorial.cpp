@@ -14,7 +14,7 @@ namespace Poincare {
 
 // Property
 
-Expression FactorialNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FactorialNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == Sign::Positive);
   return Factorial(this);
 }
@@ -34,11 +34,11 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Factorial(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression FactorialNode::shallowReduce(ReductionContext reductionContext) {
+  return Factorial(this).shallowReduce(reductionContext);
 }
 
-Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FactorialNode::shallowBeautify(ReductionContext reductionContext) {
   return Factorial(this).shallowBeautify();
 }
 
@@ -77,7 +77,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 
-Expression Factorial::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -86,7 +86,7 @@ Expression Factorial::shallowReduce(Context & context, Preferences::ComplexForma
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();

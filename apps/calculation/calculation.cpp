@@ -55,7 +55,7 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
   }
   Expression exactOutput;
   Expression approximateOutput;
-  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, *context, false);
+  PoincareHelpers::ParseAndSimplifyAndApproximate(m_inputText, &exactOutput, &approximateOutput, context, false);
   PoincareHelpers::Serialize(exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   PoincareHelpers::Serialize(approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
@@ -159,7 +159,7 @@ Expression Calculation::approximateOutput(Context * context) {
      * the buffer. Put a special error instead of "undef". */
     return Undefined::Builder();
   }
-  return PoincareHelpers::Approximate<double>(exp, *context);
+  return PoincareHelpers::Approximate<double>(exp, context);
 }
 
 Layout Calculation::createApproximateOutputLayout(Context * context) {
@@ -173,7 +173,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   if (shouldOnlyDisplayExactOutput()) {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (input().recursivelyMatches(
-        [](const Expression e, Context & c) {
+        [](const Expression e, Context * c) {
           /* If the input contains:
            * - Random
            * - Round
@@ -181,7 +181,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
           ExpressionNode::Type t = e.type();
           return (t == ExpressionNode::Type::Random) || (t == ExpressionNode::Type::Round) || Expression::IsMatrix(e, c);
         },
-        *context, true))
+        context, true))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
@@ -192,7 +192,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
     // If the approximate result is 'unreal' or the exact result is 'undef'
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (input().recursivelyMatches(Expression::IsApproximate, *context) || exactOutput().recursivelyMatches(Expression::IsApproximate, *context)) {
+  } else if (input().recursivelyMatches(Expression::IsApproximate, context) || exactOutput().recursivelyMatches(Expression::IsApproximate, context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;
@@ -214,12 +214,12 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
   char buffer[bufferSize];
   Preferences * preferences = Preferences::sharedPreferences();
-  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context, false);
+  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(m_exactOutputText, context, false);
   if (exactOutputExpression.isUninitialized()) {
     exactOutputExpression = Undefined::Builder();
   }
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

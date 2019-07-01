@@ -28,7 +28,7 @@ const Expression CacheContext<T>::expressionForSymbol(const SymbolAbstract & sym
 }
 
 template<typename T>
-void CacheContext<T>::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context & context) {
+void CacheContext<T>::setExpressionForSymbol(const Expression & expression, const SymbolAbstract & symbol, Context * context) {
   m_parentContext->setExpressionForSymbol(expression, symbol, context);
 }
 

@@ -27,8 +27,8 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
   // Evaluation
   template<typename U> static Complex<U> computeOnComplex(const std::complex<U> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -36,9 +36,9 @@ public:
      * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
     return Complex<U>::Builder(std::log10(c));
   }
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
-  template<typename U> Evaluation<U> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  template<typename U> Evaluation<U> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class Logarithm final : public Expression {
@@ -47,13 +47,13 @@ public:
   static Logarithm Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2>>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 2, &UntypedBuilderTwoChildren<Logarithm>);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
 
 private:
-  Expression simpleShallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+  Expression simpleShallowReduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
-  Expression splitLogarithmInteger(Integer i, bool isDenominator, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext);
   bool parentIsAPowerOfSameBase() const;
 };
 
@@ -64,7 +64,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("log", 1, &UntypedBuilderOneChild<CommonLogarithm>);
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

@@ -37,8 +37,8 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Builder(templatedApproximate<float>()); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Builder(templatedApproximate<double>()); }
   template<typename T> T templatedApproximate() const;
 
   // Basic test
@@ -52,10 +52,10 @@ public:
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
-  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression setSign(Sign s, ReductionContext reductionContext) override;
+  Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
   uint8_t m_numberOfDigitsNumerator;
   uint8_t m_numberOfDigitsDenominator;
@@ -112,7 +112,7 @@ private:
 
   /* Simplification */
   Expression shallowBeautify();
-  Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Expression denominator() const;
   Expression setSign(ExpressionNode::Sign s);
 };
 

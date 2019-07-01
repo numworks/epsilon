@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper Cosine::s_functionHelper;
 
 int CosineNode::numberOfChildren() const { return Cosine::s_functionHelper.numberOfChildren(); }
 
-float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float CosineNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
 }
 
@@ -30,11 +30,11 @@ int CosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosine::s_functionHelper.name());
 }
 
-Expression CosineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Cosine(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression CosineNode::shallowReduce(ReductionContext reductionContext) {
+  return Cosine(this).shallowReduce(reductionContext);
 }
 
-Expression Cosine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Cosine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -43,9 +43,9 @@ Expression Cosine::shallowReduce(Context & context, Preferences::ComplexFormat c
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
-  return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
+  return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
 

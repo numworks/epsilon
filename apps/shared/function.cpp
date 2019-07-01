@@ -84,7 +84,7 @@ T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, Cod
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
   Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, unknownSymbol);
-  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, *context);
+  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, context);
 }
 
 Function::FunctionRecordDataBuffer * Function::recordData() const {
@@ -95,5 +95,5 @@ Function::FunctionRecordDataBuffer * Function::recordData() const {
 
 }
 
-template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*, CodePoint) const;
-template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*, CodePoint) const;
+template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context *, CodePoint) const;
+template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context *, CodePoint) const;

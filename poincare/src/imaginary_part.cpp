@@ -20,11 +20,11 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression ImaginaryPartNode::shallowReduce(ReductionContext reductionContext) {
+  return ImaginaryPart(this).shallowReduce(reductionContext);
 }
 
-Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -33,9 +33,9 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
-  if (c.isReal(context)) {
+  if (c.isReal(reductionContext.context())) {
     Expression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;
@@ -44,7 +44,7 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexF
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
     Expression i = complexChild.imag();
     replaceWithInPlace(i);
-    return i.shallowReduce(context, complexFormat, angleUnit, target);
+    return i.shallowReduce(reductionContext);
   }
   return *this;
 }

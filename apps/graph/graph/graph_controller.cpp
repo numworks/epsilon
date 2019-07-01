@@ -46,7 +46,7 @@ float GraphController::interestingXHalfRange() const {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    float fRange = f->expressionReduced(context).characteristicXRange(*context, Poincare::Preferences::sharedPreferences()->angleUnit());
+    float fRange = f->expressionReduced(context).characteristicXRange(context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
     }

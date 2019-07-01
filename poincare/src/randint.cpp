@@ -28,7 +28,7 @@ int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
 
-template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+template <typename T> Evaluation<T> RandintNode::templateApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T a = aInput.toScalar();
@@ -41,16 +41,16 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   return Complex<T>::Builder(result);
 }
 
-Expression RandintNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Randint(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression RandintNode::shallowReduce(ReductionContext reductionContext) {
+  return Randint(this).shallowReduce(reductionContext);
 }
 
-Expression Randint::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = Expression::defaultShallowReduce();
   if (e.isUndefined()) {
     return e;
   }
-  float eval = approximateToScalar<float>(context, complexFormat, angleUnit);
+  float eval = approximateToScalar<float>(reductionContext.context() , reductionContext.complexFormat() , reductionContext.angleUnit() );
   Expression result;
   if (std::isnan(eval)) {
     result = Undefined::Builder();

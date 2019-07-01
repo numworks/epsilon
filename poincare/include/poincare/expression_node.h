@@ -113,23 +113,46 @@ public:
     Unknown = 0,
     Positive = 1
   };
+
+  class ReductionContext {
+  public:
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation = true) :
+      m_context(context),
+      m_complexFormat(complexFormat),
+      m_angleUnit(angleUnit),
+      m_target(target),
+      m_symbolicComputation(symbolicComputation)
+    {}
+    Context * context() { return m_context; }
+    Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
+    Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
+    ReductionTarget target() const { return m_target; }
+    bool symbolicComputation() const { return m_symbolicComputation; }
+  private:
+    Context * m_context;
+    Preferences::ComplexFormat m_complexFormat;
+    Preferences::AngleUnit m_angleUnit;
+    ReductionTarget m_target;
+    bool m_symbolicComputation;
+  };
+
   virtual Sign sign(Context * context) const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
   virtual bool isRandom() const { return false; }
   virtual bool isParameteredExpression() const { return false; }
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   /*!*/ virtual Expression replaceUnknown(const Symbol & symbol, const Symbol & unknownSymbol);
-  /*!*/ virtual Expression setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
-  virtual int polynomialDegree(Context & context, const char * symbolName) const;
-  /*!*/ virtual int getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const;
-  /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context & context);
+  /*!*/ virtual Expression setSign(Sign s, ReductionContext reductionContext);
+  virtual int polynomialDegree(Context * context, const char * symbolName) const;
+  /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
+  /*!*/ virtual Expression shallowReplaceReplaceableSymbols(Context * context);
   typedef bool (*isVariableTest)(const char * c);
-  virtual int getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
-  virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
+  virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const;
+  virtual float characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const;
   bool isOfType(Type * types, int length) const;
 
   /* Complex */
-  virtual bool isReal(Context & context) const { return false; }
+  virtual bool isReal(Context * context) const { return false; }
 
   /* Simplification */
   /* SimplificationOrder returns:
@@ -159,15 +182,15 @@ public:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;
-  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
-  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual void deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation);
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation);
-  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target);
+  /*!*/ virtual void deepReduceChildren(ReductionContext reductionContext);
+  /*!*/ virtual Expression shallowReduce(ReductionContext reductionContext);
+  /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
-  /*!*/ virtual Expression denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }

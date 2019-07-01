@@ -21,12 +21,12 @@ int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.name());
 }
 
-Expression RoundNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression RoundNode::shallowReduce(ReductionContext reductionContext) {
   return Round(this).shallowReduce();
 }
 
 template<typename T>
-Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> RoundNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();

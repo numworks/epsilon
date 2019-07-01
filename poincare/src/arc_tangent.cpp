@@ -44,11 +44,11 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcTangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ArcTangent(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression ArcTangentNode::shallowReduce(ReductionContext reductionContext) {
+  return ArcTangent(this).shallowReduce(reductionContext);
 }
 
-Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -56,9 +56,9 @@ Expression ArcTangent::shallowReduce(Context & context, Preferences::ComplexForm
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
-  return Trigonometry::shallowReduceInverseFunction(*this, context, complexFormat, angleUnit, target);
+  return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 
 }

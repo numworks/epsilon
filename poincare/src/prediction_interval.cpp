@@ -27,12 +27,12 @@ int PredictionIntervalNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 
-Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return PredictionInterval(this).shallowReduce(context, complexFormat, angleUnit, target);
+Expression PredictionIntervalNode::shallowReduce(ReductionContext reductionContext) {
+  return PredictionInterval(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
-Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> PredictionIntervalNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> pInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T p = static_cast<Complex<T> &>(pInput).toScalar();
@@ -47,7 +47,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
 }
 
 
-Expression PredictionInterval::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -103,7 +103,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Com
   matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);
-  matrix.deepReduceChildren(context, complexFormat, angleUnit, target);
+  matrix.deepReduceChildren(reductionContext);
   return matrix;
 }
 

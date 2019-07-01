@@ -28,7 +28,7 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, bool canBeIn
   }
 }
 
-bool NAryExpressionNode::isReal(Context & context) const {
+bool NAryExpressionNode::isReal(Context * context) const {
   return NAryExpression(this).allChildrenAreReal(context) == 1;
 }
 
@@ -80,7 +80,7 @@ int NAryExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e,
   return 0;
 }
 
-int NAryExpression::allChildrenAreReal(Context & context) const {
+int NAryExpression::allChildrenAreReal(Context * context) const {
   int i = 0;
   int result = 1;
   while (i < numberOfChildren()) {
@@ -95,7 +95,7 @@ int NAryExpression::allChildrenAreReal(Context & context) const {
   return result;
 }
 
-bool NAryExpression::SortedIsMatrix(Expression e, Context & context) {
+bool NAryExpression::SortedIsMatrix(Expression e, Context * context) {
   assert(IsNAry(e, context));
   int childrenCount = e.numberOfChildren();
   if (childrenCount > 0) {

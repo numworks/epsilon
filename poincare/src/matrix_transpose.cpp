@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
 
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression MatrixTransposeNode::shallowReduce(ReductionContext reductionContext) {
   return MatrixTranspose(this).shallowReduce();
 }
 
@@ -25,7 +25,7 @@ int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 template<typename T>
-Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixTransposeNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> transpose;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {

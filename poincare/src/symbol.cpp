@@ -30,18 +30,18 @@ Expression SymbolNode::replaceUnknown(const Symbol & symbol, const Symbol & unkn
   return Symbol(this).replaceUnknown(symbol, unknownSymbol);
 }
 
-int SymbolNode::polynomialDegree(Context & context, const char * symbolName) const {
+int SymbolNode::polynomialDegree(Context * context, const char * symbolName) const {
   if (strcmp(m_name, symbolName) == 0) {
     return 1;
   }
   return 0;
 }
 
-int SymbolNode::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+int SymbolNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   return Symbol(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
+int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable) const {
   // variables is in fact of type char[k_maxNumberOfVariables][maxSizeVariable]
   size_t variablesIndex = 0;
   while(variables[variablesIndex] != 0) {
@@ -68,11 +68,11 @@ int SymbolNode::getVariables(Context & context, isVariableTest isVariable, char 
   return variablesIndex/maxSizeVariable;
 }
 
-float SymbolNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   return isUnknown(UCodePointUnknownX) ? NAN : 0.0f;
 }
 
-bool SymbolNode::isReal(Context & context) const {
+bool SymbolNode::isReal(Context * context) const {
   Symbol s(this);
   return SymbolAbstract::isReal(s, context);
 }
@@ -123,16 +123,16 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return strlcpy(buffer, m_name, bufferSize);
 }
 
-Expression SymbolNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Symbol(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression SymbolNode::shallowReduce(ReductionContext reductionContext) {
+  return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::shallowReplaceReplaceableSymbols(Context & context) {
+Expression SymbolNode::shallowReplaceReplaceableSymbols(Context * context) {
   return Symbol(this).shallowReplaceReplaceableSymbols(context);
 }
 
 template<typename T>
-Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> SymbolNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Symbol s(this);
   Expression e = SymbolAbstract::Expand(s, context, false);
   if (e.isUninitialized()) {
@@ -183,7 +183,7 @@ bool Symbol::isRegressionSymbol(const char * c) {
   return false;
 }
 
-Expression Symbol::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression parentExpression = parent();
   {
     Expression current = *this;
@@ -211,9 +211,9 @@ Expression Symbol::shallowReduce(Context & context, Preferences::ComplexFormat c
   }
 
   Symbol s = *this;
-  Expression result = SymbolAbstract::Expand(s, context, true);
+  Expression result = SymbolAbstract::Expand(s, reductionContext.context(), true);
   if (result.isUninitialized()) {
-    if (symbolicComputation) {
+    if (reductionContext.symbolicComputation()) {
       return *this;
     }
     result = Undefined::Builder();
@@ -222,7 +222,7 @@ Expression Symbol::shallowReduce(Context & context, Preferences::ComplexFormat c
     parentExpression.replaceChildInPlace(*this, result);
   }
   // The stored expression is as entered by the user, so we need to call reduce
-  return result.deepReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+  return result.deepReduce(reductionContext);
 }
 
 Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {
@@ -245,7 +245,7 @@ Expression Symbol::replaceUnknown(const Symbol & symbol, const Symbol & unknownS
   return replaceSymbolWithExpression(symbol, unknownSymbol);
 }
 
-int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName, Expression coefficients[]) const {
+int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   if (strcmp(name(), symbolName) == 0) {
     coefficients[0] = Rational::Builder(0);
     coefficients[1] = Rational::Builder(1);
@@ -255,11 +255,11 @@ int Symbol::getPolynomialCoefficients(Context & context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::shallowReplaceReplaceableSymbols(Context & context) {
+Expression Symbol::shallowReplaceReplaceableSymbols(Context * context) {
   if (isSystemSymbol()) {
     return *this;
   }
-  Expression e = context.expressionForSymbol(*this, true);
+  Expression e = context->expressionForSymbol(*this, true);
   if (e.isUninitialized()) {
     return *this;
   }

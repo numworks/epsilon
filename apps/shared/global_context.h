@@ -37,7 +37,7 @@ public:
   void setExpressionForSymbol(
       const Poincare::Expression & expression,
       const Poincare::SymbolAbstract & symbol,
-      Poincare::Context & context) override;
+      Poincare::Context * context) override;
 
 private:
   // Expression getters

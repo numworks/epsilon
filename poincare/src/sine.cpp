@@ -11,7 +11,7 @@ constexpr Expression::FunctionHelper Sine::s_functionHelper;
 
 int SineNode::numberOfChildren() const { return Sine::s_functionHelper.numberOfChildren(); }
 
-float SineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float SineNode::characteristicXRange(Context * context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Sine(this), context, angleUnit);
 }
 
@@ -30,12 +30,12 @@ int SineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sine::s_functionHelper.name());
 }
 
-Expression SineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Sine(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression SineNode::shallowReduce(ReductionContext reductionContext) {
+  return Sine(this).shallowReduce(reductionContext);
 }
 
 
-Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -43,9 +43,9 @@ Expression Sine::shallowReduce(Context & context, Preferences::ComplexFormat com
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
-  return Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
+  return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 
 }

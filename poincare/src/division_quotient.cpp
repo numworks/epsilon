@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
 
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
-Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression DivisionQuotientNode::shallowReduce(ReductionContext reductionContext) {
   return DivisionQuotient(this).shallowReduce();
 }
 
@@ -24,7 +24,7 @@ int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::
 }
 
 template<typename T>
-Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> DivisionQuotientNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T f1 = f1Input.toScalar();

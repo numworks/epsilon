@@ -23,17 +23,16 @@ int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::Print
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> DeterminantNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   return Complex<T>::Builder(input.determinant());
 }
 
-Expression DeterminantNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Determinant(this).shallowReduce(context);
+Expression DeterminantNode::shallowReduce(ReductionContext reductionContext) {
+  return Determinant(this).shallowReduce(reductionContext.context());
 }
 
-
-Expression Determinant::shallowReduce(Context & context) {
+Expression Determinant::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

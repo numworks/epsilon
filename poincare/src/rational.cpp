@@ -88,7 +88,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Expression subclassing
 
-Expression RationalNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression RationalNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return Rational(this).setSign(s);
 }
@@ -137,16 +137,16 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 // Simplification
 
-Expression RationalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression RationalNode::shallowReduce(ReductionContext reductionContext) {
   return Rational(this).shallowReduce();
 }
 
-Expression RationalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression RationalNode::shallowBeautify(ReductionContext reductionContext) {
   return Rational(this).shallowBeautify();
 }
 
-Expression RationalNode::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return Rational(this).denominator(context, complexFormat, angleUnit);
+Expression RationalNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return Rational(this).denominator();
 }
 
 /* Rational  */
@@ -264,7 +264,7 @@ Expression Rational::shallowBeautify() {
   return *this;
 }
 
-Expression Rational::denominator(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Rational::denominator() const {
   Integer d = integerDenominator();
   if (d.isOne()) {
     return Expression();

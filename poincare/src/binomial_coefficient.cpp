@@ -14,8 +14,8 @@ constexpr Expression::FunctionHelper BinomialCoefficient::s_functionHelper;
 
 int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
 
-Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return BinomialCoefficient(this).shallowReduce(context);
+Expression BinomialCoefficientNode::shallowReduce(ReductionContext reductionContext) {
+  return BinomialCoefficient(this).shallowReduce(reductionContext.context());
 }
 
 Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -29,7 +29,7 @@ int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 template<typename T>
-Complex<T> BinomialCoefficientNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Complex<T> BinomialCoefficientNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> nInput = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Evaluation<T> kInput = childAtIndex(1)->approximate(T(), context, complexFormat, angleUnit);
   T n = nInput.toScalar();
@@ -54,7 +54,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 
-Expression BinomialCoefficient::shallowReduce(Context & context) {
+Expression BinomialCoefficient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {

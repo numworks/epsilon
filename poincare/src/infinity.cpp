@@ -9,9 +9,9 @@ extern "C" {
 
 namespace Poincare {
 
-Expression InfinityNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression InfinityNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-  return Infinity(this).setSign(s, context, complexFormat, angleUnit);
+  return Infinity(this).setSign(s);
 }
 
 Layout InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -38,7 +38,7 @@ Infinity Infinity::Builder(bool negative) {
   return static_cast<Infinity &>(h);
 }
 
-Expression Infinity::setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Infinity::setSign(ExpressionNode::Sign s) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   Expression result = Infinity::Builder(s == ExpressionNode::Sign::Negative);
   replaceWithInPlace(result);

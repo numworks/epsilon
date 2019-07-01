@@ -24,14 +24,14 @@ private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); return Layout(); }
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
+  Expression shallowBeautify(ReductionContext reductionContext) override;
 
 private:
-  template<typename T> Complex<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Complex<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 class ComplexCartesian final : public Expression {
@@ -47,25 +47,24 @@ public:
 
   // Simplification
   Expression shallowReduce();
-  Expression shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
 
   // Common operations (done in-place)
-  Expression squareNorm(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression norm(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  Expression argument(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
-  ComplexCartesian inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  ComplexCartesian squareRoot(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  ComplexCartesian powerInteger(int n, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
-  ComplexCartesian multiply(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  ComplexCartesian power(ComplexCartesian & other, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation);
+  Expression squareNorm(ExpressionNode::ReductionContext reductionContext);
+  Expression norm(ExpressionNode::ReductionContext reductionContext);
+  Expression argument(ExpressionNode::ReductionContext reductionContext);
+  ComplexCartesian inverse(ExpressionNode::ReductionContext reductionContext);
+  ComplexCartesian squareRoot(ExpressionNode::ReductionContext reductionContext);
+  ComplexCartesian powerInteger(int n, ExpressionNode::ReductionContext reductionContext);
+  ComplexCartesian multiply(ComplexCartesian & other,ExpressionNode::ReductionContext reductionContext);
+  ComplexCartesian power(ComplexCartesian & other, ExpressionNode::ReductionContext reductionContext);
 private:
   static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
-  void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext);
   ComplexCartesian interruptComputationIfManyNodes();
-  static Multiplication squareRootHelper(Expression e, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  static Expression powerHelper(Expression norm, Expression trigo, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  static Multiplication squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Expression powerHelper(Expression norm, Expression trigo, ExpressionNode::ReductionContext reductionContext);
 };
-
 
 }
 

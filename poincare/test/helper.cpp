@@ -90,11 +90,11 @@ void assert_parsed_expression_is(const char * expression, Poincare::Expression r
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, const char * symbolName, Preferences::ComplexFormat complexFormat) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
-  Expression result = e.clone().reduce(globalContext, complexFormat, Radian);
+  Expression result = e.clone().reduce(&globalContext, complexFormat, Radian);
   if (result.isUninitialized()) {
     result = e;
   }
-  quiz_assert(result.polynomialDegree(globalContext, symbolName) == degree);
+  quiz_assert(result.polynomialDegree(&globalContext, symbolName) == degree);
 }
 
 
@@ -102,14 +102,14 @@ Expression parse_and_simplify(const char * expression) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression);
   quiz_assert(!e.isUninitialized());
-  return e.simplify(globalContext, Cartesian, Radian);
+  return e.simplify(&globalContext, Cartesian, Radian);
 }
 
 void assert_simplify(const char * expression) {
   quiz_assert(!(parse_and_simplify(expression).isUninitialized()));
 }
 
-typedef Expression (*ProcessExpression)(Expression, Context & context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
+typedef Expression (*ProcessExpression)(Expression, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ProcessExpression process, int numberOfSignifiantDigits = PrintFloat::k_numberOfStoredSignificantDigits) {
   Shared::GlobalContext globalContext;
@@ -119,7 +119,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   cout << " Entry expression: " << expression << "----"  << endl;
   print_expression(e, 0);
 #endif
-  Expression m = process(e, globalContext, target, complexFormat, angleUnit);
+  Expression m = process(e, &globalContext, target, complexFormat, angleUnit);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
@@ -138,7 +138,7 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
 
-  assert_parsed_expression_process_to(expression, approximation, target, complexFormat, angleUnit, [](Expression e, Context & context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert_parsed_expression_process_to(expression, approximation, target, complexFormat, angleUnit, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
       Expression simplified = e.clone();
       Expression result;
       if (target == ExpressionNode::ReductionTarget::User) {
@@ -161,7 +161,7 @@ template<typename T>
 void assert_parsed_expression_evaluates_without_simplifying_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::System, complexFormat, angleUnit, [](Expression e, Context & context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert_parsed_expression_process_to(expression, approximation, ExpressionNode::ReductionTarget::System, complexFormat, angleUnit, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
       return e.approximate<T>(context, complexFormat, angleUnit);
     }, numberOfDigits);
 }
@@ -170,7 +170,7 @@ void assert_parsed_expression_evaluates_without_simplifying_to(const char * expr
 template<typename T>
 void assert_parsed_expression_approximates_with_value_for_symbol(Expression expression, const char * symbol, T value, T approximation, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit) {
   Shared::GlobalContext globalContext;
-  T result = expression.approximateWithValueForSymbol(symbol, value, globalContext, complexFormat, angleUnit);
+  T result = expression.approximateWithValueForSymbol(symbol, value, &globalContext, complexFormat, angleUnit);
   quiz_assert((std::isnan(result) && std::isnan(approximation)) || std::fabs(result - approximation) < 10.0*Expression::Epsilon<T>());
 }
 
@@ -178,7 +178,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "--------- Simplification ---------" << endl;
 #endif
-  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, [](Expression e, Context & context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, [](Expression e, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
       Expression copy = e.clone();
       if (target == ExpressionNode::ReductionTarget::User) {
         copy.simplifyAndApproximate(&copy, nullptr, context, complexFormat, angleUnit);

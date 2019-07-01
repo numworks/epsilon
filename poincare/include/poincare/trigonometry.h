@@ -12,14 +12,14 @@ public:
     Cosine = 0,
     Sine = 1,
   };
-  static float characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit);
+  static float characteristicXRange(const Expression & e, Context * context, Preferences::AngleUnit angleUnit);
   static bool isDirectTrigonometryFunction(const Expression & e);
   static bool isInverseTrigonometryFunction(const Expression & e);
   static bool AreInverseFunctions(const Expression & directFunction, const Expression & inverseFunction);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);
-  static Expression shallowReduceDirectFunction(Expression & e, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  static Expression shallowReduceInverseFunction(Expression & e, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-  static Expression table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target); // , Function f, bool inverse
+  static Expression shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceInverseFunction(Expression & e,  ExpressionNode::ReductionContext reductionContext);
+  static Expression table(const Expression e, ExpressionNode::Type type,  ExpressionNode::ReductionContext reductionContext); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> RoundToMeaningfulDigits(const std::complex<T> result, const std::complex<T> input);

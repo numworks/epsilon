@@ -11,11 +11,11 @@ namespace Poincare {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
-int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) const {
+int UndefinedNode::polynomialDegree(Context * context, const char * symbolName) const {
   return -1;
 }
 
-Expression UndefinedNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression UndefinedNode::setSign(Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return Undefined(this);
 }

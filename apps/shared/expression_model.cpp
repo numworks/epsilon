@@ -31,7 +31,7 @@ void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t
 
 bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poincare::Context * context) const {
   if (m_circular == -1) {
-    m_circular = Expression::ExpressionWithoutSymbols(expressionClone(record), *context).isUninitialized();
+    m_circular = Expression::ExpressionWithoutSymbols(expressionClone(record), context).isUninitialized();
   }
   return m_circular;
 }
@@ -40,7 +40,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
     m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
-    PoincareHelpers::Simplify(&m_expression, *context);
+    PoincareHelpers::Simplify(&m_expression, context);
     // simplify might return an uninitialized Expression if interrupted
     if (m_expression.isUninitialized()) {
       m_expression = Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));

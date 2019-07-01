@@ -36,13 +36,13 @@ public:
 
   // Properties
   Type type() const override { return Type::Matrix; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
 
   // Approximation
-  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>(context, complexFormat, angleUnit);
   }
-  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>(context, complexFormat, angleUnit);
   }
 
@@ -50,7 +50,7 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
-  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template<typename T> Evaluation<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* We could store 2 uint8_t but multiplying m_numberOfRows and
    * m_numberOfColumns could then lead to overflow. As we are unlikely to use
    * greater matrix than 100*100, uint16_t is fine. */
@@ -73,7 +73,7 @@ public:
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
-  int rank(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace = false);
+  int rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace = false);
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
 #if MATRIX_EXACT_REDUCING
@@ -82,7 +82,7 @@ public:
   Matrix transpose() const;
   static Matrix CreateIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
-  Expression inverse(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  Expression inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
@@ -91,7 +91,7 @@ private:
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   /* rowCanonize turns a matrix in its reduced row echelon form. */
-  Matrix rowCanonize(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication::Builder());
+  Matrix rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication::Builder());
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
 };

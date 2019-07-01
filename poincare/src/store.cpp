@@ -15,15 +15,15 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::deepReduceChildren(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+void StoreNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
   // Interrupt simplification if the expression stored contains a matrix
-  if (Expression(childAtIndex(0)).recursivelyMatches([](const Expression e, Context & context) { return Expression::IsMatrix(e, context); }, context, true)) {
+  if (Expression(childAtIndex(0)).recursivelyMatches([](const Expression e, Context * context) { return Expression::IsMatrix(e, context); }, reductionContext.context(), true)) {
     Expression::SetInterruption(true);
   }
 }
 
-Expression StoreNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Store(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression StoreNode::shallowReduce(ReductionContext reductionContext) {
+  return Store(this).shallowReduce(reductionContext);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -42,7 +42,7 @@ Layout StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 }
 
 template<typename T>
-Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> StoreNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   /* If we are here, it means that the store node was not shallowReduced.
    * Otherwise, it would have been replaced by its symbol. We thus have to
    * setExpressionForSymbol. */
@@ -51,9 +51,9 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Com
   return storedExpression.node()->approximate(T(), context, complexFormat, angleUnit);
 }
 
-Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // Store the expression.
-  Expression storedExpression = storeValueForSymbol(context, complexFormat, angleUnit);
+  Expression storedExpression = storeValueForSymbol(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
 
   if (symbol().type() == ExpressionNode::Type::Symbol) {
     /* If the symbol is not a function, we want to replace the store with its
@@ -62,7 +62,7 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
      * The simplification fails for [1+2]->a for instance, because we do not
      * have exact simplification of matrices yet. */
     bool interruptedSimplification = SimplificationHasBeenInterrupted();
-    Expression reducedE = storedExpression.clone().deepReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    Expression reducedE = storedExpression.clone().deepReduce(reductionContext);
     if (!reducedE.isUninitialized() && !SimplificationHasBeenInterrupted()) {
       storedExpression = reducedE;
     }
@@ -74,7 +74,7 @@ Expression Store::shallowReduce(Context & context, Preferences::ComplexFormat co
   return storedExpression;
 }
 
-Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression Store::storeValueForSymbol(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Expression finalValue;
   if (symbol().type() == ExpressionNode::Type::Function) {
     // In tata + 2 ->f(tata), replace tata with xUnknown symbol
@@ -87,8 +87,8 @@ Expression Store::storeValueForSymbol(Context& context, Preferences::ComplexForm
     finalValue = childAtIndex(0);
   }
   assert(!finalValue.isUninitialized());
-  context.setExpressionForSymbol(finalValue, symbol(), context);
-  Expression storedExpression = context.expressionForSymbol(symbol(), true);
+  context->setExpressionForSymbol(finalValue, symbol(), context);
+  Expression storedExpression = context->expressionForSymbol(symbol(), true);
 
   if (storedExpression.isUninitialized()) {
     return Undefined::Builder();

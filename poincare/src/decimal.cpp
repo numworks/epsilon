@@ -53,7 +53,7 @@ size_t DecimalNode::size() const {
   return DecimalSize(m_numberOfDigitsInMantissa);
 }
 
-Expression DecimalNode::setSign(Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DecimalNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
   return Decimal(this).setSign(s);
 }
@@ -86,11 +86,11 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool asce
   return ((int)Number(this).sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression DecimalNode::shallowReduce(ReductionContext reductionContext) {
   return Decimal(this).shallowReduce();
 }
 
-Expression DecimalNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DecimalNode::shallowBeautify(ReductionContext reductionContext) {
   return Decimal(this).shallowBeautify();
 }
 

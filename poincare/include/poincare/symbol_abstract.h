@@ -34,7 +34,7 @@ public:
 
   // Property
   Sign sign(Context * context) const override;
-  Expression setSign(ExpressionNode::Sign s, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression setSign(ExpressionNode::Sign s, ReductionContext reductionContext) override;
 
   // TreeNode
 #if POINCARE_TREE_LOG
@@ -70,7 +70,7 @@ public:
     Expression f = context ? context->expressionForSymbol(s, false) : Expression();
     return f.isUninitialized() || f.type() == s.type();
   }
-  static bool matches(const SymbolAbstract & symbol, ExpressionTest test, Context & context);
+  static bool matches(const SymbolAbstract & symbol, ExpressionTest test, Context * context);
   constexpr static size_t k_maxNameSize = 8;
 
 protected:
@@ -80,8 +80,8 @@ protected:
 
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 private:
-  static Expression Expand(const SymbolAbstract & symbol, Context & context, bool clone);
-  static bool isReal(const SymbolAbstract & symbol, Context & context);
+  static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone);
+  static bool isReal(const SymbolAbstract & symbol, Context * context);
 };
 
 }

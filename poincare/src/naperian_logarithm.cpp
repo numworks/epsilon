@@ -18,12 +18,12 @@ int NaperianLogarithmNode::serialize(char * buffer, int bufferSize, Preferences:
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NaperianLogarithm::s_functionHelper.name());
 }
 
-Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return NaperianLogarithm(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+Expression NaperianLogarithmNode::shallowReduce(ReductionContext reductionContext) {
+  return NaperianLogarithm(this).shallowReduce(reductionContext);
 }
 
 
-Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
+Expression NaperianLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -32,11 +32,11 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Comp
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
+    return mapOnMatrixChild(reductionContext);
   }
   Logarithm l = Logarithm::Builder(c, Constant::Builder(UCodePointScriptSmallE));
   replaceWithInPlace(l);
-  return l.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+  return l.shallowReduce(reductionContext);
 }
 
 }

@@ -24,16 +24,16 @@ public:
 
   // Properties
   Type type() const override { return Type::Division; }
-  int polynomialDegree(Context & context, const char * symbolName) const override;
+  int polynomialDegree(Context * context, const char * symbolName) const override;
 
   // Approximation
-  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<float>(
         this, context, complexFormat, angleUnit, compute<float>,
         computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>,
         computeOnMatrices<float>);
   }
-  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
+  virtual Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(
         this, context, complexFormat, angleUnit, compute<double>,
         computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>,
@@ -46,7 +46,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
 
 private:
   // Approximation
@@ -64,7 +64,7 @@ public:
   static Division Builder() { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(); }
   static Division Builder(Expression numerator, Expression denominator) { return TreeHandle::FixedArityBuilder<Division, DivisionNode>(ArrayBuilder<TreeHandle>(numerator, denominator).array(), 2); }
 
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

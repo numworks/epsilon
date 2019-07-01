@@ -26,12 +26,11 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
-Expression FactorNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
-  return Factor(this).shallowBeautify(context, complexFormat, angleUnit);
+Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
+  return Factor(this).shallowBeautify(reductionContext);
 }
 
-
-Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     Expression result = Undefined::Builder();
@@ -43,7 +42,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
     replaceWithInPlace(r);
     return r;
   }
-  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, complexFormat, angleUnit);
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (numeratorDecomp.numberOfChildren() == 0) {
     Expression result = Undefined::Builder();
     replaceWithInPlace(result);
@@ -51,7 +50,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.integerDenominator().isOne()) {
-    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, complexFormat, angleUnit);
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (denominatorDecomp.numberOfChildren() == 0) {
       Expression result = Undefined::Builder();
       replaceWithInPlace(result);
@@ -66,7 +65,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::ComplexFormat
   return result;
 }
 
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   //TODO LEA Matrices?
   assert(!i.isZero());
   assert(!i.isNegative());

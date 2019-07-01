@@ -259,7 +259,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
   AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-  int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
+  int nbOfVariables = formula.getVariables(appsContainer->globalContext(), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
   (void) nbOfVariables; // Remove compilation warning of nused variable
   assert(nbOfVariables >= 0);
   int numberOfValuesToCompute = -1;
@@ -287,7 +287,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     // Set the context
     store->setSeriesPairIndex(j);
     // Compute the new value using the formula
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
     if (std::isnan(evaluation) || std::isinf(evaluation)) {
       Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
       return false;
@@ -297,7 +297,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   // Fill in the table with the formula values
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     store->setSeriesPairIndex(j);
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, store);
     setDataAtLocation(evaluation, currentColumn, j + 1);
   }
   selectableTableView()->reloadData();

@@ -13,7 +13,7 @@ constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
 
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
-Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
+Expression MatrixTraceNode::shallowReduce(ReductionContext reductionContext) {
   return MatrixTrace(this).shallowReduce();
 }
 
@@ -26,7 +26,7 @@ int MatrixTraceNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 template<typename T>
-Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), context, complexFormat, angleUnit);
   Complex<T> result = Complex<T>::Builder(input.trace());
   return result;

@@ -2,7 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <cmath>
 
 namespace Poincare {
@@ -20,7 +20,7 @@ int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 Expression ArcSineNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return ArcSine(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return ArcSine(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<typename T>
@@ -49,7 +49,7 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
 }
 
 
-Expression ArcSine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression ArcSine::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -57,7 +57,7 @@ Expression ArcSine::shallowReduce(Context & context, Preferences::ComplexFormat 
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   return Trigonometry::shallowReduceInverseFunction(*this, context, complexFormat, angleUnit, target);
 }

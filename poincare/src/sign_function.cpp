@@ -3,7 +3,7 @@
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <ion.h>
 #include <assert.h>
 #include <math.h>
@@ -35,7 +35,7 @@ int SignFunctionNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 Expression SignFunctionNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return SignFunction(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return SignFunction(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 template<typename T>
@@ -53,7 +53,7 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 
-Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -62,7 +62,7 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFo
   }
   Expression child = childAtIndex(0);
   if (child.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   Rational resultSign = Rational::Builder(1);
   ExpressionNode::Sign s = child.sign(&context);

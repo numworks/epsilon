@@ -5,7 +5,7 @@
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -35,7 +35,7 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 // Simplification
 
 Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Factorial(this).shallowReduce(context, angleUnit);
+  return Factorial(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
@@ -77,7 +77,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 
-Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -86,7 +86,7 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();

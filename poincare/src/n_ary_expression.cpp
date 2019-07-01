@@ -99,7 +99,7 @@ bool NAryExpression::SortedIsMatrix(Expression e, Context & context) {
   assert(IsNAry(e, context));
   int childrenCount = e.numberOfChildren();
   if (childrenCount > 0) {
-     return SortedIsMatrix(e.childAtIndex(childrenCount - 1), context);
+     return Expression::SortedIsMatrix(e.childAtIndex(childrenCount - 1), context);
   }
   return false;
 }

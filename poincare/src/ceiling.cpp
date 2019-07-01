@@ -2,7 +2,7 @@
 #include <poincare/constant.h>
 #include <poincare/ceiling_layout.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -32,11 +32,11 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::C
 }
 
 Expression CeilingNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Ceiling(this).shallowReduce(context, angleUnit);
+  return Ceiling(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 
-Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Ceiling::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -45,7 +45,7 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.type() == ExpressionNode::Type::Constant) {
     Constant s = static_cast<Constant&>(c);

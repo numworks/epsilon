@@ -3,7 +3,7 @@
 #include <poincare/floor_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/symbol.h>
 #include <ion.h>
 #include <assert.h>
@@ -32,10 +32,10 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Com
 }
 
 Expression FloorNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Floor(this).shallowReduce(context, angleUnit);
+  return Floor(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
-Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Floor::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -44,7 +44,7 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
   if (c.type() == ExpressionNode::Type::Constant) {
     Constant s = static_cast<Constant &>(c);

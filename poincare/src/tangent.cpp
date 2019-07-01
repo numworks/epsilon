@@ -3,7 +3,7 @@
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/simplification_helper.h>
+
 #include <poincare/sine.h>
 #include <poincare/trigonometry.h>
 #include <cmath>
@@ -34,11 +34,11 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::C
 }
 
 Expression TangentNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Tangent(this).shallowReduce(context, complexFormat, angleUnit, target);
+  return Tangent(this).shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
 }
 
 
-Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
+Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target, bool symbolicComputation) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -47,7 +47,7 @@ Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat 
   }
 
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return SimplificationHelper::Map(*this, context, angleUnit);
+    return mapOnMatrixChild(context, complexFormat, angleUnit, target, symbolicComputation);
   }
 
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, complexFormat, angleUnit, target);
@@ -55,8 +55,8 @@ Expression Tangent::shallowReduce(Context & context, Preferences::ComplexFormat 
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
     Division d = Division::Builder(s, c);
-    s.shallowReduce(context, complexFormat, angleUnit, target);
-    c.shallowReduce(context, complexFormat, angleUnit, target);
+    s.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
+    c.shallowReduce(context, complexFormat, angleUnit, target, symbolicComputation);
     newExpression.replaceWithInPlace(d);
     return d.shallowReduce(context, complexFormat, angleUnit, target);
   }

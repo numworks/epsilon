@@ -79,8 +79,6 @@ Expression Opposite::shallowReduce(Context & context, Preferences::ComplexFormat
     return result;
   }
   Expression child = result.childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#endif
   result = Multiplication::Builder(Rational::Builder(-1), child);
   replaceWithInPlace(result);
   return result.shallowReduce(context, complexFormat, angleUnit, target);

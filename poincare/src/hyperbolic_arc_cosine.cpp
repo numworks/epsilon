@@ -26,7 +26,6 @@ Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Pr
   return Complex<T>::Builder(Trigonometry::RoundToMeaningfulDigits(result, c));
 }
 
-
 template Complex<float> Poincare::HyperbolicArcCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Complex<double> Poincare::HyperbolicArcCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit);
 

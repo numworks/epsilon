@@ -42,11 +42,9 @@ Expression ComplexArgument::shallowReduce(Context & context, Preferences::Comple
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   bool real = c.isReal(context);
   if (real) {
     float app = c.node()->approximate(float(), context, complexFormat, angleUnit).toScalar();

@@ -3,6 +3,7 @@
 #include <poincare/rational.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <ion.h>
 #include <assert.h>
 #include <math.h>
@@ -59,13 +60,11 @@ Expression SignFunction::shallowReduce(Context & context, Preferences::ComplexFo
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (c.type() == ExpressionNode::Type::Matrix) {
+  Expression child = childAtIndex(0);
+  if (child.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
   Rational resultSign = Rational::Builder(1);
-  Expression child = childAtIndex(0);
   ExpressionNode::Sign s = child.sign(&context);
   if (s == ExpressionNode::Sign::Negative) {
     resultSign = Rational::Builder(-1);

@@ -35,7 +35,7 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 // Simplification
 
 Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
-  return Factorial(this).shallowReduce();
+  return Factorial(this).shallowReduce(context, angleUnit);
 }
 
 Expression FactorialNode::shallowBeautify(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
@@ -77,20 +77,19 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 
-Expression Factorial::shallowReduce() {
+Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
-#endif
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational r = childAtIndex(0).convert<Rational>();
+  if (c.type() == ExpressionNode::Type::Rational) {
+    Rational r = c.convert<Rational>();
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
       Expression result = Undefined::Builder();
       replaceWithInPlace(result);
@@ -104,7 +103,7 @@ Expression Factorial::shallowReduce() {
     replaceWithInPlace(fact);
     return fact;
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Constant) {
+  if (c.type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef
     Expression result = Undefined::Builder();
     replaceWithInPlace(result);

@@ -77,6 +77,8 @@ Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionCon
       return e;
     }
   }
+  /* For matrices: we decided that A/B is computed as A = A/B * B so A/B = AB^-1
+   * (it could have been A = B * A/B so A/B = B^-1*A). */
   Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Multiplication m = Multiplication::Builder(childAtIndex(0), p);
   p.shallowReduce(reductionContext); // For instance: Division::Builder(2,1). p would be 1^(-1) which can be simplified

@@ -19,6 +19,10 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   );
 }
 
+Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
+  return Sequence(this).shallowReduce();
+}
+
 template<typename T>
 Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> aInput = childAtIndex(2)->approximate(T(), context, complexFormat, angleUnit);
@@ -41,6 +45,22 @@ Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences:
     }
   }
   return result;
+}
+
+Expression Sequence::shallowReduce() {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  assert(childAtIndex(1).type() != ExpressionNode::Type::Matrix);
+  if (childAtIndex(2).type() == ExpressionNode::Type::Matrix || childAtIndex(3).type() == ExpressionNode::Type::Matrix) {
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
+  }
+  return *this;
 }
 
 template Evaluation<float> SequenceNode::templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

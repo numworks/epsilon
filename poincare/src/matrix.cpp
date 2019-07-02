@@ -285,6 +285,17 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
   }
 }
 
+Matrix Matrix::CreateIdentity(int dim) {
+  Matrix matrix = Matrix::Builder();
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      matrix.addChildAtIndexInPlace(i == j ? Rational::Builder(1) : Rational::Builder(0), i*dim+j, i*dim+j);
+    }
+  }
+  matrix.setDimensions(dim, dim);
+  return matrix;
+}
+
 #if 0
 #if MATRIX_EXACT_REDUCING
 Matrix Matrix::transpose() const {
@@ -296,17 +307,6 @@ Matrix Matrix::transpose() const {
   }
   // Intentionally swapping dimensions for transpose
   matrix.setDimensions(m_numberOfColumns, m_numberOfRows);
-  return matrix;
-}
-
-Matrix Matrix::CreateIdentity(int dim) {
-  Matrix matrix();
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      matrix.addChildAtIndexInPlace(i == j ? Rational::Builder(1) : Rational::Builder(0), i*dim+j, i*dim+j);
-    }
-  }
-  matrix.setDimensions(dim, dim);
   return matrix;
 }
 

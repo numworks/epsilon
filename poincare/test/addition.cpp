@@ -87,4 +87,7 @@ QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("1/x^2+1/(x^3×π)", "(π×x+1)/(π×x^3)");
   assert_parsed_expression_simplify_to("4x/x^2+3π/(x^3×π)", "(4×x^2+3)/x^3");
   assert_parsed_expression_simplify_to("3^(1/2)+2^(-2×3^(1/2)×ℯ^π)/2", "(2×2^(2×√(3)×ℯ^π)×√(3)+1)/(2×2^(2×√(3)×ℯ^π))");
+  assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2×𝐢][6,8][10,12]]");
+  assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
+  assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+𝐢][3,4][5,6]]", "undef");
 }

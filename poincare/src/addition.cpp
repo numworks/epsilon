@@ -1,13 +1,13 @@
 #include <poincare/addition.h>
 #include <poincare/complex_cartesian.h>
-#include <poincare/multiplication.h>
-#include <poincare/subtraction.h>
-#include <poincare/power.h>
-#include <poincare/opposite.h>
-#include <poincare/undefined.h>
-//#include <poincare/matrix.h>
 #include <poincare/layout_helper.h>
+#include <poincare/matrix.h>
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -143,8 +143,14 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     }
   }
 
-  /* Step 1: AdditionNode is associative, so let's start by merging children
-   * which are additions. */
+  // Step 0: Let's remove the addition if it has a single child
+  assert(numberOfChildren() > 0);
+  if (numberOfChildren() == 1) {
+    return squashUnaryHierarchyInPlace();
+  }
+
+  /* Step 1: Addition is associative, so let's start by merging children which
+   * are additions. */
   int i = 0;
   while (i < numberOfChildren()) {
     if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
@@ -157,60 +163,58 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   // Step 2: Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
 
-#if MATRIX_EXACT_REDUCING
-#if 0
-  // This code is very old
-  /* Step 2bis: get rid of matrix */
-  int n = 1;
-  int m = 1;
-  /* All children have been simplified so if any child contains a matrix, it
-   * is at the root node of the child. Moreover, thanks to the simplification
+  /* Step 3: Get rid of matrices
+   * All children have been simplified so if any child contains a matrix, it is
+   * at the root node of the child. Moreover, thanks to the simplification
    * order, all matrix children (if any) are the last children. */
-  assert(thisCopy.numberOfChildren() > 0);
-  Expression lastChild = thisCopy.childAtIndex(numberOfChildren()-1);
-  if (lastChild.type() == Type::Matrix) {
-    // Create in-place the matrix of addition M (in place of the last child)
-    Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
-    n = resultMatrix->numberOfRows();
-    m = resultMatrix->numberOfColumns();
-    removeOperand(resultMatrix, false);
-    /* Scan (starting at the end) accross the addition children to find any
-     * other matrix */
-    int i = numberOfChildren()-1;
-    while (i >= 0 && childAtIndex(i)->type() == Type::Matrix) {
-      Matrix * currentMatrix = static_cast<Matrix *>(childAtIndex(i));
-      int on = currentMatrix->numberOfRows();
-      int om = currentMatrix->numberOfColumns();
-      if (on != n || om != m) {
-        return replaceWith(new Undefined::Builder(), true);
+  int childrenCount = numberOfChildren();
+  assert(childrenCount > 1);
+  if (childAtIndex(childrenCount - 1).type() == ExpressionNode::Type::Matrix) {
+    Expression firstChild = childAtIndex(0);
+    if (firstChild.type() != ExpressionNode::Type::Matrix) {
+      /* If there is a matrix in the children, the last child is a matrix. If
+       * there is a ascalar, the first child is a scalar.
+       * We forbid the addition of a matrix and a scalar. */
+      Expression result = Undefined::Builder();
+      replaceWithInPlace(result);
+      return result;
+    }
+    // Create the addition matrix (in place of the first child)
+    Matrix resultMatrix = static_cast<Matrix &>(firstChild);
+    int n = resultMatrix.numberOfRows();
+    int m = resultMatrix.numberOfColumns();
+    // Scan to add the other children, which are  matrices
+    for (int i = 1; i < childrenCount; i++) {
+      assert(childAtIndex(i).type() == ExpressionNode::Type::Matrix);
+      Matrix currentMatrix = childAtIndex(i).convert<Matrix>();
+      int currentN = currentMatrix.numberOfRows();
+      int currentM = currentMatrix.numberOfColumns();
+      if (currentN != n || currentM != m) {
+        // Addition of matrices of different dimensions -> undef
+        Expression result = Undefined::Builder();
+        replaceWithInPlace(result);
+        return result;
       }
-      // Dispatch the current matrix children in the created additions matrix
+      // Dispatch the current matrix children in the created addition matrix
       for (int j = 0; j < n*m; j++) {
-        AdditionNode * a = new AdditionNode();
-        Expression * resultMatrixEntryJ = resultMatrix->childAtIndex(j);
-        resultMatrix->replaceOperand(resultMatrixEntryJ, a, false);
-        a->addOperand(currentMatrix->childAtIndex(j));
-        a->addOperand(resultMatrixEntryJ);
-        a->shallowReduce(context, complexFormat, angleUnit);
+        Expression resultEntryJ = resultMatrix.childAtIndex(j);
+        Expression currentEntryJ = currentMatrix.childAtIndex(j);
+        if (resultEntryJ.type() == ExpressionNode::Type::Addition) {
+          static_cast<Addition &>(resultEntryJ).addChildAtIndexInPlace(currentEntryJ, resultEntryJ.numberOfChildren(), resultEntryJ.numberOfChildren());
+        } else {
+          Addition a = Addition::Builder(resultEntryJ, currentEntryJ);
+          resultMatrix.replaceChildAtIndexInPlace(j, a);
+        }
       }
-      currentMatrix->detachOperands();
-      removeOperand(currentMatrix, true);
-      i--;
     }
-    // Distribute the remaining addition on matrix children
-    for (int i = 0; i < n*m; i++) {
-      AdditionNode * a = static_cast<AdditionNode *>(clone());
-      Expression * entryI = resultMatrix->childAtIndex(i);
-      resultMatrix->replaceOperand(entryI, a, false);
-      a->addOperand(entryI);
-      a->shallowReduce(context, complexFormat, angleUnit);
+    for (int j = 0; j < n*m; j++) {
+      resultMatrix.childAtIndex(j).shallowReduce(reductionContext);
     }
-    return replaceWith(resultMatrix, true)->shallowReduce(context, complexFormat, angleUnit);
+    replaceWithInPlace(resultMatrix);
+    return resultMatrix;
   }
-#endif
-#endif
 
-  /* Step 3: Factorize like terms. Thanks to the simplification order, those are
+  /* Step 4: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
   i = 0;
   while (i < numberOfChildren()-1) {
@@ -231,7 +235,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  /* Step 4: Let's remove any zero. It's important to do this after having
+  /* Step 5: Let's remove any zero. It's important to do this after having
    * factorized because factorization can lead to new zeroes. For example
    * pi+(-1)*pi. We don't remove the last zero if it's the only child left
    * though. */
@@ -245,13 +249,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     i++;
   }
 
-  // Step 5: Let's remove the addition altogether if it has a single child
+  // Step 6: Let's remove the addition altogether if it has a single child
   Expression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
 
-  /* Step 6: Let's bubble up the complex operator if possible
+  /* Step 7: Let's bubble up the complex operator if possible
    * 3 cases:
    * - All children are real, we do nothing (allChildrenAreReal == 1)
    * - One of the child is non-real and not a ComplexCartesian: it means a
@@ -284,7 +288,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return newComplexCartesian.shallowReduce();
   }
 
-  /* Step 7: Let's put everything under a common denominator.
+  /* Step 8: Let's put everything under a common denominator.
    * This step is done only for ReductionTarget::User if the parent expression
    * is not an addition. */
   Expression p = result.parent();

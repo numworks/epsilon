@@ -43,7 +43,7 @@ Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }

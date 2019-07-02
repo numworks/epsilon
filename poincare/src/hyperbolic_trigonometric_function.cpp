@@ -16,7 +16,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
   }
   Expression c = childAtIndex(0);
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   return *this;
 }

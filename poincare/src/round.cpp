@@ -51,7 +51,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
     return result;
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */

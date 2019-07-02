@@ -44,7 +44,7 @@ Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   if (c.type() == ExpressionNode::Type::Constant) {
     Constant s = static_cast<Constant &>(c);

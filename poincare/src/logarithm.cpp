@@ -95,7 +95,7 @@ Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reduc
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
   replaceWithInPlace(log);
@@ -209,7 +209,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
 
   // log(m) with m Matrix
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
 
   return *this;

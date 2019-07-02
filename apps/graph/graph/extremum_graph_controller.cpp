@@ -1,7 +1,7 @@
 #include "extremum_graph_controller.h"
-#include "../app.h"
+#include "../../shared/poincare_helpers.h"
+#include <poincare/serialization_helper.h>
 
-using namespace Shared;
 using namespace Poincare;
 
 namespace Graph {
@@ -16,7 +16,11 @@ const char * MinimumGraphController::title() {
 }
 
 Coordinate2D MinimumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
-  return functionStore()->modelForRecord(m_record)->nextMinimumFrom(start, step, max, context);
+  // TODO The following three lines should be factored.
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  return Shared::PoincareHelpers::NextMinimum(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context);
 }
 
 MaximumGraphController::MaximumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor) :
@@ -29,7 +33,11 @@ const char * MaximumGraphController::title() {
 }
 
 Coordinate2D MaximumGraphController::computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) {
-  return functionStore()->modelForRecord(m_record)->nextMaximumFrom(start, step, max, context);
+  // TODO The following three lines should be factored.
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  return Shared::PoincareHelpers::NextMaximum(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context);
 }
 
 }

@@ -1,5 +1,6 @@
 #include "root_graph_controller.h"
-#include "../app.h"
+#include "../../shared/poincare_helpers.h"
+#include <poincare/serialization_helper.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -16,7 +17,11 @@ const char * RootGraphController::title() {
 }
 
 Coordinate2D RootGraphController::computeNewPointOfInterest(double start, double step, double max, Context * context) {
-  return Coordinate2D(functionStore()->modelForRecord(m_record)->nextRootFrom(start, step, max, context), 0.0);
+  // TODO The following three lines should be factored.
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  return Coordinate2D(Shared::PoincareHelpers::NextRoot(functionStore()->modelForRecord(m_record)->expressionReduced(context), unknownX, start, step, max, context), 0.0);
 }
 
 }

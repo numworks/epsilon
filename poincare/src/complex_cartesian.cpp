@@ -119,12 +119,18 @@ Expression ComplexCartesian::squareNorm(ExpressionNode::ReductionContext reducti
 }
 
 Expression ComplexCartesian::norm(ExpressionNode::ReductionContext reductionContext) {
+  Expression a;
+  // Special case for pure real or pure imaginary cartesian
   if (imag().isRationalZero()) {
-    Expression a = real();
+    a = real();
+  } else if (real().isRationalZero()) {
+    a = imag();
+  }
+  if (!a.isUninitialized()) {
     ExpressionNode::Sign s = a.sign(reductionContext.context());
     if (s == ExpressionNode::Sign::Positive) {
       // Case 1: the expression is positive real
-      return a;;
+      return a;
     } else if (s == ExpressionNode::Sign::Negative) {
       // Case 2: the argument is negative real
       return a.setSign(ExpressionNode::Sign::Positive, reductionContext);

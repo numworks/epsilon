@@ -41,7 +41,7 @@ public:
   static Round Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Round, RoundNode>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("round", 2, &UntypedBuilderTwoChildren<Round>);
 
-  Expression shallowReduce();
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

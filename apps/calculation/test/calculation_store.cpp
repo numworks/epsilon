@@ -96,7 +96,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationDisplay("1/0", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
   assertCalculationDisplay("2x-x", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
   assertCalculationDisplay("[[1,2,3]]", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("[[1,x,3]]", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "[[1,undef,3]]", &globalContext, &store);
+  assertCalculationDisplay("[[1,x,3]]", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "undef", &globalContext, &store);
   assertCalculationDisplay("28^7", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
   assertCalculationDisplay("3+√(2)→a", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "√(2)+3", nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();

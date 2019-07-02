@@ -50,10 +50,10 @@ QUIZ_CASE(poincare_addition_evaluate) {
   assert_parsed_expression_evaluates_to<float>("𝐢", "𝐢");
   assert_parsed_expression_evaluates_to<float>("𝐢+𝐢", "2×𝐢");
   assert_parsed_expression_evaluates_to<double>("2+𝐢+4+𝐢", "6+2×𝐢");
-  assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]+3", "[[4,5][6,7][8,9]]");
-  assert_parsed_expression_evaluates_to<double>("[[1,2+𝐢][3,4][5,6]]+3+𝐢", "[[4+𝐢,5+2×𝐢][6+𝐢,7+𝐢][8+𝐢,9+𝐢]]");
-  assert_parsed_expression_evaluates_to<float>("3+[[1,2][3,4][5,6]]", "[[4,5][6,7][8,9]]");
-  assert_parsed_expression_evaluates_to<double>("3+𝐢+[[1,2+𝐢][3,4][5,6]]", "[[4+𝐢,5+2×𝐢][6+𝐢,7+𝐢][8+𝐢,9+𝐢]]");
+  assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]+3", "undef");
+  assert_parsed_expression_evaluates_to<double>("[[1,2+𝐢][3,4][5,6]]+3+𝐢", "undef");
+  assert_parsed_expression_evaluates_to<float>("3+[[1,2][3,4][5,6]]", "undef");
+  assert_parsed_expression_evaluates_to<double>("3+𝐢+[[1,2+𝐢][3,4][5,6]]", "undef");
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2×𝐢][6,8][10,12]]");
 }

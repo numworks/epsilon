@@ -138,15 +138,15 @@ QUIZ_CASE(poincare_user_variable_composed_functions) {
 
   // g: x→f(x-2)+f(x+1)
   assert_simplify("f(x-2)+f(x+1)→g(x)");
-  // Add a matrix to bypass simplification
-  assert_parsed_expression_evaluates_to<double>("g(3)+[[1]]", "[[18]]");
+  // Add a sum to bypass simplification
+  assert_parsed_expression_evaluates_to<double>("g(3)+sum(1, n, 2, 4)", "20");
   assert_parsed_expression_evaluates_to<double>("g(5)", "45");
 
   // g: x→x+1
   assert_simplify("x+1→g(x)");
   assert_parsed_expression_evaluates_to<double>("f(g(4))", "25");
-  // Add a matrix to bypass simplification
-  assert_parsed_expression_evaluates_to<double>("f(g(4))+[[1]]", "[[26]]");
+  // Add a sum to bypass simplification
+  assert_parsed_expression_evaluates_to<double>("f(g(4))+sum(1, n, 2, 4)", "28");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();

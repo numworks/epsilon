@@ -1,8 +1,9 @@
 #include <poincare/sign_function.h>
 #include <poincare/complex_cartesian.h>
-#include <poincare/rational.h>
 #include <poincare/layout_helper.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/undefined.h>
 
 #include <ion.h>
 #include <assert.h>
@@ -62,7 +63,9 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   }
   Expression child = childAtIndex(0);
   if (child.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
   Rational resultSign = Rational::Builder(1);
   ExpressionNode::Sign s = child.sign(reductionContext.context());

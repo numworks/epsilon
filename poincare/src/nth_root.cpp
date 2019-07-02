@@ -71,11 +71,11 @@ Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionCont
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode:Type::Matrix) {
-    return Undefined::Builder();
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
-#endif
   Expression invIndex = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Power p = Power::Builder(childAtIndex(0), invIndex);
   invIndex.shallowReduce(reductionContext);

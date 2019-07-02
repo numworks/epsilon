@@ -111,7 +111,9 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
 
   if (SortedIsMatrix(childAtIndex(1), reductionContext.context())) {
-    return Undefined::Builder();
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
 
   Expression c = childAtIndex(0);

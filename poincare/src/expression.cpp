@@ -530,8 +530,10 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
   return e;
 }
 
-Expression Expression::mapOnMatrixChild(ExpressionNode::ReductionContext reductionContext) {
-  assert(numberOfChildren() == 1 && childAtIndex(0).type() == ExpressionNode::Type::Matrix);
+Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext) {
+  /* For now, the matrix child on which the mapping must be done  is always at
+   * the index 0. */
+  assert(childAtIndex(0).type() == ExpressionNode::Type::Matrix);
   Expression c = childAtIndex(0);
   Matrix matrix = Matrix::Builder();
   for (int i = 0; i < c.numberOfChildren(); i++) {

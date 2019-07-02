@@ -413,7 +413,6 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * Instead, we rather use the cartesian form of the base and the index. */
   if (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian) {
     complexBase = static_cast<ComplexCartesian &>(base);
-    Integer ten(10);
     if (index.type() == ExpressionNode::Type::Rational) {
       Rational r = static_cast<Rational &>(index);
       if (r.isMinusOne()) {
@@ -425,7 +424,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       } else if (r.isMinusHalf()) {
         // (x+iy)^(-1/2)
         result = complexBase.squareRoot(reductionContext).inverse(reductionContext);
-      } else if (r.integerDenominator().isOne() && r.unsignedIntegerNumerator().isLowerThan(ten)) {
+      } else if (r.integerDenominator().isOne() && r.unsignedIntegerNumerator().isLowerThan(Integer(10))) {
         if (r.sign() == ExpressionNode::Sign::Positive) {
           // (x+iy)^n, n integer positive n < 10
           result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), reductionContext);

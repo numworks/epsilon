@@ -1,6 +1,9 @@
 #include <poincare/matrix_identity.h>
-#include <poincare/matrix_complex.h>
+#include <poincare/integer.h>
 #include <poincare/layout_helper.h>
+#include <poincare/matrix.h>
+#include <poincare/matrix_complex.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -44,7 +47,21 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
     if (e.isUndefined()) {
       return e;
     }
-    return *this;
+
+    Expression c = childAtIndex(0);
+    if (!c.isRationalOne()) {
+      Expression result = Undefined::Builder();
+      replaceWithInPlace(result);
+      return result;
+    }
+    Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
+    if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
+      return *this;
+    }
+    int dim = dimension.extractedInt();
+    Expression result = Matrix::CreateIdentity(dim);
+    replaceWithInPlace(result);
+    return result;
   }
 }
 

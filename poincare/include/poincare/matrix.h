@@ -76,11 +76,11 @@ public:
   int rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace = false);
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
+  static Matrix CreateIdentity(int dim);
 #if MATRIX_EXACT_REDUCING
   Expression trace() const;
   Expression determinant() const;
   Matrix transpose() const;
-  static Matrix CreateIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
   Expression inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif

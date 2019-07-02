@@ -22,7 +22,7 @@ int RoundNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 }
 
 Expression RoundNode::shallowReduce(ReductionContext reductionContext) {
-  return Round(this).shallowReduce();
+  return Round(this).shallowReduce(reductionContext);
 }
 
 template<typename T>
@@ -38,19 +38,21 @@ Evaluation<T> RoundNode::templatedApproximate(Context * context, Preferences::Co
   return Complex<T>::Builder(std::round(f1*err)/err);
 }
 
-
-Expression Round::shallowReduce() {
+Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
-    return Undefined::Builder();
+  if (childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
-#endif
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+    return mapOnMatrixChild(reductionContext);
+  }
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational) {

@@ -74,6 +74,7 @@ class Expression : public TreeHandle {
   friend class Randint;
   friend class RealPart;
   friend class Round;
+  friend class Sequence;
   friend class SignFunction;
   friend class Sine;
   friend class SquareRoot;

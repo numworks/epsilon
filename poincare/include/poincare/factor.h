@@ -26,6 +26,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
   Expression shallowBeautify(ReductionContext reductionContext) override;
+  Expression shallowReduce(ReductionContext reductionContext) override;
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
@@ -41,8 +42,11 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilderOneChild<Factor>);
 
-  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
+  // Expression
+  Expression shallowReduce();
+  Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

@@ -26,8 +26,52 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.name());
 }
 
+Expression FactorNode::shallowReduce(ReductionContext reductionContext) {
+  return Factor(this).shallowReduce();
+}
+
 Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
+}
+
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  assert(!i.isZero());
+  assert(!i.isNegative());
+  Multiplication m = Multiplication::Builder();
+  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
+  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
+  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  if (numberOfPrimeFactors == 0) {
+    m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
+    return m;
+  }
+  if (numberOfPrimeFactors < 0) {
+    // Exception: the decomposition failed
+    return m;
+  }
+  for (int index = 0; index < numberOfPrimeFactors; index++) {
+    Expression factor = Rational::Builder(factors[index]);
+    if (!coefficients[index].isOne()) {
+      factor = Power::Builder(factor, Rational::Builder(coefficients[index]));
+    }
+    m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
+  }
+  return m;
+}
+
+Expression Factor::shallowReduce() {
+  {
+    Expression e = Expression::defaultShallowReduce();
+    if (e.isUndefined()) {
+      return e;
+    }
+  }
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) { // TODO LEA SortedIsMatrix?
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
+  }
+  return *this;
 }
 
 Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
@@ -63,32 +107,6 @@ Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionCon
   }
   replaceWithInPlace(result);
   return result;
-}
-
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  //TODO LEA Matrices?
-  assert(!i.isZero());
-  assert(!i.isNegative());
-  Multiplication m = Multiplication::Builder();
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
-  if (numberOfPrimeFactors == 0) {
-    m.addChildAtIndexInPlace(Rational::Builder(i), 0, 0);
-    return m;
-  }
-  if (numberOfPrimeFactors < 0) {
-    // Exception: the decomposition failed
-    return m;
-  }
-  for (int index = 0; index < numberOfPrimeFactors; index++) {
-    Expression factor = Rational::Builder(factors[index]);
-    if (!coefficients[index].isOne()) {
-      factor = Power::Builder(factor, Rational::Builder(coefficients[index]));
-    }
-    m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
-  }
-  return m;
 }
 
 }

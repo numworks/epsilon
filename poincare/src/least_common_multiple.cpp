@@ -63,11 +63,11 @@ Expression LeastCommonMultiple::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (c0.type() == Type::Matrix || c1.type() == Type::Matrix) {
-    return Undefined::Builder();
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
-#endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {

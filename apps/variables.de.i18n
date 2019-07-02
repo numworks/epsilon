@@ -1,5 +1,5 @@
 Variables = "Variablen"
-Expressions = "Ausdruecke"
+Expressions = "Ausdrücke"
 Functions = "Funktionen"
 EmptyExpressionBox0 = "Sie haben keine Variable definiert."
 EmptyFunctionBox0 = "Sie haben keine Funktion definiert."

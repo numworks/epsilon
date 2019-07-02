@@ -6,11 +6,11 @@
 
 namespace TextInputHelpers {
 
-size_t CursorIndexInCommand(const char * text);
-/* Returns the index of the cursor position in a Command, which is the smallest
- * index between :
- *   - The first EmptyChar index (which is the position of the first argument)
- *   - The first empty quote
+const char * CursorPositionInCommand(const char * text, const char * stoppingPosition = nullptr);
+/* Returns the pointer to the char that should be right of the cursor, which is
+ * the first char between :
+ *   - The first EmptyChar (which is the position of the first argument)
+ *   - The char after the first empty quote
  *   - The end of the text */
 }
 

@@ -19,30 +19,24 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
      || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
      || (event == Ion::Events::Up && selectedRow() > 0)
-     || (event == Ion::Events::Right && textField->cursorLocation() == textField->draftTextLength() && selectedColumn() < numberOfColumns()-1)
-     || (event == Ion::Events::Left && textField->cursorLocation() == 0 && selectedColumn() > 0);
+     || (event == Ion::Events::Right && (textField->cursorLocation() == textField->draftTextBuffer() + textField->draftTextLength()) && selectedColumn() < numberOfColumns()-1)
+     || (event == Ion::Events::Left && textField->cursorLocation() == textField->draftTextBuffer() && selectedColumn() > 0);
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
-  Context * globalContext = appsContainer->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
+  double floatBody;
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  int nbOfRows = numberOfRows();
-  int nbOfColumns = numberOfColumns();
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  for (int j = 0; j < numberOfColumns(); j++) {
-    selectableTableView()->reloadCellAtLocation(j, selectedRow());
-  }
-  if (nbOfRows != numberOfRows() || nbOfColumns != numberOfColumns()) {
-    selectableTableView()->reloadData();
-  }
+  /* At this point, a new cell is selected depending on the event, before the
+   * data is reloaded, which means that the right cell is selected but the data
+   * may be incorrect. The data is reloaded afterwards by the
+   * textFieldDidFinishEditing methods of the derived classes StoreController
+   * and ValuesController. */
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
   } else {

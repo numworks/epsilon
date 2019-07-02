@@ -8,6 +8,7 @@
 namespace Poincare {
 
 class LayoutCursor;
+class Expression;
 
 class Layout : public TreeHandle {
   friend class GridLayoutNode;
@@ -23,6 +24,10 @@ public:
     assert(isUninitialized() || !TreeHandle::node()->isGhost());
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
+
+  // Properties
+  LayoutNode::Type type() const { return node()->type(); }
+  bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
@@ -45,22 +50,21 @@ public:
   Layout recursivelyMatches(LayoutTest test) const;
   bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
   bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }
-  bool isHorizontal() const { return const_cast<Layout *>(this)->node()->isHorizontal(); }
-  bool isMatrix() const { return const_cast<Layout *>(this)->node()->isMatrix(); }
-  bool isVerticalOffset() const { return const_cast<Layout *>(this)->node()->isVerticalOffset(); }
-  bool isLeftParenthesis() const { return const_cast<Layout *>(this)->node()->isLeftParenthesis(); }
-  bool isChar() const { return const_cast<Layout *>(this)->node()->isChar(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
   int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }
   int rightCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
   bool hasText() { return node()->hasText(); }
-  char XNTChar() const { return const_cast<Layout *>(this)->node()->XNTChar(); }
+  CodePoint XNTCodePoint() const { return const_cast<Layout *>(this)->node()->XNTCodePoint(); }
 
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
   bool removeGreySquaresFromAllMatrixAncestors() { return node()->removeGreySquaresFromAllMatrixAncestors(); }
   bool addGreySquaresToAllMatrixAncestors() { return node()->addGreySquaresToAllMatrixAncestors(); }
-  Layout layoutToPointWhenInserting() { return Layout(node()->layoutToPointWhenInserting()); }
+  Layout layoutToPointWhenInserting(Expression * correspondingExpression) {
+    // Pointer to correspondingExpr because expression.h includes layout.h
+    assert(correspondingExpression != nullptr);
+    return Layout(node()->layoutToPointWhenInserting(correspondingExpression));
+  }
 
   // Cursor
   LayoutCursor cursor() const;

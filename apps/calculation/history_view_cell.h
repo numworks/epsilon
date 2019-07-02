@@ -20,14 +20,17 @@ public:
   void setSelectedSubviewType(SubviewType subviewType, HistoryViewCell * cell = nullptr);
   SubviewType selectedSubviewType() { return m_selectedSubviewType; }
 private:
+  /* This method should belong to a delegate instead of a data source but as
+   * both the data source and the delegate will be the same controller, we
+   * avoid keeping 2 pointers in HistoryViewCell. */
+  virtual void historyViewCellDidChangeSelection() = 0;
   SubviewType m_selectedSubviewType;
 };
 
 class HistoryViewCell : public ::EvenOddCell, public Responder {
 public:
   HistoryViewCell(Responder * parentResponder = nullptr);
-  void reloadCell() override;
-  void reloadScroll();
+  void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setDataSource(HistoryViewCellDataSource * dataSource) { m_dataSource = dataSource; }
@@ -36,7 +39,8 @@ public:
   }
   Poincare::Layout layout() const override;
   KDColor backgroundColor() const override;
-  void setCalculation(Calculation * calculation);
+  Calculation * calculation() { return &m_calculation; }
+  void setCalculation(Calculation * calculation, bool expanded = false);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
@@ -46,10 +50,10 @@ public:
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  void reloadScroll();
+  void reloadOutputSelection();
   Calculation m_calculation;
-  Poincare::Layout m_inputLayout;
-  Poincare::Layout m_leftOutputLayout;
-  Poincare::Layout m_rightOutputLayout;
+  bool m_calculationExpanded;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   HistoryViewCellDataSource * m_dataSource;

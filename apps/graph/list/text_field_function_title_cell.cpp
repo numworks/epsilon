@@ -1,16 +1,16 @@
 #include "text_field_function_title_cell.h"
-#include "storage_list_controller.h"
+#include "list_controller.h"
 #include <assert.h>
 
 namespace Graph {
 
-static inline float min(float x, float y) { return (x<y ? x : y); }
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
-TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(StorageListController * listController, Orientation orientation, const KDFont * font) :
+TextFieldFunctionTitleCell::TextFieldFunctionTitleCell(ListController * listController, Orientation orientation, const KDFont * font) :
   Shared::FunctionTitleCell(orientation),
   Responder(listController),
-  m_textField(Shared::StorageFunction::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 1.0f, 0.5f)
+  m_textField(Shared::Function::k_parenthesedArgumentLength, this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, nullptr, listController, false, font, 1.0f, 0.5f)
 {
 }
 
@@ -57,9 +57,9 @@ void TextFieldFunctionTitleCell::layoutSubviews() {
   KDRect frame = subviewFrame();
   m_textField.setFrame(frame);
   KDCoordinate maxTextFieldX = frame.width() - m_textField.minimalSizeForOptimalDisplay().width();
-  float horizontalAlignment = max(
+  float horizontalAlignment = maxFloat(
       0.0f,
-      min(
+      minFloat(
         1.0f,
         ((float)(maxTextFieldX - k_textFieldRightMargin))/((float)maxTextFieldX)));
   m_textField.setAlignment(horizontalAlignment, verticalAlignment());

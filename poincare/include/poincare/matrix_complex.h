@@ -60,7 +60,7 @@ public:
   static MatrixComplex Builder() { return TreeHandle::NAryBuilder<MatrixComplex<T>, MatrixComplexNode<T>>(); }
   static MatrixComplex Builder(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
   static MatrixComplex<T> Undefined();
-  static MatrixComplex<T> createIdentity(int dim);
+  static MatrixComplex<T> CreateIdentity(int dim);
   MatrixComplex<T> inverse() const { return node()->inverse(); }
   MatrixComplex<T> transpose() const { return node()->transpose(); }
   std::complex<T> complexAtIndex(int index) const {

@@ -2,7 +2,7 @@
 #include "../sequence_store.h"
 #include <poincare/layout_helper.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -72,24 +72,24 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
    * There is a special case for double recurrent sequences because we do not
    * want to parse symbols u(n+2) or v(n+2). */
   m_numberOfAddedCells = recurrenceDepth == 2 ? 2*recurrenceDepth : 2*recurrenceDepth+1;
-  int sequenceIndex = sequenceName == SequenceStore::k_sequenceNames[0] ? 0 : 1;
+  int sequenceIndex = sequenceName[0] == SequenceStore::k_sequenceNames[0][0] ? 0 : 1;
   const char * otherSequenceName = SequenceStore::k_sequenceNames[1-sequenceIndex];
   for (int j = 0; j < recurrenceDepth; j++) {
     const char * indice = j == 0 ? "n" : "n+1";
     m_addedCellLayout[j] = HorizontalLayout::Builder(
-        CharLayout::Builder(sequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+        CodePointLayout::Builder(sequenceName[0], KDFont::LargeFont),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
       );
     m_addedCellLayout[j+recurrenceDepth] = HorizontalLayout::Builder(
-        CharLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+        CodePointLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
       );
   }
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
     m_addedCellLayout[2*recurrenceDepth] = HorizontalLayout::Builder(
-        CharLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Type::Subscript)
+        CodePointLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
+        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
       );
   }
 }

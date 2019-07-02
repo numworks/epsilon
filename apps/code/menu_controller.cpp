@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <ion/events.h>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Code {
 
@@ -126,7 +127,7 @@ void MenuController::renameSelectedScript() {
   app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
   myCell->textField()->setEditing(true, false);
-  myCell->textField()->setCursorLocation(strlen(myCell->textField()->text()));
+  myCell->textField()->setCursorLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
 }
 
 void MenuController::deleteScript(Script script) {
@@ -271,7 +272,7 @@ void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell * cell, in
   (static_cast<ScriptNameCell *>(cell))->textField()->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
-void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
+void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddScriptRow) {
     t->selectCellAtLocation(0, numberOfRows()-1);
   }
@@ -283,7 +284,9 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 }
 
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Right && textField->isEditing() && textField->cursorLocation() == textField->draftTextLength()) {
+  if (event == Ion::Events::Right
+      && textField->isEditing()
+      && textField->cursorLocation() == textField->text() + textField->draftTextLength()) {
     return true;
   }
   if (event == Ion::Events::Clear && textField->isEditing()) {
@@ -292,7 +295,7 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     assert(k_bufferSize >= 1 + strlen(ScriptStore::k_scriptExtension) + 1);
     strlcpy(&buffer[1], ScriptStore::k_scriptExtension, strlen(ScriptStore::k_scriptExtension) + 1);
     textField->setText(buffer);
-    textField->setCursorLocation(0);
+    textField->setCursorLocation(textField->text());
     return true;
   }
   return false;
@@ -301,22 +304,24 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
   static constexpr int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
-
   char numberedDefaultName[bufferSize];
+
   if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
     newName = text;
   } else {
     // The user entered an empty name. Use a numbered default script name.
     bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
+    assert(defaultNameLength < bufferSize);
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberedDefaultName[defaultNameLength++] = '.';
-    strlcpy(&numberedDefaultName[defaultNameLength], ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
+    strlcpy(numberedDefaultName + defaultNameLength, ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
     /* If there are already scripts named script1.py, script2.py,... until
      * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
      * default name and let the user modify it. */
     if (!foundDefaultName) {
       textField->setText(numberedDefaultName);
-      textField->setCursorLocation(defaultNameLength);
+      textField->setCursorLocation(textField->draftTextBuffer() + defaultNameLength);
     }
     newName = const_cast<const char *>(numberedDefaultName);
   }
@@ -348,8 +353,11 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
 
 bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
-  if (textField->isEditing() && textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength) {
-    textField->setCursorLocation(textField->draftTextLength() - scriptExtensionLength);
+  if (textField->isEditing()) {
+    const char * maxPointerLocation = textField->text() + textField->draftTextLength() - scriptExtensionLength;
+    if (textField->cursorLocation() > maxPointerLocation) {
+      textField->setCursorLocation(maxPointerLocation);
+    }
   }
   return returnValue;
 }

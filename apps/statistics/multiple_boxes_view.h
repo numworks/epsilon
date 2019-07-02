@@ -17,7 +17,7 @@ public:
   MultipleBoxesView(Store * store, BoxView::Quantile * selectedQuantile);
   // MultipleDataView
   int seriesOfSubviewAtIndex(int index) override;
-  const BoxBannerView * bannerView() const override { return &m_bannerView; }
+  BoxBannerView * bannerView() override { return &m_bannerView; }
   BoxView * dataViewAtIndex(int index) override;
   void layoutDataSubviews() override;
   void reload() override;

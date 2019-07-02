@@ -152,11 +152,13 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
       App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      /* Just after a software update, the battery timer does not have time to
+       * fire before the calculator enters DFU mode. As the DFU mode blocks the
+       * event loop, we update the battery state "manually" here.
+       * We do it before switching to USB application to redraw the battery
+       * pictogram. */
+      updateBatteryState();
       if (switchTo(usbConnectedAppSnapshot())) {
-        /* Just after a software update, the battery timer does not have time to
-         * fire before the calculator enters DFU mode. As the DFU mode blocks the
-         * event loop, we update the battery state "manually" here. */
-        updateBatteryState();
         Ion::USB::DFU();
         bool switched = switchTo(activeSnapshot);
         assert(switched);
@@ -300,13 +302,26 @@ void AppsContainer::refreshPreferences() {
   m_window.refreshPreferences();
 }
 
+void AppsContainer::reloadTitleBarView() {
+  m_window.reloadTitleBarView();
+}
+
 void AppsContainer::displayExamModePopUp(bool activate) {
   m_examPopUpController.setActivatingExamMode(activate);
   activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
 }
 
 void AppsContainer::shutdownDueToLowBattery() {
+  if (Ion::Battery::level() != Ion::Battery::Charge::EMPTY) {
+  /* We early escape here. When the battery switches from LOW to EMPTY, it
+   * oscillates a few times before stabilizing to EMPTY. So we might call
+   * 'shutdownDueToLowBattery' but the battery level still answers LOW instead
+   * of EMPTY. We want to avoid uselessly redrawing the whole window in that
+   * case. */
+    return;
+  }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY) {
+    Ion::Backlight::setBrightness(0);
     m_emptyBatteryWindow.redraw(true);
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();

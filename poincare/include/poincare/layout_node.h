@@ -3,10 +3,10 @@
 
 #include <poincare/tree_node.h>
 #include <kandinsky.h>
-#include <ion/charset.h>
 
 namespace Poincare {
 
+class Expression;
 class LayoutCursor;
 class Layout;
 
@@ -16,6 +16,30 @@ public:
   enum class VerticalDirection {
     Up,
     Down
+  };
+  enum class Type : uint8_t {
+    AbsoluteValueLayout,
+    BinomialCoefficientLayout,
+    BracketPairLayout,
+    CeilingLayout,
+    CodePointLayout,
+    CondensedSumLayout,
+    ConjugateLayout,
+    EmptyLayout,
+    FloorLayout,
+    FractionLayout,
+    GridLayout,
+    HorizontalLayout,
+    IntegralLayout,
+    LeftParenthesisLayout,
+    LeftSquareBracketLayout,
+    MatrixLayout,
+    NthRootLayout,
+    ProductLayout,
+    RightParenthesisLayout,
+    RightSquareBracketLayout,
+    SumLayout,
+    VerticalOffsetLayout
   };
 
   // Constructor
@@ -28,6 +52,12 @@ public:
     m_sized(false)
   {
   }
+
+  /* Poor man's RTTI */
+  virtual Type type() const = 0;
+
+  // Comparison
+  bool isIdenticalTo(Layout l);
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -73,9 +103,7 @@ public:
   virtual void deleteBeforeCursor(LayoutCursor * cursor);
 
   // Other
-  virtual LayoutNode * layoutToPointWhenInserting() {
-    return numberOfChildren() > 0 ? childAtIndex(0) : this;
-  }
+  virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression);
   bool removeGreySquaresFromAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(false); }
   bool addGreySquaresToAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(true); }
   /* A layout has text if it is not empty and it is not an horizontal layout
@@ -84,31 +112,23 @@ public:
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
-   * become 1+ 2/3 - 4 when pressing "Divide": a CharLayout is collapsable if
+   * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if
    * its char is not +, -, or *. */
   virtual bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the
    * layout, next to another layout, might be the factor of a multiplication
    * with an omitted multiplication sign. For instance, an absolute value layout
-   * returns true, because |3|2 means |3|*2. A '+' CharLayout returns false,
+   * returns true, because |3|2 means |3|*2. A '+' CodePointLayout returns false,
    * because +'something' nevers means +*'something'. */
   virtual bool mustHaveLeftSibling() const { return false; }
-  virtual bool isVerticalOffset() const { return false; }
   /* For now, mustHaveLeftSibling and isVerticalOffset behave the same, but code
    * is clearer with different names. */
-  virtual bool isHorizontal() const { return false; }
-  virtual bool isLeftParenthesis() const { return false; }
-  virtual bool isRightParenthesis() const { return false; }
-  virtual bool isLeftBracket() const { return false; }
-  virtual bool isRightBracket() const { return false; }
   virtual bool isEmpty() const { return false; }
-  virtual bool isMatrix() const { return false; }
-  virtual bool isChar() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
-  virtual char XNTChar() const {
+  virtual CodePoint XNTCodePoint() const {
     LayoutNode * p = parent();
-    return p == nullptr ? Ion::Charset::Empty : p->XNTChar();
+    return p == nullptr ? UCodePointNull : p->XNTCodePoint();
   }
 
   virtual bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) { return true; }
@@ -120,11 +140,14 @@ public:
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
 
 protected:
+  virtual bool protectedIsIdenticalTo(Layout l);
+
   // Tree navigation
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
+  Direct<LayoutNode> childrenFromIndex(int i) { return Direct<LayoutNode>(this, i); }
 
   // Sizing and positioning
   virtual KDSize computeSize() = 0;

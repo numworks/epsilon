@@ -16,6 +16,7 @@ namespace Shared {
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDefaultDelegate {
 public:
   ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   const char * title() override;
   Interval * interval();
   int numberOfColumns() override;
@@ -46,11 +47,13 @@ protected:
   StackViewController * stackController() const;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   virtual void updateNumberOfColumns();
+  virtual FunctionStore * functionStore() const;
+  virtual Ion::Storage::Record recordAtColumn(int i);
   Interval * m_interval;
   int m_numberOfColumns;
   bool m_numberOfColumnsNeedUpdate;
 private:
-  virtual Function * functionAtColumn(int i);
+  static constexpr const KDFont * k_font = KDFont::SmallFont;
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void configureAbscissa();
@@ -69,7 +72,6 @@ private:
   virtual EvenOddBufferTextCell * floatCells(int j) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
   EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfAbscissaCells];
-  virtual FunctionStore * functionStore() const = 0;
   virtual ValuesFunctionParameterController * functionParameterController() = 0;
   ValuesParameterController m_abscissaParameterController;
   Button m_setIntervalButton;

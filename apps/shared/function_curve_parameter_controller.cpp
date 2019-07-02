@@ -3,11 +3,11 @@
 
 namespace Shared {
 
-FunctionCurveParameterController::FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
+FunctionCurveParameterController::FunctionCurveParameterController() :
   ViewController(nullptr),
   m_goToCell(I18n::Message::Goto),
   m_selectableTableView(this, this, this),
-  m_function(nullptr)
+  m_record()
 {
 }
 
@@ -23,10 +23,10 @@ void FunctionCurveParameterController::didBecomeFirstResponder() {
 }
 
 bool FunctionCurveParameterController::handleGotoSelection() {
-  if (m_function == nullptr) {
+  if (m_record.isNull()) {
     return false;
   }
-  goToParameterController()->setFunction(m_function);
+  goToParameterController()->setRecord(m_record);
   StackViewController * stack = (StackViewController *)parentResponder();
   stack->push(goToParameterController());
   return true;
@@ -36,8 +36,8 @@ KDCoordinate FunctionCurveParameterController::cellHeight() {
   return Metric::ParameterCellHeight;
 }
 
-void FunctionCurveParameterController::setFunction(Function * function) {
-  m_function = function;
+void FunctionCurveParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
 }
 
 }

@@ -5,11 +5,11 @@ using namespace Shared;
 
 namespace Graph {
 
-static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
 
-GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, StorageCartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
-  StorageFunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
-  m_bannerView(),
+GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
+  m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
@@ -27,7 +27,9 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
-  StorageFunctionGraphController::viewWillAppear();
+  m_view.setCursorView(&m_cursorView);
+  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + m_displayDerivativeInBanner);
+  FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
 }
 
@@ -43,10 +45,10 @@ float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
-    ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     float fRange = f->expressionReduced(myApp->localContext()).characteristicXRange(*(myApp->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
-      characteristicRange = max(fRange, characteristicRange);
+      characteristicRange = maxFloat(fRange, characteristicRange);
     }
   }
   return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::interestingXHalfRange());
@@ -57,8 +59,8 @@ int GraphController::estimatedBannerNumberOfLines() const {
 }
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {
-  StorageFunctionGraphController::selectFunctionWithCursor(functionIndex);
-  ExpiringPointer<StorageCartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  FunctionGraphController::selectFunctionWithCursor(functionIndex);
+  ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
 }
 
@@ -67,8 +69,7 @@ BannerView * GraphController::bannerView() {
 }
 
 void GraphController::reloadBannerView() {
-  StorageFunctionGraphController::reloadBannerView();
-  m_bannerView.setNumberOfSubviews(2+m_displayDerivativeInBanner);
+  FunctionGraphController::reloadBannerView();
   if (functionStore()->numberOfActiveFunctions() == 0 || !m_displayDerivativeInBanner) {
     return;
   }
@@ -80,7 +81,7 @@ void GraphController::reloadBannerView() {
 bool GraphController::moveCursorHorizontally(int direction) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   App * myApp = static_cast<App *>(app());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, myApp, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, myApp);
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {

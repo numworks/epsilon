@@ -17,22 +17,22 @@ namespace Sequence {
 
 class ListController : public Shared::FunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
-  ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
+  ListController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
   int numberOfExpressionRows() override;
   KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForInputEventHandler(InputEventHandler * handler) override;
   void selectPreviousNewSequenceCell();
-  void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
+  void editExpression(int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
   static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
-  Toolbox * toolboxForSender(InputEventHandler * sender);
+  bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   Shared::InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() override;
   ListParameterController * parameterController() override;
-  int maxNumberOfRows() override;
+  int maxNumberOfDisplayableRows() override;
   Shared::FunctionTitleCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
@@ -41,12 +41,11 @@ private:
   bool isAddEmptyRow(int j) override;
   int sequenceDefinitionForRow(int j);
   void addEmptyModel() override;
-  void reinitExpression(Shared::ExpressionModel * model) override;
-  void editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) override;
-  bool removeModelRow(Shared::ExpressionModel * model) override;
-  KDCoordinate baseline(int j) const;
+  void reinitSelectedExpression(Shared::ExpiringPointer<Shared::ExpressionModelHandle> model) override;
+  void editExpression(Ion::Events::Event event) override;
+  bool removeModelRow(Ion::Storage::Record record) override;
+  SequenceStore * modelStore() override { return static_cast<SequenceStore *>(Shared::FunctionListController::modelStore()); }
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
-  SequenceStore * m_sequenceStore;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;

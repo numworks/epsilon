@@ -7,7 +7,7 @@
 namespace Poincare {
 
   /* We use the cheat table to look for known simplifications (e.g. cos(0)=1,
-   * cos(Pi/2)=1...). For each entry of the table, we store its expression and
+   * cos(π/2)=1...). For each entry of the table, we store its expression and
    * its float approximation in order to quickly scan the table looking for our
    * input approximation. If one entry matches the float approximation, we then
    * check that the actual expression of our input is equivalent to the table

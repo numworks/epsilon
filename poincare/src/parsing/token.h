@@ -24,9 +24,7 @@ public:
        * token of lesser precedence than Equal, and this prevents expressions
        * such as "3=4>a". Tokenizer::parseStore uses a special algorithm that
        * prevents (3>4=a). */
-    RightSuperscript,
-      /* Superscript marks the limit of a power. For instance:
-       * 2 LeftSuperscript 3! RightSuperscript ! is (2^(3!))! */
+    RightSystemParenthesis,
     RightBracket,
     RightParenthesis,
     RightBrace,
@@ -42,10 +40,11 @@ public:
        * in order to allow the Parser to insert such Tokens where needed. */
     Caret,
     Bang,
-    LeftSuperscript,
+    CaretWithParenthesis,
     LeftBracket,
     LeftParenthesis,
     LeftBrace,
+    LeftSystemParenthesis,
     Empty,
     Constant,
     Number,
@@ -53,7 +52,7 @@ public:
     Undefined
   };
 
-  Token(Type type) : m_type(type), m_text(0) {};
+  Token(Type type) : m_type(type), m_text(0), m_codePoint(UCodePointNull) {};
 
   Type type() const { return m_type; }
   bool is(Type t) const { return m_type == t; }
@@ -62,12 +61,14 @@ public:
   Expression expression() const { return m_expression; }
   const char * text() const { return m_text; }
   size_t length() const { return m_length; }
+  CodePoint codePoint() const { return m_codePoint; }
 
   void setExpression(Expression e) { m_expression = e; }
   void setString(const char * text, size_t length) {
     m_text = text;
     m_length = length;
   }
+  void setCodePoint(CodePoint c) { m_codePoint = c; }
   static int CompareNonNullTerminatedName(const char * nonNullTerminatedName, size_t nonNullTerminatedNameLength, const char * nullTerminatedName) {
     /* Compare m_text to name, similarly to strcmp, assuming
      *  - m_text is not null-terminated
@@ -84,6 +85,7 @@ private:
   Expression m_expression;
   const char * m_text;
   size_t m_length;
+  CodePoint m_codePoint;
 };
 
 }

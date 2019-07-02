@@ -10,10 +10,13 @@ namespace Poincare {
 class RightSquareBracketLayoutNode final : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
+
+  // Layout
+  Type type() const override { return Type::RightSquareBracketLayout; }
+
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Char(buffer, bufferSize, ']');
+    return SerializationHelper::CodePoint(buffer, bufferSize, ']');
   }
-  bool isRightBracket() const override { return true; }
 
   // TreeNode
   size_t size() const override { return sizeof(RightSquareBracketLayoutNode); }

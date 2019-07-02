@@ -109,7 +109,7 @@ public:
   void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
-  void addXNTCharLayout();
+  void addXNTCodePointLayout();
   void insertText(const char * text);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }

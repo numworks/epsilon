@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <cmath>
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -49,55 +49,52 @@ int PreferencesController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-Layout layoutForPreferences(I18n::Message message) {
+Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   switch (message) {
     // Angle Unit
     case I18n::Message::Degres:
     {
-      const char degEx[] = {'9', '0', Ion::Charset::Degree};
-      return LayoutHelper::String(degEx, sizeof(degEx), KDFont::SmallFont);
+      const char * degEx = "90°";
+      return LayoutHelper::String(degEx, strlen(degEx), k_layoutFont);
     }
     case I18n::Message::Radian:
-    {
-      const char pi[] = {Ion::Charset::SmallPi};
       return FractionLayout::Builder(
-          LayoutHelper::String(pi, sizeof(pi), KDFont::SmallFont),
-          LayoutHelper::String("2", 1, KDFont::SmallFont)
-        );
-    }
+          CodePointLayout::Builder(UCodePointGreekSmallLetterPi, k_layoutFont),
+          CodePointLayout::Builder('2', k_layoutFont));
+
     // Display Mode format
     case I18n::Message::Decimal:
-      return LayoutHelper::String("12.34", 5, KDFont::SmallFont);
+      return LayoutHelper::String("12.34", 5, k_layoutFont);
     case I18n::Message::Scientific:
     {
-      const char text[] = {'1','.', '2', '3', '4', Ion::Charset::Exponent, '1'};
-      return LayoutHelper::String(text, sizeof(text), KDFont::SmallFont);
+      const char * text = "1.234ᴇ1";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
+
     // Edition mode
     case I18n::Message::Edition2D:
       return HorizontalLayout::Builder(
-          LayoutHelper::String("1+", 2, KDFont::SmallFont),
-          FractionLayout::Builder(LayoutHelper::String("2", 1, KDFont::SmallFont), LayoutHelper::String("3", 1, KDFont::SmallFont))
+          LayoutHelper::String("1+", 2, k_layoutFont),
+          FractionLayout::Builder(LayoutHelper::String("2", 1, k_layoutFont), LayoutHelper::String("3", 1, k_layoutFont))
         );
     case I18n::Message::EditionLinear:
-      return LayoutHelper::String("1+2/3", 5, KDFont::SmallFont);
+      return LayoutHelper::String("1+2/3", 5, k_layoutFont);
+
     // Complex format
     case I18n::Message::Real:
-    {
-      return CharLayout::Builder('x', KDFont::SmallFont);
-    }
+      return CodePointLayout::Builder('x', k_layoutFont);
     case I18n::Message::Cartesian:
     {
-      const char text[] = {'a','+', Ion::Charset::IComplex, 'b'};
-      return LayoutHelper::String(text, sizeof(text), KDFont::SmallFont);
+      const char * text = "a+𝐢b";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
     case I18n::Message::Polar:
     {
-      const char base[] = {'r', Ion::Charset::Exponential};
-      const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta};
+      const char * base = "rℯ";
+      const char * superscript = "𝐢θ";
       return HorizontalLayout::Builder(
-          LayoutHelper::String(base, sizeof(base), KDFont::SmallFont),
-          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, sizeof(superscript), KDFont::SmallFont), VerticalOffsetLayoutNode::Type::Superscript)
+          LayoutHelper::String(base, strlen(base), k_layoutFont),
+          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript), k_layoutFont), VerticalOffsetLayoutNode::Position::Superscript)
         );
     }
     default:
@@ -122,14 +119,11 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   Preferences * preferences = Preferences::sharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
-  }
-  if (message == I18n::Message::DisplayMode) {
+  } else if (message == I18n::Message::DisplayMode) {
     preferences->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
-  }
-  if (message == I18n::Message::EditionMode) {
+  } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
-  }
-  if (message == I18n::Message::ComplexFormat) {
+  } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   }
 }

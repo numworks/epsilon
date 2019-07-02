@@ -1,6 +1,7 @@
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -96,7 +97,7 @@ int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences:
 
   // Write the opening bracket
   int numberOfChar = 0;
-  buffer[numberOfChar++] = '[';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
   // Write the argument
@@ -104,7 +105,8 @@ int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences:
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing bracket
-  buffer[numberOfChar++] = ']';
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

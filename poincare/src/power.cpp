@@ -138,7 +138,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(VerticalOffsetLayout::Builder(
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
-        VerticalOffsetLayoutNode::Type::Superscript),
+        VerticalOffsetLayoutNode::Position::Superscript),
       result.numberOfChildren(),
       result.numberOfChildren(),
       nullptr);
@@ -164,7 +164,7 @@ int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 
 // Simplify
 
-Expression PowerNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression PowerNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Power(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
 
@@ -217,7 +217,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
     MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex(), complexFormat);
     return result;
   }
-  MatrixComplex<T> result = MatrixComplex<T>::createIdentity(m.numberOfRows());
+  MatrixComplex<T> result = MatrixComplex<T>::CreateIdentity(m.numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
     if (Expression::ShouldStopProcessing()) {
@@ -311,7 +311,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       return this;
     }
     int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
-    Matrix * id = Matrix::createIdentity(mat->numberOfRows());
+    Matrix * id = Matrix::CreateIdentity(mat->numberOfRows());
     if (exp == 0) {
       return replaceWith(id, true);
     }
@@ -384,7 +384,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       }
     }
     // 1^x = 1 if x != ±inf
-    if (a.isOne() && !childAtIndex(1).recursivelyMatchesInfinity(context)) {
+    if (a.isOne() && !childAtIndex(1).recursivelyMatches(Expression::IsInfinity, context)) {
       Expression result = Rational::Builder(1);
       replaceWithInPlace(result);
       return result;
@@ -521,7 +521,7 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
       Multiplication m1 = Multiplication::Builder();
       replaceWithInPlace(m1);
       // Multiply m1 by i complex
-      Constant i = Constant::Builder(Ion::Charset::IComplex);
+      Constant i = Constant::Builder(UCodePointMathematicalBoldSmallI);
       m1.addChildAtIndexInPlace(i, 0, 0);
       i.shallowReduce(context, complexFormat, angleUnit, target);
       m1.addChildAtIndexInPlace(*this, 1, 1);
@@ -572,10 +572,22 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
    * This rule is not generally true: ((-2)^2)^(1/2) != (-2)^(2*1/2) = -2
    * This rule is true if:
    * - a > 0
-   * - in Real: when b and c are integers
-   * - in other modes: when c is integer
-   * (Warning: in real mode only c integer is not enough:
-   * ex: ((-2)^(1/2))^2 = unreal != -2)
+   * - c is an integer
+   *
+   * Warning 1: in real mode only c integer is not enough:
+   * ex: ((-2)^(1/2))^2 = unreal != -2
+   * We escape that case by returning 'unreal' if the a^b is complex.
+   *
+   * Warning 2: If we did not apply this rule on expressions of the form
+   * (a^b)^(-1), we would end up in infinite loop when factorizing an addition
+   * on the same denominator.
+   * For ex:
+   * 1+[tan(2)^1/2]^(-1) --> (tan(2)^1/2+tan(2)^1/2*[tan(2)^1/2]^(-1))/tan(2)^1/2
+   *                     --> tan(2)+tan(2)*[tan(2)^1/2]^(-1)/tan(2)
+   *                     --> tan(2)^(3/2)+tan(2)^(3/2)*[tan(2)^1/2]^(-1)/tan(2)^3/2
+   *                     --> ...
+   * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is an
+   * integer.
    */
   if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
     Power p = childAtIndex(0).convert<Power>();
@@ -584,11 +596,17 @@ Expression Power::shallowReduce(Context & context, Preferences::ComplexFormat co
     bool cInteger = (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne());
     if (aPositive || cInteger) {
-      // Check that the complex format is not Real or that b is an integer
-      bool bInteger = (p.childAtIndex(1).type() == ExpressionNode::Type::Rational && p.childAtIndex(1).convert<Rational>().integerDenominator().isOne());
-      if (aPositive || complexFormat != Preferences::ComplexFormat::Real || bInteger) {
-        return simplifyPowerPower(context, complexFormat, angleUnit, target);
+      /* If the complexFormat is real, we check that the inner power is defined
+       * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
+       * 'unreal'. */
+      if (complexFormat == Preferences::ComplexFormat::Real) {
+        Expression approximation = p.approximate<float>(context, complexFormat, angleUnit);
+        if (approximation.type() == ExpressionNode::Type::Unreal) {
+          replaceWithInPlace(approximation);
+          return approximation;
+        }
       }
+      return simplifyPowerPower(context, complexFormat, angleUnit, target);
     }
   }
   // Step 11: (a*b*c*...)^r ?
@@ -1136,17 +1154,17 @@ Expression Power::equivalentExpressionUsingStandardExpression() const {
 
 Expression Power::CreateComplexExponent(const Expression & r, Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   // Returns e^(i*pi*r)
-  const Constant exp = Constant::Builder(Ion::Charset::Exponential);
-  Constant iComplex = Constant::Builder(Ion::Charset::IComplex);
-  const Constant pi = Constant::Builder(Ion::Charset::SmallPi);
+  const Constant exp = Constant::Builder(UCodePointScriptSmallE);
+  Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
+  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
   Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());
   iComplex.shallowReduce(context, complexFormat, angleUnit, target);
   Power p = Power::Builder(exp, mExp);
   mExp.shallowReduce(context, complexFormat, angleUnit, target);
   return p;
 #if 0
-  const Constant iComplex = Constant::Builder(Ion::Charset::IComplex);
-  const Constant pi = Constant::Builder(Ion::Charset::SmallPi);
+  const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
+  const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
   Expression op = Multiplication::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
   Cosine cos = Cosine(op).shallowReduce(context, complexFormat, angleUnit, false);;
   Sine sin = Sine(op).shallowReduce(context, complexFormat, angleUnit, false);

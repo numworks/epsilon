@@ -37,7 +37,7 @@ void SelectableTableView::selectColumn(int i) {
 void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
-  deselectTable();
+  deselectTable(true);
   /* FIXME: The problem with calling deselectTable is that at this point in time
    * the datasource's model is very likely to have changed. Therefore it's
    * rather complicated to get a pointer to the currently selected cell (in
@@ -45,7 +45,7 @@ void SelectableTableView::reloadData(bool setFirstResponder) {
   /* As a workaround, datasources can reset the highlighted state in their
    * willDisplayCell callback. */
   TableView::layoutSubviews();
-  selectCellAtLocation(col, row, setFirstResponder);
+  selectCellAtLocation(col, row, setFirstResponder, true);
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -60,18 +60,18 @@ void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder)
   unhighlightSelectedCell();
 }
 
-void SelectableTableView::deselectTable() {
+void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   unhighlightSelectedCell();
   int previousSelectedCellX = selectedColumn();
   int previousSelectedCellY = selectedRow();
   selectColumn(0);
   selectRow(-1);
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY);
+    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }
 }
 
-bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder) {
+bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }
@@ -85,12 +85,12 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   selectRow(j);
 
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousX, previousY);
+    m_delegate->tableViewDidChangeSelection(this, previousX, previousY, withinTemporarySelection);
   }
 
   /* We need to scroll:
    * - After notifying the delegate. For instance,
-   *   StorageExpressionModelListController needs to update its memoized cell
+   *   ExpressionModelListController needs to update its memoized cell
    *   height values before any scroll.
    * - Before setting the first responder. If the first responder is a view, it
    *   might change during the scroll. */

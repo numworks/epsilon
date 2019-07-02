@@ -19,6 +19,9 @@ public:
     m_hasIndex(hasIndex)
   {}
 
+  // Layout
+  Type type() const override { return Type::NthRootLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -52,6 +55,7 @@ private:
   constexpr static KDCoordinate k_radixLineThickness = 1;
   KDSize adjustedIndexSize();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  bool protectedIsIdenticalTo(Layout l) override;
   LayoutNode * radicandLayout() { return childAtIndex(0); }
   LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : nullptr; }
   bool m_hasIndex;

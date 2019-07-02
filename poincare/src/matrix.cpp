@@ -1,9 +1,10 @@
 #include <poincare/matrix.h>
-#include <poincare/rational.h>
 #include <poincare/division.h>
-#include <poincare/subtraction.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/subtraction.h>
 #include <cmath>
 #include <float.h>
 #include <string.h>
@@ -40,12 +41,12 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   if (currentChar >= bufferSize-1) {
     return 0;
   }
-  buffer[currentChar++] = '[';
+  currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '[');
   if (currentChar >= bufferSize-1) {
     return currentChar;
   }
   for (int i = 0; i < m_numberOfRows; i++) {
-    buffer[currentChar++] = '[';
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '[');
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
@@ -54,7 +55,7 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
       return currentChar;
     }
     for (int j = 1; j < m_numberOfColumns; j++) {
-      buffer[currentChar++] = ',';
+      currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, ',');
       if (currentChar >= bufferSize-1) {
         return currentChar;
       }
@@ -67,12 +68,15 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
-    buffer[currentChar++] = ']';
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, ']');
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
   }
-  buffer[currentChar++] = ']';
+  currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, ']');
+  if (currentChar >= bufferSize-1) {
+    return currentChar;
+  }
   buffer[currentChar] = 0;
   return currentChar;
 }
@@ -134,8 +138,10 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   }
   assert(numberOfRows*numberOfColumns <= k_maxNumberOfCoefficients);
   int dim = numberOfRows;
-  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  T operands[k_maxNumberOfCoefficients*(3/2)]; // inv dimensions: dim x (2*dim)
+  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix
+   * (A is squared with less than k_maxNumberOfCoefficients so (A|I) has less than
+   * 2*k_maxNumberOfCoefficients */
+  T operands[2*k_maxNumberOfCoefficients];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       operands[i*2*dim+j] = array[i*numberOfColumns+j];
@@ -288,7 +294,7 @@ Matrix Matrix::transpose() const {
   return matrix;
 }
 
-Matrix Matrix::createIdentity(int dim) {
+Matrix Matrix::CreateIdentity(int dim) {
   Matrix matrix();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {

@@ -26,7 +26,7 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    SequenceStore * sequenceStore() { return &m_sequenceStore; }
+    SequenceStore * functionStore() override { return &m_sequenceStore; }
     CurveViewRange * graphRange() { return &m_graphRange; }
   private:
     void tidy() override;
@@ -34,8 +34,11 @@ public:
     CurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
-  SequenceContext * localContext() override;
+  // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
+  // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   char XNT() override;
+  SequenceContext * localContext() override;
+  SequenceStore * functionStore() override { return static_cast<SequenceStore *>(Shared::FunctionApp::functionStore()); }
 private:
   App(Container * container, Snapshot * snapshot);
   SequenceContext m_sequenceContext;

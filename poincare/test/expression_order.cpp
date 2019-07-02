@@ -38,9 +38,9 @@ QUIZ_CASE(poincare_expression_order) {
   }
   {
     // e + pi + i
-    Expression pi = Constant::Builder(Ion::Charset::SmallPi);
-    Expression i = Constant::Builder(Ion::Charset::IComplex);
-    Expression e = Constant::Builder(Ion::Charset::Exponential);
+    Expression pi = Constant::Builder(UCodePointGreekSmallLetterPi);
+    Expression i = Constant::Builder(UCodePointMathematicalBoldSmallI);
+    Expression e = Constant::Builder(UCodePointScriptSmallE);
     constexpr int numberOfChildren = 3;
     Expression children[numberOfChildren] = {pi.clone(), i.clone(), e.clone()};
     Expression childrenSorted[numberOfChildren] = {e, pi, i};
@@ -91,16 +91,16 @@ QUIZ_CASE(poincare_expression_order) {
   }
   {
     // pi^a * pi^b
-    Expression child1 = Power::Builder(Constant::Builder(Ion::Charset::SmallPi), Symbol::Builder('a'));
-    Expression child2 = Power::Builder(Constant::Builder(Ion::Charset::SmallPi), Symbol::Builder('b'));
+    Expression child1 = Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Symbol::Builder('a'));
+    Expression child2 = Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Symbol::Builder('b'));
     Expression e1 = Multiplication::Builder(child2.clone(), child1.clone());
     Expression e2 = Multiplication::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // pi^2 * pi^3
-    Expression child1 = Power::Builder(Constant::Builder(Ion::Charset::SmallPi), Rational::Builder(2));
-    Expression child2 = Power::Builder(Constant::Builder(Ion::Charset::SmallPi), Rational::Builder(3));
+    Expression child1 = Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(2));
+    Expression child2 = Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(3));
     Expression e1 = Multiplication::Builder(child2.clone(), child1.clone());
     Expression e2 = Multiplication::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);

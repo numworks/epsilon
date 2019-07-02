@@ -44,7 +44,7 @@ void EditorController::didBecomeFirstResponder() {
 
 void EditorController::viewWillAppear() {
   m_editorView.loadSyntaxHighlighter();
-  m_editorView.setCursorLocation(strlen(m_editorView.text()));
+  m_editorView.setCursorLocation(m_editorView.text() + strlen(m_editorView.text()));
 }
 
 void EditorController::viewDidDisappear() {
@@ -53,7 +53,8 @@ void EditorController::viewDidDisappear() {
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
   if (event == Ion::Events::Var) {
-    // We save script before displaying the Variable box to add new functions or variables
+    /* We save the script before displaying the Variable box to add new
+     * functions or variables. */
     saveScript();
     return false;
   }
@@ -61,60 +62,40 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     return true;
   }
   if (event == Ion::Events::EXE) {
-    // Auto-Indent
-    char * text = const_cast<char *>(textArea->text());
-    int charBeforeCursorIndex = textArea->cursorLocation()-1;
-    int indentationSize = 0;
-    // Indent more if the previous line ends with ':'.
-    if (charBeforeCursorIndex >= 0 && text[charBeforeCursorIndex] == ':') {
-      indentationSize += k_indentationSpacesNumber;
-    }
-    // Compute the indentation of the current line.
-    int indentationIndex = charBeforeCursorIndex;
-    while (indentationIndex >= 0 && text[indentationIndex] != '\n') {
-      indentationIndex--;
-    }
-    if (indentationIndex >= 0) {
-      indentationIndex++;
-      while (text[indentationIndex] == ' ') {
-        indentationSize++;
-        indentationIndex++;
-      }
-    }
-    textArea->handleEventWithText("\n");
-    for (int i = 0; i < indentationSize; i++) {
-      textArea->handleEventWithText(" ");
-    }
+    textArea->handleEventWithText("\n", true, false);
     return true;
   }
 
   if (event == Ion::Events::Backspace) {
-    // If the cursor is on the left of the text of a line,
-    // backspace one intentation space at a time.
-    char * text = const_cast<char *>(textArea->text());
-    int charBeforeCursorIndex = textArea->cursorLocation()-1;
-    int indentationSize = 0;
-    while (charBeforeCursorIndex >= 0 && text[charBeforeCursorIndex] == ' ') {
-      charBeforeCursorIndex--;
-      indentationSize++;
+    /* If the cursor is on the left of the text of a line, backspace one
+     * indentation space at a time. */
+    const char * text = textArea->text();
+    const char * cursorLocation = textArea->cursorLocation();
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, cursorLocation);
+    assert(firstNonSpace >= text);
+    bool cursorIsPrecededOnTheLineBySpacesOnly = false;
+    size_t numberOfSpaces = cursorLocation - firstNonSpace;
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
+      cursorIsPrecededOnTheLineBySpacesOnly = true;
+      numberOfSpaces -= UTF8Decoder::CharSizeOfCodePoint('\n');
+    } else if (firstNonSpace == text) {
+      cursorIsPrecededOnTheLineBySpacesOnly = true;
     }
-    if (charBeforeCursorIndex >= 0 && text[charBeforeCursorIndex] == '\n'
-        && indentationSize >= k_indentationSpacesNumber)
-    {
+    numberOfSpaces = numberOfSpaces / UTF8Decoder::CharSizeOfCodePoint(' ');
+    if (cursorIsPrecededOnTheLineBySpacesOnly && numberOfSpaces >= k_indentationSpacesNumber) {
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
-        textArea->removeChar();
+        textArea->removePreviousGlyph();
       }
       return true;
     }
   } else if (event == Ion::Events::Space) {
-    // If the cursor is on the left of the text of a line,
-    // a space triggers an indentation.
-    char * text = const_cast<char *>(textArea->text());
-    int charBeforeCursorIndex = textArea->cursorLocation()-1;
-    while (charBeforeCursorIndex >= 0 && text[charBeforeCursorIndex] == ' ') {
-      charBeforeCursorIndex--;
-    }
-    if (charBeforeCursorIndex >= 0 && text[charBeforeCursorIndex] == '\n') {
+    /* If the cursor is on the left of the text of a line, a space triggers an
+     * indentation. */
+    const char * text = textArea->text();
+    const char * firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ', true, textArea->cursorLocation());
+    assert(firstNonSpace >= text);
+    if (UTF8Helper::CodePointIs(firstNonSpace, '\n')) {
+      assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
       char indentationBuffer[k_indentationSpacesNumber+1];
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
         indentationBuffer[i] = ' ';
@@ -144,9 +125,8 @@ StackViewController * EditorController::stackController() {
 void EditorController::saveScript() {
   size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
   Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
-  if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
-    assert(false); // This should not happen as we set the text area according to the available space in the Kallax
-  }
+  assert(err != Script::ErrorStatus::NotEnoughSpaceAvailable && err != Script::ErrorStatus::RecordDoesNotExist); // This should not happen as we set the text area according to the available space in the Kallax
+  (void) err;
 }
 
 }

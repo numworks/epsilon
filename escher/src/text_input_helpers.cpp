@@ -1,20 +1,32 @@
 #include <escher/text_input_helpers.h>
-#include <ion/charset.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <string.h>
 
 namespace TextInputHelpers {
 
-size_t CursorIndexInCommand(const char * text) {
-  size_t index = 0;
-  while (text[index] != 0) {
-    if (text[index] == '\'' &&  text[index+1] == '\'') {
-      return index + 1;
-    } else if (text[index] == Ion::Charset::Empty) {
-      return index;
+const char * CursorPositionInCommand(const char * text, const char * stoppingPosition) {
+  assert(stoppingPosition == nullptr || text <= stoppingPosition);
+  UTF8Decoder decoder(text);
+  const char * currentPointer = text;
+  CodePoint codePoint = decoder.nextCodePoint();
+  while ((stoppingPosition == nullptr || currentPointer < stoppingPosition) && codePoint != UCodePointNull) {
+    if (codePoint == UCodePointEmpty) {
+      return currentPointer;
     }
-    index++;
+    //TODO make sure changing empty / ' order was OK
+    if (codePoint == '\'') {
+      currentPointer = decoder.stringPosition();
+      codePoint = decoder.nextCodePoint();
+      if (codePoint == '\'') {
+        return currentPointer;
+      }
+      // Continue because we already incremented codePoint
+      continue;
+    }
+    currentPointer = decoder.stringPosition();
+    codePoint = decoder.nextCodePoint();
   }
-  return index;
+  return currentPointer;
 }
 
 }

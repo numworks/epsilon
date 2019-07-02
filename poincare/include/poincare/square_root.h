@@ -4,7 +4,6 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
 #include <poincare/multiplication.h>
-#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -27,7 +26,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) override;
+  Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
@@ -42,13 +41,8 @@ class SquareRoot final : public Expression {
 public:
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   static SquareRoot Builder(Expression child) { return TreeHandle::FixedArityBuilder<SquareRoot, SquareRootNode>(&child, 1); }
-
-  static_assert('\x91' == Ion::Charset::Root, "Charset error");
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\x91", 1, &UntypedBuilderOneChild<SquareRoot>);
-
+  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("√", 1, &UntypedBuilderOneChild<SquareRoot>);
   Expression shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target);
-private:
-  static const char k_name[2];
 };
 
 }

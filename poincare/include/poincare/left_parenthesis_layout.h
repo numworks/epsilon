@@ -11,15 +11,17 @@ class LeftParenthesisLayoutNode final : public ParenthesisLayoutNode {
 public:
   using ParenthesisLayoutNode::ParenthesisLayoutNode;
 
+  // Layout
+  Type type() const override { return Type::LeftParenthesisLayout; }
+
   static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
   // Layout Node
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
-  bool isLeftParenthesis() const override { return true; }
 
   // Serializable Node
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Char(buffer, bufferSize, '(');
+    return SerializationHelper::CodePoint(buffer, bufferSize, '(');
   }
 
   // TreeNode

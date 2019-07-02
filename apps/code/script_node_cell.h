@@ -4,7 +4,6 @@
 #include "script_node.h"
 #include "script_store.h"
 #include <escher/table_cell.h>
-#include <ion/charset.h>
 #include <kandinsky/coordinate.h>
 
 namespace Code {
@@ -23,8 +22,10 @@ public:
   void reloadCell() override;
   const char * text() const override { return m_scriptNodeView.text(); }
 
+  static_assert('\x11' == UCodePointEmpty, "Unicode error");
   constexpr static char k_parentheses[] = "()";
-  constexpr static char k_parenthesesWithEmpty[] = {'(', Ion::Charset::Empty, ')', 0};
+  constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
+
 protected:
   class ScriptNodeView : public HighlightCell {
   public:

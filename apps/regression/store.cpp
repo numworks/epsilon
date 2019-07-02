@@ -1,4 +1,5 @@
 #include "store.h"
+#include "linear_model_helper.h"
 #include "apps/apps_container.h"
 #include <poincare/preferences.h>
 #include <assert.h>
@@ -10,14 +11,14 @@ using namespace Shared;
 
 namespace Regression {
 
-static inline float max(float x, float y) { return (x>y ? x : y); }
-static inline float min(float x, float y) { return (x<y ? x : y); }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
 
 static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regression::Store() needs to adapt");
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
-  InteractiveCurveViewRange(nullptr),
+  InteractiveCurveViewRange(),
   DoublePairStore(),
   m_seriesChecksum{0, 0, 0},
   m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
@@ -144,8 +145,8 @@ void Store::setDefault() {
   float maxX = -FLT_MAX;
   for (int series = 0; series < k_numberOfSeries; series++) {
     if (!seriesIsEmpty(series)) {
-      minX = min(minX, minValueOfColumn(series, 0));
-      maxX = max(maxX, maxValueOfColumn(series, 0));
+      minX = minFloat(minX, minValueOfColumn(series, 0));
+      maxX = maxFloat(maxX, maxValueOfColumn(series, 0));
     }
   }
   float range = maxX - minX;
@@ -191,7 +192,7 @@ double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
 float Store::maxValueOfColumn(int series, int i) const {
   float maxColumn = -FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    maxColumn = max(maxColumn, m_data[series][i][k]);
+    maxColumn = maxFloat(maxColumn, m_data[series][i][k]);
   }
   return maxColumn;
 }
@@ -199,7 +200,7 @@ float Store::maxValueOfColumn(int series, int i) const {
 float Store::minValueOfColumn(int series, int i) const {
   float minColumn = FLT_MAX;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    minColumn = min(minColumn, m_data[series][i][k]);
+    minColumn = minFloat(minColumn, m_data[series][i][k]);
   }
   return minColumn;
 }
@@ -238,11 +239,11 @@ double Store::covariance(int series) const {
 }
 
 double Store::slope(int series) const {
-  return covariance(series)/varianceOfColumn(series, 0);
+  return LinearModelHelper::Slope(covariance(series), varianceOfColumn(series, 0));
 }
 
 double Store::yIntercept(int series) const {
-  return meanOfColumn(series, 1) - slope(series)*meanOfColumn(series, 0);
+  return LinearModelHelper::YIntercept(meanOfColumn(series, 1), meanOfColumn(series, 0), slope(series));
 }
 
 double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {

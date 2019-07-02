@@ -96,8 +96,8 @@ public:
   // Serialization
   int serialize(char * buffer, int bufferSize) const;
 
-  //Layout
-  HorizontalLayout createLayout() const;
+  // Layout
+  Layout createLayout() const;
 
   // Approximation
   template<typename T> T approximate() const;

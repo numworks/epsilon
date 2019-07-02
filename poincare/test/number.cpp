@@ -27,12 +27,18 @@ QUIZ_CASE(poincare_number_parser) {
   assert_parsed_expression_is("123456789012345.2", Decimal::Builder(Integer("12345678901235"), 14));
   assert_parsed_expression_is("123456789012341.2", Decimal::Builder(Integer("12345678901234"), 14));
   assert_parsed_expression_is("12.34567", Decimal::Builder(Integer("1234567"), 1));
+  assert_parsed_expression_is(".999999999999990", Decimal::Builder(Integer("99999999999999"), -1));
+  assert_parsed_expression_is("9.99999999999994", Decimal::Builder(Integer("99999999999999"), 0));
+  assert_parsed_expression_is("99.9999999999995", Decimal::Builder(Integer("100000000000000"), 2));
+  assert_parsed_expression_is("999.999999999999", Decimal::Builder(Integer("100000000000000"), 3));
+  assert_parsed_expression_is("9999.99199999999", Decimal::Builder(Integer("99999920000000"), 3));
+  assert_parsed_expression_is("99299.9999999999", Decimal::Builder(Integer("99300000000000"), 4));
 
   // Infinity
-  assert_parsed_expression_is("23E1000", Infinity::Builder(false));
-  assert_parsed_expression_is("2.3E1000", Decimal::Builder(Integer(23), 1000));
+  assert_parsed_expression_is("23ᴇ1000", Infinity::Builder(false));
+  assert_parsed_expression_is("2.3ᴇ1000", Decimal::Builder(Integer(23), 1000));
 
   // Zero
-  assert_parsed_expression_is("0.23E-1000", Decimal::Builder(Integer(0), 0));
-  assert_parsed_expression_is("0.23E-999", Decimal::Builder(Integer(23), -1000));
+  assert_parsed_expression_is("0.23ᴇ-1000", Decimal::Builder(Integer(0), 0));
+  assert_parsed_expression_is("0.23ᴇ-999", Decimal::Builder(Integer(23), -1000));
 }

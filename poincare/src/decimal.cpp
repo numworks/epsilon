@@ -4,13 +4,17 @@
 #include <poincare/infinity.h>
 #include <poincare/undefined.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/ieee754.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
-#include <ion.h>
 #include <cmath>
 #include <assert.h>
 
 namespace Poincare {
+
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 void removeZeroAtTheEnd(Integer * i) {
   if (i->isZero()) {
@@ -82,7 +86,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool asce
   return ((int)Number(this).sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression DecimalNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Decimal(this).shallowReduce();
 }
 
@@ -108,8 +112,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   int currentChar = 0;
   if (currentChar >= bufferSize-1) { return bufferSize-1; }
   if (unsignedMantissa().isZero()) {
-    buffer[currentChar++] = '0';
-    buffer[currentChar] = 0;
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '0'); // This already writes the null terminating char
     return currentChar;
   }
   int exponent = m_exponent;
@@ -133,14 +136,14 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     removeZeroAtTheEnd(&m);
   }
   if (m_negative) {
-    buffer[currentChar++] = '-';
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '-');
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
 
   // Assert that m is not +/-inf
   assert(strcmp(tempBuffer, Infinity::Name()) != 0);
-  assert(!(tempBuffer[0] == '-' && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
+  assert(!(UTF8Helper::CodePointIs(tempBuffer, '-') && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
 
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
@@ -165,10 +168,20 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     if (mantissaLength == 1) {
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     } else {
+      /* Forward one char: _
+       * Write the mantissa _23456
+       * Copy the most significant digit on the forwarded char: 223456
+       * Write the dot : 2.3456
+       *
+       * We should use the UTF8Helper to manipulate chars, but it is clearer to
+       * manipulate chars directly, so we just put assumptions on the char size
+       * of the code points we manipuate. */
+      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       currentChar++;
-      int decimalMarkerPosition = currentChar;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
+      int decimalMarkerPosition = currentChar;
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
+      assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) == 1);
       buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
       buffer[decimalMarkerPosition] = '.';
     }
@@ -176,21 +189,20 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       return currentChar;
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
-    buffer[currentChar++] = Ion::Charset::Exponent;
+    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, UCodePointLatinLetterSmallCapitalE);
+    if (currentChar >= bufferSize-1) { return bufferSize-1; }
     currentChar += Integer(exponent).serialize(buffer+currentChar, bufferSize-currentChar);
     return currentChar;
   }
   /* Case 1: Decimal mode */
+  assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+  assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
-  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, max(0, bufferSize-deltaCharMantissa-currentChar));
+  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, maxInt(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
     for (int i = 0; i <= -exponent; i++) {
+      buffer[currentChar++] = i == 1 ? '.' : '0';
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
-      if (i == 1) {
-        buffer[currentChar++] = '.';
-        continue;
-      }
-      buffer[currentChar++] = '0';
     }
   }
   currentChar += mantissaLength;
@@ -201,17 +213,18 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       buffer[i+1] = buffer[i];
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
+  if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
   if (exponent >= 0 && exponent > mantissaLength-1) {
     int endMarkerPosition = m_negative ? exponent+1 : exponent;
     for (int i = currentChar-1; i < endMarkerPosition; i++) {
+      currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '0');
       if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
-      buffer[currentChar++] = '0';
     }
   }
-  if (currentChar >= bufferSize-1) { return bufferSize-1; }
   buffer[currentChar] = 0;
   return currentChar;
 }
@@ -224,7 +237,7 @@ template<typename T> T DecimalNode::templatedApproximate() const {
 }
 
 int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
-  if (exponentLength > 0 && exponent[0] == '-') {
+  if (exponentLength > 0 && UTF8Helper::CodePointIs(exponent, '-')) {
     exponent++;
     exponentNegative = true;
     exponentLength--;
@@ -233,6 +246,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   int exp = 0;
   for (int i = 0; i < exponentLength; i++) {
     exp *= base;
+    assert(*exponent >= '0' && *exponent <= '9');
     exp += *exponent-'0';
     exponent++;
   }
@@ -249,7 +263,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   if (integralPart == integralPartEnd) {
     const char * fractionalPartEnd = fractionalPart + fractionalPartLength;
     if (fractionalPart != nullptr) {
-      while (*fractionalPart == '0' && fractionalPart < fractionalPartEnd) {
+      while (UTF8Helper::CodePointIs(fractionalPart, '0') && fractionalPart < fractionalPartEnd) {
         fractionalPart++;
         exp--;
       }
@@ -267,32 +281,50 @@ Decimal Decimal::Builder(const char * integralPart, int integralPartLength, cons
   Integer zero(0);
   Integer base(10);
   // Get rid of useless preceeding 0s
-  while (*integralPart == '0' && integralPartLength > 1) {
+  while (UTF8Helper::CodePointIs(integralPart, '0') && integralPartLength > 1) {
     integralPart++;
     integralPartLength--;
   }
   //TODO: set a FLAG to tell that a rounding happened?
   bool rounding = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits && integralPart[PrintFloat::k_numberOfStoredSignificantDigits] >= '5';
+  /* At this point, the exponent has already been computed. In the very special
+   * case where all the significant digits of the mantissa are 9, rounding up
+   * must increment the exponent. For instance, rounding up 0.99...9 (whose
+   * exponent is -1) yields 1 (whose exponent is 0). To that end, the
+   * significant digits will be scanned successively to determine whether the
+   * exponent should be incremented. */
+  bool incrementExponentAfterRoundingUp = true;
   // Cap the length of the integralPart
   integralPartLength = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits : integralPartLength;
   Integer numerator(integralPart, integralPartLength, false);
   assert(!numerator.isOverflow());
   // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
-  if (fractionalPart != nullptr && integralPartLength == 1 && integralPart[0] == '0') {
+  if (fractionalPart != nullptr && integralPartLength == 1 && UTF8Helper::CodePointIs(integralPart, '0')) {
     integralPartLength = 0;
-    while (*fractionalPart == '0') {
+    while (UTF8Helper::CodePointIs(fractionalPart, '0')) {
       fractionalPart++;
       fractionalPartLength--;
     }
   }
-  rounding |= integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits && fractionalPart[PrintFloat::k_numberOfStoredSignificantDigits-integralPartLength] >= '5';
+  rounding |= fractionalPart && integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits && fractionalPart[PrintFloat::k_numberOfStoredSignificantDigits-integralPartLength] >= '5';
   fractionalPartLength = integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits - integralPartLength : fractionalPartLength;
+  while (incrementExponentAfterRoundingUp && integralPartLength-- > 0) {
+    incrementExponentAfterRoundingUp = (*(integralPart++) == '9');
+  }
   for (int i = 0; i < fractionalPartLength; i++) {
+    assert(fractionalPart);
     numerator = Integer::Multiplication(numerator, base);
+    assert(*fractionalPart >= '0' && *fractionalPart <= '9');
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
+    incrementExponentAfterRoundingUp &= (*fractionalPart == '9');
     fractionalPart++;
   }
-  numerator = rounding ? Integer::Addition(numerator, Integer(1)) : numerator;
+  if (rounding) {
+    numerator = Integer::Addition(numerator, Integer(1));
+    if (incrementExponentAfterRoundingUp) {
+      exponent++;
+    }
+  }
   exponent = numerator.isZero() ? 0 : exponent;
   return Decimal::Builder(numerator, exponent);
 }

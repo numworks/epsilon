@@ -20,10 +20,9 @@ int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ImaginaryPart::s_functionHelper.name());
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return ImaginaryPart(this).shallowReduce(context, complexFormat, angleUnit, target);
 }
-
 
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ExpressionNode::ReductionTarget target) {
   {

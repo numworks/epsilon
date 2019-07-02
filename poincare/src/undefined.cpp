@@ -9,6 +9,8 @@ extern "C" {
 
 namespace Poincare {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 int UndefinedNode::polynomialDegree(Context & context, const char * symbolName) const {
   return -1;
 }
@@ -27,7 +29,7 @@ int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
     return -1;
   }
   strlcpy(buffer, Undefined::Name(), bufferSize);
-  return min(Undefined::NameSize(), bufferSize) - 1;
+  return minInt(Undefined::NameSize(), bufferSize) - 1;
 }
 
 template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {

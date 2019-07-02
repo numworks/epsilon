@@ -6,11 +6,10 @@ using namespace Shared;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, Interval * interval, ButtonRowController * header) :
+ValuesController::ValuesController(Responder * parentResponder,InputEventHandlerDelegate * inputEventHandlerDelegate, Interval * interval, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, inputEventHandlerDelegate, header, I18n::Message::NColumn, &m_intervalParameterController, interval),
   m_sequenceTitleCells{},
   m_floatCells{},
-  m_sequenceStore(sequenceStore),
 #if COPY_COLUMN
   m_sequenceParameterController('n'),
 #endif
@@ -32,14 +31,14 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
     SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-    Sequence * sequence = m_sequenceStore->activeFunctionAtIndex(i-1);
+    Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());
     myCell->setColor(sequence->color());
   }
 }
 
 I18n::Message ValuesController::emptyMessage() {
-  if (m_sequenceStore->numberOfDefinedModels() == 0) {
+  if (functionStore()->numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
@@ -72,10 +71,6 @@ SequenceTitleCell * ValuesController::functionTitleCells(int j) {
 EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfCells);
   return &m_floatCells[j];
-}
-
-SequenceStore * ValuesController::functionStore() const {
-  return m_sequenceStore;
 }
 
 Shared::ValuesFunctionParameterController * ValuesController::functionParameterController() {

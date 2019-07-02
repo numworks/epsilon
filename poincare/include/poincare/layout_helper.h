@@ -15,6 +15,7 @@ namespace LayoutHelper {
   /* Create special layouts */
   Layout Parentheses(Layout layout, bool cloneLayout);
   HorizontalLayout String(const char * buffer, int bufferLen, const KDFont * font = KDFont::LargeFont);
+  HorizontalLayout CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font = KDFont::LargeFont);
   Layout Logarithm(Layout argument, Layout index);
 };
 

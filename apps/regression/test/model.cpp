@@ -76,6 +76,20 @@ QUIZ_CASE(exponential_regression) {
   assert_regression_is(x, y, 6, Model::Type::Exponential, coefficients);
 }
 
+QUIZ_CASE(exponential_regression2) {
+  double x[] = {0, 1, 2, 3};
+  double y[] = {3000, 3315.513, 3664.208, 4049.576};
+  double coefficients[] = {3000, .1};
+  assert_regression_is(x, y, 4, Model::Type::Exponential, coefficients);
+}
+
+QUIZ_CASE(exponential_regression3) {
+  double x[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  double y[] = {-1, -.3678794, -.1353353, -.04978707, -.01831564, -.006737947, -.002478752, -.000911882, -.0003354626, -.0001234098, -.00004539993};
+  double coefficients[] = {-1, -1};
+  assert_regression_is(x, y, 11, Model::Type::Exponential, coefficients);
+}
+
 QUIZ_CASE(power_regression) {
   double x[] = {1.0, 50.0, 34.0, 67.0, 20.0};
   double y[] = {71.860, 2775514, 979755.1, 6116830, 233832.9};

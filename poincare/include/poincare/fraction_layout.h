@@ -10,6 +10,9 @@ class FractionLayoutNode /*final*/ : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  // Layout
+  Type type() const override { return Type::FractionLayout; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -24,7 +27,7 @@ public:
   int leftCollapsingAbsorbingChildIndex() const override { return 0; }
   int rightCollapsingAbsorbingChildIndex() const override { return 1; }
   void didCollapseSiblings(LayoutCursor * cursor) override;
-  LayoutNode * layoutToPointWhenInserting() override;
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be
    * serialized as 1/2**3/4, as the two Fraction layouts think their sibling is

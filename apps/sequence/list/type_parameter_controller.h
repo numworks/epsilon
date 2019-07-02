@@ -11,7 +11,7 @@ class ListController;
 
 class TypeParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list,
+  TypeParameterController(Responder * parentResponder, ListController * list,
     TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   const char * title() override;
@@ -25,17 +25,21 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  void setSequence(Sequence * sequence);
+  void setRecord(Ion::Storage::Record record);
 private:
   StackViewController * stackController() const;
+  Sequence * sequence() {
+    assert(!m_record.isNull());
+    return sequenceStore()->modelForRecord(m_record);
+  }
+  SequenceStore * sequenceStore();
   constexpr static int k_totalNumberOfCell = 3;
   ExpressionTableCellWithPointer m_expliciteCell;
   ExpressionTableCellWithPointer m_singleRecurrenceCell;
   ExpressionTableCellWithPointer m_doubleRecurenceCell;
   Poincare::Layout m_layouts[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
-  SequenceStore * m_sequenceStore;
-  Sequence * m_sequence;
+  Ion::Storage::Record m_record;
   ListController * m_listController;
 };
 

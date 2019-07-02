@@ -2,7 +2,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/decimal.h>
@@ -19,30 +19,31 @@ namespace Regression {
 
 Layout CubicModel::layout() {
   if (m_layout.isUninitialized()) {
-    Layout layoutChildren[] = {
-      CharLayout::Builder('a', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
+    constexpr int size = 15;
+    Layout layoutChildren[size] = {
+      CodePointLayout::Builder('a', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CharLayout::Builder('3', KDFont::SmallFont),
-          VerticalOffsetLayoutNode::Type::Superscript
+          CodePointLayout::Builder('3', k_layoutFont),
+          VerticalOffsetLayoutNode::Position::Superscript
         ),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('b', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('b', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont),
       VerticalOffsetLayout::Builder(
-          CharLayout::Builder('2', KDFont::SmallFont),
-          VerticalOffsetLayoutNode::Type::Superscript
+          CodePointLayout::Builder('2', k_layoutFont),
+          VerticalOffsetLayoutNode::Position::Superscript
         ),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('c', KDFont::SmallFont),
-      CharLayout::Builder(Ion::Charset::MiddleDot, KDFont::SmallFont),
-      CharLayout::Builder('X', KDFont::SmallFont),
-      CharLayout::Builder('+', KDFont::SmallFont),
-      CharLayout::Builder('d', KDFont::SmallFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('c', k_layoutFont),
+      CodePointLayout::Builder(UCodePointMiddleDot, k_layoutFont),
+      CodePointLayout::Builder('X', k_layoutFont),
+      CodePointLayout::Builder('+', k_layoutFont),
+      CodePointLayout::Builder('d', k_layoutFont),
     };
-    m_layout = HorizontalLayout::Builder(layoutChildren, 15);
+    m_layout = HorizontalLayout::Builder(layoutChildren, size);
   }
   return m_layout;
 }

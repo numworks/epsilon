@@ -5,6 +5,9 @@
 
 namespace Probability {
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 CalculationCell::CalculationCell(Responder * parentResponder, char * draftTextBuffer, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate) :
   m_text(KDFont::LargeFont, I18n::Message::Default, 0.5f, 0.5f),
   m_calculation(parentResponder, inputEventHandlerDelegate, textFieldDelegate, draftTextBuffer),
@@ -75,7 +78,7 @@ KDCoordinate CalculationCell::calculationCellWidth() const {
   KDCoordinate glyphWidth = KDFont::LargeFont->glyphSize().width();
   KDCoordinate minTextFieldWidth = 4 * glyphWidth + TextCursorView::k_width;
   KDCoordinate maxTextFieldWidth = 14 * glyphWidth + TextCursorView::k_width;
-  return min(maxTextFieldWidth, max(minTextFieldWidth, calculationCellWidth));
+  return minCoordinate(maxTextFieldWidth, maxCoordinate(minTextFieldWidth, calculationCellWidth));
 }
 
 }

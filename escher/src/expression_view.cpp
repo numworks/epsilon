@@ -1,6 +1,8 @@
 #include <escher/expression_view.h>
 using namespace Poincare;
 
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   m_layout(),
@@ -12,9 +14,17 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 {
 }
 
-void ExpressionView::setLayout(Layout layoutR) {
+bool ExpressionView::setLayout(Layout layoutR) {
+  /* TODO: this would avoid some useless redrawing. However, when we call
+   * setLayout after raising an Exception that led to erase all
+   * Poincare::TreePool, accessing m_layout will result in an ACCESS ERROR.
+   * How do we avoid that? */
+  /*if (m_layout.isIdenticalTo(layoutR)) {
+    return false;
+  }*/
   m_layout = layoutR;
   markRectAsDirty(bounds());
+  return true;
 }
 
 void ExpressionView::setBackgroundColor(KDColor backgroundColor) {
@@ -51,7 +61,7 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
 
 KDPoint ExpressionView::drawingOrigin() const {
   KDSize expressionSize = m_layout.layoutSize();
-  return KDPoint(m_horizontalMargin + m_horizontalAlignment*(m_frame.width() - 2*m_horizontalMargin - expressionSize.width()), max(0, m_verticalAlignment*(m_frame.height() - expressionSize.height())));
+  return KDPoint(m_horizontalMargin + m_horizontalAlignment*(m_frame.width() - 2*m_horizontalMargin - expressionSize.width()), maxCoordinate(0, m_verticalAlignment*(m_frame.height() - expressionSize.height())));
 }
 
 KDPoint ExpressionView::absoluteDrawingOrigin() const {

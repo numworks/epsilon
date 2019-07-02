@@ -58,37 +58,31 @@ QUIZ_CASE(calculation_ans) {
   store.push("1+3/4", &globalContext);
   store.push("ans+2/3", &globalContext);
   ::Calculation::Calculation * lastCalculation = store.calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
+  quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate);
   quiz_assert(strcmp(lastCalculation->exactOutputText(),"29/12") == 0);
 
   store.push("ans+0.22", &globalContext);
   lastCalculation = store.calculationAtIndex(2);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
+  quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
 
   store.deleteAll();
 }
 
-void assertCalculationDisplay(const char * input, bool displayExactOutput, bool displayApproximateOutput, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
-  char buffer[500];
-  strlcpy(buffer, input, sizeof(buffer));
-  translate_in_special_chars(buffer);
-  store->push(buffer, context);
+void assertCalculationDisplay(const char * input, ::Calculation::Calculation::DisplayOutput display, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
+  store->push(input, context);
   ::Calculation::Calculation * lastCalculation = store->calculationAtIndex(1);
-  quiz_assert(lastCalculation->shouldOnlyDisplayExactOutput() == displayExactOutput);
-  quiz_assert(lastCalculation->shouldOnlyDisplayApproximateOutput(context) == displayApproximateOutput);
+  quiz_assert(lastCalculation->displayOutput(context) == display);
   if (sign != ::Calculation::Calculation::EqualSign::Unknown) {
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
-    strlcpy(buffer, exactOutput, sizeof(buffer));
-    translate_in_special_chars(buffer);
-    quiz_assert(strcmp(lastCalculation->exactOutputText(), buffer) == 0);
+    constexpr int bufferSize = 500;
+    char buffer[bufferSize];
+    quiz_assert(strcmpWithSystemParentheses(lastCalculation->exactOutputText(), exactOutput) == 0);
   }
   if (approximateOutput) {
-    strlcpy(buffer, approximateOutput, sizeof(buffer));
-    translate_in_special_chars(buffer);
-    quiz_assert(strcmp(lastCalculation->approximateOutputText(),buffer) == 0);
+    quiz_assert(strcmpWithSystemParentheses(lastCalculation->approximateOutputText(), approximateOutput) == 0);
   }
   store->deleteAll();
 }
@@ -97,53 +91,92 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
-  assertCalculationDisplay("1/2", false, false, ::Calculation::Calculation::EqualSign::Equal, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("1/3", false, false, ::Calculation::Calculation::EqualSign::Approximation, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("1/0", true, false, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
-  assertCalculationDisplay("2x-x", true, false, ::Calculation::Calculation::EqualSign::Unknown, "x", "undef", &globalContext, &store);
-  assertCalculationDisplay("[[1,2,3]]", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("[[1,x,3]]", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("28^7", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
-  assertCalculationDisplay("3+R(2)>a", false, false, ::Calculation::Calculation::EqualSign::Approximation, "R(2)+3", nullptr, &globalContext, &store);
+  assertCalculationDisplay("1/2", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Equal, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("1/3", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("1/0", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("2x-x", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("[[1,2,3]]", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("[[1,x,3]]", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "[[1,undef,3]]", &globalContext, &store);
+  assertCalculationDisplay("28^7", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("3+√(2)→a", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "√(2)+3", nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  assertCalculationDisplay("3+2>a", false, true, ::Calculation::Calculation::EqualSign::Equal, "5", "5", &globalContext, &store);
+  assertCalculationDisplay("3+2→a", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Equal, "5", "5", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  assertCalculationDisplay("3>a", false, true, ::Calculation::Calculation::EqualSign::Equal, "3", "3", &globalContext, &store);
+  assertCalculationDisplay("3→a", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Equal, "3", "3", &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
-  assertCalculationDisplay("3+x>f(x)", true, false, ::Calculation::Calculation::EqualSign::Unknown, "x+3", nullptr, &globalContext, &store);
+  assertCalculationDisplay("3+x→f(x)", ::Calculation::Calculation::DisplayOutput::ExactOnly, ::Calculation::Calculation::EqualSign::Unknown, "x+3", nullptr, &globalContext, &store);
   Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  assertCalculationDisplay("1+1+random()", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("1+1+round(1.343,2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3.34", &globalContext, &store);
+  assertCalculationDisplay("randint(2,2)+3", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "5", "5", &globalContext, &store);
+
 }
+
+QUIZ_CASE(calculation_symbolic_computation) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
+
+  assertCalculationDisplay("x+x+1+3+√(π)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("f(x)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("1+x→f(x)", ::Calculation::Calculation::DisplayOutput::ExactOnly, ::Calculation::Calculation::EqualSign::Unknown, "x+1", nullptr, &globalContext, &store);
+  assertCalculationDisplay("f(x)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "undef", "undef", &globalContext, &store);
+  assertCalculationDisplay("f(2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Equal, "3", "3", &globalContext, &store);
+  assertCalculationDisplay("2→x", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Equal, "2", nullptr, &globalContext, &store);
+  assertCalculationDisplay("f(x)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Equal, "3", nullptr, &globalContext, &store);
+  assertCalculationDisplay("x+x+1+3+√(π)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "√(π)+8", nullptr, &globalContext, &store);
+
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+}
+
+QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store;
+
+  assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("diff(x^2,x,3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
+  assertCalculationDisplay("2→x", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, nullptr, &globalContext, &store);
+  assertCalculationDisplay("int(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("sum(x,x,0,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "3", &globalContext, &store);
+  assertCalculationDisplay("product(x,x,1,2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "2", &globalContext, &store);
+  assertCalculationDisplay("diff(x^2,x,3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "6", &globalContext, &store);
+
+  Ion::Storage::sharedStorage()->recordNamed("x.exp").destroy();
+}
+
 
 QUIZ_CASE(calculation_complex_format) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
-  assertCalculationDisplay("1+I", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+I", &globalContext, &store);
-  assertCalculationDisplay("R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, "unreal", nullptr, &globalContext, &store);
-  assertCalculationDisplay("ln(-2)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
-  assertCalculationDisplay("R(-1)*R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
-  assertCalculationDisplay("(-8)^(1/3)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "-2", &globalContext, &store);
-  assertCalculationDisplay("(-8)^(2/3)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "4", &globalContext, &store);
-  assertCalculationDisplay("(-2)^(1/4)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
+  assertCalculationDisplay("1+𝐢", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+𝐢", &globalContext, &store);
+  assertCalculationDisplay("√(-1)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, "unreal", nullptr, &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
+  assertCalculationDisplay("√(-1)×√(-1)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
+  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "-2", &globalContext, &store);
+  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "4", &globalContext, &store);
+  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "unreal", &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
-  assertCalculationDisplay("1+I", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+I", &globalContext, &store);
-  assertCalculationDisplay("R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "I", &globalContext, &store);
-  assertCalculationDisplay("ln(-2)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("R(-1)*R(-1)", false, true, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "-1", &globalContext, &store);
-  assertCalculationDisplay("(-8)^(1/3)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "1+R(3)*I", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-8)^(2/3)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "-2+2*R(3)*I", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-2)^(1/4)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "root(8,4)/2+root(8,4)/2*I", nullptr, &globalContext, &store);
+  assertCalculationDisplay("1+𝐢", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "1+𝐢", &globalContext, &store);
+  assertCalculationDisplay("√(-1)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "𝐢", &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("√(-1)×√(-1)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "-1", &globalContext, &store);
+  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "1+√(3)×𝐢", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "-2+2×√(3)×𝐢", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×𝐢", nullptr, &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
-  assertCalculationDisplay("1+I", false, false, ::Calculation::Calculation::EqualSign::Approximation, "R(2)*X^(P/4*I)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("R(-1)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "X^(P/2*I)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("ln(-2)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("R(-1)*R(-1)", false, false, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "X^(3.1415926535898*I)", &globalContext, &store);
-  assertCalculationDisplay("(-8)^(1/3)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "2*X^(P/3*I)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-8)^(2/3)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "4*X^((2*P)/3*I)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-2)^(1/4)", false, false, ::Calculation::Calculation::EqualSign::Approximation, "root(2,4)*X^(P/4*I)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("1+𝐢", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "√(2)×ℯ^(π/4×𝐢)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("√(-1)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ℯ^(π/2×𝐢)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("ln(-2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("√(-1)×√(-1)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "ℯ^(3.1415926535898×𝐢)", &globalContext, &store);
+  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "2×ℯ^(π/3×𝐢)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "4×ℯ^((2×π)/3×𝐢)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "root(2,4)×ℯ^(π/4×𝐢)", nullptr, &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
 }

@@ -2,6 +2,9 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 
+static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
+static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
@@ -109,8 +112,8 @@ bool ExpressionField::handleEventWithText(const char * text, bool indentation, b
 KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
     + (editionIsInTextField() ? k_textFieldHeight :
-        min(maximalHeight(),
-          max(k_textFieldHeight, m_layoutField.minimalSizeForOptimalDisplay().height() + 2*k_verticalMargin )));
+        minCoordinate(maximalHeight(),
+          maxCoordinate(k_textFieldHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
 KDCoordinate ExpressionField::maximalHeight() const {

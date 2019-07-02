@@ -16,7 +16,6 @@ public:
 #endif
 
   Type type() const override { return Type::Product; }
-  Expression replaceUnknown(const Symbol & symbol) override;
 
 private:
   float emptySequenceValue() const override { return 1.0f; }
@@ -31,10 +30,10 @@ private:
   template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b, Preferences::ComplexFormat complexFormat) const;
 };
 
-class Product final : public Expression {
+class Product final : public ParameteredExpression {
 friend class ProductNode;
 public:
-  Product(const ProductNode * n) : Expression(n) {}
+  Product(const ProductNode * n) : ParameteredExpression(n) {}
   static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>(ArrayBuilder<TreeHandle>(child0, child1, child2, child3).array(), 4); }
   static Expression UntypedBuilder(Expression children);
 

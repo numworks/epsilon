@@ -94,6 +94,12 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor
   }
 }
 
+bool EmptyLayoutNode::protectedIsIdenticalTo(Layout l) {
+  assert(l.type() == Type::EmptyLayout);
+  EmptyLayoutNode * n = static_cast<EmptyLayoutNode *>(l.node());
+  return color() == n->color();
+}
+
 EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
 
 EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, bool visible, const KDFont * font, bool margins) {

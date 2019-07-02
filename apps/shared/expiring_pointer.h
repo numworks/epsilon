@@ -7,12 +7,15 @@ namespace Shared {
 
 template <class T>
 class ExpiringPointer {
+  template<typename U>
+  friend class ExpiringPointer;
 public:
   ExpiringPointer(T * rawPointer, bool reinitGlobal = true) : m_rawPointer(rawPointer) {
 #if DEBUG
     s_global = rawPointer;
 #endif
   }
+  T * pointer() { return m_rawPointer; }
   T *operator->() {
 #if DEBUG
     assert(m_rawPointer != nullptr && m_rawPointer == s_global);

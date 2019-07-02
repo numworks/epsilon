@@ -12,9 +12,6 @@ public:
   void reloadScroll(bool forceRelayout = false);
 protected:
   KDSize contentSize() const override;
-  KDPoint m_manualScrollingOffset;
 };
 
 #endif
-
-

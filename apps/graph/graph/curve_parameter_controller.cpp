@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
-  StorageFunctionCurveParameterController(graphRange, cursor),
+  FunctionCurveParameterController(),
   m_goToParameterController(this, inputEventHandlerDelegate, graphRange, cursor, I18n::Message::X),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
@@ -68,7 +68,7 @@ int CurveParameterController::reusableCellCount() {
   return k_totalNumberOfCells;
 }
 
-StorageFunctionGoToParameterController * CurveParameterController::goToParameterController() {
+FunctionGoToParameterController * CurveParameterController::goToParameterController() {
   return &m_goToParameterController;
 }
 

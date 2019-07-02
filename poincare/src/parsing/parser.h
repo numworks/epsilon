@@ -52,6 +52,7 @@ private:
   void parseEmpty(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMatrix(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseBang(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parsePlus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseMinus(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -59,6 +60,7 @@ private:
   void parseSlash(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseStore(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -74,6 +76,7 @@ private:
   void parseSpecialIdentifier(Expression & leftHandSide);
   void parseSequence(Expression & leftHandSide, const char name, Token::Type leftDelimiter, Token::Type rightDelimiter);
   void parseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
+  void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
 
   // Data members
   Status m_status;
@@ -109,6 +112,7 @@ private:
     &Floor::s_functionHelper,
     &FracPart::s_functionHelper,
     &GreatCommonDivisor::s_functionHelper,
+    &MatrixIdentity::s_functionHelper,
     &ImaginaryPart::s_functionHelper,
     &Integral::s_functionHelper,
     &MatrixInverse::s_functionHelper,

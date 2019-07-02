@@ -1,6 +1,6 @@
 #include "list_controller.h"
 #include "app.h"
-#include <poincare/char_layout.h>
+#include <poincare/code_point_layout.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -11,7 +11,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationStore(equationStore),
-  m_equationListView(this, this, this),
+  m_equationListView(this),
   m_expressionCells{},
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
@@ -115,16 +115,14 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
 }
 
 bool textRepresentsAnEquality(const char * text) {
-  if (strchr(text, '=')) {
-    return true;
-  }
-  return false;
+  char equal = '=';
+  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, equal), equal);
 }
 
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      return layout.isChar() && static_cast<Poincare::CharLayout &>(layout).character() == '='; });
+      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '='; });
   return !match.isUninitialized();
 }
 
@@ -216,8 +214,8 @@ void ListController::addEmptyModel() {
   app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
-bool ListController::removeModelRow(ExpressionModel * model) {
-  ExpressionModelListController::removeModelRow(model);
+bool ListController::removeModelRow(Ion::Storage::Record record) {
+  ExpressionModelListController::removeModelRow(record);
   reloadButtonMessage();
   reloadBrace();
   return true;
@@ -226,7 +224,6 @@ bool ListController::removeModelRow(ExpressionModel * model) {
 void ListController::reloadBrace() {
   EquationListView::BraceStyle braceStyle = m_equationStore->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (m_equationStore->numberOfModels() == m_equationStore->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
-  m_equationListView.layoutSubviews();
 }
 
 SelectableTableView * ListController::selectableTableView() {

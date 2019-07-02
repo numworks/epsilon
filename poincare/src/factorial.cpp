@@ -1,13 +1,13 @@
 #include <poincare/factorial.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
-#include <poincare/char_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/rational.h>
-#include <poincare/undefined.h>
-#include <poincare/symbol.h>
-#include <poincare/simplification_helper.h>
 #include <poincare/parenthesis.h>
-#include <ion.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <cmath>
 
 namespace Poincare {
@@ -34,7 +34,7 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target) {
+Expression FactorialNode::shallowReduce(Context & context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ReductionTarget target, bool symbolicComputation) {
   return Factorial(this).shallowReduce();
 }
 
@@ -62,29 +62,16 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
-  result.addChildAtIndex(CharLayout::Builder('!'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
   return result;
 }
 
 int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (childNeedsParenthesis(childAtIndex(0))) {
-    buffer[numberOfChar++] = '(';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (childNeedsParenthesis(childAtIndex(0))) {
-    buffer[numberOfChar++] = ')';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  if (numberOfChar >= bufferSize-1) {
+  int numberOfChar = SerializationHelper::SerializeChild(childAtIndex(0), this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
     return numberOfChar;
   }
-  buffer[numberOfChar++] = '!';
+  numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, '!');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

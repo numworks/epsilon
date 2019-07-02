@@ -6,6 +6,9 @@
 #include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/infinity.h>
+#include <poincare/matrix.h>
+#include <poincare/matrix_identity.h>
+#include <poincare/matrix_inverse.h>
 #include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/naperian_logarithm.h>
@@ -284,51 +287,59 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-#if MATRIX_EXACT_REDUCING
-#if 0
-  /* Step 0: get rid of matrix */
-  if (childAtIndex(1)->type() == ExpressionNode::Type::Matrix) {
-    return replaceWith(new Undefined::Builder(), true);
-  }
-  if (childAtIndex(0)->type() == ExpressionNode::Type::Matrix) {
-    Matrix * mat = static_cast<Matrix *>(childAtIndex(0));
-    if (childAtIndex(1)->type() != ExpressionNode::Type::Rational || !static_cast<const Rational *>(childAtIndex(1))->denominator().isOne()) {
-      return replaceWith(new Undefined::Builder(), true);
-    }
-    Integer exponent = static_cast<const Rational *>(childAtIndex(1))->numerator();
-    if (mat->numberOfRows() != mat->numberOfColumns()) {
-      return replaceWith(new Undefined::Builder(), true);
-    }
-    if (exponent.isNegative()) {
-      childAtIndex(1)->setSign(Sign::Positive, context, complexFormat, angleUnit);
-      Expression * newMatrix = shallowReduce(reductionContext);
-      Expression * parent = newMatrix->parent();
-      MatrixInverse * inv = new MatrixInverse(newMatrix, false);
-      parent->replaceOperand(newMatrix, inv, false);
-      return inv;
-    }
-    if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
-      return this;
-    }
-    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
-    Matrix * id = Matrix::CreateIdentity(mat->numberOfRows());
-    if (exp == 0) {
-      return replaceWith(id, true);
-    }
-    Multiplication * result = new Multiplication::Builder(id, mat->clone());
-    // TODO: implement a quick exponentiation
-    for (int k = 1; k < exp; k++) {
-      result->addOperand(mat->clone());
-    }
-    replaceWith(result, true);
-    return result->shallowReduce(reductionContext);
-  }
-#endif
-#endif
-
-  Expression power = *this;
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
+
+  // Step 0: Handle matrices
+  if (index.type() == ExpressionNode::Type::Matrix) {
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
+  }
+  if (base.type() == ExpressionNode::Type::Matrix) {
+    Matrix matrixBase = static_cast<Matrix &>(base);
+    if (index.type() != ExpressionNode::Type::Rational
+        || !static_cast<Rational &>(index).integerDenominator().isOne()
+        || matrixBase.numberOfRows() != matrixBase.numberOfColumns())
+    {
+      Expression result = Undefined::Builder();
+      replaceWithInPlace(result);
+      return result;
+    }
+    Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();
+    if (exponent.isNegative()) {
+      index.setSign(ExpressionNode::Sign::Positive, reductionContext);
+      Expression reducedPositiveExponentMatrix = shallowReduce(reductionContext);
+      Expression dummyExpression = Undefined::Builder();
+      MatrixInverse inv = MatrixInverse::Builder(dummyExpression);
+      reducedPositiveExponentMatrix.replaceWithInPlace(inv);
+      inv.replaceChildInPlace(dummyExpression, reducedPositiveExponentMatrix);
+      return inv.shallowReduce(reductionContext);
+    }
+    if (Integer::NaturalOrder(exponent, Integer(k_maxExactPowerMatrix)) > 0) {
+      return *this;
+    }
+    int exp = exponent.extractedInt(); // Ok, because 0 < exponent < k_maxExactPowerMatrix
+    if (exp == 0) {
+      Matrix id = Matrix::CreateIdentity(matrixBase.numberOfRows());
+      replaceWithInPlace(id);
+      return id;
+    }
+    if (exp == 1) {
+      replaceWithInPlace(matrixBase);
+      return matrixBase;
+    }
+    Multiplication result = Multiplication::Builder(matrixBase.clone());
+    // TODO: implement a quick exponentiation
+    for (int k = 1; k < exp; k++) {
+      result.addChildAtIndexInPlace(matrixBase.clone(), 1, 1);
+      result.shallowReduce(reductionContext);
+    }
+    replaceWithInPlace(result);
+    return result;
+  }
+
+  Expression power = *this;
   /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
   if (!base.isReal(reductionContext.context())
       && base.type() != ExpressionNode::Type::ComplexCartesian

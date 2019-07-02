@@ -43,7 +43,7 @@ Expression Cosine::shallowReduce(ExpressionNode::ReductionContext reductionConte
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }

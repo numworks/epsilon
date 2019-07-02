@@ -41,7 +41,7 @@ Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   if (c.isReal(reductionContext.context())) {
     replaceWithInPlace(c);

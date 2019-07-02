@@ -43,7 +43,7 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   bool real = c.isReal(reductionContext.context());
   if (real) {

@@ -37,7 +37,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   if (c.isReal(reductionContext.context())) {
     float app = c.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();

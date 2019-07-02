@@ -56,7 +56,7 @@ Expression ArcTangent::shallowReduce(ExpressionNode::ReductionContext reductionC
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }

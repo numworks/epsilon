@@ -33,7 +33,7 @@ Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reducti
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   if (c.isReal(reductionContext.context())) {
     Expression result = Rational::Builder(0);

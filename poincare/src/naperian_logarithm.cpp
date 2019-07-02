@@ -32,7 +32,7 @@ Expression NaperianLogarithm::shallowReduce(ExpressionNode::ReductionContext red
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
   Logarithm l = Logarithm::Builder(c, Constant::Builder(UCodePointScriptSmallE));
   replaceWithInPlace(l);

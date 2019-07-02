@@ -47,7 +47,7 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
   }
 
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixChild(reductionContext);
+    return mapOnMatrixFirstChild(reductionContext);
   }
 
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);

@@ -6,18 +6,16 @@ extern "C" {
 
 namespace Poincare {
 
-void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, bool canBeInterrupted) {
+void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
   Expression reference(this);
   for (int i = reference.numberOfChildren()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < reference.numberOfChildren()-1; j++) {
       /* Warning: Matrix operations are not always commutative (ie,
        * multiplication) so we never swap 2 matrices. */
-#if MATRIX_EXACT_REDUCING
-      if (order(childAtIndex(j), childAtIndex(j+1), canBeInterrupted) > 0 && (!childAtIndex(j)->recursivelyMatches(Expression::IsMatrix) || !childAtIndex(j+1)->recursivelyMatches(Expression::IsMatrix))) {
-#else
-      if (order(childAtIndex(j), childAtIndex(j+1), canBeInterrupted) > 0) {
-#endif
+      ExpressionNode * cj = childAtIndex(j);
+      ExpressionNode * cj1 = childAtIndex(j+1);
+      if (order(cj, cj1, canBeInterrupted) > 0 && !(Expression::SortedIsMatrix(Expression(cj), context) && Expression::SortedIsMatrix(Expression(cj1), context))) {
         reference.swapChildrenInPlace(j, j+1);
         isSorted = false;
       }

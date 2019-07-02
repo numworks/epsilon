@@ -271,7 +271,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   mergeMultiplicationChildrenInPlace();
 
   // Step 2: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
 
 #if MATRIX_EXACT_REDUCING
 #if 0 // OLD CODE
@@ -404,7 +404,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     /* Replacing sin/cos by tan factors may have mixed factors and factors are
      * guaranteed to be sorted (according ot SimplificationOrder) at the end of
      * shallowReduce */
-    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
+    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
   }
 
   /* Step 5: We remove rational children that appeared in the middle of sorted
@@ -667,7 +667,7 @@ void Multiplication::addMissingFactors(Expression factor, Context * context, Pre
     }
   }
   addChildAtIndexInPlace(factor.clone(), 0, numberOfChildren());
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
 }
 
 void Multiplication::factorizeSineAndCosine(int i, int j, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -797,10 +797,10 @@ Expression Multiplication::mergeNegativePower(Context * context, Preferences::Co
   if (m.numberOfChildren() == 0) {
     return *this;
   }
-  m.sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
+  m.sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
   Power p = Power::Builder(m.squashUnaryHierarchyInPlace(), Rational::Builder(-1));
   addChildAtIndexInPlace(p, 0, numberOfChildren());
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
   return squashUnaryHierarchyInPlace();
 }
 

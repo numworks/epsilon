@@ -1,5 +1,6 @@
 #include "integral_graph_controller.h"
 #include "../../shared/text_field_delegate.h"
+#include <poincare/integral.h>
 #include <poincare/layout_helper.h>
 #include "../app.h"
 
@@ -44,6 +45,13 @@ Layout IntegralGraphController::createFunctionLayout(ExpiringPointer<Shared::Fun
   assert(numberOfChars <= bufferSize);
   strlcpy(buffer+numberOfChars, dx, bufferSize-numberOfChars);
   return LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
+}
+
+Poincare::Expression IntegralGraphController::sumBetweenBounds(Shared::ExpiringPointer<Shared::Function> function, double start, double end, Poincare::Context * context) const {
+  return Poincare::Integral::Builder(function->expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
+  /* TODO: when we approximate integral, we might want to simplify the integral
+   * here. However, we might want to do it once for all x (to avoid lagging in
+   * the derivative table. */
 }
 
 }

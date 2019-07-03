@@ -38,7 +38,6 @@ public:
   // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const = 0;
   virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const = 0;
-  virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a Function. We want to avoid padding which would:

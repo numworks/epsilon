@@ -2,7 +2,6 @@ app_src += $(addprefix apps/hardware_test/,\
   app.cpp \
   arrow_view.cpp \
   battery_test_controller.cpp \
-  centered_screen_test_controller.cpp \
   code_128b_view.cpp \
   dead_pixels_test_controller.cpp \
   keyboard_test_controller.cpp \

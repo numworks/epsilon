@@ -57,24 +57,18 @@ Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext re
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
     if (r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -83,9 +77,7 @@ Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext re
   Rational r0 = static_cast<Rational &>(c0);
   Rational r1 = static_cast<Rational &>(c1);
   if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   /* [r0-1.96*sqrt(r0*(1-r0)/r1), r0+1.96*sqrt(r0*(1-r0)/r1)]*/
   // Compute numerator = r0*(1-r0)

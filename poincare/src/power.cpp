@@ -292,9 +292,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
   // Step 0: Handle matrices
   if (index.type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   if (base.type() == ExpressionNode::Type::Matrix) {
     Matrix matrixBase = static_cast<Matrix &>(base);
@@ -302,9 +300,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         || !static_cast<Rational &>(index).integerDenominator().isOne()
         || matrixBase.numberOfRows() != matrixBase.numberOfColumns())
     {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
     Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();
     if (exponent.isNegative()) {
@@ -359,9 +355,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     if (b.isZero()) {
       // 0^0 = undef or (±inf)^0 = undef
       if ((childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(0).convert<Rational>().isZero()) || childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
-        Expression result = Undefined::Builder();
-        replaceWithInPlace(result);
-        return result;
+        return replaceWithUndefinedInPlace();
       }
       // x^0
       if (reductionContext.target() == ExpressionNode::ReductionTarget::User || childAtIndex(0).isNumber()) {
@@ -393,9 +387,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
       // 0^x with x < 0 = undef
       if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-        Expression result = Undefined::Builder();
-        replaceWithInPlace(result);
-        return result;
+        return replaceWithUndefinedInPlace();
       }
     }
     // 1^x = 1 if x != ±inf

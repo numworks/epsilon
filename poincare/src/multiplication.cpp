@@ -297,9 +297,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       int currentM = currentMatrix.numberOfColumns();
       if (currentM != n) {
         // Matrices dimensions do not match for multiplication
-        Expression result = Undefined::Builder();
-        replaceWithInPlace(result);
-        return result;
+        return replaceWithUndefinedInPlace();
       }
       /* Create the matrix resulting of the multiplication of the current matrix
        * and the result matrix

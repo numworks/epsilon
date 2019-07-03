@@ -297,6 +297,7 @@ protected:
 
   /* Hierarchy */
   Expression parent() const; // TODO try to inline
+  Expression replaceWithUndefinedInPlace();
   void defaultSetChildrenInPlace(Expression other);
   void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren) = delete;
   void removeChildAtIndexInPlace(int i) = delete;

@@ -296,21 +296,21 @@ Matrix Matrix::CreateIdentity(int dim) {
   return matrix;
 }
 
-#if 0
-#if MATRIX_EXACT_REDUCING
-Matrix Matrix::transpose() const {
-  Matrix matrix();
-  for (int i = 0; i < m_numberOfRows; i++) {
-    for (int j = 0; j < m_numberOfColumns; j++) {
-      matrix.addChildAtIndexInPlace(childAtIndex(i*m_numberOfRows+j), j*m_numberOfRows+i, j*m_numberOfRows+i);
+
+Matrix Matrix::createTranspose() const {
+  Matrix matrix = Matrix::Builder();
+  for (int j = 0; j < numberOfColumns(); j++) {
+    for (int i = 0; i < numberOfRows(); i++) {
+      matrix.addChildAtIndexInPlace(const_cast<Matrix *>(this)->matrixChild(i, j).clone(), matrix.numberOfChildren(), matrix.numberOfChildren());
     }
   }
   // Intentionally swapping dimensions for transpose
-  matrix.setDimensions(m_numberOfColumns, m_numberOfRows);
+  matrix.setDimensions(numberOfColumns(), numberOfRows());
   return matrix;
 }
 
-Expression Matrix::inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+#if 0
+#if MATRIX_EXACT_REDUCINGExpression Matrix::inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (m_numberOfRows != m_numberOfColumns) {
     return Undefined::Builder();
   }

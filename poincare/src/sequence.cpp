@@ -56,9 +56,7 @@ Expression Sequence::shallowReduce() {
   }
   assert(childAtIndex(1).type() != ExpressionNode::Type::Matrix);
   if (childAtIndex(2).type() == ExpressionNode::Type::Matrix || childAtIndex(3).type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

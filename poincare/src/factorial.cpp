@@ -91,9 +91,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
       return *this;
@@ -105,9 +103,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
   if (c.type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

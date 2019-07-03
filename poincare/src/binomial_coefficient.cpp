@@ -65,25 +65,19 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   Expression c1 = childAtIndex(1);
 
   if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
 
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (!r0.integerDenominator().isOne() || r0.isNegative()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.isNegative()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -95,9 +89,7 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   /* If n is too big, we do not reduce in order to avoid too long computation.
    * The binomial coefficient will be approximatively evaluated later. */

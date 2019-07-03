@@ -63,9 +63,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   }
   Expression child = childAtIndex(0);
   if (child.type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   Rational resultSign = Rational::Builder(1);
   ExpressionNode::Sign s = child.sign(reductionContext.context());

@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "battery_test_controller.h"
-#include "centered_screen_test_controller.h"
 #include "dead_pixels_test_controller.h"
 #include "keyboard_test_controller.h"
 #include "lcd_data_test_controller.h"
@@ -31,7 +30,6 @@ private:
     bool handleEvent(Ion::Events::Event event) override;
   private:
     BatteryTestController m_batteryTestController;
-    CenteredScreenTestController m_centeredScreenTestController;
     DeadPixelsTestController m_deadPixelsTestController;
     KeyboardTestController m_keyboardController;
     LCDDataTestController m_lcdDataTestController;

@@ -62,7 +62,9 @@ Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext re
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
   if (SortedIsMatrix(c0, reductionContext.context()) || SortedIsMatrix(c1, reductionContext.context())) {
-    return Undefined::Builder();
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);

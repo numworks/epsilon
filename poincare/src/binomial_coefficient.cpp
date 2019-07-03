@@ -65,7 +65,9 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
   Expression c1 = childAtIndex(1);
 
   if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
-    return Undefined::Builder();
+    Expression result = Undefined::Builder();
+    replaceWithInPlace(result);
+    return result;
   }
 
   if (c0.type() == ExpressionNode::Type::Rational) {

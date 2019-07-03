@@ -6,7 +6,6 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/integer.h>
-#include <poincare/sum.h>
 #include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <cmath>
@@ -184,11 +183,6 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-2), &ctx);
     }
   }
-}
-
-double Sequence::sumBetweenBounds(double start, double end, Context * context) const {
-  Poincare::Sum sum = Poincare::Sum::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Sum takes ownership of args
-  return PoincareHelpers::ApproximateToScalar<double>(sum, *context);
 }
 
 Sequence::SequenceRecordDataBuffer * Sequence::recordData() const {

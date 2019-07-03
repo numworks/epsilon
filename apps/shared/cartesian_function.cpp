@@ -2,7 +2,6 @@
 #include "expression_model_store.h"
 #include "poincare_helpers.h"
 #include <poincare/derivative.h>
-#include <poincare/integral.h>
 #include <poincare/serialization_helper.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -93,15 +92,6 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
   return PoincareHelpers::ApproximateToScalar<double>(derivative, context);
-}
-
-double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  // TODO: this does not work yet because integral does not understand UnknownX
-  Poincare::Integral integral = Poincare::Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Integral takes ownership of args
-  /* TODO: when we approximate integral, we might want to simplify the integral
-   * here. However, we might want to do it once for all x (to avoid lagging in
-   * the derivative table. */
-  return PoincareHelpers::ApproximateToScalar<double>(integral, context);
 }
 
 void * CartesianFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

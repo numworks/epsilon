@@ -1,5 +1,6 @@
 #include "term_sum_controller.h"
 #include "../../shared/text_field_delegate.h"
+#include <poincare/sum.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -51,6 +52,10 @@ double TermSumController::cursorNextStep(double x, int direction) {
 Layout TermSumController::createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) {
   Sequence * sequence = static_cast<Sequence *>(function.pointer());
   return sequence->nameLayout();
+}
+
+Poincare::Expression TermSumController::sumBetweenBounds(Shared::ExpiringPointer<Shared::Function> function, double start, double end, Poincare::Context * context) const {
+  return Poincare::Sum::Builder(function->expressionReduced(context).clone(), Poincare::Symbol::Builder(UCodePointUnknownX), Poincare::Float<double>::Builder(start), Poincare::Float<double>::Builder(end)); // Sum takes ownership of args
 }
 
 }

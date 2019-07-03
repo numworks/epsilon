@@ -135,7 +135,9 @@ void SumGraphController::reloadBannerView() {
     FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
     ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-    result = function->sumBetweenBounds(m_startSum, endSum, myApp->localContext());
+    Poincare::Context * context = myApp->localContext();
+    Poincare::Expression sum = sumBetweenBounds(function, m_startSum, endSum, context);
+    result = PoincareHelpers::ApproximateToScalar<double>(sum, context);
     functionLayout = createFunctionLayout(function);
   } else {
     m_legendView.setEditableZone(m_cursor->x());

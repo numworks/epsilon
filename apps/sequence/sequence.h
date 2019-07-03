@@ -70,7 +70,6 @@ public:
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 private:
   constexpr static const KDFont * k_layoutFont = KDFont::LargeFont;
-  constexpr static double k_maxNumberOfTermsInSum = 100000.0;
 
   /* SequenceRecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in

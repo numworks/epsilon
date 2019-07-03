@@ -563,14 +563,6 @@ Expression Expression::reduce(Context * context, Preferences::ComplexFormat comp
 }
 
 Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
-#if MATRIX_EXACT_REDUCING
-#else
-  if (IsMatrix(*this, reductionContext.context())) {
-    sSimplificationHasBeenInterrupted = true;
-    return *this;
-  }
-#endif
-
   deepReduceChildren(reductionContext);
   if (sSimplificationHasBeenInterrupted) {
     return *this;

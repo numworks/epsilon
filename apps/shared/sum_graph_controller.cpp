@@ -147,7 +147,6 @@ void SumGraphController::reloadBannerView() {
   } else {
     m_legendView.setEditableZone(m_cursor->x());
     result = NAN;
-    functionLayout = Poincare::Layout();
   }
   m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, result, functionLayout);
 }

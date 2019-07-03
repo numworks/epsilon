@@ -67,9 +67,7 @@ Expression Factor::shallowReduce() {
     }
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) { // TODO LEA SortedIsMatrix?
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }
@@ -77,9 +75,7 @@ Expression Factor::shallowReduce() {
 Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   Rational r = static_cast<Rational &>(c);
   if (r.isZero()) {
@@ -88,17 +84,13 @@ Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionCon
   }
   Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (numeratorDecomp.numberOfChildren() == 0) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.integerDenominator().isOne()) {
     Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (denominatorDecomp.numberOfChildren() == 0) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
     result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
   }

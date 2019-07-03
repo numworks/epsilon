@@ -138,9 +138,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return e.deepReduce(reductionContext);
   }
   if (!reductionContext.symbolicComputation()) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

@@ -111,9 +111,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
 
   if (SortedIsMatrix(childAtIndex(1), reductionContext.context())) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
 
   Expression c = childAtIndex(0);
@@ -220,15 +218,11 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
   Expression b = childAtIndex(1);
   // log(0,0)->Undefined
   if (c.type() == ExpressionNode::Type::Rational && b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isZero() && static_cast<Rational &>(c).isZero()) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   // log(x,1)->Undefined
   if (b.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(b).isOne()) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   bool infiniteArg = c.recursivelyMatches(Expression::IsInfinity, context);
   // log(x,x)->1 with x != inf and log(inf,inf) = undef
@@ -251,9 +245,7 @@ Expression Logarithm::simpleShallowReduce(Context * context, Preferences::Comple
       bool infiniteBase = b.recursivelyMatches(Expression::IsInfinity, context);
       // Special case: log(0,inf) -> undef
       if (infiniteBase) {
-        Expression result = Undefined::Builder();
-        replaceWithInPlace(result);
-        return result;
+        return replaceWithUndefinedInPlace();
       }
       bool isNegative = true;
       Expression result;

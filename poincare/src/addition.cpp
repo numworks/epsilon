@@ -175,9 +175,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       /* If there is a matrix in the children, the last child is a matrix. If
        * there is a ascalar, the first child is a scalar.
        * We forbid the addition of a matrix and a scalar. */
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
     // Create the addition matrix (in place of the first child)
     Matrix resultMatrix = static_cast<Matrix &>(firstChild);
@@ -191,9 +189,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       int currentM = currentMatrix.numberOfColumns();
       if (currentN != n || currentM != m) {
         // Addition of matrices of different dimensions -> undef
-        Expression result = Undefined::Builder();
-        replaceWithInPlace(result);
-        return result;
+        return replaceWithUndefinedInPlace();
       }
       // Dispatch the current matrix children in the created addition matrix
       for (int j = 0; j < n*m; j++) {

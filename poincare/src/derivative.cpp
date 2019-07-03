@@ -146,9 +146,7 @@ Expression Derivative::shallowReduce(Context * context) {
       || SortedIsMatrix(childAtIndex(1), context)
       || SortedIsMatrix(childAtIndex(2), context))
   {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   // TODO: to be implemented diff(+) -> +diff() etc
   return *this;

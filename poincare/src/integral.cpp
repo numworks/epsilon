@@ -225,9 +225,7 @@ Expression Integral::shallowReduce(Context * context) {
       || SortedIsMatrix(childAtIndex(2), context)
       || SortedIsMatrix(childAtIndex(3), context))
   {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   return *this;
 }

@@ -47,22 +47,19 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
     if (e.isUndefined()) {
       return e;
     }
-
-    Expression c = childAtIndex(0);
-    if (!c.isRationalOne()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
-    }
-    Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
-    if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
-      return *this;
-    }
-    int dim = dimension.extractedInt();
-    Expression result = Matrix::CreateIdentity(dim);
-    replaceWithInPlace(result);
-    return result;
   }
+  Expression c = childAtIndex(0);
+  if (!c.isRationalOne()) {
+    return replaceWithUndefinedInPlace();
+  }
+  Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();
+  if (Integer::NaturalOrder(dimension, Integer(Integer::k_maxExtractableInteger)) > 0) {
+    return *this;
+  }
+  int dim = dimension.extractedInt();
+  Expression result = Matrix::CreateIdentity(dim);
+  replaceWithInPlace(result);
+  return result;
 }
 
 }

@@ -52,9 +52,7 @@ Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionC
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   Power p = Power::Builder(c, Rational::Builder(1, 2));
   replaceWithInPlace(p);

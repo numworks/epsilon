@@ -62,24 +62,18 @@ Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext re
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
   if (SortedIsMatrix(c0, reductionContext.context()) || SortedIsMatrix(c1, reductionContext.context())) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {

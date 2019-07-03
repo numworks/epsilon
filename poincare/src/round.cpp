@@ -46,9 +46,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
   if (childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
-    Expression result = Undefined::Builder();
-    replaceWithInPlace(result);
-    return result;
+    return replaceWithUndefinedInPlace();
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
@@ -59,9 +57,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Rational r1 = childAtIndex(0).convert<Rational>();
     Rational r2 = childAtIndex(1).convert<Rational>();
     if (!r2.integerDenominator().isOne()) {
-      Expression result = Undefined::Builder();
-      replaceWithInPlace(result);
-      return result;
+      return replaceWithUndefinedInPlace();
     }
     const Rational ten = Rational::Builder(10);
     if (Power::RationalExponentShouldNotBeReduced(ten, r2)) {

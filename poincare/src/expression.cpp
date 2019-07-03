@@ -1,9 +1,9 @@
 #include <poincare/expression.h>
 #include <poincare/expression_node.h>
-#include <poincare/rational.h>
 #include <poincare/opposite.h>
-#include <poincare/undefined.h>
+#include <poincare/rational.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
 #include <ion/unicode/utf8_helper.h>
@@ -238,6 +238,12 @@ bool Expression::SimplificationHasBeenInterrupted() {
 Expression Expression::parent() const {
   TreeHandle p = TreeHandle::parent();
   return static_cast<Expression &>(p);
+}
+
+Expression Expression::replaceWithUndefinedInPlace() {
+  Expression result = Undefined::Builder();
+  replaceWithInPlace(result);
+  return result;
 }
 
 void Expression::defaultSetChildrenInPlace(Expression other) {

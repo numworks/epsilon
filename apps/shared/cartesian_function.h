@@ -16,6 +16,14 @@ public:
   {}
   CodePoint symbol() const override { return 'x'; }
 
+  enum class PlotType {
+    Cartesian = 0,
+    Polar = 1,
+    Parametric = 2
+  };
+  PlotType plotType() const;
+  void setPlotType(PlotType plotType);
+
   // Evaluation
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
     return templatedApproximateAtAbscissa(x, context);
@@ -37,11 +45,15 @@ private:
   public:
     CartesianFunctionRecordDataBuffer(KDColor color) :
       FunctionRecordDataBuffer(color),
+      m_plotType(PlotType::Cartesian),
       m_displayDerivative(false)
     {}
+    PlotType plotType() const { return m_plotType; }
+    void setPlotType(PlotType plotType) { m_plotType = plotType; }
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
   private:
+    PlotType m_plotType;
     bool m_displayDerivative;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */

@@ -3,6 +3,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
+#include <poincare/matrix.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/power.h>
@@ -273,83 +274,94 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   // Step 2: Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
 
-#if MATRIX_EXACT_REDUCING
-#if 0 // OLD CODE
-  /* Step 2bis: get rid of matrix */
-  int n = 1;
-  int m = 1;
+  // Step 3: Handle matrices
   /* All children have been simplified so if any child contains a matrix, it
    * is at the root node of the child. Moreover, thanks to the simplification
    * order, all matrix children (if any) are the last children. */
-  Expression * lastOperand = childAtIndex(numberOfChildren()-1);
-  if (lastOperand->type() == ExpressionNode::Type::Matrix) {
-    Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
+  Expression lastChild = childAtIndex(numberOfChildren()-1);
+  if (lastChild.type() == ExpressionNode::Type::Matrix) {
+    Matrix resultMatrix = static_cast<Matrix &>(lastChild);
     // Use the last matrix child as the final matrix
-    n = resultMatrix->numberOfRows();
-    m = resultMatrix->numberOfColumns();
-    /* Scan accross the multiplication children to find any other matrix:
-     * (the last child is the result matrix so we start at
-     * numberOfChildren()-2)*/
-    int k = numberOfChildren()-2;
-    while (k >= 0 && childAtIndex(k)->type() == ExpressionNode::Type::Matrix) {
-      Matrix * currentMatrix = static_cast<Matrix *>(childAtIndex(k));
-      int on = currentMatrix->numberOfRows();
-      int om = currentMatrix->numberOfColumns();
-      if (om != n) {
-        return replaceWith(new Undefined::Builder(), true);
+    int n = resultMatrix.numberOfRows();
+    int m = resultMatrix.numberOfColumns();
+    /* Scan accross the children to find other matrices. The last child is the
+     * result matrix so we start at numberOfChildren()-2. */
+    int multiplicationChildIndex = numberOfChildren()-2;
+    while (multiplicationChildIndex >= 0) {
+      Expression currentChild = childAtIndex(multiplicationChildIndex);
+      if (currentChild.type() != ExpressionNode::Type::Matrix) {
+        break;
       }
-      // Create the matrix resulting of the multiplication of the current matrix and the result matrix
-     /*                        resultMatrix
-      *                          i2= 0..m
-      *                         +-+-+-+-+-+
-      *                         | | | | | |
-      *                         +-+-+-+-+-+
-      *                  j=0..n | | | | | |
-      *                         +-+-+-+-+-+
-      *                         | | | | | |
-      *                         +-+-+-+-+-+
-      *        currentMatrix
-      *           j=0..om
-      *         +---+---+---+   +-+-+-+-+-+
-      *         |   |   |   |   | | | | | |
-      *         +---+---+---+   +-+-+-+-+-+
-      *i1=0..on |   |   |   |   | |e| | | |
-      *         +---+---+---+   +-+-+-+-+-+
-      *         |   |   |   |   | | | | | |
-      *         +---+---+---+   +-+-+-+-+-+
-      * */
-      Expression ** newMatrixOperands = new Expression * [on*m];
-      for (int e = 0; e < on*m; e++) {
-        newMatrixOperands[e] = new Addition::Builder();
-        int i2 = e%m;
-        int i1 = e/m;
-        for (int j = 0; j < n; j++) {
-          Expression * mult = new Multiplication::Builder(currentMatrix->childAtIndex(j+om*i1), resultMatrix->childAtIndex(j*m+i2), true);
-          static_cast<Addition *>(newMatrixOperands[e])->addOperand(mult);
-          mult->shallowReduce(reductionContext);
+      Matrix currentMatrix = static_cast<Matrix &>(currentChild);
+      int currentN = currentMatrix.numberOfRows();
+      int currentM = currentMatrix.numberOfColumns();
+      if (currentM != n) {
+        // Matrices dimensions do not match for multiplication
+        Expression result = Undefined::Builder();
+        replaceWithInPlace(result);
+        return result;
+      }
+      /* Create the matrix resulting of the multiplication of the current matrix
+       * and the result matrix
+       *                                resultMatrix
+       *                                  i2= 0..m
+       *                                +-+-+-+-+-+
+       *                                | | | | | |
+       *                                +-+-+-+-+-+
+       *                         j=0..n | | | | | |
+       *                                +-+-+-+-+-+
+       *                                | | | | | |
+       *                                +-+-+-+-+-+
+       *                currentMatrix
+       *                j=0..currentM
+       *                +---+---+---+   +-+-+-+-+-+
+       *                |   |   |   |   | | | | | |
+       *                +---+---+---+   +-+-+-+-+-+
+       * i1=0..currentN |   |   |   |   | |e| | | |
+       *                +---+---+---+   +-+-+-+-+-+
+       *                |   |   |   |   | | | | | |
+       *                +---+---+---+   +-+-+-+-+-+
+       * */
+      int newResultN = currentN;
+      int newResultM = m;
+      Matrix newResult = Matrix::Builder();
+      for (int i = 0; i < newResultN; i++) {
+        for (int j = 0; j < newResultM; j++) {
+          Addition a = Addition::Builder();
+          for (int k = 0; k < n; k++) {
+            Expression e = Multiplication::Builder(currentMatrix.matrixChild(i, k).clone(), resultMatrix.matrixChild(k, j).clone());
+            a.addChildAtIndexInPlace(e, a.numberOfChildren(), a.numberOfChildren());
+            e.shallowReduce(reductionContext);
+          }
+          newResult.addChildAtIndexInPlace(a, newResult.numberOfChildren(), newResult.numberOfChildren());
+          a.shallowReduce(reductionContext);
         }
-        Reduce(&newMatrixOperands[e], context, complexFormat, angleUnit, false);
       }
-      n = on;
-      removeOperand(currentMatrix, true);
-      resultMatrix = static_cast<Matrix *>(resultMatrix->replaceWith(new Matrix(newMatrixOperands, n, m, false), true));
-      k--;
+      newResult.setDimensions(newResultN, newResultM);
+      n = newResultN;
+      m = newResultM;
+      removeChildInPlace(currentMatrix, currentMatrix.numberOfChildren());
+      replaceChildInPlace(resultMatrix, newResult);
+      resultMatrix = newResult;
+      multiplicationChildIndex--;
     }
-    removeOperand(resultMatrix, false);
-    // Distribute the remaining multiplication on matrix children
-    for (int i = 0; i < n*m; i++) {
-      Multiplication * m = static_cast<Multiplication *>(clone());
-      Expression * entryI = resultMatrix->childAtIndex(i);
-      resultMatrix->replaceOperand(entryI, m, false);
-      m->addOperand(entryI);
-      m->shallowReduce(reductionContext);
+    // Distribute the remaining multiplication children on the matrix children
+    int remainingChildrenCount = numberOfChildren();
+    if (remainingChildrenCount > 1) {
+      removeChildInPlace(resultMatrix, resultMatrix.numberOfChildren());
+      for (int i = 0; i < n*m; i++) {
+        Multiplication m = clone().convert<Multiplication>();
+        Expression entryI = resultMatrix.childAtIndex(i);
+        resultMatrix.replaceChildInPlace(entryI, m);
+        m.addChildAtIndexInPlace(entryI, m.numberOfChildren(), m.numberOfChildren());
+        m.shallowReduce(reductionContext);
+      }
     }
-    return replaceWith(resultMatrix, true)->shallowReduce(reductionContext);
+    replaceWithInPlace(resultMatrix);
+    return resultMatrix.shallowReduce(reductionContext);
   }
-#endif
-#endif
 
-  /* Step 3: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
+  /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
@@ -381,7 +393,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-  /* Step 4: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
+  /* Step 5: We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
    * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -407,7 +419,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
   }
 
-  /* Step 5: We remove rational children that appeared in the middle of sorted
+  /* Step 6: We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
    * factorization can lead to new ones. Indeed:
    * pi^(-1)*pi-> 1
@@ -439,7 +451,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     i++;
   }
 
-   /* Step 5: If the first child is zero, the multiplication result is zero. We
+   /* Step 7: If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
     * of turning 0*inf into undef. We still have to check that no other child
     * involves an inifity expression to avoid reducing 0*e^(inf) to 0.
@@ -465,7 +477,7 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  /* Step 6: Expand multiplication over addition children if any. For example,
+  /* Step 8: Expand multiplication over addition children if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
    * the parent is a multiplication or if the reduction is done bottom up to
    * avoid missing factorization such as (x+y)^(-1)*((a+b)*(x+y)).
@@ -485,13 +497,13 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
     }
   }
 
-  // Step 7: Let's remove the multiplication altogether if it has one child
+  // Step 9: Let's remove the multiplication altogether if it has one child
   Expression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
 
-  /* Step 8: Let's bubble up the complex operator if possible
+  /* Step 10: Let's bubble up the complex operator if possible
    * 3 cases:
    * - All children are real, we do nothing (allChildrenAreReal == 1)
    * - One of the child is non-real and not a ComplexCartesian: it means a

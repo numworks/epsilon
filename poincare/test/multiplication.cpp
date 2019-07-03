@@ -68,4 +68,6 @@ QUIZ_CASE(poincare_multiplication_simplify) {
   assert_parsed_expression_simplify_to("x-x", "0");
   assert_parsed_expression_simplify_to("π×3^(1/2)×(5π)^(1/2)×(4/5)^(1/2)", "2×√(3)×π^(3/2)");
   assert_parsed_expression_simplify_to("12^(1/4)×(π/6)×(12×π)^(1/4)", "(√(3)×π^(5/4))/3");
+  assert_parsed_expression_simplify_to("[[1,2+𝐢][3,4][5,6]]×[[1,2+𝐢,3,4][5,6+𝐢,7,8]]", "[[11+5×𝐢,13+9×𝐢,17+7×𝐢,20+8×𝐢][23,30+7×𝐢,37,44][35,46+11×𝐢,57,68]]");
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]×[[1,3][5,6]]×[[2,3][4,6]]", "[[82,123][178,267]]");
 }

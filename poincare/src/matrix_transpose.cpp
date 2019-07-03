@@ -46,22 +46,17 @@ Expression MatrixTranspose::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix transpose = static_cast<Matrix&>(c).createTranspose();
-    return transpose;
+    Expression result = static_cast<Matrix&>(c).createTranspose();
+    replaceWithInPlace(result);
+    return result;
   }
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return c;
-  }
-  return *this;
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    replaceWithInPlace(c);
-    return c;
-  }
-  return *this;
-#endif
+  /* TODO LEA
+  if (c.recursivelyMatches(Expression::IsMatrix)) {
+    return *this;
+  }*/
+  replaceWithInPlace(c);
+  return c;
 }
 
 }

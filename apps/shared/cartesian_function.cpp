@@ -78,6 +78,14 @@ int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSi
   return numberOfChars + derivativeSize;
 }
 
+CartesianFunction::PlotType CartesianFunction::plotType() const {
+  return recordData()->plotType();
+}
+
+void CartesianFunction::setPlotType(PlotType plotType) {
+  return recordData()->setPlotType(plotType);
+}
+
 bool CartesianFunction::displayDerivative() const {
   return recordData()->displayDerivative();
 }

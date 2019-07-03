@@ -28,8 +28,6 @@ public:
   void setDisplayDerivative(bool display);
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   double approximateDerivative(double x, Poincare::Context * context) const;
-  // Integral
-  double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 private:
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
    * representing a CartesianFunction. See comment on

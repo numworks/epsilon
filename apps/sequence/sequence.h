@@ -64,8 +64,6 @@ public:
     return templatedApproximateAtAbscissa(x, static_cast<SequenceContext *>(context));
   }
   template<typename T> T approximateToNextRank(int n, SequenceContext * sqctx) const;
-  // Integral
-  double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
 
   constexpr static int k_initialRankNumberOfDigits = 3; // m_initialRank is capped by 999
 private:

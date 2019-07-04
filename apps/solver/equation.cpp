@@ -12,11 +12,6 @@ using namespace Shared;
 
 namespace Solver {
 
-Equation::Equation(Ion::Storage::Record record) :
-  ExpressionModelHandle(record)
-{
-}
-
 bool Equation::containsIComplex(Context * context) const {
   return expressionClone().recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Constant && static_cast<const Constant &>(e).isIComplex(); }, context, true);
 }

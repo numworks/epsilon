@@ -81,8 +81,9 @@ QUIZ_CASE(poincare_matrix_simplify) {
   assert_parsed_expression_simplify_to("log([[1/√(2),1/2][1,-3]],3)", Undefined::Name());
   assert_parsed_expression_simplify_to("ln([[√(2),1/2][1,3]])", "[[(1/2)*ln(2),-ln(2)][0,ln(3)]]");
   assert_parsed_expression_simplify_to("log([[1/√(2),1/2][1,-3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("dim([[1/√(2),1/2,3][2,1,-3]])", "[[2,3]]");
 #endif
+  assert_parsed_expression_simplify_to("dim(3)", "[[1,1]]");
+  assert_parsed_expression_simplify_to("dim([[1/√(2),1/2,3][2,1,-3]])", "[[2,3]]");
   assert_parsed_expression_simplify_to("inverse([[1/√(2),1/2,3][2,1,-3]])", Undefined::Name());
   assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
   assert_parsed_expression_simplify_to("trace([[1/√(2),1/2,3][2,1,-3]])", Undefined::Name());

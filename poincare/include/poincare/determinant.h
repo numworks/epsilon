@@ -39,7 +39,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("det", 1, &UntypedBuilderOneChild<Determinant>);
 
-  Expression shallowReduce(Context * context);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

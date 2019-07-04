@@ -290,13 +290,16 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
 
+  ExpressionNode::Type indexType = index.type();
+
   // Step 0: Handle matrices
-  if (index.type() == ExpressionNode::Type::Matrix) {
+  if (indexType == ExpressionNode::Type::Matrix) {
     return replaceWithUndefinedInPlace();
   }
-  if (base.type() == ExpressionNode::Type::Matrix) {
+  ExpressionNode::Type baseType = base.type();
+  if (baseType == ExpressionNode::Type::Matrix) {
     Matrix matrixBase = static_cast<Matrix &>(base);
-    if (index.type() != ExpressionNode::Type::Rational
+    if (indexType != ExpressionNode::Type::Rational
         || !static_cast<Rational &>(index).integerDenominator().isOne()
         || matrixBase.numberOfRows() != matrixBase.numberOfColumns())
     {
@@ -336,29 +339,30 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   Expression power = *this;
-  /* Step 0: if both children are true unresolved complexes, the result is not simplified. TODO? */
+  /* Step 0: if both children are true unresolved complexes, the result is not
+   * simplified. TODO? */
   if (!base.isReal(reductionContext.context())
-      && base.type() != ExpressionNode::Type::ComplexCartesian
+      && baseType != ExpressionNode::Type::ComplexCartesian
       && !index.isReal(reductionContext.context())
-      && index.type() != ExpressionNode::Type::ComplexCartesian)
+      && indexType != ExpressionNode::Type::ComplexCartesian)
   {
     return *this;
   }
 
-  /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
+  /* Step 1: Handle simple cases as x^0, x^1, 0^x and 1^x first, for 2 reasons:
    * - we can assert after this step that there is no division by 0:
    *   for instance, 0^(-2)->undefined
    * - we save computational time by early escaping for these cases. */
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-    const Rational b = childAtIndex(1).convert<Rational>();
+  if (indexType == ExpressionNode::Type::Rational) {
+    const Rational rationalIndex = static_cast<Rational &>(index);
     // x^0
-    if (b.isZero()) {
+    if (rationalIndex.isZero()) {
       // 0^0 = undef or (±inf)^0 = undef
-      if ((childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(0).convert<Rational>().isZero()) || childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
+      if (base.isRationalZero() || baseType == ExpressionNode::Type::Infinity) {
         return replaceWithUndefinedInPlace();
       }
       // x^0
-      if (reductionContext.target() == ExpressionNode::ReductionTarget::User || childAtIndex(0).isNumber()) {
+      if (reductionContext.target() == ExpressionNode::ReductionTarget::User || base.isNumber()) { //TODO LEA
         /* Warning: if the ReductionTarget is User, in all other cases but 0^0,
          * we replace x^0 by one. This is almost always true except when x = 0.
          * However, not substituting x^0 by one would prevent from simplifying
@@ -369,29 +373,29 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
     }
     // x^1
-    if (b.isOne()) {
+    if (rationalIndex.isOne()) {
       Expression result = childAtIndex(0);
       replaceWithInPlace(result);
       return result;
     }
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational a = childAtIndex(0).convert<Rational>();
+  if (baseType == ExpressionNode::Type::Rational) {
+    Rational rationalBase = static_cast<Rational &>(base);
     // 0^x
-    if (a.isZero()) {
+    if (rationalBase.isZero()) {
       // 0^x with x > 0 = 0
-      if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+      ExpressionNode::Sign indexSign = index.sign(reductionContext.context());
+      if (indexSign == ExpressionNode::Sign::Positive) {
         Expression result = Rational::Builder(0);
         replaceWithInPlace(result);
         return result;
-      }
-      // 0^x with x < 0 = undef
-      if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      } else if (indexSign == ExpressionNode::Sign::Negative) {
+        // 0^x with x < 0 = undef
         return replaceWithUndefinedInPlace();
       }
     }
     // 1^x = 1 if x != ±inf
-    if (a.isOne() && !childAtIndex(1).recursivelyMatches(Expression::IsInfinity, reductionContext.context())) {
+    if (rationalBase.isOne() && !index.recursivelyMatches(Expression::IsInfinity, reductionContext.context())) {
       Expression result = Rational::Builder(1);
       replaceWithInPlace(result);
       return result;
@@ -399,8 +403,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* We do not apply some rules to a^b if the parent node is a logarithm of same
-   * base a. In this case there is a simplication of form ln(e^(3^(1/2))->3^(1/2).
-   */
+   * base a. In this case there is a simplication of form
+   * ln(e^(3^(1/2))->3^(1/2). */
   bool letPowerAtRoot = parentIsALogarithmOfSameBase();
 
   /* Step 2: we now bubble up ComplexCartesian, we handle different cases:
@@ -414,9 +418,9 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * For q = -1, 1/2, -1/2, n with n integer < 10, we avoid introducing arctangent
    * by using the formula (r*e^(i*th))^(a+ib) = r^a*e(-th*b)*e^(b*ln(r)+th*a).
    * Instead, we rather use the cartesian form of the base and the index. */
-  if (!letPowerAtRoot && base.type() == ExpressionNode::Type::ComplexCartesian) {
+  if (!letPowerAtRoot && baseType == ExpressionNode::Type::ComplexCartesian) {
     complexBase = static_cast<ComplexCartesian &>(base);
-    if (index.type() == ExpressionNode::Type::Rational) {
+    if (indexType == ExpressionNode::Type::Rational) {
       Rational r = static_cast<Rational &>(index);
       if (r.isMinusOne()) {
         // (x+iy)^(-1)
@@ -446,14 +450,14 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   // All other cases where one child at least is a ComplexCartesian
   if (!letPowerAtRoot
       && ((base.isReal(reductionContext.context())
-          && index.type() == ExpressionNode::Type::ComplexCartesian)
-        || (base.type() == ExpressionNode::Type::ComplexCartesian
+          && indexType == ExpressionNode::Type::ComplexCartesian)
+        || (baseType == ExpressionNode::Type::ComplexCartesian
           && index.isReal(reductionContext.context()))
-        || (base.type() == ExpressionNode::Type::ComplexCartesian
-          && index.type() == ExpressionNode::Type::ComplexCartesian)))
+        || (baseType == ExpressionNode::Type::ComplexCartesian
+          && indexType == ExpressionNode::Type::ComplexCartesian)))
   {
-    complexBase = base.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational::Builder(0));
-    complexIndex = index.type() == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational::Builder(0));
+    complexBase = baseType == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(base) : ComplexCartesian::Builder(base, Rational::Builder(0));
+    complexIndex = indexType == ExpressionNode::Type::ComplexCartesian ? static_cast<ComplexCartesian &>(index) : ComplexCartesian::Builder(index, Rational::Builder(0));
     result = complexBase.power(complexIndex, reductionContext);
     replaceWithInPlace(result);
     return result.shallowReduce();
@@ -469,11 +473,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   /* Step 4: we simplify i^(p/q) = e^(i*Pi*p/2q) */
-  if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-    const Rational b = childAtIndex(1).convert<Rational>();
+  if (indexType == ExpressionNode::Type::Rational) {
+    const Rational rationalIndex = static_cast<Rational &>(index);
     // i^(p/q)
-    if (childAtIndex(0).type() == ExpressionNode::Type::Constant && childAtIndex(0).convert<Constant>().isIComplex()) {
-      Number r = Number::Multiplication(b, Rational::Builder(1, 2));
+    if (baseType == ExpressionNode::Type::Constant && static_cast<Constant &>(base).isIComplex()) {
+      Number r = Number::Multiplication(rationalIndex, Rational::Builder(1, 2));
       Expression result = CreateComplexExponent(r, reductionContext);
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
@@ -481,15 +485,16 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   // Step 5: (±inf)^x = 0 or ±inf
-  if (childAtIndex(0).type() == ExpressionNode::Type::Infinity) {
+  if (baseType == ExpressionNode::Type::Infinity) {
     Expression result;
-    if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+    ExpressionNode::Sign indexSign = index.sign(reductionContext.context());
+    if (indexSign == ExpressionNode::Sign::Negative) {
       // --> 0 if x < 0
       result = Rational::Builder(0);
-    } else if (childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+    } else if (indexSign == ExpressionNode::Sign::Positive) {
       // --> (±inf) if x > 0
       result = Infinity::Builder(false);
-      if (childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      if (base.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
         // (-inf)^x --> (-1)^x*inf
         Power p = Power::Builder(Rational::Builder(-1), childAtIndex(1));
         result = Multiplication::Builder(p, result);
@@ -503,32 +508,33 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
 
   // Step 6: p^q with p, q rationals --> a*b^c*exp(i*pi*d) with a, b, c, d rationals
-  if (!letPowerAtRoot && childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational a = childAtIndex(0).convert<Rational>();
+  if (!letPowerAtRoot && baseType == ExpressionNode::Type::Rational) {
+    Rational rationalBase = static_cast<Rational &>(base);
     // p^q with p, q rationals
     // TODO: maybe reduce Number^Rational?
-    if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-      Rational exp = childAtIndex(1).convert<Rational>();
-      if (RationalExponentShouldNotBeReduced(a, exp)) {
+    if (indexType == ExpressionNode::Type::Rational) {
+      Rational rationalIndex = static_cast<Rational &>(index);
+      if (RationalExponentShouldNotBeReduced(rationalBase, rationalIndex)) {
         return *this;
       }
       return simplifyRationalRationalPower(reductionContext);
     }
   }
-  // Step 7: (a)^(1/2) --> i*(-a)^(1/2)
-  // WARNING: this rule true only if:
-  // - a real: (-1*i)^(1/2) != i*i^(1/2)
-  // - a is negative: (-(-2))^(1/2) != -2^(1/2)
-  // We apply this rule only when a is a negative numeral
+  /* Step 7: (a)^(1/2) --> i*(-a)^(1/2)
+   * WARNING: this rule true only if:
+   * - a real: (-1*i)^(1/2) != i*i^(1/2)
+   * - a is negative: (-(-2))^(1/2) != -2^(1/2)
+   * We apply this rule only when a is a negative numeral */
   if (!letPowerAtRoot
-      && childAtIndex(0).isNumber()
-      && childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && childAtIndex(1).convert<Rational>().isHalf())
+      && base.isNumber()
+      && indexType == ExpressionNode::Type::Rational
+      && index.convert<Rational>().isHalf())
   {
-    Expression m0 = childAtIndex(0).makePositiveAnyNegativeNumeralFactor(reductionContext);
+    Expression m0 = base.makePositiveAnyNegativeNumeralFactor(reductionContext);
     if (!m0.isUninitialized()) {
       replaceChildAtIndexInPlace(0, m0);
-      // m0 doest not need to be shallowReduce as makePositiveAnyNegativeNumeralFactor returns a reduced expression
+      /* m0 doesn't need to be shallowReduce as
+       * makePositiveAnyNegativeNumeralFactor returns a reduced expression */
       Multiplication m1 = Multiplication::Builder();
       replaceWithInPlace(m1);
       // Multiply m1 by i complex
@@ -542,15 +548,14 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
   // Step 8: e^(r*i*Pi) with r rational --> cos(pi*r) + i*sin(pi*r)
   if (!letPowerAtRoot && isNthRootOfUnity()) {
-    Expression m = childAtIndex(1);
-    Expression i = m.childAtIndex(m.numberOfChildren()-2);
-    static_cast<Multiplication &>(m).removeChildAtIndexInPlace(m.numberOfChildren()-2);
+    Expression i = index.childAtIndex(index.numberOfChildren()-2);
+    static_cast<Multiplication &>(index).removeChildAtIndexInPlace(index.numberOfChildren()-2);
     if (reductionContext.angleUnit() == Preferences::AngleUnit::Degree) {
-      m.replaceChildAtIndexInPlace(m.numberOfChildren()-1, Rational::Builder(180));
+      index.replaceChildAtIndexInPlace(index.numberOfChildren()-1, Rational::Builder(180));
     }
-    Expression cos = Cosine::Builder(m);
-    m = m.shallowReduce(reductionContext);
-    Expression sin = Sine::Builder(m.clone());
+    Expression cos = Cosine::Builder(index);
+    index = index.shallowReduce(reductionContext);
+    Expression sin = Sine::Builder(index.clone());
     Expression complexPart = Multiplication::Builder(sin, i);
     sin.shallowReduce(reductionContext);
     Expression a = Addition::Builder(cos, complexPart);
@@ -560,21 +565,21 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     return a.shallowReduce(reductionContext);
   }
   // Step 9: x^log(y,x)->y if y > 0
-  if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
-    if (childAtIndex(1).numberOfChildren() == 2 && childAtIndex(0).isIdenticalTo(childAtIndex(1).childAtIndex(1))) {
+  if (indexType == ExpressionNode::Type::Logarithm) {
+    if (index.numberOfChildren() == 2 && base.isIdenticalTo(index.childAtIndex(1))) {
       // y > 0
-      if (childAtIndex(1).childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
-        Expression result = childAtIndex(1).childAtIndex(0);
+      if (index.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+        Expression result = index.childAtIndex(0);
         replaceWithInPlace(result);
         return result;
       }
     }
     // 10^log(y)
-    if (childAtIndex(1).numberOfChildren() == 1
-        && childAtIndex(0).type() == ExpressionNode::Type::Rational
-        && childAtIndex(0).convert<Rational>().isTen())
+    if (index.numberOfChildren() == 1
+        && baseType == ExpressionNode::Type::Rational
+        && static_cast<Rational &>(base).isTen())
     {
-      Expression result = childAtIndex(1).childAtIndex(0);
+      Expression result = index.childAtIndex(0);
       replaceWithInPlace(result);
       return result;
     }
@@ -600,18 +605,17 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * Indeed, we have to apply the rule (a^b)^c -> a^(b*c) as soon as c is an
    * integer.
    */
-  if (childAtIndex(0).type() == ExpressionNode::Type::Power) {
-    Power p = childAtIndex(0).convert<Power>();
+  if (baseType == ExpressionNode::Type::Power) {
+    Power powerBase = static_cast<Power &>(base);
     // Check if a > 0 or c is Integer
-    bool aPositive = p.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive;
-    bool cInteger = (childAtIndex(1).type() == ExpressionNode::Type::Rational
-          && childAtIndex(1).convert<Rational>().integerDenominator().isOne());
-    if (aPositive || cInteger) {
+    if (powerBase.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive // a > 0
+        || (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).integerDenominator().isOne())) // c integr
+    {
       /* If the complexFormat is real, we check that the inner power is defined
        * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
        * 'unreal'. */
       if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
-        Expression approximation = p.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+        Expression approximation = powerBase.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
         if (approximation.type() == ExpressionNode::Type::Unreal) {
           replaceWithInPlace(approximation);
           return approximation;
@@ -621,34 +625,34 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
   // Step 11: (a*b*c*...)^r ?
-  if (!letPowerAtRoot && childAtIndex(0).type() == ExpressionNode::Type::Multiplication) {
-    Multiplication m = childAtIndex(0).convert<Multiplication>();
+  if (!letPowerAtRoot && baseType == ExpressionNode::Type::Multiplication) {
+    Multiplication multiplicationBase = static_cast<Multiplication &>(base);
     // Case 1: (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
-    if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().integerDenominator().isOne()) {
+    if (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).integerDenominator().isOne()) {
       return simplifyPowerMultiplication(reductionContext);
     }
     // Case 2: (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
-    for (int i = 0; i < m.numberOfChildren(); i++) {
+    for (int i = 0; i < multiplicationBase.numberOfChildren(); i++) {
       // a is signed and a != -1
-      if (m.childAtIndex(i).sign(reductionContext.context()) != ExpressionNode::Sign::Unknown
-          && (m.childAtIndex(i).type() != ExpressionNode::Type::Rational
-            || !m.childAtIndex(i).convert<Rational>().isMinusOne()))
+      Expression baseChildI = multiplicationBase.childAtIndex(i);
+      ExpressionNode::Sign baseChildISign = baseChildI.sign(reductionContext.context());
+      if (baseChildISign != ExpressionNode::Sign::Unknown
+          && (baseChildI.type() != ExpressionNode::Type::Rational
+            || !static_cast<Rational &>(baseChildI).isMinusOne()))
       {
-        Expression r = childAtIndex(1);
+        Expression r = index;
         Expression rCopy = r.clone();
-        Expression factor = m.childAtIndex(i);
-
         // (sign(a)*b*...)^r
-        if (factor.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-          m.replaceChildAtIndexInPlace(i, Rational::Builder(-1));
-          factor = factor.setSign(ExpressionNode::Sign::Positive, reductionContext);
+        if (baseChildISign == ExpressionNode::Sign::Negative) {
+          multiplicationBase.replaceChildAtIndexInPlace(i, Rational::Builder(-1));
+          baseChildI = baseChildI.setSign(ExpressionNode::Sign::Positive, reductionContext);
         } else {
-          m.removeChildAtIndexInPlace(i);
+          multiplicationBase.removeChildAtIndexInPlace(i);
         }
-        m.shallowReduce(reductionContext);
+        multiplicationBase.shallowReduce(reductionContext);
 
         // |a|^r
-        Power p = Power::Builder(factor, rCopy);
+        Power p = Power::Builder(baseChildI, rCopy);
 
         // |a|^r*(sign(a)*b*...)^r
         Power thisRef = *this;
@@ -661,16 +665,18 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
     }
   }
-  // Step 12: a^(p/q+c+...) -> Rational::Builder(a^p)*a^(1/q+c+...) with a rational and a != 0 and p, q integers
+  /* Step 12: a^(p/q+c+...) -> Rational::Builder(a^p)*a^(1/q+c+...) with a
+   * rational and a != 0 and p, q integers */
   if (!letPowerAtRoot
-      && childAtIndex(0).type() == ExpressionNode::Type::Rational
-      && !childAtIndex(0).convert<Rational>().isZero()
-      && childAtIndex(1).type() == ExpressionNode::Type::Addition)
+      && baseType == ExpressionNode::Type::Rational
+      && !static_cast<Rational &>(base).isZero()
+      && indexType == ExpressionNode::Type::Addition)
   {
-    Addition a = childAtIndex(1).convert<Addition>();
+    Addition additionIndex = static_cast<Addition &>(index);
     // Check is b is rational
-    if (a.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-      const Rational rationalIndex = a.childAtIndex(0).convert<Rational>();
+    Expression additionIndexChild0 = additionIndex.childAtIndex(0);
+    if (additionIndexChild0.type() == ExpressionNode::Type::Rational) {
+      const Rational rationalIndex = static_cast<Rational &>(additionIndexChild0);
       if (rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.integerDenominator().isOne()) {
         /* Do not reduce a^(1/q+c+...) to avoid potential infinite loop:
          * a^(1/q+c+...) --> a^(1/q)*a^(c+...) --> a^(1/q+c+...)*/
@@ -685,15 +691,15 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
          * 2^(1/2+s) --> 2^(1/2)*2^s --> 2^(1/2+s)... */
         return *this;
       }
-      const Rational rationalBase = childAtIndex(0).convert<Rational>();
+      const Rational rationalBase = static_cast<Rational &>(base);
       if (RationalExponentShouldNotBeReduced(rationalBase, rationalIndex)) {
         return *this;
       }
-      Power p1 = Power::Builder(childAtIndex(0).clone(), a.childAtIndex(0));
+      Power p1 = Power::Builder(childAtIndex(0).clone(), additionIndex.childAtIndex(0));
       Power thisRef = *this;
-      childAtIndex(1).convert<Addition>().removeChildAtIndexInPlace(0); // p2 = a^(c+...)
+      additionIndex.removeChildAtIndexInPlace(0); // p2 = a^(c+...)
       // if addition had only 2 children
-      childAtIndex(1).convert<Addition>().squashUnaryHierarchyInPlace();
+      additionIndex.squashUnaryHierarchyInPlace();
       Multiplication m = Multiplication::Builder(p1);
       replaceWithInPlace(m);
       m.addChildAtIndexInPlace(thisRef, 1, 1);
@@ -702,16 +708,17 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
 
-  // Step 13: (a0+a1+...am)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
+  /* Step 13: (a0+a1+...am)^n with n integer
+   *              -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome) */
   if (!letPowerAtRoot
-      && childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && !childAtIndex(1).convert<Rational>().signedIntegerNumerator().isZero()
-      && childAtIndex(1).convert<Rational>().integerDenominator().isOne()
-      && childAtIndex(0).type() == ExpressionNode::Type::Addition)
+      && indexType == ExpressionNode::Type::Rational
+      && !static_cast<Rational &>(index).signedIntegerNumerator().isZero()
+      && static_cast<Rational &>(index).integerDenominator().isOne()
+      && baseType == ExpressionNode::Type::Addition)
   {
     // Exponent n
-    Rational nr = childAtIndex(1).convert<Rational>();
-    Integer n = nr.unsignedIntegerNumerator();
+    Rational rationalIndex = static_cast<Rational &>(index);
+    Integer n = rationalIndex.unsignedIntegerNumerator();
     /* If n is above 25, the resulting sum would have more than
      * k_maxNumberOfTermsInExpandedMultinome terms so we do not expand it. */
     if (Integer(k_maxNumberOfTermsInExpandedMultinome).isLowerThan(n) || n.isOne()) {
@@ -721,7 +728,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     assert(clippedN > 0);
 
     // Number of terms in addition m
-    int m = childAtIndex(0).numberOfChildren();
+    int m = base.numberOfChildren();
     /* The multinome (a0+a2+...+a(m-1))^n has BinomialCoefficient(n+m-1,n) terms;
      * we expand the multinome only when the number of terms in the resulting
      * sum has less than k_maxNumberOfTermsInExpandedMultinome terms. */
@@ -729,7 +736,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       return *this;
     }
 
-    Expression result = childAtIndex(0);
+    Expression result = base;
     Expression a = result.clone();
     for (int i = 2; i <= clippedN; i++) {
       // result = result * (a0+a1+...+a(m-1) in its expanded form
@@ -756,8 +763,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         result = result.shallowReduce(reductionContext);
       }
     }
-    if (nr.sign() == ExpressionNode::Sign::Negative) {
-      nr.replaceWithInPlace(Rational::Builder(-1));
+    if (rationalIndex.sign() == ExpressionNode::Sign::Negative) {
+      rationalIndex.replaceWithInPlace(Rational::Builder(-1));
       return shallowReduce(reductionContext);
     } else {
       replaceWithInPlace(result);

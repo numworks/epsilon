@@ -114,7 +114,8 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
-  m = m.rowCanonize(context, complexFormat, angleUnit);
+  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
+  m = m.rowCanonize(systemReductionContext);
   int rank = m.numberOfRows();
   int i = rank-1;
   while (i >= 0) {
@@ -166,11 +167,10 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
-  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
-  deepReduceChildren(systemReductionContext);
+  deepReduceChildren(reductionContext);
 
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -200,7 +200,7 @@ Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complex
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h*n+j, newOpHJ);
-        newOpHJ = newOpHJ.shallowReduce(systemReductionContext);
+        newOpHJ = newOpHJ.shallowReduce(reductionContext);
       }
       replaceChildInPlace(divisor, Rational::Builder(1));
 
@@ -212,8 +212,8 @@ Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complex
           Expression opIJ = matrixChild(i, j);
           Expression newOpIJ = Subtraction::Builder(opIJ, Multiplication::Builder(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
-          newOpIJ.childAtIndex(1).shallowReduce(systemReductionContext);
-          newOpIJ = newOpIJ.shallowReduce(systemReductionContext);
+          newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
+          newOpIJ = newOpIJ.shallowReduce(reductionContext);
         }
         replaceChildAtIndexInPlace(i*n+k, Rational::Builder(0));
       }
@@ -317,7 +317,7 @@ Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionConte
     }
   }
   matrixAI.setDimensions(dim, 2*dim);
-  matrixAI = matrixAI.rowCanonize(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  matrixAI = matrixAI.rowCanonize(reductionContext);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
     if (!matrixAI.matrixChild(i, i).isRationalOne()) {

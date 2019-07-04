@@ -14,7 +14,7 @@ constexpr Expression::FunctionHelper MatrixTrace::s_functionHelper;
 int MatrixTraceNode::numberOfChildren() const { return MatrixTrace::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTraceNode::shallowReduce(ReductionContext reductionContext) {
-  return MatrixTrace(this).shallowReduce();
+  return MatrixTrace(this).shallowReduce(reductionContext);
 }
 
 Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -33,7 +33,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context * context, Preferenc
 }
 
 
-Expression MatrixTrace::shallowReduce() {
+Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -41,32 +41,26 @@ Expression MatrixTrace::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix m = static_cast<Matrix&>(c);
-    if (m.numberOfRows() != m.numberOfColumns()) {
-      return Undefined::Builder();
+    Matrix matrixChild = static_cast<Matrix&>(c);
+    if (matrixChild.numberOfRows() != matrixChild.numberOfColumns()) {
+      return replaceWithUndefinedInPlace();
     }
-    int n = m.numberOfRows();
+    int n = matrixChild.numberOfRows();
     Addition a = Addition::Builder();
     for (int i = 0; i < n; i++) {
-      a.addChildAtIndexInPlace(m.childAtIndex(i+n*i), i, a.numberOfChildren());
+      a.addChildAtIndexInPlace(matrixChild.matrixChild(i,i), i, i);
     }
-    return a.shallowReduce(context, complexFormat, angleUnit);
+    replaceWithInPlace(a);
+    return a.shallowReduce(reductionContext);
   }
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return c;
+  /* TODO LEA
+  if (c.recursivelyMatches(Expression::IsMatrix)) {
+    return *this;
   }
-  return *this;
-#endif
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    replaceWithInPlace(c);
-    return c;
-  }
-  return *this;
-#endif
+  */
+  replaceWithInPlace(c);
+  return c;
 }
 
 }

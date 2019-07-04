@@ -7,7 +7,7 @@ namespace Solver {
 
 class Equation : public Shared::ExpressionModelHandle {
 public:
-  Equation(Ion::Storage::Record record = Record());
+  Equation(Ion::Storage::Record record = Record()) : ExpressionModelHandle(record) {}
   bool shouldBeClearedBeforeRemove() override {
     return false;
   }

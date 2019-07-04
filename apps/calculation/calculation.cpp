@@ -174,12 +174,10 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (input().recursivelyMatches(
         [](const Expression e, Context * c) {
-          /* If the input contains:
-           * - Random
-           * - Round
-           * or involves a Matrix, we only display the approximate output. */
+          /* If the input contains Random or Round we only display the
+           * approximate output. */
           ExpressionNode::Type t = e.type();
-          return (t == ExpressionNode::Type::Random) || (t == ExpressionNode::Type::Round) || Expression::IsMatrix(e, c);
+          return (t == ExpressionNode::Type::Random) || (t == ExpressionNode::Type::Round);
         },
         context, true))
   {

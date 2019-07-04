@@ -38,7 +38,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("trace", 1, &UntypedBuilderOneChild<MatrixTrace>);
 
-  Expression shallowReduce();
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

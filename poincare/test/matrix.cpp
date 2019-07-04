@@ -33,9 +33,15 @@ QUIZ_CASE(poincare_matrix_simplify) {
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)", "[[-2,1][3/2,-1/2]]");
 
   // Determinant
-  assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "det([[1,2][3,4]])"); // TODO: implement determinant if dim < 3
-  assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "det([[2,2][3,4]])");
-  assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "det([[2,2][3,3]])");
+  assert_parsed_expression_simplify_to("det(π+π)", "2×π");
+  assert_parsed_expression_simplify_to("det([[π+π]])", "2×π");
+  assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "-2");
+  assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "2");
+  assert_parsed_expression_simplify_to("det([[2,2][3,4][3,4]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "0");
+  assert_parsed_expression_simplify_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
+  assert_parsed_expression_simplify_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
+  assert_parsed_expression_simplify_to("det([[1,2,3][4π,5,6][7,8,9]])", "24×π-24");
 
   // Dimension
   assert_parsed_expression_simplify_to("dim(3)", "[[1,1]]");

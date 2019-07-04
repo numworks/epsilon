@@ -46,34 +46,19 @@ Expression MatrixDimension::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
+  Matrix result = Matrix::Builder();
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix &>(c);
-    Matrix result = Matrix::Builder();
     result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
     result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
-    result.setDimensions(1, 2);
-    return result;
-  }
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    Matrix result = Matrix::Builder();
+  } else {
     result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
     result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
-    result.setDimensions(1, 2);
-    return result;
   }
-  return *this;
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    Matrix result = Matrix::Builder();
-    result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
-    result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
-    result.setDimensions(1, 2);
-    replaceWithInPlace(result);
-    return result;
-  }
-  return *this;
-#endif
+  //TODO LEA SortedIsMatrix
+  //return *this;
+  result.setDimensions(1, 2);
+  return result;
 }
 
 }

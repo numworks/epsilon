@@ -92,7 +92,7 @@ private:
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   /* rowCanonize turns a matrix in its reduced row echelon form. */
-  Matrix rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication m = Multiplication::Builder());
+  Matrix rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
 };

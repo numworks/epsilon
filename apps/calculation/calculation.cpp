@@ -187,7 +187,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
      * too, do not display the exact result. If the two layouts are not equal
      * because of the number of significant digits, we display both. */
     m_displayOutput = exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? DisplayOutput::ApproximateOnly : DisplayOutput::ExactAndApproximate;
-  } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0) {
+  } else if (strcmp(m_exactOutputText, Undefined::Name()) == 0 || strcmp(m_approximateOutputText, Unreal::Name()) == 0 || exactOutput().type() == ExpressionNode::Type::Undefined) {
     // If the approximate result is 'unreal' or the exact result is 'undef'
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (input().recursivelyMatches(Expression::IsApproximate, context) || exactOutput().recursivelyMatches(Expression::IsApproximate, context)) {

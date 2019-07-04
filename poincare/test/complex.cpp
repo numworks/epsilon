@@ -40,7 +40,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("𝐢", "unreal", User, Radian, Real);
   assert_parsed_expression_simplify_to("√(-1)", "unreal", User, Radian, Real);
   assert_parsed_expression_simplify_to("√(-1)×√(-1)", "unreal", User, Radian, Real);
-  assert_parsed_expression_simplify_to("ln(-2)", "ln(-2)", User, Radian, Real);
+  assert_parsed_expression_simplify_to("ln(-2)", "unreal", User, Radian, Real);
   assert_parsed_expression_simplify_to("(-8)^(2/3)", "4", User, Radian, Real);
   assert_parsed_expression_simplify_to("(-8)^(2/5)", "2×root(2,5)", User, Radian, Real);
   assert_parsed_expression_simplify_to("(-8)^(1/5)", "-root(8,5)", User, Radian, Real);

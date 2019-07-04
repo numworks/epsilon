@@ -26,9 +26,12 @@ QUIZ_CASE(poincare_store_simplify) {
 QUIZ_CASE(poincare_store_matrix) {
   assert_parsed_expression_evaluates_to<double>("[[7]]→a", "[[7]]");
   assert_parsed_expression_simplify_to("1+1→a", "2");
+  assert_parsed_expression_simplify_to("[[8]]→f(x)", "[[8]]");
+  assert_parsed_expression_simplify_to("[[x]]→f(x)", "[[x]]");
 
   // Clean the storage for other tests
   Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_store_that_should_fail) {

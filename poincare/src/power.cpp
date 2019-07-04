@@ -362,7 +362,10 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         return replaceWithUndefinedInPlace();
       }
       // x^0
-      if (reductionContext.target() == ExpressionNode::ReductionTarget::User || base.isNumber()) { //TODO LEA
+      if (reductionContext.target() == ExpressionNode::ReductionTarget::User
+          || base.isNumber()
+          || baseType == ExpressionNode::Type::Constant)
+      {
         /* Warning: if the ReductionTarget is User, in all other cases but 0^0,
          * we replace x^0 by one. This is almost always true except when x = 0.
          * However, not substituting x^0 by one would prevent from simplifying

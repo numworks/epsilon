@@ -25,7 +25,7 @@ public:
 
 private:
   // Simplification
-  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
+  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override {}
   Expression shallowReduce(ReductionContext reductionContext) override;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

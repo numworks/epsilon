@@ -15,13 +15,6 @@ extern "C" {
 
 namespace Poincare {
 
-void StoreNode::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
-  // Interrupt simplification if the expression stored contains a matrix
-  if (Expression(childAtIndex(0)).recursivelyMatches([](const Expression e, Context * context) { return Expression::IsMatrix(e, context); }, reductionContext.context(), true)) {
-    Expression::SetInterruption(true);
-  }
-}
-
 Expression StoreNode::shallowReduce(ReductionContext reductionContext) {
   return Store(this).shallowReduce(reductionContext);
 }

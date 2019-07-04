@@ -44,6 +44,7 @@ QUIZ_CASE(poincare_matrix_simplify) {
   // Inverse
   assert_parsed_expression_simplify_to("inverse([[1/√(2),1/2,3][2,1,-3]])", Undefined::Name());
   assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])", "[[-2,1][3/2,-1/2]]");
+  assert_parsed_expression_simplify_to("inverse([[π,2π][3,2]])", "[[-1/(2×π),1/2][3/(4×π),-1/4]]");
 
   // Trace
   assert_parsed_expression_simplify_to("trace([[1/√(2),1/2,3][2,1,-3]])", Undefined::Name());

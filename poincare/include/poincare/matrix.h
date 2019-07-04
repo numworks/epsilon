@@ -82,7 +82,6 @@ public:
    * not. */
   Expression createInverse(ExpressionNode::ReductionContext reductionContext) const;
 #if MATRIX_EXACT_REDUCING
-  Expression trace() const;
   Expression determinant() const;
 #endif
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)

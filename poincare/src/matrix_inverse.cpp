@@ -51,28 +51,20 @@ Expression MatrixInverse::shallowReduce(ExpressionNode::ReductionContext reducti
     }
   }
   Expression c = childAtIndex(0);
-#if MATRIX_EXACT_REDUCING
-#if 0
-  if (!c.recursivelyMatches(Expression::IsMatrix)) {
-    return Power::Builder(c, Rational::Builder(-1).shallowReduce(reductionContext);
-  }
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix mat = static_cast<Matrix&>(c);
-    if (mat.numberOfRows() != mat.numberOfColumns()) {
-      return Undefined::Builder();
+    Matrix matrixChild = static_cast<Matrix&>(c);
+    if (matrixChild.numberOfRows() != matrixChild.numberOfColumns()) {
+      return replaceWithUndefinedInPlace();
     }
-  }
-  return *this;
-#endif
-#else
-  if (c.type() != ExpressionNode::Type::Matrix) {
-    Expression result = Power::Builder(c, Rational::Builder(-1));
+    /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
+     * done here and not in power. */
+    Expression result = matrixChild.createInverse(reductionContext);
     replaceWithInPlace(result);
-    result = result.shallowReduce(reductionContext);
-    return result;
+    return result.shallowReduce(reductionContext);
   }
-  return *this;
-#endif
+  Expression result = Power::Builder(c, Rational::Builder(-1));
+  replaceWithInPlace(result);
+  return result.shallowReduce(reductionContext);
 }
 
 }

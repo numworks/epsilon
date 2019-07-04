@@ -166,7 +166,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Multiplication determinant) {
+Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
   ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
@@ -187,25 +187,15 @@ Matrix Matrix::rowCanonize(Context * context, Preferences::ComplexFormat complex
     if (iPivot == m) {
       // No non-null coefficient in this column, skip
       k++;
-      // Update determinant: det *= 0
-      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational::Builder(0), 0, determinant.numberOfChildren()); }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
           swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
-        // Update determinant: det *= -1
-        if (!determinant.isUninitialized()) {
-          determinant.addChildAtIndexInPlace(Rational::Builder(-1), 0, determinant.numberOfChildren());
-        }
       }
       /* Set to 1 M[h][k] by linear combination */
       Expression divisor = matrixChild(h, k);
-      // Update determinant: det *= divisor
-      if (!determinant.isUninitialized()) {
-        determinant.addChildAtIndexInPlace(divisor.clone(), 0, determinant.numberOfChildren());
-      }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division::Builder(opHJ, divisor.clone());

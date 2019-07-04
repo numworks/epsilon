@@ -5,6 +5,7 @@
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
+#include <poincare/undefined.h>
 #include <cmath>
 #include <float.h>
 #include <string.h>
@@ -309,42 +310,39 @@ Matrix Matrix::createTranspose() const {
   return matrix;
 }
 
-#if 0
-#if MATRIX_EXACT_REDUCINGExpression Matrix::inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  if (m_numberOfRows != m_numberOfColumns) {
+Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionContext) const {
+  int dim = numberOfRows();
+  if (dim != numberOfColumns()) {
     return Undefined::Builder();
   }
-  int dim = m_numberOfRows;
-  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  Matrix AI = Matrix::Builder();
+  /* Create the matrix inv = (A|I) with A is the input matrix and I the dim
+   * identity matrix */
+  Matrix matrixAI = Matrix::Builder();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      AI.addChildAtIndexInPlace(matrixChild(i, j), i*2*dim+j, i*2*dim+j);
+      matrixAI.addChildAtIndexInPlace(const_cast<Matrix *>(this)->matrixChild(i, j).clone(), i*2*dim+j, i*2*dim+j);
     }
     for (int j = dim; j < 2*dim; j++) {
-      AI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);
+      matrixAI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);
     }
   }
-  AI.setDimensions(dim, 2*dim);
-  AI = AI.rowCanonize(context, complexFormat, angleUnit);
+  matrixAI.setDimensions(dim, 2*dim);
+  matrixAI = matrixAI.rowCanonize(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   // Check inversibility
   for (int i = 0; i < dim; i++) {
-    if (AI.matrixChild(i, i)->type() != ExpressionNode::Type::Rational || !static_cast<RationalNode *>(AI.matrixChild(i, i)->node())->isOne()) {
+    if (!matrixAI.matrixChild(i, i).isRationalOne()) {
       return Undefined::Builder();
     }
   }
-  Matrix inverse();
+  Matrix inverse = Matrix::Builder();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      addChildAtIndexInPlace(AI.matrixChild(i, j+dim), i*dim+j, i*dim+j);
+      inverse.addChildAtIndexInPlace(matrixAI.matrixChild(i, j+dim), i*dim+j, i*dim+j); // We can steal matrixAI's children
     }
   }
   inverse.setDimensions(dim, dim);
   return inverse;
 }
-
-#endif
-#endif
 
 template int Matrix::ArrayInverse<float>(float *, int, int);
 template int Matrix::ArrayInverse<double>(double *, int, int);

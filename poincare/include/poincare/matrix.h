@@ -78,11 +78,12 @@ public:
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
   static Matrix CreateIdentity(int dim);
   Matrix createTranspose() const;
+  /* createInverse can be called on any matrix, reduced or not, approximated or
+   * not. */
+  Expression createInverse(ExpressionNode::ReductionContext reductionContext) const;
 #if MATRIX_EXACT_REDUCING
   Expression trace() const;
   Expression determinant() const;
-  /* createInverse can be called on any matrix reduce or not, approximate or not. */
-  Expression inverse(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 #endif
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;

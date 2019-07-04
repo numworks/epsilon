@@ -42,14 +42,14 @@ Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reduction
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix matrixChild = static_cast<Matrix&>(c);
-    if (matrixChild.numberOfRows() != matrixChild.numberOfColumns()) {
+    Matrix matrixChild0 = static_cast<Matrix&>(c);
+    if (matrixChild0.numberOfRows() != matrixChild0.numberOfColumns()) {
       return replaceWithUndefinedInPlace();
     }
-    int n = matrixChild.numberOfRows();
+    int n = matrixChild0.numberOfRows();
     Addition a = Addition::Builder();
     for (int i = 0; i < n; i++) {
-      a.addChildAtIndexInPlace(matrixChild.matrixChild(i,i), i, i);
+      a.addChildAtIndexInPlace(matrixChild0.matrixChild(i,i), i, i); // No need to clone
     }
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);

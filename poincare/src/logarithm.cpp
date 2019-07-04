@@ -1,19 +1,18 @@
 #include <poincare/logarithm.h>
-
 #include <poincare/addition.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
+#include <poincare/constant.h>
 #include <poincare/division.h>
 #include <poincare/infinity.h>
+#include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-
-#include <poincare/constant.h>
 #include <poincare/undefined.h>
+#include <poincare/unreal.h>
 #include <cmath>
 #include <ion.h>
 #include <assert.h>
@@ -118,6 +117,11 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   if (c.sign(reductionContext.context()) == ExpressionNode::Sign::Negative
       || childAtIndex(1).sign(reductionContext.context()) == ExpressionNode::Sign::Negative)
   {
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
+      Expression result = Unreal::Builder();
+      replaceWithInPlace(result);
+      return result;
+    }
     return *this;
   }
   Expression f = simpleShallowReduce(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());

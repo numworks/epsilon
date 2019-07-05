@@ -23,6 +23,7 @@ public:
 private:
   constexpr static int k_stampSize = 8;
   constexpr static int k_numberOfLCDIterations = 20;
+  constexpr static int k_acceptableNumberOfFailures = 2;
   static bool TilingLCDTestOK();
   static_assert(Ion::Display::Width % k_stampSize == 0, "Stamps must tesselate the display");
   static_assert(Ion::Display::Height % k_stampSize == 0, "Stamps must tesselate the display");

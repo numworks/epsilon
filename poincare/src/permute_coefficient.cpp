@@ -24,7 +24,7 @@ int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression PermuteCoefficientNode::shallowReduce(ReductionContext reductionContext) {
-  return PermuteCoefficient(this).shallowReduce();
+  return PermuteCoefficient(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
@@ -50,7 +50,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context * context, Pr
 }
 
 
-Expression PermuteCoefficient::shallowReduce() {
+Expression PermuteCoefficient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -59,7 +59,7 @@ Expression PermuteCoefficient::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {

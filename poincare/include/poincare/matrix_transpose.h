@@ -38,7 +38,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("transpose", 1, &UntypedBuilderOneChild<MatrixTranspose>);
 
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 };
 
 }

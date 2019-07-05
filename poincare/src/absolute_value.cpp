@@ -39,6 +39,9 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
+  if (SortedIsMatrix(c, reductionContext.context())) {
+    return *this;
+  }
   if (c.isReal(reductionContext.context())) {
     float app = c.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();
     if (!std::isnan(app) &&

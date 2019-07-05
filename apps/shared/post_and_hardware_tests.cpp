@@ -29,8 +29,10 @@ bool POSTAndHardwareTests::TextLCDTestOK() {
     KDIonContext::sharedContext()->drawString(text, KDPoint(0, i * glyphHeight), font);
   }
   // Check the drawing
+  int numberOfFailures = 0;
   for (int i = 0; i < Ion::Display::Height / glyphHeight; i++) {
-    if (!KDIonContext::sharedContext()->checkDrawnString(text, KDPoint(0, i * glyphHeight), font)) {
+    numberOfFailures += KDIonContext::sharedContext()->checkDrawnString(text, KDPoint(0, i * glyphHeight), font);
+    if (numberOfFailures > k_acceptableNumberOfFailures) {
       return false;
     }
   }
@@ -49,6 +51,7 @@ bool POSTAndHardwareTests::LCDDataOK() {
 bool POSTAndHardwareTests::TilingLCDTestOK() {
   Ion::Display::POSTPushMulticolor(k_stampSize);
   KDColor stamp[k_stampSize*k_stampSize];
+  int numberOfFailures = 0;
   for (int i = 0; i < Ion::Display::Width / k_stampSize; i++) {
     for (int j = 0; j < Ion::Display::Height / k_stampSize; j++) {
       Ion::Display::pullRect(KDRect(i * k_stampSize, j * k_stampSize, k_stampSize, k_stampSize), stamp);
@@ -56,7 +59,10 @@ bool POSTAndHardwareTests::TilingLCDTestOK() {
       uint16_t color = (uint16_t)(1 << shift);
       for (int k = 0; k < k_stampSize*k_stampSize; k++) {
         if (stamp[k] != color) {
-          return false;
+          numberOfFailures++;
+          if (numberOfFailures > k_acceptableNumberOfFailures) {
+            return false;
+          }
         }
         color ^= 0xFFFF;
       }

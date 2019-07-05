@@ -6,7 +6,7 @@ extern "C" {
 
 namespace Poincare {
 
-void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
+void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
   Expression reference(this);
   for (int i = reference.numberOfChildren()-1; i > 0; i--) {
     bool isSorted = true;
@@ -15,7 +15,7 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * co
        * multiplication) so we never swap 2 matrices. */
       ExpressionNode * cj = childAtIndex(j);
       ExpressionNode * cj1 = childAtIndex(j+1);
-      if (order(cj, cj1, canBeInterrupted) > 0 && !(Expression::SortedIsMatrix(Expression(cj), context) && Expression::SortedIsMatrix(Expression(cj1), context))) {
+      if (order(cj, cj1, canBeInterrupted) > 0 && (canSwapMatrices || !(Expression::SortedIsMatrix(Expression(cj), context) && Expression::SortedIsMatrix(Expression(cj1), context)))) {
         reference.swapChildrenInPlace(j, j+1);
         isSorted = false;
       }

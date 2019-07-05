@@ -21,6 +21,7 @@ app_graph_src = $(addprefix apps/graph/,\
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
   list/text_field_function_title_cell.cpp \
+  list/type_helper.cpp \
   values/derivative_parameter_controller.cpp \
   values/function_parameter_controller.cpp \
   values/values_controller.cpp \

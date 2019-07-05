@@ -10,13 +10,13 @@ KDPoint KDContext::drawString(const char * text, KDPoint p, const KDFont * font,
   return pushOrPullString(text, p, font, textColor, backgroundColor, maxByteLength, true);
 }
 
-bool KDContext::checkDrawnString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
-  bool result = true;
-  pushOrPullString(text, p, font, textColor, backgroundColor, maxLength, false, &result);
-  return result;
+int KDContext::checkDrawnString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxLength) {
+  int numberOfFailedPixels = 0;
+  pushOrPullString(text, p, font, textColor, backgroundColor, maxLength, false, &numberOfFailedPixels);
+  return numberOfFailedPixels;
 }
 
-KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength, bool push, bool * result) {
+KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont * font, KDColor textColor, KDColor backgroundColor, int maxByteLength, bool push, int * result) {
   KDPoint position = p;
   KDSize glyphSize = font->glyphSize();
   KDFont::RenderPalette palette = font->renderPalette(textColor, backgroundColor);
@@ -53,7 +53,7 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
       } else {
         // Pull and compare the character from the screen
         assert(result != nullptr);
-        *result = true;
+        *result = 0;
         KDFont::GlyphBuffer workingGlyphBuffer;
         KDColor * workingColorBuffer = workingGlyphBuffer.colorBuffer();
         KDColor * colorBuffer = glyphBuffer.colorBuffer();
@@ -65,8 +65,7 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
         Ion::Display::pullRect(KDRect(position, glyphSize), workingColorBuffer);
         for (int k = 0; k < glyphSize.height() * glyphSize.width(); k++) {
           if (colorBuffer[k] != workingColorBuffer[k]) {
-            *result = false;
-            return position;
+            *result = (*result)+1;
           }
         }
       }

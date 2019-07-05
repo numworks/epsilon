@@ -20,6 +20,7 @@ public:
    * Data is sent OK). To test each of the 16 data wires for short-circuits, 16
    * colors are used: 2**k with 0 <= k < 16. */
   static bool LCDDataOK();
+  static bool ColorsLCDOK();
 private:
   constexpr static int k_stampSize = 8;
   constexpr static int k_numberOfLCDIterations = 20;

@@ -48,6 +48,16 @@ bool POSTAndHardwareTests::LCDDataOK() {
   return true;
 }
 
+bool POSTAndHardwareTests::ColorsLCDOK() {
+  constexpr KDColor k_colors[] = {KDColorBlack, KDColorRed, KDColorBlue, KDColorGreen, KDColorWhite};
+  for (KDColor c : k_colors) {
+    if (Ion::Display::displayUniformTilingSize10(c) > k_acceptableNumberOfFailures) {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool POSTAndHardwareTests::TilingLCDTestOK() {
   Ion::Display::POSTPushMulticolor(k_stampSize);
   KDColor stamp[k_stampSize*k_stampSize];

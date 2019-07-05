@@ -22,7 +22,7 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression GreatCommonDivisorNode::shallowReduce(ReductionContext reductionContext) {
-  return GreatCommonDivisor(this).shallowReduce();
+  return GreatCommonDivisor(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
@@ -50,7 +50,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context * context, Pr
 }
 
 
-Expression GreatCommonDivisor::shallowReduce() {
+Expression GreatCommonDivisor::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -59,7 +59,7 @@ Expression GreatCommonDivisor::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) { //TODO LEA SortedIsMatrix ?
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {

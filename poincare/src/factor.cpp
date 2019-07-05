@@ -27,7 +27,7 @@ int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 Expression FactorNode::shallowReduce(ReductionContext reductionContext) {
-  return Factor(this).shallowReduce();
+  return Factor(this).shallowReduce(reductionContext.context());
 }
 
 Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
@@ -59,14 +59,14 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   return m;
 }
 
-Expression Factor::shallowReduce() {
+Expression Factor::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) { // TODO LEA SortedIsMatrix?
+  if (SortedIsMatrix(childAtIndex(0), context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

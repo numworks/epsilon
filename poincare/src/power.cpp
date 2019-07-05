@@ -290,19 +290,21 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   Expression base = childAtIndex(0);
   Expression index = childAtIndex(1);
 
-  ExpressionNode::Type indexType = index.type();
-
   // Step 0: Handle matrices
-  if (indexType == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(index, reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
   ExpressionNode::Type baseType = base.type();
-  if (baseType == ExpressionNode::Type::Matrix) {
+  ExpressionNode::Type indexType = index.type();
+  if (SortedIsMatrix(base, reductionContext.context())) {
+    if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).integerDenominator().isOne()) {
+      return replaceWithUndefinedInPlace();
+    }
+    if (baseType != ExpressionNode::Type::Matrix) {
+      return *this;
+    }
     Matrix matrixBase = static_cast<Matrix &>(base);
-    if (indexType != ExpressionNode::Type::Rational
-        || !static_cast<Rational &>(index).integerDenominator().isOne()
-        || matrixBase.numberOfRows() != matrixBase.numberOfColumns())
-    {
+    if (matrixBase.numberOfRows() != matrixBase.numberOfColumns()) {
       return replaceWithUndefinedInPlace();
     }
     Integer exponent = static_cast<Rational &>(index).signedIntegerNumerator();

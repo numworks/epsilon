@@ -220,8 +220,8 @@ Expression Integral::shallowReduce(Context * context) {
       return e;
     }
   }
+  assert(!SortedIsMatrix(childAtIndex(1), context));
   if (SortedIsMatrix(childAtIndex(0), context)
-      || SortedIsMatrix(childAtIndex(1), context)
       || SortedIsMatrix(childAtIndex(2), context)
       || SortedIsMatrix(childAtIndex(3), context))
   {

@@ -13,7 +13,7 @@ constexpr Expression::FunctionHelper MatrixTranspose::s_functionHelper;
 int MatrixTransposeNode::numberOfChildren() const { return MatrixTranspose::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixTransposeNode::shallowReduce(ReductionContext reductionContext) {
-  return MatrixTranspose(this).shallowReduce();
+  return MatrixTranspose(this).shallowReduce(reductionContext.context());
 }
 
 Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -38,7 +38,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context * context, Prefe
 }
 
 
-Expression MatrixTranspose::shallowReduce() {
+Expression MatrixTranspose::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -51,10 +51,9 @@ Expression MatrixTranspose::shallowReduce() {
     replaceWithInPlace(result);
     return result;
   }
-  /* TODO LEA
-  if (c.recursivelyMatches(Expression::IsMatrix)) {
+  if (SortedIsMatrix(c, context)) {
     return *this;
-  }*/
+  }
   replaceWithInPlace(c);
   return c;
 }

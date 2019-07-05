@@ -42,7 +42,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("quo", 2, &UntypedBuilderTwoChildren<DivisionQuotient>);
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 };
 
 }

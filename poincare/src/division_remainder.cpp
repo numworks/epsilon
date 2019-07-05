@@ -21,7 +21,7 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 Expression DivisionRemainderNode::shallowReduce(ReductionContext reductionContext) {
-  return DivisionRemainder(this).shallowReduce();
+  return DivisionRemainder(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
@@ -37,7 +37,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context * context, Pre
 }
 
 
-Expression DivisionRemainder::shallowReduce() {
+Expression DivisionRemainder::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -46,7 +46,7 @@ Expression DivisionRemainder::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {

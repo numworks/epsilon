@@ -45,7 +45,7 @@ public:
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
 };
 

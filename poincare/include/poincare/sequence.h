@@ -29,7 +29,7 @@ private:
 class Sequence : public Expression {
 public:
   Sequence(const SequenceNode * n) : Expression(n) {}
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 };
 
 }

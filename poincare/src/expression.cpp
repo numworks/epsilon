@@ -548,7 +548,7 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
     matrix.addChildAtIndexInPlace(f, i, i);
     f.shallowReduce(reductionContext);
   }
-  matrix.setDimensions(c.convert<Matrix>().numberOfRows(), c.convert<Matrix>().numberOfColumns());
+  matrix.setDimensions(static_cast<Matrix &>(c).numberOfRows(), static_cast<Matrix &>(c).numberOfColumns());
   replaceWithInPlace(matrix);
   return matrix.shallowReduce(reductionContext);
 }

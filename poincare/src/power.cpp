@@ -328,12 +328,13 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceWithInPlace(matrixBase);
       return matrixBase;
     }
-    Multiplication result = Multiplication::Builder(matrixBase.clone());
+    Expression result = matrixBase.clone();
     // TODO: implement a quick exponentiation
     for (int k = 1; k < exp; k++) {
-      result.addChildAtIndexInPlace(matrixBase.clone(), 1, 1);
-      result.shallowReduce(reductionContext);
+      result = Multiplication::Builder(result, matrixBase.clone());
+      result = result.shallowReduce(reductionContext);
     }
+    assert(!result.isUninitialized());
     replaceWithInPlace(result);
     return result;
   }

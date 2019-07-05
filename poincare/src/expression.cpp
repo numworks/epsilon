@@ -126,7 +126,7 @@ bool Expression::SortedIsMatrix(const Expression e, Context * context) {
     return true;
   }
   if (IsNAry(e, context)) {
-    return NAryExpression::SortedIsMatrix(e, context);
+    return NAryExpression::SortedNAryIsMatrix(e, context);
   }
   return false;
 }

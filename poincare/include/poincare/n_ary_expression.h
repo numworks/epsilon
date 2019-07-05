@@ -58,7 +58,7 @@ public:
    * - 0 if all non real children are ComplexCartesian
    * - -1 if some chidren are non-real and non ComplexCartesian */
   int allChildrenAreReal(Context * context) const;
-  static bool SortedIsMatrix(Expression e, Context * context); // this is supposed to be a sorted
+  static bool SortedNAryIsMatrix(Expression e, Context * context); // this is supposed to be a sorted
 protected:
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
 };

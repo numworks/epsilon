@@ -27,7 +27,7 @@ public:
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 
   // Commutative properties
-  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted);
+  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted);
   Expression squashUnaryHierarchyInPlace();
 
 protected:
@@ -47,9 +47,6 @@ public:
   using TreeHandle::removeChildAtIndexInPlace;
   using TreeHandle::removeChildInPlace;
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
-  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
-    node()->sortChildrenInPlace(order, context, canBeInterrupted);
-  }
   Expression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }
@@ -60,6 +57,9 @@ public:
   int allChildrenAreReal(Context * context) const;
   static bool SortedNAryIsMatrix(Expression e, Context * context); // this is supposed to be a sorted
 protected:
+  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canBeInterrupted) {
+    node()->sortChildrenInPlace(order, context, canSwapMatrices, canBeInterrupted);
+  }
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
 };
 

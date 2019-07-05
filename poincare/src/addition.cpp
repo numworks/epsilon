@@ -163,51 +163,60 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   // Step 2: Sort the children
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
 
-  /* Step 3: Get rid of matrices
-   * All children have been simplified so if any child contains a matrix, it is
-   * at the root node of the child. Moreover, thanks to the simplification
-   * order, all matrix children (if any) are the last children. */
+  /* Step 3: Handle matrices. We return undef for a scalar added to a matrix.
+   * Thanks to the simplification order, all matrix children (if any) are the
+   * last children. */
   int childrenCount = numberOfChildren();
   assert(childrenCount > 1);
-  if (childAtIndex(childrenCount - 1).type() == ExpressionNode::Type::Matrix) {
-    Expression firstChild = childAtIndex(0);
-    if (firstChild.type() != ExpressionNode::Type::Matrix) {
-      /* If there is a matrix in the children, the last child is a matrix. If
-       * there is a ascalar, the first child is a scalar.
-       * We forbid the addition of a matrix and a scalar. */
-      return replaceWithUndefinedInPlace();
-    }
-    // Create the addition matrix (in place of the first child)
-    Matrix resultMatrix = static_cast<Matrix &>(firstChild);
-    int n = resultMatrix.numberOfRows();
-    int m = resultMatrix.numberOfColumns();
-    // Scan to add the other children, which are  matrices
-    for (int i = 1; i < childrenCount; i++) {
-      assert(childAtIndex(i).type() == ExpressionNode::Type::Matrix);
-      Matrix currentMatrix = childAtIndex(i).convert<Matrix>();
-      int currentN = currentMatrix.numberOfRows();
-      int currentM = currentMatrix.numberOfColumns();
-      if (currentN != n || currentM != m) {
-        // Addition of matrices of different dimensions -> undef
+  {
+    Expression lastChild = childAtIndex(childrenCount - 1);
+    if (SortedIsMatrix(lastChild, reductionContext.context())) {
+      if (!SortedIsMatrix(childAtIndex(0), reductionContext.context())) {
+        /* If there is a matrix in the children, the last child is a matrix. If
+         * there is a a scalar, the first child is a scalar. We forbid the
+         * addition of a matrix and a scalar. */
         return replaceWithUndefinedInPlace();
       }
-      // Dispatch the current matrix children in the created addition matrix
-      for (int j = 0; j < n*m; j++) {
-        Expression resultEntryJ = resultMatrix.childAtIndex(j);
-        Expression currentEntryJ = currentMatrix.childAtIndex(j);
-        if (resultEntryJ.type() == ExpressionNode::Type::Addition) {
-          static_cast<Addition &>(resultEntryJ).addChildAtIndexInPlace(currentEntryJ, resultEntryJ.numberOfChildren(), resultEntryJ.numberOfChildren());
-        } else {
-          Addition a = Addition::Builder(resultEntryJ, currentEntryJ);
-          resultMatrix.replaceChildAtIndexInPlace(j, a);
-        }
+      if (lastChild.type() != ExpressionNode::Type::Matrix) {
+        /* All children are matrices that are not of type Matrix (for instance a
+         * ConfidenceInterval that cannot be reduced). We cannot reduce the
+         * addition more. */
+        return *this;
       }
+      // Create the addition matrix (in place of the last child)
+      Matrix resultMatrix = static_cast<Matrix &>(lastChild);
+      int n = resultMatrix.numberOfRows();
+      int m = resultMatrix.numberOfColumns();
+      // Scan to add the other children, which are  matrices
+      for (int i = childrenCount - 2; i >= 0; i--) {
+        if (childAtIndex(i).type() != ExpressionNode::Type::Matrix) {
+          break;
+        }
+        Matrix currentMatrix = childAtIndex(i).convert<Matrix>();
+        int currentN = currentMatrix.numberOfRows();
+        int currentM = currentMatrix.numberOfColumns();
+        if (currentN != n || currentM != m) {
+          // Addition of matrices of different dimensions -> undef
+          return replaceWithUndefinedInPlace();
+        }
+        // Dispatch the current matrix children in the created addition matrix
+        for (int j = 0; j < n*m; j++) {
+          Expression resultEntryJ = resultMatrix.childAtIndex(j);
+          Expression currentEntryJ = currentMatrix.childAtIndex(j);
+          if (resultEntryJ.type() == ExpressionNode::Type::Addition) {
+            static_cast<Addition &>(resultEntryJ).addChildAtIndexInPlace(currentEntryJ, resultEntryJ.numberOfChildren(), resultEntryJ.numberOfChildren());
+          } else {
+            Addition a = Addition::Builder(resultEntryJ, currentEntryJ);
+            resultMatrix.replaceChildAtIndexInPlace(j, a);
+          }
+        }
+        removeChildInPlace(currentMatrix, currentMatrix.numberOfChildren());
+      }
+      for (int j = 0; j < n*m; j++) {
+        resultMatrix.childAtIndex(j).shallowReduce(reductionContext);
+      }
+      return squashUnaryHierarchyInPlace();
     }
-    for (int j = 0; j < n*m; j++) {
-      resultMatrix.childAtIndex(j).shallowReduce(reductionContext);
-    }
-    replaceWithInPlace(resultMatrix);
-    return resultMatrix;
   }
 
   /* Step 4: Factorize like terms. Thanks to the simplification order, those are

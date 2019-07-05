@@ -80,6 +80,9 @@ public:
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
+    NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
+  }
 private:
   // Simplification
   Expression privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool expand, bool canBeInterrupted);

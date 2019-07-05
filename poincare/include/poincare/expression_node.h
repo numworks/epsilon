@@ -90,13 +90,13 @@ public:
 
     ComplexCartesian,
 
-    Matrix,
     ConfidenceInterval,
     MatrixDimension,
     MatrixIdentity,
     MatrixInverse,
     MatrixTranspose,
     PredictionInterval,
+    Matrix,
     EmptyExpression
    };
 

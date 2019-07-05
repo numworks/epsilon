@@ -45,7 +45,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("permute", 2, &UntypedBuilderTwoChildren<PermuteCoefficient>);
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 
   constexpr static int k_maxNValue = 100;
 };

@@ -22,7 +22,7 @@ int LeastCommonMultipleNode::serialize(char * buffer, int bufferSize, Preference
 }
 
 Expression LeastCommonMultipleNode::shallowReduce(ReductionContext reductionContext) {
-  return LeastCommonMultiple(this).shallowReduce();
+  return LeastCommonMultiple(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
@@ -54,7 +54,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context * context, P
 }
 
 
-Expression LeastCommonMultiple::shallowReduce() {
+Expression LeastCommonMultiple::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -63,7 +63,7 @@ Expression LeastCommonMultiple::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {

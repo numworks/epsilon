@@ -39,7 +39,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dim", 1, &UntypedBuilderOneChild<MatrixDimension>);
 
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 };
 
 }

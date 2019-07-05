@@ -20,7 +20,7 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 Expression SequenceNode::shallowReduce(ReductionContext reductionContext) {
-  return Sequence(this).shallowReduce();
+  return Sequence(this).shallowReduce(reductionContext.context());
 }
 
 template<typename T>
@@ -47,15 +47,15 @@ Evaluation<T> SequenceNode::templatedApproximate(Context * context, Preferences:
   return result;
 }
 
-Expression Sequence::shallowReduce() {
+Expression Sequence::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
   }
-  assert(childAtIndex(1).type() != ExpressionNode::Type::Matrix);
-  if (childAtIndex(2).type() == ExpressionNode::Type::Matrix || childAtIndex(3).type() == ExpressionNode::Type::Matrix) {
+  assert(!SortedIsMatrix(childAtIndex(1), context));
+  if (SortedIsMatrix(childAtIndex(2), context) || SortedIsMatrix(childAtIndex(3), context)) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

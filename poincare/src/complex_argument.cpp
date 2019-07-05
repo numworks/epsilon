@@ -45,6 +45,9 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   if (c.type() == ExpressionNode::Type::Matrix) {
     return mapOnMatrixFirstChild(reductionContext);
   }
+  if (SortedIsMatrix(c, reductionContext.context())) {
+    return *this;
+  }
   bool real = c.isReal(reductionContext.context());
   if (real) {
     float app = c.node()->approximate(float(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit()).toScalar();

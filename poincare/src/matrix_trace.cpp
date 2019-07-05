@@ -54,11 +54,9 @@ Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reduction
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }
-  /* TODO LEA
-  if (c.recursivelyMatches(Expression::IsMatrix)) {
+  if (SortedIsMatrix(c, reductionContext.context())) {
     return *this;
   }
-  */
   replaceWithInPlace(c);
   return c;
 }

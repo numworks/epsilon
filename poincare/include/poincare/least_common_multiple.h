@@ -41,7 +41,7 @@ public:
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, &UntypedBuilderTwoChildren<LeastCommonMultiple>);
 
   // Expression
-  Expression shallowReduce();
+  Expression shallowReduce(Context * context);
 };
 
 }

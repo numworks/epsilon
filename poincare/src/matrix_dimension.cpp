@@ -12,7 +12,7 @@ constexpr Expression::FunctionHelper MatrixDimension::s_functionHelper;
 int MatrixDimensionNode::numberOfChildren() const { return MatrixDimension::s_functionHelper.numberOfChildren(); }
 
 Expression MatrixDimensionNode::shallowReduce(ReductionContext reductionContext) {
-  return MatrixDimension(this).shallowReduce();
+  return MatrixDimension(this).shallowReduce(reductionContext.context());
 }
 
 Layout MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -38,7 +38,7 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context * context, Prefe
 }
 
 
-Expression MatrixDimension::shallowReduce() {
+Expression MatrixDimension::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -46,6 +46,9 @@ Expression MatrixDimension::shallowReduce() {
     }
   }
   Expression c = childAtIndex(0);
+  if (SortedIsMatrix(c, context) && c.type() != ExpressionNode::Type::Matrix) {
+    return *this;
+  }
   Matrix result = Matrix::Builder();
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix &>(c);
@@ -55,8 +58,6 @@ Expression MatrixDimension::shallowReduce() {
     result.addChildAtIndexInPlace(Rational::Builder(1), 0, 0);
     result.addChildAtIndexInPlace(Rational::Builder(1), 1, 1);
   }
-  //TODO LEA SortedIsMatrix
-  //return *this;
   result.setDimensions(1, 2);
   return result;
 }

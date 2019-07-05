@@ -13,7 +13,7 @@ constexpr Expression::FunctionHelper DivisionQuotient::s_functionHelper;
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
 Expression DivisionQuotientNode::shallowReduce(ReductionContext reductionContext) {
-  return DivisionQuotient(this).shallowReduce();
+  return DivisionQuotient(this).shallowReduce(reductionContext.context());
 }
 
 Layout DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -36,7 +36,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context * context, Pref
 }
 
 
-Expression DivisionQuotient::shallowReduce() {
+Expression DivisionQuotient::shallowReduce(Context * context) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -45,7 +45,7 @@ Expression DivisionQuotient::shallowReduce() {
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
-  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+  if (SortedIsMatrix(c0, context) || SortedIsMatrix(c1, context)) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Rational) {

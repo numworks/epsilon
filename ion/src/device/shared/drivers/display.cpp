@@ -99,6 +99,43 @@ void POSTPushMulticolor(int tileSize) {
   }
 }
 
+int displayUniformTilingSize10(KDColor c) {
+  constexpr int stampHeight = 10;
+  constexpr int stampWidth = 10;
+  static_assert(Ion::Display::Width % stampWidth == 0, "Stamps must tesselate the display");
+  static_assert(Ion::Display::Height % stampHeight == 0, "Stamps must tesselate the display");
+  static_assert(stampHeight % 2 == 0 || stampWidth % 2 == 0, "Even number of XOR needed.");
+
+  KDColor stamp[stampWidth*stampHeight];
+  for (int i=0;i<stampWidth*stampHeight; i++) {
+    stamp[i] = c;
+  }
+
+  for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
+    for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
+      Ion::Display::pushRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
+    }
+  }
+
+  int numberOfInvalidPixels = 0;
+
+  for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
+    for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
+      for (int k=0; k<stampWidth*stampHeight; k++) {
+        stamp[k] = KDColorBlack;
+      }
+      Ion::Display::pullRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
+      for (int k=0; k<stampWidth*stampHeight; k++) {
+        if (stamp[k] != c) {
+          numberOfInvalidPixels++;
+        }
+      }
+    }
+  }
+
+  return numberOfInvalidPixels;
+}
+
 }
 }
 
@@ -477,7 +514,6 @@ void pushColorAndContraryPixels(uint16_t value, int count) {
     color ^= 0xFFFF;
   }
 }
-
 
 }
 }

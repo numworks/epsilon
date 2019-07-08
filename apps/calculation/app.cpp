@@ -35,7 +35,6 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 void App::Snapshot::tidy() {
-  m_calculationStore.tidy();
 }
 
 App::App(Snapshot * snapshot) :

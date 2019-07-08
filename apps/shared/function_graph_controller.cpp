@@ -69,7 +69,7 @@ void FunctionGraphController::reloadBannerView() {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), functionStore()->symbol());
+  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

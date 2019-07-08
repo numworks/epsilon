@@ -6,7 +6,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, char symbol) {
+void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore) {
+  CodePoint symbol = functionStore->symbol();
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   constexpr int bufferSize = k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];

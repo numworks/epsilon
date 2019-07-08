@@ -24,6 +24,7 @@ public:
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> RoundToMeaningfulDigits(const std::complex<T> result, const std::complex<T> input);
 private:
+  static Expression mapIfPossible(Expression & e, ExpressionNode::ReductionContext reductionContext);
   template <typename T> static T RoundToMeaningfulDigits(T result, T input);
 };
 

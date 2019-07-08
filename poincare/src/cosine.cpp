@@ -41,10 +41,6 @@ Expression Cosine::shallowReduce(ExpressionNode::ReductionContext reductionConte
       return e;
     }
   }
-  Expression c = childAtIndex(0);
-  if (c.type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 

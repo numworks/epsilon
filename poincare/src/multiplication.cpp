@@ -261,7 +261,7 @@ Expression Multiplication::denominator(Context * context, Preferences::ComplexFo
 
 Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
   {
-    Expression e = Expression::defaultShallowReduce();;
+    Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
       return e;
     }
@@ -275,9 +275,8 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, reductionContext.context(), true);
 
   // Step 3: Handle matrices
-  /* All children have been simplified so if any child contains a matrix, it
-   * is at the root node of the child. Moreover, thanks to the simplification
-   * order, all matrix children (if any) are the last children. */
+  /* Thanks to the simplification order, all matrix children (if any) are the
+   * last children. */
   Expression lastChild = childAtIndex(numberOfChildren()-1);
   if (lastChild.type() == ExpressionNode::Type::Matrix) {
     Matrix resultMatrix = static_cast<Matrix &>(lastChild);
@@ -343,9 +342,14 @@ Expression Multiplication::privateShallowReduce(ExpressionNode::ReductionContext
       resultMatrix = newResult;
       multiplicationChildIndex--;
     }
-    // Distribute the remaining multiplication children on the matrix children
-    int remainingChildrenCount = numberOfChildren();
-    if (remainingChildrenCount > 1) {
+    /* Distribute the remaining multiplication children on the matrix children,
+     * if there are no oether matrices (such as a non reduced confidence
+     * interval). */
+
+    if (multiplicationChildIndex >= 0) {
+      if (SortedIsMatrix(childAtIndex(multiplicationChildIndex), reductionContext.context())) {
+        return *this;
+      }
       removeChildInPlace(resultMatrix, resultMatrix.numberOfChildren());
       for (int i = 0; i < n*m; i++) {
         Multiplication m = clone().convert<Multiplication>();
@@ -552,7 +556,7 @@ void Multiplication::mergeMultiplicationChildrenInPlace() {
   while (i < numberOfChildren()) {
     Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::Multiplication) {
-      mergeChildrenAtIndexInPlace(c, numberOfChildren()); // TODO: ensure that matrix children are not swapped to implement MATRIX_EXACT_REDUCING
+      mergeChildrenAtIndexInPlace(c, i); // TODO: ensure that matrix children are not swapped to implement MATRIX_EXACT_REDUCING
       continue;
     }
     i++;

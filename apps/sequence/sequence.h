@@ -27,6 +27,8 @@ public:
     Function(record),
     m_nameLayout() {}
   static char Symbol() { return 'n'; }
+  CodePoint symbol() const override { return 'n'; }
+  CodePoint unknownSymbol() const override { return UCodePointUnknownN; }
   void tidy() override;
   // MetaData getters
   Type type() const;

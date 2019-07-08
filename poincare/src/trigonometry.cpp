@@ -96,6 +96,14 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
 Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isDirectTrigonometryFunction(e));
 
+  // Step 0. Map on matrix child if possible
+  {
+    Expression mapped = mapIfPossible(e, reductionContext);
+    if (!mapped.isUninitialized()) {
+      return mapped;
+    }
+  }
+
   // Step 1. Try finding an easy standard calculation reduction
   Expression lookup = TrigonometryCheatTable::Table()->simplify(e.childAtIndex(0), e.type(), reductionContext);
   if (!lookup.isUninitialized()) {
@@ -254,6 +262,14 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
 
 Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseTrigonometryFunction(e));
+  // Step 0. Map on matrix child if possible
+  {
+    Expression mapped = mapIfPossible(e, reductionContext);
+    if (!mapped.isUninitialized()) {
+      return mapped;
+    }
+  }
+
   float pi = reductionContext.angleUnit() == Preferences::AngleUnit::Radian ? M_PI : 180;
 
   // Step 1. Look for an expression of type "acos(cos(x))", return x
@@ -358,6 +374,13 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
     return c * std::complex<T>(180/M_PI);
   }
   return c;
+}
+
+Expression Trigonometry::mapIfPossible(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+  if (e.childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+    return e.mapOnMatrixFirstChild(reductionContext);
+  }
+  return Expression();
 }
 
 template<typename T>

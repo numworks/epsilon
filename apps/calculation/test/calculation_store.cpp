@@ -8,45 +8,31 @@
 using namespace Poincare;
 using namespace Calculation;
 
-void assert_store_is(CalculationStore * store, const char * result[10]) {
+void assert_store_is(CalculationStore * store, const char * * result) {
   for (int i = 0; i < store->numberOfCalculations(); i++) {
     quiz_assert(strcmp(store->calculationAtIndex(i)->inputText(), result[i]) == 0);
   }
 }
 
-QUIZ_CASE(calculation_store_ring_buffer) {
+
+QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;
   CalculationStore store;
-  quiz_assert(CalculationStore::k_maxNumberOfCalculations == 10);
-  for (int i = 0; i < CalculationStore::k_maxNumberOfCalculations; i++) {
+  // Store is now {9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
+  const char * result[] = {"9", "8", "7", "6", "5", "4", "3", "2", "1", "0"};
+  for (int i = 0; i < 10; i++) {
     char text[2] = {(char)(i+'0'), 0};
     store.push(text, &globalContext);
     quiz_assert(store.numberOfCalculations() == i+1);
   }
-  /* Store is now {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} */
-  const char * result[10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
   assert_store_is(&store, result);
-
-  store.push("10", &globalContext);
-  /* Store is now {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} */
-  const char * result1[10] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-  assert_store_is(&store, result1);
 
   for (int i = 9; i > 0; i = i-2) {
    store.deleteCalculationAtIndex(i);
   }
-  /* Store is now {1, 3, 5, 7, 9} */
-  const char * result2[10] = {"1", "3", "5", "7", "9", "", "", "", "", ""};
+  // Store is now {9, 7, 5, 3, 1}
+  const char * result2[] = {"9", "7", "5", "3", "1"};
   assert_store_is(&store, result2);
-
-  for (int i = 5; i < CalculationStore::k_maxNumberOfCalculations; i++) {
-    char text[3] = {(char)(i+'0'), 0};
-    store.push(text, &globalContext);
-    quiz_assert(store.numberOfCalculations() == i+1);
-  }
-  /* Store is now {0, 2, 4, 6, 8, 5, 6, 7, 8, 9} */
-  const char * result3[10] = {"1", "3", "5", "7", "9", "5", "6", "7", "8", "9"};
-  assert_store_is(&store, result3);
 
   store.deleteAll();
 }
@@ -57,12 +43,12 @@ QUIZ_CASE(calculation_ans) {
 
   store.push("1+3/4", &globalContext);
   store.push("ans+2/3", &globalContext);
-  ::Calculation::Calculation * lastCalculation = store.calculationAtIndex(1);
+  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate);
   quiz_assert(strcmp(lastCalculation->exactOutputText(),"29/12") == 0);
 
   store.push("ans+0.22", &globalContext);
-  lastCalculation = store.calculationAtIndex(2);
+  lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle);
   quiz_assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
 
@@ -71,7 +57,7 @@ QUIZ_CASE(calculation_ans) {
 
 void assertCalculationDisplay(const char * input, ::Calculation::Calculation::DisplayOutput display, ::Calculation::Calculation::EqualSign sign, const char * exactOutput, const char * approximateOutput, Context * context, CalculationStore * store) {
   store->push(input, context);
-  ::Calculation::Calculation * lastCalculation = store->calculationAtIndex(1);
+  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(context) == display);
   if (sign != ::Calculation::Calculation::EqualSign::Unknown) {
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);

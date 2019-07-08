@@ -42,9 +42,6 @@ Expression Sine::shallowReduce(ExpressionNode::ReductionContext reductionContext
       return e;
     }
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   return Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
 }
 

@@ -56,9 +56,6 @@ Expression ArcSine::shallowReduce(ExpressionNode::ReductionContext reductionCont
       return e;
     }
   }
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
   return Trigonometry::shallowReduceInverseFunction(*this, reductionContext);
 }
 

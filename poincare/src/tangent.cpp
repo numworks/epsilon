@@ -46,10 +46,6 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
     }
   }
 
-  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
-    return mapOnMatrixFirstChild(reductionContext);
-  }
-
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());

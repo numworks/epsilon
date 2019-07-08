@@ -10,6 +10,8 @@ namespace Shared {
 class ExpressionModelHandle : public Ion::Storage::Record {
 public:
   ExpressionModelHandle(Ion::Storage::Record record = Ion::Storage::Record());
+  virtual CodePoint symbol() const { return 0; }
+  virtual CodePoint unknownSymbol() const { return 0; }
 
   // Property
   void text(char * buffer, size_t bufferSize) const { return model()->text(this, buffer, bufferSize); }

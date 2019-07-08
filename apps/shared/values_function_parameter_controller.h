@@ -9,12 +9,11 @@ namespace Shared {
 
 class ValuesFunctionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ValuesFunctionParameterController(char symbol) :
+  ValuesFunctionParameterController() :
     ViewController(nullptr),
     m_copyColumn(I18n::Message::CopyColumnInList),
     m_selectableTableView(this, this, this),
-    m_record(),
-    m_symbol(symbol)
+    m_record()
   {}
 
   View * view() override { return &m_selectableTableView; }
@@ -35,7 +34,6 @@ protected:
   Ion::Storage::Record m_record;
 private:
   char m_pageTitle[Function::k_maxNameWithArgumentSize];
-  char m_symbol;
 };
 
 }

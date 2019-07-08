@@ -8,7 +8,7 @@ using namespace Shared;
 namespace Graph {
 
 FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
-  ValuesFunctionParameterController(CartesianFunction::Symbol()),
+  ValuesFunctionParameterController(),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
   m_valuesController(valuesController)
 {

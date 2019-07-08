@@ -11,7 +11,7 @@ class FunctionBannerDelegate  {
 public:
   constexpr static int k_maxNumberOfCharacters = 50;
 protected:
-  void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, char symbol);
+  void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore);
   virtual XYBannerView * bannerView() = 0;
 };
 

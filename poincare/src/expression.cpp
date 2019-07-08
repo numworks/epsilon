@@ -1,5 +1,6 @@
 #include <poincare/expression.h>
 #include <poincare/expression_node.h>
+#include <poincare/ghost.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
@@ -537,13 +538,16 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context)
 }
 
 Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext reductionContext) {
-  /* For now, the matrix child on which the mapping must be done  is always at
+  /* For now, the matrix child on which the mapping must be done is always at
    * the index 0. */
   assert(childAtIndex(0).type() == ExpressionNode::Type::Matrix);
   Expression c = childAtIndex(0);
   Matrix matrix = Matrix::Builder();
+  /* replace c with a ghost, because we will clone this and we do not want to
+   * clone c, as it might be very big. */
+  replaceChildInPlace(c, Ghost::Builder());
   for (int i = 0; i < c.numberOfChildren(); i++) {
-    Expression f = clone(); // TODO Avoid cloning because 'this' might be very big TODO LEA: emptyBuilder?
+    Expression f = clone();
     f.replaceChildAtIndexInPlace(0, c.childAtIndex(i));
     matrix.addChildAtIndexInPlace(f, i, i);
     f.shallowReduce(reductionContext);

@@ -30,6 +30,9 @@ app_src += $(addprefix apps/,\
   variable_box_empty_controller.cpp \
 )
 
+apps_launch_on_boarding_src = apps/apps_container_launch_on_boarding.cpp
+apps_launch_default_src = apps/apps_container_launch_default.cpp
+
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
 apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
 snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot())
@@ -89,7 +92,7 @@ epsilon_src += $(addprefix apps/, \
   i18n.py \
 )
 
-all_app_src = $(app_src) $(epsilon_src)
+all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src)
 
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h

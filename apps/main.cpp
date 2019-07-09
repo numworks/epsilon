@@ -6,6 +6,8 @@
 #if DUMMY_MAIN
 
 void ion_main(int argc, char * argv[]) {
+  // Initialize the backlight
+  Ion::Backlight::init();
   while (1) {
     Ion::Display::pushRectUniform(KDRect(0,0,10,10), KDColorRed);
     Ion::Timing::msleep(100);

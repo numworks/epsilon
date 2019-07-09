@@ -3,6 +3,9 @@
 #include <ion.h>
 
 void ion_main(int argc, char * argv[]) {
+  // Initialize the backlight
+  Ion::Backlight::init();
+  // Initialize Flasher display
   Flasher::Display::init();
   while (true) {
     Ion::USB::enable();

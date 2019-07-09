@@ -267,12 +267,7 @@ void AppsContainer::run() {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */
-     bool switched =
-#if EPSILON_ONBOARDING_APP
-       switchTo(onBoardingAppSnapshot());
-#else
-       switchTo(appSnapshotAtIndex(numberOfApps() == 2 ? 1 : 0));
-#endif
+    bool switched = switchTo(initialAppSnapshot());
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
   } else {

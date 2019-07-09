@@ -71,9 +71,9 @@ $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
 $(BUILD_DIR)/bench.%.$(EXE): $(call object_for,$(src) $(bench_src) $(ion_device_dfu_xip_src))
 
-ifeq ($(EPSILON_ONBOARDING_APP)$(EPSILON_BOOT_PROMPT),1update)
-.PHONY: %_two_binaries
-%_two_binaries: %.elf
+ifeq ($(EPSILON_BOOT_PROMPT),update)
+.PHONY: %.two_binaries
+%.two_binaries: %.elf
 	@echo "Building an internal and an external binary for     $<"
 	$(Q) $(OBJCOPY) -O binary -j .text.external -j .rodata.external $< $(basename $<).external.bin
 	$(Q) $(OBJCOPY) -O binary -R .text.external -R .rodata.external $< $(basename $<).internal.bin
@@ -82,7 +82,7 @@ ifeq ($(EPSILON_ONBOARDING_APP)$(EPSILON_BOOT_PROMPT),1update)
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $(basename $<).internal.bin
 else
 %_two_binaries:
-	@echo "Error: two_binaries requires EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update"
+	@echo "Error: two_binaries requires EPSILON_BOOT_PROMPT=update"
 endif
 
 .PHONY: binpack
@@ -97,9 +97,9 @@ binpack:
 	make -j8 $(BUILD_DIR)/bench.ram.bin
 	cp $(BUILD_DIR)/bench.ram.bin $(BUILD_DIR)/bench.flash.bin build/binpack
 	make clean
-	make -j8 EPSILON_ONBOARDING_APP=1 EPSILON_BOOT_PROMPT=update $(BUILD_DIR)/epsilon_two_binaries
-	cp $(BUILD_DIR)/epsilon.internal.bin $(BUILD_DIR)/epsilon.external.bin build/binpack
+	make -j8 EPSILON_BOOT_PROMPT=update $(BUILD_DIR)/epsilon.on-boarding.two_binaries
+	cp $(BUILD_DIR)/epsilon.on-boarding.internal.bin $(BUILD_DIR)/epsilon.on-boarding.external.bin build/binpack
 	make clean
-	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.internal.bin epsilon.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
+	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.on-boarding.internal.bin epsilon.on-boarding.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
 	rm -rf build/binpack

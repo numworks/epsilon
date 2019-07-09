@@ -4,7 +4,6 @@ PLATFORM ?= device
 DEBUG ?= 0
 
 EPSILON_VERSION ?= 11.1.0
-EPSILON_ONBOARDING_APP ?= 0
 # Valid values are "none", "update", "beta"
 EPSILON_BOOT_PROMPT ?= none
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings
@@ -23,7 +22,6 @@ endif
 include scripts/toolchain.$(TOOLCHAIN).mak
 
 SFLAGS += -DDEBUG=$(DEBUG)
-SFLAGS += -DEPSILON_ONBOARDING_APP=$(EPSILON_ONBOARDING_APP)
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
 EPSILON_BETA_PROMPT := 1
 EPSILON_UPDATE_PROMPT := 2

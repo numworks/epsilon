@@ -45,6 +45,8 @@ static inline void ion_main_inner() {
 }
 
 void ion_main(int argc, char * argv[]) {
+  // Initialize the backlight
+  Ion::Backlight::init();
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
 

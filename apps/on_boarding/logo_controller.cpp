@@ -33,9 +33,9 @@ void LogoController::viewWillAppear() {
     m_didPerformTests = true;
     m_previousLEDColor = PowerOnSelfTest::Perform();
   }
-  /* If EPSILON_ONBOARDING_APP == 1, the backlight is not initialized in
-   * Ion::Device::Board::initPeripherals, so that the LCD test is not visible to
-   * the user. We thus need to initialize the backlight after the test.*/
+  /* The backlight was not initialized in Ion::Device::Board::initPeripherals,
+   * so that the LCD test is not visible to the user. We thus need to initialize
+   * the backlight after the test.*/
   if (!backlightInitialized) {
     Ion::Backlight::init();
   }

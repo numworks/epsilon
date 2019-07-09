@@ -100,6 +100,7 @@ void CopyAndRemoveCodePoint(char * dst, size_t dstSize, const char * src, CodePo
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
   size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+  (void)codePointCharSize; // Silence compilation warning about unused variable.
 
   // Remove CodePoint c
   while (codePoint != UCodePointNull && bufferIndex < dstSize) {
@@ -122,7 +123,8 @@ void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate,
   const char * initialPointerToUpdate =  *pointerToUpdate;
   const char * nextPointer = decoder.stringPosition();
   size_t bufferIndex = 0;
-  size_t codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+  int codePointCharSize = UTF8Decoder::CharSizeOfCodePoint(c);
+  (void)codePointCharSize; // Silence compilation warning about unused variable.
 
   while (codePoint != UCodePointNull && (stoppingPosition == nullptr || currentPointer < stoppingPosition)) {
     if (codePoint != c) {

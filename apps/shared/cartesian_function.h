@@ -17,7 +17,6 @@ public:
   {}
   CodePoint symbol() const override { return 'x'; }
   CodePoint unknownSymbol() const override { return UCodePointUnknownX; }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), UCodePointUnknownX); }
 
   // Derivative
   bool displayDerivative() const;

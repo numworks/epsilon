@@ -31,7 +31,7 @@ public:
    * behaviour but it is not true for its child classes (for example, in
    * Sequence). */
   virtual void tidy() { model()->tidy(); }
-  virtual Ion::Storage::Record::ErrorStatus setContent(const char * c) { return editableModel()->setContent(this, c); }
+  Ion::Storage::Record::ErrorStatus setContent(const char * c) { return editableModel()->setContent(this, c, symbol(), unknownSymbol()); }
   Ion::Storage::Record::ErrorStatus setExpressionContent(Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
 protected:
   bool isCircularlyDefined(Poincare::Context * context) const { return model()->isCircularlyDefined(this, context); }

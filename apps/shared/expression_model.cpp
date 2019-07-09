@@ -20,11 +20,14 @@ ExpressionModel::ExpressionModel() :
 {
 }
 
-void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize) const {
+void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol, CodePoint unknownSymbol) const {
   Expression e = expressionClone(record);
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
+    if (symbol != 0 && !e.isUninitialized()) {
+      e = e.replaceUnknown(Symbol::Builder(unknownSymbol), Symbol::Builder(symbol));
+    }
     e.serialize(buffer, bufferSize);
   }
 }

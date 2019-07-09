@@ -1,3 +1,5 @@
+include scripts/targets.device.$(MODEL).mak
+
 executables += flasher.light flasher.verbose bench.RAM bench.flash
 extensions = dfu hex bin
 
@@ -111,5 +113,3 @@ binpack:
 	cd build && for binary in flasher.light.bin bench.flash.bin bench.ram.bin epsilon.internal.bin epsilon.external.bin; do shasum -a 256 -b binpack/$${binary} > binpack/$${binary}.sha256;done
 	cd build && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.tgz binpack
 	rm -rf build/binpack
-
-include scripts/targets.device.$(MODEL).mak

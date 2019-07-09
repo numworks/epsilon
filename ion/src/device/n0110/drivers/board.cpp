@@ -229,7 +229,7 @@ void initClocks() {
   class RCC::APB2ENR apb2enr(0); // Reset value
   apb2enr.setADC1EN(true);
   apb2enr.setSYSCFGEN(true);
-  apb2enr.setUSART6EN(true); // TODO if EPSILON_DEVICE_BENCH?
+  apb2enr.setUSART6EN(true); // TODO required if building bench target only?
   RCC.APB2ENR()->set(apb2enr);
 
   // Configure clocks in sleep mode

@@ -112,6 +112,7 @@ SECTIONS {
     /* 'start' dependencies */
     *(.rodata._ZN3Ion6Device4RegsL5GPIOAE)
     *(.rodata._ZN3Ion6Device4RegsL5GPIOBE)
+    *(.rodata._ZN3Ion6Device5Board4initEv.str1.4)
   } >INTERNAL_FLASH
 
   /* External flash memory */

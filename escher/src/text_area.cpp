@@ -21,7 +21,7 @@ TextArea::TextArea(Responder * parentResponder, View * contentView, const KDFont
 
 static inline void InsertSpacesAtLocation(int spacesCount, char * buffer, int bufferSize) {
   assert(buffer != nullptr);
-  assert(strlen(buffer) + spacesCount < bufferSize);
+  assert((int)(strlen(buffer) + spacesCount) < bufferSize);
 
   size_t sizeToMove = strlen(buffer) + 1;
   size_t spaceCharSize = UTF8Decoder::CharSizeOfCodePoint(' ');

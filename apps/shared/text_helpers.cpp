@@ -11,7 +11,7 @@ void PadWithSpaces(char * buffer, int bufferSize, int * currentNumberOfChar, int
   size_t currentGlyphLength = UTF8Helper::StringGlyphLength(buffer, *currentNumberOfChar);
   bool addedPadding = false;
   assert(UTF8Decoder::CharSizeOfCodePoint(' ') == 1);
-  while (currentGlyphLength < maxGlyphLengthWithPadding && *currentNumberOfChar < bufferSize) {
+  while ((int)currentGlyphLength < maxGlyphLengthWithPadding && *currentNumberOfChar < bufferSize) {
     *currentNumberOfChar = *currentNumberOfChar + UTF8Decoder::CodePointToChars(' ', buffer + *currentNumberOfChar, bufferSize - *currentNumberOfChar);
     addedPadding = true;
     currentGlyphLength++;

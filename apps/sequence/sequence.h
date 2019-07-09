@@ -38,7 +38,6 @@ public:
   void setInitialRank(int rank);
   // Definition
   Poincare::Layout definitionName() { return m_definition.name(this); }
-  Ion::Storage::Record::ErrorStatus setContent(const char * c) override { return editableModel()->setContent(this, c, Symbol(), UCodePointUnknownN); }
   // First initial condition
   Poincare::Layout firstInitialConditionName() { return m_firstInitialCondition.name(this); }
   void firstInitialConditionText(char * buffer, size_t bufferSize) const { return m_firstInitialCondition.text(this, buffer, bufferSize); }

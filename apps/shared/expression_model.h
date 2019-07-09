@@ -12,7 +12,7 @@ public:
   ExpressionModel();
 
   // Getters
-  void text(const Ion::Storage::Record * record, char * buffer, size_t bufferSize) const;
+  void text(const Ion::Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol = 0, CodePoint unknownSymbol = 0) const;
   Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
   Poincare::Expression expressionClone(const Ion::Storage::Record * record) const;
   Poincare::Layout layout(const Ion::Storage::Record * record) const;

@@ -219,17 +219,6 @@ void ExpressionModelListController::reinitSelectedExpression(ExpiringPointer<Exp
   selectableTableView()->reloadData();
 }
 
-void ExpressionModelListController::replaceUnknownSymbolWithReadableSymbol(char * text) {
-  size_t textLength = strlen(text);
-  char unknownSymb = modelStore()->unknownSymbol();
-  char symb = modelStore()->symbol();
-  for (size_t i = 0; i < textLength; i++) {
-    if (unknownSymb != 0 && text[i] == unknownSymb) {
-      text[i] = symb;
-    }
-  }
-}
-
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   char * initialText = nullptr;
   constexpr int initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
@@ -239,8 +228,6 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
     model->text(initialTextContent, initialTextContentMaxSize);
     initialText = initialTextContent;
-    // Replace UCodePointUnknownX with 'x'
-    replaceUnknownSymbolWithReadableSymbol(initialTextContent);
   }
   inputController()->edit(this, event, this, initialText,
       [](void * context, void * sender){

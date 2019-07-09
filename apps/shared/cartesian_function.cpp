@@ -69,7 +69,7 @@ int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSi
   // Fill buffer with f(x). Keep size for derivative sign.
   int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
   int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize, arg);
-  assert(numberOfChars + derivativeSize < bufferSize);
+  assert(numberOfChars + derivativeSize < (int)bufferSize);
   char * firstParenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
   if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {
     return numberOfChars;

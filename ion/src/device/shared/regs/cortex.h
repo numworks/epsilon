@@ -37,7 +37,7 @@ public:
   class VTOR : Register32 {
   public:
     void setVTOR(void *address) volatile {
-      assert(address & 0xC00001FF == 0);
+      assert(((uint32_t)address & 0xC00001FF) == 0);
       setBitRange(29, 9, (uint32_t)address >> 9); }
   };
 

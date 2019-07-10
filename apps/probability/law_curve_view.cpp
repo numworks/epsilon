@@ -21,9 +21,7 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_law->type() == Law::Type::Normal) {
     // Special case for the normal law, which has always the same curve
-    float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, lowerBound));
-    float pixelColorUpperBound = std::round(floatToPixel(Axis::Horizontal, upperBound));
-    drawStandardNormal(ctx, rect, pixelColorLowerBound, pixelColorUpperBound);
+    drawStandardNormal(ctx, rect, lowerBound, upperBound);
     return;
   }
   if (m_law->isContinuous()) {
@@ -53,7 +51,7 @@ void LawCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorL
   // Draw a centered reduced normal curve
   NormalLaw n;
   constCastedThis->setCurveViewRange(&n);
-  drawCurve(ctx, rect, EvaluateAtAbscissa, &n, nullptr, Palette::YellowDark, true, pixelToFloat(Axis::Horizontal, colorLowerBound), pixelToFloat(Axis::Horizontal, colorUpperBound), true);
+  drawCurve(ctx, rect, EvaluateAtAbscissa, &n, nullptr, Palette::YellowDark, true, colorLowerBound, colorUpperBound, true);
 
   // Put back the previous curve view range
   constCastedThis->setCurveViewRange(previousRange);

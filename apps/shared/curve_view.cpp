@@ -12,6 +12,9 @@ namespace Shared {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, View * okView, bool displayBanner) :
   View(),
@@ -505,9 +508,6 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
 
-  float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, colorLowerBound));
-  float pixelColorUpperBound = std::round(floatToPixel(Axis::Horizontal, colorUpperBound));
-
   for (float x = rectMin; x < rectMax; x += xStep) {
     /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
      * the infinite loop. */
@@ -518,15 +518,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     if (std::isnan(y)|| std::isinf(y)) {
       continue;
     }
+    if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
+      drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
+    }
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
-    if (colorUnderCurve && pxf > pixelColorLowerBound && pxf < pixelColorUpperBound) {
-      KDRect colorRect((int)pxf, std::round(pyf), 1, std::round(floatToPixel(Axis::Vertical, 0.0f)) - std::round(pyf));
-      if (floatToPixel(Axis::Vertical, 0.0f) < std::round(pyf)) {
-        colorRect = KDRect((int)pxf, std::round(floatToPixel(Axis::Vertical, 0.0f)), 1, std::round(pyf) - std::round(floatToPixel(Axis::Vertical, 0.0f)));
-      }
-      ctx->fillRect(colorRect, color);
-    }
     stampAtLocation(ctx, rect, pxf, pyf, color);
     if (x <= rectMin || std::isnan(evaluation(x-xStep, model, context))) {
       continue;

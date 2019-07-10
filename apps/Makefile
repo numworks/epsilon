@@ -30,8 +30,11 @@ app_src += $(addprefix apps/,\
   variable_box_empty_controller.cpp \
 )
 
-apps_launch_on_boarding_src = apps/apps_container_launch_on_boarding.cpp
-apps_launch_default_src = apps/apps_container_launch_default.cpp
+apps_launch_on_boarding_src += apps/apps_container_launch_on_boarding.cpp
+apps_launch_default_src += apps/apps_container_launch_default.cpp
+apps_prompt_none_src += apps/apps_container_prompt_none.cpp
+apps_prompt_beta_src += apps/apps_container_prompt_beta.cpp
+apps_prompt_update_src += apps/apps_container_prompt_update.cpp
 
 snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
 apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
@@ -92,7 +95,7 @@ epsilon_src += $(addprefix apps/, \
   i18n.py \
 )
 
-all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src)
+all_app_src = $(app_src) $(epsilon_src) $(apps_launch_on_boarding_src) $(apps_launch_default_src) $(apps_prompt_none_src) $(apps_container_prompt_update) $(apps_prompt_beta_src)
 
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(all_app_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h

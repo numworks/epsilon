@@ -8,8 +8,6 @@
 
 namespace OnBoarding {
 
-#ifdef EPSILON_BOOT_PROMPT
-
 class PopUpController : public ViewController {
 public:
   PopUpController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
@@ -32,8 +30,6 @@ private:
   };
   MessageViewWithSkip m_messageViewWithSkip;
 };
-
-#endif
 
 }
 

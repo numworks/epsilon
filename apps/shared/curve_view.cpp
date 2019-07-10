@@ -573,9 +573,17 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
 }
 
 void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
+  float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
+  float puf = floatToPixel(Axis::Horizontal, u);
   float pvf = floatToPixel(Axis::Vertical, v);
   if (std::isnan(pyf) || std::isnan(pvf)) {
+    return;
+  }
+  const float deltaX = pxf - puf;
+  const float deltaY = pyf - pvf;
+  if (deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
+    // the dots are already joined
     return;
   }
   // No need to draw if both dots are outside visible area
@@ -589,21 +597,12 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   if (std::isinf(pvf)) {
     pvf = pvf > 0 ? m_frame.height()+stampSize : -stampSize;
   }
-  if (pyf - ((float)circleDiameter)/2.0f < pvf && pvf < pyf + ((float)circleDiameter)/2.0f) {
-    // the dots are already joined
-    return;
-  }
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
   float cy = evaluation(cx, model, context);
   if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */
-    float pxf = floatToPixel(Axis::Horizontal, x);
-    float puf = floatToPixel(Axis::Horizontal, u);
-    if (std::isnan(pxf) || std::isnan(puf)) {
-      return;
-    }
     straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
     return;
   }

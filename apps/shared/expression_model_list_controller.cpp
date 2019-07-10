@@ -19,8 +19,12 @@ ExpressionModelListController::ExpressionModelListController(Responder * parentR
 void ExpressionModelListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   int currentSelectedRow = selectedRow();
 
-  // Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down
-  if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedCellY + 1) {
+  /* Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down.
+   * We want previousSelectedCellY >= 0 and currentSelectedRow >= 0 to ensure
+   * that a cell is selected before and after the change.
+   * (previousSelectedCellY >= 0 condition is enough as
+   * currentSelectedRow > previousSelectedCellY) */
+  if (previousSelectedCellY >= 0 && currentSelectedRow == previousSelectedCellY + 1) {
     /* We selected the cell under the previous cell. Shift the memoized cell
      * heights. */
     shiftMemoization(true);
@@ -32,6 +36,8 @@ void ExpressionModelListController::tableViewDidChangeSelection(SelectableTableV
       assert(currentSelectedRow == 0);
       m_cumulatedHeightForSelectedIndex = 0;
     }
+  /* We ensure that a cell is selected before and after the selection change by
+   * checking that previousSelectedCellY > currentSelectedRow >= 0. */
   } else if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedCellY - 1) {
     /* We selected the cell above the previous cell. Shift the memoized cell
      * heights. */

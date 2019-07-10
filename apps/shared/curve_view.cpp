@@ -578,17 +578,6 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     stampAtLocation(ctx, rect, puf, pvf, color);
     return;
   }
-  // No need to draw if both dots are outside visible area
-  if ((pyf < -stampSize && pvf < -stampSize) || (pyf > m_frame.height()+stampSize && pvf > m_frame.height()+stampSize)) {
-    return;
-  }
-  // If one of the dot is infinite, we cap it with a dot outside area
-  if (std::isinf(pyf)) {
-    pyf = pyf > 0 ? m_frame.height()+stampSize : -stampSize;
-  }
-  if (std::isinf(pvf)) {
-    pvf = pvf > 0 ? m_frame.height()+stampSize : -stampSize;
-  }
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
   float cy = evaluation(cx, model, context);
@@ -604,7 +593,46 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   }
 }
 
+static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, const KDCoordinate * bounds, const float p1f, const float p2f) {
+  static constexpr int lower = 0;
+  static constexpr int upper = 1;
+  if (p1f == p2f) {
+    if (p1f < bounds[lower] || bounds[upper] < p1f) {
+      start = 1;
+      end = 0;
+    }
+  } else {
+    start = maxFloat(start, (bounds[(p1f > p2f) ? lower : upper] - p2f)/(p1f-p2f));
+    end   = minFloat( end , (bounds[(p1f > p2f) ? upper : lower] - p2f)/(p1f-p2f));
+  }
+}
+
 void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const {
+  {
+    /* Before drawing the line segment, clip it to rect:
+     * start and end are the barycentric coordinates on the line segment (0
+     * corresponding to (u, v) and 1 to (x, y)), of the drawing start and end
+     * points. */
+    float start = 0;
+    float end   = 1;
+    const KDCoordinate xBounds[2] = {
+      static_cast<KDCoordinate>(rect.left() - stampSize),
+      static_cast<KDCoordinate>(rect.right() + stampSize)
+    };
+    const KDCoordinate yBounds[2] = {
+      static_cast<KDCoordinate>(rect.top() - stampSize),
+      static_cast<KDCoordinate>(rect.bottom() + stampSize)
+    };
+    clipBarycentricCoordinatesBetweenBounds(start, end, xBounds, pxf, puf);
+    clipBarycentricCoordinatesBetweenBounds(start, end, yBounds, pyf, pvf);
+    if (start > end) {
+      return;
+    }
+    puf = start * pxf + (1-start) * puf;
+    pvf = start * pyf + (1-start) * pvf;
+    pxf =  end  * pxf + (1- end ) * puf;
+    pyf =  end  * pyf + (1- end ) * pvf;
+  }
   const float deltaX = pxf - puf;
   const float deltaY = pyf - pvf;
   const float normsRatio = std::sqrt(deltaX*deltaX + deltaY*deltaY) / (circleDiameter / 2.0f);

@@ -7,45 +7,11 @@ using namespace Poincare;
 
 namespace Settings {
 
-const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Radian)};
-const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Message::Edition2D), SettingsMessageTree(I18n::Message::EditionLinear)};
-const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
-const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
-const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
-const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
-
-#ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree menu[9] =
-#else
-const SettingsMessageTree menu[8] =
-#endif
-  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
-    SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
-    SettingsMessageTree(I18n::Message::EditionMode, editionModeChildren, 2),
-    SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 3),
-    SettingsMessageTree(I18n::Message::Brightness),
-    SettingsMessageTree(I18n::Message::Language),
-    SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
-#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
-  SettingsMessageTree(I18n::Message::BetaPopUp),
-#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
-  SettingsMessageTree(I18n::Message::UpdatePopUp),
-#endif
-  SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
-#ifdef EPSILON_BOOT_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
-#else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
-#endif
-
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   ViewController(parentResponder),
-#ifdef EPSILON_BOOT_PROMPT
-  m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
-#endif
   m_brightnessCell(I18n::Message::Default, KDFont::LargeFont),
+  m_popUpCell(I18n::Message::Default, KDFont::LargeFont),
   m_selectableTableView(this),
-  m_messageTreeModel((MessageTree *)&model),
   m_preferencesController(this),
   m_displayModeController(this, inputEventHandlerDelegate),
   m_languageController(this, 13),
@@ -70,13 +36,8 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  if (m_messageTreeModel->children(selectedRow())->numberOfChildren() == 0) {
-#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::BetaPopUp) {
-#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
-#endif
-#ifdef EPSILON_BOOT_PROMPT
+  if (model()->children(selectedRow())->numberOfChildren() == 0) {
+    if (model()->children(selectedRow())->label() == promptMessage()) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
         m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
@@ -84,8 +45,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-#endif
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Brightness) {
+    if (model()->children(selectedRow())->label() == I18n::Message::Brightness) {
       if (event == Ion::Events::Right || event == Ion::Events::Left || event == Ion::Events::Plus || event == Ion::Events::Minus) {
         int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
         int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
@@ -95,7 +55,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       }
       return false;
     }
-    if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::Language) {
+    if (model()->children(selectedRow())->label() == I18n::Message::Language) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
         stackController()->push(&m_languageController);
         return true;
@@ -105,27 +65,19 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     GenericSubController * subController = nullptr;
-    switch (selectedRow()) {
-      case 1:
-        subController = &m_displayModeController;
-        break;
-      case 4:
-      case 5:
-        assert(false);
-      case 6:
-        subController = &m_examModeController;
-        break;
-#ifdef EPSILON_BOOT_PROMPT
-      case 8:
-#else
-      case 7:
-#endif
-        subController = &m_aboutController;
-        break;
-      default:
-        subController = &m_preferencesController;
+    int rowIndex = selectedRow();
+    if (rowIndex == 1) {
+      subController = &m_displayModeController;
+    } else if (rowIndex == 4 || rowIndex == 5) {
+      assert(false);
+    } else if (rowIndex == 6) {
+      subController = &m_examModeController;
+    } else if (rowIndex == 7 + hasPrompt()) {
+      subController = &m_aboutController;
+    } else {
+      subController = &m_preferencesController;
     }
-    subController->setMessageTreeModel(m_messageTreeModel->children(selectedRow()));
+    subController->setMessageTreeModel(model()->children(selectedRow()));
     StackViewController * stack = stackController();
     stack->push(subController);
     return true;
@@ -134,7 +86,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 }
 
 int MainController::numberOfRows() {
-  return m_messageTreeModel->numberOfChildren();
+  return model()->numberOfChildren();
 };
 
 KDCoordinate MainController::rowHeight(int j) {
@@ -156,11 +108,9 @@ HighlightCell * MainController::reusableCell(int index, int type) {
     return &m_cells[index];
   }
   assert(index == 0);
-#ifdef EPSILON_BOOT_PROMPT
   if (type == 2) {
     return &m_popUpCell;
   }
-#endif
   assert(type == 1);
   return &m_brightnessCell;
 }
@@ -176,11 +126,9 @@ int MainController::typeAtLocation(int i, int j) {
   if (j == 4) {
     return 1;
   }
-#ifdef EPSILON_BOOT_PROMPT
-  if (j == 7) {
+  if (hasPrompt() && j == 7) {
     return 2;
   }
-#endif
   return 0;
 }
 
@@ -188,7 +136,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   Preferences * preferences = Preferences::sharedPreferences();
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  myCell->setMessage(m_messageTreeModel->children(index)->label());
+  myCell->setMessage(model()->children(index)->label());
   if (index == 4) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
@@ -200,14 +148,12 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-#ifdef EPSILON_BOOT_PROMPT
-  if (index == 7) {
+  if (hasPrompt() && index == 7) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(globalPreferences->showPopUp());
     return;
   }
-#endif
   MessageTableCellWithChevronAndMessage * myTextCell = (MessageTableCellWithChevronAndMessage *)cell;
   int childIndex = -1;
   switch (index) {
@@ -224,7 +170,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       childIndex = (int)preferences->complexFormat();
       break;
   }
-  I18n::Message message = childIndex >= 0 ? m_messageTreeModel->children(index)->children(childIndex)->label() : I18n::Message::Default;
+  I18n::Message message = childIndex >= 0 ? model()->children(index)->children(childIndex)->label() : I18n::Message::Default;
   myTextCell->setSubtitle(message);
 }
 

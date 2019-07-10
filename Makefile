@@ -31,7 +31,6 @@ endef
 .PHONY: info
 info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
-	@echo "EPSILON_BOOT_PROMPT = $(EPSILON_BOOT_PROMPT)"
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
 
@@ -81,13 +80,15 @@ all_objs = $(call object_for,$(all_src))
 # but allows correct yet optimal incremental builds.
 -include $(all_objs:.o=.d)
 
-executables = epsilon epsilon.on-boarding test
+executables = epsilon epsilon.on-boarding epsilon.on-boarding.update epsilon.on-boarding.beta test
 
 #define platform generic targets
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_default_src))
+$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_default_src) $(apps_prompt_none_src))
 
-$(BUILD_DIR)/epsilon.on-boarding.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src))
+$(BUILD_DIR)/epsilon.on-boarding.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src))
+$(BUILD_DIR)/epsilon.on-boarding.update.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src))
+$(BUILD_DIR)/epsilon.on-boarding.beta.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src))
 
 $(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_for,$(src) $(ion_device_dfu_relocated_src) $(tests) $(runner_src))
 

@@ -4,8 +4,6 @@
 
 namespace OnBoarding {
 
-#ifdef EPSILON_BOOT_PROMPT
-
 PopUpController::MessageViewWithSkip::MessageViewWithSkip(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages) :
   MessageView(messages, colors, numberOfMessages),
   m_skipView(KDFont::SmallFont, I18n::Message::Skip, 1.0f, 0.5f),
@@ -63,7 +61,5 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
-
-#endif
 
 }

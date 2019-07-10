@@ -11,48 +11,6 @@ extern "C" {
 
 using namespace Shared;
 
-#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
-
-static I18n::Message sPromptMessages[] = {
-  I18n::Message::BetaVersion,
-  I18n::Message::BetaVersionMessage1,
-  I18n::Message::BetaVersionMessage2,
-  I18n::Message::BetaVersionMessage3,
-  I18n::Message::BlankMessage,
-  I18n::Message::BetaVersionMessage4,
-  I18n::Message::BetaVersionMessage5,
-  I18n::Message::BetaVersionMessage6};
-
-static KDColor sPromptColors[] = {
-  KDColorBlack,
-  KDColorBlack,
-  KDColorBlack,
-  KDColorBlack,
-  KDColorWhite,
-  KDColorBlack,
-  KDColorBlack,
-  Palette::YellowDark};
-
-#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
-
-static I18n::Message sPromptMessages[] = {
-  I18n::Message::UpdateAvailable,
-  I18n::Message::UpdateMessage1,
-  I18n::Message::UpdateMessage2,
-  I18n::Message::BlankMessage,
-  I18n::Message::UpdateMessage3,
-  I18n::Message::UpdateMessage4};
-
-static KDColor sPromptColors[] = {
-  KDColorBlack,
-  KDColorBlack,
-  KDColorBlack,
-  KDColorWhite,
-  KDColorBlack,
-  Palette::YellowDark};
-
-#endif
-
 AppsContainer * AppsContainer::sharedAppsContainer() {
   static AppsContainerStorage appsContainerStorage;
   return &appsContainerStorage;
@@ -65,11 +23,7 @@ AppsContainer::AppsContainer() :
   m_globalContext(),
   m_variableBoxController(),
   m_examPopUpController(this),
-#if EPSILON_BOOT_PROMPT == EPSILON_BETA_PROMPT
-  m_promptController(sPromptMessages, sPromptColors, 8),
-#elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
-  m_promptController(sPromptMessages, sPromptColors, 6),
-#endif
+  m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages),
   m_batteryTimer(),
   m_suspendTimer(),
   m_backlightDimmingTimer(),
@@ -137,11 +91,10 @@ VariableBoxController * AppsContainer::variableBoxController() {
 void AppsContainer::suspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-#ifdef EPSILON_BOOT_PROMPT
-  if (s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
-    s_activeApp->displayModalViewController(&m_promptController, 0.f, 0.f);
+  // Display the prompt if it has a message to display
+  if (promptController() != nullptr && s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
+    s_activeApp->displayModalViewController(promptController(), 0.f, 0.f);
   }
-#endif
   Ion::Power::suspend(checkIfOnOffKeyReleased);
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
@@ -352,11 +305,12 @@ bool AppsContainer::updateAlphaLock() {
   return m_window.updateAlphaLock();
 }
 
-#ifdef EPSILON_BOOT_PROMPT
 OnBoarding::PopUpController * AppsContainer::promptController() {
+  if (k_promptNumberOfMessages == 0) {
+    return nullptr;
+  }
   return &m_promptController;
 }
-#endif
 
 void AppsContainer::redrawWindow() {
   m_window.redraw();

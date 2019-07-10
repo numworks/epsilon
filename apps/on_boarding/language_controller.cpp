@@ -12,11 +12,11 @@ LanguageController::LanguageController(Responder * parentResponder) :
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (Shared::LanguageController::handleEvent(event)) {
     AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-#ifdef EPSILON_BOOT_PROMPT
-    Container::activeApp()->displayModalViewController(appsContainer->promptController(), 0.5f, 0.5f);
-#else
-    appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
-#endif
+    if (appsContainer->promptController()) {
+      Container::activeApp()->displayModalViewController(appsContainer->promptController(), 0.5f, 0.5f);
+    } else {
+      appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
+    }
     return true;
   }
   if (event == Ion::Events::Back) {

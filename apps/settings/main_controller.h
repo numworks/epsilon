@@ -27,18 +27,15 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:
+  static const SettingsMessageTree * model();
   StackViewController * stackController() const;
-#ifdef EPSILON_BOOT_PROMPT
-  constexpr static int k_totalNumberOfCell = 9;
-  MessageTableCellWithSwitch m_popUpCell;
-#else
-  constexpr static int k_totalNumberOfCell = 8;
-#endif
+  I18n::Message promptMessage() const;
+  bool hasPrompt() const { return promptMessage() != I18n::Message::Default; }
   constexpr static int k_numberOfSimpleChevronCells = 7;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGauge m_brightnessCell;
+  MessageTableCellWithSwitch m_popUpCell;
   SelectableTableView m_selectableTableView;
-  MessageTree * m_messageTreeModel;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LanguageController m_languageController;

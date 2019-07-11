@@ -1,7 +1,9 @@
-app_src += $(addprefix apps/usb/,\
+app_usb_src = $(addprefix apps/usb/,\
   app.cpp \
   usb_connected_controller.cpp \
 )
+
+app_src += $(app_usb_src)
 
 i18n_files += $(addprefix apps/usb/,\
   base.de.i18n\

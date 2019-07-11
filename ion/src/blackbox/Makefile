@@ -1,11 +1,11 @@
-src += $(addprefix ion/src/blackbox/, \
+ion_src += $(addprefix ion/src/blackbox/, \
   boot.cpp \
   ion.cpp \
   display.cpp \
   events.cpp \
 )
 
-src += $(addprefix ion/src/shared/, \
+ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   console_stdio.cpp \
   crc32.cpp \

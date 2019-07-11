@@ -1,4 +1,4 @@
-app_src += $(addprefix apps/shared/,\
+app_shared_src = $(addprefix apps/shared/,\
   banner_view.cpp \
   buffer_function_title_cell.cpp \
   buffer_text_view_with_text_field.cpp \
@@ -74,3 +74,5 @@ app_src += $(addprefix apps/shared/,\
   xy_banner_view.cpp\
   zoom_parameter_controller.cpp \
 )
+
+app_src += $(app_shared_src)

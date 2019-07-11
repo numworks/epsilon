@@ -1,12 +1,12 @@
-src += $(addprefix ion/src/simulator/, \
+ion_src += $(addprefix ion/src/simulator/, \
   init.cpp \
 )
 
-src += $(addprefix ion/src/simulator/boot/, main.cpp)
-src += $(addprefix ion/src/simulator/display/, fltklcd.cpp)
-src += $(addprefix ion/src/simulator/keyboard/, fltkkbd.cpp)
+ion_src += $(addprefix ion/src/simulator/boot/, main.cpp)
+ion_src += $(addprefix ion/src/simulator/display/, fltklcd.cpp)
+ion_src += $(addprefix ion/src/simulator/keyboard/, fltkkbd.cpp)
 
-src += $(addprefix ion/src/shared/, \
+ion_src += $(addprefix ion/src/shared/, \
   crc32.cpp \
   console_line.cpp \
   console_stdio.cpp \

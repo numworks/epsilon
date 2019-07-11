@@ -84,13 +84,14 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     range.max = xMax;
     return range;
   }
+  float step = (xMax - xMin) / curveView()->resolution();
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    float res = curveView()->resolution();
     /* Scan x-range from the middle to the extrema in order to get balanced
      * y-range for even functions (y = 1/x). */
-    for (int j = -res/2; j <= res/2; j++) {
-      float x = (xMin+xMax)/2.0+(xMax-xMin)*j/res;
+    const int balancedBound = std::floor((xMax-xMin)/2/step);
+    for (int j = -balancedBound; j <= balancedBound ; j++) {
+      float x = (xMin+xMax)/2 + step * j;
       float y = f->evaluateAtAbscissa(x, context);
       if (!std::isnan(y) && !std::isinf(y)) {
         min = min < y ? min : y;

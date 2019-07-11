@@ -87,8 +87,8 @@ void CurveView::setOkView(View * okView) {
   layoutSubviews();
 }
 
-float CurveView::resolution() const {
-  return bounds().width();
+const float CurveView::pixelWidth() const {
+  return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / m_frame.width();
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
@@ -498,9 +498,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 constexpr static int k_maxNumberOfIterations = 10;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
-  float xMin = min(Axis::Horizontal);
-  float xMax = max(Axis::Horizontal);
-  float xStep = (xMax-xMin)/resolution();
+  const float xStep = pixelWidth();
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
 
@@ -543,7 +541,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   float pHighlightLowerBound = floatToPixel(Axis::Horizontal, highlightLowerBound);
   float pHighlightUpperBound = floatToPixel(Axis::Horizontal, highlightUpperBound);
-  float step = std::fmax(barWidth, (curveViewRange()->xMax() - curveViewRange()->xMin())/resolution());
+  const float step = std::fmax(barWidth, pixelWidth());
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
     /* When |rectMinLowerBound| >> step, rectMinLowerBound + step = rectMinLowerBound.
      * In that case, quit the infinite loop. */

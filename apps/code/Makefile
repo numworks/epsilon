@@ -1,7 +1,7 @@
 apps += Code::App
 app_headers += apps/code/app.h
 
-app_src += $(addprefix apps/code/,\
+app_code_src = $(addprefix apps/code/,\
   app.cpp \
   console_controller.cpp \
   console_edit_cell.cpp \
@@ -22,6 +22,8 @@ app_src += $(addprefix apps/code/,\
   script_template.cpp \
   variable_box_controller.cpp \
 )
+
+app_src += $(app_code_src)
 
 i18n_files += $(addprefix apps/code/,\
   base.de.i18n\

@@ -1,6 +1,6 @@
 SFLAGS += -Ipoincare/include
 
-src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/,\
   binomial_coefficient_layout.cpp \
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
@@ -28,13 +28,13 @@ src += $(addprefix poincare/src/,\
   vertical_offset_layout.cpp \
 )
 
-src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/,\
   init.cpp \
   exception_checkpoint.cpp \
   helpers.cpp \
 )
 
-src += $(addprefix poincare/src/,\
+poincare_src += $(addprefix poincare/src/,\
   absolute_value.cpp \
   addition.cpp \
   approximation_helper.cpp \
@@ -131,12 +131,12 @@ src += $(addprefix poincare/src/,\
   variable_context.cpp \
 )
 
-src += $(addprefix poincare/src/parsing/,\
+poincare_src += $(addprefix poincare/src/parsing/,\
   parser.cpp \
   tokenizer.cpp \
 )
 
-tests += $(addprefix poincare/test/,\
+tests_src += $(addprefix poincare/test/,\
   tree/tree_handle.cpp\
   tree/helpers.cpp\
   addition.cpp\
@@ -183,8 +183,8 @@ tests += $(addprefix poincare/test/,\
 #  simplify_utils.cpp\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
-tests += poincare/src/expression_debug.o
-src += poincare/src/expression_debug.cpp
+tests_src += poincare/src/expression_debug.o
+poincare_src += poincare/src/expression_debug.cpp
 SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
 endif
 

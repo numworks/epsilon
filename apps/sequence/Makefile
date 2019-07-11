@@ -1,7 +1,7 @@
 apps += Sequence::App
 app_headers += apps/sequence/app.h
 
-app_src += $(addprefix apps/sequence/,\
+app_sequence_src = $(addprefix apps/sequence/,\
   app.cpp \
   graph/curve_parameter_controller.cpp \
   graph/curve_view_range.cpp \
@@ -22,6 +22,8 @@ app_src += $(addprefix apps/sequence/,\
   sequence_title_cell.cpp \
 )
 
+app_src += $(app_sequence_src)
+
 i18n_files += $(addprefix apps/sequence/,\
   base.de.i18n\
   base.en.i18n\
@@ -30,7 +32,7 @@ i18n_files += $(addprefix apps/sequence/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/sequence/test/,\
+tests_src += $(addprefix apps/sequence/test/,\
   sequence.cpp\
 )
 

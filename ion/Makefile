@@ -12,6 +12,7 @@ endif
 SFLAGS += -Iion/include/ion/keyboard/$(ION_KEYBOARD_LAYOUT)
 
 include ion/src/$(PLATFORM)/Makefile
+-include ion/test/$(PLATFORM)/Makefile
 include ion/src/shared/tools/Makefile
 
 # We need to work around a GCC bug (concerning versions < 5.1). It is valid in
@@ -41,10 +42,6 @@ tests += $(addprefix ion/test/,\
   utf8_decoder.cpp\
   utf8_helper.cpp\
 )
-
-TEST_EXT_FLASH_REPROGRAM ?= 0
-SFLAGS += -DTEST_EXT_FLASH_REPROGRAM=$(TEST_EXT_FLASH_REPROGRAM)
-external_flash_tests += ion/test/external_flash.cpp
 
 ifdef ION_STORAGE_LOG
 SFLAGS += -DION_STORAGE_LOG=1

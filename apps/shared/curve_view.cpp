@@ -551,10 +551,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   float pHighlightLowerBound = floatToPixel(Axis::Horizontal, highlightLowerBound);
   float pHighlightUpperBound = floatToPixel(Axis::Horizontal, highlightUpperBound);
-  float step = barWidth;
-  if ((rectMaxUpperBound-rectMinLowerBound)/step > resolution()) {
-    step = (rectMaxUpperBound-rectMinLowerBound)/resolution();
-  }
+  float step = std::fmax(barWidth, (curveViewRange()->xMax() - curveViewRange()->xMin())/resolution());
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
     /* When |rectMinLowerBound| >> step, rectMinLowerBound + step = rectMinLowerBound.
      * In that case, quit the infinite loop. */

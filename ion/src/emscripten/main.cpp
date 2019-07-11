@@ -1,8 +1,8 @@
 #include <ion.h>
 #include "display.h"
 #include "events_keyboard.h"
-#include "../../../apps/global_preferences.h"
 #include <emscripten.h>
+#include <stdlib.h>
 
 extern "C" {
 const char * IonSoftwareVersion();

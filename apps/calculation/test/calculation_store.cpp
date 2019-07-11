@@ -77,8 +77,6 @@ void assertCalculationDisplay(const char * input, ::Calculation::Calculation::Di
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
-    constexpr int bufferSize = 500;
-    char buffer[bufferSize];
     quiz_assert(strcmpWithSystemParentheses(lastCalculation->exactOutputText(), exactOutput) == 0);
   }
   if (approximateOutput) {

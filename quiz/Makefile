@@ -4,13 +4,13 @@ QUIZ_USE_CONSOLE ?= 0
 $(call object_for,quiz/src/runner.cpp): SFLAGS += -DQUIZ_USE_CONSOLE=$(QUIZ_USE_CONSOLE)
 
 define rule_for_quiz_symbols
-$$(BUILD_DIR)/quiz/src/$(1)_symbols.c: $$($(1)) | $$$$(@D)/.
+$$(BUILD_DIR)/quiz/src/$(subst _src,,$(1))_symbols.c: $$($(1)) | $$$$(@D)/.
 	@ echo "AWK     $$@"
 	$$(Q) awk -f quiz/src/symbols.awk $$($(1)) > $$@
 endef
 
 $(eval $(call rule_for_quiz_symbols,tests))
-$(eval $(call rule_for_quiz_symbols,external_flash_tests))
+$(eval $(call rule_for_quiz_symbols,test_ion_external_flash_src))
 
 runner_src += $(addprefix quiz/src/, \
   assertions.cpp \

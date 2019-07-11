@@ -178,5 +178,3 @@ $(eval $(call rule_for, \
 ))
 
 $(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
-
-src += $(python_src)

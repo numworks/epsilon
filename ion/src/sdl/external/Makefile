@@ -100,4 +100,4 @@ include ion/src/sdl/external/config.$(MODEL).mak
 
 $(call object_for,$(sdl_src)): SFLAGS += $(SDL_SFLAGS)
 
-src += $(sdl_src)
+ion_src += $(sdl_src)

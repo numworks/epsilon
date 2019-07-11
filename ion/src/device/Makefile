@@ -6,7 +6,7 @@ include ion/src/device/$(MODEL)/Makefile
 
 $(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
-src += $(addprefix ion/src/shared/, \
+ion_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   events_keyboard.cpp \
   events_modifier.cpp \
@@ -20,7 +20,7 @@ src += $(addprefix ion/src/shared/, \
 ION_DEVICE_SFLAGS = -Iion/src/device/$(MODEL) -Iion/src/device/shared
 
 $(call object_for,$(ion_device_src) $(dfu_src) $(flasher_src) $(usb_src) $(bench_src) $(ion_device_dfu_xip_src) $(ion_device_dfu_relocated_src)): SFLAGS += $(ION_DEVICE_SFLAGS)
-src += $(ion_device_src)
+ion_src += $(ion_device_src)
 
 # When using the register.h C++ file in production mode, we expect the compiler
 # to completely inline all bit manipulations. For some reason, if we build using

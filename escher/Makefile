@@ -1,6 +1,6 @@
 SFLAGS += -Iescher/include
 
-src += $(addprefix escher/src/,\
+escher_src += $(addprefix escher/src/,\
   alternate_empty_view_controller.cpp \
   app.cpp \
   bank_view_controller.cpp \
@@ -114,5 +114,5 @@ $(eval $(call rule_for, \
 define depends_on_image
 $(call object_for,$(1)): $(call object_for,$(2))
 $(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
-src += $(2)
+escher_src += $(2)
 endef

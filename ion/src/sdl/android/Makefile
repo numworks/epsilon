@@ -1,4 +1,4 @@
-src += $(addprefix ion/src/sdl/android/src/cpp/, \
+ion_src += $(addprefix ion/src/sdl/android/src/cpp/, \
   images.cpp \
   language.cpp \
   telemetry.cpp \

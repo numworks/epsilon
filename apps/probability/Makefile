@@ -1,7 +1,7 @@
 apps += Probability::App
 app_headers += apps/probability/app.h
 
-app_src += $(addprefix apps/probability/,\
+app_probability_src = $(addprefix apps/probability/,\
   app.cpp \
   calculation/calculation.cpp \
   calculation/discrete_calculation.cpp \
@@ -27,6 +27,8 @@ app_src += $(addprefix apps/probability/,\
   responder_image_cell.cpp \
 )
 
+app_src += $(app_probability_src)
+
 i18n_files += $(addprefix apps/probability/,\
   base.de.i18n\
   base.en.i18n\
@@ -35,7 +37,7 @@ i18n_files += $(addprefix apps/probability/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/probability/test/,\
+tests_src += $(addprefix apps/probability/test/,\
   erf_inv.cpp\
 )
 

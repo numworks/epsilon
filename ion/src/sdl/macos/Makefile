@@ -1,3 +1,3 @@
-src += $(addprefix ion/src/sdl/macos/, \
+ion_src += $(addprefix ion/src/sdl/macos/, \
   images.m \
 )

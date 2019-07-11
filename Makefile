@@ -48,9 +48,9 @@ $(BUILD_DIR)%/.:
 # To make objects dependent on their directory, we need a second expansion
 .SECONDEXPANSION:
 
-# Each sub-Makefile can either add sources to the $(src) variable or define a
-# new executable target. The $(src) variable lists the sources that will be
-# built and linked to every executable being generated.
+# Each sub-Makefile can either add sources to $(%_src) variables or define a
+# new executable target. The $(%_src) variables list the sources that can be
+# built and linked to executables being generated.
 
 ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
@@ -70,7 +70,7 @@ include scripts/struct_layout/Makefile
 include scripts/scenario/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
-all_src = src ion_device_dfu_relocated_src ion_device_dfu_xip flasher_src bench_src epsilon_src runner_src tests
+all_src = app_src escher_src ion_src kandinsky_src liba_src libaxx_src poincare_src python_src ion_device_dfu_relocated_src ion_device_dfu_xip epsilon_src runner_src flasher_src bench_src tests_src
 all_objs = $(call object_for,$(all_src))
 .SECONDARY: $(all_objs)
 
@@ -83,14 +83,15 @@ all_objs = $(call object_for,$(all_src))
 executables = epsilon epsilon.on-boarding epsilon.on-boarding.update epsilon.on-boarding.beta test
 
 #define platform generic targets
+all_epsilon_common_src = $(ion_src) $(liba_src) $(kandinsky_src) $(epsilon_src) $(app_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src)
+all_epsilon_default_src = $(all_epsilon_common_src) $(apps_launch_default_src) $(apps_prompt_none_src)
 
-$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_default_src) $(apps_prompt_none_src))
+$(BUILD_DIR)/epsilon.$(EXE): $(call object_for,$(all_epsilon_default_src))
+$(BUILD_DIR)/epsilon.on-boarding.$(EXE): $(call object_for,$(all_epsilon_common_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src))
+$(BUILD_DIR)/epsilon.on-boarding.update.$(EXE): $(call object_for,$(all_epsilon_common_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src))
+$(BUILD_DIR)/epsilon.on-boarding.beta.$(EXE): $(call object_for,$(all_epsilon_common_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src))
 
-$(BUILD_DIR)/epsilon.on-boarding.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src) $(apps_prompt_none_src))
-$(BUILD_DIR)/epsilon.on-boarding.update.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src) $(apps_prompt_update_src))
-$(BUILD_DIR)/epsilon.on-boarding.beta.$(EXE): $(call object_for,$(src) $(epsilon_src) $(ion_device_dfu_relocated_src) $(apps_launch_on_boarding_src) $(apps_prompt_beta_src))
-
-$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_for,$(src) $(ion_device_dfu_relocated_src) $(tests) $(runner_src))
+$(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src) $(tests_src) $(runner_src) $(app_calculation_src) $(app_probability_src) $(app_regression_src) $(app_sequence_src) $(app_shared_src) $(app_statistics_src) $(app_solver_src))
 
 # Load platform-specific targets
 # We include them before the standard ones to give them precedence.

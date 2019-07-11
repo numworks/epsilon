@@ -1,7 +1,7 @@
 apps += Solver::App
 app_headers += apps/solver/app.h
 
-app_src += $(addprefix apps/solver/,\
+app_solver_src = $(addprefix apps/solver/,\
   app.cpp \
   equation_models_parameter_controller.cpp \
   equation.cpp \
@@ -12,6 +12,8 @@ app_src += $(addprefix apps/solver/,\
   solutions_controller.cpp \
 )
 
+app_src += $(app_solver_src)
+
 i18n_files += $(addprefix apps/solver/,\
   base.de.i18n\
   base.en.i18n\
@@ -20,7 +22,7 @@ i18n_files += $(addprefix apps/solver/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/solver/test/,\
+tests_src += $(addprefix apps/solver/test/,\
   equation_store.cpp\
 )
 

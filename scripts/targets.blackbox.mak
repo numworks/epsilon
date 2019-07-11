@@ -1,27 +1,29 @@
 # Compare
 
+# TODO: find a way to use rules define by rule_for instead of redeclaring them (we can't use them now because of the different basenames of the object and the source)
+
 $(BUILD_DIR)/ion/src/blackbox/library_%.o: SFLAGS += -D EPSILON_LIB_PREFIX=$(*F)
-$(BUILD_DIR)/ion/src/blackbox/library_%.o: ion/src/blackbox/library.cpp
+$(BUILD_DIR)/ion/src/blackbox/library_%.o: ion/src/blackbox/library.cpp $(@D)/.
 	@echo "CXX     $@"
 	$(Q) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
-libepsilon_src = $(filter-out $(addprefix ion/src/blackbox/,boot.cpp events.cpp),$(src))
+libepsilon_src = $(filter-out $(addprefix ion/src/blackbox/,boot.cpp events.cpp),$(all_epsilon_default_src))
 
 $(BUILD_DIR)/libepsilon_%.o: LDFLAGS += -exported_symbols_list ion/src/blackbox/lib_export_list.txt
-$(BUILD_DIR)/libepsilon_%.o: $(call object_for,$(libepsilon_src)) $(call object_for,$(app_src)) $(BUILD_DIR)/ion/src/blackbox/library_%.o
+$(BUILD_DIR)/libepsilon_%.o: $(call object_for,$(libepsilon_src)) $(BUILD_DIR)/ion/src/blackbox/library_%.o
 	@echo "LD      $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -r -s -o $@
 
 $(BUILD_DIR)/compare: $(call object_for,ion/src/blackbox/compare.cpp)
 	@echo "LD      $@"
-	$(Q) $(LD) $^ libepsilon_first.o libepsilon_second.o $(LDFLAGS) -L. -o $@
+	$(Q) $(LD) $^ $(BUILD_DIR)/libepsilon_first.o $(BUILD_DIR)/libepsilon_second.o $(LDFLAGS) -L. -o $@
 
 # Integration tests
 
 .PHONY: tests/%.run
 tests/%.run: tests/%.esc epsilon.$(EXE)
 	@echo "RUN     $<"
-	@./epsilon.$(EXE) --logAfter 0 < $< > /dev/null
+	@./build/blackbox/epsilon.$(EXE) --logAfter 0 < $< > /dev/null
 
 .PHONY: tests/%.render
 tests/%.render: tests/%.esc epsilon.$(EXE)
@@ -29,7 +31,7 @@ tests/%.render: tests/%.esc epsilon.$(EXE)
 	@rm -rf tests/$(*F)
 	@mkdir -p tests/$(*F)
 	@rm -f event*.png
-	@./epsilon.$(EXE) --logAfter 0 < $< > /dev/null
+	@./build/blackbox/epsilon.$(EXE) --logAfter 0 < $< > /dev/null
 	@mv event*.png tests/$(*F)
 
 scenarios = $(wildcard tests/*.esc)

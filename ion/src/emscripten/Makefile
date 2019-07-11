@@ -1,10 +1,10 @@
-src += $(addprefix ion/src/emscripten/, \
+ion_src += $(addprefix ion/src/emscripten/, \
   display.cpp \
   events_keyboard.cpp \
   main.cpp \
 )
 
-src += $(addprefix ion/src/shared/, \
+ion_src += $(addprefix ion/src/shared/, \
   crc32.cpp \
   events.cpp \
   events_modifier.cpp \

@@ -86,11 +86,8 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
-  /* The cursor moves by step of at minimum 1. If the windowRange is to large
-   * compared to the resolution, the cursor takes bigger round step to cross
-   * the window in approximatively resolution steps. */
-  double step = std::ceil((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
-  step = step < 1.0 ? 1.0 : step;
+  // The cursor moves by step that is larger than 1 and than a pixel's width.
+  const int step = std::ceil(m_view.pixelWidth());
   double x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;
   if (x < 0.0) {

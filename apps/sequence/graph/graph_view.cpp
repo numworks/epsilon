@@ -14,16 +14,15 @@ GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * 
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
+  /* A dot is drawn at every step where step is larger than 1
+   * and than a pixel's width. */
+  const int step = std::ceil(pixelWidth());
   for (int i = 0; i < m_sequenceStore->numberOfActiveFunctions(); i++) {
     Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
     Sequence * s = m_sequenceStore->modelForRecord(record);;
     float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
     rectXMin = rectXMin < 0 ? 0 : rectXMin;
     float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-    /* We draw a dot at every integer if WindowRange/Resolution < 1. Otherwise,
-     * we draw a dot at every step where step is an integer wider than 1. */
-    float windowRange = curveViewRange()->xMax() - curveViewRange()->xMin();
-    int step = std::ceil(windowRange/resolution());
     for (int x = rectXMin; x < rectXMax; x += step) {
       float y = s->evaluateAtAbscissa((float)x, context());
       if (std::isnan(y)) {

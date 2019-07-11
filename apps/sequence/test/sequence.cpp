@@ -13,6 +13,7 @@ namespace Sequence {
 Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
+  (void) err; // Silence compilation warning about unused variable.
   Ion::Storage::Record record = store->recordAtIndex(store->numberOfModels()-1);
   Sequence * u = store->modelForRecord(record);
   u->setType(type);

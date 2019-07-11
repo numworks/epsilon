@@ -49,7 +49,7 @@ void assert_copy_and_remove_code_point_gives(char * dst, size_t dstSize, const c
   size_t resultLen = strlen(result);
   quiz_assert(dstSize >= resultLen + 1);
   UTF8Helper::CopyAndRemoveCodePoint(dst, dstSize, src, c);
-  for (int i = 0; i <= resultLen; i++) {
+  for (size_t i = 0; i <= resultLen; i++) {
     quiz_assert(dst[i] == result[i]);
   }
 }

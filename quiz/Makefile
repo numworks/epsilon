@@ -10,7 +10,8 @@ $$(BUILD_DIR)/quiz/src/$(subst _src,,$(1))_symbols.c: $$($(1)) | $$$$(@D)/.
 endef
 
 $(eval $(call rule_for_quiz_symbols,tests))
-$(eval $(call rule_for_quiz_symbols,test_ion_external_flash_src))
+$(eval $(call rule_for_quiz_symbols,test_ion_external_flash_write_src))
+$(eval $(call rule_for_quiz_symbols,test_ion_external_flash_read_src))
 
 runner_src += $(addprefix quiz/src/, \
   assertions.cpp \

@@ -180,9 +180,6 @@ tests += $(addprefix poincare/test/,\
   vertical_offset_layout.cpp\
 )
 
-test_objs += $(addprefix poincare/test/, tree/helpers.o)
-test_objs += $(addprefix apps/shared/, global_context.o)
-
 #  simplify_utils.cpp\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS

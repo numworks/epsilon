@@ -36,7 +36,7 @@ public:
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
-  float resolution() const;
+  const float pixelWidth() const;
 protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);

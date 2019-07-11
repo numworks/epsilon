@@ -1,5 +1,5 @@
 # TODO
-src += $(addprefix ion/src/shared/, \
+ion_src += $(addprefix ion/src/shared/, \
   crc32.cpp \
   events.cpp \
   events_keyboard.cpp \
@@ -17,7 +17,7 @@ src += $(addprefix ion/src/shared/, \
   dummy/usb.cpp \
 )
 
-src += $(addprefix ion/src/sdl/shared/, \
+ion_src += $(addprefix ion/src/sdl/shared/, \
   display.cpp \
   events_keyboard_platform.cpp \
   keyboard.cpp \

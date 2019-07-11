@@ -1,7 +1,7 @@
 apps += Regression::App
 app_headers += apps/regression/app.h
 
-app_src += $(addprefix apps/regression/,\
+app_regression_src = $(addprefix apps/regression/,\
   app.cpp \
   banner_view.cpp \
   calculation_controller.cpp \
@@ -21,7 +21,7 @@ app_src += $(addprefix apps/regression/,\
   store_parameter_controller.cpp \
 )
 
-app_src += $(addprefix apps/regression/model/,\
+app_regression_src += $(addprefix apps/regression/model/,\
   cubic_model.cpp \
   exponential_model.cpp \
   linear_model.cpp \
@@ -34,6 +34,8 @@ app_src += $(addprefix apps/regression/model/,\
   trigonometric_model.cpp \
 )
 
+app_src += $(app_regression_src)
+
 i18n_files += $(addprefix apps/regression/,\
   base.de.i18n\
   base.en.i18n\
@@ -43,7 +45,7 @@ i18n_files += $(addprefix apps/regression/,\
   base.universal.i18n\
 )
 
-tests += $(addprefix apps/regression/test/,\
+tests_src += $(addprefix apps/regression/test/,\
   model.cpp\
 )
 

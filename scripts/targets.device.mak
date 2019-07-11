@@ -1,6 +1,6 @@
 include scripts/targets.device.$(MODEL).mak
 
-executables += flasher.light flasher.verbose bench.RAM bench.flash
+executables += flasher.light flasher.verbose bench.ram bench.flash
 extensions = dfu hex bin
 
 $(foreach extension,$(extensions),$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(extension)))))
@@ -24,28 +24,29 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.$(EXE)
 	$(Q) printf "\xFF\xFF\xFF\xFF" >> $@
 
 .PHONY: %_size
-%_size: %.$(EXE)
+%_size: $(BUILD_DIR)/%.$(EXE)
 	@echo "========= BUILD OUTPUT ========"
 	@echo "File:  $<"
 	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
 	@echo "==============================="
 
 .PHONY: %_run
-%_run: %.$(EXE)
+%_run: $(BUILD_DIR)/%.$(EXE)
 	$(GDB) -x scripts/$(PLATFORM)/gdb_script.gdb $<
 
-%.map: %.elf
+$(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 	@echo "LDMAP   $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null
 
 .PHONY: %_memory_map
-%_memory_map: %.map
+%_memory_map: $(BUILD_DIR)/%.map
 	@echo "========== MEMORY MAP ========="
 	$(Q) awk -f scripts/device/memory_map.awk < $<
 	@echo "==============================="
 
+# TODO: update the flash process for N0110
 .PHONY: %_flash
-%_flash: %.bin
+%_flash: $(BUILD_DIR)/%.bin
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press the RESET button the back of your device."
@@ -57,19 +58,21 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.$(EXE)
 openocd:
 	openocd -f scripts/$(PLATFORM)/openocd.$(MODEL).cfg
 
-# The flasher target is defined here because otherwise $(src) has not been
+# The flasher target is defined here because otherwise $(%_src) has not been
 # fully filled
 $(BUILD_DIR)/flasher.%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/flasher
 $(BUILD_DIR)/flasher.%.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
-flasher_objs = $(call object_for,$(src) $(flasher_src) $(ion_device_dfu_xip_src))
+flasher_objs = $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(flasher_src) $(ion_device_dfu_xip_src))
 $(BUILD_DIR)/flasher.light.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_light.o $(flasher_objs)
-$(BUILD_DIR)/flasher.verbose.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_verbose.o  $(flasher_objs)
+$(BUILD_DIR)/flasher.verbose.$(EXE): $(BUILD_DIR)/ion/src/$(PLATFORM)/flasher/display_verbose.o $(flasher_objs)
 
 #TODO Do not build all apps... Put elsewhere?
 $(BUILD_DIR)/bench.ram.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/bench
 $(BUILD_DIR)/bench.ram.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/shared/ram.ld
 $(BUILD_DIR)/bench.flash.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/$(MODEL)/internal_flash.ld
-$(BUILD_DIR)/bench.%.$(EXE): $(call object_for,$(src) $(bench_src) $(ion_device_dfu_xip_src))
+bench_objs = $(call object_for,$(ion_src) $(liba_src) $(kandinsky_src) $(ion_device_dfu_xip_src) $(poincare_src) $(libaxx_src) $(bench_src) $(app_shared_src))
+$(BUILD_DIR)/bench.ram.$(EXE): $(bench_objs)
+$(BUILD_DIR)/bench.flash.$(EXE): $(bench_objs)
 
 .PHONY: %.two_binaries
 %.two_binaries: %.elf

@@ -1,5 +1,5 @@
 $(BUILD_DIR)/epsilon.packed.js: LDFLAGS += --memory-init-file 0
-$(BUILD_DIR)/epsilon.packed.js: $(call object_for,$(src) $(epsilon_src))
+$(BUILD_DIR)/epsilon.packed.js: $(call object_for,$(all_epsilon_default_src))
 
 $(BUILD_DIR)/simulator.zip: $(BUILD_DIR)/epsilon.packed.js
 	@rm -rf $(basename $@)

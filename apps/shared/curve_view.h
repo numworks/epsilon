@@ -41,7 +41,6 @@ protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
-  virtual float samplingRatio() const;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDCoordinate k_okVerticalMargin = 23;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;

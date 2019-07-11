@@ -84,7 +84,7 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     range.max = xMax;
     return range;
   }
-  float step = (xMax - xMin) / curveView()->resolution();
+  float step = (xMax - xMin) / curveView()->resolution() / 2;
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     /* Scan x-range from the middle to the extrema in order to get balanced

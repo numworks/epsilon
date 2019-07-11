@@ -88,11 +88,7 @@ void CurveView::setOkView(View * okView) {
 }
 
 float CurveView::resolution() const {
-  return bounds().width()*samplingRatio();
-}
-
-float CurveView::samplingRatio() const {
-  return 1.1f;
+  return bounds().width();
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {

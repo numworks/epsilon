@@ -133,6 +133,12 @@ clean:
 	@echo "CLEAN"
 	$(Q) rm -rf $(BUILD_DIR)
 
+.PHONY: clean_for_apps_selection
+clean_for_apps_selection:
+	@echo "CLEAN BEFORE CHANGING EPSILON_APPS"
+	$(Q) rm -f $(BUILD_DIR)/apps/apps_container_storage.o
+	$(Q) rm -f $(BUILD_DIR)/apps/i18n.*
+
 .PHONY: cowsay_%
 cowsay_%:
 	@echo " -------"

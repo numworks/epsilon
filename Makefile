@@ -82,6 +82,8 @@ all_objs = $(call object_for,$(all_src))
 
 executables = epsilon epsilon.on-boarding epsilon.on-boarding.update epsilon.on-boarding.beta test
 
+extensions = $(EXE)
+
 #define platform generic targets
 all_epsilon_common_src = $(ion_src) $(liba_src) $(kandinsky_src) $(epsilon_src) $(app_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src)
 all_epsilon_default_src = $(all_epsilon_common_src) $(apps_launch_default_src) $(apps_prompt_none_src)
@@ -97,7 +99,7 @@ $(BUILD_DIR)/test.$(EXE): $(BUILD_DIR)/quiz/src/tests_symbols.o $(call object_fo
 # We include them before the standard ones to give them precedence.
 -include scripts/targets.$(PLATFORM).mak
 
-$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(EXE))))
+$(foreach extension,$(extensions),$(foreach executable,$(executables),$(eval $(call rules_for_targets,$(executable),$(extension)))))
 
 # Define standard compilation rules
 

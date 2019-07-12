@@ -564,15 +564,15 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     return;
   }
   // No need to draw if both dots are outside visible area
-  if ((pyf < -stampSize && pvf < -stampSize) || (pyf > pixelLength(Axis::Vertical)+stampSize && pvf > pixelLength(Axis::Vertical)+stampSize)) {
+  if ((pyf < -stampSize && pvf < -stampSize) || (pyf > m_frame.height()+stampSize && pvf > m_frame.height()+stampSize)) {
     return;
   }
   // If one of the dot is infinite, we cap it with a dot outside area
   if (std::isinf(pyf)) {
-    pyf = pyf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
+    pyf = pyf > 0 ? m_frame.height()+stampSize : -stampSize;
   }
   if (std::isinf(pvf)) {
-    pvf = pvf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
+    pvf = pvf > 0 ? m_frame.height()+stampSize : -stampSize;
   }
   if (pyf - ((float)circleDiameter)/2.0f < pvf && pvf < pyf + ((float)circleDiameter)/2.0f) {
     // the dots are already joined
@@ -614,7 +614,7 @@ void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float 
 
 void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
   // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize - FLT_EPSILON || pyf > pixelLength(Axis::Vertical)+stampSize + FLT_EPSILON) {
+  if (pyf < -stampSize - FLT_EPSILON || pyf > m_frame.height()+stampSize + FLT_EPSILON) {
     return;
   }
   /* When converting floats to KDCoordinate, we need to add -1 if the float is

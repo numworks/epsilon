@@ -33,9 +33,6 @@ void pullRect(KDRect r, KDColor * pixels) {
   sFrameBuffer.pullRect(r, pixels);
 }
 
-void waitForVBlank() {
-}
-
 }
 }
 

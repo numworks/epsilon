@@ -1,4 +1,4 @@
-def BUILD_DIR = '../../../../build/sdl/android/app'
+def BUILD_DIR = '../../../../'+System.getenv('BUILD_DIR')+'/app'
 
 buildscript {
   repositories {

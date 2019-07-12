@@ -23,7 +23,7 @@ $(BUILD_DIR)/compare: $(call object_for,ion/src/blackbox/compare.cpp)
 .PHONY: tests/%.run
 tests/%.run: tests/%.esc epsilon.$(EXE)
 	@echo "RUN     $<"
-	@./build/blackbox/epsilon.$(EXE) --logAfter 0 < $< > /dev/null
+	@./$(BUILD_DIR)/epsilon.$(EXE) --logAfter 0 < $< > /dev/null
 
 .PHONY: tests/%.render
 tests/%.render: tests/%.esc epsilon.$(EXE)
@@ -31,7 +31,7 @@ tests/%.render: tests/%.esc epsilon.$(EXE)
 	@rm -rf tests/$(*F)
 	@mkdir -p tests/$(*F)
 	@rm -f event*.png
-	@./build/blackbox/epsilon.$(EXE) --logAfter 0 < $< > /dev/null
+	@./$(BUILD_DIR)/epsilon.$(EXE) --logAfter 0 < $< > /dev/null
 	@mv event*.png tests/$(*F)
 
 scenarios = $(wildcard tests/*.esc)

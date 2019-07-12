@@ -23,4 +23,4 @@ os: linux
 script:
 - set -e
 - make clean && make epsilon.$EXT test.$EXT
-- if [ "$PLATFORM" = "blackbox" ]; then build/blackbox/test.$EXT; PLATFORM=blackbox make integration_tests; fi
+- if [ "$PLATFORM" = "blackbox" ]; then build/release/blackbox/test.$EXT; PLATFORM=blackbox make integration_tests; fi

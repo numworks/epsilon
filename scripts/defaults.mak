@@ -34,7 +34,13 @@ ifeq ("$(origin V)", "command line")
   endif
 endif
 
-BUILD_DIR = build/$(PLATFORM)
+# Building directory
+ifeq ($(DEBUG),1)
+  MODE = debug
+else
+  MODE = release
+endif
+BUILD_DIR = build/$(MODE)/$(PLATFORM)
 
 # Define rules for targets
 # Those can be built directly with make executable.extension as a shortcut.

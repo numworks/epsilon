@@ -21,6 +21,7 @@ void Jump(const char * input);
 void Keyboard(const char * input);
 void LCDData(const char * input);
 void LCDPins(const char * input);
+void LCDTiming(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);
 void Ping(const char * input);

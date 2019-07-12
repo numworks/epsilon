@@ -7,7 +7,7 @@ namespace Device {
 namespace Bench {
 namespace Command {
 
-void LCDData(const char * input) {
+void LCDTiming(const char * input) {
   if (input != nullptr) {
     reply(sSyntaxError);
     return;
@@ -20,7 +20,7 @@ void LCDData(const char * input) {
   for (int i  = 6; i < bufferSize; i++) {
     buffer[i] = 0;
   }
-  Poincare::PrintInt::Left(Shared::POSTAndHardwareTests::LCDDataGlyphFailures(), buffer+4, bufferSize - 4 - 1);
+  Poincare::PrintInt::Left(Shared::POSTAndHardwareTests::LCDTimingGlyphFailures(), buffer+4, bufferSize - 4 - 1);
   reply(buffer);
 }
 

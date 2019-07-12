@@ -30,6 +30,7 @@ private:
     }
     BufferTextView m_colorsLCDStateView;
   };
+  constexpr static int k_numberOfAcceptablesGlyphErrors = 1;
   constexpr static const char * k_colorsLCDOKText = "COLORS LCD: OK";
   constexpr static const char * k_colorsLCDFailTest = "COLORS LCD: FAIL";
   ContentView m_view;

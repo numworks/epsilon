@@ -18,6 +18,7 @@ bench_src += $(addprefix ion/src/device/bench/command/, \
   keyboard.cpp \
   lcd_data.o \
   lcd_pins.o \
+  lcd_timing.o \
   led.cpp \
   mcu_serial.cpp \
   ping.cpp \

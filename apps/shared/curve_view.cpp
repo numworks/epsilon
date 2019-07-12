@@ -527,9 +527,6 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     stampAtLocation(ctx, rect, pxf, pyf, color);
-    if (std::isnan(previousY)) {
-      continue;
-    }
     jointDots(ctx, rect, evaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
   }
 }
@@ -577,12 +574,9 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   float pyf = floatToPixel(Axis::Vertical, y);
   float puf = floatToPixel(Axis::Horizontal, u);
   float pvf = floatToPixel(Axis::Vertical, v);
-  if (std::isnan(pyf) || std::isnan(pvf)) {
-    return;
-  }
   const float deltaX = pxf - puf;
   const float deltaY = pyf - pvf;
-  if (deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
+  if (std::isnan(y) || deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
     // the dots are already joined
     return;
   }

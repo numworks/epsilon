@@ -20,10 +20,10 @@ public:
   bool textFieldDidAbortEditing(TextField * textField) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
-  constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
-  constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
-  virtual float cursorTopMarginRatio() { return 0.07f; }   // (cursorHeight/2)/graphViewHeight
-  virtual float cursorBottomMarginRatio() = 0;             // (cursorHeight/2+bannerHeight)/graphViewHeight
+  constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/(graphViewWidth-1)
+  constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/(graphViewWidth-1)
+  virtual float cursorTopMarginRatio() { return 0.07f; }   // (cursorHeight/2)/(graphViewHeight-1)
+  virtual float cursorBottomMarginRatio() = 0;             // (cursorHeight/2+bannerHeight)/(graphViewHeight-1)
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   virtual bool handleZoom(Ion::Events::Event event);
   virtual bool handleLeftRightEvent(Ion::Events::Event event);

@@ -524,9 +524,6 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
       drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    float pxf = floatToPixel(Axis::Horizontal, x);
-    float pyf = floatToPixel(Axis::Vertical, y);
-    stampAtLocation(ctx, rect, pxf, pyf, color);
     jointDots(ctx, rect, evaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
   }
 }
@@ -578,6 +575,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   const float deltaY = pyf - pvf;
   if (std::isnan(y) || deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
     // the dots are already joined
+    stampAtLocation(ctx, rect, puf, pvf, color);
     return;
   }
   // No need to draw if both dots are outside visible area
@@ -600,10 +598,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
     return;
   }
-  float pcxf = floatToPixel(Axis::Horizontal, cx);
-  float pcyf = floatToPixel(Axis::Vertical, cy);
   if (maxNumberOfRecursion > 0) {
-    stampAtLocation(ctx, rect, pcxf, pcyf, color);
     jointDots(ctx, rect, evaluation, model, context, x, y, cx, cy, color, maxNumberOfRecursion-1);
     jointDots(ctx, rect, evaluation, model, context, cx, cy, u, v, color, maxNumberOfRecursion-1);
   }

@@ -7,6 +7,7 @@
 #include "dead_pixels_test_controller.h"
 #include "keyboard_test_controller.h"
 #include "lcd_data_test_controller.h"
+#include "lcd_timing_test_controller.h"
 #include "led_test_controller.h"
 #include "serial_number_controller.h"
 #include "vblank_test_controller.h"
@@ -31,6 +32,7 @@ private:
     bool handleEvent(Ion::Events::Event event) override;
   private:
     BatteryTestController m_batteryTestController;
+    LCDTimingTestController m_lcdTimingTestController;
     ColorsLCDTestController m_colorsLCDTestController;
     DeadPixelsTestController m_deadPixelsTestController;
     KeyboardTestController m_keyboardController;

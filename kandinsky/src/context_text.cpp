@@ -66,6 +66,7 @@ KDPoint KDContext::pushOrPullString(const char * text, KDPoint p, const KDFont *
         for (int k = 0; k < glyphSize.height() * glyphSize.width(); k++) {
           if (colorBuffer[k] != workingColorBuffer[k]) {
             *result = (*result)+1;
+            break;
           }
         }
       }

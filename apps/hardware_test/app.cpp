@@ -21,6 +21,7 @@ App::App(Container * container, Snapshot * snapshot) :
 App::WizardViewController::WizardViewController(Responder * parentResponder) :
   BankViewController(parentResponder),
   m_batteryTestController(this),
+  m_lcdTimingTestController(this),
   m_colorsLCDTestController(this),
   m_deadPixelsTestController(this),
   m_keyboardController(this),
@@ -32,12 +33,13 @@ App::WizardViewController::WizardViewController(Responder * parentResponder) :
 }
 
 int App::WizardViewController::numberOfChildren() {
-  return 8;
+  return 9;
 }
 
 ViewController * App::WizardViewController::childAtIndex(int i) {
   ViewController * children[] = {
     &m_vBlankTestController,
+    &m_lcdTimingTestController,
     &m_colorsLCDTestController,
     &m_lcdDataTestController,
     &m_deadPixelsTestController,

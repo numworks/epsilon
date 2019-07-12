@@ -3,7 +3,11 @@
 void Ion::Display::POSTPushMulticolor(int tileSize) {
 }
 
-int displayUniformTilingSize10(uint16_t color) {
+int displayUniformTilingSize10(KDColor c) {
+  return 0;
+}
+
+int displayColoredTilingSize10() {
   return 0;
 }
 

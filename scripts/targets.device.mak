@@ -1,7 +1,7 @@
 include scripts/targets.device.$(MODEL).mak
 
 executables += flasher.light flasher.verbose bench.ram bench.flash
-extensions += dfu hex bin
+extensions += .dfu .hex .bin
 
 $(BUILD_DIR)/%.dfu: $(BUILD_DIR)/%.$(EXE)
 	@echo "DFUSE   $@"

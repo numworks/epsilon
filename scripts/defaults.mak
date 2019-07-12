@@ -41,12 +41,3 @@ else
   MODE = release
 endif
 BUILD_DIR = build/$(MODE)/$(PLATFORM)
-
-# Define rules for targets
-# Those can be built directly with make executable.extension as a shortcut.
-
-define rules_for_targets
-.PHONY: $(1).$(2)
-$(1).$(2): $$(BUILD_DIR)/$(1).$(2)
-endef
-

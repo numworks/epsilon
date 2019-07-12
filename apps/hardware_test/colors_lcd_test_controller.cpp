@@ -17,7 +17,7 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void ColorsLCDTestController::viewWillAppear() {
-  bool testOK = Shared::POSTAndHardwareTests::ColorsLCDOK();
+  bool testOK = Shared::POSTAndHardwareTests::ColorsLCDPixelFailures() <= k_numberOfAcceptablesGlyphErrors;
   m_view.setColor(testOK ? KDColorGreen : KDColorRed);
   m_view.colorsLCDStateTextView()->setText(testOK ? k_colorsLCDOKText : k_colorsLCDFailTest);
 }

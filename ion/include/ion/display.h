@@ -29,8 +29,9 @@ constexpr int WidthInTenthOfMillimeter = 576;
 constexpr int HeightInTenthOfMillimeter = 432;
 
 // For Power On Self tests
+int displayUniformTilingSize10(KDColor c);
+int displayColoredTilingSize10();
 void POSTPushMulticolor(int tileSize);
-int displayUniformTilingSize10(KDColor color);
 
 }
 }

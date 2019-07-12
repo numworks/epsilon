@@ -20,6 +20,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("KEYBOARD", Command::Keyboard),
   CommandHandler("LCD_DATA", Command::LCDData),
   CommandHandler("LCD_PINS", Command::LCDPins),
+  CommandHandler("LCD_TIMING", Command::LCDTiming),
   CommandHandler("LED", Command::LED),
   CommandHandler("MCU_SERIAL", Command::MCUSerial),
   CommandHandler("PING", Command::Ping),

@@ -1,1 +1,1 @@
-include ion/test/device/$(MODEL)/Makefile
+-include ion/test/device/$(MODEL)/Makefile

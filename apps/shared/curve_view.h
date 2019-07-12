@@ -37,6 +37,7 @@ public:
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   const float pixelWidth() const;
+  const float pixelHeight() const;
 protected:
   CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
@@ -78,7 +79,6 @@ private:
   float min(Axis axis) const;
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
-  KDCoordinate pixelLength(Axis axis) const;
   virtual char * label(Axis axis, int index) const = 0;
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the

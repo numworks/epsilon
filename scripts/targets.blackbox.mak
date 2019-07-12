@@ -1,5 +1,10 @@
 # Compare
 
+executables += libepsilon_first libepsilon_second
+extensions += .o
+
+$(eval $(call rules_for_targets,compare,))
+
 # TODO: find a way to use rules define by rule_for instead of redeclaring them (we can't use them now because of the different basenames of the object and the source)
 
 $(BUILD_DIR)/ion/src/blackbox/library_%.o: SFLAGS += -D EPSILON_LIB_PREFIX=$(*F)

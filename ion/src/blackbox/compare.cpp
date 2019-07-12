@@ -7,12 +7,12 @@
  * To use it, first create the two epsilon versions to compare, in a library
  * format:
  *      git checkout first_hash
- *      make -j8 PLATFORM=blackbox clean build/release/blackbox/libepsilon_first.o
+ *      make -j8 PLATFORM=blackbox clean libepsilon_first.o
  *      git checkout second_hash
- *      make -j8 PLATFORM=blackbox clean build/release/blackbox/libepsilon_second.o
+ *      make -j8 PLATFORM=blackbox clean libepsilon_second.o
  *
  * To compare the versions on a given scenario:
- *      make -j8 PLATFORM=blackbox build/release/blackbox/compare
+ *      make -j8 PLATFORM=blackbox compare
  *      ./build/release/blackbox/compare < path/to/scenario
  * To fuzz over scenarios that are in a folder named "tests":
  *      make -j8 PLATFORM=blackbox TOOLCHAIN=afl compare_fuzz

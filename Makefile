@@ -28,6 +28,14 @@ $(addprefix $$(BUILD_DIR)/,$(strip $(2))): $(addprefix $$(BUILD_DIR)/,$(strip $(
 endif
 endef
 
+# Define rules for targets
+# Those can be built directly with make executable.extension as a shortcut.
+
+define rules_for_targets
+.PHONY: $(1)$(2)
+$(1)$(2): $$(BUILD_DIR)/$(1)$(2)
+endef
+
 .PHONY: info
 info:
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
@@ -82,7 +90,7 @@ all_objs = $(call object_for,$(all_src))
 
 executables = epsilon epsilon.on-boarding epsilon.on-boarding.update epsilon.on-boarding.beta test
 
-extensions = $(EXE)
+extensions = .$(EXE)
 
 #define platform generic targets
 all_epsilon_common_src = $(ion_src) $(liba_src) $(kandinsky_src) $(epsilon_src) $(app_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(ion_device_dfu_relocated_src)

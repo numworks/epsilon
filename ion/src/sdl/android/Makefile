@@ -56,7 +56,7 @@ epsilon_apk_deps += $(addprefix $(BUILD_DIR)/app/res/,mipmap/ic_launcher.png mip
 .PHONY: gradle_%
 gradle_%: $(epsilon_apk_deps)
 	@echo "GRADLE ion/src/sdl/android/build.gradle"
-	$(Q) ANDROID_HOME=/usr/local/android EPSILON_VERSION=$(EPSILON_VERSION) gradle -b ion/src/sdl/android/build.gradle $*
+	$(Q) ANDROID_HOME=/usr/local/android EPSILON_VERSION=$(EPSILON_VERSION) BUILD_DIR=$(BUILD_DIR) gradle -b ion/src/sdl/android/build.gradle $*
 
 .PHONY: epsilon.apk
 epsilon.apk: gradle_assembleRelease

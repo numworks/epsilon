@@ -38,9 +38,66 @@ endef
 
 .PHONY: info
 info:
+	@echo "========= Building Flags ========="
 	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
 	@echo "EPSILON_APPS = $(EPSILON_APPS)"
 	@echo "EPSILON_I18N = $(EPSILON_I18N)"
+	@echo "PLATFORM" = $(PLATFORM)
+	@echo "DEBUG" = $(DEBUG)
+	@echo "EPSILON_GETOPT" = $(EPSILON_GETOPT)
+	@echo "ESCHER_LOG_EVENTS_BINARY" = $(ESCHER_LOG_EVENTS_BINARY)
+	@echo "QUIZ_USE_CONSOLE" = $(QUIZ_USE_CONSOLE)
+	@echo "ION_STORAGE_LOG" = $(ION_STORAGE_LOG)
+	@echo "POINCARE_TREE_LOG" = $(POINCARE_TREE_LOG)
+	@echo "POINCARE_TESTS_PRINT_EXPRESSIONS" = $(POINCARE_TESTS_PRINT_EXPRESSIONS)
+	@echo "=================================="
+	@echo ""
+	@echo "============= Targets ============"
+	@echo "--------- Cross-platforms --------"
+	@echo "epsilon"
+	@echo "epsilon.on-boarding"
+	@echo "epsilon.on-boarding.update"
+	@echo "epsilon.on-boarding.update.beta"
+	@echo "test"
+	@echo "PHONY:"
+	@echo "  clean"
+	@echo "  clean_for_apps_selection (use this 'light' clean before changing the flag EPSILON_APPS)"
+	@echo "----------------------------------"
+	@echo ""
+	@echo "------------- Device -------------"
+	@echo "flasher.light"
+	@echo "flasher.verbose"
+	@echo "bench.ram"
+	@echo "bench.flash"
+	@echo "PHONY:"
+	@echo "  binpack"
+	@echo "  %_two_binaries"
+	@echo "  %_size"
+	@echo "  %_run"
+	@echo "  %_memory_map"
+	@echo "  %_flash"
+	@echo "  clean_for_apps_selection (use this 'light' clean before changing the flag EPSILON_APPS)"
+	@echo ".............N0110................"
+	@echo "test.external_flash.write"
+	@echo "test.external_flash.read"
+	@echo ".................................."
+	@echo "----------------------------------"
+	@echo ""
+	@echo "----------- emscripten -----------"
+	@echo "simulator.zip"
+	@echo "----------------------------------"
+	@echo ""
+	@echo "----------- blackbox -------------"
+	@echo "compare"
+	@echo "PHONY:"
+	@echo "  tests/%.run"
+	@echo "  tests/%.render"
+	@echo "  integration_tests"
+	@echo "  epsilon_fuzz"
+	@echo "  compare_fuzz"
+	@echo "----------------------------------"
+	@echo ""
+	@echo "=================================="
 
 # Since we're building out-of-tree, we need to make sure the output directories
 # are created, otherwise the receipes will fail (e.g. gcc will fail to create

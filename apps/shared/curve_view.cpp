@@ -87,8 +87,53 @@ void CurveView::setOkView(View * okView) {
   layoutSubviews();
 }
 
+/* We need to locate physical points on the screen more precisely than pixels,
+ * hence by floating-point coordinates. We agree that the coordinates of the
+ * center of a pixel corresponding to KDPoint(x,y) are precisely (x,y). In
+ * particular, the coordinates of a pixel's corners are not integers but half
+ * integers. Finally, a physical point with floating-point coordinates (x,y)
+ * is located in the pixel with coordinates (std::round(x), std::round(y)).
+ *
+ * Translating CurveViewRange coordinates to pixel coordinates on the screen:
+ *   Along the horizontal axis
+ *     Pixel / physical coordinate     CurveViewRange coordinate
+ *       0                               xMin()
+ *       m_frame.width() - 1             xMax()
+ *   Along the vertical axis
+ *     Pixel / physical coordinate     CurveViewRange coordinate
+ *       0                               yMax()
+ *       m_frame.height() - 1            yMin()
+ */
+
 const float CurveView::pixelWidth() const {
-  return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / m_frame.width();
+  return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / (m_frame.width() - 1);
+}
+
+const float CurveView::pixelHeight() const {
+  return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
+}
+
+float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
+  return (axis == Axis::Horizontal) ?
+    m_curveViewRange->xMin() + p * pixelWidth() :
+    m_curveViewRange->yMax() - p * pixelHeight();
+}
+
+float CurveView::floatToPixel(Axis axis, float f) const {
+  float result = (axis == Axis::Horizontal) ?
+    (f - m_curveViewRange->xMin()) / pixelWidth() :
+    (m_curveViewRange->yMax() - f) / pixelHeight();
+  /* Make sure that the returned value is between the maximum and minimum
+   * possible values of KDCoordinate. */
+  if (result == NAN) {
+    return NAN;
+  } else if (result < KDCOORDINATE_MIN) {
+    return KDCOORDINATE_MIN;
+  } else if (result > KDCOORDINATE_MAX) {
+    return KDCOORDINATE_MAX;
+  } else {
+    return result;
+  }
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
@@ -118,38 +163,11 @@ float CurveView::gridUnit(Axis axis) const {
   return (axis == Axis::Horizontal ? m_curveViewRange->xGridUnit() : m_curveViewRange->yGridUnit());
 }
 
-KDCoordinate CurveView::pixelLength(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_frame.width() : m_frame.height());
-}
-
 int CurveView::numberOfLabels(Axis axis) const {
   float labelStep = 2.0f * gridUnit(axis);
   float minLabel = std::ceil(min(axis)/labelStep);
   float maxLabel = std::floor(max(axis)/labelStep);
   return maxLabel - minLabel + 1;
-}
-
-float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  float pixelLen = pixelLength(axis);
-  float minA = min(axis);
-  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLen - p;
-  return minA + pixels*(max(axis)-minA)/pixelLen;
-}
-
-float CurveView::floatToPixel(Axis axis, float f) const {
-  float fraction = (f-min(axis))/(max(axis)-min(axis));
-  fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
-  /* Fraction is a float that translates the relative position of f on the axis.
-   * When fraction is between 0 and 1, f is visible. Otherwise, f is out of the
-   * visible window. We need to clip fraction to avoid big float issue (often
-   * due to float to int transformation). However, we cannot clip fraction
-   * between 0 and 1 because drawing a sized stamp on the extern boarder of the
-   * window should still be visible. We thus arbitrarily clip fraction between
-   * -10 and 10. */
-  fraction = fraction < -10.0f ? -10.0f : fraction;
-  fraction = fraction > 10.0f ? 10.0f : fraction;
-  return pixelLength(axis)*fraction;
 }
 
 void CurveView::computeLabels(Axis axis) {

@@ -8,6 +8,7 @@ app_src += $(addprefix apps/hardware_test/,\
   keyboard_test_controller.cpp \
   keyboard_view.cpp \
   lcd_data_test_controller.cpp \
+  lcd_timing_test_controller.cpp \
   led_test_controller.cpp \
   pop_up_controller.cpp \
   serial_number_controller.cpp \

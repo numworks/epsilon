@@ -11,7 +11,7 @@ public:
    * returns the LED color previous to the tests. */
   static KDColor Perform();
 private:
-  constexpr static int k_LCDTestIterationsCount = 5;
+  constexpr static int k_textErrorsLimit = 0;
 };
 
 }

@@ -130,6 +130,12 @@ $(eval $(call rule_for, \
   $$(LD) $$^ $$(LDFLAGS) -o $$@ \
 ))
 
+.PHONY: workshop_python_emulator
+workshop_python_emulator:
+	make  PLATFORM=emscripten clean_for_apps_selection
+	make -j8 PLATFORM=emscripten EPSILON_APPS=code
+	make PLATFORM=emscripten clean_for_apps_selection
+
 .PHONY: clean
 clean:
 	@echo "CLEAN"

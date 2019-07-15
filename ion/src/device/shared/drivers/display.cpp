@@ -167,7 +167,7 @@ int displayColoredTilingSize10() {
   int numberOfHorizontalTiles = Ion::Display::Width / stampSize;
   int numberOfVerticalTiles = Ion::Display::Height / stampSize;
 
-  constexpr int numberOfPasses = 200;
+  constexpr int numberOfPasses = 150;
   int numberOfInvalidPixels = 0;
 
   constexpr int stampHeightPull = 1;

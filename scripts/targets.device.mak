@@ -42,16 +42,6 @@ $(BUILD_DIR)/%.map: $(BUILD_DIR)/%.elf
 	$(Q) awk -f scripts/device/memory_map.awk < $<
 	@echo "==============================="
 
-# TODO: update the flash process for N0110
-.PHONY: %_flash
-%_flash: $(BUILD_DIR)/%.bin
-	@echo "DFU     $@"
-	@echo "INFO    About to flash your device. Please plug your device to your computer"
-	@echo "        using an USB cable and press the RESET button the back of your device."
-	@until dfu-util -l | grep "Flash" > /dev/null 2>&1; do sleep 1;done
-	@echo "DFU     $@"
-	$(Q) dfu-util -i 0 -a 0 -s 0x08000000:leave -D $<
-
 .PHONY: openocd
 openocd:
 	openocd -f scripts/$(PLATFORM)/openocd.$(MODEL).cfg

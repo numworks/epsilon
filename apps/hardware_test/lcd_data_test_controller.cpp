@@ -1,5 +1,6 @@
 #include "lcd_data_test_controller.h"
 #include <apps/shared/post_and_hardware_tests.h>
+#include <ion/backlight.h>
 #include <ion/display.h>
 #include <poincare/print_int.h>
 
@@ -22,7 +23,9 @@ bool LCDDataTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void LCDDataTestController::viewWillAppear() {
+  Ion::Backlight::setBrightness(0);
   runTest();
+  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
 }
 
 LCDDataTestController::ContentView::ContentView() :

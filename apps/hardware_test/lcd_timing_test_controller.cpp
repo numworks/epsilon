@@ -1,5 +1,6 @@
 #include "lcd_timing_test_controller.h"
 #include <apps/shared/post_and_hardware_tests.h>
+#include <ion/backlight.h>
 #include <ion/display.h>
 #include <poincare/print_int.h>
 
@@ -9,7 +10,7 @@ namespace HardwareTest {
 
 void LCDTimingTestController::runTest() {
   int pixelFailures = Shared::POSTAndHardwareTests::LCDTimingGlyphFailures();
-  m_testSuccessful = pixelFailures < k_errorLimit;
+  m_testSuccessful = pixelFailures <= k_errorLimit;
   m_view.setStatus(m_testSuccessful, pixelFailures);
 }
 
@@ -22,7 +23,10 @@ bool LCDTimingTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void LCDTimingTestController::viewWillAppear() {
+  Ion::Display::pushRectUniform(KDRect(KDPointZero, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
+  Ion::Backlight::setBrightness(0);
   runTest();
+  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
 }
 
 LCDTimingTestController::ContentView::ContentView() :

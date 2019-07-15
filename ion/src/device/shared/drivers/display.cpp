@@ -344,17 +344,8 @@ void shutdownGPIO() {
   Config::TearingEffectPin.group().MODER()->setMode(Config::TearingEffectPin.pin(), GPIO::MODER::Mode::Analog);
 }
 
-static inline int nsToCycles(int nanoseconds) {
-  // Fix for bad screens
-#define FIX_BAD_LCD 1
-#if FIX_BAD_LCD
-  constexpr double BaseFrequency = 96.0;
-  double configFrequency = 1.0*Config::HCLKFrequencyInMHz;
-  int baseFrequencyCycles = (nanoseconds*BaseFrequency)/1000 + 1;
-  return baseFrequencyCycles * (configFrequency/BaseFrequency);
-#else
+constexpr static int nsToCycles(int nanoseconds) {
   return (nanoseconds*Config::HCLKFrequencyInMHz)/1000 + 1;
-#endif
 }
 
 void initFSMC() {
@@ -388,34 +379,44 @@ void initFSMC() {
    * We need to set the values of the BTR and BWTR which give the timings for
    * reading and writing. Note that the STM32 datasheet doesn't take into
    * account the time needed to actually switch from one logic state to another,
-   * whereas the ST7789V one does, so we'll add T(R) (Rising) and T(F) (Falling)
-   * as needed.
+   * whereas the ST7789V one does, so we'll add T(edge) as needed.
    * Last but not least, timings on the STM32 have to be expressed in terms of
    * HCLK.
-   *  - We'll pick Mode A which corresponds to SRAM with OE toggling
-   *  - ADDSET = Duration of the first access phase for read accesses.
-   *           = T(AST) + T(F) = 0ns + 15ns = 2 HCLK
-   *  - ADDHLD is unused in this mode, set to 0
-   *  - DATAST = Duration of the second access phase for read accesses.
-   *      DATAST(read) = T(RDLFM) + T(R) = 355ns + 15ns = 36 HCLK
-   *      DATAST(write) = T(WRL) + T(R) = 15ns + 15ns = 3 HCLK
-   *  - BUSTURN = Time between NEx high to NEx low
-   *      BUSTURN(read) = T(RDHFM) + T(F) = 90ns + 15ns = 10 HCLK
-   *      BUSTURN(write) = T(RDHFM) + T(F) = 15ns + 15ns = 3 HCLK
+   *  - We'll pick Mode A because at the start of a read operation, NOE/RDX is
+   *  high before the data is sent, just like in the LCD's datasheet.
+   *  - The DATAST parameter is measured between a falling edge on NWE/NOE, and
+   *  the rising edge on the same pin. In terms of LCD datasheet, that gives:
+   *    t(DATAST) = t(WRL/RDLFM) + t(edge)
+   *  - According to the STM32's datasheet, the total time of a read transaction
+   *  is ADDSET + DATAST cycles, and ADDSET + DATAST + 1 cycles for a write one.
+   *  This value is given explicitely as t(WC) and t(RCFM) in the LCD datasheet.
+   *    t(ADDSET).w = t(WC) - t(DATAST).w - 1
+   *    t(ADDSET).r = t(RCFM) - t(DATAST).r
+   *  - BUSTURN is the delay between a read and a write transaction. The LCD
+   *  datasheet asks for no such delay, so BUSTURN = 0.
    */
 
+  constexpr int tedge = 15;
+  constexpr int twc = 66;
+  constexpr int trcfm = 450;
+  constexpr int twrl = 15;
+  constexpr int trdlfm = 355;
+
+  constexpr int trdatast = trdlfm + tedge;
+  constexpr int twdatast = twrl + tedge;
+
   // Read timing from the LCD
-  FSMC.BTR(FSMCMemoryBank)->setADDSET(nsToCycles(15));
+  FSMC.BTR(FSMCMemoryBank)->setADDSET(nsToCycles(trcfm-trdatast));
   FSMC.BTR(FSMCMemoryBank)->setADDHLD(0);
-  FSMC.BTR(FSMCMemoryBank)->setDATAST(nsToCycles(355+15));
-  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(nsToCycles(90+15));
+  FSMC.BTR(FSMCMemoryBank)->setDATAST(nsToCycles(trdatast));
+  FSMC.BTR(FSMCMemoryBank)->setBUSTURN(0);
   FSMC.BTR(FSMCMemoryBank)->setACCMOD(FSMC::BTR::ACCMOD::A);
 
   // Write timings for the LCD
-  FSMC.BWTR(FSMCMemoryBank)->setADDSET(nsToCycles(15));
+  FSMC.BWTR(FSMCMemoryBank)->setADDSET(nsToCycles(twc-twdatast)-1);
   FSMC.BWTR(FSMCMemoryBank)->setADDHLD(0);
-  FSMC.BWTR(FSMCMemoryBank)->setDATAST(nsToCycles(15+15));
-  FSMC.BWTR(FSMCMemoryBank)->setBUSTURN(nsToCycles(15+15));
+  FSMC.BWTR(FSMCMemoryBank)->setDATAST(nsToCycles(twdatast));
+  FSMC.BWTR(FSMCMemoryBank)->setBUSTURN(0);
   FSMC.BWTR(FSMCMemoryBank)->setACCMOD(FSMC::BWTR::ACCMOD::A);
 }
 

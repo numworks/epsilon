@@ -97,19 +97,17 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
    * account for conversion errors. */
   float otherAxisMin = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.left() - 1 : rect.bottom() + 1);
   float otherAxisMax = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.right() + 1 : rect.top() - 1);
-  float start = step * ((int)(min(otherAxis)/step));
-  float boldStart = 2*step * ((int)(min(otherAxis)/(2*step)));
+  float start = step * ((int)(otherAxisMin/step));
+  float boldStart = 2*step * ((int)(otherAxisMin/(2*step)));
   bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;
 
-  for (float x = start; x < max(otherAxis); x+= step) {
+  for (float x = start; x <= otherAxisMax; x+= step) {
     /* When |start| >> step, start + step = start. In that case, quit the
      * infinite loop. */
     if (x == x-step || x == x+step) {
       return;
     }
-    if (otherAxisMin <= x && x <= otherAxisMax) {
-      drawLine(ctx, rect, axis, x, drawBold ? boldColor : lightColor);
-    }
+    drawLine(ctx, rect, axis, x, drawBold ? boldColor : lightColor);
     drawBold = !drawBold;
   }
 }

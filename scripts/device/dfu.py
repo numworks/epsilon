@@ -277,7 +277,7 @@ def exit_dfu():
     set_address(0x08000000)
 
     # Send DNLOAD with 0 length to exit DFU
-    __dev.ctrl_transfer(0x21, __DFU_DNLOAD, 0, __DFU_INTERFACE,
+    __dev.ctrl_transfer(0x21, __DFU_DNLOAD, 2, __DFU_INTERFACE,
                         None, __TIMEOUT)
 
     try:

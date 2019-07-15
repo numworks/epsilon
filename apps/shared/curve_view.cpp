@@ -269,7 +269,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
 
   if (floatingLabels == FloatingPosition::None) {
     for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-      int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
+      KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
       KDRect graduation = axis == Axis::Horizontal ?
         KDRect(
             labelPosition,
@@ -291,7 +291,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
 
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-    int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
+    KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
     char * labelI = label(axis, i);
     KDSize textSize = k_font->stringSize(labelI);
     float xPosition = 0.0f;

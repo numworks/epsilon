@@ -20,10 +20,19 @@ import sys
 import usb.core
 import usb.util
 import zlib
+from functools import reduce
 
 # VID/PID
-__VID = 0x0483
-__PID = 0xdf11
+__Identifiers = [
+  {
+    "VID": 0x0483,
+    "PID": 0xdf11
+  },
+  {
+    "VID": 0x0483,
+    "PID": 0xa291
+  },
+]
 
 # USB request __TIMEOUT
 __TIMEOUT = 4000
@@ -87,11 +96,15 @@ def find_dfu_cfg_descr(descr):
         return nt(*struct.unpack('<BBBHHH', bytearray(descr)))
     return None
 
+def get_dfu_devices_with_vid_pids(vid_pids):
+    devices = [get_dfu_devices(idVendor=vid_pid["VID"],idProduct=vid_pid["PID"]) for vid_pid in vid_pids]
+    devices = reduce((lambda x,y: x+y), devices)
+    return devices
 
 def init():
     """Initializes the found DFU device so that we can program it."""
     global __dev, __cfg_descr
-    devices = get_dfu_devices(idVendor=__VID, idProduct=__PID)
+    devices = get_dfu_devices_with_vid_pids(__Identifiers)
     if not devices:
         raise ValueError('No DFU device found')
     if len(devices) > 1:
@@ -454,9 +467,9 @@ def get_memory_layout(device):
     return result
 
 
-def list_dfu_devices(*args, **kwargs):
+def list_dfu_devices(vid_pids):
     """Prints a lits of devices detected in DFU mode."""
-    devices = get_dfu_devices(*args, **kwargs)
+    devices = get_dfu_devices_with_vid_pids(__Identifiers)
     if not devices:
         print("No DFU capable devices found")
         return
@@ -559,7 +572,7 @@ def main():
     __verbose = args.verbose
 
     if args.list:
-        list_dfu_devices(idVendor=__VID, idProduct=__PID)
+        list_dfu_devices(__Identifiers)
         return
 
     init()

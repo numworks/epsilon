@@ -270,11 +270,11 @@ def write_page(buf, xfer_offset):
         print ("Write: 0x%x " % (xfer_base + xfer_offset))
 
 
-def exit_dfu():
+def exit_dfu(address = 0x08000000):
     """Exit DFU mode, and start running the program."""
 
     # set jump address
-    set_address(0x08000000)
+    set_address(address)
 
     # Send DNLOAD with 0 length to exit DFU
     __dev.ctrl_transfer(0x21, __DFU_DNLOAD, 2, __DFU_INTERFACE,
@@ -589,7 +589,7 @@ def main():
         write_elements(elements, args.mass_erase, progress=cli_progress)
 
         print("Exiting DFU...")
-        exit_dfu()
+        exit_dfu(elements[0]['addr'])
         return
 
     print("No command specified")

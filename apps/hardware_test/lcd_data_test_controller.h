@@ -33,7 +33,7 @@ private:
     BufferTextView m_lcdDataStateView;
     BufferTextView m_lcdNumberPixelFailuresView;
   };
-  static constexpr int k_errorLimit = 0;
+  static constexpr int k_errorLimit = 2;
   void runTest();
   bool m_testSuccessful;
   ContentView m_view;

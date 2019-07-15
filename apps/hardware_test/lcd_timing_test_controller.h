@@ -34,7 +34,7 @@ private:
     BufferTextView m_lcdTimingStateView;
     BufferTextView m_lcdNumberGlyphFailuresView;
   };
-  static constexpr int k_errorLimit = 1;
+  static constexpr int k_errorLimit = 0;
   void runTest();
   bool m_testSuccessful;
   ContentView m_view;

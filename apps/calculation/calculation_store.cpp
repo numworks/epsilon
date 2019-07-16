@@ -48,10 +48,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   /* Add the input expression.
    * We do not store directly the text entered by the user because we do not
    * want to keep Ans symbol in the calculation store. */
-  Expression input = Expression::Parse(text).replaceSymbolWithExpression(Symbol::Ans(), ans);
   const char * inputSerialization = nextSerializationLocation;
-  serializeExpression(input, nextSerializationLocation, &newCalculationsLocation);
-  nextSerializationLocation += strlen(nextSerializationLocation) + 1;
+  {
+    Expression input = Expression::Parse(text).replaceSymbolWithExpression(Symbol::Ans(), ans);
+    serializeExpression(input, nextSerializationLocation, &newCalculationsLocation);
+    nextSerializationLocation += strlen(nextSerializationLocation) + 1;
+  }
   Expression exactOutput;
   Expression approximateOutput;
   PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &exactOutput, &approximateOutput, context, false);

@@ -8,7 +8,7 @@
 namespace Sequence {
 
 constexpr static int MaxRecurrenceDepth = 2;
-static constexpr int MaxNumberOfSequences = 2;
+static constexpr int MaxNumberOfSequences = 3;
 
 class SequenceStore;
 class SequenceContext;

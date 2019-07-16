@@ -111,7 +111,7 @@ bool Sequence::isEmpty() {
 template<typename T>
 T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);
-  int sequenceIndex = fullName()[0] == SequenceStore::k_sequenceNames[0][0] ? 0 : 1;
+  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
   if (sqctx->iterateUntilRank<T>(n)) {
     return sqctx->valueOfSequenceAtPreviousRank<T>(sequenceIndex, 0);
   }
@@ -129,21 +129,30 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   Poincare::SerializationHelper::CodePoint(unknownN, bufferSize, UCodePointUnknownN);
 
   CacheContext<T> ctx = CacheContext<T>(sqctx);
-  T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
-  T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
-  T unm2 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 2);
-  T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
-  T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
-  T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
-  Poincare::Symbol vnSymbol = Symbol::Builder("v(n)", 4);
-  Poincare::Symbol vn1Symbol = Symbol::Builder("v(n+1)", 6);
-  Poincare::Symbol unSymbol = Symbol::Builder("u(n)", 4);
-  Poincare::Symbol un1Symbol = Symbol::Builder("u(n+1)", 6);
+  // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
+  T values[MaxNumberOfSequences][MaxRecurrenceDepth+1];
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    for (int j = 0; j < MaxRecurrenceDepth+1; j++) {
+      values[i][j] = sqctx->valueOfSequenceAtPreviousRank<T>(i, j);
+    }
+  }
+  // Hold symbols u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
+  Poincare::Symbol symbols[MaxNumberOfSequences][MaxRecurrenceDepth];
+  char name[MaxRecurrenceDepth][7] = {"0(n)","0(n+1)"};
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    for (int j = 0; j < MaxRecurrenceDepth; j++) {
+      name[j][0] = SequenceStore::k_sequenceNames[i][0];
+      symbols[i][j] = Symbol::Builder(name[j], strlen(name[j]));
+    }
+  }
+
   switch (type()) {
     case Type::Explicit:
     {
-      ctx.setValueForSymbol(un, unSymbol);
-      ctx.setValueForSymbol(vn, vnSymbol);
+      for (int i = 0; i < MaxNumberOfSequences; i++) {
+        // Set in context u(n) = u(n) for all sequences
+        ctx.setValueForSymbol(values[i][0], symbols[i][0]);
+      }
       return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)n, &ctx);
     }
     case Type::SingleRecurrence:
@@ -151,10 +160,11 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       if (n == initialRank()) {
         return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpressionReduced(sqctx), sqctx);
       }
-      ctx.setValueForSymbol(un, un1Symbol);
-      ctx.setValueForSymbol(unm1, unSymbol);
-      ctx.setValueForSymbol(vn, vn1Symbol);
-      ctx.setValueForSymbol(vnm1, vnSymbol);
+      for (int i = 0; i < MaxNumberOfSequences; i++) {
+        // Set in context u(n) = u(n-1) and u(n+1) = u(n) for all sequences
+        ctx.setValueForSymbol(values[i][0], symbols[i][1]);
+        ctx.setValueForSymbol(values[i][1], symbols[i][0]);
+      }
       return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-1), &ctx);
     }
     default:
@@ -165,10 +175,11 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       if (n == initialRank()+1) {
         return PoincareHelpers::ApproximateToScalar<T>(secondInitialConditionExpressionReduced(sqctx), sqctx);
       }
-      ctx.setValueForSymbol(unm1, un1Symbol);
-      ctx.setValueForSymbol(unm2, unSymbol);
-      ctx.setValueForSymbol(vnm1, vn1Symbol);
-      ctx.setValueForSymbol(vnm2, vnSymbol);
+      for (int i = 0; i < MaxNumberOfSequences; i++) {
+        // Set in context u(n) = u(n-2) and u(n+1) = u(n-1) for all sequences
+        ctx.setValueForSymbol(values[i][1], symbols[i][1]);
+        ctx.setValueForSymbol(values[i][2], symbols[i][0]);
+      }
       return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(sqctx), unknownN, (T)(n-2), &ctx);
     }
   }

@@ -24,9 +24,10 @@ public:
    * changed */
   int maxNumberOfModels() const override { return MaxNumberOfSequences; }
 
+  static int sequenceIndexForName(char name);
   static const char * firstAvailableName(int * nameIndex = nullptr);
   static constexpr const char * k_sequenceNames[MaxNumberOfSequences] = {
-    "u", "v"//, "w"
+    "u", "v", "w"
   };
 
 private:

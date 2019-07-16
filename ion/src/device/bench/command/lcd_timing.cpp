@@ -20,7 +20,7 @@ void LCDTiming(const char * input) {
   for (int i  = 6; i < bufferSize; i++) {
     buffer[i] = 0;
   }
-  Poincare::PrintInt::Left(Shared::POSTAndHardwareTests::LCDTimingGlyphFailures(), buffer+4, bufferSize - 4 - 1);
+  Poincare::PrintInt::Left(Shared::POSTAndHardwareTests::LCDTimingGlyphFailures(), buffer+6, bufferSize - 6 - 1);
   reply(buffer);
 }
 

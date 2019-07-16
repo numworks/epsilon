@@ -37,6 +37,16 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   return Ion::Storage::sharedStorage()->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
 }
 
+int SequenceStore::sequenceIndexForName(char name) {
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    if (k_sequenceNames[i][0] == name) {
+      return i;
+    }
+  }
+  assert(false);
+  return 0;
+}
+
 void SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   m_sequences[cacheIndex] = Sequence(record);

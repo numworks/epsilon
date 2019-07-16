@@ -10,7 +10,7 @@ namespace Sequence {
 template<typename T>
 TemplatedSequenceContext<T>::TemplatedSequenceContext() :
   m_rank(-1),
-  m_values{{NAN, NAN, NAN},{NAN, NAN, NAN}}
+  m_values{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}}
 {
 }
 
@@ -50,22 +50,25 @@ void TemplatedSequenceContext<T>::step(SequenceStore * sequenceStore, SequenceCo
   }
 
   /* Evaluate new u(n) and v(n) */
-  Sequence * u = sequenceStore->numberOfModels() > 0 ? sequenceStore->modelForRecord(sequenceStore->recordAtIndex(0)) : nullptr;
-  u = u && u->isDefined() ? u : nullptr;
-  Sequence * v = sequenceStore->numberOfModels() > 1 ? sequenceStore->modelForRecord(sequenceStore->recordAtIndex(1)) : nullptr;
-  v = v && v->isDefined() ? v : nullptr;
-  /* Switch u & v  if the name of u is v */
-  if (u && u->fullName()[0] ==  SequenceStore::k_sequenceNames[1][0]) {
-    Sequence * temp = u;
-    u = v;
-    v = temp;
+  // sequences hold u, v, w in this order
+  Sequence * sequences[MaxNumberOfSequences] = {nullptr, nullptr, nullptr};
+  for (int i = 0; i < sequenceStore->numberOfModels(); i++) {
+    Sequence * u = sequenceStore->modelForRecord(sequenceStore->recordAtIndex(i));
+    sequences[SequenceStore::sequenceIndexForName(u->fullName()[0])] = u->isDefined() ? u : nullptr;
   }
 
-  /* Approximate u & v at the new rank. We evaluate u twice in case its
-   * expression depends on v. */
-  m_values[0][0] = u ? u->approximateToNextRank<T>(m_rank, sqctx) : NAN;
-  m_values[1][0] = v ? v->approximateToNextRank<T>(m_rank, sqctx) : NAN;
-  m_values[0][0] = u ? u->approximateToNextRank<T>(m_rank, sqctx) : NAN;
+  /* Approximate u, v and w at the new rank. We have to evaluate all sequences
+   * MaxNumberOfSequences times in case the evaluations depend on each other.
+   * For example, if u expression depends on v and v depends on w. At the first
+   * iteration, we can only evaluate w, at the second iteration we evaluate v
+   * and u can only be known at the third iteration . */
+  for (int k = 0; k < MaxNumberOfSequences; k++) {
+    for (int i = 0; i < MaxNumberOfSequences; i++) {
+      if (std::isnan(m_values[i][0])) {
+        m_values[i][0] = sequences[i] ? sequences[i]->approximateToNextRank<T>(m_rank, sqctx) : NAN;
+      }
+    }
+  }
 }
 
 template class TemplatedSequenceContext<float>;

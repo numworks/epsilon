@@ -49,9 +49,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
      * after the isDerivativeColumn call, else it will expire. */
     Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(i));
     if (isDerivative) {
-      function->derivativeNameWithArgument(bufferName, bufferNameSize, CartesianFunction::Symbol());
+      function->derivativeNameWithArgument(bufferName, bufferNameSize);
     } else {
-      function->nameWithArgument(bufferName, bufferNameSize, CartesianFunction::Symbol());
+      function->nameWithArgument(bufferName, bufferNameSize);
     }
     myFunctionCell->setText(bufferName);
     myFunctionCell->setColor(function->color());

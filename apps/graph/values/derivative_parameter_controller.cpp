@@ -18,7 +18,7 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
 }
 
 void DerivativeParameterController::viewWillAppear() {
-  functionStore()->modelForRecord(m_record)->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle, Shared::CartesianFunction::Symbol());
+  functionStore()->modelForRecord(m_record)->derivativeNameWithArgument(m_pageTitle, k_maxNumberOfCharsInTitle);
 }
 
 const char * DerivativeParameterController::title() {

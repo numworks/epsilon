@@ -64,14 +64,15 @@ void Function::setActive(bool active) {
   recordData()->setActive(active);
 }
 
-int Function::nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) {
-  assert(UTF8Decoder::CharSizeOfCodePoint(arg) == 1);
+int Function::nameWithArgument(char * buffer, size_t bufferSize) {
   const char * functionName = fullName();
   size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
   assert(baseNameLength <= bufferSize);
   size_t result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
-  if (baseNameLength + 1 < bufferSize) {
-    UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferSize - (baseNameLength+1));
+  int bufferRemainingSize = bufferSize - (baseNameLength+1);
+  if (bufferRemainingSize > 0) {
+    assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) == 1);
+    UTF8Decoder::CodePointToChars(symbol(), buffer+baseNameLength+1, bufferRemainingSize);
   }
   return result;
 }

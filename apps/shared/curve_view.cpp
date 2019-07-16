@@ -374,14 +374,14 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   switch(axis) {
     case Axis::Horizontal:
       lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, lowerBound)), std::round(floatToPixel(Axis::Vertical, coordinate)),
-          std::round(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
-          );
+        std::round(floatToPixel(Axis::Horizontal, lowerBound)), std::round(floatToPixel(Axis::Vertical, coordinate)),
+        std::round(floatToPixel(Axis::Horizontal, upperBound)) - std::round(floatToPixel(Axis::Horizontal, lowerBound)), thickness
+      );
       break;
     case Axis::Vertical:
       lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, coordinate)), std::round(floatToPixel(Axis::Vertical, upperBound)),
-          thickness,  std::round(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
+        std::round(floatToPixel(Axis::Horizontal, coordinate)), std::round(floatToPixel(Axis::Vertical, upperBound)),
+        thickness, std::round(floatToPixel(Axis::Vertical, lowerBound)) - std::round(floatToPixel(Axis::Vertical, upperBound))
       );
       break;
   }

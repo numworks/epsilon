@@ -187,7 +187,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
 void ListController::setFunctionNameInTextField(ExpiringPointer<Function> function, TextField * textField) {
   assert(textField != nullptr);
   char bufferName[BufferTextView::k_maxNumberOfChar];
-  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar, modelStore()->symbol());
+  function->nameWithArgument(bufferName, BufferTextView::k_maxNumberOfChar);
   textField->setText(bufferName);
 }
 

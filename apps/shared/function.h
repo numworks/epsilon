@@ -33,7 +33,7 @@ public:
   void setActive(bool active);
 
   // Name
-  int nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg);
+  int nameWithArgument(char * buffer, size_t bufferSize);
 
   // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {

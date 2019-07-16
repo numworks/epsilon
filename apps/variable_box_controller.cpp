@@ -113,8 +113,8 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
     CartesianFunction f(record);
     symbolLength = f.nameWithArgument(
         symbolName,
-        Shared::Function::k_maxNameWithArgumentSize,
-        Shared::CartesianFunction::Symbol());
+        Shared::Function::k_maxNameWithArgumentSize
+    );
   }
   Layout symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   myCell->setLayout(symbolLayout);

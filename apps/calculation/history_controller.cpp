@@ -49,7 +49,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     m_selectableTableView.deselectTable();
     Container::activeApp()->setFirstResponder(editController);
-    Shared::ExpiringPointer<Calculation> calculation = m_calculationStore->calculationAtIndex(focusRow);
+    Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
     if (subviewType == SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
@@ -69,7 +69,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     SubviewType subviewType = selectedSubviewType();
     m_selectableTableView.deselectTable();
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
-    m_calculationStore->deleteCalculationAtIndex(focusRow);
+    m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
     reload();
     if (numberOfRows()== 0) {
       Container::activeApp()->setFirstResponder(editController);
@@ -102,6 +102,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(int i) {
+  return m_calculationStore->calculationAtIndex(storeIndex(i));
 }
 
 void HistoryController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -141,7 +145,7 @@ int HistoryController::reusableCellCount(int type) {
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalculation((m_calculationStore->calculationAtIndex(numberOfRows()-index-1)).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
+  myCell->setCalculation(calculationAtIndex(index).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
   myCell->setHighlighted(myCell->isHighlighted());
 }
@@ -150,7 +154,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
   if (j >= m_calculationStore->numberOfCalculations()) {
     return 0;
   }
-  Shared::ExpiringPointer<Calculation> calculation = m_calculationStore->calculationAtIndex(j);
+  Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(j);
   return calculation->height(App::app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
 }
 

@@ -141,7 +141,7 @@ int HistoryController::reusableCellCount(int type) {
 
 void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   HistoryViewCell * myCell = (HistoryViewCell *)cell;
-  myCell->setCalculation((m_calculationStore->calculationAtIndex(index)).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
+  myCell->setCalculation((m_calculationStore->calculationAtIndex(numberOfRows()-index-1)).pointer(), index == selectedRow() && selectedSubviewType() == SubviewType::Output);
   myCell->setEven(index%2 == 0);
   myCell->setHighlighted(myCell->isHighlighted());
 }

@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-/* FunctionStore storse functions and gives them a color. */
+// FunctionStore stores functions and gives them a color.
 
 class FunctionStore : public ExpressionModelStore {
 public:

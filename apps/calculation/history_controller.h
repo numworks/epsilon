@@ -27,6 +27,8 @@ public:
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
   void scrollToCell(int i, int j);
 private:
+  int storeIndex(int i) { return numberOfRows() - i - 1; }
+  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   CalculationSelectableTableView * selectableTableView();
   void historyViewCellDidChangeSelection() override;
   constexpr static int k_maxNumberOfDisplayedRows = 5;

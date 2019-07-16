@@ -24,9 +24,7 @@
 
 class AppsContainer : public Container, ExamPopUpControllerDelegate, Ion::StorageDelegate {
 public:
-  static AppsContainer * sharedAppsContainer() {
-    return static_cast<AppsContainer *>(Container::sharedContainer());
-  }
+  static AppsContainer * sharedAppsContainer();
   AppsContainer();
   static bool poincareCircuitBreaker();
   virtual int numberOfApps() = 0;

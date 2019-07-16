@@ -58,7 +58,7 @@ class Symbol final : public SymbolAbstract {
 public:
   static constexpr int k_ansLength = 3;
   static constexpr char k_ans[k_ansLength+1] = "ans";
-  Symbol(const SymbolNode * node) : SymbolAbstract(node) {}
+  Symbol(const SymbolNode * node = nullptr) : SymbolAbstract(node) {}
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
   static Symbol Builder(CodePoint name);
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }

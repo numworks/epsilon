@@ -9,7 +9,6 @@
 
 class AppsContainerStorage : public AppsContainer {
 public:
-  static AppsContainerStorage * sharedContainer();
   AppsContainerStorage();
   int numberOfApps() override;
   App::Snapshot * appSnapshotAtIndex(int index) override;

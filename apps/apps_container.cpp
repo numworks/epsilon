@@ -1,4 +1,5 @@
 #include "apps_container.h"
+#include "apps_container_storage.h"
 #include "global_preferences.h"
 #include <ion.h>
 #include <poincare/init.h>
@@ -51,6 +52,11 @@ static KDColor sPromptColors[] = {
   Palette::YellowDark};
 
 #endif
+
+AppsContainer * AppsContainer::sharedAppsContainer() {
+  static AppsContainerStorage appsContainerStorage;
+  return &appsContainerStorage;
+}
 
 AppsContainer::AppsContainer() :
   Container(),

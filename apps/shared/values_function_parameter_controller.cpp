@@ -9,8 +9,7 @@ const char * ValuesFunctionParameterController::title() {
 }
 
 void ValuesFunctionParameterController::viewWillAppear() {
-  CodePoint symbol = FunctionApp::app()->functionStore()->symbol();
-  FunctionApp::app()->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, Function::k_maxNameWithArgumentSize, symbol);
+  FunctionApp::app()->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, Function::k_maxNameWithArgumentSize);
 }
 
 void ValuesFunctionParameterController::didBecomeFirstResponder() {

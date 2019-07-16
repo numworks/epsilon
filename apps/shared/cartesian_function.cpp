@@ -65,10 +65,10 @@ CartesianFunction CartesianFunction::NewModel(Ion::Storage::Record::ErrorStatus 
   return CartesianFunction(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) {
+int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSize) {
   // Fill buffer with f(x). Keep size for derivative sign.
   int derivativeSize = UTF8Decoder::CharSizeOfCodePoint('\'');
-  int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize, arg);
+  int numberOfChars = nameWithArgument(buffer, bufferSize - derivativeSize);
   assert(numberOfChars + derivativeSize < (int)bufferSize);
   char * firstParenthesis = const_cast<char *>(UTF8Helper::CodePointSearch(buffer, '('));
   if (!UTF8Helper::CodePointIs(firstParenthesis, '(')) {

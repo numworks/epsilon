@@ -7,13 +7,12 @@ using namespace Poincare;
 namespace Shared {
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore) {
-  CodePoint symbol = functionStore->symbol();
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   constexpr int bufferSize = k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * space = " ";
   int numberOfChar = 0;
-  buffer[numberOfChar++] = symbol;
+  buffer[numberOfChar++] = function->symbol();
   assert(numberOfChar <= bufferSize);
   strlcpy(buffer + numberOfChar, "=", bufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
@@ -25,7 +24,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer+numberOfChar, space, bufferSize - numberOfChar);
   bannerView()->abscissaValue()->setText(buffer);
 
-  numberOfChar = function->nameWithArgument(buffer, bufferSize, symbol);
+  numberOfChar = function->nameWithArgument(buffer, bufferSize);
   assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", bufferSize-numberOfChar);
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->y(), buffer+numberOfChar, bufferSize-numberOfChar, precision);

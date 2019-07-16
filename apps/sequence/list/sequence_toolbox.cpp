@@ -68,29 +68,23 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
   }
   /* The cells added reprensent the sequence at smaller ranks than its depth
    * and the other sequence at ranks smaller or equal to the depth, ie:
-   * if the sequence is u(n+1), we add cells u(n), v(n), v(n+1).
+   * if the sequence is u(n+1), we add cells u(n), v(n), v(n+1), w(n), w(n+1).
    * There is a special case for double recurrent sequences because we do not
-   * want to parse symbols u(n+2) or v(n+2). */
-  m_numberOfAddedCells = recurrenceDepth == 2 ? 2*recurrenceDepth : 2*recurrenceDepth+1;
-  int sequenceIndex = sequenceName[0] == SequenceStore::k_sequenceNames[0][0] ? 0 : 1;
-  const char * otherSequenceName = SequenceStore::k_sequenceNames[1-sequenceIndex];
-  for (int j = 0; j < recurrenceDepth; j++) {
-    const char * indice = j == 0 ? "n" : "n+1";
-    m_addedCellLayout[j] = HorizontalLayout::Builder(
-        CodePointLayout::Builder(sequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
-      );
-    m_addedCellLayout[j+recurrenceDepth] = HorizontalLayout::Builder(
-        CodePointLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
-      );
-  }
-  if (recurrenceDepth < 2) {
-    const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
-    m_addedCellLayout[2*recurrenceDepth] = HorizontalLayout::Builder(
-        CodePointLayout::Builder(otherSequenceName[0], KDFont::LargeFont),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
-      );
+   * want to parse symbols u(n+2), v(n+2) or w(n+2). */
+  m_numberOfAddedCells = 0;
+  int sequenceIndex = SequenceStore::sequenceIndexForName(sequenceName[0]);
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    for (int j = 0; j < recurrenceDepth+1; j++) {
+      // When defining u(n+1) for ex, don't add [u|v|w](n+2) or u(n+1)
+      if (j == 2 || (j == recurrenceDepth && sequenceIndex == i)) {
+        continue;
+      }
+      const char * indice = j == 0 ? "n" : "n+1";
+      m_addedCellLayout[m_numberOfAddedCells++] = HorizontalLayout::Builder(
+          CodePointLayout::Builder(SequenceStore::k_sequenceNames[i][0], KDFont::LargeFont),
+          VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice), KDFont::LargeFont), VerticalOffsetLayoutNode::Position::Subscript)
+        );
+    }
   }
 }
 

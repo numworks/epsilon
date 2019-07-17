@@ -17,6 +17,7 @@
 
 class Container : public RunLoop {
 public:
+  static App * activeApp() { return s_activeApp; }
   static Container * sharedContainer() {
     assert(s_sharedContainer);
     return s_sharedContainer;
@@ -29,7 +30,6 @@ public:
   Container& operator=(Container&& other) = delete;
   virtual void * currentAppBuffer() = 0;
   virtual void run();
-  App * activeApp() { return m_activeApp; }
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   virtual bool switchTo(App::Snapshot * snapshot);
 protected:
@@ -43,7 +43,7 @@ private:
   Timer * timerAtIndex(int i) override;
   virtual int numberOfContainerTimers();
   virtual Timer * containerTimerAtIndex(int i);
-  App * m_activeApp;
+  static App * s_activeApp;
   static Container * s_sharedContainer;
 };
 

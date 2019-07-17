@@ -1,5 +1,5 @@
 #include <escher/modal_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <assert.h>
 
 ModalViewController::ContentView::ContentView() :

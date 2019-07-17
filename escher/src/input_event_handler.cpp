@@ -1,6 +1,6 @@
 #include <escher/input_event_handler.h>
 #include <escher/input_event_handler_delegate.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/toolbox.h>
 #include <escher/metric.h>
 

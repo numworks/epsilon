@@ -1,5 +1,5 @@
 #include <escher/bank_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
 BankViewController::BankViewController(Responder * parentViewController) :
   ViewController(parentViewController),

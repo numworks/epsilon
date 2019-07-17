@@ -1,5 +1,5 @@
 #include <escher/selectable_table_view.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/clipboard.h>
 #include <escher/metric.h>
 #include <assert.h>

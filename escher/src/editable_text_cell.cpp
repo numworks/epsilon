@@ -1,5 +1,5 @@
 #include <escher/editable_text_cell.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <assert.h>
 

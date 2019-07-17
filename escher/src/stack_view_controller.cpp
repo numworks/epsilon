@@ -2,7 +2,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <escher/stack_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/metric.h>
 
 StackViewController::ControllerView::ControllerView() :

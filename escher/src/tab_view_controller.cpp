@@ -3,7 +3,7 @@ extern "C" {
 }
 #include <escher/tab_view_controller.h>
 #include <escher/metric.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
 TabViewController::ContentView::ContentView() :
   View(),

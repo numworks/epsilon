@@ -2,39 +2,39 @@
 #include <assert.h>
 
 Container::Container() :
-  RunLoop(),
-  m_activeApp(nullptr)
+  RunLoop()
 {
 }
 
 // Initialize private static member
+App * Container::s_activeApp = nullptr;
 Container * Container::s_sharedContainer = nullptr;
 
 Container::~Container() {
-  if (m_activeApp) {
-    m_activeApp->~App();
+  if (s_activeApp) {
+    s_activeApp->~App();
   }
 }
 
 bool Container::switchTo(App::Snapshot * snapshot) {
-  if (m_activeApp && snapshot == m_activeApp->snapshot()) {
+  if (s_activeApp && snapshot == s_activeApp->snapshot()) {
     return true;
   }
-  if (m_activeApp && !m_activeApp->prepareForExit()) {
+  if (s_activeApp && !s_activeApp->prepareForExit()) {
     /* activeApp()->prepareForExit() returned false, which means that the app
      * needs another event loop to prepare for being switched off. */
     return false;
   }
-  if (m_activeApp) {
-    m_activeApp->willBecomeInactive();
-    m_activeApp->snapshot()->pack(m_activeApp);
-    m_activeApp = nullptr;
+  if (s_activeApp) {
+    s_activeApp->willBecomeInactive();
+    s_activeApp->snapshot()->pack(s_activeApp);
+    s_activeApp = nullptr;
   }
   if (snapshot) {
-    m_activeApp = snapshot->unpack(this);
+    s_activeApp = snapshot->unpack(this);
   }
-  if (m_activeApp) {
-    m_activeApp->didBecomeActive(window());
+  if (s_activeApp) {
+    s_activeApp->didBecomeActive(window());
     window()->redraw();
   }
   return true;
@@ -45,7 +45,7 @@ bool Container::dispatchEvent(Ion::Events::Event event) {
     window()->redraw();
     return true;
   }
-  if (m_activeApp->processEvent(event)) {
+  if (s_activeApp->processEvent(event)) {
     window()->redraw();
     return true;
   }
@@ -58,14 +58,14 @@ void Container::run() {
 }
 
 int Container::numberOfTimers() {
-  return m_activeApp->numberOfTimers() + numberOfContainerTimers();
+  return s_activeApp->numberOfTimers() + numberOfContainerTimers();
 }
 
 Timer * Container::timerAtIndex(int i) {
-  if (i < m_activeApp->numberOfTimers()) {
-    return m_activeApp->timerAtIndex(i);
+  if (i < s_activeApp->numberOfTimers()) {
+    return s_activeApp->timerAtIndex(i);
   }
-  return containerTimerAtIndex(i-m_activeApp->numberOfTimers());
+  return containerTimerAtIndex(i-s_activeApp->numberOfTimers());
 }
 
 int Container::numberOfContainerTimers() {

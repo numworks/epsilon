@@ -138,8 +138,8 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
 #ifdef EPSILON_BOOT_PROMPT
-  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
-    activeApp()->displayModalViewController(&m_promptController, 0.f, 0.f);
+  if (s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
+    s_activeApp->displayModalViewController(&m_promptController, 0.f, 0.f);
   }
 #endif
   Ion::Power::suspend(checkIfPowerKeyReleased);
@@ -157,7 +157,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
-      App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
       /* Just after a software update, the battery timer does not have time to
        * fire before the calculator enters DFU mode. As the DFU mode blocks the
        * event loop, we update the battery state "manually" here.
@@ -232,7 +232,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
 }
 
 bool AppsContainer::switchTo(App::Snapshot * snapshot) {
-  if (activeApp() && snapshot != activeApp()->snapshot()) {
+  if (s_activeApp && snapshot != s_activeApp->snapshot()) {
     resetShiftAlphaStatus();
   }
   if (snapshot == hardwareTestAppSnapshot() || snapshot == onBoardingAppSnapshot()) {
@@ -270,11 +270,11 @@ void AppsContainer::run() {
     (void) switched; // Silence compilation warning about unused variable.
   } else {
     // Exception
-    if (activeApp() != nullptr) {
+    if (s_activeApp != nullptr) {
       /* The app models can reference layouts or expressions that have been
        * destroyed from the pool. To avoid using them before packing the app
        * (in App::willBecomeInactive for instance), we tidy them early on. */
-      activeApp()->snapshot()->tidy();
+      s_activeApp->snapshot()->tidy();
       /* When an app encoutered an exception due to a full pool, the next time
        * the user enters the app, the same exception could happen again which
        * would prevent from reopening the app. To avoid being stuck outside the
@@ -282,13 +282,13 @@ void AppsContainer::run() {
        * exception. For instance, the calculation app can encounter an
        * exception when displaying too many huge layouts, if we don't clean the
        * history here, we will be stuck outside the calculation app. */
-      activeApp()->snapshot()->reset();
+      s_activeApp->snapshot()->reset();
     }
     bool switched = switchTo(appSnapshotAtIndex(0));
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
     Poincare::Tidy();
-    activeApp()->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
+    s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
   }
   Container::run();
   switchTo(nullptr);
@@ -314,7 +314,7 @@ void AppsContainer::reloadTitleBarView() {
 
 void AppsContainer::displayExamModePopUp(bool activate) {
   m_examPopUpController.setActivatingExamMode(activate);
-  activeApp()->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
+  s_activeApp->displayModalViewController(&m_examPopUpController, 0.f, 0.f, Metric::ExamPopUpTopMargin, Metric::PopUpRightMargin, Metric::ExamPopUpBottomMargin, Metric::PopUpLeftMargin);
 }
 
 void AppsContainer::shutdownDueToLowBattery() {
@@ -361,14 +361,14 @@ void AppsContainer::examDeactivatingPopUpIsDismissed() {
 }
 
 void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {
-  if (activeApp()) {
-    activeApp()->snapshot()->storageDidChangeForRecord(record);
+  if (s_activeApp) {
+    s_activeApp->snapshot()->storageDidChangeForRecord(record);
   }
 }
 
 void AppsContainer::storageIsFull() {
-  if (activeApp()) {
-    activeApp()->displayWarning(I18n::Message::StorageMemoryFull1, I18n::Message::StorageMemoryFull2, true);
+  if (s_activeApp) {
+    s_activeApp->displayWarning(I18n::Message::StorageMemoryFull1, I18n::Message::StorageMemoryFull2, true);
   }
 }
 

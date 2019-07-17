@@ -72,8 +72,5 @@ private:
   WarningController m_warningController;
 };
 
-// Make sure App * app() is reachable by anyone including only app.h
-#include <escher/container.h>
-
 #endif
 

@@ -8,7 +8,6 @@ Container::Container() :
 
 // Initialize private static member
 App * Container::s_activeApp = nullptr;
-Container * Container::s_sharedContainer = nullptr;
 
 Container::~Container() {
   if (s_activeApp) {

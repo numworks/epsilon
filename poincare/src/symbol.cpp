@@ -85,33 +85,21 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
     return CodePointLayout::Builder('n');
   }
   // TODO return Parse(m_name).createLayout() ?
-  if (strcmp(m_name, "u(n)") == 0) {
-    return HorizontalLayout::Builder(
-        CodePointLayout::Builder('u'),
-        VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayoutNode::Position::Subscript));
-  }
-  if (strcmp(m_name, "u(n+1)") == 0) {
-    return HorizontalLayout::Builder(
-      CodePointLayout::Builder('u'),
-      VerticalOffsetLayout::Builder(
-        LayoutHelper::String("n+1", 3),
-        VerticalOffsetLayoutNode::Position::Subscript));
-  }
-  if (strcmp(m_name, "v(n)") == 0) {
-    return HorizontalLayout::Builder(
-        CodePointLayout::Builder('v'),
-        VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('n'),
-          VerticalOffsetLayoutNode::Position::Subscript));
-  }
-  if (strcmp(m_name, "v(n+1)") == 0) {
-    return HorizontalLayout::Builder(
-      CodePointLayout::Builder('v'),
-      VerticalOffsetLayout::Builder(
-        LayoutHelper::String("n+1", 3),
-          VerticalOffsetLayoutNode::Position::Subscript));
+  // Special case for the symbol names: u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
+  const char * sequenceIndex[] = {"n", "n+1"};
+  for (char sequenceName = 'u'; sequenceName <= 'w'; sequenceName++) {
+    if (m_name[0] == sequenceName) {
+      for (int i = 0; i < sizeof(sequenceIndex)/sizeof(char *); i++) {
+        size_t sequenceIndexLength = strlen(sequenceIndex[i]);
+        if (m_name[1] == '(' && strncmp(sequenceIndex[i], m_name+2, sequenceIndexLength) == 0 && m_name[2+sequenceIndexLength] == ')' && m_name[3+sequenceIndexLength] == 0) {
+      return HorizontalLayout::Builder(
+          CodePointLayout::Builder(sequenceName),
+          VerticalOffsetLayout::Builder(
+            LayoutHelper::String(sequenceIndex[i], sequenceIndexLength),
+            VerticalOffsetLayoutNode::Position::Subscript));
+        }
+      }
+    }
   }
   return LayoutHelper::String(m_name, strlen(m_name));
 }

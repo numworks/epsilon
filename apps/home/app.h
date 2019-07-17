@@ -15,7 +15,6 @@ public:
   };
   class Snapshot : public ::App::Snapshot, public SelectableTableViewDataSource {
   public:
-    Snapshot() { selectCellAtLocation(0, 0); }
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
   };

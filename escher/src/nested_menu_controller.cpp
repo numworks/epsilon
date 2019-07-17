@@ -1,4 +1,5 @@
 #include <escher/nested_menu_controller.h>
+#include <escher/app.h>
 #include <escher/metric.h>
 #include <assert.h>
 #include <string.h>

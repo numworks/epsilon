@@ -1,5 +1,5 @@
 #include <escher/even_odd_editable_text_cell.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <assert.h>
 
 EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, char * draftTextBuffer, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :

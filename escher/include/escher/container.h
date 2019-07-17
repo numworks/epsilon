@@ -17,7 +17,10 @@
 
 class Container : public RunLoop {
 public:
-  static App * activeApp() { return s_activeApp; }
+  static App * activeApp() {
+    assert(s_activeApp);
+    return s_activeApp;
+  }
   Container();
   virtual ~Container();
   Container(const Container& other) = delete;

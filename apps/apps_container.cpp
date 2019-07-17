@@ -247,7 +247,6 @@ bool AppsContainer::switchTo(App::Snapshot * snapshot) {
 }
 
 void AppsContainer::run() {
-  setSharedContainer(this);
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   refreshPreferences();
 

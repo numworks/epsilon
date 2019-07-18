@@ -79,7 +79,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(0,0);
-      app()->setFirstResponder(selectableTableView());
+      Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
     return false;
@@ -88,7 +88,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
       return true;
     }
     selectableTableView()->deselectTable();

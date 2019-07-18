@@ -35,7 +35,7 @@ void ConsoleEditCell::layoutSubviews() {
 }
 
 void ConsoleEditCell::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
 void ConsoleEditCell::setEditing(bool isEditing,  bool reinitDraftBuffer) {

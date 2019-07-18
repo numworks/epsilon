@@ -81,7 +81,7 @@ void Controller::didBecomeFirstResponder() {
   if (selectionDataSource()->selectedRow() == -1) {
     selectionDataSource()->selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(m_view.selectableTableView());
+  Container::activeApp()->setFirstResponder(m_view.selectableTableView());
 }
 
 void Controller::viewWillAppear() {

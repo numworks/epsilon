@@ -77,7 +77,7 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   }
   int index = std::round(floatBody);
   if (index < 0  || floatBody >= maxFirstIndex) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   sequence()->setInitialRank(index);
@@ -104,7 +104,7 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
     if (myCell) {
       myCell->setEditing(false);
     }
-    app()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
 #if FUNCTION_COLOR_CHOICE
   if (t->selectedRow() == 2) {
@@ -112,7 +112,7 @@ void ListParameterController::tableViewDidChangeSelection(SelectableTableView * 
   if (t->selectedRow() == 1) {
 #endif
     MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
+    Container::activeApp()->setFirstResponder(myNewCell);
   }
 }
 

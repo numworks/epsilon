@@ -61,7 +61,7 @@ void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
   m_historyController->scrollToCell(0, lastRow);
   ((ContentView *)view())->expressionField()->setEditing(true, false);
-  app()->setFirstResponder(((ContentView *)view())->expressionField());
+  Container::activeApp()->setFirstResponder(((ContentView *)view())->expressionField());
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
@@ -133,7 +133,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     if (m_calculationStore->numberOfCalculations() > 0) {
       m_cacheBuffer[0] = 0;
       ((ContentView *)view())->expressionField()->setEditing(false, false);
-      app()->setFirstResponder(m_historyController);
+      Container::activeApp()->setFirstResponder(m_historyController);
     }
     return true;
   }

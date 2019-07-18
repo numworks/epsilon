@@ -28,7 +28,7 @@ View * GenericSubController::view() {
 
 void GenericSubController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool GenericSubController::handleEvent(Ion::Events::Event event) {

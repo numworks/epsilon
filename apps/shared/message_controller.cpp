@@ -8,7 +8,7 @@ MessageController::MessageController(I18n::Message * messages, KDColor * colors,
 
 bool MessageController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::Home) {
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }
   return false;

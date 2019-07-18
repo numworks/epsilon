@@ -25,10 +25,6 @@ private:
   StackViewController m_stackViewController;
 };
 
-inline App * app() {
-  return static_cast<App *>(::app());
-}
-
 }
 
 #endif

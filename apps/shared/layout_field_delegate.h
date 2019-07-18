@@ -14,7 +14,7 @@ public:
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
 protected:
   ExpressionFieldDelegateApp * expressionFieldDelegateApp() const {
-    return static_cast<ExpressionFieldDelegateApp *>(::app());
+    return static_cast<ExpressionFieldDelegateApp *>(Container::activeApp());
   }
 };
 

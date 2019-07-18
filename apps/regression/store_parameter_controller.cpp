@@ -37,7 +37,7 @@ void StoreParameterController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   m_lastSelectionIsRegression = false;
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {

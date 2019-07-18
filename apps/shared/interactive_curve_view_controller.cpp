@@ -78,14 +78,14 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
       header()->setSelectedButton(-1);
       curveView()->selectMainView(true);
-      app()->setFirstResponder(this);
+      Container::activeApp()->setFirstResponder(this);
       reloadBannerView();
       curveView()->reload();
       return true;
     }
     if (event == Ion::Events::Up) {
       header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
       return true;
     }
     return false;

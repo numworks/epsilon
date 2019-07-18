@@ -22,7 +22,7 @@ double FunctionGoToParameterController::parameterAtIndex(int index) {
 
 bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
-  FunctionApp * myApp = (FunctionApp *)app();
+  FunctionApp * myApp = FunctionApp::app();
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   float y = function->evaluateAtAbscissa(f, myApp->localContext());
   m_cursor->moveTo(f, y);

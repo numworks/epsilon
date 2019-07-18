@@ -112,8 +112,7 @@ ExpiringPointer<Function> ListParameterController::function() {
 }
 
 FunctionStore * ListParameterController::functionStore() {
-  FunctionApp * a = static_cast<FunctionApp *>(app());
-  return a->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 

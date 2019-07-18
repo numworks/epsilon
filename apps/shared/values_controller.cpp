@@ -336,8 +336,7 @@ void ValuesController::updateNumberOfColumns() {
 }
 
 FunctionStore * ValuesController::functionStore() const {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 }

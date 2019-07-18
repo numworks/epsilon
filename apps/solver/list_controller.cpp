@@ -175,7 +175,7 @@ void ListController::resolveEquations() {
     app()->displayWarning(I18n::Message::EnterEquation);
     return;
   }
-  EquationStore::Error e = m_equationStore->exactSolve(app()->localContext());
+  EquationStore::Error e = m_equationStore->exactSolve(textFieldDelegateApp()->localContext());
   switch (e) {
     case EquationStore::Error::EquationUndefined:
       app()->displayWarning(I18n::Message::UndefinedEquation);

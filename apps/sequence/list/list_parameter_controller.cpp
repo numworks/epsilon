@@ -72,7 +72,7 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   /* -1 to take into account a double recursive sequence, which has
    * SecondIndex = FirstIndex + 1 */
   double floatBody;
-  if (app()->hasUndefinedValue(text, floatBody)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   int index = std::round(floatBody);

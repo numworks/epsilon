@@ -327,8 +327,7 @@ int ValuesController::maxNumberOfElements() const {
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return function->evaluateAtAbscissa(abscissa, myApp->localContext());
+  return function->evaluateAtAbscissa(abscissa, textFieldDelegateApp()->localContext());
 }
 
 void ValuesController::updateNumberOfColumns() {

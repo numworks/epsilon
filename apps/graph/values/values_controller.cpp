@@ -147,10 +147,11 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
   /* isDerivativeColumn uses expiring pointers, so "function" must be created
    * after the isDerivativeColumn call, else it will expire. */
   Shared::ExpiringPointer<CartesianFunction> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
   if (isDerivative) {
-    return function->approximateDerivative(abscissa, app()->localContext());
+    return function->approximateDerivative(abscissa, context);
   }
-  return function->evaluateAtAbscissa(abscissa, app()->localContext());
+  return function->evaluateAtAbscissa(abscissa, context);
 }
 
 void ValuesController::updateNumberOfColumns() {

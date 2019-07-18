@@ -22,7 +22,7 @@ PreferencesController::PreferencesController(Responder * parentResponder) :
 
 void PreferencesController::didBecomeFirstResponder() {
   selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool PreferencesController::handleEvent(Ion::Events::Event event) {

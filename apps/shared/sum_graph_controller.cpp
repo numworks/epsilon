@@ -44,14 +44,14 @@ void SumGraphController::viewWillAppear() {
 
 
 void SumGraphController::didEnterResponderChain(Responder * previousFirstResponder) {
-  app()->setFirstResponder(m_legendView.textField());
+  Container::activeApp()->setFirstResponder(m_legendView.textField());
 }
 
 bool SumGraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step-1);
     if (m_step == Step::SecondParameter) {
-      app()->setFirstResponder(m_legendView.textField());
+      Container::activeApp()->setFirstResponder(m_legendView.textField());
       m_graphView->setAreaHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
     }
@@ -95,7 +95,7 @@ bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const 
     return false;
   }
   if ((m_step == Step::SecondParameter && floatBody < m_startSum) || !moveCursorHorizontallyToPosition(floatBody)) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   return handleEnter();
@@ -125,7 +125,7 @@ bool SumGraphController::handleEnter() {
     } else {
       m_graphView->setAreaHighlightColor(true);
       m_graphView->setCursorView(nullptr);
-      app()->setFirstResponder(this);
+      Container::activeApp()->setFirstResponder(this);
     }
     m_step = (Step)((int)m_step+1);
     reloadBannerView();

@@ -27,7 +27,7 @@ void FloatParameterController::didBecomeFirstResponder() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void FloatParameterController::viewWillAppear() {

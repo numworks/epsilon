@@ -40,7 +40,7 @@ private:
 };
 
 inline App * app() {
-  return static_cast<App *>(::app());
+  return static_cast<App *>(Container::activeApp());
 }
 
 }

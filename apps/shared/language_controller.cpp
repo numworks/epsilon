@@ -31,7 +31,7 @@ View * LanguageController::view() {
 }
 
 void LanguageController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void LanguageController::viewWillAppear() {

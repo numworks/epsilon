@@ -258,7 +258,7 @@ int ListController::sequenceDefinitionForRow(int j) {
 }
 
 void ListController::addEmptyModel() {
-  app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
+  Container::activeApp()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

@@ -51,7 +51,7 @@ void EditableTextCell::layoutSubviews() {
 }
 
 void EditableTextCell::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
 KDSize EditableTextCell::minimalSizeForOptimalDisplay() const {

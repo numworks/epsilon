@@ -61,14 +61,14 @@ void MenuController::didBecomeFirstResponder() {
   }
   if (footer()->selectedButton() == 0) {
     assert(m_selectableTableView.selectedRow() < 0);
-    app()->setFirstResponder(&m_consoleButton);
+    Container::activeApp()->setFirstResponder(&m_consoleButton);
     return;
   }
   if (m_selectableTableView.selectedRow() < 0) {
     m_selectableTableView.selectCellAtLocation(0,0);
   }
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
   if (consoleController()->locked()) {
     consoleController()->setAutoImport(true);
@@ -92,7 +92,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     if (footer()->selectedButton() == 0) {
       footer()->setSelectedButton(-1);
       m_selectableTableView.selectCellAtLocation(0, numberOfRows()-1);
-      app()->setFirstResponder(&m_selectableTableView);
+      Container::activeApp()->setFirstResponder(&m_selectableTableView);
       return true;
     }
   }
@@ -124,7 +124,7 @@ void MenuController::renameSelectedScript() {
   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
   ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
-  app()->setFirstResponder(myCell);
+  Container::activeApp()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
   myCell->textField()->setEditing(true, false);
   myCell->textField()->setCursorLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
@@ -337,16 +337,16 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     }
     m_selectableTableView.selectedCell()->setHighlighted(true);
     reloadConsole();
-    app()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
     AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Script::ErrorStatus::NameTaken) {
-    app()->displayWarning(I18n::Message::NameTaken);
+    Container::activeApp()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Script::ErrorStatus::NonCompliantName) {
-    app()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
+    Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
   } else {
     assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
-    app()->displayWarning(I18n::Message::NameTooLong);
+    Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
   }
   return false;
 }
@@ -420,7 +420,7 @@ bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool
   textField->setText(scriptName);
   if (menuControllerStaysInResponderChain) {
     m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
-    app()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
   }
   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;

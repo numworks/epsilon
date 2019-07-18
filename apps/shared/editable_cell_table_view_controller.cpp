@@ -27,7 +27,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     return false;
   }
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   /* At this point, a new cell is selected depending on the event, before the

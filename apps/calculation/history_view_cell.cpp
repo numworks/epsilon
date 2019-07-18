@@ -167,9 +167,9 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
 void HistoryViewCell::didBecomeFirstResponder() {
   assert(m_dataSource);
   if (m_dataSource->selectedSubviewType() == HistoryViewCellDataSource::SubviewType::Input) {
-    app()->setFirstResponder(&m_inputView);
+    Container::activeApp()->setFirstResponder(&m_inputView);
   } else {
-    app()->setFirstResponder(&m_scrollableOutputView);
+    Container::activeApp()->setFirstResponder(&m_scrollableOutputView);
   }
 }
 
@@ -181,7 +181,7 @@ bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
     m_dataSource->setSelectedSubviewType(otherSubviewType, this);
     CalculationSelectableTableView * tableView = (CalculationSelectableTableView *)parentResponder();
     tableView->scrollToSubviewOfTypeOfCellAtLocation(otherSubviewType, tableView->selectedColumn(), tableView->selectedRow());
-    app()->setFirstResponder(this);
+    Container::activeApp()->setFirstResponder(this);
     return true;
   }
   return false;

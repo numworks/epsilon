@@ -11,7 +11,7 @@ public:
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->variableBoxForInputEventHandler(textInput); }
 private:
   InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() const {
-    return static_cast<InputEventHandlerDelegateApp *>(::app());
+    return static_cast<InputEventHandlerDelegateApp *>(Container::activeApp());
   }
 };
 

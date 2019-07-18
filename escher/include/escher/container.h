@@ -42,8 +42,4 @@ private:
   virtual Timer * containerTimerAtIndex(int i);
 };
 
-inline App * app() {
-  return Container::activeApp();
-}
-
 #endif

@@ -19,7 +19,7 @@ const char * MessageTableCellWithEditableText::editedText() const {
 }
 
 void MessageTableCellWithEditableText::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
 bool MessageTableCellWithEditableText::isEditing() {

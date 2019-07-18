@@ -79,7 +79,7 @@ void Probability::LawController::didBecomeFirstResponder() {
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {

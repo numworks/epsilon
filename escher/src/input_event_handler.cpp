@@ -12,7 +12,7 @@ bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
   }
   if (box) {
     box->setSender(this);
-    app()->displayModalViewController(box, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    Container::activeApp()->displayModalViewController(box, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
   return false;

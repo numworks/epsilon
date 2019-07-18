@@ -49,7 +49,7 @@ void TypeParameterController::viewDidDisappear() {
 
 void TypeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
@@ -81,7 +81,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
     Sequence * newSequence = sequenceStore()->modelForRecord(record);
     newSequence->setType((Sequence::Type)selectedRow());
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     m_listController->editExpression(0, Ion::Events::OK);
     return true;
   }

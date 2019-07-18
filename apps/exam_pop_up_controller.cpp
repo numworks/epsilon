@@ -30,16 +30,16 @@ void ExamPopUpController::viewDidDisappear() {
 }
 
 void ExamPopUpController::didBecomeFirstResponder() {
-  m_contentView.setSelectedButton(0, app());
+  m_contentView.setSelectedButton(0);
 }
 
 bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left && m_contentView.selectedButton() == 1) {
-    m_contentView.setSelectedButton(0, app());
+    m_contentView.setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::Right && m_contentView.selectedButton() == 0) {
-    m_contentView.setSelectedButton(1, app());
+    m_contentView.setSelectedButton(1);
     return true;
   }
   return false;
@@ -78,14 +78,10 @@ void ExamPopUpController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   ctx->fillRect(bounds(), KDColorBlack);
 }
 
-void ExamPopUpController::ContentView::setSelectedButton(int selectedButton, App * app) {
+void ExamPopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
-  if (selectedButton == 0) {
-    app->setFirstResponder(&m_cancelButton);
-  } else {
-    app->setFirstResponder(&m_okButton);
-  }
+  app()->setFirstResponder(selectedButton == 0 ? &m_cancelButton : &m_okButton);
 }
 
 int ExamPopUpController::ContentView::selectedButton() {

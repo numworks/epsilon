@@ -43,9 +43,10 @@ void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
 
 float GraphController::interestingXHalfRange() const {
   float characteristicRange = 0.0f;
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    float fRange = f->expressionReduced(app()->localContext()).characteristicXRange(*(app()->localContext()), Poincare::Preferences::sharedPreferences()->angleUnit());
+    float fRange = f->expressionReduced(context).characteristicXRange(*context, Poincare::Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = maxFloat(fRange, characteristicRange);
     }

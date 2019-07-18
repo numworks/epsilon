@@ -14,7 +14,7 @@ View * LogoController::view() {
 }
 
 bool LogoController::fire() {
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 

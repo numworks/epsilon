@@ -26,7 +26,7 @@ const char * StoreParameterController::title() {
 
 void StoreParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {

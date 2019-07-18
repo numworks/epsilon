@@ -35,7 +35,7 @@ bool PopUpController::handleEvent(Ion::Events::Event event) {
 PopUpController::ContentView::ContentView(Responder * parentResponder) :
   Responder(parentResponder),
   m_cancelButton(this, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }, this), KDFont::SmallFont),
   m_okButton(this, I18n::Message::Ok, Invocation([](void * context, void * sender) {
@@ -61,9 +61,9 @@ void PopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
   if (selectedButton == 0) {
-    app()->setFirstResponder(&m_cancelButton);
+    Container::activeApp()->setFirstResponder(&m_cancelButton);
   } else {
-    app()->setFirstResponder(&m_okButton);
+    Container::activeApp()->setFirstResponder(&m_okButton);
   }
 }
 

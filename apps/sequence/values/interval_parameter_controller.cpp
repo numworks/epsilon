@@ -22,7 +22,7 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f < 0) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   double parameter = std::round(f);

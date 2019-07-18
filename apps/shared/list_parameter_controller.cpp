@@ -21,7 +21,7 @@ const char * ListParameterController::title() {
 }
 
 void ListParameterController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void ListParameterController::viewWillAppear() {

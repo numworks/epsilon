@@ -31,7 +31,7 @@ void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->isMainViewSelected()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
-    app()->setFirstResponder(bannerView()->abscissaValue());
+    Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
   } else {
     InteractiveCurveViewController::didBecomeFirstResponder();
   }

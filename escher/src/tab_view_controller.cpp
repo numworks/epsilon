@@ -75,14 +75,12 @@ int TabViewController::activeTab() const {
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back) {
-    if (app()->firstResponder() != this) {
-      app()->setFirstResponder(this);
+  App * app = Container::activeApp();
+  if (app->firstResponder() != this) {
+    if (event == Ion::Events::Back) {
+      app->setFirstResponder(this);
       return true;
     }
-    return false;
-  }
-  if (app()->firstResponder() != this) {
     return false;
   }
   if (event == Ion::Events::Left) {
@@ -116,7 +114,7 @@ void TabViewController::setActiveTab(int8_t i) {
     m_children[i]->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);
   }
-  app()->setFirstResponder(activeVC);
+  Container::activeApp()->setFirstResponder(activeVC);
   if (i  != m_dataSource->activeTab()) {
     m_children[m_dataSource->activeTab()]->viewDidDisappear();
     m_dataSource->setActiveTab(i);
@@ -132,7 +130,7 @@ void TabViewController::setSelectedTab(int8_t i) {
 }
 
 void TabViewController::didEnterResponderChain(Responder * previousResponder) {
-  app()->setFirstResponder(activeViewController());
+  Container::activeApp()->setFirstResponder(activeViewController());
 }
 
 void TabViewController::didBecomeFirstResponder() {

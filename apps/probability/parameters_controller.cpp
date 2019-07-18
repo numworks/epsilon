@@ -144,7 +144,7 @@ double ParametersController::parameterAtIndex(int index) {
 
 bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   if (!m_law->authorizedValueAtIndex(f, parameterIndex)) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   m_law->setParameterAtIndex(f, parameterIndex);

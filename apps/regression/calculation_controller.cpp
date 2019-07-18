@@ -50,7 +50,7 @@ const char * CalculationController::title() {
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   return false;
@@ -78,7 +78,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     if (previousSelectedCellX == 0 && previousSelectedCellY == 1) {
       selectableTableView()->deselectTable();
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
     } else {
       t->selectCellAtLocation(0, 1);
     }

@@ -37,5 +37,5 @@ void EvenOddEditableTextCell::layoutSubviews() {
 }
 
 void EvenOddEditableTextCell::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editableCell);
+  Container::activeApp()->setFirstResponder(&m_editableCell);
 }

@@ -40,7 +40,7 @@ void BufferTextViewWithTextField::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void BufferTextViewWithTextField::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
   m_textField.setEditing(true, false);
   markRectAsDirty(bounds());
 }

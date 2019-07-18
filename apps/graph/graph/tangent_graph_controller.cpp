@@ -34,7 +34,7 @@ void TangentGraphController::didBecomeFirstResponder() {
   if (curveView()->isMainViewSelected()) {
     m_bannerView->abscissaValue()->setParentResponder(this);
     m_bannerView->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
-    app()->setFirstResponder(m_bannerView->abscissaValue());
+    Container::activeApp()->setFirstResponder(m_bannerView->abscissaValue());
   }
 }
 

@@ -47,8 +47,7 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
 
 ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_cancelButton(parentResponder, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    AppsContainer * container = AppsContainer::sharedAppsContainer();
-    container->activeApp()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }, parentResponder), KDFont::SmallFont),
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
@@ -64,7 +63,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
       Ion::LED::setColor(KDColorBlack);
     }
     container->refreshPreferences();
-    container->activeApp()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }, parentResponder), KDFont::SmallFont),
   m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
@@ -81,7 +80,7 @@ void ExamPopUpController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
 void ExamPopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
-  app()->setFirstResponder(selectedButton == 0 ? &m_cancelButton : &m_okButton);
+  Container::activeApp()->setFirstResponder(selectedButton == 0 ? &m_cancelButton : &m_okButton);
 }
 
 int ExamPopUpController::ContentView::selectedButton() {

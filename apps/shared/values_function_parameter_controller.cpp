@@ -15,7 +15,7 @@ void ValuesFunctionParameterController::viewWillAppear() {
 void ValuesFunctionParameterController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 }

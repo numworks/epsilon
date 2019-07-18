@@ -107,7 +107,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
     // Replace UCodePointUnknownN with 'n'
     replaceUnknownSymbolWithReadableSymbol(initialText);
   }
-  InputViewController * inputController = app()->inputViewController();
+  InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
   // Invalidate the sequences context cache
   app()->localContext()->resetCache();
   switch (sequenceDefinition) {

@@ -136,9 +136,6 @@ void ModalViewController::dismissModalViewController() {
 }
 
 void ModalViewController::didBecomeFirstResponder() {
-  if (m_contentView.isDisplayingModal()) {
-    app()->setFirstResponder(m_currentModalViewController);
-  }
   app()->setFirstResponder(m_regularViewController);
 }
 

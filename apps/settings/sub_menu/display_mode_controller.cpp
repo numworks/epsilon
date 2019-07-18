@@ -78,7 +78,7 @@ bool DisplayModeController::textFieldShouldFinishEditing(TextField * textField, 
 
 bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
-  if (app()->hasUndefinedValue(text, floatBody)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   if (floatBody < 1) {

@@ -69,7 +69,7 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
-  return app()->textFieldDidReceiveEvent(textField, event);
+  return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
@@ -120,10 +120,11 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   if (shouldDuplicateLastCalculation && m_cacheBuffer[0] != 0) {
     /* The input text store in m_cacheBuffer might have beed correct the first
      * time but then be too long when replacing ans in another context */
-    if (!app()->isAcceptableText(m_cacheBuffer)) {
+    Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
+    if (!myApp->isAcceptableText(m_cacheBuffer)) {
       return true;
     }
-    m_calculationStore->push(m_cacheBuffer, app()->localContext());
+    m_calculationStore->push(m_cacheBuffer, myApp->localContext());
     m_historyController->reload();
     ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
     return true;
@@ -147,7 +148,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   } else {
     layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize);
   }
-  m_calculationStore->push(m_cacheBuffer, app()->localContext());
+  m_calculationStore->push(m_cacheBuffer, textFieldDelegateApp()->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   ((ContentView *)view())->expressionField()->setEditing(true, true);

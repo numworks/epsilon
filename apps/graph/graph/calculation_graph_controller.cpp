@@ -48,7 +48,7 @@ Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetF
   double step = m_graphRange->xGridUnit()/10.0;
   step = direction < 0 ? -step : step;
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
-  return computeNewPointOfInterest(start, step, max, app()->localContext());
+  return computeNewPointOfInterest(start, step, max, textFieldDelegateApp()->localContext());
 }
 
 CartesianFunctionStore * CalculationGraphController::functionStore() const {

@@ -61,12 +61,13 @@ float GraphController::interestingXHalfRange() const {
 }
 
 bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;
-  if (app()->hasUndefinedValue(text, floatBody)) {
+  if (myApp->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = yValue(selectedCurveIndex(), floatBody, app()->localContext());
+  double y = yValue(selectedCurveIndex(), floatBody, myApp->localContext());
   m_cursor->moveTo(floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
@@ -96,7 +97,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  double y = s->evaluateAtAbscissa(x, app()->localContext());
+  double y = s->evaluateAtAbscissa(x, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(x, y);
   return true;
 }

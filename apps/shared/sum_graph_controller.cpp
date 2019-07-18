@@ -66,7 +66,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  FunctionApp * myApp = FunctionApp::app();
   assert(!m_record.isNull());
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->evaluateAtAbscissa(x, myApp->localContext());
@@ -138,7 +138,7 @@ void SumGraphController::reloadBannerView() {
   double result;
   Poincare::Layout functionLayout;
   if (m_step == Step::Result) {
-    FunctionApp * myApp = static_cast<FunctionApp *>(app());
+    FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
     ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
     result = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());

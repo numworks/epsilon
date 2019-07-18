@@ -30,7 +30,10 @@ public:
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
- };
+  };
+  static FunctionApp * app() {
+    return static_cast<FunctionApp *>(::app());
+  }
   virtual ~FunctionApp() = default;
   virtual FunctionStore * functionStore() { return static_cast<FunctionApp::Snapshot *>(snapshot())->functionStore(); }
   virtual InputViewController * inputViewController() = 0;

@@ -111,8 +111,7 @@ double FunctionGraphController::defaultCursorAbscissa() {
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 void FunctionGraphController::initCursorParameters() {

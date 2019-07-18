@@ -61,7 +61,7 @@ void TangentGraphController::reloadBannerView() {
   if (m_record.isNull()) {
     return;
   }
-  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, app()->functionStore(), CartesianFunction::Symbol());
+  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), CartesianFunction::Symbol());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];

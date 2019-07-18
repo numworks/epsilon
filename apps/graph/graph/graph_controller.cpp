@@ -73,12 +73,12 @@ void GraphController::reloadBannerView() {
     return;
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record, app());
+  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, app());
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record);
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {

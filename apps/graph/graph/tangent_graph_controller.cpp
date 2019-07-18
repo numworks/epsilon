@@ -62,7 +62,7 @@ void TangentGraphController::reloadBannerView() {
     return;
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, app()->functionStore(), CartesianFunction::Symbol());
-  GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, app());
+  GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits);
   char buffer[bufferSize];
   const char * legend = "a=";
@@ -81,7 +81,7 @@ void TangentGraphController::reloadBannerView() {
 }
 
 bool TangentGraphController::moveCursorHorizontally(int direction) {
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, app());
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record);
 }
 
 bool TangentGraphController::handleEnter() {

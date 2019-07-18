@@ -11,7 +11,7 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   TextFieldDelegateApp * textFieldDelegateApp() const {
-    return static_cast<TextFieldDelegateApp *>(::app());
+    return static_cast<TextFieldDelegateApp *>(Container::activeApp());
   }
 };
 

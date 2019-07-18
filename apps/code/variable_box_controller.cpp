@@ -100,7 +100,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   if (selectedScriptNode.type() == ScriptNode::Type::Function) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
   }
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 

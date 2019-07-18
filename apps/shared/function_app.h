@@ -32,7 +32,7 @@ public:
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
   };
   static FunctionApp * app() {
-    return static_cast<FunctionApp *>(::app());
+    return static_cast<FunctionApp *>(Container::activeApp());
   }
   virtual ~FunctionApp() = default;
   virtual FunctionStore * functionStore() { return static_cast<FunctionApp::Snapshot *>(snapshot())->functionStore(); }

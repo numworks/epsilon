@@ -44,7 +44,7 @@ View * EquationListView::subviewAtIndex(int index) {
 }
 
 void EquationListView::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_listView);
+  Container::activeApp()->setFirstResponder(&m_listView);
 }
 
 void EquationListView::layoutSubviews() {

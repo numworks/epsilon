@@ -117,11 +117,11 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
-  m_previousResponder = app()->firstResponder();
+  m_previousResponder = Container::activeApp()->firstResponder();
   m_currentModalViewController->initView();
   m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
   m_currentModalViewController->viewWillAppear();
-  app()->setFirstResponder(vc);
+  Container::activeApp()->setFirstResponder(vc);
 }
 
 void ModalViewController::reloadModalViewController() {
@@ -130,13 +130,13 @@ void ModalViewController::reloadModalViewController() {
 
 void ModalViewController::dismissModalViewController() {
   m_currentModalViewController->viewDidDisappear();
-  app()->setFirstResponder(m_previousResponder);
+  Container::activeApp()->setFirstResponder(m_previousResponder);
   m_contentView.dismissModalView();
   m_currentModalViewController = nullptr;
 }
 
 void ModalViewController::didBecomeFirstResponder() {
-  app()->setFirstResponder(m_regularViewController);
+  Container::activeApp()->setFirstResponder(m_regularViewController);
 }
 
 bool ModalViewController::handleEvent(Ion::Events::Event event) {

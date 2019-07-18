@@ -86,7 +86,7 @@ void CalculationController::didEnterResponderChain(Responder * previousResponder
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 View * CalculationController::view() {
@@ -192,7 +192,7 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField, boo
     /* We do not reload the responder because the first responder might be the
      * toolbox (or the variable  box) and reloading the responder would corrupt
      * the first responder. */
-    bool shouldUpdateFirstResponder = app()->firstResponder() == textField;
+    bool shouldUpdateFirstResponder = Container::activeApp()->firstResponder() == textField;
     m_selectableTableView.reloadData(shouldUpdateFirstResponder);
     // The textField frame might have increased which forces to reload the textField scroll
     textField->scrollToCursor();

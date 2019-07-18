@@ -154,7 +154,7 @@ bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(selectedButton);
     button->setHighlighted(true);
-    app()->setFirstResponder(button);
+    Container::activeApp()->setFirstResponder(button);
     return true;
   }
   return false;
@@ -171,7 +171,7 @@ const char * ButtonRowController::title() {
 }
 
 void ButtonRowController::didBecomeFirstResponder(){
-  app()->setFirstResponder(m_contentView.mainViewController());
+  Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
 }
 
 int ButtonRowController::selectedButton() {

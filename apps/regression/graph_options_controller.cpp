@@ -2,7 +2,6 @@
 #include "app.h"
 #include "graph_controller.h"
 #include "regression_controller.h"
-#include <apps/apps_container.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -32,7 +31,7 @@ void GraphOptionsController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void GraphOptionsController::viewWillAppear() {

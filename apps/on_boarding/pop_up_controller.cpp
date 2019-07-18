@@ -52,7 +52,7 @@ PopUpController::PopUpController(I18n::Message * messages, KDColor * colors, uin
 
 bool PopUpController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
       bool switched = appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));

@@ -153,7 +153,7 @@ void ConsoleController::viewWillAppear() {
 }
 
 void ConsoleController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editCell);
+  Container::activeApp()->setFirstResponder(&m_editCell);
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
@@ -162,7 +162,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();
       m_editCell.setEditing(true);
       m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-      app()->setFirstResponder(&m_editCell);
+      Container::activeApp()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
   } else if (event == Ion::Events::Clear) {

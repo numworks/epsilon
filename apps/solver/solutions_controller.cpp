@@ -284,7 +284,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  app()->setFirstResponder(m_contentView.selectableTableView());
+  Container::activeApp()->setFirstResponder(m_contentView.selectableTableView());
 }
 
 }

@@ -14,8 +14,6 @@ class ExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)
 public:
   ExpressionModelStore();
-  virtual CodePoint symbol() const { return 0; }
-  virtual CodePoint unknownSymbol() const { return 0; }
 
   // Getters
   // By default, the number of models is not bounded

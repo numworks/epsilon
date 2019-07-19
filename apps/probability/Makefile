@@ -1,6 +1,11 @@
 apps += Probability::App
 app_headers += apps/probability/app.h
 
+app_probability_test_src = $(addprefix apps/probability/,\
+  law/erf_inv.cpp \
+  law/law.cpp \
+)
+
 app_probability_src = $(addprefix apps/probability/,\
   app.cpp \
   calculation/calculation.cpp \
@@ -14,9 +19,7 @@ app_probability_src = $(addprefix apps/probability/,\
   cell.cpp \
   image_cell.cpp \
   law/binomial_law.cpp \
-  law/erf_inv.cpp \
   law/exponential_law.cpp \
-  law/law.cpp \
   law/normal_law.cpp \
   law/poisson_law.cpp \
   law/two_parameter_law.cpp \
@@ -27,6 +30,7 @@ app_probability_src = $(addprefix apps/probability/,\
   responder_image_cell.cpp \
 )
 
+app_probability_src += $(app_probability_test_src)
 app_src += $(app_probability_src)
 
 i18n_files += $(addprefix apps/probability/,\

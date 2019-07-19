@@ -1,10 +1,13 @@
 apps += Calculation::App
 app_headers += apps/calculation/app.h
 
-app_calculation_src = $(addprefix apps/calculation/,\
-  app.cpp \
+app_calculation_test_src += $(addprefix apps/calculation/,\
   calculation.cpp \
   calculation_store.cpp \
+)
+
+app_calculation_src = $(addprefix apps/calculation/,\
+  app.cpp \
   edit_expression_controller.cpp \
   expression_field.cpp \
   history_view_cell.cpp \
@@ -13,6 +16,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
   selectable_table_view.cpp \
 )
 
+app_calculation_src += $(app_calculation_test_src)
 app_src += $(app_calculation_src)
 
 i18n_files += $(addprefix apps/calculation/,\

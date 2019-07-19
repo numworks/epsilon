@@ -136,7 +136,9 @@ void ModalViewController::dismissModalViewController() {
 }
 
 void ModalViewController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(m_regularViewController);
+  Container::activeApp()->setFirstResponder(
+    isDisplayingModal() ? m_currentModalViewController : m_regularViewController
+  );
 }
 
 bool ModalViewController::handleEvent(Ion::Events::Event event) {

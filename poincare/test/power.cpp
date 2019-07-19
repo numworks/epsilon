@@ -103,6 +103,8 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("R(-x)", "R(-x)");
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "unreal", User, Radian, Real);
+  // Principal angle of root of unity
+  assert_parsed_expression_simplify_to("(-5)^(-1/3)", "1/(2×root(5,3))-√(3)/(2×root(5,3))×𝐢", User, Radian, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)", "(√(√(6)+8)+√(6)+9)/√(√(6)+8)", User, Radian, Real);
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");

@@ -30,6 +30,9 @@ public:
     CartesianFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   InputViewController * inputViewController() override;
   char XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
@@ -51,10 +54,6 @@ private:
   TabViewController m_tabViewController;
   InputViewController m_inputViewController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

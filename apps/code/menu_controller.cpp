@@ -36,7 +36,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
 }
 
 ConsoleController * MenuController::consoleController() {
-  return app()->consoleController();
+  return App::app()->consoleController();
 }
 
 StackViewController * MenuController::stackViewController() {

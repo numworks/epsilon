@@ -73,7 +73,7 @@ void Probability::LawController::viewWillAppear() {
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
-  app()->snapshot()->setActivePage(App::Snapshot::Page::Law);
+  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Law);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {

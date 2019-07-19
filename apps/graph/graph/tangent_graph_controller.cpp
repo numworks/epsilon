@@ -44,7 +44,7 @@ bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, co
   if (myApp->hasUndefinedValue(text, floatBody)) {
     return false;
   }
-  ExpiringPointer<CartesianFunction> function = app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->evaluateAtAbscissa(floatBody, myApp->localContext());
   m_cursor->moveTo(floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
@@ -70,7 +70,7 @@ void TangentGraphController::reloadBannerView() {
 
   const char * legend = "a=";
   int legendLength = strlcpy(buffer, legend, bufferSize);
-  ExpiringPointer<CartesianFunction> function = app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   double y = function->approximateDerivative(m_cursor->x(), context);
   PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->aView()->setText(buffer);

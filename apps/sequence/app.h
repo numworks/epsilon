@@ -33,6 +33,9 @@ public:
     SequenceStore m_sequenceStore;
     CurveViewRange m_graphRange;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   InputViewController * inputViewController() override;
   // TODO: override variableBoxForInputEventHandler to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
@@ -57,10 +60,6 @@ private:
   TabViewController m_tabViewController;
   InputViewController m_inputViewController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

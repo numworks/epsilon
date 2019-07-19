@@ -192,14 +192,14 @@ void ListController::resolveEquations() {
     case EquationStore::Error::RequireApproximateSolution:
     {
       StackViewController * stack = stackController();
-      stack->push(app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(App::app()->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
     }
     default:
     {
       assert(e == EquationStore::Error::NoError);
       StackViewController * stack = stackController();
-      stack->push(app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+      stack->push(App::app()->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
  }
 }
@@ -233,7 +233,7 @@ StackViewController * ListController::stackController() const {
 }
 
 InputViewController * ListController::inputController() {
-  return app()->inputViewController();
+  return App::app()->inputViewController();
 }
 
 }

@@ -75,7 +75,7 @@ void HistoryViewCell::reloadScroll() {
 }
 
 void HistoryViewCell::reloadOutputSelection() {
-  Calculation::DisplayOutput display = m_calculation.displayOutput(app()->localContext());
+  Calculation::DisplayOutput display = m_calculation.displayOutput(App::app()->localContext());
   /* Select the right output according to the calculation display output. This
    * will reload the scroll to display the selected output. */
   if (display == Calculation::DisplayOutput::ExactAndApproximate) {
@@ -136,10 +136,11 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   if (m_calculationExpanded == expanded && *calculation == m_calculation) {
     return;
   }
+  Poincare::Context * context = App::app()->localContext();
   // Memoization
   m_calculation = *calculation;
   m_calculationExpanded = expanded;
-  Calculation::DisplayOutput display = calculation->displayOutput(app()->localContext());
+  Calculation::DisplayOutput display = calculation->displayOutput(context);
   m_inputView.setLayout(calculation->createInputLayout());
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
@@ -149,13 +150,13 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
   if (display == Calculation::DisplayOutput::ExactOnly) {
     rightOutputLayout = calculation->createExactOutputLayout();
   } else {
-    rightOutputLayout = calculation->createApproximateOutputLayout(app()->localContext());
+    rightOutputLayout = calculation->createApproximateOutputLayout(context);
     if (display == Calculation::DisplayOutput::ExactAndApproximate || (display == Calculation::DisplayOutput::ExactAndApproximateToggle && expanded)) {
       leftOutputLayout = calculation->createExactOutputLayout();
     }
   }
   m_scrollableOutputView.setLayouts(rightOutputLayout, leftOutputLayout);
-  I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(app()->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
+  I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);
 
   /* The displayed input and outputs have changed. We need to re-layout the cell

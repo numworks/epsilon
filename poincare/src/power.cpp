@@ -990,6 +990,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
       }
     } else {
       /* On complex numbers, we pick the first root (-1)^(p/q) = e^(i*pi*p/q) */
+      r.setSign(isDenominator ? ExpressionNode::Sign::Negative : ExpressionNode::Sign::Positive);
       Expression exp = CreateComplexExponent(r, reductionContext);
       m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
       exp.shallowReduce(reductionContext);

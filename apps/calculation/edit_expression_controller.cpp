@@ -121,7 +121,6 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     /* The input text store in m_cacheBuffer might have beed correct the first
      * time but then be too long when replacing ans in another context */
     if (!app()->isAcceptableText(m_cacheBuffer)) {
-      app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
     m_calculationStore->push(m_cacheBuffer, app()->localContext());

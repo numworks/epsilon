@@ -13,7 +13,7 @@ public:
   bool layoutFieldDidAbortEditing(LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
 private:
-  ExpressionFieldDelegateApp * expressionFieldDelegateApp() {
+  ExpressionFieldDelegateApp * expressionFieldDelegateApp() const {
     return static_cast<ExpressionFieldDelegateApp *>(::app());
   }
 };

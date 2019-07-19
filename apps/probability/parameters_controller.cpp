@@ -99,7 +99,7 @@ void ParametersController::reinitCalculation() {
 }
 
 void ParametersController::didBecomeFirstResponder() {
-  app()->snapshot()->setActivePage(App::Snapshot::Page::Parameters);
+  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Parameters);
   FloatParameterController::didBecomeFirstResponder();
 }
 

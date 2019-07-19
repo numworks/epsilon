@@ -54,6 +54,9 @@ public:
     char m_calculation[k_calculationSize];
     Page m_activePage;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(::App::snapshot()); }
 private:
   App(Snapshot * snapshot);
@@ -62,10 +65,6 @@ private:
   LawController m_lawController;
   StackViewController m_stackViewController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

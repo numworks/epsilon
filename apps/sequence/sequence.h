@@ -26,7 +26,6 @@ public:
   Sequence(Ion::Storage::Record record = Record()) :
     Function(record),
     m_nameLayout() {}
-  static char Symbol() { return 'n'; }
   CodePoint symbol() const override { return 'n'; }
   CodePoint unknownSymbol() const override { return UCodePointUnknownN; }
   void tidy() override;

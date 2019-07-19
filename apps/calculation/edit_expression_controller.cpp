@@ -85,7 +85,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layout
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
-  return app()->layoutFieldDidReceiveEvent(layoutField, event);
+  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {

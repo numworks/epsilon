@@ -84,6 +84,9 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     range.max = xMax;
     return range;
   }
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
   const float step = curveView()->pixelWidth() / 2;
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));

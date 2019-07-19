@@ -78,7 +78,7 @@ Poincare::Layout Sequence::nameLayout() {
   if (m_nameLayout.isUninitialized()) {
     m_nameLayout = HorizontalLayout::Builder(
         CodePointLayout::Builder(fullName()[0], KDFont::SmallFont),
-        VerticalOffsetLayout::Builder(CodePointLayout::Builder(Symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Subscript)
+        VerticalOffsetLayout::Builder(CodePointLayout::Builder(symbol(), KDFont::SmallFont), VerticalOffsetLayoutNode::Position::Subscript)
       );
   }
   return m_nameLayout;

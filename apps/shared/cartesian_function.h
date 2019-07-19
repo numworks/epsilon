@@ -10,7 +10,6 @@ namespace Shared {
 class CartesianFunction : public Function {
 public:
   static void DefaultName(char buffer[], size_t bufferSize);
-  static CodePoint Symbol() { return 'x'; }
   static CartesianFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
   CartesianFunction(Ion::Storage::Record record = Record()) :
     Function(record)

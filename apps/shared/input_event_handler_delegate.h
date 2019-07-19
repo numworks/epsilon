@@ -10,7 +10,7 @@ public:
   Toolbox * toolboxForInputEventHandler(InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->toolboxForInputEventHandler(textInput); }
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override { return inputEventHandlerDelegateApp()->variableBoxForInputEventHandler(textInput); }
 private:
-  InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() {
+  InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() const {
     return static_cast<InputEventHandlerDelegateApp *>(::app());
   }
 };

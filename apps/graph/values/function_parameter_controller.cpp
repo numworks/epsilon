@@ -70,7 +70,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 }
 
 ExpiringPointer<CartesianFunction> FunctionParameterController::function() {
-  return app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore()->modelForRecord(m_record);
 }
 
 }

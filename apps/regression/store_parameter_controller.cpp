@@ -20,7 +20,7 @@ void StoreParameterController::viewWillAppear() {
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedRow() == numberOfRows() - 1) {
-    RegressionController * regressionController = app()->regressionController();
+    RegressionController * regressionController = App::app()->regressionController();
     regressionController->setSeries(m_series);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->push(regressionController);

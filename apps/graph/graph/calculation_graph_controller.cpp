@@ -52,7 +52,7 @@ Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetF
 }
 
 CartesianFunctionStore * CalculationGraphController::functionStore() const {
-  return app()->functionStore();
+  return App::app()->functionStore();
 }
 
 bool CalculationGraphController::handleLeftRightEvent(Ion::Events::Event event) {

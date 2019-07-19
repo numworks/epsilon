@@ -151,7 +151,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
     return 0;
   }
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
-  return calculation->height(app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
+  return calculation->height(App::app()->localContext(), j == selectedRow() && selectedSubviewType() == SubviewType::Output) + 4 * Metric::CommonSmallMargin;
 }
 
 int HistoryController::typeAtLocation(int i, int j) {

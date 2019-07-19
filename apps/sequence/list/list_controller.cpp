@@ -109,7 +109,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
   }
   InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
   // Invalidate the sequences context cache
-  app()->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
       inputController->edit(this, event, this, initialText,
@@ -267,7 +267,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 
 void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   // Invalidate the sequences context cache
-  app()->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   Sequence * sequence = static_cast<Sequence *>(model.pointer());
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
@@ -295,7 +295,7 @@ void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHan
 bool ListController::removeModelRow(Ion::Storage::Record record) {
   Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache
-  app()->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   return true;
 }
 

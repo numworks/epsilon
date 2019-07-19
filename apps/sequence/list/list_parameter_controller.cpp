@@ -56,7 +56,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 #else
     if (selectedRowIndex == 2+hasAdditionalRow) {
 #endif
-      app()->localContext()->resetCache();
+      App::app()->localContext()->resetCache();
       return handleEnterOnRow(selectedRowIndex-hasAdditionalRow-1);
     }
   }
@@ -82,7 +82,7 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   }
   sequence()->setInitialRank(index);
   // Invalidate sequence context cache when changing sequence type
-  app()->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());
   m_selectableTableView.handleEvent(event);
   return true;

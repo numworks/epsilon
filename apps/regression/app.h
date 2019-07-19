@@ -40,6 +40,9 @@ public:
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   RegressionController * regressionController() { return &m_regressionController; }
 private:
   App(Snapshot * snapshot);
@@ -56,10 +59,6 @@ private:
   TabViewController m_tabViewController;
   RegressionController m_regressionController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

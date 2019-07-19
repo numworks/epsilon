@@ -29,6 +29,9 @@ public:
     void tidy() override;
     EquationStore m_equationStore;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   InputViewController * inputViewController() { return &m_inputViewController; }
   ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   ViewController * intervalController() { return &m_intervalController; }
@@ -44,10 +47,6 @@ private:
   StackViewController m_stackViewController;
   InputViewController m_inputViewController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

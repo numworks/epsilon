@@ -41,7 +41,7 @@ void GraphOptionsController::viewWillAppear() {
 bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (selectedRow() == numberOfRows() -1) {
-      RegressionController * regressionController = app()->regressionController();
+      RegressionController * regressionController = App::app()->regressionController();
       regressionController->setSeries(m_graphController->selectedSeriesIndex());
       StackViewController * stack = static_cast<StackViewController *>(parentResponder());
       stack->push(regressionController);

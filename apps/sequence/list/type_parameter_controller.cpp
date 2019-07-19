@@ -60,7 +60,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         m_listController->selectPreviousNewSequenceCell();
         sequence()->setType(sequenceType);
         // Invalidate sequence context cache when changing sequence type
-        app()->localContext()->resetCache();
+        App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Sequence::Type::Explicit) {
           sequence()->setInitialRank(0);
@@ -135,7 +135,7 @@ void TypeParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 SequenceStore * TypeParameterController::sequenceStore() {
-  return app()->functionStore();
+  return App::app()->functionStore();
 }
 
 StackViewController * TypeParameterController::stackController() const {

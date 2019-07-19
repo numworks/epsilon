@@ -36,6 +36,9 @@ public:
 #endif
     ScriptStore m_scriptStore;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   ~App();
   bool prepareForExit() override {
     if (m_consoleController.inputRunLoopActive()) {
@@ -83,10 +86,6 @@ private:
   PythonToolbox m_toolbox;
   VariableBoxController m_variableBoxController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

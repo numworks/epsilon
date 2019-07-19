@@ -162,7 +162,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
 }
 
 SelectableTableViewDataSource * Controller::selectionDataSource() const {
-  return app()->snapshot();
+  return App::app()->snapshot();
 }
 
 }

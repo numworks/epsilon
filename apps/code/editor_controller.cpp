@@ -58,7 +58,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     saveScript();
     return false;
   }
-  if (app()->textInputDidReceiveEvent(textArea, event)) {
+  if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
   if (event == Ion::Events::EXE) {
@@ -109,7 +109,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 }
 
 VariableBoxController * EditorController::variableBoxForInputEventHandler(InputEventHandler * textInput) {
-  VariableBoxController * varBox = app()->variableBoxController();
+  VariableBoxController * varBox = App::app()->variableBoxController();
   varBox->loadFunctionsAndVariables();
   return varBox;
 }

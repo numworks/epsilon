@@ -27,6 +27,9 @@ public:
     void tidy() override;
     CalculationStore m_calculationStore;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
@@ -38,10 +41,6 @@ private:
   HistoryController m_historyController;
   EditExpressionController m_editExpressionController;
 };
-
-inline App * app() {
-  return static_cast<App *>(Container::activeApp());
-}
 
 }
 

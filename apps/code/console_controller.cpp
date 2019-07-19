@@ -57,7 +57,7 @@ bool ConsoleController::loadPythonEnvironment() {
   /* We load functions and variables names in the variable box before running
    * any other python code to avoid failling to load functions and variables
    * due to memory exhaustion. */
-  app()->variableBoxController()->loadFunctionsAndVariables();
+  App::app()->variableBoxController()->loadFunctionsAndVariables();
   return true;
 }
 
@@ -290,7 +290,7 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
       return true;
     }
   }
-  return app()->textInputDidReceiveEvent(textField, event);
+  return App::app()->textInputDidReceiveEvent(textField, event);
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

@@ -100,7 +100,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 double GraphController::defaultCursorAbscissa() {
-  return std::round(Shared::FunctionGraphController::defaultCursorAbscissa());
+  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorAbscissa()));
 }
 
 }

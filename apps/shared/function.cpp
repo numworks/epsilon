@@ -78,13 +78,13 @@ int Function::nameWithArgument(char * buffer, size_t bufferSize) {
 }
 
 template<typename T>
-T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const {
+T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   if (isCircularlyDefined(context)) {
     return NAN;
   }
   constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, unknownSymbol);
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
   return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, context);
 }
 
@@ -94,7 +94,7 @@ Function::FunctionRecordDataBuffer * Function::recordData() const {
   return reinterpret_cast<FunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
-}
+template float Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*) const;
+template double Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*) const;
 
-template float Shared::Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context *, CodePoint) const;
-template double Shared::Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context *, CodePoint) const;
+}

@@ -37,10 +37,10 @@ public:
 
   // Evaluation
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context, UCodePointUnknownX);
+    return templatedApproximateAtAbscissa(x, context);
   }
   virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context, UCodePointUnknownX);
+    return templatedApproximateAtAbscissa(x, context);
   }
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
@@ -76,7 +76,7 @@ protected:
   };
 #pragma pack(pop)
 private:
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const;
+  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   FunctionRecordDataBuffer * recordData() const;
 };
 

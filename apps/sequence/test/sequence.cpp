@@ -27,134 +27,300 @@ Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * 
   return u;
 }
 
-void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, const char * definitionU, const char * conditionU1 = nullptr, const char * conditionU2 = nullptr, Sequence::Type typeV = Sequence::Type::Explicit, const char * definitionV = nullptr, const char * conditionV1 = nullptr, const char * conditionV2 = nullptr) {
+void check_sequences_defined_by(double result[MaxNumberOfSequences][10], Sequence::Type types[MaxNumberOfSequences], const char * definitions[MaxNumberOfSequences], const char * conditions1[MaxNumberOfSequences], const char * conditions2[MaxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
   SequenceStore store;
   SequenceContext sequenceContext(&globalContext, &store);
 
-  Sequence * u = nullptr;
-  Sequence * v = nullptr;
-  if (definitionU) {
-    u = addSequence(&store, typeU, definitionU, conditionU1, conditionU2);
-    quiz_assert(u->fullName()[0] == 'u');
+  Sequence * seqs[MaxNumberOfSequences];
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    seqs[i] = addSequence(&store, types[i], definitions[i], conditions1[i], conditions2[i]);
   }
-  if (definitionV) {
-    if (store.numberOfModels() == 0) {
-      Sequence * tempU = addSequence(&store, typeU, nullptr, nullptr, nullptr);
-      v = addSequence(&store, typeV, definitionV, conditionV1, conditionV2);
-      store.removeModel(*tempU);
-    } else {
-      quiz_assert(store.numberOfModels() == 1);
-      v = addSequence(&store, typeV, definitionV, conditionV1, conditionV2);
-    }
-  }
+
   for (int j = 0; j < 10; j++) {
-    if (u && u->isDefined()) {
-      double un = u->evaluateAtAbscissa((double)j, &sequenceContext);
-      quiz_assert((std::isnan(un) && std::isnan(result[0][j])) || (un == result[0][j]));
-    }
-    if (v && v->isDefined()) {
-      double vn = v->evaluateAtAbscissa((double)j, &sequenceContext);
-      quiz_assert((std::isnan(vn) && std::isnan(result[1][j])) || (vn == result[1][j]));
+    for (int i = 0; i < MaxNumberOfSequences; i++) {
+      if (seqs[i]->isDefined()) {
+        double un = seqs[i]->evaluateAtAbscissa((double)j, &sequenceContext);
+        quiz_assert((std::isnan(un) && std::isnan(result[i][j])) || (un == result[i][j]));
+      }
     }
   }
   store.removeAll();
 }
 
 QUIZ_CASE(sequence_evaluation) {
+  Sequence::Type types[MaxNumberOfSequences] = {Sequence::Type::Explicit, Sequence::Type::Explicit, Sequence::Type::Explicit};
+  const char * definitions[MaxNumberOfSequences] = {nullptr, nullptr, nullptr};
+  const char * conditions1[MaxNumberOfSequences] = {nullptr, nullptr, nullptr};
+  const char * conditions2[MaxNumberOfSequences] = {nullptr, nullptr, nullptr};
+
   // u(n) = n
-  double result0[2][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {}};
-  check_sequences_defined_by(result0, Sequence::Type::Explicit, "n");
+  double results1[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {}, {}};
+  definitions[0] = "n";
+  check_sequences_defined_by(results1, types, definitions, conditions1, conditions2);
 
   // u(n+1) = u(n)+n, u(0) = 0
-  double result1[2][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {}};
-  check_sequences_defined_by(result1, Sequence::Type::SingleRecurrence, "u(n)+n", "0");
+  double results2[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "u(n)+n";
+  conditions1[0] = "0";
+  check_sequences_defined_by(results2, types, definitions, conditions1, conditions2);
 
   // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0
-  double result2[2][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}, {}};
-  check_sequences_defined_by(result2, Sequence::Type::DoubleRecurrence, "u(n)+u(n+1)+n", "0", "0");
+  double results3[MaxNumberOfSequences][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}, {}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "u(n)+u(n+1)+n";
+  conditions1[0] = "0";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results3, types, definitions, conditions1, conditions2);
 
   // u independent, v defined with u
   // u(n) = n; v(n) = u(n)+n
-  double result3[2][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
-    {0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0}};
-  check_sequences_defined_by(result3, Sequence::Type::Explicit, "n", nullptr, nullptr, Sequence::Type::Explicit, "u(n)+n");
+  double results4[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+    {0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0},
+    {}};
+  types[0] = Sequence::Type::Explicit;
+  definitions[0] = "n";
+  definitions[1] = "u(n)+n";
+  conditions1[0] = nullptr;
+  conditions2[0] = nullptr;
+  check_sequences_defined_by(results4, types, definitions, conditions1, conditions2);
 
   // u(n+1) = u(n)+n, u(0) = 0; v(n) = u(n)+n
-  double result4[2][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
-    {0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0}};
-  check_sequences_defined_by(result4, Sequence::Type::SingleRecurrence, "n+u(n)", "0", nullptr, Sequence::Type::Explicit, "u(n)+n");
+  double results5[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
+    {0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n+u(n)";
+  conditions1[0] = "0";
+  check_sequences_defined_by(results5, types, definitions, conditions1, conditions2);
 
   // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n) = u(n)+n
-  double result5[2][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
-    {0.0, 1.0, 2.0, 4.0, 7.0, 12.0, 20.0, 33.0, 54.0, 88.0}};
-  check_sequences_defined_by(result5, Sequence::Type::DoubleRecurrence, "n+u(n)+u(n+1)", "0", "0", Sequence::Type::Explicit, "u(n)+n");
+  double results6[MaxNumberOfSequences][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
+    {0.0, 1.0, 2.0, 4.0, 7.0, 12.0, 20.0, 33.0, 54.0, 88.0}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "n+u(n)+u(n+1)";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results6, types, definitions, conditions1, conditions2);
 
   // u(n) = n; v(n+1) = u(n)+u(n+1)+n, v(0) = 0
-  double result6[2][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
-    {0.0, 1.0, 4.0, 7.0, 10.0, 13.0, 16.0, 19.0, 22.0, 25.0}};
-  check_sequences_defined_by(result6, Sequence::Type::Explicit, "n", nullptr, nullptr, Sequence::Type::SingleRecurrence, "u(n)+u(n+1)+n", "0");
+  double results7[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+    {0.0, 1.0, 4.0, 7.0, 10.0, 13.0, 16.0, 19.0, 22.0, 25.0}, {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n";
+  definitions[1] = "n+u(n)+u(n+1)";
+  conditions1[0] = nullptr;
+  conditions1[1] = "0";
+  conditions2[0] = nullptr;
+  check_sequences_defined_by(results7, types, definitions, conditions1, conditions2);
 
   // u(n+1) = u(n)+n, u(0) = 0; v(n+1) = u(n)+u(n+1)+n, v(0) = 0
-  double result7[2][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
-    {0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0, 72.0}};
-  check_sequences_defined_by(result7, Sequence::Type::SingleRecurrence, "n+u(n)", "0", nullptr, Sequence::Type::SingleRecurrence, "u(n)+u(n+1)+n", "0");
+  double results8[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
+    {0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0, 72.0}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n+u(n)";
+  definitions[1] = "n+u(n)+u(n+1)";
+  conditions1[0] = "0";
+  check_sequences_defined_by(results8, types, definitions, conditions1, conditions2);
 
   // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n+1) = u(n)+u(n+1)+n, v(0) = 0
-  double result8[2][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
-    {0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0, 133.0}};
-  check_sequences_defined_by(result8, Sequence::Type::DoubleRecurrence, "n+u(n)+u(n+1)", "0", "0", Sequence::Type::SingleRecurrence, "u(n)+u(n+1)+n", "0");
+  double results9[MaxNumberOfSequences][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
+    {0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0, 133.0}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "n+u(n)+u(n+1)";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results9, types, definitions, conditions1, conditions2);
 
   // u(n) = n; v(n+2) = u(n)+u(n+1)+n, v(0) = 0, v(1)=0
-  double result9[2][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
-    {0.0, 0.0, 1.0, 4.0, 7.0, 10.0, 13.0, 16.0, 19.0, 22.0}};
-  check_sequences_defined_by(result9, Sequence::Type::Explicit, "n", nullptr, nullptr, Sequence::Type::DoubleRecurrence, "u(n)+u(n+1)+n", "0", "0");
+  double results10[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+    {0.0, 0.0, 1.0, 4.0, 7.0, 10.0, 13.0, 16.0, 19.0, 22.0}, {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "n";
+  conditions1[0] = nullptr;
+  conditions2[0] = nullptr;
+  conditions2[1] = "0";
+  check_sequences_defined_by(results10, types, definitions, conditions1, conditions2);
 
   // u(n+1) = u(n)+n, u(0) = 0; v(n+2) = u(n)+u(n+1)+n, v(0) = 0, v(1)=0
-  double result10[2][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
-    {0.0, 0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0}};
-  check_sequences_defined_by(result10, Sequence::Type::SingleRecurrence, "n+u(n)", "0", nullptr, Sequence::Type::DoubleRecurrence, "u(n)+u(n+1)+n", "0", "0");
+  double results11[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
+    {0.0, 0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n+u(n)";
+  conditions1[0] = "0";
+  check_sequences_defined_by(results11, types, definitions, conditions1, conditions2);
 
   // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n+2) = u(n)+u(n+1)+n, v(0) = 0, v(1)=0
-  double result11[2][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
-    {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}};
-  check_sequences_defined_by(result11, Sequence::Type::DoubleRecurrence, "n+u(n)+u(n+1)", "0", "0", Sequence::Type::DoubleRecurrence, "u(n)+u(n+1)+n", "0", "0");
+  double results12[MaxNumberOfSequences][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
+    {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "u(n+1)+u(n)+n";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results12, types, definitions, conditions1, conditions2);
 
   // v independent, u defined with v
 
   // u(n) = v(n); v(n) = u(n)
-  double result12[2][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
-    {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}};
-  check_sequences_defined_by(result12, Sequence::Type::Explicit, "v(n)", nullptr, nullptr, Sequence::Type::Explicit, "u(n)");
+  double results13[MaxNumberOfSequences][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+    {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "v(n)";
+  definitions[1] = "u(n)";
+  conditions1[0] = nullptr;
+  conditions1[1] = nullptr;
+  conditions2[0] = nullptr;
+  conditions2[1] = nullptr;
+  check_sequences_defined_by(results13, types, definitions, conditions1, conditions2);
 
   // u(n+1) = v(n)+n, u(0)=0; v(n) = u(n)+n
-  double result13[2][10] = {{0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0, 72.0}, {0.0, 1.0, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81}};
-  check_sequences_defined_by(result13, Sequence::Type::SingleRecurrence, "v(n)+n", "0", nullptr, Sequence::Type::Explicit, "u(n)+n");
+  double results14[MaxNumberOfSequences][10] = {{0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0, 72.0}, {0.0, 1.0, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "v(n)+n";
+  definitions[1] = "u(n)+n";
+  conditions1[0] = "0";
+  check_sequences_defined_by(results14, types, definitions, conditions1, conditions2);
 
   // u(n+2) = v(n+1)+u(n+1)+v(n)+u(n)+n, u(1) = 0; u(0)=0; v(n) = u(n)+n
-  double result14[2][10] = {{0.0, 0.0, 1.0, 6.0, 21.0, 64.0, 183.0, 510.0, 1405.0, 3852.0}, {0.0, 1.0, 3.0, 9.0, 25.0, 69.0, 189.0, 517.0, 1413.0, 3861.0}};
-  check_sequences_defined_by(result14, Sequence::Type::DoubleRecurrence, "v(n+1)+v(n)+u(n+1)+u(n)+n", "0", "0", Sequence::Type::Explicit, "u(n)+n");
+  double results15[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 6.0, 21.0, 64.0, 183.0, 510.0, 1405.0, 3852.0}, {0.0, 1.0, 3.0, 9.0, 25.0, 69.0, 189.0, 517.0, 1413.0, 3861.0}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "v(n+1)+v(n)+u(n+1)+u(n)+n";
+  conditions1[0] = "0";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results15, types, definitions, conditions1, conditions2);
 
   // u(n) = v(n)+n; v(n+1) = u(n)+n, v(0)=0
-  double result15[2][10] = {{0.0, 1.0, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81},
-    {0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0, 72.0}};
-  check_sequences_defined_by(result15, Sequence::Type::Explicit, "v(n)+n", nullptr, nullptr, Sequence::Type::SingleRecurrence, "u(n)+n", "0");
+  double results16[MaxNumberOfSequences][10] = {{0.0, 1.0, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0, 64.0, 81},
+    {0.0, 0.0, 2.0, 6.0, 12.0, 20.0, 30.0, 42.0, 56.0, 72.0}, {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "v(n)+n";
+  conditions1[0] = nullptr;
+  conditions1[1] = "0";
+  conditions2[0] = nullptr;
+  check_sequences_defined_by(results16, types, definitions, conditions1, conditions2);
 
   // u(n+1) = v(n)+n, u(0)=0; v(n+1) = u(n)+n, v(0)=0
-  double result16[2][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}};
-  check_sequences_defined_by(result16, Sequence::Type::SingleRecurrence, "v(n)+n", "0", nullptr, Sequence::Type::SingleRecurrence, "u(n)+n", "0");
+  double results17[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  conditions1[0] = "0";
+  check_sequences_defined_by(results17, types, definitions, conditions1, conditions2);
 
   // u(n+2) = v(n+1)+u(n+1)+v(n)+u(n)+n, u(1) = 0, u(0) = 0; v(n+1) = u(n)+n, v(0)=0
-  double result17[2][10] = {{0.0, 0.0, 0.0, 2.0, 7.0, 19.0, 46.0, 105.0, 233.0, 509.0}, {0.0, 0.0, 1.0, 2.0, 5.0, 11.0, 24.0, 52.0, 112.0, 241.0}};
-  check_sequences_defined_by(result17, Sequence::Type::DoubleRecurrence, "v(n+1)+v(n)+u(n+1)+u(n)+n", "0", "0", Sequence::Type::SingleRecurrence, "u(n)+n", "0");
+  double results18[MaxNumberOfSequences][10] = {{0.0, 0.0, 0.0, 2.0, 7.0, 19.0, 46.0, 105.0, 233.0, 509.0}, {0.0, 0.0, 1.0, 2.0, 5.0, 11.0, 24.0, 52.0, 112.0, 241.0}, {}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "v(n+1)+v(n)+u(n+1)+u(n)+n";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results18, types, definitions, conditions1, conditions2);
 
   // u(n) = n; v undefined
-  double result18[2][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}};
-  check_sequences_defined_by(result18, Sequence::Type::Explicit, "n");
+  double results19[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "n";
+  definitions[1] = nullptr;
+  conditions1[0] = nullptr;
+  conditions1[1] = nullptr;
+  conditions2[0] = nullptr;
+  conditions2[1] = nullptr;
+  check_sequences_defined_by(results19, types, definitions, conditions1, conditions2);
 
   // u undefined; v(n) = n
-  double result19[2][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}};
-  check_sequences_defined_by(result19, Sequence::Type::Explicit, nullptr, nullptr, nullptr, Sequence::Type::Explicit, "n");
+  double results20[MaxNumberOfSequences][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {}};
+  definitions[0] =  nullptr;
+  definitions[1] = "n";
+  check_sequences_defined_by(results20, types, definitions, conditions1, conditions2);
+
+  // u, v, w independent
+
+  // u(n) = n; v(n+1) = 9+n, v(0) = 0; w(n) = n+2
+  double results21[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {0.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0}, {2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0}};
+  types[1] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n";
+  definitions[1] = "9+n";
+  definitions[2] = "n+2";
+  conditions1[1] = "0";
+  check_sequences_defined_by(results21, types, definitions, conditions1, conditions2);
+
+  // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n) = 9+n; w(n+1) = w(n)+2, w(0) = 0
+  double results22[MaxNumberOfSequences][10] = {{0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}, {9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0}, {0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0}};
+  types[0] = Sequence::Type::DoubleRecurrence;
+  types[1] = Sequence::Type::Explicit;
+  types[2] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "u(n+1)+u(n)+n";
+  definitions[2] = "2+w(n)";
+  conditions1[0] = "0";
+  conditions1[1] = nullptr;
+  conditions1[2] = "0";
+  conditions2[0] = "0";
+  check_sequences_defined_by(results22, types, definitions, conditions1, conditions2);
+
+  // u(n+1) = u(n)+n, u(0) = 0; v(n) = 9+n; w(n+2) = w(n+1)+w(n)+2, w(0) = 0, w(1) = 0
+  double results23[MaxNumberOfSequences][10] = {{0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0}, {0.0, 0.0, 2.0, 4.0, 8.0, 14.0, 24.0, 40.0, 66.0, 108.0}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  types[2] = Sequence::Type::DoubleRecurrence;
+  definitions[0] = "u(n)+n";
+  definitions[2] = "w(n+1)+w(n)+2";
+  conditions2[2] = "0";
+  conditions2[0] = nullptr;
+  check_sequences_defined_by(results23, types, definitions, conditions1, conditions2);
+
+  // v depends on u, w depends on v & u independent
+  // u(n) = n ; v(n+1) = u(n)+1, v(0) = 0, w(n) = 2+v(n)
+  double results24[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::SingleRecurrence;
+  types[2] = Sequence::Type::Explicit;
+  definitions[0] = "n";
+  definitions[1] = "u(n)+1";
+  definitions[2] = "2+v(n)";
+  conditions1[1] = "0";
+  check_sequences_defined_by(results24, types, definitions, conditions1, conditions2);
+
+  // u(n) = n ; v(n+1) = u(n)+1, v(0) = 0, w(n+1) = 2+v(n+1), w(0) = 0
+  double results25[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {0.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0}};
+  types[2] = Sequence::Type::SingleRecurrence;
+  definitions[2] = "2+v(n+1)";
+  conditions1[2] = "0";
+  check_sequences_defined_by(results25, types, definitions, conditions1, conditions2);
+
+  // v depends on u, w depends on u and v & u independent
+  // u(n) = n ; v(n+1) = u(n)+1, v(0) = 0, w(n+2) = 2+v(n+1)+u(n+1), w(0) = 0, w(1) = 0
+  double results26[MaxNumberOfSequences][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {0.0, 0.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0}};
+  types[2] = Sequence::Type::DoubleRecurrence;
+  definitions[2] = "2+v(n+1)+u(n+1)";
+  conditions1[2] = "0";
+  conditions2[2] = "0";
+  check_sequences_defined_by(results26, types, definitions, conditions1, conditions2);
+
+  // v depends on u, w depends on v & u depends on w
+  // u(n+1) = w(n)+1, u(0) = 0; v(n+1) = u(n)+1, v(0) = 0, w(n+1) = v(n)+2, w(0) = 0
+  double results27[MaxNumberOfSequences][10] = {{0.0, 1.0, 3.0, 4.0, 5.0, 7.0, 8.0, 9.0, 11.0, 12.0}, {0.0, 1.0, 2.0, 4.0, 5.0, 6.0, 8.0, 9.0, 10.0, 12.0}, {0.0, 2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 10.0, 11.0, 12.0}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  types[2] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "w(n)+1";
+  definitions[1] = "u(n)+1";
+  definitions[2] = "v(n)+2";
+  conditions1[0] = "0";
+  conditions1[1] = "0";
+  conditions1[2] = "0";
+  conditions2[2] = nullptr;
+  check_sequences_defined_by(results27, types, definitions, conditions1, conditions2);
+
+  // v depends on u, w depends on v & u depends on w
+  // u(n) = w(n); v(n) = u(n), w(n) = v(n)
+  double results28[MaxNumberOfSequences][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
+  types[2] = Sequence::Type::Explicit;
+  definitions[0] = "w(n)";
+  definitions[1] = "u(n)";
+  definitions[2] = "v(n)";
+  conditions1[0] = nullptr;
+  conditions1[1] = nullptr;
+  conditions1[2] = nullptr;
+  conditions2[2] = nullptr;
+  check_sequences_defined_by(results28, types, definitions, conditions1, conditions2);
 }
 
 }

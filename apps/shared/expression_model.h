@@ -32,7 +32,7 @@ protected:
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
 private:
-  virtual void updateNewDataWithExpression(Ion::Storage::Record * record, Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
+  virtual void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
   mutable int m_circular;
 };

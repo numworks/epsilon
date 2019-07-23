@@ -2,6 +2,7 @@
 #include <poincare/division.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/multiplication_explicite.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
@@ -210,7 +211,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext) {
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
           Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = Subtraction::Builder(opIJ, Multiplication::Builder(matrixChild(h, j).clone(), factor.clone()));
+          Expression newOpIJ = Subtraction::Builder(opIJ, MultiplicationExplicite::Builder(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
           newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
           newOpIJ = newOpIJ.shallowReduce(reductionContext);

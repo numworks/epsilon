@@ -26,9 +26,6 @@ public:
 
   static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 
-  // Set expression for record
-  static Ion::Storage::Record::ErrorStatus SetExpressionForFunctionRecord(Poincare::Expression e, Ion::Storage::Record record, const char * baseName);
-
   // Destroy records
   static void DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension);
 

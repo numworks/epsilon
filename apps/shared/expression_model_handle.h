@@ -31,7 +31,7 @@ public:
    * Sequence). */
   virtual void tidy() { model()->tidy(); }
   Ion::Storage::Record::ErrorStatus setContent(const char * c) { return editableModel()->setContent(this, c, symbol()); }
-  Ion::Storage::Record::ErrorStatus setExpressionContent(Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
+  Ion::Storage::Record::ErrorStatus setExpressionContent(const Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
 protected:
   bool isCircularlyDefined(Poincare::Context * context) const { return model()->isCircularlyDefined(this, context); }
   ExpressionModel * editableModel() { return const_cast<ExpressionModel *>(model()); }

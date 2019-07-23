@@ -216,7 +216,7 @@ Poincare::Layout Sequence::SequenceModel::name(Sequence * sequence) {
   return m_name;
 }
 
-void Sequence::SequenceModel::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) {
+void Sequence::SequenceModel::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) {
   Ion::Storage::Record::Data newData = record->value();
   // Translate expressions located downstream
   size_t sizeBeforeExpression = (char *)expressionAddress -(char *)newData.buffer;

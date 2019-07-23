@@ -119,7 +119,7 @@ private:
     virtual void buildName(Sequence * sequence) = 0;
     Poincare::Layout m_name;
   private:
-    void updateNewDataWithExpression(Ion::Storage::Record * record, Poincare::Expression & newExpression, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) override;
+    void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t newExpressionSize, size_t previousExpressionSize) override;
     virtual void updateMetaData(const Ion::Storage::Record * record, size_t newSize) {}
   };
 

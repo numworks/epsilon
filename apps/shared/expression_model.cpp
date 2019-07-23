@@ -110,7 +110,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   return error;
 }
 
-void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record, Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
+void ExpressionModel::updateNewDataWithExpression(Ion::Storage::Record * record, const Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize) {
   if (!expressionToStore.isUninitialized()) {
     memmove(expressionAddress, expressionToStore.addressInPool(), expressionToStoreSize);
   }

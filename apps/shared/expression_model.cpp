@@ -77,7 +77,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Reco
   return setExpressionContent(record, e);
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Storage::Record * record, Expression & newExpression) {
+Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Storage::Record * record, const Expression & newExpression) {
   assert(record->fullName() != nullptr);
   // Prepare the new data to be stored
   Ion::Storage::Record::Data newData = record->value();

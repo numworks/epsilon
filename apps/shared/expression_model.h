@@ -19,7 +19,7 @@ public:
 
   // Setters
   Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol = 0);
-  Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, Poincare::Expression & e);
+  Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
   // Property
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;

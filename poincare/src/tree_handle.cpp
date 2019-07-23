@@ -314,7 +314,8 @@ template MatrixIdentity TreeHandle::FixedArityBuilder<MatrixIdentity, MatrixIden
 template MatrixInverse TreeHandle::FixedArityBuilder<MatrixInverse, MatrixInverseNode>(TreeHandle*, size_t);
 template MatrixTrace TreeHandle::FixedArityBuilder<MatrixTrace, MatrixTraceNode>(TreeHandle*, size_t);
 template MatrixTranspose TreeHandle::FixedArityBuilder<MatrixTranspose, MatrixTransposeNode>(TreeHandle*, size_t);
-template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(TreeHandle*, size_t);
+template MultiplicationExplicite TreeHandle::NAryBuilder<MultiplicationExplicite, MultiplicationExpliciteNode>(TreeHandle*, size_t);
+template MultiplicationImplicite TreeHandle::NAryBuilder<MultiplicationImplicite, MultiplicationImpliciteNode>(TreeHandle*, size_t);
 template NaperianLogarithm TreeHandle::FixedArityBuilder<NaperianLogarithm, NaperianLogarithmNode>(TreeHandle*, size_t);
 template NthRoot TreeHandle::FixedArityBuilder<NthRoot, NthRootNode>(TreeHandle*, size_t);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(TreeHandle*, size_t);

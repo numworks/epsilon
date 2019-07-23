@@ -2,11 +2,8 @@
 #define POINCARE_MATRIX_H
 
 #include <poincare/expression.h>
-#include <poincare/multiplication.h>
 
 namespace Poincare {
-
-class Multiplication;
 
 class MatrixNode /*final*/ : public ExpressionNode {
 public:

@@ -1,4 +1,5 @@
 #include <poincare/matrix_dimension.h>
+#include <poincare/matrix_complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
 #include <poincare/rational.h>

@@ -2,7 +2,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <poincare/addition.h>
 #include <poincare/layout_helper.h>
-#include <poincare/multiplication.h>
+#include <poincare/multiplication_explicite.h>
 #include <poincare/number.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
@@ -66,11 +66,11 @@ Expression TrigonometricModel::expression(double * modelCoefficients) {
   // a*sin(bx+c)+d
   Expression result =
     Addition::Builder(
-      Multiplication::Builder(
+      MultiplicationExplicite::Builder(
         Number::DecimalNumber(a),
         Sine::Builder(
           Addition::Builder(
-            Multiplication::Builder(
+            MultiplicationExplicite::Builder(
               Number::DecimalNumber(b),
               Symbol::Builder('x')),
             Number::DecimalNumber(c)))),

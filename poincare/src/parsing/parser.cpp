@@ -191,7 +191,7 @@ void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Times)) {
-    leftHandSide = Multiplication::Builder(leftHandSide, rightHandSide);
+    leftHandSide = MultiplicationExplicite::Builder(leftHandSide, rightHandSide);
   }
 }
 
@@ -205,7 +205,7 @@ void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
-    leftHandSide = Multiplication::Builder(leftHandSide, rightHandSide);
+    leftHandSide = MultiplicationImplicite::Builder(leftHandSide, rightHandSide);
   }
 }
 

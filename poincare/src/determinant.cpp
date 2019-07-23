@@ -1,6 +1,7 @@
 #include <poincare/determinant.h>
 #include <poincare/addition.h>
 #include <poincare/matrix.h>
+#include <poincare/multiplication_explicite.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -61,8 +62,8 @@ Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reduction
     } else if (dim == 2) {
       /*                |a b|
        * Determinant of |c d| is ad-bc   */
-      Multiplication ad = Multiplication::Builder(m0.matrixChild(0,0), m0.matrixChild(1,1));
-      Multiplication bc = Multiplication::Builder(m0.matrixChild(0,1), m0.matrixChild(1,0));
+      MultiplicationExplicite ad = MultiplicationExplicite::Builder(m0.matrixChild(0,0), m0.matrixChild(1,1));
+      MultiplicationExplicite bc = MultiplicationExplicite::Builder(m0.matrixChild(0,1), m0.matrixChild(1,0));
       result = Subtraction::Builder(ad, bc);
       ad.shallowReduce(reductionContext);
       bc.shallowReduce(reductionContext);
@@ -81,12 +82,12 @@ Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reduction
       Expression i = m0.matrixChild(2,2);
       constexpr int additionChildrenCount = 6;
       Expression additionChildren[additionChildrenCount] = {
-        Multiplication::Builder(a.clone(), e.clone(), i.clone()),
-        Multiplication::Builder(b.clone(), f.clone(), g.clone()),
-        Multiplication::Builder(c.clone(), d.clone(), h.clone()),
-        Multiplication::Builder(Rational::Builder(-1), c, e, g),
-        Multiplication::Builder(Rational::Builder(-1), b, d, i),
-        Multiplication::Builder(Rational::Builder(-1), a, f, h)};
+        MultiplicationExplicite::Builder(a.clone(), e.clone(), i.clone()),
+        MultiplicationExplicite::Builder(b.clone(), f.clone(), g.clone()),
+        MultiplicationExplicite::Builder(c.clone(), d.clone(), h.clone()),
+        MultiplicationExplicite::Builder(Rational::Builder(-1), c, e, g),
+        MultiplicationExplicite::Builder(Rational::Builder(-1), b, d, i),
+        MultiplicationExplicite::Builder(Rational::Builder(-1), a, f, h)};
       result = Addition::Builder(additionChildren, additionChildrenCount);
       for (int i = 0; i < additionChildrenCount; i++) {
         additionChildren[i].shallowReduce(reductionContext);

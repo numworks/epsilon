@@ -28,8 +28,8 @@ bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition, Type::Power};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Division, Type::Addition, Type::Power};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 7);
 }
 
 // Simplification
@@ -111,7 +111,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
 Expression Factorial::shallowBeautify() {
   // +(a,b)! ->(+(a,b))!
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
-      || childAtIndex(0).type() == ExpressionNode::Type::Multiplication
+      || childAtIndex(0).isMultiplication()
       || childAtIndex(0).type() == ExpressionNode::Type::Power)
   {
     Expression result = Factorial::Builder(Parenthesis::Builder(childAtIndex(0)));

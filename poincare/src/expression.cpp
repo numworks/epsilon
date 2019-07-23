@@ -108,7 +108,7 @@ bool Expression::IsRandom(const Expression e, Context * context) {
 }
 
 bool Expression::IsNAry(const Expression e, Context * context) {
-  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::Multiplication;
+  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::MultiplicationExplicite || e.type() == ExpressionNode::Type::MultiplicationImplicite;
 }
 
 bool Expression::IsMatrix(const Expression e, Context * context) {
@@ -278,7 +278,7 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::Redu
     return setSign(ExpressionNode::Sign::Positive, reductionContext);
   }
   // The expression is a multiplication whose numeral factor is negative
-  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+  if (isMultiplication() && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
     Multiplication m = convert<Multiplication>();
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && m.childAtIndex(0).convert<Rational>().isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
@@ -559,12 +559,12 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+  return MultiplicationExplicite::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
+  return MultiplicationExplicite::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
 }
 
 Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -660,7 +660,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           imag = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          imag = Multiplication::Builder(tb , Constant::Builder(UCodePointMathematicalBoldSmallI));
+          imag = MultiplicationImplicite::Builder(tb , Constant::Builder(UCodePointMathematicalBoldSmallI));
         }
       }
       if (imag.isUninitialized()) {
@@ -691,7 +691,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           arg = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          arg = Multiplication::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          arg = MultiplicationImplicite::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
@@ -703,7 +703,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       } else if (norm.isUninitialized()) {
         return exp;
       } else {
-        return Multiplication::Builder(norm, exp);
+        return MultiplicationImplicite::Builder(norm, exp);
       }
     }
   }

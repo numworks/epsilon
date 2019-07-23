@@ -3,7 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/rational.h>
-#include <poincare/multiplication.h>
+#include <poincare/multiplication_explicite.h>
 #include <cmath>
 
 namespace Poincare {
@@ -42,7 +42,7 @@ public:
 
   static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("factor", 1, &UntypedBuilderOneChild<Factor>);
 
-  Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  MultiplicationExplicite createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
   // Expression
   Expression shallowReduce(Context * context);

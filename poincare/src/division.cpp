@@ -1,6 +1,7 @@
 #include <poincare/division.h>
 #include <poincare/fraction_layout.h>
-#include <poincare/multiplication.h>
+#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_implicite.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -28,8 +29,8 @@ bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Division, Type::Addition};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
 }
 
 Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -80,7 +81,7 @@ Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionCon
   /* For matrices: we decided that A/B is computed as A = A/B * B so A/B = AB^-1
    * (it could have been A = B * A/B so A/B = B^-1*A). */
   Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
-  Multiplication m = Multiplication::Builder(childAtIndex(0), p);
+  MultiplicationExplicite m = MultiplicationExplicite::Builder(childAtIndex(0), p);
   p.shallowReduce(reductionContext); // For instance: Division::Builder(2,1). p would be 1^(-1) which can be simplified
   replaceWithInPlace(m);
   return m.shallowReduce(reductionContext);

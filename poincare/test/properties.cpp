@@ -80,12 +80,12 @@ QUIZ_CASE(poincare_characteristic_range) {
   assert_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(UCodePointUnknownX))), 360.0f);
   assert_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(UCodePointUnknownX)), 2.0f*M_PI, Preferences::AngleUnit::Radian);
   assert_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(UCodePointUnknownX))), 2.0f*M_PI, Preferences::AngleUnit::Radian);
-  assert_expression_has_characteristic_range(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))), 40.0f);
-  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknownX),Rational::Builder(2)))), 720.0f);
-  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(Multiplication::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknownX),Rational::Builder(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_expression_has_characteristic_range(Sine::Builder(Addition::Builder(MultiplicationExplicite::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))), 40.0f);
+  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(MultiplicationExplicite::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknownX),Rational::Builder(2)))), 720.0f);
+  assert_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(MultiplicationExplicite::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknownX),Rational::Builder(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
   assert_expression_has_characteristic_range(Symbol::Builder(UCodePointUnknownX), NAN);
   assert_expression_has_characteristic_range(Addition::Builder(Cosine::Builder(Rational::Builder(3)),Rational::Builder(2)), 0.0f);
-  assert_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(Multiplication::Builder(Rational::Builder(40),Symbol::Builder(UCodePointUnknownX)))), 9.0f);
+  assert_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(MultiplicationExplicite::Builder(Rational::Builder(40),Symbol::Builder(UCodePointUnknownX)))), 9.0f);
   assert_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol::Builder(UCodePointUnknownX))), 360.0f);
   assert_simplify("cos(x)→f(x)");
   assert_expression_has_characteristic_range(Function::Builder("f",1,Symbol::Builder(UCodePointUnknownX)), 360.0f);

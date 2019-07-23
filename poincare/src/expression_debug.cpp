@@ -150,8 +150,11 @@ void print_expression(const Expression e, int indentationLevel) {
     case ExpressionNode::Type::MatrixTranspose:
       std::cout << "MatrixTranspose";
       break;
-    case ExpressionNode::Type::Multiplication:
-      std::cout << "Multiplication";
+    case ExpressionNode::Type::MultiplicationExplicite:
+      std::cout << "Multiplication Explicite";
+      break;
+    case ExpressionNode::Type::MultiplicationImplicite:
+      std::cout << "Multiplication Implicite";
       break;
     case ExpressionNode::Type::NaperianLogarithm:
         std::cout << "NaperianLogarithm";

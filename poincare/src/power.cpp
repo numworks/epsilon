@@ -133,10 +133,6 @@ Complex<T> PowerNode::compute(const std::complex<T> c, const std::complex<T> d, 
 
 Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   ExpressionNode * indiceOperand = childAtIndex(1);
-  // Delete eventual parentheses of the indice in the pretty print
-  if (indiceOperand->type() == ExpressionNode::Type::Parenthesis) {
-    indiceOperand = indiceOperand->childAtIndex(0);
-  }
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(VerticalOffsetLayout::Builder(

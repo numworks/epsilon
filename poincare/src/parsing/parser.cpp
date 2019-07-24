@@ -570,7 +570,9 @@ void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & 
     m_status = Status::Error; // Right parenthesis missing.
     return;
   }
-  leftHandSide = Parenthesis::Builder(leftHandSide);
+  if (!isSystemParenthesis) {
+    leftHandSide = Parenthesis::Builder(leftHandSide);
+  }
   isThereImplicitMultiplication();
 }
 

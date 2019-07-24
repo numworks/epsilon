@@ -213,10 +213,21 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the opening parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
+
+  /* Add an extra system parenthesis to avoid serializing:
+   *   2)+(1
+   *    ∑     (5)
+   *   n=1
+   */
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
   for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
     if (i != 0) {
       // Write the comma
@@ -227,8 +238,14 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
 
-  // Write the closing parenthesis
+  // Write the closing system parenthesis
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  // Write the closing parenthesis
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

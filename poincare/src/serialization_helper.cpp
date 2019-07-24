@@ -91,6 +91,11 @@ int InfixPrefix(
       return bufferSize-1;
     }
     // Add the opening parenthesis
+    numberOfChar += UTF8Decoder::CodePointToChars('(', buffer+numberOfChar, bufferSize - numberOfChar);
+    if (numberOfChar >= bufferSize-1) {
+      return bufferSize-1;
+    }
+    // Add the opening system parenthesis
     numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
@@ -128,8 +133,13 @@ int InfixPrefix(
   }
 
   if (prefix) {
-    // Add the closing parenthesis
+    // Add the closing system parenthesis
     numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+    if (numberOfChar >= bufferSize-1) {
+      return bufferSize-1;
+    }
+    // Add the closing parenthesis
+    numberOfChar += UTF8Decoder::CodePointToChars(')', buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }

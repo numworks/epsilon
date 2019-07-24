@@ -78,11 +78,25 @@ int CartesianFunction::derivativeNameWithArgument(char * buffer, size_t bufferSi
   return numberOfChars + derivativeSize;
 }
 
+CodePoint CartesianFunction::symbol() const {
+  switch (plotType()) {
+  case PlotType::Cartesian:
+    return 'x';
+  case PlotType::Polar:
+    return UCodePointGreekSmallLetterTheta;
+  default:
+    assert(plotType() == PlotType::Parametric);
+    return 't';
+  }
+}
+
 CartesianFunction::PlotType CartesianFunction::plotType() const {
   return recordData()->plotType();
 }
 
 void CartesianFunction::setPlotType(PlotType plotType) {
+  /* Reset memoized layout. */
+  m_model.tidy();
   return recordData()->setPlotType(plotType);
 }
 

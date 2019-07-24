@@ -24,6 +24,8 @@ public:
   static Poincare::Expression ExpressionFromSymbolRecord(Ion::Storage::Record record);
   static Poincare::Expression ExpressionFromFunctionRecord(Ion::Storage::Record record);
 
+  static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
+
   // Set expression for record
   static Ion::Storage::Record::ErrorStatus SetExpressionForFunctionRecord(Poincare::Expression e, Ion::Storage::Record record, const char * baseName);
 

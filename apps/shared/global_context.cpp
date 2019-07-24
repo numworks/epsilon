@@ -1,10 +1,8 @@
 #include "global_context.h"
 #include "cartesian_function.h"
-#include <poincare/helpers.h>
+#include "poincare_helpers.h"
 #include <poincare/undefined.h>
-#include <poincare/preferences.h>
 #include <assert.h>
-#include <ion.h>
 
 using namespace Poincare;
 
@@ -47,6 +45,16 @@ Poincare::Expression GlobalContext::ExpressionFromFunctionRecord(Ion::Storage::R
    * expression, use the function record handle. */
   CartesianFunction f = CartesianFunction(record);
   return f.expressionClone();
+}
+
+const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
+  assert(!record.isNull());
+  if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
+    return PoincareHelpers::CreateLayout(ExpressionFromSymbolRecord(record));
+  } else {
+    assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension)));
+    return CartesianFunction(record).layout();
+  }
 }
 
 void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension) {

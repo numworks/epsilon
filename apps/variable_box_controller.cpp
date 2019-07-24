@@ -1,9 +1,6 @@
 #include "variable_box_controller.h"
 #include "shared/global_context.h"
-#include "shared/poincare_helpers.h"
-#include "shared/function.h"
 #include "shared/cartesian_function.h"
-#include "graph/cartesian_function_store.h"
 #include <escher/metric.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/layout_helper.h>
@@ -236,7 +233,7 @@ Layout VariableBoxController::expressionLayoutForRecord(Storage::Record record, 
   }
   assert(index >= m_firstMemoizedLayoutIndex && index < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
   if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
-    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::ExpressionFromRecord(record).createLayout(Preferences::sharedPreferences()->displayMode(), Preferences::ShortNumberOfSignificantDigits);
+    m_layouts[index-m_firstMemoizedLayoutIndex] = GlobalContext::LayoutForRecord(record);
   }
   return m_layouts[index-m_firstMemoizedLayoutIndex];
 }

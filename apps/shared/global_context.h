@@ -20,7 +20,6 @@ public:
   static bool SymbolAbstractNameIsFree(const char * baseName);
 
   // Expression from record
-  static Poincare::Expression ExpressionFromRecord(Ion::Storage::Record record);
   static Poincare::Expression ExpressionFromSymbolRecord(Ion::Storage::Record record);
   static Poincare::Expression ExpressionFromFunctionRecord(Ion::Storage::Record record);
 

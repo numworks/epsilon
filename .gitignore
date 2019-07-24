@@ -1,2 +1,3 @@
 build
 scripts/device/elf2dfu.pyc
+scripts/device/**/*.pyc

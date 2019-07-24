@@ -75,12 +75,7 @@ float SymbolNode::characteristicXRange(Context * context, Preferences::AngleUnit
 }
 
 Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (isUnknown(UCodePointUnknownX)) {
-    return CodePointLayout::Builder('x');
-  }
-  if (isUnknown(UCodePointUnknownN)) {
-    return CodePointLayout::Builder('n');
-  }
+  assert(!isUnknown(UCodePointUnknownX) && !isUnknown(UCodePointUnknownN));
   // TODO return Parse(m_name).createLayout() ?
   // Special case for the symbol names: u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
   const char * sequenceIndex[] = {"n", "n+1"};

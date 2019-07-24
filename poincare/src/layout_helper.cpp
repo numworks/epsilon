@@ -15,7 +15,10 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
   for (int i = 1; i < numberOfChildren; i++) {
-    result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), result.numberOfChildren(), true);
+    size_t operatorLength = strlen(operatorName);
+    if (operatorLength > 0) {
+      result.addOrMergeChildAtIndex(String(operatorName, operatorLength), result.numberOfChildren(), true);
+    }
     result.addOrMergeChildAtIndex(
         expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits),
         result.numberOfChildren(),

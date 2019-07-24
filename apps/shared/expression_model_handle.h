@@ -17,7 +17,7 @@ public:
   void text(char * buffer, size_t bufferSize) const { return model()->text(this, buffer, bufferSize, symbol(), unknownSymbol()); }
   Poincare::Expression expressionReduced(Poincare::Context * context) const { return model()->expressionReduced(this, context); }
   Poincare::Expression expressionClone() const { return model()->expressionClone(this); }
-  Poincare::Layout layout() { return model()->layout(this); }
+  Poincare::Layout layout() { return model()->layout(this, symbol(), unknownSymbol()); }
    /* Here, isDefined is the exact contrary of isEmpty. However, for Sequence
    * inheriting from ExpressionModelHandle, isEmpty and isDefined have not exactly
    * opposite meaning. For instance, u(n+1)=u(n) & u(0) = ... is not empty and

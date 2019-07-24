@@ -14,17 +14,6 @@ bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }
 
-Poincare::Expression GlobalContext::ExpressionFromRecord(Ion::Storage::Record record) {
-  if (record.isNull() || record.value().size == 0) {
-    return Expression();
-  }
-  if (Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::expExtension, strlen(Ion::Storage::expExtension))) {
-    return ExpressionFromSymbolRecord(record);
-  }
-  assert(Ion::Storage::FullNameHasExtension(record.fullName(), Ion::Storage::funcExtension, strlen(Ion::Storage::funcExtension)));
-  return ExpressionFromFunctionRecord(record);
-}
-
 Poincare::Expression GlobalContext::ExpressionFromSymbolRecord(Ion::Storage::Record record) {
   if (record.isNull() || record.value().size == 0) {
     return Expression();
@@ -74,7 +63,7 @@ void GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  Expression e = ExpressionFromRecord(record);
+  Expression e = ExpressionForSymbolAndRecord(symbol, record);
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }

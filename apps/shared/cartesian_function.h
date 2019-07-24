@@ -14,7 +14,7 @@ public:
   CartesianFunction(Ion::Storage::Record record = Record()) :
     Function(record)
   {}
-  CodePoint symbol() const override { return 'x'; }
+  CodePoint symbol() const override;
 
   enum class PlotType {
     Cartesian = 0,

@@ -4,7 +4,6 @@
 #define MATRIX_VARIABLES 1
 
 #include <escher.h>
-#include "shared/global_context.h"
 #include "variable_box_empty_controller.h"
 #include <apps/i18n.h>
 

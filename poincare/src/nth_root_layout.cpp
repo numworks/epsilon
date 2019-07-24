@@ -152,13 +152,13 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
     assert((const_cast<NthRootLayoutNode *>(this))->indexLayout());
     if ((const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty()) {
       // Case: root(x,empty): Write "'SquareRootSymbol'('radicandLayout')"
-      return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), 0);
+      return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), true, 0);
     }
     // Case: root(x,n)
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name(), true);
   }
   // Case: squareRoot(x)
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), true);
 }
 
 KDSize NthRootLayoutNode::computeSize() {

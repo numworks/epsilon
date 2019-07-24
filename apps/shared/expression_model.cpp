@@ -58,9 +58,13 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
 }
 
-Layout ExpressionModel::layout(const Storage::Record * record) const {
+Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol, CodePoint unknownSymbol) const {
   if (m_layout.isUninitialized()) {
-    m_layout = PoincareHelpers::CreateLayout(expressionClone(record));
+    Expression clone = expressionClone(record);
+    if (!clone.isUninitialized() && symbol != 0) {
+      clone = clone.replaceUnknown(Symbol::Builder(unknownSymbol), Symbol::Builder(symbol));
+    }
+    m_layout = PoincareHelpers::CreateLayout(clone);
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout::Builder();
     }

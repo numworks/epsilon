@@ -1,5 +1,4 @@
 #include "cartesian_function.h"
-#include "expression_model_store.h"
 #include "poincare_helpers.h"
 #include <apps/constant.h>
 #include <poincare/derivative.h>
@@ -10,6 +9,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
 #include <escher/palette.h>
+#include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <apps/i18n.h>
 #include <float.h>

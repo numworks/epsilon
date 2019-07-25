@@ -146,4 +146,18 @@ CartesianFunction::CartesianFunctionRecordDataBuffer * CartesianFunction::record
   return reinterpret_cast<CartesianFunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
+template<typename T>
+T CartesianFunction::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
+  if (isCircularlyDefined(context)) {
+    return NAN;
+  }
+  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char unknownX[bufferSize];
+  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
+  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, context);
+}
+
+template float CartesianFunction::templatedApproximateAtAbscissa<float>(float, Poincare::Context *) const;
+template double CartesianFunction::templatedApproximateAtAbscissa<double>(double, Poincare::Context *) const;
+
 }

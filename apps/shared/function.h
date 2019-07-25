@@ -36,12 +36,8 @@ public:
   int nameWithArgument(char * buffer, size_t bufferSize);
 
   // Evaluation
-  virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context);
-  }
-  virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const {
-    return templatedApproximateAtAbscissa(x, context);
-  }
+  virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const = 0;
+  virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const = 0;
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
@@ -76,7 +72,6 @@ protected:
   };
 #pragma pack(pop)
 private:
-  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   FunctionRecordDataBuffer * recordData() const;
 };
 

@@ -1,6 +1,4 @@
 #include "function_store.h"
-#include "cartesian_function.h"
-#include <assert.h>
 
 namespace Shared {
 

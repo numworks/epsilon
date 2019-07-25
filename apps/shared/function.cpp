@@ -1,6 +1,4 @@
 #include "function.h"
-#include "poincare_helpers.h"
-#include <poincare/serialization_helper.h>
 #include "poincare/src/parsing/parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -77,24 +75,10 @@ int Function::nameWithArgument(char * buffer, size_t bufferSize) {
   return result;
 }
 
-template<typename T>
-T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  if (isCircularlyDefined(context)) {
-    return NAN;
-  }
-  constexpr int bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char unknownX[bufferSize];
-  Poincare::SerializationHelper::CodePoint(unknownX, bufferSize, UCodePointUnknownX);
-  return PoincareHelpers::ApproximateWithValueForSymbol(expressionReduced(context), unknownX, x, context);
-}
-
 Function::FunctionRecordDataBuffer * Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
   return reinterpret_cast<FunctionRecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
-
-template float Function::templatedApproximateAtAbscissa<float>(float, Poincare::Context*) const;
-template double Function::templatedApproximateAtAbscissa<double>(double, Poincare::Context*) const;
 
 }

@@ -17,6 +17,13 @@ public:
   CodePoint symbol() const override { return 'x'; }
   CodePoint unknownSymbol() const override { return UCodePointUnknownX; }
 
+  // Evaluation
+  float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
+    return templatedApproximateAtAbscissa(x, context);
+  }
+  double evaluateAtAbscissa(double x, Poincare::Context * context) const override {
+    return templatedApproximateAtAbscissa(x, context);
+  }
   // Derivative
   bool displayDerivative() const;
   void setDisplayDerivative(bool display);
@@ -59,6 +66,7 @@ private:
   size_t metaDataSize() const override { return sizeof(CartesianFunctionRecordDataBuffer); }
   const ExpressionModel * model() const override { return &m_model; }
   CartesianFunctionRecordDataBuffer * recordData() const;
+  template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context) const;
   Model m_model;
 };
 

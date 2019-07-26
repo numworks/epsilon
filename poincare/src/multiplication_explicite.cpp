@@ -537,8 +537,8 @@ void MultiplicationExplicite::addMissingFactors(Expression factor, Context * con
    * child, we replace it by its LCM with factor ; otherwise, we simply add
    * factor as a child. */
   if (numberOfChildren() > 0 && childAtIndex(0).type() == ExpressionNode::Type::Rational && factor.type() == ExpressionNode::Type::Rational) {
-    assert(static_cast<Rational &>(factor).integerDenominator().isOne());
-    assert(childAtIndex(0).convert<Rational>().integerDenominator().isOne());
+    assert(static_cast<Rational &>(factor).isInteger());
+    assert(childAtIndex(0).convert<Rational>().isInteger());
     Integer lcm = Arithmetic::LCM(static_cast<Rational &>(factor).unsignedIntegerNumerator(), childAtIndex(0).convert<Rational>().unsignedIntegerNumerator());
     if (lcm.isOverflow()) {
       addChildAtIndexInPlace(Rational::Builder(static_cast<Rational &>(factor).unsignedIntegerNumerator()), 1, numberOfChildren());
@@ -669,7 +669,7 @@ Expression MultiplicationExplicite::mergeNegativePower(Context * context, Prefer
    * for instance, a^(-1)*b^(-c)*c = c*(a*b^c)^(-1) */
   MultiplicationExplicite m = MultiplicationExplicite::Builder();
   // Special case for rational p/q: if q != 1, q should be at denominator
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !childAtIndex(0).convert<Rational>().integerDenominator().isOne()) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !childAtIndex(0).convert<Rational>().isInteger()) {
     Rational r = childAtIndex(0).convert<Rational>();
     m.addChildAtIndexInPlace(Rational::Builder(r.integerDenominator()), 0, m.numberOfChildren());
     if (r.signedIntegerNumerator().isOne()) {

@@ -39,7 +39,7 @@ ExpressionNode::Sign PowerNode::sign(Context * context) const {
   }
   if (childAtIndex(0)->sign(context) == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
-    if (r->denominator().isOne()) {
+    if (r->isInteger()) {
       assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isOverflow());
       if (Integer::Division(r->signedNumerator(), Integer(2)).remainder.isZero()) {
         return Sign::Positive;
@@ -67,7 +67,7 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   }
   if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
-    if (!r->denominator().isOne() || Number(r).sign() == Sign::Negative) {
+    if (!r->isInteger() || Number(r).sign() == Sign::Negative) {
       return -1;
     }
     Integer numeratorInt = r->signedNumerator();
@@ -93,7 +93,7 @@ bool PowerNode::isReal(Context * context) const {
   if (base->isReal(context) &&
       index->isReal(context) &&
       (base->sign(context) == Sign::Positive ||
-       (index->type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(index)->denominator().isOne()))) {
+       (index->type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(index)->isInteger()))) {
     return true;
   }
   return false;
@@ -105,7 +105,7 @@ bool PowerNode::childNeedsUserParentheses(const Expression & child) const {
      * ^(2/3, 4) --> (2/3)^{4}
      */
     if ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
-       || (child.type() == Type::Rational && !static_cast<const Rational &>(child).integerDenominator().isOne())) {
+       || (child.type() == Type::Rational && !static_cast<const Rational &>(child).isInteger())) {
       return true;
     }
     // ^(2+3,4) --> (2+3)^{4}
@@ -166,7 +166,7 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * chil
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
   Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Division, Type::Addition};
@@ -271,7 +271,7 @@ int Power::getPolynomialCoefficients(Context * context, const char * symbolName,
       && childAtIndex(1).type() == ExpressionNode::Type::Rational)
   {
     Rational r = childAtIndex(1).convert<Rational>();
-    if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
+    if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {
       return -1;
     }
     Integer num = r.unsignedIntegerNumerator();
@@ -309,7 +309,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   ExpressionNode::Type baseType = base.type();
   ExpressionNode::Type indexType = index.type();
   if (SortedIsMatrix(base, reductionContext.context())) {
-    if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).integerDenominator().isOne()) {
+    if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
     }
     if (baseType != ExpressionNode::Type::Matrix) {
@@ -449,7 +449,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       } else if (r.isMinusHalf()) {
         // (x+iy)^(-1/2)
         result = complexBase.squareRoot(reductionContext).inverse(reductionContext);
-      } else if (r.integerDenominator().isOne() && r.unsignedIntegerNumerator().isLowerThan(Integer(10))) {
+      } else if (r.isInteger() && r.unsignedIntegerNumerator().isLowerThan(Integer(10))) {
         if (r.sign() == ExpressionNode::Sign::Positive) {
           // (x+iy)^n, n integer positive n < 10
           result = complexBase.powerInteger(r.unsignedIntegerNumerator().extractedInt(), reductionContext);
@@ -627,7 +627,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Power powerBase = static_cast<Power &>(base);
     // Check if a > 0 or c is Integer
     if (powerBase.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive // a > 0
-        || (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).integerDenominator().isOne())) // c integr
+        || (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger())) // c integr
     {
       /* If the complexFormat is real, we check that the inner power is defined
        * before applying the rule (a^b)^c -> a^(b*c). Otherwise, we return
@@ -646,7 +646,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   if (!letPowerAtRoot && baseType == ExpressionNode::Type::MultiplicationExplicite) {
     MultiplicationExplicite multiplicationBase = static_cast<MultiplicationExplicite &>(base);
     // Case 1: (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
-    if (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).integerDenominator().isOne()) {
+    if (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()) {
       return simplifyPowerMultiplication(reductionContext);
     }
     // Case 2: (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
@@ -695,7 +695,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Expression additionIndexChild0 = additionIndex.childAtIndex(0);
     if (additionIndexChild0.type() == ExpressionNode::Type::Rational) {
       const Rational rationalIndex = static_cast<Rational &>(additionIndexChild0);
-      if (rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.integerDenominator().isOne()) {
+      if (rationalIndex.unsignedIntegerNumerator().isOne() && !rationalIndex.isInteger()) {
         /* Do not reduce a^(1/q+c+...) to avoid potential infinite loop:
          * a^(1/q+c+...) --> a^(1/q)*a^(c+...) --> a^(1/q+c+...)*/
         /* TODO: do something more sensible here:
@@ -731,7 +731,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   if (!letPowerAtRoot
       && indexType == ExpressionNode::Type::Rational
       && !static_cast<Rational &>(index).signedIntegerNumerator().isZero()
-      && static_cast<Rational &>(index).integerDenominator().isOne()
+      && static_cast<Rational &>(index).isInteger()
       && baseType == ExpressionNode::Type::Addition)
   {
     // Exponent n
@@ -793,7 +793,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   /* We could use the Newton formula instead which is quicker but not immediate
    * to implement in the general case (Newton multinome). */
   // (a+b)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Newton)
-  if (!letPowerAtRoot && childAtIndex(1)->type() == ExpressionNode::Type::Rational && static_cast<const Rational *>(childAtIndex(1))->denominator().isOne() && childAtIndex(0)->type() == ExpressionNode::Type::Addition && childAtIndex(0)->numberOfChildren() == 2) {
+  if (!letPowerAtRoot && childAtIndex(1)->type() == ExpressionNode::Type::Rational && static_cast<const Rational *>(childAtIndex(1))->isInteger() && childAtIndex(0)->type() == ExpressionNode::Type::Addition && childAtIndex(0)->numberOfChildren() == 2) {
     Rational * nr = static_cast<Rational *>(childAtIndex(1));
     Integer n = nr->numerator();
     n.setNegative(false);
@@ -920,7 +920,7 @@ Expression Power::simplifyRationalRationalPower(ExpressionNode::ReductionContext
   // this is a^b with a, b rationals
   Rational a = childAtIndex(0).convert<Rational>();
   Rational b = childAtIndex(1).convert<Rational>();
-  if (b.integerDenominator().isOne()) {
+  if (b.isInteger()) {
     Rational r = Rational::IntegerPower(a, b.signedIntegerNumerator());
     if (r.numeratorOrDenominatorIsInfinity()) {
       return Power::Builder(a, b);

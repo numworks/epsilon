@@ -110,7 +110,7 @@ Number Number::Power(const Number & i, const Number & j) {
   return BinaryOperation(i, j,
       // Special case for Rational^Rational: we escape to Float if the index is not an Integer
       [](const Rational & i, const Rational & j) {
-        if (!j.integerDenominator().isOne()) {
+        if (!j.isInteger()) {
           // We return an overflown result to reach the escape case Float+Float
           return Rational::Builder(Integer::Overflow(false));
         }

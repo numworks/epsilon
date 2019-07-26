@@ -64,13 +64,13 @@ Expression GreatCommonDivisor::shallowReduce(Context * context) {
   }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
-    if (!r0.integerDenominator().isOne()) {
+    if (!r0.isInteger()) {
       return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne()) {
+    if (!r1.isInteger()) {
       return replaceWithUndefinedInPlace();
     }
   }

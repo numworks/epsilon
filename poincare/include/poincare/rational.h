@@ -16,6 +16,7 @@ public:
   Integer denominator() const;
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) { m_negative = negative; }
+  bool isInteger() const { return denominator().isOne(); }
 
   // TreeNode
   size_t size() const override;
@@ -43,11 +44,11 @@ public:
 
   // Basic test
   bool isZero() const { return unsignedNumerator().isZero(); }
-  bool isOne() const { return signedNumerator().isOne() && denominator().isOne(); }
-  bool isMinusOne() const { return signedNumerator().isMinusOne() && denominator().isOne(); }
+  bool isOne() const { return signedNumerator().isOne() && isInteger(); }
+  bool isMinusOne() const { return signedNumerator().isMinusOne() && isInteger(); }
   bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
   bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
-  bool isTen() const { return signedNumerator().isTen() && denominator().isOne(); }
+  bool isTen() const { return signedNumerator().isTen() && isInteger(); }
 
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
@@ -92,6 +93,7 @@ public:
   bool isMinusHalf() const { return node()->isMinusHalf(); }
   bool isTen() const { return node()->isTen(); }
   bool numeratorOrDenominatorIsInfinity() const;
+  bool isInteger() const { return node()->isInteger(); }
 
   // Arithmetic
   /* Warning: when using this function, always assert that the result does not

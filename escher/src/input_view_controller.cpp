@@ -25,10 +25,6 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 {
 }
 
-const char * InputViewController::textBody() {
-  return m_expressionFieldController.expressionField()->text();
-}
-
 void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);

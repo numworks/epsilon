@@ -25,13 +25,10 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 {
 }
 
-void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction) {
+void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
   displayModalViewController(&m_expressionFieldController, 1.0f, 1.0f);
-  if (initialText != nullptr) {
-    m_expressionFieldController.expressionField()->setText(initialText);
-  }
   m_expressionFieldController.expressionField()->handleEvent(event);
 }
 

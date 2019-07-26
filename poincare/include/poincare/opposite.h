@@ -26,6 +26,7 @@ public:
   Type type() const override { return Type::Opposite; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
   Sign sign(Context * context) const override;
+  bool childNeedsUserParentheses(const Expression & child) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
@@ -36,7 +37,6 @@ public:
   }
 
   // Layout
-  bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 

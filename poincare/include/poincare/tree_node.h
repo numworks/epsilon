@@ -83,7 +83,21 @@ public:
 
   // Serialization
   virtual int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { assert(false); return 0; }
-  virtual bool childNeedsParenthesis(const TreeNode * child) const { return false; };
+  /* When serializing, we turn a tree into a string. In order not to lose
+   * structure information, we sometimes need to add system parentheses (that
+   * are invisible when turning the string back into a tree).
+   * For example:
+   * - Layout:
+   *  2                                                                               (2
+   * --- π --> [[2]/[3]]π which keeps the omitted multiplication and forbid to parse --- π
+   *  3                                                                                3)
+   * - Expression:
+   *  2+3
+   * ----- --> [2+3]/4 to keep the fraction structure
+   *   4
+   *
+   * */
+  virtual bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const { return false; };
 
   template <typename T>
   class Iterator {

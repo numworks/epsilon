@@ -21,13 +21,15 @@ Expression MultiplicationImpliciteNode::shallowReduce(ReductionContext reduction
   return MultiplicationImplicite(this).shallowReduce(reductionContext);
 }
 
-bool MultiplicationImpliciteNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (MultiplicationNode::childNeedsParenthesis(child)) {
-    return true;
-  }
+bool MultiplicationImpliciteNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
+  /*  2
+   * ---i --> [2/3]i
+   *  3
+   */
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
+  // 2^{3}i --> [2^3]i
   Type types[] = {Type::Power, Type::Opposite, Type::MultiplicationExplicite, Type::Division, Type::Factorial};
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
 }

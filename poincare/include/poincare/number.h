@@ -48,7 +48,7 @@ public:
 
   /* Number::sign() or Number::setSign does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
-  ExpressionNode::Sign sign() { return Expression::sign(nullptr); }
+  ExpressionNode::Sign sign() const { return Expression::sign(nullptr); }
   Number setSign(ExpressionNode::Sign s) {
     assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
     return Expression::setSign(s, ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Degree, ExpressionNode::ReductionTarget::User)).convert<Number>();

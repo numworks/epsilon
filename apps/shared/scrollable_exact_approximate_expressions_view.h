@@ -23,6 +23,7 @@ public:
   void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
     m_contentCell.setSelectedSubviewPosition(subviewPosition);
   }
+  void setDisplayLeftLayout(bool display) { m_contentCell.setDisplayLeftExpression(display); }
   void reloadScroll();
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -51,6 +52,7 @@ private:
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
+    void setDisplayLeftExpression(bool display) { m_displayLeftExpression = display; }
     void layoutSubviews() override;
     int numberOfSubviews() const override;
     Poincare::Layout layout() const override;
@@ -60,6 +62,7 @@ private:
     MessageTextView m_approximateSign;
     ExpressionView m_leftExpressionView;
     SubviewPosition m_selectedSubviewPosition;
+    bool m_displayLeftExpression;
   };
   ContentCell m_contentCell;
 };

@@ -36,12 +36,12 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
   // Slide the memoization buffer
   if (i >= m_indexOfFirstMemoizedCalculationPointer) {
     // Slide the memoization buffer to the left
-    memcpy(m_memoizedCalculationPointers, m_memoizedCalculationPointers+1, k_numberOfMemoizedCalculationPointers - 1 * sizeof(Calculation *));
+    memmove(m_memoizedCalculationPointers, m_memoizedCalculationPointers+1, (k_numberOfMemoizedCalculationPointers - 1) * sizeof(Calculation *));
     m_memoizedCalculationPointers[k_numberOfMemoizedCalculationPointers - 1] = nullptr;
     m_indexOfFirstMemoizedCalculationPointer++;
   } else {
     // Slide the memoization buffer to the right
-    memcpy(m_memoizedCalculationPointers+1, m_memoizedCalculationPointers, k_numberOfMemoizedCalculationPointers - 1 * sizeof(Calculation *));
+    memmove(m_memoizedCalculationPointers+1, m_memoizedCalculationPointers, (k_numberOfMemoizedCalculationPointers - 1) * sizeof(Calculation *));
     m_memoizedCalculationPointers[0] = nullptr;
     m_indexOfFirstMemoizedCalculationPointer--;
   }
@@ -64,10 +64,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   // Add the beginning of the calculation
   {
     /* Copy the begining of the calculation. The calculation minimal size is
-     * available, so this memcpy will not overide anything. */
+     * available, so this memmove will not overide anything. */
     Calculation newCalc = Calculation();
     size_t calcSize = sizeof(newCalc);
-    memcpy(nextSerializationLocation, &newCalc, calcSize);
+    memmove(nextSerializationLocation, &newCalc, calcSize);
     nextSerializationLocation += calcSize;
   }
   /* Add the input expression.
@@ -105,7 +105,7 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
   char * nextCalc = reinterpret_cast<char *>(calcI->next());
   assert(m_bufferEnd >= nextCalc);
   size_t slidingSize = m_bufferEnd - nextCalc;
-  memcpy((char *)(calcI.pointer()), nextCalc, slidingSize);
+  memmove((char *)(calcI.pointer()), nextCalc, slidingSize);
   m_bufferEnd -= (nextCalc - (char *)(calcI.pointer()));
   m_numberOfCalculations--;
   resetMemoizedModelsAfterCalculationIndex(i);
@@ -161,7 +161,7 @@ void CalculationStore::serializeExpression(Expression e, char * location, char *
 char * CalculationStore::slideCalculationsToEndOfBuffer() {
   int calculationsSize = m_bufferEnd - m_buffer;
   char * calculationsNewPosition = m_buffer + k_bufferSize - calculationsSize;
-  memcpy(calculationsNewPosition, m_buffer, calculationsSize);
+  memmove(calculationsNewPosition, m_buffer, calculationsSize);
   m_slidedBuffer = true;
   return calculationsNewPosition;
 }
@@ -180,7 +180,7 @@ size_t CalculationStore::deleteLastCalculation(const char * calculationsStart) {
     const char * lastCalc = lastCalculationPosition(calculationsStart);
     assert(*lastCalc == 0);
     result = m_buffer + k_bufferSize - lastCalc;
-    memcpy(const_cast<char *>(calculationsStart + result), calculationsStart, m_buffer + k_bufferSize - calculationsStart - result);
+    memmove(const_cast<char *>(calculationsStart + result), calculationsStart, m_buffer + k_bufferSize - calculationsStart - result);
   }
   m_numberOfCalculations--;
   resetMemoizedModelsAfterCalculationIndex(-1);

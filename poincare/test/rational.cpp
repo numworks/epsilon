@@ -60,6 +60,11 @@ QUIZ_CASE(poincare_rational_properties) {
   quiz_assert(!Rational::Builder(3,2).isMinusHalf());
   quiz_assert(Rational::Builder(10).isTen());
   quiz_assert(!Rational::Builder(-1).isTen());
+  quiz_assert(Rational::Builder(-1).isInteger());
+  quiz_assert(Rational::Builder(9).isInteger());
+  quiz_assert(Rational::Builder(9,3).isInteger());
+  quiz_assert(Rational::Builder(-9,3).isInteger());
+  quiz_assert(!Rational::Builder(9,10).isInteger());
 }
 
 static inline void assert_add_to(const Rational i, const Rational j, const Rational k) {

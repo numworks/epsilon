@@ -70,13 +70,13 @@ Expression BinomialCoefficient::shallowReduce(Context * context) {
 
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
-    if (!r0.integerDenominator().isOne() || r0.isNegative()) {
+    if (!r0.isInteger() || r0.isNegative()) {
       return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne() || r1.isNegative()) {
+    if (!r1.isInteger() || r1.isNegative()) {
       return replaceWithUndefinedInPlace();
     }
   }

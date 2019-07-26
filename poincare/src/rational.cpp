@@ -72,7 +72,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = signedNumerator().serialize(buffer, bufferSize);
-  if (denominator().isOne()) {
+  if (isInteger()) {
     return numberOfChar;
   }
   if (numberOfChar >= bufferSize-1) {
@@ -97,7 +97,7 @@ Expression RationalNode::setSign(Sign s, ReductionContext reductionContext) {
 
 Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   Layout numeratorLayout = signedNumerator().createLayout();
-  if (denominator().isOne()) {
+  if (isInteger()) {
     return numeratorLayout;
   }
   Layout denominatorLayout = denominator().createLayout();

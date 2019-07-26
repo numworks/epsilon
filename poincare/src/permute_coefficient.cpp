@@ -64,13 +64,13 @@ Expression PermuteCoefficient::shallowReduce(Context * context) {
   }
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
-    if (!r0.integerDenominator().isOne() || r0.sign() == ExpressionNode::Sign::Negative) {
+    if (!r0.isInteger() || r0.sign() == ExpressionNode::Sign::Negative) {
       return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
-    if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
+    if (!r1.isInteger() || r1.sign() == ExpressionNode::Sign::Negative) {
       return replaceWithUndefinedInPlace();
     }
   }

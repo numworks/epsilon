@@ -26,7 +26,7 @@ bool MultiplicationImpliciteNode::childNeedsSystemParenthesesAtSerialization(con
    * ---i --> [2/3]i
    *  3
    */
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
   // 2^{3}i --> [2^3]i

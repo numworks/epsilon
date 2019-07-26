@@ -67,7 +67,7 @@ Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext re
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
-    if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
+    if (!r1.isInteger() || r1.sign() == ExpressionNode::Sign::Negative) {
       return replaceWithUndefinedInPlace();
     }
   }
@@ -76,7 +76,7 @@ Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext re
   }
   Rational r0 = static_cast<Rational &>(c0);
   Rational r1 = static_cast<Rational &>(c1);
-  if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
+  if (!r1.isInteger() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
     return replaceWithUndefinedInPlace();
   }
   /* [r0-1.96*sqrt(r0*(1-r0)/r1), r0+1.96*sqrt(r0*(1-r0)/r1)]*/

@@ -75,6 +75,9 @@ bool MultiplicationNode::childNeedsUserParentheses(const Expression & child) con
     }
     return true;
   }
+  if (child.type() == Type::Conjugate) {
+    return childNeedsUserParentheses(child.childAtIndex(0));
+  }
   Type types[] = {Type::Subtraction, Type::Addition};
   return child.isOfType(types, 2);
 }

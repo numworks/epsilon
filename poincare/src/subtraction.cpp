@@ -30,6 +30,9 @@ bool SubtractionNode::childNeedsUserParentheses(const Expression & child) const 
   if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
+  if (child.type() == Type::Conjugate) {
+    return childNeedsUserParentheses(child.childAtIndex(0));
+  }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
   return child.isOfType(types, 3);
 }

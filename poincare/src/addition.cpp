@@ -35,6 +35,9 @@ bool AdditionNode::childNeedsUserParentheses(const Expression & child) const {
        && child.node() != childAtIndex(0)) {
     return true;
   }
+  if (child.type() == Type::Conjugate) {
+    return childNeedsUserParentheses(child.childAtIndex(0));
+  }
   return false;
 }
 

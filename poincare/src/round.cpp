@@ -56,7 +56,7 @@ Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContex
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     Rational r1 = childAtIndex(0).convert<Rational>();
     Rational r2 = childAtIndex(1).convert<Rational>();
-    if (!r2.integerDenominator().isOne()) {
+    if (!r2.isInteger()) {
       return replaceWithUndefinedInPlace();
     }
     const Rational ten = Rational::Builder(10);

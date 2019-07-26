@@ -87,7 +87,7 @@ Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionCon
     return replaceWithUndefinedInPlace();
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
-  if (!r.integerDenominator().isOne()) {
+  if (!r.isInteger()) {
     MultiplicationExplicite denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (denominatorDecomp.numberOfChildren() == 0) {
       return replaceWithUndefinedInPlace();

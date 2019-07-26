@@ -72,7 +72,7 @@ Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext re
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
-    if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
+    if (!r1.isInteger() || r1.signedIntegerNumerator().isNegative()) {
       return replaceWithUndefinedInPlace();
     }
   }

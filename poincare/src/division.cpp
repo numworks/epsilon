@@ -32,7 +32,7 @@ bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * c
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::Division, Type::Addition};

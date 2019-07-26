@@ -35,7 +35,7 @@ bool FactorialNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * 
    * --- ! ---> [2/3]!
    *  3
    */
-  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
+  if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
   Type types[] = {Type::Division, Type::Power};
@@ -100,7 +100,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
-    if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
+    if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {
       return replaceWithUndefinedInPlace();
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {

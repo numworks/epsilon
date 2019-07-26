@@ -11,7 +11,8 @@ ScrollableExactApproximateExpressionsView::ContentCell::ContentCell() :
   m_rightExpressionView(),
   m_approximateSign(KDFont::LargeFont, I18n::Message::AlmostEqual, 0.5f, 0.5f, Palette::GreyVeryDark),
   m_leftExpressionView(),
-  m_selectedSubviewPosition((SubviewPosition)0)
+  m_selectedSubviewPosition((SubviewPosition)0),
+  m_displayLeftExpression(true)
 {
 }
 
@@ -77,7 +78,7 @@ Poincare::Layout ScrollableExactApproximateExpressionsView::ContentCell::layout(
 }
 
 int ScrollableExactApproximateExpressionsView::ContentCell::numberOfSubviews() const {
-  if (m_leftExpressionView.layout().isUninitialized()) {
+  if (!m_displayLeftExpression || m_leftExpressionView.layout().isUninitialized()) {
     return 1;
   }
   return 3;

@@ -1,9 +1,29 @@
 #include <poincare/serialization_helper.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <string.h>
 #include <assert.h>
 
 namespace Poincare {
+
+void replaceOneCharSizedCodePointWith(char * buffer, CodePoint searchedCodePoint, CodePoint newCodePoint) {
+  assert(UTF8Decoder::CharSizeOfCodePoint(searchedCodePoint == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint(newCodePoint == 1));
+  UTF8Helper::PerformAtCodePoints(
+      buffer,
+      searchedCodePoint,
+      [](int codePointOffset, void * text, int newCodePoint, int bufferLength) {
+        *((char *)text+codePointOffset) = (char)newCodePoint;
+      },
+      [](int c1, void * c2, int c3, int c4) {},
+      (void *)buffer,
+      newCodePoint);
+}
+
+void SerializationHelper::ReplaceSystemParenthesesByUserParentheses(char * buffer) {
+  replaceOneCharSizedCodePointWith(buffer, UCodePointLeftSystemParenthesis, '(');
+  replaceOneCharSizedCodePointWith(buffer, UCodePointRightSystemParenthesis, ')');
+}
 
 static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
   // If buffer has size 0 or 1, put a zero if it fits and return

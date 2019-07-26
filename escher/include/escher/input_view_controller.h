@@ -22,7 +22,7 @@ public:
   void setTextBody(const char * text) {
     m_expressionFieldController.expressionField()->setText(text);
   }
-  void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
+  void edit(Responder * caller, Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction);
   bool isEditing();
   void abortEditionAndDismiss();
 

@@ -223,16 +223,15 @@ void ExpressionModelListController::reinitSelectedExpression(ExpiringPointer<Exp
 }
 
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
-  char * initialText = nullptr;
-  constexpr int initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
-  char initialTextContent[initialTextContentMaxSize];
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
     ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
+    constexpr size_t initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
+    char initialTextContent[initialTextContentMaxSize];
     model->text(initialTextContent, initialTextContentMaxSize);
-    initialText = initialTextContent;
+    inputController()->setTextBody(initialTextContent);
   }
-  inputController()->edit(this, event, this, initialText,
+  inputController()->edit(this, event, this,
       [](void * context, void * sender){
         ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;

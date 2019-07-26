@@ -196,7 +196,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     Rational r = static_cast<Rational &>(c);
     Addition a = Addition::Builder();
     // if the log base is Integer: log_b(r) = c + log_b(r') with r = b^c*r'
-    if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().integerDenominator().isOne()) {
+    if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().isInteger()) {
       Integer b = childAtIndex(1).convert<Rational>().signedIntegerNumerator();
       Integer newNumerator = simplifyLogarithmIntegerBaseInteger(r.signedIntegerNumerator(), b, a, false);
       Integer newDenomitor = simplifyLogarithmIntegerBaseInteger(r.integerDenominator(), b, a, true);

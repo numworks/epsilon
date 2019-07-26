@@ -93,6 +93,11 @@ const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
   m_inputRunLoopActive = true;
 
+  // Hide the sandbox if it is displayed
+  if (sandboxIsDisplayed()) {
+    hideSandbox();
+  }
+
   const char * promptText = prompt;
   char * s = const_cast<char *>(prompt);
 

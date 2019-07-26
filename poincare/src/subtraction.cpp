@@ -23,15 +23,15 @@ int SubtractionNode::polynomialDegree(Context * context, const char * symbolName
 
 // Private
 
-bool SubtractionNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (child == childAtIndex(0)) {
+bool SubtractionNode::childNeedsUserParentheses(const Expression & child) const {
+  if (child.node() == childAtIndex(0)) {
     return false;
   }
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
+  return child.isOfType(types, 3);
 }
 
 Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

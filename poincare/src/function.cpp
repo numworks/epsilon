@@ -121,7 +121,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
     Expression xValue = childAtIndex(0);
     value = value.replaceSymbolWithExpression(xSymbol, xValue);
     Expression p = parent();
-    if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
+    if (!p.isUninitialized() && p.node()->childNeedsUserParentheses(value)) {
       value = Parenthesis::Builder(value);
     }
     replaceWithInPlace(value);

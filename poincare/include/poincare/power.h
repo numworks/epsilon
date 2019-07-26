@@ -28,6 +28,7 @@ public:
   Type type() const override { return Type::Power; }
   Sign sign(Context * context) const override;
   Expression setSign(Sign s, ReductionContext reductionContext) override;
+  bool childNeedsUserParentheses(const Expression & child) const override;
 
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
@@ -41,7 +42,7 @@ private:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Serialize
-  bool childNeedsParenthesis(const TreeNode * child) const override;
+  bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplify

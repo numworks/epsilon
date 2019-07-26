@@ -3,6 +3,7 @@
 #include <escher/clipboard.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
@@ -461,6 +462,9 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   constexpr int bufferSize = TextField::maxBufferSize();
   char buffer[bufferSize];
   UTF8Helper::CopyAndRemoveCodePoint(buffer, bufferSize, eventText, UCodePointEmpty);
+
+  // Replace System parentheses (used to keep layout tree structure) by normal parentheses
+  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
 
   const char * nextCursorLocation = m_contentView.draftTextBuffer() + draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {

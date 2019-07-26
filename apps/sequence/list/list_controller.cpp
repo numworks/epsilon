@@ -87,9 +87,9 @@ void ListController::selectPreviousNewSequenceCell() {
 void ListController::editExpression(int sequenceDefinition, Ion::Events::Event event) {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   Sequence * sequence = modelStore()->modelForRecord(record);
-  char * initialText = nullptr;
-  char initialTextContent[TextField::maxBufferSize()];
+  InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    char initialTextContent[Constant::MaxSerializedExpressionSize];
     switch (sequenceDefinition) {
       case 0:
         sequence->text(initialTextContent, sizeof(initialTextContent));
@@ -101,14 +101,13 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
         sequence->secondInitialConditionText(initialTextContent, sizeof(initialTextContent));
         break;
     }
-    initialText = initialTextContent;
+    inputController->setTextBody(initialTextContent);
   }
-  InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
-      inputController->edit(this, event, this, initialText,
+      inputController->edit(this, event, this,
         [](void * context, void * sender){
         ListController * myController = static_cast<ListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
@@ -120,7 +119,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
       });
       break;
   case 1:
-    inputController->edit(this, event, this, initialText,
+    inputController->edit(this, event, this,
       [](void * context, void * sender){
       ListController * myController = static_cast<ListController *>(context);
       InputViewController * myInputViewController = (InputViewController *)sender;
@@ -132,7 +131,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
     });
     break;
   default:
-    inputController->edit(this, event, this, initialText,
+    inputController->edit(this, event, this,
       [](void * context, void * sender){
       ListController * myController = static_cast<ListController *>(context);
       InputViewController * myInputViewController = (InputViewController *)sender;

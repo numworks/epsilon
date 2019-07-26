@@ -22,13 +22,14 @@ public:
   Type type() const override { return Type::Factorial; }
   Sign sign(Context * context) const override { return Sign::Positive; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
+  bool childNeedsUserParentheses(const Expression & child) const override;
 
   // Complex
   bool isReal(Context * context) const override { return true; }
 
 private:
   // Layout
-  bool childNeedsParenthesis(const TreeNode * child) const override;
+  bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication

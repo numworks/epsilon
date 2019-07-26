@@ -33,12 +33,12 @@ ExpressionNode::Sign OppositeNode::sign(Context * context) const {
 
 /* Layout */
 
-bool OppositeNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+bool OppositeNode::childNeedsUserParentheses(const Expression & child) const {
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
+  return child.isOfType(types, 3);
 }
 
 Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

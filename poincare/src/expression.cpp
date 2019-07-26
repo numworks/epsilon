@@ -22,7 +22,7 @@ static bool sApproximationEncounteredComplex = false;
 
 Expression Expression::clone() const { TreeHandle c = TreeHandle::clone(); return static_cast<Expression&>(c); }
 
-Expression Expression::Parse(char const * string) {
+Expression Expression::Parse(char const * string, bool addParentheses) {
   if (string[0] == 0) {
     return Expression();
   }
@@ -30,6 +30,9 @@ Expression Expression::Parse(char const * string) {
   Expression expression = p.parse();
   if (p.getStatus() != Parser::Status::Success) {
     expression = Expression();
+  }
+  if (!expression.isUninitialized() && addParentheses) {
+    expression = expression.addMissingParentheses();
   }
   return expression;
 }
@@ -205,6 +208,28 @@ bool Expression::getLinearCoefficients(char * variables, int maxVariableSize, Ex
 }
 
 // Private
+
+void Expression::shallowAddMissingParenthesis() {
+  if (isUninitialized()) {
+    return;
+  }
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression child = childAtIndex(0);
+    if (node()->childNeedsUserParentheses(child)) {
+      replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
+    }
+  }
+}
+
+Expression Expression::addMissingParentheses() {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression child = childAtIndex(i);
+    if (node()->childNeedsUserParentheses(child)) {
+      replaceChildAtIndexInPlace(i, Parenthesis::Builder(child.addMissingParentheses()));
+    }
+  }
+  return *this;
+}
 
 void Expression::defaultDeepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
   for (int i = 0; i < numberOfChildren(); i++) {
@@ -399,7 +424,7 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 /* Simplification */
 
 Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicSimplification) {
-  Expression exp = Parse(text);
+  Expression exp = Parse(text, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
@@ -414,7 +439,7 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
 
 void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool symbolicComputation) {
   assert(simplifiedExpression);
-  Expression exp = Parse(text);
+  Expression exp = Parse(text, false);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -652,6 +677,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa || isZeroTb) {
         if (isNegativeRa) {
           real = Opposite::Builder(ra);
+          real.shallowAddMissingParenthesis();
         } else {
           real = ra;
         }
@@ -660,22 +686,26 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           imag = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          imag = MultiplicationImplicite::Builder(tb , Constant::Builder(UCodePointMathematicalBoldSmallI));
+          imag = MultiplicationImplicite::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          imag.shallowAddMissingParenthesis();
         }
       }
+      Expression result;
       if (imag.isUninitialized()) {
         return real;
       } else if (real.isUninitialized()) {
         if (isNegativeTb) {
-          return Opposite::Builder(imag);
+          result = Opposite::Builder(imag);
         } else {
           return imag;
         }
       } else if (isNegativeTb) {
-        return Subtraction::Builder(real, imag);
+        result = Subtraction::Builder(real, imag);
       } else {
-        return Addition::Builder(real, imag);
+        result = Addition::Builder(real, imag);
       }
+      result.shallowAddMissingParenthesis();
+      return result;
     }
     default:
     {
@@ -696,14 +726,18 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
         }
+        arg.shallowAddMissingParenthesis();
         exp = Power::Builder(Constant::Builder(UCodePointScriptSmallE), arg);
+        exp.shallowAddMissingParenthesis();
       }
       if (exp.isUninitialized()) {
         return norm;
       } else if (norm.isUninitialized()) {
         return exp;
       } else {
-        return MultiplicationImplicite::Builder(norm, exp);
+        Expression result = MultiplicationImplicite::Builder(norm, exp);
+        result.shallowAddMissingParenthesis();
+        return result;
       }
     }
   }

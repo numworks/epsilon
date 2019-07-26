@@ -19,17 +19,27 @@ Expression FactorialNode::setSign(Sign s, ReductionContext reductionContext) {
   return Factorial(this);
 }
 
-// Layout
-
-bool FactorialNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+bool FactorialNode::childNeedsUserParentheses(const Expression & child) const {
+  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
     return true;
   }
+
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Addition};
+  return child.isOfType(types, 5);
+}
+
+// Layout
+
+bool FactorialNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
+  /*  2
+   * --- ! ---> [2/3]!
+   *  3
+   */
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Division, Type::Addition, Type::Power};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 7);
+  Type types[] = {Type::Division, Type::Power};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 2);
 }
 
 // Simplification
@@ -110,10 +120,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
 
 Expression Factorial::shallowBeautify() {
   // +(a,b)! ->(+(a,b))!
-  if (childAtIndex(0).type() == ExpressionNode::Type::Addition
-      || childAtIndex(0).isMultiplication()
-      || childAtIndex(0).type() == ExpressionNode::Type::Power)
-  {
+  if (node()->childNeedsUserParentheses(childAtIndex(0))) {
     Expression result = Factorial::Builder(Parenthesis::Builder(childAtIndex(0)));
     replaceWithInPlace(result);
     return result;

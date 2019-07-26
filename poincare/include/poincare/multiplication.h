@@ -14,6 +14,7 @@ public:
   Sign sign(Context * context) const override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
+  bool childNeedsUserParentheses(const Expression & child) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c*d); }
@@ -21,10 +22,6 @@ public:
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
   }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
-
-protected:
-  // Layout
-  bool childNeedsParenthesis(const TreeNode * child) const override;
 
 private:
   /* Approximation */

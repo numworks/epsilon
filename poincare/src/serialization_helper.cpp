@@ -57,7 +57,7 @@ int SerializationHelper::SerializeChild(
 
   int numberOfChar = 0;
   // Write the child with parentheses if needed
-  bool addParentheses = parentNode->childNeedsParenthesis(childNode);
+  bool addParentheses = parentNode->childNeedsSystemParenthesesAtSerialization(childNode);
   if (addParentheses) {
     numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
     if (numberOfChar >= bufferSize-1) {
@@ -71,10 +71,10 @@ int SerializationHelper::SerializeChild(
   }
   if (addParentheses) {
     numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
-  }
-  if (numberOfChar >= bufferSize-1) {
-    assert(buffer[bufferSize - 1] == 0);
-    return bufferSize-1;
+    if (numberOfChar >= bufferSize-1) {
+      assert(buffer[bufferSize - 1] == 0);
+      return bufferSize-1;
+    }
   }
   buffer[numberOfChar] = 0;
   return numberOfChar;

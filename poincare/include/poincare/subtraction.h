@@ -23,6 +23,7 @@ public:
   // Properties
   Type type() const override { return Type::Subtraction; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
+  bool childNeedsUserParentheses(const Expression & child) const override;
 
   // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d, Preferences::ComplexFormat complexFormat) { return Complex<T>::Builder(c - d); }
@@ -34,7 +35,6 @@ public:
   }
 
   /* Layout */
-  bool childNeedsParenthesis(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 

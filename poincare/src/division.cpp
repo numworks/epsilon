@@ -22,21 +22,21 @@ int DivisionNode::polynomialDegree(Context * context, const char * symbolName) c
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-bool DivisionNode::childNeedsParenthesis(const TreeNode * child) const {
+Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  const ExpressionNode * numerator = childAtIndex(0);
+  const ExpressionNode * denominator = childAtIndex(1);
+  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Division, Type::Addition};
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::Division, Type::Addition};
   return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
-}
-
-Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const ExpressionNode * numerator = childAtIndex(0);
-  const ExpressionNode * denominator = childAtIndex(1);
-  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 int DivisionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

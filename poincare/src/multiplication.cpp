@@ -66,17 +66,17 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
-bool MultiplicationNode::childNeedsParenthesis(const TreeNode * child) const {
-  if ((static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative)
-        || static_cast<const ExpressionNode *>(child)->type() == ExpressionNode::Type::Opposite)
+bool MultiplicationNode::childNeedsUserParentheses(const Expression & child) const {
+  if ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+        || child.type() == ExpressionNode::Type::Opposite)
   {
-    if (child == childAtIndex(0)) {
+    if (child.node() == childAtIndex(0)) {
       return false;
     }
     return true;
   }
   Type types[] = {Type::Subtraction, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 2);
+  return child.isOfType(types, 2);
 }
 
 /* Multiplication */

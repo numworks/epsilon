@@ -24,7 +24,7 @@ public:
 
 private:
   // Layout
-  bool childNeedsParenthesis(const TreeNode * child) const override;
+  bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Serialize

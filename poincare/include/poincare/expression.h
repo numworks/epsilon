@@ -63,6 +63,7 @@ class Expression : public TreeHandle {
   friend class Multiplication;
   friend class MultiplicationExplicite;
   friend class MultiplicationImplicite;
+  friend class MultiplicationNode;
   friend class NaperianLogarithm;
   friend class NthRoot;
   friend class Number;
@@ -83,6 +84,7 @@ class Expression : public TreeHandle {
   friend class SquareRootNode;
   friend class Store;
   friend class Subtraction;
+  friend class SubtractionNode;
   friend class Sum;
   friend class Symbol;
   friend class SymbolAbstractNode;
@@ -111,7 +113,7 @@ public:
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
   Expression clone() const;
-  static Expression Parse(char const * string);
+  static Expression Parse(char const * string, bool addMissingParenthesis = true);
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Circuit breaker */
@@ -126,6 +128,7 @@ public:
 
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
+  bool isOfType(ExpressionNode::Type * types, int length) const { return node()->isOfType(types, length); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
   bool isMultiplication() const { return node()->type() == ExpressionNode::Type::MultiplicationExplicite ||  node()->type() == ExpressionNode::Type::MultiplicationImplicite; }
@@ -332,6 +335,15 @@ protected:
 private:
   static constexpr int k_maxSymbolReplacementsCount = 10;
   static bool sSymbolReplacementsCountLock;
+
+  /* Add missing parenthesis will add parentheses that easen the reading of the
+   * expression or that are required by math rules. For example:
+   * 2+-1 --> 2+(-1)
+   * *(+(2,1),3) --> (2+1)*3
+   */
+  Expression addMissingParentheses();
+  void shallowAddMissingParenthesis();
+
   /* Simplification */
   Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {

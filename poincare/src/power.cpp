@@ -99,6 +99,22 @@ bool PowerNode::isReal(Context * context) const {
   return false;
 }
 
+bool PowerNode::childNeedsUserParentheses(const Expression & child) const {
+  if (child.node() == childAtIndex(0)) {
+    /* ^(-2.3, 4) --> (-2.3)^{4}
+     * ^(2/3, 4) --> (2/3)^{4}
+     */
+    if ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+       || (child.type() == Type::Rational && !static_cast<const Rational &>(child).integerDenominator().isOne())) {
+      return true;
+    }
+    // ^(2+3,4) --> (2+3)^{4}
+    Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::MultiplicationExplicite, Type::MultiplicationImplicite, Type::Division, Type::Addition};
+    return child.isOfType(types, 7);
+  }
+  return false;
+}
+
 // Private
 
 template<typename T>
@@ -146,7 +162,7 @@ Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 
 // Serialize
 
-bool PowerNode::childNeedsParenthesis(const TreeNode * child) const {
+bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
   if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
     return true;
   }
@@ -850,8 +866,7 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
   }
 
   // Step 4: +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
-  if (childAtIndex(0).type() == ExpressionNode::Type::Addition
-      || childAtIndex(0).isMultiplication())
+  if (node()->childNeedsUserParentheses(childAtIndex(0)))
   {
     Parenthesis p = Parenthesis::Builder(childAtIndex(0));
     replaceChildAtIndexInPlace(0, p);

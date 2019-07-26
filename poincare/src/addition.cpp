@@ -29,12 +29,10 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
 }
 
 // Layout
-bool AdditionNode::childNeedsParenthesis(const TreeNode * child) const {
-  if (((static_cast<const ExpressionNode *>(child)->isNumber()
-          && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative)
-        || static_cast<const ExpressionNode *>(child)->type() == Type::Opposite)
-      && child != childAtIndex(0))
-  {
+bool AdditionNode::childNeedsUserParentheses(const Expression & child) const {
+  if (((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+        || child.type() == Type::Opposite)
+       && child.node() != childAtIndex(0)) {
     return true;
   }
   return false;

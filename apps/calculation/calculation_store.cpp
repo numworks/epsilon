@@ -9,18 +9,43 @@ using namespace Shared;
 
 namespace Calculation {
 
+CalculationStore::CalculationStore() :
+  m_bufferEnd(m_buffer),
+  m_numberOfCalculations(0),
+  m_slidedBuffer(false),
+  m_indexOfFirstMemoizedCalculationPointer(0)
+{
+  resetMemoizedModelsAfterCalculationIndex(-1);
+}
+
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
   assert(!m_slidedBuffer);
   assert(i >= 0 && i < m_numberOfCalculations);
-  int currentIndex = 0;
-  for (Calculation * c : *this) {
-    if (currentIndex == i) {
+  assert(m_indexOfFirstMemoizedCalculationPointer >= 0);
+  if (i >= m_indexOfFirstMemoizedCalculationPointer && i < m_indexOfFirstMemoizedCalculationPointer + k_numberOfMemoizedCalculationPointers) {
+    // The calculation is within the range of memoized calculations
+    Calculation * c = m_memoizedCalculationPointers[i];
+    if (c != nullptr) {
+      // The pointer was memoized
       return ExpiringPointer<Calculation>(c);
     }
-    currentIndex++;
+    c = bufferCalculationAtIndex(i);
+    m_memoizedCalculationPointers[i] = c;
+    return c;
   }
-  assert(false);
-  return nullptr;
+  // Slide the memoization buffer
+  if (i >= m_indexOfFirstMemoizedCalculationPointer) {
+    // Slide the memoization buffer to the left
+    memcpy(m_memoizedCalculationPointers, m_memoizedCalculationPointers+1, k_numberOfMemoizedCalculationPointers - 1 * sizeof(Calculation *));
+    m_memoizedCalculationPointers[k_numberOfMemoizedCalculationPointers - 1] = nullptr;
+    m_indexOfFirstMemoizedCalculationPointer++;
+  } else {
+    // Slide the memoization buffer to the right
+    memcpy(m_memoizedCalculationPointers+1, m_memoizedCalculationPointers, k_numberOfMemoizedCalculationPointers - 1 * sizeof(Calculation *));
+    m_memoizedCalculationPointers[0] = nullptr;
+    m_indexOfFirstMemoizedCalculationPointer--;
+  }
+  return calculationAtIndex(0);
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context) {
@@ -66,6 +91,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   m_slidedBuffer = false;
   m_numberOfCalculations++;
   m_bufferEnd+= nextSerializationLocation - m_buffer;
+
+  // Clean the memoization
+  resetMemoizedModelsAfterCalculationIndex(-1);
+
   return ExpiringPointer<Calculation>(reinterpret_cast<Calculation *>(m_buffer));
 }
 
@@ -79,12 +108,14 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
   memcpy((char *)(calcI.pointer()), nextCalc, slidingSize);
   m_bufferEnd -= (nextCalc - (char *)(calcI.pointer()));
   m_numberOfCalculations--;
+  resetMemoizedModelsAfterCalculationIndex(i);
 }
 
 void CalculationStore::deleteAll() {
   assert(!m_slidedBuffer);
   m_bufferEnd = m_buffer;
   m_numberOfCalculations = 0;
+  resetMemoizedModelsAfterCalculationIndex(-1);
 }
 
 Expression CalculationStore::ansExpression(Context * context) {
@@ -104,6 +135,18 @@ Expression CalculationStore::ansExpression(Context * context) {
     return mostRecentCalculation->approximateOutput(context);
   }
   return mostRecentCalculation->exactOutput();
+}
+
+Calculation * CalculationStore::bufferCalculationAtIndex(int i) {
+  int currentIndex = 0;
+  for (Calculation * c : *this) {
+    if (currentIndex == i) {
+      return c;
+    }
+    currentIndex++;
+  }
+  assert(false);
+  return nullptr;
 }
 
 void CalculationStore::serializeExpression(Expression e, char * location, char * * newCalculationsLocation) {
@@ -140,6 +183,7 @@ size_t CalculationStore::deleteLastCalculation(const char * calculationsStart) {
     memcpy(const_cast<char *>(calculationsStart + result), calculationsStart, m_buffer + k_bufferSize - calculationsStart - result);
   }
   m_numberOfCalculations--;
+  resetMemoizedModelsAfterCalculationIndex(-1);
   return result;
 }
 
@@ -164,6 +208,19 @@ void CalculationStore::pushExpression(ValueCreator valueCreator, Expression * ex
   if (*newCalculationsLocation >= m_buffer + k_bufferSize) {
     //TODO LEA the expression does not fit in the buffer even empty
     // Push undef if calculation is too big !!! (and push undef before too if needed!!!)
+  }
+}
+
+void CalculationStore::resetMemoizedModelsAfterCalculationIndex(int index) {
+  if (index < m_indexOfFirstMemoizedCalculationPointer) {
+    memset(&m_memoizedCalculationPointers, 0, k_numberOfMemoizedCalculationPointers * sizeof(Calculation *));
+    return;
+  }
+  if (index >= m_indexOfFirstMemoizedCalculationPointer + k_numberOfMemoizedCalculationPointers) {
+    return;
+  }
+  for (int i = index - m_indexOfFirstMemoizedCalculationPointer; i < k_numberOfMemoizedCalculationPointers; i++) {
+    m_memoizedCalculationPointers[i] = nullptr;
   }
 }
 

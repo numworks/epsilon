@@ -13,6 +13,9 @@ namespace Poincare {
  */
 
 namespace SerializationHelper {
+
+  void ReplaceSystemParenthesesByUserParentheses(char * buffer);
+
   // SerializableReference to text
   int Infix(
       const TreeNode * node,

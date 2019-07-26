@@ -45,7 +45,7 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
     m_memoizedCalculationPointers[0] = nullptr;
     m_indexOfFirstMemoizedCalculationPointer--;
   }
-  return calculationAtIndex(0);
+  return calculationAtIndex(i);
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context) {

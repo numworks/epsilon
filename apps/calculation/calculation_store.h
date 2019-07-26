@@ -25,13 +25,14 @@ namespace Calculation {
 
 class CalculationStore {
 public:
-  CalculationStore() : m_bufferEnd(m_buffer), m_numberOfCalculations(0), m_slidedBuffer(false) {}
+  CalculationStore();
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context);
   void deleteCalculationAtIndex(int i);
   void deleteAll();
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Poincare::Expression ansExpression(Poincare::Context * context);
+  void tidy() { resetMemoizedModelsAfterCalculationIndex(-1); }
 private:
   static constexpr int k_bufferSize = 10 * 3 * Constant::MaxSerializedExpressionSize;
 
@@ -51,6 +52,7 @@ private:
   CalculationIterator begin() const { return CalculationIterator(m_buffer); }
   CalculationIterator end() const { return CalculationIterator(m_bufferEnd); }
 
+  Calculation * bufferCalculationAtIndex(int i);
   int remainingBufferSize() const { assert(m_bufferEnd >= m_buffer); return k_bufferSize - (m_bufferEnd - m_buffer); }
   void serializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation);
   char * slideCalculationsToEndOfBuffer(); // returns the new position of the calculations
@@ -62,6 +64,12 @@ private:
   const char * m_bufferEnd;
   int m_numberOfCalculations;
   bool m_slidedBuffer;
+
+  // Memoization
+  static constexpr int k_numberOfMemoizedCalculationPointers = 10;
+  void resetMemoizedModelsAfterCalculationIndex(int index);
+  int m_indexOfFirstMemoizedCalculationPointer;
+  mutable Calculation * m_memoizedCalculationPointers[k_numberOfMemoizedCalculationPointers];
 };
 
 }

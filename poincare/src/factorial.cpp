@@ -48,10 +48,6 @@ Expression FactorialNode::shallowReduce(ReductionContext reductionContext) {
   return Factorial(this).shallowReduce(reductionContext);
 }
 
-Expression FactorialNode::shallowBeautify(ReductionContext reductionContext) {
-  return Factorial(this).shallowBeautify();
-}
-
 template<typename T>
 Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
   T n = c.real();
@@ -114,16 +110,6 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
   if (c.type() == ExpressionNode::Type::Constant) {
     // e! = undef, i! = undef, pi! = undef
     return replaceWithUndefinedInPlace();
-  }
-  return *this;
-}
-
-Expression Factorial::shallowBeautify() {
-  // +(a,b)! ->(+(a,b))!
-  if (node()->childNeedsUserParentheses(childAtIndex(0))) {
-    Expression result = Factorial::Builder(Parenthesis::Builder(childAtIndex(0)));
-    replaceWithInPlace(result);
-    return result;
   }
   return *this;
 }

@@ -54,6 +54,7 @@ public:
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
+  Expression omitMultiplicationWhenPossible();
   Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);

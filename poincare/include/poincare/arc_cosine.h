@@ -21,6 +21,7 @@ public:
 
   // Properties
   Type type() const override { return Type::ArcCosine; }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -28,6 +29,9 @@ private:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
   //Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {

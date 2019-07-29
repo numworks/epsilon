@@ -35,6 +35,9 @@ public:
   Type type() const override { return Type::Matrix; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
 
+  // Simplification
+  LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
+
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>(context, complexFormat, angleUnit);

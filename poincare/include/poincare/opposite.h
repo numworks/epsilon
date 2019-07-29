@@ -42,6 +42,8 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::DigitOrLetter; };
+  LayoutShape rightLayoutShape() const override { return childAtIndex(0)->rightLayoutShape(); }
 };
 
 class Opposite final : public Expression {

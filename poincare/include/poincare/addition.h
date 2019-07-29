@@ -36,6 +36,19 @@ public:
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
   }
+
+  // Simplification
+  LayoutShape leftLayoutShape() const override {
+    /* When beautifying an Multiplication of Addition, Parentheses will be added
+     * around Addition. leftLayoutShape being called after beautifying, we
+     * should not call it on an Addition. */
+    assert(false);
+    return NAryExpressionNode::leftLayoutShape();
+  }
+  LayoutShape rightLayoutShape() const override {
+    assert(false);
+    return NAryExpressionNode::rightLayoutShape();
+  }
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

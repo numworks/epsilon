@@ -42,6 +42,9 @@ public:
   Expression shallowReduce(ReductionContext reductionContext) override;
 
 private:
+  /* Simplification */
+  LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
+  LayoutShape rightLayoutShape() const override { return childAtIndex(1)->rightLayoutShape(); }
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);

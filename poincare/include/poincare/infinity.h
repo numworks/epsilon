@@ -37,6 +37,9 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
+  // Simplification
+  LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::DigitOrLetter; }
+  LayoutShape rightLayoutShape() const override { return LayoutShape::DigitOrLetter; }
   template<typename T> Evaluation<T> templatedApproximate() const;
   bool m_negative;
 };

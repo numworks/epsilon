@@ -37,6 +37,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 protected:
   template<typename T> Evaluation<T> templatedApproximate() const;
+  // Simplification
+  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
 };
 
 class Undefined final : public Number {

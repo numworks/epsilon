@@ -616,6 +616,10 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
       e.replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
     }
   }
+  // We choose whether or not to omit multiplication sign after beautifying parent and child
+  if (e.type() == ExpressionNode::Type::MultiplicationExplicite) {
+    e = static_cast<MultiplicationExplicite &>(e).omitMultiplicationWhenPossible();
+  }
   return e;
 }
 

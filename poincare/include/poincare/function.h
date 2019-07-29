@@ -42,6 +42,9 @@ private:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowReplaceReplaceableSymbols(Context * context) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;

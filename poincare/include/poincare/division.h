@@ -47,6 +47,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return LayoutShape::ShiftedBaseline; };
 
 private:
   // Approximation

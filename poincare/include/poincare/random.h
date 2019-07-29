@@ -27,6 +27,9 @@ public:
   Sign sign(Context * context) const override { return Sign::Positive; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
 private:
+  // Simplification
+  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

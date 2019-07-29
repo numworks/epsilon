@@ -116,7 +116,7 @@ void LayoutCursor::addEmptySquarePowerLayout() {
 void LayoutCursor::addEmptyTenPowerLayout() {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder(UCodePointMultiplicationSign),
       CodePointLayout::Builder('1'),
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
@@ -154,7 +154,7 @@ void LayoutCursor::insertText(const char * text) {
       continue;
     }
     if (codePoint == UCodePointMultiplicationSign) {
-      newChild = CodePointLayout::Builder(UCodePointMiddleDot);
+      newChild = CodePointLayout::Builder(UCodePointMultiplicationSign);
     } else if (codePoint == '(') {
       newChild = LeftParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {

@@ -24,6 +24,10 @@ public:
   // Complex
   bool isReal(Context * context) const override { return true; }
 
+  // Simplification
+  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

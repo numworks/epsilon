@@ -55,6 +55,8 @@ private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(!m_negative); return isInteger() ? LayoutShape::DigitOrLetter : LayoutShape::ShiftedBaseline; };
+  LayoutShape rightLayoutShape() const override { return isInteger() ? LayoutShape::DigitOrLetter : LayoutShape::ShiftedBaseline; }
   Expression setSign(Sign s, ReductionContext reductionContext) override;
   Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;

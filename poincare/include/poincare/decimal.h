@@ -58,6 +58,8 @@ public:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::DigitOrLetter; };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::DigitOrLetter; }
 
   // Serialization
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;

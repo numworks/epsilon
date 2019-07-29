@@ -29,8 +29,13 @@ private:
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override {
+    /* leftLayoutShape is called after beautifying expression. ComplexCartesian
+     * is transformed in another expression at beautifying. */
+    assert(false);
+    return LayoutShape::BoundaryPunctuation;
+  };
 
-private:
   template<typename T> Complex<T> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 

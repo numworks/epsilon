@@ -197,6 +197,15 @@ public:
   /*!*/ virtual Expression shallowBeautify(ReductionContext reductionContext);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions. It depends on the "layout syle" of the on the right of the left expression */
+  enum class LayoutShape {
+    DigitOrLetter,
+    SpecialLetter,
+    BoundaryPunctuation,
+    ShiftedBaseline
+  };
+  virtual LayoutShape leftLayoutShape() const = 0;
+  virtual LayoutShape rightLayoutShape() const { return leftLayoutShape(); }
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }

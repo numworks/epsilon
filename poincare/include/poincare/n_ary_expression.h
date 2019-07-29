@@ -31,6 +31,9 @@ public:
   Expression squashUnaryHierarchyInPlace();
 
 protected:
+  LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
+  LayoutShape rightLayoutShape() const override { return childAtIndex(0)->rightLayoutShape(); }
+
   /* With a pool of size < 120k and TreeNode of size 20, a node can't have more
    * than 6144 children which fit in uint16_t. */
   uint16_t m_numberOfChildren;

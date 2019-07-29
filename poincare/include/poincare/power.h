@@ -48,6 +48,8 @@ private:
   // Simplify
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
+  LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); };
+  LayoutShape rightLayoutShape() const override { return LayoutShape::ShiftedBaseline; };
   int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool canBeInterrupted) const override;
   Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override;

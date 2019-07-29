@@ -22,6 +22,12 @@ public:
   // Properties
   Type type() const override { return Type::EmptyExpression; }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+  // Simplification
+  LayoutShape leftLayoutShape() const override {
+    assert(false);
+    return LayoutShape::DigitOrLetter;
+  };
 private:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

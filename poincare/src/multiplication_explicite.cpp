@@ -1,4 +1,5 @@
 #include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_implicite.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
@@ -63,6 +64,31 @@ Expression MultiplicationExplicite::setSign(ExpressionNode::Sign s, ExpressionNo
 
 Expression MultiplicationExplicite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   return privateShallowReduce(reductionContext, true, true);
+}
+
+static bool canOmitSignBefore(ExpressionNode::LayoutShape right) {
+  // 2π, 2(1+2), ππ, π(1+2)
+  return right == ExpressionNode::LayoutShape::SpecialLetter || right == ExpressionNode::LayoutShape::BoundaryPunctuation;
+}
+
+Expression MultiplicationExplicite::omitMultiplicationWhenPossible() {
+  int i = 0;
+  while (i < numberOfChildren() - 1) {
+    Expression childI = childAtIndex(i);
+    Expression childI1 = childAtIndex(i+1);
+    if (canOmitSignBefore(childI1.node()->leftLayoutShape())) {
+      if (childI.type() == ExpressionNode::Type::MultiplicationImplicite) {
+        static_cast<MultiplicationImplicite &>(childI).addChildAtIndexInPlace(childI1, childI.numberOfChildren(), childI.numberOfChildren());
+      } else {
+        Expression impliciteMultiplication = MultiplicationImplicite::Builder(childI, childI1);
+        replaceChildAtIndexInPlace(i, impliciteMultiplication);
+      }
+      removeChildAtIndexInPlace(i+1);
+      continue;
+    }
+    i++;
+  }
+  return squashUnaryHierarchyInPlace();
 }
 
 Expression MultiplicationExplicite::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {

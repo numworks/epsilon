@@ -62,7 +62,7 @@ public:
   static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
 
   // Symbol properties
-  bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX) || node()->isUnknown(UCodePointUnknownN); }
+  bool isSystemSymbol() const { return node()->isUnknown(UCodePointUnknownX); }
   const char * name() const { return node()->name(); }
   static bool isSeriesSymbol(const char * c);
   static bool isRegressionSymbol(const char * c);

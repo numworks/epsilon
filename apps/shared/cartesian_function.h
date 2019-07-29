@@ -15,7 +15,6 @@ public:
     Function(record)
   {}
   CodePoint symbol() const override { return 'x'; }
-  CodePoint unknownSymbol() const override { return UCodePointUnknownX; }
 
   // Evaluation
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override {

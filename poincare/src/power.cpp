@@ -865,12 +865,6 @@ Expression Power::shallowBeautify(ExpressionNode::ReductionContext reductionCont
     return result;
   }
 
-  // Step 4: +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
-  if (node()->childNeedsUserParentheses(childAtIndex(0)))
-  {
-    Parenthesis p = Parenthesis::Builder(childAtIndex(0));
-    replaceChildAtIndexInPlace(0, p);
-  }
   return *this;
 }
 

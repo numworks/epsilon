@@ -90,16 +90,7 @@ Expression MultiplicationExplicite::shallowBeautify(ExpressionNode::ReductionCon
   }
   assert(thisExp.type() == ExpressionNode::Type::MultiplicationExplicite);
 
-  // Step 3: Add Parenthesis if needed
-  for (int i = 0; i < thisExp.numberOfChildren(); i++) {
-    const Expression o = thisExp.childAtIndex(i);
-    if (o.type() == ExpressionNode::Type::Addition) {
-      Parenthesis p = Parenthesis::Builder(o);
-      thisExp.replaceChildAtIndexInPlace(i, p);
-    }
-  }
-
-  // Step 4: Create a Division if needed
+  // Step 3: Create a Division if needed
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression childI = thisExp.childAtIndex(i);
     if (!(childI.type() == ExpressionNode::Type::Power && childI.childAtIndex(1).type() == ExpressionNode::Type::Rational && childI.childAtIndex(1).convert<Rational>().isMinusOne())) {

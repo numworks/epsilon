@@ -20,13 +20,13 @@ ExpressionModel::ExpressionModel() :
 {
 }
 
-void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol, CodePoint unknownSymbol) const {
+void ExpressionModel::text(const Storage::Record * record, char * buffer, size_t bufferSize, CodePoint symbol) const {
   Expression e = expressionClone(record);
   if (e.isUninitialized() && bufferSize > 0) {
     buffer[0] = 0;
   } else {
     if (symbol != 0 && !e.isUninitialized()) {
-      e = e.replaceUnknown(Symbol::Builder(unknownSymbol), Symbol::Builder(symbol));
+      e = e.replaceUnknown(Symbol::Builder(UCodePointUnknownX), Symbol::Builder(symbol));
     }
     e.serialize(buffer, bufferSize);
   }
@@ -58,11 +58,11 @@ Expression ExpressionModel::expressionClone(const Storage::Record * record) cons
   return Expression::ExpressionFromAddress(expressionAddress(record), expressionSize(record));
 }
 
-Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol, CodePoint unknownSymbol) const {
+Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol) const {
   if (m_layout.isUninitialized()) {
     Expression clone = expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
-      clone = clone.replaceUnknown(Symbol::Builder(unknownSymbol), Symbol::Builder(symbol));
+      clone = clone.replaceUnknown(Symbol::Builder(UCodePointUnknownX), Symbol::Builder(symbol));
     }
     m_layout = PoincareHelpers::CreateLayout(clone);
     if (m_layout.isUninitialized()) {
@@ -72,8 +72,8 @@ Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol,
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol, CodePoint unknownSymbol) {
-  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol, unknownSymbol);
+Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(Ion::Storage::Record * record, const char * c, CodePoint symbol) {
+  Expression e = ExpressionModel::BuildExpressionFromText(c, symbol);
   return setExpressionContent(record, e);
 }
 
@@ -122,14 +122,14 @@ void ExpressionModel::tidy() const {
   m_circular = 0;
 }
 
-Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, char symbol, char unknownSymbol) {
+Poincare::Expression ExpressionModel::BuildExpressionFromText(const char * c, char symbol) {
   Expression expressionToStore;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c);
     if (!expressionToStore.isUninitialized() && symbol != 0) {
-      expressionToStore = expressionToStore.replaceUnknown(Symbol::Builder(symbol), Symbol::Builder(unknownSymbol));
+      expressionToStore = expressionToStore.replaceUnknown(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknownX));
     }
   }
   return expressionToStore;

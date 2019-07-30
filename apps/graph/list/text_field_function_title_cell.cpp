@@ -26,7 +26,7 @@ Responder * TextFieldFunctionTitleCell::responder() {
 void TextFieldFunctionTitleCell::setEditing(bool editing) {
   Container::activeApp()->setFirstResponder(&m_textField);
   const char * previousText = m_textField.text();
-  m_textField.setEditing(true, false);
+  m_textField.setEditing(true);
   m_textField.setText(previousText);
 }
 

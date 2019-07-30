@@ -144,6 +144,11 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded) {
     return;
   }
   Poincare::Context * context = App::app()->localContext();
+
+  // Clean the layouts to make room in the pool
+  m_inputView.setLayout(Poincare::Layout());
+  m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout());
+
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
   m_calculationExpanded = expanded;

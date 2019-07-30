@@ -212,12 +212,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   int numberOfChar = strlcpy(buffer, operatorName, bufferSize);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  // Write the opening parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-
-  /* Add an extra system parenthesis to avoid serializing:
+  /* Add an system parenthesis to avoid serializing:
    *   2)+(1
    *    ∑     (5)
    *   n=1
@@ -240,12 +235,6 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
 
   // Write the closing system parenthesis
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-
-  // Write the closing parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

@@ -118,7 +118,7 @@ void EditExpressionController::reloadView() {
 
 bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
   if (shouldDuplicateLastCalculation && m_cacheBuffer[0] != 0) {
-    /* The input text store in m_cacheBuffer might have beed correct the first
+    /* The input text store in m_cacheBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
     Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
     if (!myApp->isAcceptableText(m_cacheBuffer)) {

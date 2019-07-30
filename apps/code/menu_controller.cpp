@@ -49,7 +49,7 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
   if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
     TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
     if (tf->isEditing()) {
-      tf->setEditing(false, false);
+      tf->setEditing(false);
       privateTextFieldDidAbortEditing(tf, false);
     }
   }
@@ -126,7 +126,7 @@ void MenuController::renameSelectedScript() {
   ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
   Container::activeApp()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
-  myCell->textField()->setEditing(true, false);
+  myCell->textField()->setEditing(true);
   myCell->textField()->setCursorLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
 }
 

@@ -29,9 +29,7 @@ bool MultiplicationImpliciteNode::childNeedsSystemParenthesesAtSerialization(con
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  // 2^{3}i --> [2^3]i
-  Type types[] = {Type::Power, Type::Opposite, Type::MultiplicationExplicite, Type::Division, Type::Factorial};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 5);
+  return static_cast<const ExpressionNode *>(child)->type() == Type::Division;
 }
 
 /* Multiplication */

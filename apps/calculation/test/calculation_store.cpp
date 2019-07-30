@@ -63,10 +63,10 @@ void assertCalculationDisplay(const char * input, ::Calculation::Calculation::Di
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
-    quiz_assert(strcmpWithSystemParentheses(lastCalculation->exactOutputText(), exactOutput) == 0);
+    quiz_assert(strcmp(lastCalculation->exactOutputText(), exactOutput) == 0);
   }
   if (approximateOutput) {
-    quiz_assert(strcmpWithSystemParentheses(lastCalculation->approximateOutputText(), approximateOutput) == 0);
+    quiz_assert(strcmp(lastCalculation->approximateOutputText(), approximateOutput) == 0);
   }
   store->deleteAll();
 }
@@ -135,6 +135,9 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
 
 
 QUIZ_CASE(calculation_complex_format) {
+  assert(UCodePointLeftSystemParenthesis == '\u0012');
+  assert(UCodePointRightSystemParenthesis == '\u0013');
+
   Shared::GlobalContext globalContext;
   CalculationStore store;
 
@@ -152,18 +155,18 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationDisplay("√(-1)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "𝐢", &globalContext, &store);
   assertCalculationDisplay("ln(-2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
   assertCalculationDisplay("√(-1)×√(-1)", ::Calculation::Calculation::DisplayOutput::ApproximateOnly, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "-1", &globalContext, &store);
-  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "1+√(3)×𝐢", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "-2+2×√(3)×𝐢", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×𝐢", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "1+√(3)𝐢", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "-2+2√(3)𝐢", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "root(8,4)/2+\u0012root(8,4)/2\u0013𝐢", nullptr, &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
-  assertCalculationDisplay("1+𝐢", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "√(2)×ℯ^(π/4×𝐢)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("√(-1)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ℯ^(π/2×𝐢)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("1+𝐢", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "√(2)ℯ^\u0012\u0012π/4\u0013𝐢\u0013", nullptr, &globalContext, &store);
+  assertCalculationDisplay("√(-1)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ℯ^\u0012\u0012π/2\u0013𝐢\u0013", nullptr, &globalContext, &store);
   assertCalculationDisplay("ln(-2)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "ln(-2)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("√(-1)×√(-1)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "ℯ^(3.1415926535898×𝐢)", &globalContext, &store);
-  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "2×ℯ^(π/3×𝐢)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "4×ℯ^((2×π)/3×𝐢)", nullptr, &globalContext, &store);
-  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "root(2,4)×ℯ^(π/4×𝐢)", nullptr, &globalContext, &store);
+  assertCalculationDisplay("√(-1)×√(-1)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Unknown, nullptr, "ℯ^\u00123.1415926535898𝐢\u0013", &globalContext, &store);
+  assertCalculationDisplay("(-8)^(1/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "2ℯ^\u0012\u0012π/3\u0013𝐢\u0013", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-8)^(2/3)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "4ℯ^\u0012\u00122π/3\u0013𝐢\u0013", nullptr, &globalContext, &store);
+  assertCalculationDisplay("(-2)^(1/4)", ::Calculation::Calculation::DisplayOutput::ExactAndApproximate, ::Calculation::Calculation::EqualSign::Approximation, "root(2,4)ℯ^\u0012\u0012π/4\u0013𝐢\u0013", nullptr, &globalContext, &store);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
 }

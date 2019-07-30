@@ -1,5 +1,6 @@
 #include "calculation.h"
 #include "../shared/poincare_helpers.h"
+#include <poincare/exception_checkpoint.h>
 #include <poincare/undefined.h>
 #include <poincare/unreal.h>
 #include <string.h>
@@ -162,16 +163,31 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
-  constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
-  char buffer[bufferSize];
-  Preferences * preferences = Preferences::sharedPreferences();
-  Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(exactOutputText(), context, false);
-  if (exactOutputExpression.isUninitialized()) {
-    exactOutputExpression = Undefined::Builder();
+  /* Displaying the right equal symbol is less important than displaying a
+   * result, so we do not want exactAndApproximateDisplayedOutputsAreEqual to
+   * create a pool failure that would prevent from displaying a result that we
+   * managed to compute. We thus encapsulate the method in an exception
+   * checkpoint: if there was not enough memory on the pool to compute the equal
+   * sign, just return EqualSign::Approximation.
+   * We can safely use an exception checkpoint here because we are sure of not
+   * modifying any pre-existing node in the pool. */
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    constexpr int bufferSize = Constant::MaxSerializedExpressionSize;
+    char buffer[bufferSize];
+    Preferences * preferences = Preferences::sharedPreferences();
+    Expression exactOutputExpression = PoincareHelpers::ParseAndSimplify(exactOutputText(), context, false);
+    if (exactOutputExpression.isUninitialized()) {
+      exactOutputExpression = Undefined::Builder();
+    }
+    Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
+    m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context) ? EqualSign::Equal : EqualSign::Approximation;
+    return m_equalSign;
+  } else {
+    /* Do not override m_equalSign in case there is enough room in the pool
+     * later to compute it. */
+    return EqualSign::Approximation;
   }
-  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithTextInput(preferences->complexFormat(), m_inputText);
-  m_equalSign = exactOutputExpression.isEqualToItsApproximationLayout(approximateOutput(context), buffer, bufferSize, complexFormat, preferences->angleUnit(), preferences->displayMode(), preferences->numberOfSignificantDigits(), context) ? EqualSign::Equal : EqualSign::Approximation;
-  return m_equalSign;
 }
 
 }

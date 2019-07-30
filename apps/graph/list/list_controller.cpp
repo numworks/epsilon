@@ -73,7 +73,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
     bool selectTab = false;
-    textField->setEditing(false, false);
+    textField->setEditing(false);
     computeTitlesColumnWidth();
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
@@ -109,7 +109,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
     Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
   }
-  textField->setEditing(true, false);
+  textField->setEditing(true);
   return false;
 }
 

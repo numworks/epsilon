@@ -25,13 +25,13 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
   assert(m_indexOfFirstMemoizedCalculationPointer >= 0);
   if (i >= m_indexOfFirstMemoizedCalculationPointer && i < m_indexOfFirstMemoizedCalculationPointer + k_numberOfMemoizedCalculationPointers) {
     // The calculation is within the range of memoized calculations
-    Calculation * c = m_memoizedCalculationPointers[i];
+    Calculation * c = m_memoizedCalculationPointers[i-m_indexOfFirstMemoizedCalculationPointer];
     if (c != nullptr) {
       // The pointer was memoized
       return ExpiringPointer<Calculation>(c);
     }
     c = bufferCalculationAtIndex(i);
-    m_memoizedCalculationPointers[i] = c;
+    m_memoizedCalculationPointers[i-m_indexOfFirstMemoizedCalculationPointer] = c;
     return c;
   }
   // Slide the memoization buffer

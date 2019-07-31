@@ -2,11 +2,6 @@
 #include <ion.h>
 #include <assert.h>
 #include "helper.h"
-#if POINCARE_TESTS_PRINT_EXPRESSIONS
-#include "../src/expression_debug.h"
-#include <iostream>
-using namespace std;
-#endif
 
 using namespace Poincare;
 

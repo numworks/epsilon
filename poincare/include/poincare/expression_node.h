@@ -15,7 +15,6 @@ namespace Poincare {
 class SymbolAbstract;
 class Symbol;
 class ComplexCartesian;
-class ComplexPolar;
 
 class ExpressionNode : public TreeNode {
   friend class AdditionNode;
@@ -52,7 +51,6 @@ public:
     BinomialCoefficient,
     Ceiling,
     ComplexArgument,
-    ComplexPolar,
     Conjugate,
     Derivative,
     Determinant,

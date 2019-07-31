@@ -151,28 +151,18 @@ Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Positio
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
-  if (cellAtLocationIsEditable(i, j)) {
-    return;
-  }
   // The cell is not a title cell and not editable
   if (j > 0 && i > 0) {
     constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(precision)];
     // Special case: last row
-    if (j == numberOfRows() - 1) {
-      int numberOfIntervalElements = m_interval->numberOfElements();
-      if (numberOfIntervalElements < Interval::k_maxNumberOfElements) {
-        buffer[0] = 0;
-        EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-        myValueCell->setText(buffer);
-        return;
-      }
+    if (j == numberOfElements() + 1) {
+      buffer[0] = 0;
+    } else {
+      double x = m_interval->element(j-1);
+      PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, cellBufferSize(i), precision);
     }
-    // The cell is a value cell
-    EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
-    double x = m_interval->element(j-1);
-    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, cellBufferSize(i), precision);
-    myValueCell->setText(buffer);
+    static_cast<EvenOddBufferTextCell *>(cell)->setText(buffer);
   }
 }
 

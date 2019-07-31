@@ -45,10 +45,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
 
 int EditableCellTableViewController::numberOfRows() {
   int numberOfModelElements = numberOfElements();
-  if (numberOfModelElements >= maxNumberOfElements()) {
-    return 1 + numberOfModelElements;
-  }
-  return 2 + numberOfModelElements;
+  return 1 + numberOfModelElements + (numberOfModelElements < maxNumberOfElements());
 }
 
 KDCoordinate EditableCellTableViewController::rowHeight(int j) {

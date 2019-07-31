@@ -159,10 +159,11 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   // Handle empty cells
-  if (j > 0 && j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows()) {
+  const int numberOfElementsInCol = m_store->numberOfPairsOfSeries(seriesAtColumn(i));
+  if (j > numberOfElementsInCol) {
     StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
-    if (cellShouldBeTransparent(i,j)) {
+    if (numberOfElementsInCol + 1 < j) {
       myCell->setHide(true);
     } else {
       myCell->setEven(j%2 == 0);
@@ -301,11 +302,6 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   }
   selectableTableView()->reloadData();
   return true;
-}
-
-bool StoreController::cellShouldBeTransparent(int i, int j) {
-  int seriesIndex = i/DoublePairStore::k_numberOfColumnsPerSeries;
-  return j > 1 + m_store->numberOfPairsOfSeries(seriesIndex);
 }
 
 }

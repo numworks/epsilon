@@ -47,9 +47,11 @@ private:
   LayoutShape rightLayoutShape() const override { return childAtIndex(1)->rightLayoutShape(); }
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c, Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, complexFormat, compute<T>);
+    return MatrixComplex<T>::Undefined();
   }
-  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat);
+  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
+    return MatrixComplex<T>::Undefined();
+  }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, Preferences::ComplexFormat complexFormat) {
     return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, complexFormat, compute<T>);
   }

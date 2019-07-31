@@ -8,7 +8,6 @@
 using namespace Poincare;
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
-static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 namespace Shared {
 
@@ -159,7 +158,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   // Handle empty cells
-  const int numberOfElementsInCol = m_store->numberOfPairsOfSeries(seriesAtColumn(i));
+  const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol) {
     StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
@@ -198,7 +197,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (selectedRow() == 0 || selectedRow() > m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries)) {
+    if (selectedRow() == 0 || selectedRow() > numberOfElementsInColumn(selectedColumn())) {
       return false;
     }
     m_store->deletePairOfSeriesAtIndex(series, selectedRow()-1);
@@ -240,12 +239,8 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
   return m_store->get(seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
-int StoreController::numberOfElements() {
-  int result = 0;
-  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    result = maxInt(result, m_store->numberOfPairsOfSeries(i));
-  }
-  return result;
+int StoreController::numberOfElementsInColumn(int columnIndex) {
+  return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
 }
 
 int StoreController::maxNumberOfElements() const {
@@ -277,7 +272,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     index++;
   }
   if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries);
+    numberOfValuesToCompute = numberOfElementsInColumn(selectedColumn());
   }
 
   StoreContext * store = storeContext();

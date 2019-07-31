@@ -31,7 +31,7 @@ private:
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;
-  virtual int numberOfElements() = 0;
+  virtual int numberOfElementsInColumn(int columnIndex) = 0;
   virtual int maxNumberOfElements() const = 0;
 };
 

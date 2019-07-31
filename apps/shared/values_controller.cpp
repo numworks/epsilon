@@ -95,7 +95,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
-      selectedRow() <= m_interval->numberOfElements()) {
+      selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
     m_interval->deleteElementAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
@@ -156,7 +156,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(precision)];
     // Special case: last row
-    if (j == numberOfElements() + 1) {
+    if (j == numberOfElementsInColumn(i) + 1) {
       buffer[0] = 0;
     } else {
       double x = m_interval->element(j-1);
@@ -307,7 +307,7 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return m_interval->element(rowIndex-1);
 }
 
-int ValuesController::numberOfElements() {
+int ValuesController::numberOfElementsInColumn(int columnIndex) {
   return m_interval->numberOfElements();
 }
 

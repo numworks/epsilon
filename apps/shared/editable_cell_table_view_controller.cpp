@@ -64,24 +64,20 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = (EvenOddEditableTextCell *)cell;
+    if (myEditableValueCell->editableTextCell()->textField()->isEditing()) {
+      return;
+    }
+    myCell->setEven(j%2 == 0);
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)];
     // Special case 1: last row
-    if (j == numberOfRows() - 1) {
+    if (j == numberOfElements() + 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
-      if (numberOfElements() < maxNumberOfElements() && !myEditableValueCell->editableTextCell()->textField()->isEditing()) {
-        myCell->setEven(j%2 == 0);
-        buffer[0] = 0;
-        myEditableValueCell->editableTextCell()->textField()->setText(buffer);
-        return;
-      }
-    }
-    if (!myEditableValueCell->editableTextCell()->textField()->isEditing()) {
-      myCell->setEven(j%2 == 0);
+      buffer[0] = 0;
+    } else {
       PrintFloat::ConvertFloatToText<double>(dataAtLocation(i, j), buffer, cellBufferSize(i), Preferences::LargeNumberOfSignificantDigits, floatDisplayMode);
-      myEditableValueCell->editableTextCell()->textField()->setText(buffer);
     }
-    return;
+    myEditableValueCell->editableTextCell()->textField()->setText(buffer);
   } else {
     myCell->setEven(j%2 == 0);
   }

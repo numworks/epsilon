@@ -95,7 +95,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && selectedRow() > 0 &&
-      (selectedRow() < numberOfRows()-1 || m_interval->numberOfElements() == Interval::k_maxNumberOfElements)) {
+      selectedRow() <= m_interval->numberOfElements()) {
     m_interval->deleteElementAtIndex(selectedRow()-1);
     selectableTableView()->reloadData();
     return true;

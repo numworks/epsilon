@@ -48,9 +48,7 @@ Expression Calculation::exactOutput() {
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
   Expression exactOutput = Expression::Parse(exactOutputText());
-  if (exactOutput.isUninitialized()) {
-    return Undefined::Builder();
-  }
+  assert(!exactOutput.isUninitialized());
   return exactOutput;
 }
 
@@ -58,12 +56,7 @@ Expression Calculation::approximateOutput(Context * context) {
   /* To ensure that the expression 'm_output' is a matrix or a complex, we
    * call 'evaluate'. */
   Expression exp = Expression::Parse(approximateOutputText());
-  if (exp.isUninitialized()) {
-    /* TODO LEA replace with assert
-     * exp might be uninitialized because the serialization did not fit in
-     * the buffer. Put a special error instead of "undef". */
-    return Undefined::Builder();
-  }
+  assert(!exp.isUninitialized());
   return PoincareHelpers::Approximate<double>(exp, context);
 }
 

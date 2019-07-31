@@ -60,7 +60,7 @@ private:
   void configureFunction();
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  int numberOfElements() override;
+  int numberOfElementsInColumn(int columnIndex) override;
   int maxNumberOfElements() const override;
   virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
   constexpr static int k_maxNumberOfAbscissaCells = 10;

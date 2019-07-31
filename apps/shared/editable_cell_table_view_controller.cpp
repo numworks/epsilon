@@ -6,6 +6,8 @@
 
 using namespace Poincare;
 
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
@@ -44,7 +46,10 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
 }
 
 int EditableCellTableViewController::numberOfRows() {
-  int numberOfModelElements = numberOfElements();
+  int numberOfModelElements = 0;
+  for (int i = 0; i < numberOfColumns(); i++) {
+    numberOfModelElements = maxInt(numberOfModelElements, numberOfElementsInColumn(i));
+  }
   return 1 + numberOfModelElements + (numberOfModelElements < maxNumberOfElements());
 }
 
@@ -67,7 +72,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
     myCell->setEven(j%2 == 0);
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Preferences::LargeNumberOfSignificantDigits)];
     // Special case 1: last row
-    if (j == numberOfElements() + 1) {
+    if (j == numberOfElementsInColumn(i) + 1) {
       /* Display an empty line only if there is enough space for a new element in
        * data */
       buffer[0] = 0;

@@ -79,7 +79,6 @@ protected:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  int numberOfElements() override;
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
@@ -88,6 +87,7 @@ protected:
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 private:
+  int numberOfElementsInColumn(int columnIndex) override;
   ContentView m_contentView;
 };
 

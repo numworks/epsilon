@@ -45,16 +45,6 @@ int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::Print
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "-");
 }
 
-template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m, Preferences::ComplexFormat complexFormat) {
-  MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c, complexFormat);
-  MatrixComplex<T> result = MatrixComplex<T>::Builder();
-  for (int i = 0; i < opposite.numberOfChildren(); i++) {
-    result.addChildAtIndexInPlace(OppositeNode::compute(opposite.complexAtIndex(i), complexFormat), i, i);
-  }
-  result.setDimensions(opposite.numberOfRows(), opposite.numberOfColumns());
-  return result;
-}
-
 Expression SubtractionNode::shallowReduce(ReductionContext reductionContext) {
   return Subtraction(this).shallowReduce(reductionContext);
 }

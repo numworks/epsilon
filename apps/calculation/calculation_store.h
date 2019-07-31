@@ -54,12 +54,14 @@ private:
 
   Calculation * bufferCalculationAtIndex(int i);
   int remainingBufferSize() const { assert(m_bufferEnd >= m_buffer); return k_bufferSize - (m_bufferEnd - m_buffer); }
-  void serializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation);
+  bool serializeExpression(Poincare::Expression e, char * location, char * * newCalculationsLocation);
   char * slideCalculationsToEndOfBuffer(); // returns the new position of the calculations
   size_t deleteLastCalculation(const char * calculationsStart = nullptr);
   const char * lastCalculationPosition(const char * calculationsStart) const;
   typedef bool (*ValueCreator)(char * location, size_t locationSize, void * e);
-  void pushExpression(ValueCreator valueCrator, Poincare::Expression * expression, char * location, char * * newCalculationsLocation);
+  bool pushExpression(ValueCreator valueCrator, Poincare::Expression * expression, char * location, char * * newCalculationsLocation);
+  Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context);
+
   char m_buffer[k_bufferSize];
   const char * m_bufferEnd;
   int m_numberOfCalculations;

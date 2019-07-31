@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -61,6 +62,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   }
   char * newCalculationsLocation = slideCalculationsToEndOfBuffer();
   char * nextSerializationLocation = m_buffer;
+
   // Add the beginning of the calculation
   {
     /* Copy the begining of the calculation. The calculation minimal size is
@@ -70,22 +72,41 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     memmove(nextSerializationLocation, &newCalc, calcSize);
     nextSerializationLocation += calcSize;
   }
+
   /* Add the input expression.
    * We do not store directly the text entered by the user because we do not
    * want to keep Ans symbol in the calculation store. */
   const char * inputSerialization = nextSerializationLocation;
   {
     Expression input = Expression::Parse(text).replaceSymbolWithExpression(Symbol::Ans(), ans);
-    serializeExpression(input, nextSerializationLocation, &newCalculationsLocation);
+    if (!serializeExpression(input, nextSerializationLocation, &newCalculationsLocation)) {
+      /* If the input does not fit in the store (event if the current
+       * calculation is the only calculation), just replace the calculation with
+       * undef. */
+      return emptyStoreAndPushUndef(context);
+    }
     nextSerializationLocation += strlen(nextSerializationLocation) + 1;
   }
-  Expression exactOutput;
-  Expression approximateOutput;
-  PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &exactOutput, &approximateOutput, context, false);
-  serializeExpression(exactOutput, nextSerializationLocation, &newCalculationsLocation);
-  nextSerializationLocation += strlen(nextSerializationLocation) + 1;
-  serializeExpression(approximateOutput, nextSerializationLocation, &newCalculationsLocation);
-  nextSerializationLocation += strlen(nextSerializationLocation) + 1;
+
+  // Compute and serialize the outputs
+  {
+    Expression outputs[] = {Expression(), Expression()};
+    PoincareHelpers::ParseAndSimplifyAndApproximate(inputSerialization, &(outputs[0]), &(outputs[1]), context, false);
+    for (int i = 0; i < 2; i++) {
+      if (!serializeExpression(outputs[i], nextSerializationLocation, &newCalculationsLocation)) {
+        /* If the exat/approximate output does not fit in the store (event if the
+         * current calculation is the only calculation), replace the output with
+         * undef if it fits, else replace the whole calcualtion with undef. */
+        Expression undef = Undefined::Builder();
+        if (!serializeExpression(undef, nextSerializationLocation, &newCalculationsLocation)) {
+          return emptyStoreAndPushUndef(context);
+        }
+      }
+      nextSerializationLocation += strlen(nextSerializationLocation) + 1;
+    }
+  }
+
+  // Restore the other calculations
   size_t slideSize = m_buffer + k_bufferSize - newCalculationsLocation;
   memcpy(nextSerializationLocation, newCalculationsLocation, slideSize);
   m_slidedBuffer = false;
@@ -149,9 +170,9 @@ Calculation * CalculationStore::bufferCalculationAtIndex(int i) {
   return nullptr;
 }
 
-void CalculationStore::serializeExpression(Expression e, char * location, char * * newCalculationsLocation) {
+bool CalculationStore::serializeExpression(Expression e, char * location, char * * newCalculationsLocation) {
   assert(m_slidedBuffer);
-  pushExpression(
+  return pushExpression(
       [](char * location, size_t locationSize, void * e) {
         return PoincareHelpers::Serialize(*(Expression *)e, location, locationSize) < locationSize-1; //TODO LEA check the return value
       },
@@ -188,7 +209,6 @@ size_t CalculationStore::deleteLastCalculation(const char * calculationsStart) {
 }
 
 const char * CalculationStore::lastCalculationPosition(const char * calculationsStart) const {
-  // TODO LEA: Make this faster?
   assert(calculationsStart >= m_buffer && calculationsStart < m_buffer + k_bufferSize);
   Calculation * c = reinterpret_cast<Calculation *>(const_cast<char *>(calculationsStart));
   int calculationIndex = 0;
@@ -198,17 +218,26 @@ const char * CalculationStore::lastCalculationPosition(const char * calculations
   return reinterpret_cast<const char *>(c);
 }
 
-void CalculationStore::pushExpression(ValueCreator valueCreator, Expression * expression, char * location, char * * newCalculationsLocation) {
-  while (!valueCreator(location, *newCalculationsLocation - location, expression)
-      && *newCalculationsLocation < m_buffer + k_bufferSize)
-  {
+bool CalculationStore::pushExpression(ValueCreator valueCreator, Expression * expression, char * location, char * * newCalculationsLocation) {
+  assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
+  bool expressionIsPushed = false;
+  while (true) {
+    expressionIsPushed = valueCreator(location, *newCalculationsLocation - location, expression);
+    if (expressionIsPushed || *newCalculationsLocation >= m_buffer + k_bufferSize) {
+      break;
+    }
     *newCalculationsLocation = *newCalculationsLocation + deleteLastCalculation();
     assert(*newCalculationsLocation <= m_buffer + k_bufferSize);
   }
-  if (*newCalculationsLocation >= m_buffer + k_bufferSize) {
-    //TODO LEA the expression does not fit in the buffer even empty
-    // Push undef if calculation is too big !!! (and push undef before too if needed!!!)
-  }
+  return expressionIsPushed;
+}
+
+Shared::ExpiringPointer<Calculation> CalculationStore::emptyStoreAndPushUndef(Context * context) {
+  /* We end up here as a result of a failed calculation push. The store
+   * attributes are not necessarily clean, so we need to reset them. */
+  m_slidedBuffer = false;
+  deleteAll();
+  return push(Undefined::Name(), context);
 }
 
 void CalculationStore::resetMemoizedModelsAfterCalculationIndex(int index) {

@@ -182,14 +182,6 @@ tests_src += $(addprefix poincare/test/,\
   vertical_offset_layout.cpp\
 )
 
-#  simplify_utils.cpp\
-
-ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
-tests_src += poincare/src/expression_debug.o
-poincare_src += poincare/src/expression_debug.cpp
-SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
-endif
-
 ifdef POINCARE_TREE_LOG
 SFLAGS += -DPOINCARE_TREE_LOG=1
 endif

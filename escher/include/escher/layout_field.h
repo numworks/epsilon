@@ -21,7 +21,7 @@ public:
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool isEditing() const override { return m_contentView.isEditing(); }
-  void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
+  void setEditing(bool isEditing) override;
   void clearLayout() { m_contentView.clearLayout(); }
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
@@ -59,7 +59,7 @@ private:
   public:
     ContentView();
     bool isEditing() const { return m_isEditing; }
-    void setEditing(bool isEditing);
+    bool setEditing(bool isEditing); // returns True if LayoutField should reload
     void setBackgroundColor(KDColor c) { m_expressionView.setBackgroundColor(c); }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(); }

@@ -19,10 +19,20 @@ LayoutField::ContentView::ContentView() :
   clearLayout();
 }
 
-void LayoutField::ContentView::setEditing(bool isEditing) {
+bool LayoutField::ContentView::setEditing(bool isEditing) {
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
+  if (isEditing) {
+    /* showEmptyLayoutIfNeeded is done in LayoutField::handleEvent, so no need
+     * to do it here. */
+    if (m_cursor.hideEmptyLayoutIfNeeded()) {
+      m_expressionView.layout().invalidAllSizesPositionsAndBaselines();
+      return true;
+    }
+  }
   layoutSubviews();
+  markRectAsDirty(bounds());
+  return false;
 }
 
 void LayoutField::ContentView::clearLayout() {
@@ -68,6 +78,13 @@ void LayoutField::ContentView::layoutCursorSubview() {
   }
   KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayoutR.baseline() - m_cursor.baseline());
   m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
+}
+
+void LayoutField::setEditing(bool isEditing) {
+  KDSize previousLayoutSize = m_contentView.minimalSizeForOptimalDisplay();
+  if (m_contentView.setEditing(isEditing)) {
+    reload(previousLayoutSize);
+  }
 }
 
 CodePoint LayoutField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
@@ -143,9 +160,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   bool didHandleEvent = false;
+  KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
-  KDSize previousSize = minimalSizeForOptimalDisplay();
   if (privateHandleMoveEvent(event, &moveEventChangedLayout)) {
     if (!isEditing()) {
       setEditing(true);

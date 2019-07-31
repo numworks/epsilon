@@ -88,7 +88,6 @@ protected:
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 private:
-  bool cellShouldBeTransparent(int i, int j);
   ContentView m_contentView;
 };
 

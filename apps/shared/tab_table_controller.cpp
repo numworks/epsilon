@@ -22,8 +22,4 @@ void TabTableController::willExitResponderChain(Responder * nextFirstResponder) 
   }
 }
 
-SelectableTableView * TabTableController::selectableTableView() {
-  return static_cast<SelectableTableView *>(view());
-}
-
 }

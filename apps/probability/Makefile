@@ -39,6 +39,7 @@ i18n_files += $(addprefix apps/probability/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.universal.i18n\
 )
 
 tests_src += $(addprefix apps/probability/test/,\

@@ -12,7 +12,7 @@ namespace Graph {
 bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record) {
   ExpiringPointer<CartesianFunction> function = App::app()->functionStore()->modelForRecord(record);
   double xCursorPosition = cursor->x();
-  double x = direction > 0 ? xCursorPosition + range->xGridUnit()/numberOfStepsInGradUnit : xCursorPosition -  range->xGridUnit()/numberOfStepsInGradUnit;
+  double x = xCursorPosition + (direction > 0 ? 1.0 : -1.0) * range->xGridUnit()/numberOfStepsInGradUnit;
   double y = function->evaluateAtAbscissa(x, App::app()->localContext());
   cursor->moveTo(x, y);
   return true;

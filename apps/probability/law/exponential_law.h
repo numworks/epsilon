@@ -13,7 +13,6 @@ public:
   Type type() const override { return Type::Exponential; }
   bool isContinuous() const override { return true; }
   float xMin() override;
-  float yMin() override;
   float xMax() override;
   float yMax() override;
   I18n::Message parameterNameAtIndex(int index) override {

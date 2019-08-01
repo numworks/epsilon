@@ -9,10 +9,6 @@ float PoissonLaw::xMin() {
   return -k_displayLeftMarginRatio * xMax();
 }
 
-float PoissonLaw::yMin() {
-  return - k_displayBottomMarginRatio * yMax();
-}
-
 float PoissonLaw::xMax() {
   assert(m_parameter1 != 0);
   return (m_parameter1 + 5.0f * std::sqrt(m_parameter1)) * (1.0f + k_displayRightMarginRatio);

@@ -8,10 +8,6 @@ float ExponentialLaw::xMin() {
   return - k_displayLeftMarginRatio * xMax();
 }
 
-float ExponentialLaw::yMin() {
-  return -k_displayBottomMarginRatio * yMax();
-}
-
 float ExponentialLaw::xMax() {
   assert(m_parameter1 != 0.0f);
   float result = 5.0f/m_parameter1;

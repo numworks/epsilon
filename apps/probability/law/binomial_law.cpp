@@ -37,10 +37,6 @@ float BinomialLaw::xMax() {
   return max + k_displayRightMarginRatio*(max - min);
 }
 
-float BinomialLaw::yMin() {
-  return -k_displayBottomMarginRatio*yMax();
-}
-
 float BinomialLaw::yMax() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);

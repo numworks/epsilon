@@ -1,5 +1,6 @@
 #include <poincare/matrix.h>
 #include <poincare/division.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/multiplication_explicite.h>
@@ -301,38 +302,52 @@ Matrix Matrix::createTranspose() const {
   return matrix;
 }
 
-Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionContext) const {
+Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const {
   int dim = numberOfRows();
   if (dim != numberOfColumns()) {
     return Undefined::Builder();
   }
-  /* Create the matrix inv = (A|I) with A is the input matrix and I the dim
-   * identity matrix */
-  Matrix matrixAI = Matrix::Builder();
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      matrixAI.addChildAtIndexInPlace(const_cast<Matrix *>(this)->matrixChild(i, j).clone(), i*2*dim+j, i*2*dim+j);
+  /* If the matrix is too big, the inversion might not be computed exactly
+   * because of a pool allocation error, but we might still be able to compute
+   * it approximately. We thus encapsulate the inversion creation in an
+   * exception checkpoint.
+   * We can safely use an exception checkpoint here because we are sure of not
+   * modifying any pre-existing node in the pool. We are sure there is no Store
+   * in the matrix. */
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    /* Create the matrix inv = (A|I) with A is the input matrix and I the dim
+     * identity matrix */
+    Matrix matrixAI = Matrix::Builder();
+    for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+        matrixAI.addChildAtIndexInPlace(const_cast<Matrix *>(this)->matrixChild(i, j).clone(), i*2*dim+j, i*2*dim+j);
+      }
+      for (int j = dim; j < 2*dim; j++) {
+        matrixAI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);
+      }
     }
-    for (int j = dim; j < 2*dim; j++) {
-      matrixAI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);
+    matrixAI.setDimensions(dim, 2*dim);
+    matrixAI = matrixAI.rowCanonize(reductionContext);
+    // Check inversibility
+    for (int i = 0; i < dim; i++) {
+      if (!matrixAI.matrixChild(i, i).isRationalOne()) {
+        return Undefined::Builder();
+      }
     }
+    Matrix inverse = Matrix::Builder();
+    for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+        inverse.addChildAtIndexInPlace(matrixAI.matrixChild(i, j+dim), i*dim+j, i*dim+j); // We can steal matrixAI's children
+      }
+    }
+    inverse.setDimensions(dim, dim);
+    *couldComputeInverse = true;
+    return inverse;
+  } else {
+    *couldComputeInverse = false;
+    return Expression();
   }
-  matrixAI.setDimensions(dim, 2*dim);
-  matrixAI = matrixAI.rowCanonize(reductionContext);
-  // Check inversibility
-  for (int i = 0; i < dim; i++) {
-    if (!matrixAI.matrixChild(i, i).isRationalOne()) {
-      return Undefined::Builder();
-    }
-  }
-  Matrix inverse = Matrix::Builder();
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      inverse.addChildAtIndexInPlace(matrixAI.matrixChild(i, j+dim), i*dim+j, i*dim+j); // We can steal matrixAI's children
-    }
-  }
-  inverse.setDimensions(dim, dim);
-  return inverse;
 }
 
 template int Matrix::ArrayInverse<float>(float *, int, int);

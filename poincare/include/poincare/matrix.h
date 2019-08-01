@@ -80,7 +80,7 @@ public:
   Matrix createTranspose() const;
   /* createInverse can be called on any matrix, reduced or not, approximated or
    * not. */
-  Expression createInverse(ExpressionNode::ReductionContext reductionContext) const;
+  Expression createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const;
 #if MATRIX_EXACT_REDUCING
   Expression determinant() const;
 #endif

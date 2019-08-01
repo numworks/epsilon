@@ -57,9 +57,15 @@ Expression MatrixInverse::shallowReduce(ExpressionNode::ReductionContext reducti
     }
     /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
      * done here and not in power. */
-    Expression result = matrixChild.createInverse(reductionContext);
-    replaceWithInPlace(result);
-    return result.shallowReduce(reductionContext);
+    bool couldComputeInverse = false;
+    Expression result = matrixChild.createInverse(reductionContext, &couldComputeInverse);
+    if (couldComputeInverse) {
+      replaceWithInPlace(result);
+      return result.shallowReduce(reductionContext);
+    }
+    // The matrix could not be inverted exactly
+    // TODO Poincare error?
+    return *this;
   }
   Expression result = Power::Builder(c, Rational::Builder(-1));
   replaceWithInPlace(result);

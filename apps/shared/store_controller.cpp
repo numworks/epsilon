@@ -243,10 +243,6 @@ int StoreController::numberOfElementsInColumn(int columnIndex) {
   return m_store->numberOfPairsOfSeries(seriesAtColumn(columnIndex));
 }
 
-int StoreController::maxNumberOfElements() const {
-  return DoublePairStore::k_maxNumberOfPairs;
-}
-
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series

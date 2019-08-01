@@ -311,10 +311,6 @@ int ValuesController::numberOfElementsInColumn(int columnIndex) {
   return m_interval->numberOfElements();
 }
 
-int ValuesController::maxNumberOfElements() const {
-  return Interval::k_maxNumberOfElements;
-}
-
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   //TODO LEA RUBEN Careful with merge

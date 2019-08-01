@@ -61,7 +61,9 @@ private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   int numberOfElementsInColumn(int columnIndex) override;
-  int maxNumberOfElements() const override;
+  int maxNumberOfElements() const override {
+    return Interval::k_maxNumberOfElements;
+  };
   virtual double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex);
   constexpr static int k_maxNumberOfAbscissaCells = 10;
   virtual int maxNumberOfCells() = 0;

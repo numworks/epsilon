@@ -48,6 +48,16 @@ int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::Prin
 }
 
 template<>
+void LogarithmNode<2>::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  Logarithm(this).deepReduceChildren(reductionContext);
+}
+
+template<>
+void LogarithmNode<1>::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  return Expression(this).defaultDeepReduceChildren(reductionContext);
+}
+
+template<>
 Expression LogarithmNode<1>::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   return CommonLogarithm(this).shallowReduce(reductionContext);
 }
@@ -83,6 +93,14 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(Contex
     result = DivisionNode::compute<U>(computeOnComplex(xc, complexFormat, angleUnit).stdComplex(), computeOnComplex(nc, complexFormat, angleUnit).stdComplex(), complexFormat).stdComplex();
   }
   return Complex<U>::Builder(result);
+}
+
+void Logarithm::deepReduceChildren(ExpressionNode::ReductionContext reductionContext) {
+  /* We reduce the base first because of the case log(x1^y, x2) with x1 == x2.
+   * When reducing x1^y, we want to be able to compare x1 of x2 so x2 need to be
+   * reduced first. */
+  childAtIndex(1).deepReduce(reductionContext);
+  childAtIndex(0).deepReduce(reductionContext);
 }
 
 Expression CommonLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
@@ -287,6 +305,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   bool thisIsPowerExponent = parentExpression.type() == ExpressionNode::Type::Power ? parentExpression.childAtIndex(1) == logGroup : false;
   if (thisIsPowerExponent) {
     Expression powerOperand0 = parentExpression.childAtIndex(0);
+    // powerOperand0 has already been reduced so can be compared to childAtIndex(1)
     if (powerOperand0.isIdenticalTo(childAtIndex(1))) {
       return true;
     }

@@ -7,10 +7,6 @@
 
 namespace Probability {
 
-float NormalLaw::yMin() {
-  return - k_displayBottomMarginRatio * yMax();
-}
-
 float NormalLaw::yMax() {
   float maxAbscissa = m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);

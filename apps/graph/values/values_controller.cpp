@@ -23,8 +23,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0
-      && selectedColumn()>0 && isDerivativeColumn(selectedColumn())) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtLocation(selectedColumn(), selectedRow()) == 1 && isDerivativeColumn(selectedColumn())) {
     configureDerivativeFunction();
     return true;
   }
@@ -34,13 +33,13 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
-  if (j == 0 && i == 0) {
+  if (typeAtLocation(i,j) == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
     mytitleCell->setMessage(I18n::Message::X);
     return;
   }
   // The cell is a function title cell:
-  if (j == 0 && i > 0) {
+  if (typeAtLocation(i,j) == 1) {
     Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
     const size_t bufferNameSize = Shared::Function::k_maxNameWithArgumentSize + 1;
     char bufferName[bufferNameSize];
@@ -70,7 +69,7 @@ IntervalParameterController * ValuesController::intervalParameterController() {
 }
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
-  assert(i > 0);
+  assert(typeAtLocation(i, 0) == 1);
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
     Ion::Storage::Record record = functionStore()->definedRecordAtIndex(k);
@@ -93,7 +92,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 }
 
 bool ValuesController::isDerivativeColumn(int i) {
-  assert(i >= 1);
+  assert(typeAtLocation(i, 0) == 1);
   int index = 1;
   for (int k = 0; k < functionStore()->numberOfDefinedModels(); k++) {
     ExpiringPointer<CartesianFunction> f = functionStore()->modelForRecord(functionStore()->definedRecordAtIndex(k));

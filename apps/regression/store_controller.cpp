@@ -36,7 +36,7 @@ bool StoreController::fillColumnWithFormula(Expression formula) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   ::StoreController::willDisplayCellAtLocation(cell, i, j);
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) != k_titleCellType) {
     return;
   }
   Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);

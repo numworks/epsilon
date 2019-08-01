@@ -104,7 +104,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     return header()->handleEvent(event);
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    if (selectedColumn() == 0) {
+    if (typeAtLocation(selectedColumn(), 0) == 0) {
       configureAbscissa();
       return true;
     }
@@ -146,7 +146,7 @@ Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Positio
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
   // The cell is not a title cell and not editable
-  if (j > 0 && i > 0) {
+  if (typeAtLocation(i,j) == 3) {
     constexpr int precision = Preferences::LargeNumberOfSignificantDigits;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(precision)];
     // Special case: last row
@@ -254,7 +254,7 @@ void ValuesController::viewDidDisappear() {
 }
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
-  assert(i > 0);
+  assert(typeAtLocation(i, 0) == 1);
   return functionStore()->activeRecordAtIndex(i-1);
 }
 
@@ -286,10 +286,7 @@ void ValuesController::configureFunction() {
 }
 
 bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  if (rowIndex > 0 && columnIndex == 0) {
-    return true;
-  }
-  return false;
+  return typeAtLocation(columnIndex, rowIndex) == 2;
 }
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {

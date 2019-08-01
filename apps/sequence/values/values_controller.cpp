@@ -23,13 +23,13 @@ ValuesController::ValuesController(Responder * parentResponder,InputEventHandler
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
   // The cell is the abscissa title cell:
-  if (j == 0 && i == 0) {
+  if (typeAtLocation(i,j) == 0) {
     EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
     mytitleCell->setMessage(I18n::Message::N);
     return;
   }
   // The cell is a function title cell:
-  if (j == 0 && i > 0) {
+  if (typeAtLocation(i,j) == 1) {
     SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
     Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(i));
     myCell->setLayout(sequence->nameLayout());

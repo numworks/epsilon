@@ -15,13 +15,6 @@ FiniteIntegralCalculation::FiniteIntegralCalculation() :
   compute(0);
 }
 
-int FiniteIntegralCalculation::numberOfEditableParameters() {
-  if (m_law->type() == Law::Type::Normal) {
-    return 3;
-  }
-  return 2;
-}
-
 I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {

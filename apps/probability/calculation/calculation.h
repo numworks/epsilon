@@ -18,7 +18,6 @@ public:
   virtual Type type() = 0;
   void setLaw(Law * law);
   virtual int numberOfParameters() = 0;
-  virtual int numberOfEditableParameters();
   virtual I18n::Message legendForParameterAtIndex(int index) = 0;
   virtual void setParameterAtIndex(double f, int index) = 0;
   virtual double parameterAtIndex(int index) = 0;

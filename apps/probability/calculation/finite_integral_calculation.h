@@ -10,7 +10,6 @@ public:
   FiniteIntegralCalculation();
   Type type() override { return Type::FiniteIntegral; }
   int numberOfParameters() override { return 3; }
-  int numberOfEditableParameters() override;
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;

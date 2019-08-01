@@ -10,7 +10,6 @@ public:
   DiscreteCalculation();
   Type type() override { return Type::Discrete; }
   int numberOfParameters() override { return 2; }
-  int numberOfEditableParameters() override { return 1; }
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;

@@ -153,7 +153,7 @@ int StoreController::typeAtLocation(int i, int j) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle the separator
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) == k_editableCellType) {
     bool shouldHaveLeftSeparator = i % DoublePairStore::k_numberOfColumnsPerSeries == 0;
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
@@ -170,7 +170,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     }
     return;
   }
-  if (cellAtLocationIsEditable(i, j)) {
+  if (typeAtLocation(i, j) == k_editableCellType) {
     static_cast<StoreCell *>(cell)->setHide(false);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::PrintFloatMode::Decimal);
@@ -220,10 +220,7 @@ Responder * StoreController::tabController() const {
 }
 
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
-  if (rowIndex > 0) {
-    return true;
-  }
-  return false;
+  return typeAtLocation(columnIndex, rowIndex) == k_editableCellType;
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {

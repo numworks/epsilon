@@ -56,7 +56,7 @@ public:
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
   Expression omitMultiplicationWhenPossible();
   Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, false, canBeInterrupted);
   }
 private:

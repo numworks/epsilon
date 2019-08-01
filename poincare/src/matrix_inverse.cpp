@@ -51,14 +51,10 @@ Expression MatrixInverse::shallowReduce(ExpressionNode::ReductionContext reducti
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix matrixChild = static_cast<Matrix&>(c);
-    if (matrixChild.numberOfRows() != matrixChild.numberOfColumns()) {
-      return replaceWithUndefinedInPlace();
-    }
     /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
      * done here and not in power. */
     bool couldComputeInverse = false;
-    Expression result = matrixChild.createInverse(reductionContext, &couldComputeInverse);
+    Expression result = static_cast<Matrix&>(c).createInverse(reductionContext, &couldComputeInverse);
     if (couldComputeInverse) {
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);

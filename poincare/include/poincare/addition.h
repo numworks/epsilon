@@ -81,7 +81,7 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify(ExpressionNode::ReductionContext reductionContext);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canBeInterrupted) {
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canBeInterrupted) {
     NAryExpression::sortChildrenInPlace(order, context, true, canBeInterrupted);
   }
 private:

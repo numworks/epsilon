@@ -219,10 +219,6 @@ Responder * StoreController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
 }
 
-SelectableTableView * StoreController::selectableTableView() {
-  return m_contentView.dataView();
-}
-
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
   if (rowIndex > 0) {
     return true;

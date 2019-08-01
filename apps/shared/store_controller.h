@@ -75,7 +75,6 @@ protected:
   };
 
   Responder * tabController() const override;
-  SelectableTableView * selectableTableView() override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
@@ -86,6 +85,9 @@ protected:
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 private:
+  SelectableTableView * selectableTableView() override {
+    return m_contentView.dataView();
+  }
   int numberOfElementsInColumn(int columnIndex) override;
   int maxNumberOfElements() const override {
     return DoublePairStore::k_maxNumberOfPairs;

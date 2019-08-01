@@ -27,6 +27,7 @@ public:
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
+  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override;
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowBeautify(ReductionContext reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
@@ -44,6 +45,7 @@ public:
 };
 
 class Logarithm final : public Expression {
+  friend class LogarithmNode<2>;
 public:
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
   static Logarithm Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<Logarithm, LogarithmNode<2>>(ArrayBuilder<TreeHandle>(child0, child1).array(), 2); }
@@ -53,6 +55,7 @@ public:
   Expression shallowBeautify();
 
 private:
+  void deepReduceChildren(ExpressionNode::ReductionContext reductionContext);
   Expression simpleShallowReduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, ExpressionNode::ReductionContext reductionContext);

@@ -134,7 +134,6 @@ Expression MultiplicationExplicite::shallowBeautify(ExpressionNode::ReductionCon
       numeratorOperand.replaceWithInPlace(numeratorChild0);
       numeratorOperand = numeratorChild0;
     }
-    Expression originalParent = numeratorOperand.parent();
     Division d = Division::Builder();
     numeratorOperand.replaceWithInPlace(d);
     d.replaceChildAtIndexInPlace(0, numeratorOperand);

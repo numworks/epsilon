@@ -1125,6 +1125,8 @@ bool Power::parentIsALogarithmOfSameBase() const {
       return false;
     }
     // parent = log(x^y,x)
+    /* Because p is a logarthim, we simplified p.childAtIndex(1) before
+     * p.childAtIndex(0), so p.childAtIndex(1) can be compared to childAtIndex(0). */
     if (childAtIndex(0).isIdenticalTo(p.childAtIndex(1))) {
       return true;
     }

@@ -163,7 +163,8 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
    * checkpoint: if there was not enough memory on the pool to compute the equal
    * sign, just return EqualSign::Approximation.
    * We can safely use an exception checkpoint here because we are sure of not
-   * modifying any pre-existing node in the pool. */
+   * modifying any pre-existing node in the pool. We are sure there cannot be a
+   * Store in the exactOutput. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     constexpr int bufferSize = Constant::MaxSerializedExpressionSize;

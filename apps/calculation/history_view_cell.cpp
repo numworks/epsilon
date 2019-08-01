@@ -33,7 +33,17 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   m_inputView(this),
   m_scrollableOutputView(this)
 {
-  m_calculationCRC32 = 0; //TODO LEA initialize at empty calc value
+  /* Initialize m_calculationCRC32 to the crc32 of an empty calculation.
+   * We thus need to create |Calculation|0|0|0|, the 0 being the emtpy
+   * inputText, exactOuputText and approximateOutputText. */
+  Calculation calculations[2];
+  int calculationSize = sizeof(Calculation);
+  int numberOfCalculationStrings = 3; // inputText, exactOuputText, approximateOutputText
+  assert(3 <= calculationSize);
+  for (int i = 0; i < 3; i++) {
+    *(reinterpret_cast<char *>(calculations) + calculationSize + i) = 0;
+  }
+  m_calculationCRC32 = Ion::crc32Byte((const uint8_t *)calculations, calculationSize + numberOfCalculationStrings);
 }
 
 Shared::ScrollableExactApproximateExpressionsView * HistoryViewCell::outputView() {

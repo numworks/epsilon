@@ -133,7 +133,9 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
 }
 
 void CalculationStore::deleteAll() {
-  assert(!m_slidedBuffer);
+  /* We might call deleteAll because the app closed due to a pool allocation
+   * failure, so we cannot assert that m_slidedBuffer is false. */
+  m_slidedBuffer = false;
   m_bufferEnd = m_buffer;
   m_numberOfCalculations = 0;
   resetMemoizedModelsAfterCalculationIndex(-1);

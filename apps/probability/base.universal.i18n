@@ -1,0 +1,6 @@
+DiscreteLegend = "P(X="
+FiniteIntegralLegend = "≤X≤"
+LeftIntegralFirstLegend = "P(X≤"
+LeftIntegralSecondLegend = ")="
+RightIntegralFirstLegend = "P("
+RightIntegralSecondLegend = "≤X)="

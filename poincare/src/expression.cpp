@@ -610,7 +610,7 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
   int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     Expression child = e.childAtIndex(i);
-    child.deepBeautify(reductionContext);
+    child = child.deepBeautify(reductionContext);
     // We add missing Parentheses after beautifying the parent and child
     if (e.node()->childNeedsUserParentheses(child)) {
       e.replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));

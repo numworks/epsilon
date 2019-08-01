@@ -41,9 +41,11 @@ protected:
   static_assert(Constant::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static float k_displayTopMarginRatio = 0.05f;
-  constexpr static float k_displayBottomMarginRatio = 0.2f;
   constexpr static float k_displayLeftMarginRatio = 0.05f;
   constexpr static float k_displayRightMarginRatio = 0.05f;
+private:
+  constexpr static float k_displayBottomMarginRatio = 0.2f;
+  float yMin() override;
 };
 
 }

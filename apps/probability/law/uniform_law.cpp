@@ -32,10 +32,6 @@ float UniformLaw::xMin() {
   return m_parameter1 - 0.6f * (m_parameter2 - m_parameter1);
 }
 
-float UniformLaw::yMin() {
-  return -k_displayBottomMarginRatio * yMax();
-}
-
 float UniformLaw::xMax() {
   if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
     return m_parameter1 + 1.0f;

@@ -18,7 +18,7 @@ FiniteIntegralCalculation::FiniteIntegralCalculation() :
 I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
-    return I18n::Message::RightIntegralFirstLegend;
+    return I18n::Message::FiniteIntegralFirstLegend;
   }
   if (index == 1) {
     return I18n::Message::FiniteIntegralLegend;

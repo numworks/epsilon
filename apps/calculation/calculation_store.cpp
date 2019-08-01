@@ -52,7 +52,7 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int i) {
 ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context * context) {
   /* Compute ans now, before the buffer is slided and before the calculation
    * might be deleted */
-  Expression ans = ansExpression(context); // TODO LEA compute ans only if Ans is in the input ?
+  Expression ans = ansExpression(context);
 
   // Prepare the buffer for the new calculation
   int minSize = Calculation::MinimalSize();
@@ -174,9 +174,8 @@ bool CalculationStore::serializeExpression(Expression e, char * location, char *
   assert(m_slidedBuffer);
   return pushExpression(
       [](char * location, size_t locationSize, void * e) {
-        return PoincareHelpers::Serialize(*(Expression *)e, location, locationSize) < locationSize-1; //TODO LEA check the return value
-      },
-      &e, location, newCalculationsLocation);
+        return PoincareHelpers::Serialize(*(Expression *)e, location, locationSize) < locationSize-1;
+      }, &e, location, newCalculationsLocation);
 }
 
 char * CalculationStore::slideCalculationsToEndOfBuffer() {

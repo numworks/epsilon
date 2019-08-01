@@ -79,7 +79,6 @@ protected:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
@@ -88,6 +87,9 @@ protected:
   DoublePairStore * m_store;
 private:
   int numberOfElementsInColumn(int columnIndex) override;
+  int maxNumberOfElements() const override {
+    return DoublePairStore::k_maxNumberOfPairs;
+  };
   ContentView m_contentView;
 };
 

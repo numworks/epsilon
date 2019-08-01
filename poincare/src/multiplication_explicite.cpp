@@ -395,7 +395,7 @@ Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::Reducti
   Expression p = parent();
   bool hasRandom = recursivelyMatches(Expression::IsRandom, reductionContext.context(), true);
   if (shouldExpand
-      && (p.isUninitialized() || p.type() != ExpressionNode::Type::MultiplicationExplicite)
+      && (p.isUninitialized() || !p.isMultiplication())
       && !hasRandom)
   {
     for (int i = 0; i < numberOfChildren(); i++) {

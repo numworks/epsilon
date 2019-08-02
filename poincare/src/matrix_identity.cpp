@@ -49,7 +49,9 @@ Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reduct
     }
   }
   Expression c = childAtIndex(0);
-  if (!c.isRationalOne()) {
+  if (c.type() != ExpressionNode::Type::Rational
+      || !static_cast<Rational&>(c).isInteger())
+  {
     return replaceWithUndefinedInPlace();
   }
   Integer dimension = static_cast<Rational &>(c).signedIntegerNumerator();

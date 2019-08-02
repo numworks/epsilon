@@ -160,7 +160,12 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Plus)) {
-    leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
+    if (leftHandSide.type() == ExpressionNode::Type::Addition) {
+      int childrenCount = leftHandSide.numberOfChildren();
+      static_cast<Addition &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
+    } else {
+      leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
+    }
   }
 }
 
@@ -191,7 +196,12 @@ void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Times)) {
-    leftHandSide = MultiplicationExplicite::Builder(leftHandSide, rightHandSide);
+    if (leftHandSide.type() == ExpressionNode::Type::MultiplicationExplicite) {
+      int childrenCount = leftHandSide.numberOfChildren();
+      static_cast<MultiplicationExplicite &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
+    } else {
+      leftHandSide = MultiplicationExplicite::Builder(leftHandSide, rightHandSide);
+    }
   }
 }
 

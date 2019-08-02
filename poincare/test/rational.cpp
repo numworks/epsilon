@@ -7,6 +7,30 @@
 
 using namespace Poincare;
 
+static inline void assert_equal(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) == 0);
+}
+static inline void assert_not_equal(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) != 0);
+}
+
+static inline void assert_lower(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) < 0);
+}
+
+static inline void assert_greater(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) > 0);
+}
+
+QUIZ_CASE(poincare_rational_order) {
+  assert_equal(Rational::Builder(123,324), Rational::Builder(41,108));
+  assert_not_equal(Rational::Builder(123,234), Rational::Builder(42, 108));
+  assert_lower(Rational::Builder(123,234), Rational::Builder(456,567));
+  assert_lower(Rational::Builder(-123, 234),Rational::Builder(456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder(-456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder("123456789123456789", "12345678912345678910"));
+}
+
 QUIZ_CASE(poincare_rational_specific_properties) {
   quiz_assert(Rational::Builder(0).isZero());
   quiz_assert(!Rational::Builder(231).isZero());

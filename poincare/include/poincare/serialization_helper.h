@@ -28,10 +28,12 @@ namespace SerializationHelper {
       int lastChildIndex = -1);
 
   /* needsSystemParentheses add System parentheses wrapping the layout children.
-   * It is used when serializing special layouts to avoid creating parsable
-   * string from misformed layout. For instance, we don't want to parse:
+   * It is used when serializing layouts to avoid creating a parsable string
+   * from a misformed layout. For instance, we don't want to parse:
    * |2)(3|, so we serialize it in "abs({2)(3})" where {} are System parentheses
-   * instead of "abs(2)(3)". */
+   * instead of "abs(2)(3)".
+   *
+   * /!\ A layout that calls Prefix should put true to needsSystemParentheses */
   int Prefix(
       const TreeNode * node,
       char * buffer,

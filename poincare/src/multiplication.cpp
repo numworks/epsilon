@@ -1,5 +1,5 @@
 #include <poincare/multiplication.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
@@ -120,14 +120,14 @@ int Multiplication::getPolynomialCoefficients(Context * context, const char * sy
       int jbis = j > degI ? degI : j;
       for (int l = 0; l <= jbis ; l++) {
         // Always copy the a and b coefficients are they are used multiple times
-        a.addChildAtIndexInPlace(MultiplicationExplicite::Builder(intermediateCoefficients[l].clone(), coefficients[j-l].clone()), a.numberOfChildren(), a.numberOfChildren());
+        a.addChildAtIndexInPlace(MultiplicationExplicit::Builder(intermediateCoefficients[l].clone(), coefficients[j-l].clone()), a.numberOfChildren(), a.numberOfChildren());
       }
       /* a(j) and b(j) are used only to compute coefficient at rank >= j, we
        * can delete them as we compute new coefficient by decreasing ranks. */
       coefficients[j] = a;
     }
     // new coefficients[0] = a(0)*b(0)
-    coefficients[0] = MultiplicationExplicite::Builder(coefficients[0], intermediateCoefficients[0]);
+    coefficients[0] = MultiplicationExplicit::Builder(coefficients[0], intermediateCoefficients[0]);
   }
   return deg;
 }

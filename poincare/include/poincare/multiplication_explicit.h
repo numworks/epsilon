@@ -1,25 +1,25 @@
-#ifndef POINCARE_MULTIPLICATION_EXPLICITE_H
-#define POINCARE_MULTIPLICATION_EXPLICITE_H
+#ifndef POINCARE_MULTIPLICATION_EXPLICIT_H
+#define POINCARE_MULTIPLICATION_EXPLICIT_H
 
 #include <poincare/multiplication.h>
 #include <poincare/n_ary_expression.h>
 
 namespace Poincare {
 
-class MultiplicationExpliciteNode /*final*/ : public MultiplicationNode {
+class MultiplicationExplicitNode /*final*/ : public MultiplicationNode {
   friend class Addition;
 public:
   using MultiplicationNode::MultiplicationNode;
   // Tree
-  size_t size() const override { return sizeof(MultiplicationExpliciteNode); }
+  size_t size() const override { return sizeof(MultiplicationExplicitNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
-    stream << "Multiplication Explicite";
+    stream << "Multiplication Explicit";
   }
 #endif
 
   // Properties
-  Type type() const override { return Type::MultiplicationExplicite; }
+  Type type() const override { return Type::MultiplicationExplicit; }
 
 private:
   // Property
@@ -38,18 +38,18 @@ private:
 
 };
 
-class MultiplicationExplicite : public Multiplication {
+class MultiplicationExplicit : public Multiplication {
   friend class AdditionNode;
   friend class Addition;
   friend class Power;
 public:
-  MultiplicationExplicite(const MultiplicationExpliciteNode * n) : Multiplication(n) {}
-  static MultiplicationExplicite Builder() { return TreeHandle::NAryBuilder<MultiplicationExplicite, MultiplicationExpliciteNode>(); }
-  static MultiplicationExplicite Builder(Expression e1) { return MultiplicationExplicite::Builder(&e1, 1); }
-  static MultiplicationExplicite Builder(Expression e1, Expression e2) { return MultiplicationExplicite::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
-  static MultiplicationExplicite Builder(Expression e1, Expression e2, Expression e3) { return MultiplicationExplicite::Builder(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
-  static MultiplicationExplicite Builder(Expression e1, Expression e2, Expression e3, Expression e4) { return MultiplicationExplicite::Builder(ArrayBuilder<Expression>(e1, e2, e3, e4).array(), 4); }
-  static MultiplicationExplicite Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<MultiplicationExplicite, MultiplicationExpliciteNode>(children, numberOfChildren); }
+  MultiplicationExplicit(const MultiplicationExplicitNode * n) : Multiplication(n) {}
+  static MultiplicationExplicit Builder() { return TreeHandle::NAryBuilder<MultiplicationExplicit, MultiplicationExplicitNode>(); }
+  static MultiplicationExplicit Builder(Expression e1) { return MultiplicationExplicit::Builder(&e1, 1); }
+  static MultiplicationExplicit Builder(Expression e1, Expression e2) { return MultiplicationExplicit::Builder(ArrayBuilder<Expression>(e1, e2).array(), 2); }
+  static MultiplicationExplicit Builder(Expression e1, Expression e2, Expression e3) { return MultiplicationExplicit::Builder(ArrayBuilder<Expression>(e1, e2, e3).array(), 3); }
+  static MultiplicationExplicit Builder(Expression e1, Expression e2, Expression e3, Expression e4) { return MultiplicationExplicit::Builder(ArrayBuilder<Expression>(e1, e2, e3, e4).array(), 4); }
+  static MultiplicationExplicit Builder(Expression * children, size_t numberOfChildren) { return TreeHandle::NAryBuilder<MultiplicationExplicit, MultiplicationExplicitNode>(children, numberOfChildren); }
 
   Expression setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

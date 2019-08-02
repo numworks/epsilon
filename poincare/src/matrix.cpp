@@ -4,7 +4,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
@@ -175,7 +175,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
 
-  MultiplicationExplicite det = MultiplicationExplicite::Builder();
+  MultiplicationExplicit det = MultiplicationExplicit::Builder();
 
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -227,7 +227,7 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Ex
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
           Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = Subtraction::Builder(opIJ, MultiplicationExplicite::Builder(matrixChild(h, j).clone(), factor.clone()));
+          Expression newOpIJ = Subtraction::Builder(opIJ, MultiplicationExplicit::Builder(matrixChild(h, j).clone(), factor.clone()));
           replaceChildAtIndexInPlace(i*n+j, newOpIJ);
           newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
           newOpIJ = newOpIJ.shallowReduce(reductionContext);
@@ -346,8 +346,8 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
   if (dim == 2) {
     /*                |a b|
      * Determinant of |c d| is ad-bc   */
-    MultiplicationExplicite ad = MultiplicationExplicite::Builder(m.matrixChild(0,0), m.matrixChild(1,1));
-    MultiplicationExplicite bc = MultiplicationExplicite::Builder(m.matrixChild(0,1), m.matrixChild(1,0));
+    MultiplicationExplicit ad = MultiplicationExplicit::Builder(m.matrixChild(0,0), m.matrixChild(1,1));
+    MultiplicationExplicit bc = MultiplicationExplicit::Builder(m.matrixChild(0,1), m.matrixChild(1,0));
     Expression result = Subtraction::Builder(ad, bc);
     ad.shallowReduce(reductionContext);
     bc.shallowReduce(reductionContext);
@@ -368,12 +368,12 @@ Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext
     Expression i = m.matrixChild(2,2);
     constexpr int additionChildrenCount = 6;
     Expression additionChildren[additionChildrenCount] = {
-      MultiplicationExplicite::Builder(a.clone(), e.clone(), i.clone()),
-      MultiplicationExplicite::Builder(b.clone(), f.clone(), g.clone()),
-      MultiplicationExplicite::Builder(c.clone(), d.clone(), h.clone()),
-      MultiplicationExplicite::Builder(Rational::Builder(-1), c, e, g),
-      MultiplicationExplicite::Builder(Rational::Builder(-1), b, d, i),
-      MultiplicationExplicite::Builder(Rational::Builder(-1), a, f, h)};
+      MultiplicationExplicit::Builder(a.clone(), e.clone(), i.clone()),
+      MultiplicationExplicit::Builder(b.clone(), f.clone(), g.clone()),
+      MultiplicationExplicit::Builder(c.clone(), d.clone(), h.clone()),
+      MultiplicationExplicit::Builder(Rational::Builder(-1), c, e, g),
+      MultiplicationExplicit::Builder(Rational::Builder(-1), b, d, i),
+      MultiplicationExplicit::Builder(Rational::Builder(-1), a, f, h)};
     Expression result = Addition::Builder(additionChildren, additionChildrenCount);
     for (int i = 0; i < additionChildrenCount; i++) {
       additionChildren[i].shallowReduce(reductionContext);

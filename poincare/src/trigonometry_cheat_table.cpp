@@ -41,11 +41,11 @@ Expression TrigonometryCheatTable::simplify(const Expression e, ExpressionNode::
         && e.type() != ExpressionNode::Type::Rational)
       || (inputType == Type::AngleInRadians
         && e.type() != ExpressionNode::Type::Rational
-        && e.type() != ExpressionNode::Type::MultiplicationExplicite
+        && e.type() != ExpressionNode::Type::MultiplicationExplicit
         && e.type() != ExpressionNode::Type::Constant)
       || (inputType > Type::AngleInRadians
         && e.type() != ExpressionNode::Type::Rational
-        && e.type() != ExpressionNode::Type::MultiplicationExplicite
+        && e.type() != ExpressionNode::Type::MultiplicationExplicit
         && e.type() != ExpressionNode::Type::Power
         && e.type() != ExpressionNode::Type::Addition))
   {

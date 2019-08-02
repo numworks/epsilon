@@ -61,8 +61,8 @@ class Expression : public TreeHandle {
   friend class MatrixTrace;
   friend class MatrixTranspose;
   friend class Multiplication;
-  friend class MultiplicationExplicite;
-  friend class MultiplicationImplicite;
+  friend class MultiplicationExplicit;
+  friend class MultiplicationImplicit;
   friend class MultiplicationNode;
   friend class NaperianLogarithm;
   friend class NthRoot;
@@ -131,7 +131,7 @@ public:
   bool isOfType(ExpressionNode::Type * types, int length) const { return node()->isOfType(types, length); }
   ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
   bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined ||  node()->type() == ExpressionNode::Type::Unreal; }
-  bool isMultiplication() const { return node()->type() == ExpressionNode::Type::MultiplicationExplicite ||  node()->type() == ExpressionNode::Type::MultiplicationImplicite; }
+  bool isMultiplication() const { return node()->type() == ExpressionNode::Type::MultiplicationExplicit ||  node()->type() == ExpressionNode::Type::MultiplicationImplicit; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   bool isRationalOne() const;

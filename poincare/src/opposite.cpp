@@ -4,7 +4,7 @@
 #include <poincare/constant.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 
@@ -79,7 +79,7 @@ Expression Opposite::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return result;
   }
   Expression child = result.childAtIndex(0);
-  result = MultiplicationExplicite::Builder(Rational::Builder(-1), child);
+  result = MultiplicationExplicit::Builder(Rational::Builder(-1), child);
   replaceWithInPlace(result);
   return result.shallowReduce(reductionContext);
 }

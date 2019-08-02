@@ -17,7 +17,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 }
 
 QUIZ_CASE(poincare_expression_to_layout) {
-  assert_parsed_expression_layout_serialize_to_self("binomial\u00127,6\u0013");
-  assert_parsed_expression_layout_serialize_to_self("root\u00127,3\u0013");
+  assert_parsed_expression_layout_serialize_to_self("binomial\u0012\u00127\u0013,\u00126\u0013\u0013");
+  assert_parsed_expression_layout_serialize_to_self("root\u0012\u00127\u0013,\u00123\u0013\u0013");
 }
 

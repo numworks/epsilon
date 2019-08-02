@@ -81,19 +81,19 @@ public:
   /* createInverse can be called on any matrix, reduced or not, approximated or
    * not. */
   Expression createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const;
-#if MATRIX_EXACT_REDUCING
-  Expression determinant() const;
-#endif
+  Expression determinant(ExpressionNode::ReductionContext reductionContext, bool * couldComputeDeterminant, bool inPlace);
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
 private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
-  /* rowCanonize turns a matrix in its reduced row echelon form. */
-  Matrix rowCanonize(ExpressionNode::ReductionContext reductionContext);
+  Expression computeInverseOrDeterminant(bool computeDeterminant, ExpressionNode::ReductionContext reductionContext, bool * couldCompute) const;
+  // rowCanonize turns a matrix in its reduced row echelon form.
+  Matrix rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant);
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
+
 };
 
 }

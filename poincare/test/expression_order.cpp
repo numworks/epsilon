@@ -9,28 +9,68 @@ using namespace Poincare;
 
 // TODO add tests about expression that override simplificationOrderSameType or simplificationOrderGreaterType
 
-static inline void assert_equal(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) == 0);
-}
-static inline void assert_not_equal(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) != 0);
+void assert_greater(Expression e1, Expression e2) {
+  /* ExpressionNode::SimplificationOrder can be used directly (because node
+   * getter is private) so we build an addition whose we sort children and we
+   * check that the children order is the expected one. */
+  Shared::GlobalContext globalContext;
+  Addition a = Addition::Builder(e1, e2);
+  a.sortChildrenInPlace(
+      [](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, false, canBeInterrupted); },
+      &globalContext,
+      true);
+  quiz_assert(a.childAtIndex(0) == e1);
+  quiz_assert(a.childAtIndex(1) == e2);
 }
 
-static inline void assert_lower(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) < 0);
+QUIZ_CASE(poincare_expression_order_constant) {
+  assert_greater(Constant::Builder(UCodePointGreekSmallLetterPi), Constant::Builder(UCodePointMathematicalBoldSmallI));
+  assert_greater(Constant::Builder(UCodePointScriptSmallE), Constant::Builder(UCodePointGreekSmallLetterPi));
+  assert_greater(Constant::Builder(UCodePointScriptSmallE), Constant::Builder(UCodePointMathematicalBoldSmallI));
 }
 
-static inline void assert_greater(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) > 0);
+QUIZ_CASE(poincare_expression_order_decimal) {
+  assert_greater(Decimal::Builder("1", -3), Decimal::Builder("-1", -3));
+  assert_greater(Decimal::Builder("-1", -3), Decimal::Builder("-1", -2));
+  assert_greater(Decimal::Builder("1", -3), Decimal::Builder("1", -4));
+  assert_greater(Decimal::Builder("123", -3), Decimal::Builder("12", -3));
 }
 
 QUIZ_CASE(poincare_expression_order_rational) {
-  assert_equal(Rational::Builder(123,324), Rational::Builder(41,108));
-  assert_not_equal(Rational::Builder(123,234), Rational::Builder(42, 108));
-  assert_lower(Rational::Builder(123,234), Rational::Builder(456,567));
-  assert_lower(Rational::Builder(-123, 234),Rational::Builder(456, 567));
-  assert_greater(Rational::Builder(123, 234),Rational::Builder(-456, 567));
-  assert_greater(Rational::Builder(123, 234),Rational::Builder("123456789123456789", "12345678912345678910"));
+  assert_greater(Rational::Builder(9, 10), Rational::Builder(-9,10));
+  assert_greater(Rational::Builder(3, 4), Rational::Builder(2,3));
+}
+
+QUIZ_CASE(poincare_expression_order_float) {
+  assert_greater(Float<double>::Builder(0.234), Float<double>::Builder(-0.2392));
+  assert_greater(Float<float>::Builder(0.234), Float<float>::Builder(0.123));
+  assert_greater(Float<double>::Builder(234), Float<double>::Builder(123));
+}
+
+QUIZ_CASE(poincare_expression_order_power) {
+  // 2^3 > (1/2)^5
+  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)), Power::Builder(Rational::Builder(1,2), Rational::Builder(5)));
+  // 2^3 > 2^2
+  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)), Power::Builder(Rational::Builder(2), Rational::Builder(2)));
+  // Order with expression other than power
+  // 2^3 > 1
+  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)), Rational::Builder(1));
+  // 2^3 > 2
+  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)), Rational::Builder(2));
+}
+
+QUIZ_CASE(poincare_expression_order_symbol) {
+  assert_greater(Symbol::Builder('a'), Symbol::Builder('b'));
+}
+
+QUIZ_CASE(poincare_expression_order_function) {
+  assert_greater(Function::Builder("f", 1, Rational::Builder(1)), Function::Builder("g", 1, Rational::Builder(9)));
+}
+
+QUIZ_CASE(poincare_expression_order_mix) {
+  assert_greater(Symbol::Builder('x'), Rational::Builder(2));
+  assert_greater(Symbol::Builder('x'), Infinity::Builder(true));
+  assert_greater(ArcCosine::Builder(Rational::Builder(2)), Decimal::Builder("3",-2));
 }
 
 void assert_multiplication_or_addition_is_ordered_as(Expression e1, Expression e2) {
@@ -84,7 +124,7 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
-    // root(3) $ 2 -> 2 * root(3)
+    // root(3) * 2 -> 2 * root(3)
     Expression e1 = MultiplicationExplicit::Builder(SquareRoot::Builder(Rational::Builder(3)), Rational::Builder(2));
     Expression e2 = MultiplicationExplicit::Builder(Rational::Builder(2), SquareRoot::Builder(Rational::Builder(3)));
     assert_multiplication_or_addition_is_ordered_as(e1, e2);

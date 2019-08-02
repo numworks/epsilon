@@ -98,7 +98,7 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
       LeftParenthesisLayout::Builder(),
       CodePointLayout::Builder('1')};
 
-    Layout l = ProductLayout::Builder(
+    Layout l = IntegralLayout::Builder(
         CodePointLayout::Builder('5'),
         CodePointLayout::Builder('x'),
         CodePointLayout::Builder('1'),

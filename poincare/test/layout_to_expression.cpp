@@ -107,6 +107,42 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
   }
 
   {
+    /*   2),1
+     *    ∫    (5)dx
+     *    1+binomial(3
+     */
+
+    constexpr int children1Count = 12;
+    Layout children1[children1Count] = {
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('b'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('n'),
+      CodePointLayout::Builder('o'),
+      CodePointLayout::Builder('m'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder('l'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('3')};
+
+    constexpr int children2Count = 4;
+    Layout children2[children2Count] = {
+      CodePointLayout::Builder('2'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder(','),
+      CodePointLayout::Builder('1')};
+
+    Layout l = IntegralLayout::Builder(
+        CodePointLayout::Builder('5'),
+        CodePointLayout::Builder('x'),
+        HorizontalLayout::Builder(children1, children1Count),
+        HorizontalLayout::Builder(children2, children2Count));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
     // |3)+(1|
     constexpr int childrenCount = 5;
     Layout children[childrenCount] = {

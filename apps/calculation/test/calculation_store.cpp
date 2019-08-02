@@ -63,10 +63,10 @@ void assertCalculationDisplay(const char * input, ::Calculation::Calculation::Di
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
-    quiz_assert(strcmp(lastCalculation->exactOutputText(), exactOutput) == 0);
+    quiz_assert_print_if_failure(strcmp(lastCalculation->exactOutputText(), exactOutput) == 0, input);
   }
   if (approximateOutput) {
-    quiz_assert(strcmp(lastCalculation->approximateOutputText(), approximateOutput) == 0);
+    quiz_assert_print_if_failure(strcmp(lastCalculation->approximateOutputText(), approximateOutput) == 0, input);
   }
   store->deleteAll();
 }
@@ -135,9 +135,6 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
 
 
 QUIZ_CASE(calculation_complex_format) {
-  assert(UCodePointLeftSystemParenthesis == '\u0012');
-  assert(UCodePointRightSystemParenthesis == '\u0013');
-
   Shared::GlobalContext globalContext;
   CalculationStore store;
 

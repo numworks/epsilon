@@ -7,7 +7,75 @@
 
 using namespace Poincare;
 
-// TODO add tests about expression that override sign
+QUIZ_CASE(poincare_properties_is_number) {
+  quiz_assert(Decimal::Builder("2",3).isNumber());
+  quiz_assert(Float<float>::Builder(1.0f).isNumber());
+  quiz_assert(Infinity::Builder(true).isNumber());
+  quiz_assert(Undefined::Builder().isNumber());
+  quiz_assert(Rational::Builder(2,3).isNumber());
+  quiz_assert(!Symbol::Builder('a').isNumber());
+  quiz_assert(!MultiplicationExplicit::Builder(Rational::Builder(1), Rational::Builder(2)).isNumber());
+  quiz_assert(!Addition::Builder(Rational::Builder(1), Rational::Builder(2)).isNumber());
+}
+
+QUIZ_CASE(poincare_properties_is_random) {
+  quiz_assert(Random::Builder().isRandom());
+  quiz_assert(Randint::Builder(Rational::Builder(1), Rational::Builder(2)).isRandom());
+  quiz_assert(!Symbol::Builder('a').isRandom());
+  quiz_assert(!Rational::Builder(2,3).isRandom());
+}
+
+QUIZ_CASE(poincare_properties_is_parametered_expression) {
+  quiz_assert(Derivative::Builder(Rational::Builder(1), Symbol::Builder('x'), Rational::Builder(2)).isParameteredExpression());
+  quiz_assert(Integral::Builder(Rational::Builder(1), Symbol::Builder('x'), Rational::Builder(2), Rational::Builder(2)).isParameteredExpression());
+  quiz_assert(Sum::Builder(Rational::Builder(1), Symbol::Builder('n'), Rational::Builder(2), Rational::Builder(2)).isParameteredExpression());
+  quiz_assert(Product::Builder(Rational::Builder(1), Symbol::Builder('n'), Rational::Builder(2), Rational::Builder(2)).isParameteredExpression());
+  quiz_assert(!Symbol::Builder('a').isParameteredExpression());
+  quiz_assert(!Rational::Builder(2,3).isParameteredExpression());
+}
+
+void assert_expression_has_property(const char * expression, Context * context, Expression::ExpressionTest test) {
+  Expression e = parse_expression(expression, false);
+  quiz_assert_print_if_failure(e.recursivelyMatches(test, context, true), expression);
+}
+
+void assert_expression_has_not_property(const char * expression, Context * context, Expression::ExpressionTest test) {
+  Expression e = parse_expression(expression, false);
+  quiz_assert_print_if_failure(!e.recursivelyMatches(test, context, true), expression);
+}
+
+QUIZ_CASE(poincare_properties_is_approximate) {
+  Shared::GlobalContext context;
+  assert_expression_has_property("3.4", &context, Expression::IsApproximate);
+  assert_expression_has_property("2.3+1", &context, Expression::IsApproximate);
+  assert_expression_has_not_property("a", &context, Expression::IsApproximate);
+  assert_simplify("42.3→a");
+  assert_expression_has_property("a", &context, Expression::IsApproximate);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+}
+
+QUIZ_CASE(poincare_properties_is_matrix) {
+  Shared::GlobalContext context;
+  assert_expression_has_property("[[1,2][3,4]]", &context, Expression::IsMatrix);
+  assert_expression_has_property("confidence(0.2,3)*2", &context, Expression::IsMatrix);
+  assert_expression_has_property("dim([[1,2][3,4]])/3", &context, Expression::IsMatrix);
+  assert_expression_has_property("prediction(0.3,10)", &context, Expression::IsMatrix);
+  assert_expression_has_property("[[1,2][3,4]]^(-1)", &context, Expression::IsMatrix);
+  assert_expression_has_property("inverse([[1,2][3,4]])", &context, Expression::IsMatrix);
+  assert_expression_has_property("3*identity(4)", &context, Expression::IsMatrix);
+  assert_expression_has_property("transpose([[1,2][3,4]])", &context, Expression::IsMatrix);
+  assert_expression_has_not_property("2*3+1", &context, Expression::IsMatrix);
+}
+
+QUIZ_CASE(poincare_properties_is_infinity) {
+  Shared::GlobalContext context;
+  assert_expression_has_property("3.4+inf", &context, Expression::IsInfinity);
+  assert_expression_has_not_property("2.3+1", &context, Expression::IsInfinity);
+  assert_expression_has_not_property("a", &context, Expression::IsInfinity);
+  assert_simplify("42.3+inf→a");
+  assert_expression_has_property("a", &context, Expression::IsInfinity);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
+}
 
 constexpr Poincare::ExpressionNode::Sign Positive = Poincare::ExpressionNode::Sign::Positive;
 constexpr Poincare::ExpressionNode::Sign Negative = Poincare::ExpressionNode::Sign::Negative;
@@ -48,6 +116,8 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("random()", Positive);
   assert_reduced_expression_sign("42/3", Positive);
   assert_reduced_expression_sign("-23/32", Negative);
+  assert_reduced_expression_sign("𝐢", Unknown);
+  assert_reduced_expression_sign("-π", Negative);
   assert_reduced_expression_sign("π", Positive);
   assert_reduced_expression_sign("ℯ", Positive);
   assert_reduced_expression_sign("0", Positive);
@@ -55,6 +125,12 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("cos(90)", Positive, Cartesian, Degree);
   assert_reduced_expression_sign("√(-1)", Unknown);
   assert_reduced_expression_sign("√(-1)", Unknown, Real);
+  assert_reduced_expression_sign("sign(π)", Positive);
+  assert_reduced_expression_sign("sign(-π)", Negative);
+  assert_reduced_expression_sign("a", Unknown);
+  assert_simplify("42→a");
+  assert_reduced_expression_sign("a", Positive);
+  Ion::Storage::sharedStorage()->recordNamed("a.exp").destroy();
 }
 
 void assert_reduced_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x", Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
@@ -86,6 +162,7 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   // f: x→x^2+πx+1
   assert_simplify("1+π×x+x^2→f(x)");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 void assert_reduced_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
@@ -124,6 +201,7 @@ QUIZ_CASE(poincare_properties_characteristic_range) {
   // f(x) with f : x --> cos(x), degree
   assert_simplify("cos(x)→f(x)");
   assert_reduced_expression_has_characteristic_range(Function::Builder("f",1,Symbol::Builder(UCodePointUnknownX)), 360.0f);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
@@ -161,6 +239,7 @@ QUIZ_CASE(poincare_preperties_get_variables) {
   assert_simplify("1+π×x+x^2+toto→f(x)");
   const char * variableBuffer7[] = {"tata","toto", ""};
   assert_expression_has_variables("f(tata)", variableBuffer7, 2);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
@@ -197,4 +276,5 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient5);
   const char * coefficient6[] = {0}; //√(-1)x
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient6, Real);
+  Ion::Storage::sharedStorage()->recordNamed("f.func").destroy();
 }

@@ -5,8 +5,6 @@
 
 using namespace Poincare;
 
-// TODO: add tests
-
 void assert_expression_serialize_to(Poincare::Expression expression, const char * serialization, Preferences::PrintFloatMode mode = ScientificMode, int numberOfSignificantDigits = 7) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];

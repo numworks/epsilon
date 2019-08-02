@@ -65,6 +65,42 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
   }
 
   {
+    /*   2),1
+     *    π    (5)
+     *   n=1+binomial(3
+     */
+
+    constexpr int children1Count = 12;
+    Layout children1[children1Count] = {
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('b'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('n'),
+      CodePointLayout::Builder('o'),
+      CodePointLayout::Builder('m'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder('l'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('3')};
+
+    constexpr int children2Count = 4;
+    Layout children2[children2Count] = {
+      CodePointLayout::Builder('2'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder(','),
+      CodePointLayout::Builder('1')};
+
+    Layout l = SumLayout::Builder(
+        CodePointLayout::Builder('5'),
+        CodePointLayout::Builder('n'),
+        HorizontalLayout::Builder(children1, children1Count),
+        HorizontalLayout::Builder(children2, children2Count));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
     /*   2)+(1
      *    π    (5)
      *   n=1
@@ -82,6 +118,42 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
         CodePointLayout::Builder('n'),
         CodePointLayout::Builder('1'),
         HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    /*   2),1
+     *    π    (5)
+     *   n=1+binomial(3
+     */
+
+    constexpr int children1Count = 12;
+    Layout children1[children1Count] = {
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('b'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('n'),
+      CodePointLayout::Builder('o'),
+      CodePointLayout::Builder('m'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder('l'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('3')};
+
+    constexpr int children2Count = 4;
+    Layout children2[children2Count] = {
+      CodePointLayout::Builder('2'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder(','),
+      CodePointLayout::Builder('1')};
+
+    Layout l = ProductLayout::Builder(
+        CodePointLayout::Builder('5'),
+        CodePointLayout::Builder('n'),
+        HorizontalLayout::Builder(children1, children1Count),
+        HorizontalLayout::Builder(children2, children2Count));
     assert_layout_is_not_parsed(l);
   }
 
@@ -153,6 +225,40 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
       CodePointLayout::Builder('1')};
 
     Layout l = AbsoluteValueLayout::Builder(HorizontalLayout::Builder(children, childrenCount));
+    assert_layout_is_not_parsed(l);
+  }
+
+  {
+    /*  /            \
+     * | 1+binomial(3 |
+     * |    1),1      |
+     *  \            /
+     */
+    constexpr int children1Count = 12;
+    Layout children1[children1Count] = {
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('b'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('n'),
+      CodePointLayout::Builder('o'),
+      CodePointLayout::Builder('m'),
+      CodePointLayout::Builder('i'),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder('l'),
+      LeftParenthesisLayout::Builder(),
+      CodePointLayout::Builder('3')};
+
+    constexpr int children2Count = 4;
+    Layout children2[children2Count] = {
+      CodePointLayout::Builder('1'),
+      RightParenthesisLayout::Builder(),
+      CodePointLayout::Builder(','),
+      CodePointLayout::Builder('1')};
+
+    Layout l = BinomialCoefficientLayout::Builder(
+        HorizontalLayout::Builder(children1, children1Count),
+        HorizontalLayout::Builder(children2, children2Count));
     assert_layout_is_not_parsed(l);
   }
 }

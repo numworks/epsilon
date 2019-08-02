@@ -109,10 +109,20 @@ int Probability::LawController::reusableCellCount() {
 void Probability::LawController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Cell * myCell = (Cell *)cell;
   myCell->setLabel(m_messages[index]);
-  const Image * images[5] = {ImageStore::BinomialIcon, ImageStore::UniformIcon, ImageStore::ExponentialIcon,
-    ImageStore::NormalIcon, ImageStore::PoissonIcon};
-  const Image * focusedImages[5] = {ImageStore::FocusedBinomialIcon, ImageStore::FocusedUniformIcon, ImageStore::FocusedExponentialIcon,
-    ImageStore::FocusedNormalIcon, ImageStore::FocusedPoissonIcon};
+  const Image * images[k_totalNumberOfModels] = {
+    ImageStore::BinomialIcon,
+    ImageStore::UniformIcon,
+    ImageStore::ExponentialIcon,
+    ImageStore::NormalIcon,
+    ImageStore::PoissonIcon
+  };
+  const Image * focusedImages[k_totalNumberOfModels] = {
+    ImageStore::FocusedBinomialIcon,
+    ImageStore::FocusedUniformIcon,
+    ImageStore::FocusedExponentialIcon,
+    ImageStore::FocusedNormalIcon,
+    ImageStore::FocusedPoissonIcon
+  };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
 }

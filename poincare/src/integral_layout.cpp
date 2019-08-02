@@ -160,9 +160,9 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   }
 
   /* Add system parentheses to avoid serializing:
-   *   2)+(1
-   *    ∫    (5)dx
-   *    1
+   *   2)+(1          2),1
+   *    ∫    (5)dx or  ∫    (5)dx
+   *    1             1+binomial(3
    */
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
   if (numberOfChar >= bufferSize-1) {
@@ -182,8 +182,12 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
 
-    // Write the argument
+    // Write the argument with system parentheses
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += argLayouts[i]->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
 

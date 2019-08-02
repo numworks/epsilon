@@ -126,12 +126,6 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   int numberOfChar = 0;
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-  int idxInParent = -1;
-  LayoutNode * p = parent();
-  if (p != nullptr) {
-    idxInParent = p->indexOfChild(this);
-  }
-
   /* Add System parenthesis to detect omitted multiplication:
    *   2
    *  --- i --> [2/3]i instead of 2/3i

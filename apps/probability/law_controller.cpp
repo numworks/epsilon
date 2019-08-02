@@ -3,9 +3,11 @@
 #include <new>
 #include "app.h"
 #include "law/binomial_law.h"
+#include "law/chi_squared_law.h"
 #include "law/exponential_law.h"
 #include "law/normal_law.h"
 #include "law/poisson_law.h"
+#include "law/student_law.h"
 #include "law/uniform_law.h"
 #include "images/binomial_icon.h"
 #include "images/exponential_icon.h"
@@ -49,7 +51,9 @@ static I18n::Message sMessages[] = {
   I18n::Message::Uniforme,
   I18n::Message::Exponential,
   I18n::Message::Normal,
-  I18n::Message::Poisson
+  I18n::Message::Poisson,
+  I18n::Message::ChiSquared,
+  I18n::Message::Student
 };
 
 LawController::LawController(Responder * parentResponder, Law * law, ParametersController * parametersController) :
@@ -114,14 +118,18 @@ void Probability::LawController::willDisplayCellForIndex(HighlightCell * cell, i
     ImageStore::UniformIcon,
     ImageStore::ExponentialIcon,
     ImageStore::NormalIcon,
-    ImageStore::PoissonIcon
+    ImageStore::PoissonIcon,
+    ImageStore::PoissonIcon, //FIXME
+    ImageStore::PoissonIcon //FIXME
   };
   const Image * focusedImages[k_totalNumberOfModels] = {
     ImageStore::FocusedBinomialIcon,
     ImageStore::FocusedUniformIcon,
     ImageStore::FocusedExponentialIcon,
     ImageStore::FocusedNormalIcon,
-    ImageStore::FocusedPoissonIcon
+    ImageStore::FocusedPoissonIcon,
+    ImageStore::FocusedPoissonIcon, //FIXME
+    ImageStore::FocusedPoissonIcon  //FIXME
   };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();
@@ -151,6 +159,12 @@ void Probability::LawController::setLawAccordingToIndex(int index) {
       break;
     case 4:
       new(m_law) PoissonLaw();
+      break;
+    case 5:
+      new(m_law) ChiSquaredLaw();
+      break;
+    case 6:
+      new(m_law) StudentLaw();
       break;
     default:
      return;

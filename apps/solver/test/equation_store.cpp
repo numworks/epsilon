@@ -13,7 +13,7 @@ namespace Solver {
 
 void addEquationWithText(EquationStore * equationStore, const char * text) {
   Ion::Storage::Record::ErrorStatus err = equationStore->addEmptyModel();
-  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, text);
   (void) err; // Silence warning in DEBUG=0
   Ion::Storage::Record record = equationStore->recordAtIndex(equationStore->numberOfModels()-1);
   Shared::ExpiringPointer<Equation> model = equationStore->modelForRecord(record);
@@ -28,29 +28,29 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
     addEquationWithText(&equationStore, equations[index++]);
   }
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
-  quiz_assert(err == error);
+  quiz_assert_print_if_failure(err == error, equations[0]);
   if (err != EquationStore::Error::NoError) {
     equationStore.removeAll();
     return;
   }
-  quiz_assert(equationStore.type() == type);
-  quiz_assert(equationStore.numberOfSolutions() == numberOfSolutions);
+  quiz_assert_print_if_failure(equationStore.type() == type, equations[0]);
+  quiz_assert_print_if_failure(equationStore.numberOfSolutions() == numberOfSolutions, equations[0]);
   if (numberOfSolutions == INT_MAX) {
     equationStore.removeAll();
     return;
   }
   if (type == EquationStore::Type::LinearSystem) {
     for (int i = 0; i < numberOfSolutions; i++) {
-      quiz_assert(strcmp(equationStore.variableAtIndex(i),variables[i]) == 0);
+      quiz_assert_print_if_failure(strcmp(equationStore.variableAtIndex(i),variables[i]) == 0, equations[0]);
     }
   } else {
-    quiz_assert(strcmp(equationStore.variableAtIndex(0), variables[0]) == 0);
+    quiz_assert_print_if_failure(strcmp(equationStore.variableAtIndex(0), variables[0]) == 0, equations[0]);
   }
   constexpr int bufferSize = 200;
   char buffer[bufferSize];
   for (int i = 0; i < numberOfSolutions; i++) {
     equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, bufferSize);
-    quiz_assert(strcmp(buffer, solutions[i]) == 0);
+    quiz_assert_print_if_failure(strcmp(buffer, solutions[i]) == 0, equations[0]);
   }
   equationStore.removeAll();
 }
@@ -101,9 +101,6 @@ QUIZ_CASE(equation_solve) {
   // x-x= 0
   const char * equations6[] = {"x-x=0", 0};
   assert_equation_system_exact_solve_to(equations6,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variables1, nullptr, INT_MAX);
-
-  quiz_assert(UCodePointLeftSystemParenthesis == '\022');
-  quiz_assert(UCodePointLeftSystemParenthesis == '\x12');
 
   const char * variablesx[] = {"x", ""};
   // 2x+3=4

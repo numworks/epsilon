@@ -1,0 +1,200 @@
+#include <quiz.h>
+#include <apps/shared/global_context.h>
+#include <poincare/decimal.h>
+#include <assert.h>
+#include "helper.h"
+#include "tree/helpers.h"
+
+using namespace Poincare;
+
+// TODO add tests about expression that override sign
+
+constexpr Poincare::ExpressionNode::Sign Positive = Poincare::ExpressionNode::Sign::Positive;
+constexpr Poincare::ExpressionNode::Sign Negative = Poincare::ExpressionNode::Sign::Negative;
+constexpr Poincare::ExpressionNode::Sign Unknown = Poincare::ExpressionNode::Sign::Unknown;
+
+void assert_reduced_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, false);
+  e = e.reduce(&globalContext, complexFormat, angleUnit);
+  quiz_assert_print_if_failure(e.sign(&globalContext) == sign, expression);
+}
+
+QUIZ_CASE(poincare_properties_decimal_sign) {
+  quiz_assert(Decimal::Builder(-2, 3).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Decimal::Builder(-2, -3).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Decimal::Builder(2, -3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Decimal::Builder(2, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Decimal::Builder(0, 1).sign() == ExpressionNode::Sign::Positive);
+}
+
+QUIZ_CASE(poincare_properties_rational_sign) {
+  quiz_assert(Rational::Builder(-2).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Rational::Builder(-2, 3).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Rational::Builder(2, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Rational::Builder(0, 3).sign() == ExpressionNode::Sign::Positive);
+}
+
+QUIZ_CASE(poincare_properties_sign) {
+  assert_reduced_expression_sign("abs(-cos(2)+I)", Positive);
+  assert_reduced_expression_sign("2.345ᴇ-23", Positive);
+  assert_reduced_expression_sign("-2.345ᴇ-23", Negative);
+  assert_reduced_expression_sign("2×(-3)×abs(-32)", Negative);
+  assert_reduced_expression_sign("2×(-3)×abs(-32)×cos(3)", Unknown);
+  assert_reduced_expression_sign("x", Unknown);
+  assert_reduced_expression_sign("2^(-abs(3))", Positive);
+  assert_reduced_expression_sign("(-2)^4", Positive);
+  assert_reduced_expression_sign("(-2)^3", Negative);
+  assert_reduced_expression_sign("random()", Positive);
+  assert_reduced_expression_sign("42/3", Positive);
+  assert_reduced_expression_sign("-23/32", Negative);
+  assert_reduced_expression_sign("π", Positive);
+  assert_reduced_expression_sign("ℯ", Positive);
+  assert_reduced_expression_sign("0", Positive);
+  assert_reduced_expression_sign("cos(π/2)", Positive);
+  assert_reduced_expression_sign("cos(90)", Positive, Cartesian, Degree);
+  assert_reduced_expression_sign("√(-1)", Unknown);
+  assert_reduced_expression_sign("√(-1)", Unknown, Real);
+}
+
+void assert_reduced_expression_polynomial_degree(const char * expression, int degree, const char * symbolName = "x", Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, false);
+  Expression result = e.reduce(&globalContext, complexFormat, angleUnit);
+  quiz_assert_print_if_failure(result.polynomialDegree(&globalContext, symbolName) == degree, expression);
+}
+
+QUIZ_CASE(poincare_properties_polynomial_degree) {
+  assert_reduced_expression_polynomial_degree("x+1", 1);
+  assert_reduced_expression_polynomial_degree("cos(2)+1", 0);
+  assert_reduced_expression_polynomial_degree("confidence(0.2,10)+1", -1);
+  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,2)", -1);
+  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", -1);
+  assert_reduced_expression_polynomial_degree("diff(3×x+x,x,x)", 0, "a");
+  assert_reduced_expression_polynomial_degree("(3×x+2)/3", 1);
+  assert_reduced_expression_polynomial_degree("(3×x+2)/x", -1);
+  assert_reduced_expression_polynomial_degree("int(2×x,x, 0, 1)", -1);
+  assert_reduced_expression_polynomial_degree("int(2×x,x, 0, 1)", 0, "a");
+  assert_reduced_expression_polynomial_degree("[[1,2][3,4]]", -1);
+  assert_reduced_expression_polynomial_degree("(x^2+2)×(x+1)", 3);
+  assert_reduced_expression_polynomial_degree("-(x+1)", 1);
+  assert_reduced_expression_polynomial_degree("(x^2+2)^(3)", 6);
+  assert_reduced_expression_polynomial_degree("prediction(0.2,10)+1", -1);
+  assert_reduced_expression_polynomial_degree("2-x-x^3", 3);
+  assert_reduced_expression_polynomial_degree("π×x", 1);
+  assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
+  // f: x→x^2+πx+1
+  assert_simplify("1+π×x+x^2→f(x)");
+  assert_reduced_expression_polynomial_degree("f(x)", 2);
+}
+
+void assert_reduced_expression_has_characteristic_range(Expression e, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
+  Shared::GlobalContext globalContext;
+  e = e.reduce(&globalContext, Preferences::ComplexFormat::Cartesian, angleUnit);
+  if (std::isnan(range)) {
+    quiz_assert(std::isnan(e.characteristicXRange(&globalContext, angleUnit)));
+  } else {
+    quiz_assert(std::fabs(e.characteristicXRange(&globalContext, angleUnit) - range) < 0.0000001f);
+  }
+}
+
+QUIZ_CASE(poincare_properties_characteristic_range) {
+  // cos(x), degree
+  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(UCodePointUnknownX)), 360.0f);
+  // cos(-x), degree
+  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(UCodePointUnknownX))), 360.0f);
+  // cos(x), radian
+  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Symbol::Builder(UCodePointUnknownX)), 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  // cos(-x), radian
+  assert_reduced_expression_has_characteristic_range(Cosine::Builder(Opposite::Builder(Symbol::Builder(UCodePointUnknownX))), 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  // sin(9x+10), degree
+  assert_reduced_expression_has_characteristic_range(Sine::Builder(Addition::Builder(MultiplicationExplicite::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))), 40.0f);
+  // sin(9x+10)+cos(x/2), degree
+  assert_reduced_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(MultiplicationExplicite::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknownX),Rational::Builder(2)))), 720.0f);
+  // sin(9x+10)+cos(x/2), radian
+  assert_reduced_expression_has_characteristic_range(Addition::Builder(Sine::Builder(Addition::Builder(MultiplicationExplicite::Builder(Rational::Builder(9),Symbol::Builder(UCodePointUnknownX)),Rational::Builder(10))),Cosine::Builder(Division::Builder(Symbol::Builder(UCodePointUnknownX),Rational::Builder(2)))), 4.0f*M_PI, Preferences::AngleUnit::Radian);
+  // x, degree
+  assert_reduced_expression_has_characteristic_range(Symbol::Builder(UCodePointUnknownX), NAN);
+  // cos(3)+2, degree
+  assert_reduced_expression_has_characteristic_range(Addition::Builder(Cosine::Builder(Rational::Builder(3)),Rational::Builder(2)), 0.0f);
+  // log(cos(40x), degree
+  assert_reduced_expression_has_characteristic_range(CommonLogarithm::Builder(Cosine::Builder(MultiplicationExplicite::Builder(Rational::Builder(40),Symbol::Builder(UCodePointUnknownX)))), 9.0f);
+  // cos(cos(x)), degree
+  assert_reduced_expression_has_characteristic_range(Cosine::Builder((Expression)Cosine::Builder(Symbol::Builder(UCodePointUnknownX))), 360.0f);
+  // f(x) with f : x --> cos(x), degree
+  assert_simplify("cos(x)→f(x)");
+  assert_reduced_expression_has_characteristic_range(Function::Builder("f",1,Symbol::Builder(UCodePointUnknownX)), 360.0f);
+}
+
+void assert_expression_has_variables(const char * expression, const char * variables[], int trueNumberOfVariables) {
+  Expression e = parse_expression(expression, false);
+  constexpr static int k_maxVariableSize = Poincare::SymbolAbstract::k_maxNameSize;
+  char variableBuffer[Expression::k_maxNumberOfVariables+1][k_maxVariableSize] = {{0}};
+  Shared::GlobalContext globalContext;
+  int numberOfVariables = e.getVariables(&globalContext, [](const char * symbol) { return true; }, (char *)variableBuffer, k_maxVariableSize);
+  quiz_assert_print_if_failure(trueNumberOfVariables == numberOfVariables, expression);
+  if (numberOfVariables < 0) {
+    // Too many variables
+    return;
+  }
+  int index = 0;
+  while (variableBuffer[index][0] != 0 || variables[index][0] != 0) {
+    quiz_assert_print_if_failure(strcmp(variableBuffer[index], variables[index]) == 0, expression);
+    index++;
+  }
+}
+
+QUIZ_CASE(poincare_preperties_get_variables) {
+  const char * variableBuffer1[] = {"x","y",""};
+  assert_expression_has_variables("x+y", variableBuffer1, 2);
+  const char * variableBuffer2[] = {"x","y","z","t",""};
+  assert_expression_has_variables("x+y+z+2×t", variableBuffer2, 4);
+  const char * variableBuffer3[] = {"a","x","y","k","A", ""};
+  assert_expression_has_variables("a+x^2+2×y+k!×A", variableBuffer3, 5);
+  const char * variableBuffer4[] = {"BABA","abab", ""};
+  assert_expression_has_variables("BABA+abab", variableBuffer4, 2);
+  const char * variableBuffer5[] = {"BBBBBB", ""};
+  assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
+  const char * variableBuffer6[] = {""};
+  assert_expression_has_variables("a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
+  // f: x→1+πx+x^2+toto
+  assert_simplify("1+π×x+x^2+toto→f(x)");
+  const char * variableBuffer7[] = {"tata","toto", ""};
+  assert_expression_has_variables("f(tata)", variableBuffer7, 2);
+}
+
+void assert_reduced_expression_has_polynomial_coefficient(const char * expression, const char * symbolName, const char ** coefficients, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, false);
+  e = e.reduce(&globalContext, complexFormat, angleUnit);
+  Expression coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
+  int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, &globalContext, complexFormat, Radian);
+  for (int i = 0; i <= d; i++) {
+    Expression f = parse_expression(coefficients[i], false);
+    quiz_assert(!f.isUninitialized());
+    coefficientBuffer[i] = coefficientBuffer[i].reduce(&globalContext, complexFormat, angleUnit);
+    f = f.reduce(&globalContext, complexFormat, angleUnit);
+    quiz_assert_print_if_failure(coefficientBuffer[i].isIdenticalTo(f), expression);
+  }
+  quiz_assert_print_if_failure(coefficients[d+1] == 0, expression);
+}
+
+QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
+  const char * coefficient0[] = {"2", "1", "1", 0};
+  assert_reduced_expression_has_polynomial_coefficient("x^2+x+2", "x", coefficient0);
+  const char * coefficient1[] = {"12+(-6)×π", "12", "3", 0}; //3×x^2+12×x-6×π+12
+  assert_reduced_expression_has_polynomial_coefficient("3×(x+2)^2-6×π", "x", coefficient1);
+  // TODO: decomment when enable 3-degree polynomes
+  //const char * coefficient2[] = {"2+32×x", "2", "6", "2", 0}; //2×n^3+6×n^2+2×n+2+32×x
+  //assert_reduced_expression_has_polynomial_coefficient("2×(n+1)^3-4n+32×x", "n", coefficient2);
+  const char * coefficient3[] = {"1", "-π", "1", 0}; //x^2-π×x+1
+  assert_reduced_expression_has_polynomial_coefficient("x^2-π×x+1", "x", coefficient3);
+  // f: x→x^2+Px+1
+  const char * coefficient4[] = {"1", "π", "1", 0}; //x^2+π×x+1
+  assert_simplify("1+π×x+x^2→f(x)");
+  assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
+  const char * coefficient5[] = {"0", "𝐢", 0}; //√(-1)x
+  assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient5);
+  const char * coefficient6[] = {0}; //√(-1)x
+  assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient6, Real);
+}

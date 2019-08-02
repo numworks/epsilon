@@ -141,45 +141,27 @@ poincare_src += $(addprefix poincare/src/parsing/,\
 tests_src += $(addprefix poincare/test/,\
   tree/tree_handle.cpp\
   tree/helpers.cpp\
-  addition.cpp\
+  approximation.cpp\
   arithmetic.cpp\
-  binomial_coefficient_layout.cpp\
-  complex.cpp\
-  complex_to_expression.cpp\
-  convert_expression_to_text.cpp\
-  decimal.cpp\
-  division.cpp\
+  context.cpp\
   expression.cpp\
   expression_order.cpp\
-  factorial.cpp\
-  float.cpp\
-  fraction_layout.cpp\
-  function.cpp\
+  expression_properties.cpp\
+  expression_serialization.cpp\
+  expression_to_layout.cpp\
+  function_solver.cpp\
   helper.cpp\
   helpers.cpp\
-  infinity.cpp\
   integer.cpp\
-  layouts.cpp\
+  layout.cpp\
   layout_cursor.cpp\
-  logarithm.cpp\
-  matrix.cpp\
-  multiplication.cpp\
-  nth_root_layout.cpp\
-  number.cpp\
-  parentheses_layout.cpp\
-  parser.cpp\
-  power.cpp\
+  layout_serialization.cpp\
+  layout_to_expression.cpp\
+  parsing.cpp\
+  print_float.cpp\
   print_int.cpp\
-  properties.cpp\
   rational.cpp\
-  random.cpp\
-  simplify.cpp\
-  store.cpp\
-  subtraction.cpp\
-  symbol.cpp\
-  trigo.cpp\
-  user_variable.cpp\
-  vertical_offset_layout.cpp\
+  simplification.cpp\
 )
 
 ifdef POINCARE_TREE_LOG

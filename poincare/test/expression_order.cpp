@@ -7,6 +7,32 @@
 
 using namespace Poincare;
 
+// TODO add tests about expression that override simplificationOrderSameType or simplificationOrderGreaterType
+
+static inline void assert_equal(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) == 0);
+}
+static inline void assert_not_equal(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) != 0);
+}
+
+static inline void assert_lower(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) < 0);
+}
+
+static inline void assert_greater(const Rational i, const Rational j) {
+  quiz_assert(Rational::NaturalOrder(i, j) > 0);
+}
+
+QUIZ_CASE(poincare_expression_order_rational) {
+  assert_equal(Rational::Builder(123,324), Rational::Builder(41,108));
+  assert_not_equal(Rational::Builder(123,234), Rational::Builder(42, 108));
+  assert_lower(Rational::Builder(123,234), Rational::Builder(456,567));
+  assert_lower(Rational::Builder(-123, 234),Rational::Builder(456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder(-456, 567));
+  assert_greater(Rational::Builder(123, 234),Rational::Builder("123456789123456789", "12345678912345678910"));
+}
+
 void assert_multiplication_or_addition_is_ordered_as(Expression e1, Expression e2) {
   Shared::GlobalContext globalContext;
   if (e1.type() == ExpressionNode::Type::MultiplicationExplicite) {
@@ -24,7 +50,7 @@ void assert_multiplication_or_addition_is_ordered_as(Expression e1, Expression e
   quiz_assert(e1.isIdenticalTo(e2));
 }
 
-QUIZ_CASE(poincare_expression_order) {
+QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   {
     // 2 * 5 -> 2 * 5
     Expression e1 = MultiplicationExplicite::Builder(Rational::Builder(2), Rational::Builder(5));

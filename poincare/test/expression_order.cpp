@@ -7,8 +7,6 @@
 
 using namespace Poincare;
 
-// TODO add tests about expression that override simplificationOrderSameType or simplificationOrderGreaterType
-
 void assert_greater(Expression e1, Expression e2) {
   /* ExpressionNode::SimplificationOrder can be used directly (because node
    * getter is private) so we build an addition whose we sort children and we

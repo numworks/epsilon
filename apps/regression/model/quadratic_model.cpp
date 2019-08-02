@@ -9,7 +9,7 @@
 #include <poincare/number.h>
 #include <poincare/symbol.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/power.h>
 
 using namespace Poincare;
@@ -70,12 +70,12 @@ Expression QuadraticModel::expression(double * modelCoefficients) {
   double c = modelCoefficients[2];
   // a*x^2+b*x+c
   Expression addChildren[] = {
-    MultiplicationExplicite::Builder(
+    MultiplicationExplicit::Builder(
       Number::DecimalNumber(a),
       Power::Builder(
         Symbol::Builder('x'),
         Decimal::Builder(2.0))),
-    MultiplicationExplicite::Builder(
+    MultiplicationExplicit::Builder(
       Number::DecimalNumber(b),
       Symbol::Builder('x')),
     Number::DecimalNumber(c)

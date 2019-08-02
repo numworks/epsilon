@@ -1,5 +1,5 @@
-#include <poincare/multiplication_explicite.h>
-#include <poincare/multiplication_implicite.h>
+#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication_implicit.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
@@ -19,40 +19,40 @@
 
 namespace Poincare {
 
-Expression MultiplicationExpliciteNode::setSign(Sign s, ReductionContext reductionContext) {
+Expression MultiplicationExplicitNode::setSign(Sign s, ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive);
-  return MultiplicationExplicite(this).setSign(s, reductionContext);
+  return MultiplicationExplicit(this).setSign(s, reductionContext);
 }
 
-Layout MultiplicationExpliciteNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MultiplicationExplicitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
   SerializationHelper::CodePoint(string, stringMaxSize, UCodePointMultiplicationSign);
-  return LayoutHelper::Infix(MultiplicationExplicite(this), floatDisplayMode, numberOfSignificantDigits, string);
+  return LayoutHelper::Infix(MultiplicationExplicit(this), floatDisplayMode, numberOfSignificantDigits, string);
 }
 
-int MultiplicationExpliciteNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int MultiplicationExplicitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
   SerializationHelper::CodePoint(string, stringMaxSize, UCodePointMultiplicationSign);
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
-Expression MultiplicationExpliciteNode::shallowReduce(ReductionContext reductionContext) {
-  return MultiplicationExplicite(this).shallowReduce(reductionContext);
+Expression MultiplicationExplicitNode::shallowReduce(ReductionContext reductionContext) {
+  return MultiplicationExplicit(this).shallowReduce(reductionContext);
 }
 
-Expression MultiplicationExpliciteNode::shallowBeautify(ReductionContext reductionContext) {
-  return MultiplicationExplicite(this).shallowBeautify(reductionContext);
+Expression MultiplicationExplicitNode::shallowBeautify(ReductionContext reductionContext) {
+  return MultiplicationExplicit(this).shallowBeautify(reductionContext);
 }
 
-Expression MultiplicationExpliciteNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  return MultiplicationExplicite(this).denominator(context, complexFormat, angleUnit);
+Expression MultiplicationExplicitNode::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  return MultiplicationExplicit(this).denominator(context, complexFormat, angleUnit);
 }
 
-/* MultiplicationExplicite */
+/* MultiplicationExplicit */
 
-Expression MultiplicationExplicite::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
+Expression MultiplicationExplicit::setSign(ExpressionNode::Sign s, ExpressionNode::ReductionContext reductionContext) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
@@ -62,7 +62,7 @@ Expression MultiplicationExplicite::setSign(ExpressionNode::Sign s, ExpressionNo
   return shallowReduce(reductionContext);
 }
 
-Expression MultiplicationExplicite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MultiplicationExplicit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   return privateShallowReduce(reductionContext, true, true);
 }
 
@@ -71,17 +71,17 @@ static bool canOmitSignBefore(ExpressionNode::LayoutShape right) {
   return right == ExpressionNode::LayoutShape::SpecialLetter || right == ExpressionNode::LayoutShape::BoundaryPunctuation;
 }
 
-Expression MultiplicationExplicite::omitMultiplicationWhenPossible() {
+Expression MultiplicationExplicit::omitMultiplicationWhenPossible() {
   int i = 0;
   while (i < numberOfChildren() - 1) {
     Expression childI = childAtIndex(i);
     Expression childI1 = childAtIndex(i+1);
     if (canOmitSignBefore(childI1.node()->leftLayoutShape())) {
-      if (childI.type() == ExpressionNode::Type::MultiplicationImplicite) {
-        static_cast<MultiplicationImplicite &>(childI).addChildAtIndexInPlace(childI1, childI.numberOfChildren(), childI.numberOfChildren());
+      if (childI.type() == ExpressionNode::Type::MultiplicationImplicit) {
+        static_cast<MultiplicationImplicit &>(childI).addChildAtIndexInPlace(childI1, childI.numberOfChildren(), childI.numberOfChildren());
       } else {
-        Expression impliciteMultiplication = MultiplicationImplicite::Builder(childI, childI1);
-        replaceChildAtIndexInPlace(i, impliciteMultiplication);
+        Expression implicitMultiplication = MultiplicationImplicit::Builder(childI, childI1);
+        replaceChildAtIndexInPlace(i, implicitMultiplication);
       }
       removeChildAtIndexInPlace(i+1);
       continue;
@@ -91,7 +91,7 @@ Expression MultiplicationExplicite::omitMultiplicationWhenPossible() {
   return squashUnaryHierarchyInPlace();
 }
 
-Expression MultiplicationExplicite::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
+Expression MultiplicationExplicit::shallowBeautify(ExpressionNode::ReductionContext reductionContext) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
@@ -114,7 +114,7 @@ Expression MultiplicationExplicite::shallowBeautify(ExpressionNode::ReductionCon
   if (thisExp.type() == ExpressionNode::Type::Power) {
     return thisExp.shallowBeautify(reductionContext);
   }
-  assert(thisExp.type() == ExpressionNode::Type::MultiplicationExplicite);
+  assert(thisExp.type() == ExpressionNode::Type::MultiplicationExplicit);
 
   // Step 3: Create a Division if needed
   for (int i = 0; i < numberOfChildren(); i++) {
@@ -143,15 +143,15 @@ Expression MultiplicationExplicite::shallowBeautify(ExpressionNode::ReductionCon
   return thisExp;
 }
 
-Expression MultiplicationExplicite::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Expression MultiplicationExplicit::denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   // WARNING: we do not want to change the expression but to create a new one.
-  MultiplicationExplicite thisClone = clone().convert<MultiplicationExplicite>();
+  MultiplicationExplicit thisClone = clone().convert<MultiplicationExplicit>();
   Expression e = thisClone.mergeNegativePower(context, complexFormat, angleUnit);
   if (e.type() == ExpressionNode::Type::Power) {
     return e.denominator(context, complexFormat, angleUnit);
   } else {
-    assert(e.type() == ExpressionNode::Type::MultiplicationExplicite);
+    assert(e.type() == ExpressionNode::Type::MultiplicationExplicit);
     for (int i = 0; i < e.numberOfChildren(); i++) {
       // a*b^(-1)*... -> a*.../b
       if (e.childAtIndex(i).type() == ExpressionNode::Type::Power
@@ -165,7 +165,7 @@ Expression MultiplicationExplicite::denominator(Context * context, Preferences::
   return Expression();
 }
 
-Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
+Expression MultiplicationExplicit::privateShallowReduce(ExpressionNode::ReductionContext reductionContext, bool shouldExpand, bool canBeInterrupted) {
   {
     Expression e = Expression::defaultShallowReduce();
     if (e.isUndefined()) {
@@ -173,7 +173,7 @@ Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::Reducti
     }
   }
 
-  /* Step 1: MultiplicationExpliciteNode is associative, so let's start by merging children
+  /* Step 1: MultiplicationExplicitNode is associative, so let's start by merging children
    * which also are multiplications themselves. */
   mergeMultiplicationChildrenInPlace();
 
@@ -232,7 +232,7 @@ Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::Reducti
         for (int j = 0; j < newResultM; j++) {
           Addition a = Addition::Builder();
           for (int k = 0; k < n; k++) {
-            Expression e = MultiplicationExplicite::Builder(currentMatrix.matrixChild(i, k).clone(), resultMatrix.matrixChild(k, j).clone());
+            Expression e = MultiplicationExplicit::Builder(currentMatrix.matrixChild(i, k).clone(), resultMatrix.matrixChild(k, j).clone());
             a.addChildAtIndexInPlace(e, a.numberOfChildren(), a.numberOfChildren());
             e.shallowReduce(reductionContext);
           }
@@ -258,7 +258,7 @@ Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::Reducti
       }
       removeChildInPlace(resultMatrix, resultMatrix.numberOfChildren());
       for (int i = 0; i < n*m; i++) {
-        MultiplicationExplicite m = clone().convert<MultiplicationExplicite>();
+        MultiplicationExplicit m = clone().convert<MultiplicationExplicit>();
         Expression entryI = resultMatrix.childAtIndex(i);
         resultMatrix.replaceChildInPlace(entryI, m);
         m.addChildAtIndexInPlace(entryI, m.numberOfChildren(), m.numberOfChildren());
@@ -440,8 +440,8 @@ Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::Reducti
       i--;
     }
     // The real children are both factors of the real and the imaginary multiplication
-    MultiplicationExplicite real = *this;
-    MultiplicationExplicite imag = clone().convert<MultiplicationExplicite>();
+    MultiplicationExplicit real = *this;
+    MultiplicationExplicit imag = clone().convert<MultiplicationExplicit>();
     real.addChildAtIndexInPlace(child.real(), real.numberOfChildren(), real.numberOfChildren());
     imag.addChildAtIndexInPlace(child.imag(), real.numberOfChildren(), real.numberOfChildren());
     ComplexCartesian newComplexCartesian = ComplexCartesian::Builder();
@@ -456,12 +456,12 @@ Expression MultiplicationExplicite::privateShallowReduce(ExpressionNode::Reducti
   return result;
 }
 
-void MultiplicationExplicite::mergeMultiplicationChildrenInPlace() {
+void MultiplicationExplicit::mergeMultiplicationChildrenInPlace() {
   // Multiplication is associative: a*(b*c)->a*b*c
   int i = 0;
   while (i < numberOfChildren()) {
     Expression c = childAtIndex(i);
-    if (c.type() == ExpressionNode::Type::MultiplicationExplicite) {
+    if (c.type() == ExpressionNode::Type::MultiplicationExplicit) {
       mergeChildrenAtIndexInPlace(c, i); // TODO: ensure that matrix children are not swapped to implement MATRIX_EXACT_REDUCING
       continue;
     }
@@ -469,10 +469,10 @@ void MultiplicationExplicite::mergeMultiplicationChildrenInPlace() {
   }
 }
 
-void MultiplicationExplicite::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+void MultiplicationExplicit::factorizeBase(int i, int j, ExpressionNode::ReductionContext reductionContext) {
   /* This function factorizes two children which have a common base. For example
-   * if this is MultiplicationExplicite::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
-   * and this turned into MultiplicationExplicite::Builder(pi^5). */
+   * if this is MultiplicationExplicit::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
+   * and this turned into MultiplicationExplicit::Builder(pi^5). */
 
   Expression e = childAtIndex(j);
   // Step 1: Get rid of the child j
@@ -481,7 +481,7 @@ void MultiplicationExplicite::factorizeBase(int i, int j, ExpressionNode::Reduct
   mergeInChildByFactorizingBase(i, e, reductionContext);
 }
 
-void MultiplicationExplicite::mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext) {
+void MultiplicationExplicit::mergeInChildByFactorizingBase(int i, Expression e, ExpressionNode::ReductionContext reductionContext) {
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base. */
 
@@ -496,17 +496,17 @@ void MultiplicationExplicite::mergeInChildByFactorizingBase(int i, Expression e,
   /* Step 4: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
-  if (p.type() == ExpressionNode::Type::MultiplicationExplicite) {
+  if (p.type() == ExpressionNode::Type::MultiplicationExplicit) {
     mergeMultiplicationChildrenInPlace();
   }
 }
 
-void MultiplicationExplicite::factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext) {
+void MultiplicationExplicit::factorizeExponent(int i, int j, ExpressionNode::ReductionContext reductionContext) {
   /* This function factorizes children which share a common exponent. For
-   * example, it turns MultiplicationExplicite::Builder(2^x,3^x) into MultiplicationExplicite::Builder(6^x). */
+   * example, it turns MultiplicationExplicit::Builder(2^x,3^x) into MultiplicationExplicit::Builder(6^x). */
 
   // Step 1: Find the new base
-  Expression m = MultiplicationExplicite::Builder(Base(childAtIndex(i)), Base(childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
+  Expression m = MultiplicationExplicit::Builder(Base(childAtIndex(i)), Base(childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
   // Step 2: Get rid of one of the children
   removeChildAtIndexInPlace(j);
   // Step 3: Replace the other child
@@ -517,12 +517,12 @@ void MultiplicationExplicite::factorizeExponent(int i, int j, ExpressionNode::Re
   /* Step 5: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
-  if (p.type() == ExpressionNode::Type::MultiplicationExplicite) {
+  if (p.type() == ExpressionNode::Type::MultiplicationExplicit) {
     mergeMultiplicationChildrenInPlace();
   }
 }
 
-Expression MultiplicationExplicite::distributeOnOperandAtIndex(int i, ExpressionNode::ReductionContext reductionContext) {
+Expression MultiplicationExplicit::distributeOnOperandAtIndex(int i, ExpressionNode::ReductionContext reductionContext) {
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
   assert(i >= 0 && i < numberOfChildren());
@@ -532,7 +532,7 @@ Expression MultiplicationExplicite::distributeOnOperandAtIndex(int i, Expression
   Expression childI = childAtIndex(i);
   int numberOfAdditionTerms = childI.numberOfChildren();
   for (int j = 0; j < numberOfAdditionTerms; j++) {
-    MultiplicationExplicite m = clone().convert<MultiplicationExplicite>();
+    MultiplicationExplicit m = clone().convert<MultiplicationExplicit>();
     m.replaceChildAtIndexInPlace(i, childI.childAtIndex(j));
     // Reduce m: pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
@@ -542,8 +542,8 @@ Expression MultiplicationExplicite::distributeOnOperandAtIndex(int i, Expression
   return a.shallowReduce(reductionContext); // Order terms, put under a common denominator if needed
 }
 
-void MultiplicationExplicite::addMissingFactors(Expression factor, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
-  if (factor.type() == ExpressionNode::Type::MultiplicationExplicite) {
+void MultiplicationExplicit::addMissingFactors(Expression factor, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+  if (factor.type() == ExpressionNode::Type::MultiplicationExplicit) {
     for (int j = 0; j < factor.numberOfChildren(); j++) {
       addMissingFactors(factor.childAtIndex(j), context, complexFormat, angleUnit);
     }
@@ -590,7 +590,7 @@ void MultiplicationExplicite::addMissingFactors(Expression factor, Context * con
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) { return ExpressionNode::SimplificationOrder(e1, e2, true, canBeInterrupted); }, context, true);
 }
 
-void MultiplicationExplicite::factorizeSineAndCosine(int i, int j, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+void MultiplicationExplicit::factorizeSineAndCosine(int i, int j, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -630,7 +630,7 @@ void MultiplicationExplicite::factorizeSineAndCosine(int i, int j, Context * con
   }
 }
 
-bool MultiplicationExplicite::HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2) {
+bool MultiplicationExplicit::HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2) {
   assert(e1.numberOfChildren() > 0);
   assert(e2.numberOfChildren() > 0);
   int numberOfNonNumeralFactors1 = e1.childAtIndex(0).isNumber() ? e1.numberOfChildren()-1 : e1.numberOfChildren();
@@ -651,26 +651,26 @@ bool MultiplicationExplicite::HaveSameNonNumeralFactors(const Expression & e1, c
   return true;
 }
 
-const Expression MultiplicationExplicite::CreateExponent(Expression e) {
+const Expression MultiplicationExplicit::CreateExponent(Expression e) {
   Expression result = e.type() == ExpressionNode::Type::Power ? e.childAtIndex(1).clone() : Rational::Builder(1);
   return result;
 }
 
-bool MultiplicationExplicite::TermsHaveIdenticalBase(const Expression & e1, const Expression & e2) {
+bool MultiplicationExplicit::TermsHaveIdenticalBase(const Expression & e1, const Expression & e2) {
   return Base(e1).isIdenticalTo(Base(e2));
 }
 
-bool MultiplicationExplicite::TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2) {
+bool MultiplicationExplicit::TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2) {
   /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
    * that these have the same exponent whose value is 1. */
   return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
 }
 
-bool MultiplicationExplicite::TermHasNumeralBase(const Expression & e) {
+bool MultiplicationExplicit::TermHasNumeralBase(const Expression & e) {
   return Base(e).isNumber();
 }
 
-bool MultiplicationExplicite::TermHasNumeralExponent(const Expression & e) {
+bool MultiplicationExplicit::TermHasNumeralExponent(const Expression & e) {
   if (e.type() != ExpressionNode::Type::Power) {
     return true;
   }
@@ -680,10 +680,10 @@ bool MultiplicationExplicite::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-Expression MultiplicationExplicite::mergeNegativePower(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+Expression MultiplicationExplicit::mergeNegativePower(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   /* mergeNegativePower groups all factors that are power of form a^(-b) together
    * for instance, a^(-1)*b^(-c)*c = c*(a*b^c)^(-1) */
-  MultiplicationExplicite m = MultiplicationExplicite::Builder();
+  MultiplicationExplicit m = MultiplicationExplicit::Builder();
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !childAtIndex(0).convert<Rational>().isInteger()) {
     Rational r = childAtIndex(0).convert<Rational>();
@@ -724,7 +724,7 @@ Expression MultiplicationExplicite::mergeNegativePower(Context * context, Prefer
   return squashUnaryHierarchyInPlace();
 }
 
-const Expression MultiplicationExplicite::Base(const Expression e) {
+const Expression MultiplicationExplicit::Base(const Expression e) {
   if (e.type() == ExpressionNode::Type::Power) {
     return e.childAtIndex(0);
   }

@@ -151,7 +151,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
   }
   leftHandSide = m_currentToken.expression();
   if (m_nextToken.is(Token::Number)) {
-    m_status = Status::Error; // No implicite multiplication between two numbers
+    m_status = Status::Error; // No implicit multiplication between two numbers
     return;
   }
   isThereImplicitMultiplication();
@@ -196,11 +196,11 @@ void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Times)) {
-    if (leftHandSide.type() == ExpressionNode::Type::MultiplicationExplicite) {
+    if (leftHandSide.type() == ExpressionNode::Type::MultiplicationExplicit) {
       int childrenCount = leftHandSide.numberOfChildren();
-      static_cast<MultiplicationExplicite &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
+      static_cast<MultiplicationExplicit &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
     } else {
-      leftHandSide = MultiplicationExplicite::Builder(leftHandSide, rightHandSide);
+      leftHandSide = MultiplicationExplicit::Builder(leftHandSide, rightHandSide);
     }
   }
 }
@@ -215,7 +215,7 @@ void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
-    leftHandSide = MultiplicationImplicite::Builder(leftHandSide, rightHandSide);
+    leftHandSide = MultiplicationImplicit::Builder(leftHandSide, rightHandSide);
   }
 }
 

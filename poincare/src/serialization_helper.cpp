@@ -138,12 +138,32 @@ int InfixPrefix(
         }
       }
       // Write the child, with or without parentheses if needed
-      numberOfChar+= prefix ?
-        node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits) :
-        SerializationHelper::SerializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
-      if (numberOfChar >= bufferSize-1) {
-        assert(buffer[bufferSize - 1] == 0);
-        return bufferSize-1;
+      if (prefix) {
+        if (needsSystemParentheses && (childrenCount > 1)) {
+          numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+          if (numberOfChar >= bufferSize-1) {
+            assert(buffer[bufferSize - 1] == 0);
+            return bufferSize-1;
+          }
+        }
+        numberOfChar += node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
+        if (numberOfChar >= bufferSize-1) {
+          assert(buffer[bufferSize - 1] == 0);
+          return bufferSize-1;
+        }
+        if (needsSystemParentheses && (childrenCount > 1)) {
+          numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+          if (numberOfChar >= bufferSize-1) {
+            assert(buffer[bufferSize - 1] == 0);
+            return bufferSize-1;
+          }
+        }
+      } else {
+        numberOfChar += SerializationHelper::SerializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
+        if (numberOfChar >= bufferSize-1) {
+          assert(buffer[bufferSize - 1] == 0);
+          return bufferSize-1;
+        }
       }
     }
   }

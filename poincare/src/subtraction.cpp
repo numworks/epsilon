@@ -2,7 +2,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/opposite.h>
 #include <poincare/rational.h>
 #include <assert.h>
@@ -54,7 +54,7 @@ Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reduction
   if (e.isUndefined()) {
     return e;
   }
-  Expression m = MultiplicationExplicite::Builder(Rational::Builder(-1), childAtIndex(1));
+  Expression m = MultiplicationExplicit::Builder(Rational::Builder(-1), childAtIndex(1));
   Addition a = Addition::Builder(childAtIndex(0), m);
   m = m.shallowReduce(reductionContext);
   replaceWithInPlace(a);

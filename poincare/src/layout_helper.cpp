@@ -57,7 +57,7 @@ Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
   return result;
 }
 
-HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::String(const char * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   UTF8Decoder decoder(buffer);
@@ -81,20 +81,21 @@ HorizontalLayout LayoutHelper::String(const char * buffer, int bufferLen, const 
       nextPointer = decoder.stringPosition();
     }
   }
-  return resultLayout;
+  return resultLayout.squashUnaryHierarchyInPlace();
 }
 
-HorizontalLayout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
+Layout LayoutHelper::CodePointString(const CodePoint * buffer, int bufferLen, const KDFont * font) {
   assert(bufferLen > 0);
   HorizontalLayout resultLayout = HorizontalLayout::Builder();
   for (int i = 0; i < bufferLen; i++) {
     resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i], font), i, i, nullptr);
   }
-  return resultLayout;
+  return resultLayout.squashUnaryHierarchyInPlace();
 }
 
 Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
-  HorizontalLayout resultLayout = String("log", 3);
+  Layout logLayout = String("log", 3);
+  HorizontalLayout resultLayout = static_cast<HorizontalLayout &>(logLayout);
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);

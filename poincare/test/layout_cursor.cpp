@@ -61,8 +61,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
   // int(•, x, •, •)
   l = IntegralLayout::Builder(
       EmptyLayout::Builder(),
-      HorizontalLayout::Builder(
-        CodePointLayout::Builder('x')),
+      CodePointLayout::Builder('x'),
       EmptyLayout::Builder(),
       EmptyLayout::Builder());
   e = Integral::Builder(

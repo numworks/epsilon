@@ -57,7 +57,7 @@ bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
      * abscissa within the interesting range, the complexity of the cumulative
      * probability is linear with the size of the range. Here we cap the maximal
      * size of the range to 10000. If one day we want to increase or get rid of
-     *  this cap, we should implement the explicite formula of the cumulative
+     *  this cap, we should implement the explicit formula of the cumulative
      *  probability (which depends on an incomplete beta function) to make the
      *  comlexity O(1). */
     if (x != (int)x || x < 0.0f || x > 99999.0f) {

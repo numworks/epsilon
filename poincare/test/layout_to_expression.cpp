@@ -285,9 +285,9 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
           CodePointLayout::Builder('+'),
           CodePointLayout::Builder('5'))),
       CodePointLayout::Builder('3'));
-  e = MultiplicationImplicite::Builder(
+  e = MultiplicationImplicit::Builder(
       Rational::Builder(5),
-      MultiplicationImplicite::Builder(
+      MultiplicationImplicit::Builder(
         Division::Builder(
           Rational::Builder(6),
           Addition::Builder(
@@ -348,6 +348,6 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3'),
         VerticalOffsetLayoutNode::Position::Superscript));
-  e = MultiplicationImplicite::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE), Rational::Builder(3)));
+  e = MultiplicationImplicit::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE), Rational::Builder(3)));
   assert_parsed_layout_is(l, e);
 }

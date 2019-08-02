@@ -84,7 +84,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
           return *this;
         }
         Expression sign = *this;
-        Multiplication m = MultiplicationExplicite::Builder(Rational::Builder(-1));
+        Multiplication m = MultiplicationExplicit::Builder(Rational::Builder(-1));
         replaceWithInPlace(m);
         m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because -x = NAN --> x = NAN
         return m; // m does not need to be shallowReduced, -1*sign cannot be reduced

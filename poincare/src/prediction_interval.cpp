@@ -1,7 +1,7 @@
 #include <poincare/prediction_interval.h>
 #include <poincare/matrix.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/power.h>
 #include <poincare/undefined.h>
 #include <poincare/division.h>
@@ -89,9 +89,9 @@ Expression PredictionInterval::shallowReduce(ExpressionNode::ReductionContext re
   }
   // Compute sqr = sqrt(r0*(1-r0)/r1)
   Expression sqr = Power::Builder(Division::Builder(numerator, r1), Rational::Builder(1, 2));
-  Expression m = MultiplicationExplicite::Builder(Rational::Builder(196, 100), sqr);
+  Expression m = MultiplicationExplicit::Builder(Rational::Builder(196, 100), sqr);
   Matrix matrix = Matrix::Builder();
-  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), MultiplicationExplicite::Builder(Rational::Builder(-1), m.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), MultiplicationExplicit::Builder(Rational::Builder(-1), m.clone())), 0, 0);
   matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);

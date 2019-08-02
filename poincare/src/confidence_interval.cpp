@@ -1,7 +1,7 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/addition.h>
 #include <poincare/matrix.h>
-#include <poincare/multiplication_explicite.h>
+#include <poincare/multiplication_explicit.h>
 #include <poincare/power.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -84,7 +84,7 @@ Expression ConfidenceInterval::shallowReduce(ExpressionNode::ReductionContext re
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
   Expression sqr = Power::Builder(r1, Rational::Builder(-1, 2));
   Matrix matrix = Matrix::Builder();
-  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), MultiplicationExplicite::Builder(Rational::Builder(-1), sqr.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition::Builder(r0.clone(), MultiplicationExplicit::Builder(Rational::Builder(-1), sqr.clone())), 0, 0);
   matrix.addChildAtIndexInPlace(Addition::Builder(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
   replaceWithInPlace(matrix);

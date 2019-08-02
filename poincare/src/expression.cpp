@@ -111,7 +111,7 @@ bool Expression::IsRandom(const Expression e, Context * context) {
 }
 
 bool Expression::IsNAry(const Expression e, Context * context) {
-  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::MultiplicationExplicite || e.type() == ExpressionNode::Type::MultiplicationImplicite;
+  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::MultiplicationExplicit || e.type() == ExpressionNode::Type::MultiplicationImplicit;
 }
 
 bool Expression::IsMatrix(const Expression e, Context * context) {
@@ -584,12 +584,12 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return MultiplicationExplicite::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+  return MultiplicationExplicit::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return MultiplicationExplicite::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
+  return MultiplicationExplicit::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
 }
 
 Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -617,8 +617,8 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
     }
   }
   // We choose whether or not to omit multiplication sign after beautifying parent and child
-  if (e.type() == ExpressionNode::Type::MultiplicationExplicite) {
-    e = static_cast<MultiplicationExplicite &>(e).omitMultiplicationWhenPossible();
+  if (e.type() == ExpressionNode::Type::MultiplicationExplicit) {
+    e = static_cast<MultiplicationExplicit &>(e).omitMultiplicationWhenPossible();
   }
   return e;
 }
@@ -695,7 +695,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           imag = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          imag = MultiplicationImplicite::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          imag = MultiplicationImplicit::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
           imag.shallowAddMissingParenthesis();
         }
       }
@@ -730,7 +730,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           arg = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          arg = MultiplicationImplicite::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          arg = MultiplicationImplicit::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
@@ -744,7 +744,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       } else if (norm.isUninitialized()) {
         return exp;
       } else {
-        Expression result = MultiplicationImplicite::Builder(norm, exp);
+        Expression result = MultiplicationImplicit::Builder(norm, exp);
         result.shallowAddMissingParenthesis();
         return result;
       }

@@ -14,7 +14,7 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(I18n::Message::Explicit, cellLayout),
+  m_explicitCell(I18n::Message::Explicit, cellLayout),
   m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
   m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
   m_layouts{},
@@ -99,7 +99,7 @@ int TypeParameterController::numberOfRows() {
 HighlightCell * TypeParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell * cells[] = {&m_expliciteCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
+  HighlightCell * cells[] = {&m_explicitCell, &m_singleRecurrenceCell, &m_doubleRecurenceCell};
   return cells[index];
 }
 

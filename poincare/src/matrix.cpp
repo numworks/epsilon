@@ -323,6 +323,7 @@ Matrix Matrix::createTranspose() const {
 Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionContext, bool * couldComputeInverse) const {
   int dim = numberOfRows();
   if (dim != numberOfColumns()) {
+    *couldComputeInverse = true;
     return Undefined::Builder();
   }
   Expression result = computeInverseOrDeterminant(false, reductionContext, couldComputeInverse);

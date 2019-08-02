@@ -176,7 +176,7 @@ bool CalculationStore::serializeExpression(Expression e, char * location, char *
   assert(m_slidedBuffer);
   return pushExpression(
       [](char * location, size_t locationSize, void * e) {
-        return PoincareHelpers::Serialize(*(Expression *)e, location, locationSize) < locationSize-1;
+        return PoincareHelpers::Serialize(*(Expression *)e, location, locationSize) < (int)locationSize-1;
       }, &e, location, newCalculationsLocation);
 }
 

@@ -17,7 +17,8 @@ public:
     Exponential,
     Normal,
     Poisson,
-    ChiSquared
+    ChiSquared,
+    Student
   };
   virtual ~Law() = default;
   virtual I18n::Message title() = 0;

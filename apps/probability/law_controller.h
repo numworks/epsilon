@@ -34,7 +34,7 @@ private:
     SelectableTableView * m_selectableTableView;
   };
   void setLawAccordingToIndex(int index);
-  constexpr static int k_totalNumberOfModels = 5;
+  constexpr static int k_totalNumberOfModels = 7;
   Cell m_cells[k_totalNumberOfModels];
   SelectableTableView m_selectableTableView;
   ContentView m_contentView;

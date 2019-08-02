@@ -159,7 +159,7 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     return bufferSize-1;
   }
 
-  /* Add an system parenthesis to avoid serializing:
+  /* Add system parentheses to avoid serializing:
    *   2)+(1
    *    ∫    (5)dx
    *    1
@@ -169,7 +169,12 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     return bufferSize-1;
   }
 
-  LayoutNode * argLayouts[] = {const_cast<IntegralLayoutNode *>(this)->integrandLayout(), const_cast<IntegralLayoutNode *>(this)->differentialLayout(), const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout(), const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()};
+  LayoutNode * argLayouts[] = {
+    const_cast<IntegralLayoutNode *>(this)->integrandLayout(),
+    const_cast<IntegralLayoutNode *>(this)->differentialLayout(),
+    const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout(),
+    const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()};
+
   for (uint8_t i = 0; i < sizeof(argLayouts)/sizeof(argLayouts[0]); i++) {
     if (i != 0) {
       // Write the comma

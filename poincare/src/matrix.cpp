@@ -1,4 +1,5 @@
 #include <poincare/matrix.h>
+#include <poincare/addition.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix_complex.h>
@@ -117,7 +118,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool inPlace) {
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
   ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, ExpressionNode::ReductionTarget::System);
-  m = m.rowCanonize(systemReductionContext);
+  m = m.rowCanonize(systemReductionContext, nullptr);
   int rank = m.numberOfRows();
   int i = rank-1;
   while (i >= 0) {
@@ -169,10 +170,12 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext) {
+Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext, Expression * determinant) {
   Expression::SetInterruption(false);
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
+
+  MultiplicationExplicite det = MultiplicationExplicite::Builder();
 
   int m = numberOfRows();
   int n = numberOfColumns();
@@ -189,15 +192,27 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext) {
     if (iPivot == m) {
       // No non-null coefficient in this column, skip
       k++;
+      if (determinant) {
+        // Update determinant: det *= 0
+        det.addChildAtIndexInPlace(Rational::Builder(0), det.numberOfChildren(), det.numberOfChildren());
+      }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
           swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
+        if (determinant) {
+          // Update determinant: det *= -1
+          det.addChildAtIndexInPlace(Rational::Builder(-1), det.numberOfChildren(), det.numberOfChildren());
+        }
       }
-      /* Set to 1 M[h][k] by linear combination */
+      // Set to 1 M[h][k] by linear combination
       Expression divisor = matrixChild(h, k);
+      // Update determinant: det *= divisor
+      if (determinant) {
+        det.addChildAtIndexInPlace(divisor.clone(), det.numberOfChildren(), det.numberOfChildren());
+      }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
@@ -222,6 +237,9 @@ Matrix Matrix::rowCanonize(ExpressionNode::ReductionContext reductionContext) {
       h++;
       k++;
     }
+  }
+  if (determinant) {
+    *determinant = det;
   }
   return *this;
 }
@@ -254,7 +272,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
         // Update determinant: det *= -1
         if (determinant) { *determinant *= -1.0; }
       }
-      /* Set to 1 array[h][k] by linear combination */
+      // Set to 1 array[h][k] by linear combination
       T divisor = array[h*numberOfColumns+k];
       // Update determinant: det *= divisor
       if (determinant) { *determinant *= divisor; }
@@ -307,28 +325,102 @@ Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionConte
   if (dim != numberOfColumns()) {
     return Undefined::Builder();
   }
-  /* If the matrix is too big, the inversion might not be computed exactly
+  Expression result = computeInverseOrDeterminant(false, reductionContext, couldComputeInverse);
+  assert(!(*couldComputeInverse) || !result.isUninitialized());
+  return result;
+}
+
+Expression Matrix::determinant(ExpressionNode::ReductionContext reductionContext, bool * couldComputeDeterminant, bool inPlace) {
+  *couldComputeDeterminant = true;
+  Matrix m = inPlace ? *this : clone().convert<Matrix>();
+  int dim = m.numberOfRows();
+  if (dim != m.numberOfColumns()) {
+    // Determinant is for square matrices
+    return Undefined::Builder();
+  }
+  // Explicit formulas for dimensions from 1 to 3
+  if (dim == 1) {
+    // Determinant of [[a]] is a
+    return m.childAtIndex(0);
+  }
+  if (dim == 2) {
+    /*                |a b|
+     * Determinant of |c d| is ad-bc   */
+    MultiplicationExplicite ad = MultiplicationExplicite::Builder(m.matrixChild(0,0), m.matrixChild(1,1));
+    MultiplicationExplicite bc = MultiplicationExplicite::Builder(m.matrixChild(0,1), m.matrixChild(1,0));
+    Expression result = Subtraction::Builder(ad, bc);
+    ad.shallowReduce(reductionContext);
+    bc.shallowReduce(reductionContext);
+    return result;
+  }
+  if (dim == 3) {
+    /*                |a b c|
+     * Determinant of |d e f| is aei+bfg+cdh-ceg-bdi-afh
+     *                |g h i|                             */
+    Expression a = m.matrixChild(0,0);
+    Expression b = m.matrixChild(0,1);
+    Expression c = m.matrixChild(0,2);
+    Expression d = m.matrixChild(1,0);
+    Expression e = m.matrixChild(1,1);
+    Expression f = m.matrixChild(1,2);
+    Expression g = m.matrixChild(2,0);
+    Expression h = m.matrixChild(2,1);
+    Expression i = m.matrixChild(2,2);
+    constexpr int additionChildrenCount = 6;
+    Expression additionChildren[additionChildrenCount] = {
+      MultiplicationExplicite::Builder(a.clone(), e.clone(), i.clone()),
+      MultiplicationExplicite::Builder(b.clone(), f.clone(), g.clone()),
+      MultiplicationExplicite::Builder(c.clone(), d.clone(), h.clone()),
+      MultiplicationExplicite::Builder(Rational::Builder(-1), c, e, g),
+      MultiplicationExplicite::Builder(Rational::Builder(-1), b, d, i),
+      MultiplicationExplicite::Builder(Rational::Builder(-1), a, f, h)};
+    Expression result = Addition::Builder(additionChildren, additionChildrenCount);
+    for (int i = 0; i < additionChildrenCount; i++) {
+      additionChildren[i].shallowReduce(reductionContext);
+    }
+    return result;
+  }
+
+  // Dimension >= 4
+  Expression result = computeInverseOrDeterminant(true, reductionContext, couldComputeDeterminant);
+  assert(!(*couldComputeDeterminant) || !result.isUninitialized());
+  return result;
+}
+
+Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, ExpressionNode::ReductionContext reductionContext, bool * couldCompute) const {
+  assert(numberOfRows() == numberOfColumns());
+  int dim = numberOfRows();
+  /* If the matrix is too big, the rowCanonization might not be computed exactly
    * because of a pool allocation error, but we might still be able to compute
-   * it approximately. We thus encapsulate the inversion creation in an
-   * exception checkpoint.
+   * it approximately. We thus encapsulate the inverse/determinant creation in
+   * an exception checkpoint.
    * We can safely use an exception checkpoint here because we are sure of not
    * modifying any pre-existing node in the pool. We are sure there is no Store
    * in the matrix. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    /* Create the matrix inv = (A|I) with A is the input matrix and I the dim
+    *couldCompute = true;
+    /* Create the matrix (A|I) with A is the input matrix and I the dim
      * identity matrix */
     Matrix matrixAI = Matrix::Builder();
     for (int i = 0; i < dim; i++) {
       for (int j = 0; j < dim; j++) {
-        matrixAI.addChildAtIndexInPlace(const_cast<Matrix *>(this)->matrixChild(i, j).clone(), i*2*dim+j, i*2*dim+j);
+        Expression mChildIJ = const_cast<Matrix *>(this)->matrixChild(i, j);
+        matrixAI.addChildAtIndexInPlace(mChildIJ.clone(), i*2*dim+j, i*2*dim+j);
       }
       for (int j = dim; j < 2*dim; j++) {
         matrixAI.addChildAtIndexInPlace(j-dim == i ? Rational::Builder(1) : Rational::Builder(0), i*2*dim+j, i*2*dim+j);
       }
     }
     matrixAI.setDimensions(dim, 2*dim);
-    matrixAI = matrixAI.rowCanonize(reductionContext);
+    if (computeDeterminant) {
+      // Compute the determinant
+      Expression d;
+      matrixAI.rowCanonize(reductionContext, &d);
+      return d;
+    }
+    // Compute the inverse
+    matrixAI = matrixAI.rowCanonize(reductionContext, nullptr);
     // Check inversibility
     for (int i = 0; i < dim; i++) {
       if (!matrixAI.matrixChild(i, i).isRationalOne()) {
@@ -342,13 +434,13 @@ Expression Matrix::createInverse(ExpressionNode::ReductionContext reductionConte
       }
     }
     inverse.setDimensions(dim, dim);
-    *couldComputeInverse = true;
     return inverse;
   } else {
-    *couldComputeInverse = false;
+    *couldCompute = false;
     return Expression();
   }
 }
+
 
 template int Matrix::ArrayInverse<float>(float *, int, int);
 template int Matrix::ArrayInverse<double>(double *, int, int);

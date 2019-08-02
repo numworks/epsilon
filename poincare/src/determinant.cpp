@@ -50,50 +50,10 @@ Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reduction
   }
   if (c0.type() == ExpressionNode::Type::Matrix) {
     Matrix m0 = static_cast<Matrix &>(c0);
-    int dim = m0.numberOfRows();
-    if (dim != m0.numberOfColumns()) {
-      // Determinant is for square matrices
-      return replaceWithUndefinedInPlace();
-    }
-    Expression result;
-    if (dim == 1) {
-      // Determinant of [[a]] is a
-      result = m0.childAtIndex(0);
-    } else if (dim == 2) {
-      /*                |a b|
-       * Determinant of |c d| is ad-bc   */
-      MultiplicationExplicite ad = MultiplicationExplicite::Builder(m0.matrixChild(0,0), m0.matrixChild(1,1));
-      MultiplicationExplicite bc = MultiplicationExplicite::Builder(m0.matrixChild(0,1), m0.matrixChild(1,0));
-      result = Subtraction::Builder(ad, bc);
-      ad.shallowReduce(reductionContext);
-      bc.shallowReduce(reductionContext);
-    } else if (dim == 3) {
-      /*                |a b c|
-       * Determinant of |d e f| is aei+bfg+cdh-ceg-bdi-afh
-       *                |g h i|                             */
-      Expression a = m0.matrixChild(0,0);
-      Expression b = m0.matrixChild(0,1);
-      Expression c = m0.matrixChild(0,2);
-      Expression d = m0.matrixChild(1,0);
-      Expression e = m0.matrixChild(1,1);
-      Expression f = m0.matrixChild(1,2);
-      Expression g = m0.matrixChild(2,0);
-      Expression h = m0.matrixChild(2,1);
-      Expression i = m0.matrixChild(2,2);
-      constexpr int additionChildrenCount = 6;
-      Expression additionChildren[additionChildrenCount] = {
-        MultiplicationExplicite::Builder(a.clone(), e.clone(), i.clone()),
-        MultiplicationExplicite::Builder(b.clone(), f.clone(), g.clone()),
-        MultiplicationExplicite::Builder(c.clone(), d.clone(), h.clone()),
-        MultiplicationExplicite::Builder(Rational::Builder(-1), c, e, g),
-        MultiplicationExplicite::Builder(Rational::Builder(-1), b, d, i),
-        MultiplicationExplicite::Builder(Rational::Builder(-1), a, f, h)};
-      result = Addition::Builder(additionChildren, additionChildrenCount);
-      for (int i = 0; i < additionChildrenCount; i++) {
-        additionChildren[i].shallowReduce(reductionContext);
-      }
-    }
-    if (!result.isUninitialized()) {
+    bool couldComputeDeterminant = true;
+    Expression result = m0.determinant(reductionContext, &couldComputeDeterminant, true);
+    if (couldComputeDeterminant) {
+      assert(!result.isUninitialized());
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
     }

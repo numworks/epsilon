@@ -18,7 +18,7 @@ QUIZ_CASE(poincare_layout_serialization) {
   // BinomialCoefficientLayout
   assert_layout_serialize_to(
       BinomialCoefficientLayout::Builder(CodePointLayout::Builder('7'), CodePointLayout::Builder('6')),
-      "binomial\u00127,6\u0013");
+      "binomial\u0012\u00127\u0013,\u00126\u0013\u0013");
 
   // Bracket and BracketPairLayout -> Tested by other layouts
 
@@ -98,7 +98,7 @@ QUIZ_CASE(poincare_layout_serialization) {
       NthRootLayout::Builder(
         CodePointLayout::Builder('7'),
         CodePointLayout::Builder('6')),
-      "root\u00127,6\u0013");
+      "root\u0012\u00127\u0013,\u00126\u0013\u0013");
 
   // ParenthesisLayout -> Tested by Left/RightParenthesisLayout
 
@@ -109,7 +109,7 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('x'),
         CodePointLayout::Builder('2'),
         CodePointLayout::Builder('3')),
-      "prod\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
+      "product\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
 
   // RightParenthesisLayout
   assert_layout_serialize_to(

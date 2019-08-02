@@ -19,6 +19,7 @@ app_probability_src = $(addprefix apps/probability/,\
   cell.cpp \
   image_cell.cpp \
   law/binomial_law.cpp \
+  law/chi_squared_law.cpp \
   law/exponential_law.cpp \
   law/normal_law.cpp \
   law/poisson_law.cpp \

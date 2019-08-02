@@ -155,10 +155,13 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("1+2", Addition::Builder(Rational::Builder(1),Rational::Builder(2)));
   assert_parsed_expression_is("(1)+2", Addition::Builder(Parenthesis::Builder(Rational::Builder(1)),Rational::Builder(2)));
   assert_parsed_expression_is("(1+2)", Parenthesis::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2))));
-  assert_parsed_expression_is("1+2+3", Addition::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
-  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder(Addition::Builder(Rational::Builder(1),Rational::Builder(2)),Parenthesis::Builder(Addition::Builder(Rational::Builder(3),Rational::Builder(4)))));
+  Expression nAryChildren[] = {Rational::Builder(1),Rational::Builder(2),Rational::Builder(3)};
+  assert_parsed_expression_is("1+2+3", Addition::Builder(nAryChildren, 3));
+  nAryChildren[2] = Parenthesis::Builder(Addition::Builder(Rational::Builder(3),Rational::Builder(4)));
+  assert_parsed_expression_is("1+2+(3+4)", Addition::Builder(nAryChildren, 3));
   assert_parsed_expression_is("1×2", MultiplicationExplicit::Builder(Rational::Builder(1),Rational::Builder(2)));
-  assert_parsed_expression_is("1×2×3", MultiplicationExplicit::Builder(MultiplicationExplicit::Builder(Rational::Builder(1),Rational::Builder(2)),Rational::Builder(3)));
+  nAryChildren[2] = Rational::Builder(3);
+  assert_parsed_expression_is("1×2×3", MultiplicationExplicit::Builder(nAryChildren, 3));
   assert_parsed_expression_is("1+2×3", Addition::Builder(Rational::Builder(1), MultiplicationExplicit::Builder(Rational::Builder(2), Rational::Builder(3))));
   assert_parsed_expression_is("1/2", Division::Builder(Rational::Builder(1),Rational::Builder(2)));
   assert_parsed_expression_is("(1/2)", Parenthesis::Builder(Division::Builder(Rational::Builder(1),Rational::Builder(2))));

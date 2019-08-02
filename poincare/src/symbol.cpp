@@ -89,7 +89,7 @@ Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
   const char * sequenceIndex[] = {"n", "n+1"};
   for (char sequenceName = 'u'; sequenceName <= 'w'; sequenceName++) {
     if (m_name[0] == sequenceName) {
-      for (int i = 0; i < sizeof(sequenceIndex)/sizeof(char *); i++) {
+      for (size_t i = 0; i < sizeof(sequenceIndex)/sizeof(char *); i++) {
         size_t sequenceIndexLength = strlen(sequenceIndex[i]);
         if (m_name[1] == '(' && strncmp(sequenceIndex[i], m_name+2, sequenceIndexLength) == 0 && m_name[2+sequenceIndexLength] == ')' && m_name[3+sequenceIndexLength] == 0) {
       return HorizontalLayout::Builder(

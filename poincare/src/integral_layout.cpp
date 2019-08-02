@@ -159,6 +159,15 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     return bufferSize-1;
   }
 
+  /* TODO
+   * For now, we serialize
+   *    2
+   *    ∫3dx as int{{3},{x},{1},{2}}
+   *    1
+   * To save space, we could serialize it as int{3}{x}{1}{2} and modify the
+   * parser accordingly.
+   * This could be done for other layouts too. */
+
   /* Add system parentheses to avoid serializing:
    *   2)+(1          2),1
    *    ∫    (5)dx or  ∫    (5)dx

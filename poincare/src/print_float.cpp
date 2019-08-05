@@ -112,20 +112,20 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   // Round mantissa to get the right number of significant digits
   T mantissa = std::round(unroundedMantissa);
 
-  /* if numberOfSignificantDigits -1 - exponentInBase10
-   * is too big (or too small), mantissa is now inf. We handle this case by
-   * using logarithm function. */
+  /* If (numberOfSignificantDigits - 1 - exponentInBase10) is too big (or too
+   * small), mantissa is now inf. We handle this case by using logarithm
+   * function. */
   if (std::isnan(mantissa) || std::isinf(mantissa)) {
     mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(numberOfSignificantDigits -1 - exponentInBase10)));
     mantissa = std::copysign(mantissa, f);
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
    * instance)
-   * NB: the following if-condition would rather be:
+   * NB: the following if-condition should rather be:
    * "exponentBase10(unroundedMantissa) != exponentBase10(mantissa)",
-   * however, unroundedMantissa can have a different exponent than expected
+   * However, unroundedMantissa can have a different exponent than expected
    * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000) */
-  if (f != 0 && IEEE754<T>::exponentBase10(mantissa)-exponentInBase10 != numberOfSignificantDigits - 1 - exponentInBase10) {
+  if (f != 0 && IEEE754<T>::exponentBase10(mantissa) - exponentInBase10 != numberOfSignificantDigits - 1 - exponentInBase10) {
     exponentInBase10++;
   }
 
@@ -143,21 +143,24 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   }
 
   // Number of chars for the mantissa
-  int numberOfCharsForMantissaWithoutSign = exponentInBase10 >= 0 || mode == Preferences::PrintFloatMode::Scientific ? numberOfSignificantDigits : numberOfSignificantDigits - exponentInBase10;
+  int numberOfCharsForMantissaWithoutSign = (exponentInBase10 >= 0 || mode == Preferences::PrintFloatMode::Scientific) ? numberOfSignificantDigits : (numberOfSignificantDigits - exponentInBase10);
 
-  /* The number of digits in an mantissa is capped because the maximal int64_t
-   * is 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
+  /* The number of digits in a mantissa is capped because the maximal int64_t is
+   * 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
    * that we stay beyond this threshold during computation. */
   assert(numberOfSignificantDigits < std::log10(std::pow(2.0f, 63.0f)));
 
-  // Remove the 0 on the right side of the mantissa
+  // Remove the zeroes on the right side of the mantissa
   Integer dividend = Integer((int64_t)mantissa);
   Integer quotient = Integer::Division(dividend, Integer(10)).quotient;
   Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
   int minimumNumberOfCharsInMantissa = 1;
   int numberOfZerosRemoved = 0;
-  while (digit.isZero() && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
-      (numberOfCharsForMantissaWithoutSign > exponentInBase10+1 || mode == Preferences::PrintFloatMode::Scientific)) {
+  while (digit.isZero()
+      && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa
+      && (numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1
+        || mode == Preferences::PrintFloatMode::Scientific))
+  {
     assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     numberOfCharsForMantissaWithoutSign--;
     dividend = quotient;
@@ -172,14 +175,17 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   /* Part II: Decimal marker */
 
   // Force a decimal marker if there is fractional part
-  bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific && numberOfCharsForMantissaWithoutSign > 1) || (mode == Preferences::PrintFloatMode::Decimal && numberOfCharsForMantissaWithoutSign > exponentInBase10 +1);
+  bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific
+      && numberOfCharsForMantissaWithoutSign > 1)
+    || (mode == Preferences::PrintFloatMode::Decimal
+        && numberOfCharsForMantissaWithoutSign > exponentInBase10 +1);
   if (decimalMarker) {
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
   }
 
   /* Find the position of the decimal marker position */
-  int decimalMarkerPosition = exponentInBase10 < 0 || mode == Preferences::PrintFloatMode::Scientific ? 1 : exponentInBase10+1;
+  int decimalMarkerPosition = (exponentInBase10 < 0 || mode == Preferences::PrintFloatMode::Scientific) ? 1 : exponentInBase10+1;
   decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
   assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
 

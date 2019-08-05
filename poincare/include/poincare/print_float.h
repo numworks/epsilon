@@ -10,15 +10,14 @@ class Integer;
 
 
 namespace PrintFloat {
-  // × and · are 2 bytes long, ᴇ and ℯ are 3 bytes long, 𝐢is 4 bytes long.
-  constexpr static int k_multiplicationCodePointByteLength = 2;
+  // ᴇ and ℯ are 3 bytes long
   constexpr static int k_specialECodePointByteLength = 3;
-  constexpr static int k_iComplexCodePointByteLength = 4;
 
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The worst case is -1.234ᴇ-328
     return 2+numberOfSignificantDigits+k_specialECodePointByteLength+1+3+1;
   }
+
   /* This function prints the integer i in the buffer with a '.' at the position
    * specified by the decimalMarkerPosition. It starts printing at the end of the
    * buffer and print from right to left. The integer given should be of the right
@@ -38,19 +37,6 @@ namespace PrintFloat {
    * has the form -1.99999999999999ᴇ-308 (2+15+3+1+3 char) (the auto mode is
    * always shorter. */
   constexpr static int k_maxFloatBufferLength = 2+k_numberOfStoredSignificantDigits+k_specialECodePointByteLength+1+3+1;
-  /* We here define the buffer size to write the longest complex possible. The
-   * worst case has the form
-   * -1.99999999999999ᴇ-308*ℯ^(-1.99999999999999ᴇ-308*𝐢) */
-  constexpr static int k_maxComplexBufferLength =
-    (k_maxFloatBufferLength-1)
-    + k_multiplicationCodePointByteLength
-    + k_specialECodePointByteLength
-    + 2 // Exponent + opening parenthesis
-    + (k_maxFloatBufferLength-1)
-    + k_multiplicationCodePointByteLength
-    + k_iComplexCodePointByteLength
-    + 1 // Closing parenthesis
-    + 1; // Null-terminating char
 
   /* If the buffer size is too small to display the right number of significant
    * digits, the function forces the scientific mode and caps the number of

@@ -28,6 +28,16 @@ void quiz_assert_print_if_failure(bool test, const char * information) {
   quiz_assert(test);
 }
 
+void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
+#if POINCARE_TREE_LOG
+  if (!test) {
+    quiz_print("TEST FAILURE WHILE TESTING:");
+    tree.log();
+  }
+#endif
+  quiz_assert(test);
+}
+
 typedef Expression (*ProcessExpression)(Expression, Context * context, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, ProcessExpression process, int numberOfSignifiantDigits) {

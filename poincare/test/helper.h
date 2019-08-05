@@ -16,6 +16,7 @@ constexpr Poincare::Preferences::PrintFloatMode DecimalMode = Poincare::Preferen
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode = Poincare::Preferences::PrintFloatMode::Scientific;
 
 void quiz_assert_print_if_failure(bool test, const char * information);
+void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
 typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::Context * context, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit);
 

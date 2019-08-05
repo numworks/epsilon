@@ -22,6 +22,11 @@ public:
   void didBecomeFirstResponder() override;
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
+  /* Editable cell might be not wide enough to display
+   * LargeNumberOfSignificantDigits, we update the buffer to the column width. */
+  size_t cellBufferSize(int i) {
+    return columnWidth(i)/KDFont::SmallFont->glyphSize().width()+1;
+  }
 private:
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;

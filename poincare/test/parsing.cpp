@@ -420,6 +420,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("1cos(2)", MultiplicationImplicit::Builder(Rational::Builder(1),Cosine::Builder(Rational::Builder(2))));
   assert_parsed_expression_is("1!2", MultiplicationImplicit::Builder(Factorial::Builder(Rational::Builder(1)),Rational::Builder(2)));
   assert_parsed_expression_is("2ℯ^(3)", MultiplicationImplicit::Builder(Rational::Builder(2),Power::Builder(Constant::Builder(UCodePointScriptSmallE),Parenthesis::Builder(Rational::Builder(3)))));
+  assert_parsed_expression_is("\u00122^3\u00133", MultiplicationImplicit::Builder(Power::Builder(Rational::Builder(2),Rational::Builder(3)), Rational::Builder(3)));
   Expression m1[] = {Rational::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {Rational::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);
   assert_parsed_expression_is("[[1]][[2]]", MultiplicationImplicit::Builder(M1,M2));

@@ -18,16 +18,17 @@ namespace Poincare {
 template<typename T>
 class IEEE754 final {
 public:
-  static uint16_t exponentOffset() {
-    return ((1 <<(k_exponentNbBits-1))-1);
+  static constexpr uint16_t exponentOffset() {
+    return (1 << (k_exponentNbBits - 1)) - 1;
   }
-  static uint16_t maxExponent() {
-    return ((1<<k_exponentNbBits)-1);
+  static constexpr uint16_t maxExponent() {
+    return (1 << k_exponentNbBits) - 1;
   }
   static int size() {
     assert(k_totalNumberOfBits == 8*sizeof(T));
     return k_totalNumberOfBits;
   }
+
   static T buildFloat(bool sign, uint16_t exponent, uint64_t mantissa) {
     static uint64_t oneOnMantissaBits = ((uint64_t)1 << k_mantissaNbBits)-1;
     uint_float u;
@@ -46,7 +47,7 @@ public:
   static int exponent(T f) {
     uint_float u;
     u.f = f;
-    uint16_t oneOnExponentsBits = (1 << k_exponentNbBits)-1;
+    constexpr uint16_t oneOnExponentsBits = maxExponent();
     int exp = (u.ui >> k_mantissaNbBits) & oneOnExponentsBits;
     exp -= exponentOffset();
     return exp;

@@ -1009,6 +1009,10 @@ double Expression::brentRoot(const char * symbol, double ax, double bx, double p
   double d = b-a;
   double e = b-a;
   double fa = evaluation(symbol, a, context, complexFormat, angleUnit, *this, expression);
+  if (fa == 0) {
+    // We are looking for a root. If a is already a root, just return it.
+    return a;
+  }
   double fb = evaluation(symbol, b, context, complexFormat, angleUnit, *this, expression);
   double fc = fb;
   for (int i = 0; i < 100; i++) {

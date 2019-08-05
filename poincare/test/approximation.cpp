@@ -776,7 +776,7 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("√(-1)×√(-1)", "-1", Radian, Cartesian);
   assert_expression_approximates_to<double>("ln(-2)", "6.9314718055995ᴇ-1+3.1415926535898𝐢", Radian, Cartesian);
   assert_expression_approximates_to<double>("(-8)^(1/3)", "1+1.7320508075689𝐢", Radian, Cartesian);
-  assert_expression_approximates_to<float>("(-8)^(2/3)", "-2+3.464102𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<float>("(-8)^(2/3)", "-2+3.4641𝐢", Radian, Cartesian, 6);
   assert_expression_approximates_to<double>("root(-8,3)", "1+1.7320508075689𝐢", Radian, Cartesian);
 
   // Polar

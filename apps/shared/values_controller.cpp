@@ -171,7 +171,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
     double x = m_interval->element(j-1);
-    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, cellBufferSize(i), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
 }

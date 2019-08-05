@@ -76,7 +76,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * 12|34+5 -> "Divide" -> --- + 5
    *                        |34
    * */
-  HorizontalLayout layout = static_cast<HorizontalLayout>(LayoutHelper::String("1234+5", 6));
+  Layout layout = LayoutHelper::String("1234+5", 6);
   LayoutCursor cursor(layout.childAtIndex(2), LayoutCursor::Position::Left);
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_layout_serialize_to(layout, "\u0012\u001212\u0013/\u001234\u0013\u0013+5");

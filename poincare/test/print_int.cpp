@@ -11,7 +11,7 @@ void assert_int_prints_as(int integer, const char * result, bool left) {
   for (int i = 0; i < bufferSize; i++) {
     buffer[i] = 0;
   }
-  bool couldPrint = left ? PrintInt::Left(integer, buffer, bufferSize) : PrintInt::Right(integer, buffer, bufferSize);
+  bool couldPrint = (left ? PrintInt::Left(integer, buffer, bufferSize) : PrintInt::Right(integer, buffer, bufferSize)) < bufferSize;
   quiz_assert(couldPrint);
   int i = 0;
   while (result[i] != 0) {

@@ -36,7 +36,7 @@ void StoreController::ContentView::displayFormulaInput(bool display) {
 }
 
 void StoreController::ContentView::didBecomeFirstResponder() {
-  app()->setFirstResponder(m_displayFormulaInputView ? static_cast<Responder *>(&m_formulaInputView) : static_cast<Responder *>(&m_dataView));
+  Container::activeApp()->setFirstResponder(m_displayFormulaInputView ? static_cast<Responder *>(&m_formulaInputView) : static_cast<Responder *>(&m_dataView));
 }
 
 View * StoreController::ContentView::subviewAtIndex(int index) {
@@ -86,12 +86,12 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     // Handle formula input
     Expression expression = Expression::Parse(textField->text());
     if (expression.isUninitialized()) {
-      app()->displayWarning(I18n::Message::SyntaxError);
+      Container::activeApp()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }
     m_contentView.displayFormulaInput(false);
     if (fillColumnWithFormula(expression)) {
-      app()->setFirstResponder(&m_contentView);
+      Container::activeApp()->setFirstResponder(&m_contentView);
     }
     return true;
   }
@@ -107,7 +107,7 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {
   if (textField == m_contentView.formulaInputView()->textField()) {
     m_contentView.displayFormulaInput(false);
-    app()->setFirstResponder(&m_contentView);
+    Container::activeApp()->setFirstResponder(&m_contentView);
     return true;
   }
   return EditableCellTableViewController::textFieldDidAbortEditing(textField);
@@ -185,7 +185,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
@@ -213,7 +213,7 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
-  app()->setFirstResponder(&m_contentView);
+  Container::activeApp()->setFirstResponder(&m_contentView);
 }
 
 Responder * StoreController::tabController() const {
@@ -258,7 +258,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
   constexpr static int k_maxSizeOfStoreSymbols = 3; // "V1", "N1", "X1", "Y1"
   char variables[Expression::k_maxNumberOfVariables][k_maxSizeOfStoreSymbols];
   variables[0][0] = 0;
-  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
+  AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
   int nbOfVariables = formula.getVariables(*(appsContainer->globalContext()), isVariable, (char *)variables, k_maxSizeOfStoreSymbols);
   (void) nbOfVariables; // Remove compilation warning of nused variable
   assert(nbOfVariables >= 0);
@@ -289,7 +289,7 @@ bool StoreController::privateFillColumnWithFormula(Expression formula, Expressio
     // Compute the new value using the formula
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
     if (std::isnan(evaluation) || std::isinf(evaluation)) {
-      app()->displayWarning(I18n::Message::DataNotSuitable);
+      Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
       return false;
     }
   }

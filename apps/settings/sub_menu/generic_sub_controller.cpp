@@ -1,10 +1,8 @@
 #include "generic_sub_controller.h"
-#include "../../apps_container.h"
 #include <assert.h>
 #include <cmath>
 
 using namespace Poincare;
-using namespace Shared;
 
 namespace Settings {
 
@@ -30,7 +28,7 @@ View * GenericSubController::view() {
 
 void GenericSubController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool GenericSubController::handleEvent(Ion::Events::Event event) {

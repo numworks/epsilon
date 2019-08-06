@@ -23,7 +23,6 @@ public:
 protected:
   static constexpr KDCoordinate k_cellHeight = 20;
 private:
-  TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;

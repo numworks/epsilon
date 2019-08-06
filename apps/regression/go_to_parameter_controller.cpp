@@ -40,7 +40,7 @@ double GoToParameterController::parameterAtIndex(int index) {
 bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   int series = m_graphController->selectedSeriesIndex();
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
   double unknown = m_xPrediction ?
     m_store->yValueForXValue(series, f, globContext) :
     m_store->xValueForYValue(series, f, globContext);
@@ -57,7 +57,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
       }
     }
     // Value not reached
-    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
+    Container::activeApp()->displayWarning(I18n::Message::ValueNotReachedByRegression);
     return false;
   }
   m_graphController->selectRegressionCurve();
@@ -68,7 +68,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
      * because of computation precision. y2 migth thus be invalid. */
     if (std::isnan(yFromX) || std::isinf(yFromX)) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
     m_cursor->moveTo(unknown, yFromX);

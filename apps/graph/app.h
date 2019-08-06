@@ -30,12 +30,15 @@ public:
     CartesianFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   InputViewController * inputViewController() override;
   char XNT() override;
   NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CartesianFunctionStore * functionStore() override { return static_cast<CartesianFunctionStore *>(Shared::FunctionApp::functionStore()); }
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

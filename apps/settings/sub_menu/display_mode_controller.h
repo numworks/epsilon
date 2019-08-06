@@ -20,7 +20,6 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   MessageTableCellWithEditableTextWithSeparator m_editableCell;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
 };

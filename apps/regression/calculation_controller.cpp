@@ -50,7 +50,7 @@ const char * CalculationController::title() {
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   return false;
@@ -78,7 +78,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
     if (previousSelectedCellX == 0 && previousSelectedCellY == 1) {
       selectableTableView()->deselectTable();
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
     } else {
       t->selectCellAtLocation(0, 1);
     }
@@ -203,7 +203,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     Model::Type modelType = m_store->seriesRegressionType(seriesNumber);
 
     // Put dashes if regression is not defined
-    Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+    Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
     double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
     bool coefficientsAreDefined = true;
     int numberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();

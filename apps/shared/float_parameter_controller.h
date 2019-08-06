@@ -39,7 +39,6 @@ private:
   virtual void buttonAction();
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
-  TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
 };
 

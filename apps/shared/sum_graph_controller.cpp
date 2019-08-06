@@ -1,6 +1,5 @@
 #include "sum_graph_controller.h"
 #include "function_app.h"
-#include "../apps_container.h"
 #include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
@@ -45,14 +44,14 @@ void SumGraphController::viewWillAppear() {
 
 
 void SumGraphController::didEnterResponderChain(Responder * previousFirstResponder) {
-  app()->setFirstResponder(m_legendView.textField());
+  Container::activeApp()->setFirstResponder(m_legendView.textField());
 }
 
 bool SumGraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step-1);
     if (m_step == Step::SecondParameter) {
-      app()->setFirstResponder(m_legendView.textField());
+      Container::activeApp()->setFirstResponder(m_legendView.textField());
       m_graphView->setAreaHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
     }
@@ -67,7 +66,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  FunctionApp * myApp = FunctionApp::app();
   assert(!m_record.isNull());
   ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
   double y = function->evaluateAtAbscissa(x, myApp->localContext());
@@ -96,7 +95,7 @@ bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const 
     return false;
   }
   if ((m_step == Step::SecondParameter && floatBody < m_startSum) || !moveCursorHorizontallyToPosition(floatBody)) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   return handleEnter();
@@ -126,7 +125,7 @@ bool SumGraphController::handleEnter() {
     } else {
       m_graphView->setAreaHighlightColor(true);
       m_graphView->setCursorView(nullptr);
-      app()->setFirstResponder(this);
+      Container::activeApp()->setFirstResponder(this);
     }
     m_step = (Step)((int)m_step+1);
     reloadBannerView();
@@ -139,7 +138,7 @@ void SumGraphController::reloadBannerView() {
   double result;
   Poincare::Layout functionLayout;
   if (m_step == Step::Result) {
-    FunctionApp * myApp = static_cast<FunctionApp *>(app());
+    FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
     ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
     result = function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());

@@ -1,4 +1,6 @@
 #include <escher/text_input.h>
+#include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <assert.h>
 
 /* TextInput::ContentView */
@@ -50,8 +52,8 @@ KDRect TextInput::ContentView::dirtyRectFromPosition(const char * position, bool
 
 /* TextInput */
 
-bool TextInput::removeCodePoint() {
-  contentView()->removeCodePoint();
+bool TextInput::removePreviousGlyph() {
+  contentView()->removePreviousGlyph();
   scrollToCursor();
   return true;
 }
@@ -94,6 +96,23 @@ bool TextInput::removeEndOfLine() {
     return true;
   }
   return false;
+}
+
+bool TextInput::moveCursorLeft() {
+  if (cursorLocation() <= text()) {
+    assert(cursorLocation() == text());
+    return false;
+  }
+  UTF8Decoder decoder(text(), cursorLocation());
+  return setCursorLocation(decoder.previousGlyphPosition());
+}
+
+bool TextInput::moveCursorRight() {
+  if (UTF8Helper::CodePointIs(cursorLocation(), UCodePointNull)) {
+    return false;
+  }
+  UTF8Decoder decoder(cursorLocation());
+  return setCursorLocation(decoder.nextGlyphPosition());
 }
 
 bool TextInput::privateRemoveEndOfLine() {

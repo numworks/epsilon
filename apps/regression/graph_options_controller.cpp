@@ -2,7 +2,6 @@
 #include "app.h"
 #include "graph_controller.h"
 #include "regression_controller.h"
-#include <apps/apps_container.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -32,7 +31,7 @@ void GraphOptionsController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 void GraphOptionsController::viewWillAppear() {
@@ -42,7 +41,7 @@ void GraphOptionsController::viewWillAppear() {
 bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     if (selectedRow() == numberOfRows() -1) {
-      RegressionController * regressionController = static_cast<Regression::App *>(app())->regressionController();
+      RegressionController * regressionController = App::app()->regressionController();
       regressionController->setSeries(m_graphController->selectedSeriesIndex());
       StackViewController * stack = static_cast<StackViewController *>(parentResponder());
       stack->push(regressionController);

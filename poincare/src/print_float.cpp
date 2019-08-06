@@ -120,15 +120,13 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
 
-  constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
-  char tempBuffer[tempBufferSize];
   int numberOfZerosRemoved = 0;
-  int requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
+  int requiredLength = ConvertFloatToTextPrivate(f, buffer, bufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
   /* If the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
    * fit the buffer size. */
   if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= bufferSize) {
-    requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+    requiredLength = ConvertFloatToTextPrivate(f, buffer, bufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   if (requiredLength >= bufferSize) {
     /* If the buffer size is still too small and rounding is allowed, we only
@@ -140,11 +138,9 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
     }
     int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - requiredLength + bufferSize - 1;
     adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
-    requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+    requiredLength = ConvertFloatToTextPrivate(f, buffer, bufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
-  requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize-1;
-  strlcpy(buffer, tempBuffer, bufferSize);
-  return requiredLength;
+  return (requiredLength < bufferSize) ? requiredLength : (bufferSize - 1);
 }
 
 template <class T>

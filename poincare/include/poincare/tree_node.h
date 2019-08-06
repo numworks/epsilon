@@ -82,6 +82,7 @@ public:
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 
   // Serialization
+  // Return the number of chars written, without the null-terminating char.
   virtual int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { assert(false); return 0; }
   /* When serializing, we turn a tree into a string. In order not to lose
    * structure information, we sometimes need to add system parentheses (that

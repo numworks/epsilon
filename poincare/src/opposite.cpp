@@ -56,14 +56,12 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '-');
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '-');
   if (numberOfChar >= bufferSize - 1) {
     return bufferSize - 1;
   }
   numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  buffer[numberOfChar] = 0;
   return numberOfChar;
 }
 

@@ -124,7 +124,7 @@ QUIZ_CASE(poincare_serialization_division) {
   assert_expression_serialize_to(Division::Builder(Rational::Builder(2,3), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u00122/3\u0013/π");
   assert_expression_serialize_to(Division::Builder(Addition::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u00122+1\u0013/π");
   assert_expression_serialize_to(Division::Builder(Subtraction::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u00122-1\u0013/π");
-  assert_expression_serialize_to(Division::Builder(MultiplicationExplicit::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u00122×1\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Multiplication::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u00122×1\u0013/π");
   assert_expression_serialize_to(Division::Builder(Division::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u00122/1\u0013/π");
   assert_expression_serialize_to(Division::Builder(Opposite::Builder(Rational::Builder(2)), Constant::Builder(UCodePointGreekSmallLetterPi)), "\u0012-2\u0013/π");
 }
@@ -136,8 +136,8 @@ QUIZ_CASE(poincare_serialization_factorial) {
 }
 
 QUIZ_CASE(poincare_serialization_mutiplication_implicite) {
-  assert_expression_serialize_to(MultiplicationImplicit::Builder(Division::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)),Rational::Builder(3)), "\u00122/π\u00133");
-  assert_expression_serialize_to(MultiplicationImplicit::Builder(Power::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)),Rational::Builder(3)), "\u00122^π\u00133");
+  assert_expression_serialize_to(Multiplication::Builder(Division::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)),Rational::Builder(3)), "\u00122/π\u00133");
+  assert_expression_serialize_to(Multiplication::Builder(Power::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)),Rational::Builder(3)), "\u00122^π\u00133");
 
 
 }

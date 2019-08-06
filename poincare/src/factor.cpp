@@ -34,10 +34,10 @@ Expression FactorNode::shallowBeautify(ReductionContext reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
 }
 
-MultiplicationExplicit Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());
-  MultiplicationExplicit m = MultiplicationExplicit::Builder();
+  Multiplication m = Multiplication::Builder();
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   int numberOfPrimeFactors = Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
@@ -82,13 +82,13 @@ Expression Factor::shallowBeautify(ExpressionNode::ReductionContext reductionCon
     replaceWithInPlace(r);
     return r;
   }
-  MultiplicationExplicit numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   if (numeratorDecomp.numberOfChildren() == 0) {
     return replaceWithUndefinedInPlace();
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.isInteger()) {
-    MultiplicationExplicit denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (denominatorDecomp.numberOfChildren() == 0) {
       return replaceWithUndefinedInPlace();
     }

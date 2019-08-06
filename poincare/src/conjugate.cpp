@@ -1,7 +1,7 @@
 #include <poincare/conjugate.h>
 #include <poincare/conjugate_layout.h>
 #include <poincare/complex_cartesian.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 
@@ -49,7 +49,7 @@ Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
-    MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(-1), complexChild.imag());
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), complexChild.imag());
     complexChild.replaceChildAtIndexInPlace(1, m);
     m.shallowReduce(reductionContext);
     replaceWithInPlace(complexChild);

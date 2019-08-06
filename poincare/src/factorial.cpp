@@ -24,8 +24,8 @@ bool FactorialNode::childNeedsUserParentheses(const Expression & child) const {
     return true;
   }
 
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::MultiplicationExplicit, Type::MultiplicationImplicit, Type::Addition};
-  return child.isOfType(types, 5);
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Addition};
+  return child.isOfType(types, 4);
 }
 
 // Layout

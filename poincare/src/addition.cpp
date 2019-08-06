@@ -2,7 +2,7 @@
 #include <poincare/complex_cartesian.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/power.h>
 #include <poincare/serialization_helper.h>
@@ -62,7 +62,7 @@ Expression AdditionNode::shallowBeautify(ReductionContext reductionContext) {
 // Addition
 
 const Number Addition::NumeralFactor(const Expression & e) {
-  if (e.type() == ExpressionNode::Type::MultiplicationExplicit && e.childAtIndex(0).isNumber()) {
+  if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
     Number result = e.childAtIndex(0).convert<Number>();
     return result;
   }
@@ -306,7 +306,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 }
 
 int Addition::NumberOfNonNumeralFactors(const Expression & e) {
-  if (e.type() != ExpressionNode::Type::MultiplicationExplicit) {
+  if (e.type() != ExpressionNode::Type::Multiplication) {
     return 1; // Or (e->type() != Type::Rational);
   }
   int result = e.numberOfChildren();
@@ -317,7 +317,7 @@ int Addition::NumberOfNonNumeralFactors(const Expression & e) {
 }
 
 const Expression Addition::FirstNonNumeralFactor(const Expression & e) {
-  if (e.type() != ExpressionNode::Type::MultiplicationExplicit) {
+  if (e.type() != ExpressionNode::Type::Multiplication) {
     return e;
   }
   if (e.childAtIndex(0).isNumber()) {
@@ -347,7 +347,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
     return FirstNonNumeralFactor(e1).isIdenticalTo(FirstNonNumeralFactor(e2));
   } else {
     assert(numberOfNonNumeralFactors > 1);
-    return MultiplicationExplicit::HaveSameNonNumeralFactors(e1, e2);
+    return Multiplication::HaveSameNonNumeralFactors(e1, e2);
   }
 }
 
@@ -361,7 +361,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   Addition a = Addition::Builder();
 
   // Step 1: We want to compute the common denominator, b*d
-  MultiplicationExplicit commonDenominator = MultiplicationExplicit::Builder();
+  Multiplication commonDenominator = Multiplication::Builder();
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression childI = childAtIndex(i);
     Expression currentDenominator = childI.denominator(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
@@ -391,14 +391,14 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   assert(reductionContext.target() ==  ExpressionNode::ReductionTarget::User); // Else, before, the algorithm used User target -> put back ?
   Addition numerator = Addition::Builder();
   for (int i = 0; i < numberOfChildren(); i++) {
-    MultiplicationExplicit m = MultiplicationExplicit::Builder(childAtIndex(i), commonDenominator.clone());
+    Multiplication m = Multiplication::Builder(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
     m.privateShallowReduce(reductionContext, true, false);
   }
 
   // Step 3: Add the denominator
   Power inverseDenominator = Power::Builder(commonDenominator, Rational::Builder(-1));
-  MultiplicationExplicit result = MultiplicationExplicit::Builder(numerator, inverseDenominator);
+  Multiplication result = Multiplication::Builder(numerator, inverseDenominator);
 
   // Step 4: Simplify the numerator
   numerator.shallowReduce(reductionContext);
@@ -437,9 +437,9 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Express
   removeChildAtIndexInPlace(index2);
 
   // Step 3: Create a multiplication
-  MultiplicationExplicit m = MultiplicationExplicit::Builder();
-  if (e1.type() == ExpressionNode::Type::MultiplicationExplicit) {
-    m = static_cast<MultiplicationExplicit&>(e1);
+  Multiplication m = Multiplication::Builder();
+  if (e1.type() == ExpressionNode::Type::Multiplication) {
+    m = static_cast<Multiplication&>(e1);
   } else {
     replaceChildAtIndexInPlace(index1, m);
     m.addChildAtIndexInPlace(e1, 0, 0);

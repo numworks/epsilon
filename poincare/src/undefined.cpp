@@ -28,8 +28,7 @@ int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   if (bufferSize == 0) {
     return -1;
   }
-  strlcpy(buffer, Undefined::Name(), bufferSize);
-  return minInt(Undefined::NameSize(), bufferSize) - 1;
+  return minInt(strlcpy(buffer, Undefined::Name(), bufferSize), bufferSize - 1);
 }
 
 template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {

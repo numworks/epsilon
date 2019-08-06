@@ -202,7 +202,6 @@ int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   // Write the closing system parenthesis
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-  buffer[numberOfChar] = 0;
   return numberOfChar;
 }
 

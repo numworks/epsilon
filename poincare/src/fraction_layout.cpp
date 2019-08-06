@@ -123,8 +123,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  if (bufferSize == 1) { return 0;}
 
   /* Add System parenthesis to detect omitted multiplication:
    *   2
@@ -133,8 +132,8 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
    */
 
   // Add system parenthesis
-  numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointLeftSystemParenthesis);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the content of the fraction
   numberOfChar += SerializationHelper::Infix(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, "/");
@@ -142,9 +141,6 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   // Add system parenthesis
   numberOfChar+= SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-
-  buffer[numberOfChar] = 0;
   return numberOfChar;
 }
 

@@ -2,7 +2,7 @@
 #define POINCARE_COMPLEX_CARTESIAN_H
 
 #include <poincare/expression.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 
 namespace Poincare {
 
@@ -67,7 +67,7 @@ private:
   static constexpr int k_maxNumberOfNodesBeforeInterrupting = 50;
   void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, ExpressionNode::ReductionContext reductionContext);
   ComplexCartesian interruptComputationIfManyNodes();
-  static MultiplicationExplicit squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext);
+  static Multiplication squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext);
   static Expression powerHelper(Expression norm, Expression trigo, ExpressionNode::ReductionContext reductionContext);
 };
 

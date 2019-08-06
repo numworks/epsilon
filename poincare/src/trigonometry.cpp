@@ -4,7 +4,7 @@
 #include <poincare/decimal.h>
 #include <poincare/derivative.h>
 #include <poincare/float.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
@@ -82,7 +82,7 @@ bool Trigonometry::AreInverseFunctions(const Expression & directFunction, const 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
   // We look for (cos^-1 * sin)
   assert(ExpressionNode::Type::Power < ExpressionNode::Type::Sine);
-  if (e.type() == ExpressionNode::Type::MultiplicationExplicit
+  if (e.type() == ExpressionNode::Type::Multiplication
       && e.childAtIndex(1).type() == ExpressionNode::Type::Sine
       && e.childAtIndex(0).type() == ExpressionNode::Type::Power
       && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Cosine
@@ -125,7 +125,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
       Power::Builder(
         Addition::Builder(
           Rational::Builder(1),
-          MultiplicationExplicit::Builder(
+          Multiplication::Builder(
             Rational::Builder(-1),
             Power::Builder(e.childAtIndex(0).childAtIndex(0), Rational::Builder(2))
           )
@@ -166,7 +166,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
     // reduce 1+*x^2
     res.childAtIndex(0).shallowReduce(reductionContext);
     if (e.type() == ExpressionNode::Type::Sine) {
-      res = MultiplicationExplicit::Builder(x, res);
+      res = Multiplication::Builder(x, res);
       // reduce (1+x^2)^(-1/2)
       res.childAtIndex(0).shallowReduce(reductionContext);
     }
@@ -184,7 +184,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
       return e.shallowReduce(reductionContext);
     } else {
       // sin(-a) = -sin(a) or tan(-a) = -tan(a)
-      MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(-1));
+      Multiplication m = Multiplication::Builder(Rational::Builder(-1));
       e.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(e, 1, 1);
       e.shallowReduce(reductionContext);
@@ -197,7 +197,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
    * multiply the cos/sin/tan by -1 if needed.
    * We know thanks to Step 3 that p/q > 0. */
   if ((reductionContext.angleUnit() == Preferences::AngleUnit::Radian
-        && e.childAtIndex(0).type() == ExpressionNode::Type::MultiplicationExplicit
+        && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).numberOfChildren() == 2
         && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Constant
         && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isPi()
@@ -250,7 +250,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
         unaryCoefficient *= -1;
       }
       Expression simplifiedCosine = e.shallowReduce(reductionContext); // recursive
-      MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(unaryCoefficient));
+      Multiplication m = Multiplication::Builder(Rational::Builder(unaryCoefficient));
       simplifiedCosine.replaceWithInPlace(m);
       m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
       return m.shallowReduce(reductionContext);
@@ -303,12 +303,12 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
      *   reduced to undef) */
     if (reductionContext.target() == ExpressionNode::ReductionTarget::User || x.isNumber()) {
       Expression sign = SignFunction::Builder(x.clone());
-      MultiplicationExplicit m0 = MultiplicationExplicit::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
+      Multiplication m0 = Multiplication::Builder(Rational::Builder(1,2), sign, Constant::Builder(UCodePointGreekSmallLetterPi));
       sign.shallowReduce(reductionContext);
       e.replaceChildAtIndexInPlace(0, x);
       Addition a = Addition::Builder(m0);
       e.replaceWithInPlace(a);
-      MultiplicationExplicit m1 = MultiplicationExplicit::Builder(Rational::Builder(-1), e);
+      Multiplication m1 = Multiplication::Builder(Rational::Builder(-1), e);
       e.shallowReduce(reductionContext);
       a.addChildAtIndexInPlace(m1, 1, 1);
       return a.shallowReduce(reductionContext);
@@ -348,7 +348,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e,  Expressio
         return s.shallowReduce(reductionContext);
       } else {
         // asin(-x) = -asin(x) or atan(-x) = -atan(x)
-        MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(-1));
+        Multiplication m = Multiplication::Builder(Rational::Builder(-1));
         e.replaceWithInPlace(m);
         m.addChildAtIndexInPlace(e, 1, 1);
         e.shallowReduce(reductionContext);

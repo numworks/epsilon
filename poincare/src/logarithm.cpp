@@ -6,7 +6,7 @@
 #include <poincare/division.h>
 #include <poincare/infinity.h>
 #include <poincare/layout_helper.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -182,20 +182,20 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
-    MultiplicationExplicit mult = MultiplicationExplicit::Builder(y);
+    Multiplication mult = Multiplication::Builder(y);
     replaceWithInPlace(mult);
     mult.addChildAtIndexInPlace(*this, 1, 1); // --> y*log(x,b)
     shallowReduce(reductionContext); // reduce log (ie log(e, e) = 1)
     return mult.shallowReduce(reductionContext);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
-  if (c.type() == ExpressionNode::Type::MultiplicationExplicit) {
+  if (c.type() == ExpressionNode::Type::Multiplication) {
     Addition a = Addition::Builder();
     for (int i = 0; i < c.numberOfChildren()-1; i++) {
       Expression factor = c.childAtIndex(i);
       if (factor.sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
         Expression newLog = clone();
-        static_cast<MultiplicationExplicit &>(c).removeChildInPlace(factor, factor.numberOfChildren());
+        static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);
         a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
         newLog.shallowReduce(reductionContext);
@@ -343,7 +343,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
     if (!isDenominator) {
       return e;
     }
-    MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(-1), e);
+    Multiplication m = Multiplication::Builder(Rational::Builder(-1), e);
     return m;
   }
   Addition a = Addition::Builder();
@@ -353,7 +353,7 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, Expre
     }
     Logarithm e = clone().convert<Logarithm>();
     e.replaceChildAtIndexInPlace(0, Rational::Builder(factors[index]));
-    MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(coefficients[index]), e);
+    Multiplication m = Multiplication::Builder(Rational::Builder(coefficients[index]), e);
     e.simpleShallowReduce(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(reductionContext);

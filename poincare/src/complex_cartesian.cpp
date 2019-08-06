@@ -83,12 +83,12 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
     *argument = e.childAtIndex(0);
     return;
   }
-  if (e.type() == ExpressionNode::Type::MultiplicationExplicit) {
+  if (e.type() == ExpressionNode::Type::Multiplication) {
     for (int i = 0; i < e.numberOfChildren(); i++) {
       if (e.childAtIndex(i).type() == searchedType) {
         *argument = e.childAtIndex(i).childAtIndex(0);
         *factor = e.clone();
-        static_cast<MultiplicationExplicit *>(factor)->removeChildAtIndexInPlace(i);
+        static_cast<Multiplication *>(factor)->removeChildAtIndexInPlace(i);
         *factor = factor->shallowReduce(reductionContext);
         Expression positiveFactor = factor->makePositiveAnyNegativeNumeralFactor(reductionContext);
         *factor = positiveFactor.isUninitialized() ? *factor : positiveFactor;
@@ -157,7 +157,7 @@ Expression ComplexCartesian::argument(ExpressionNode::ReductionContext reduction
     }
     // Then, compute sign(b) * π/2 - atan(a/b)
     Expression signb = SignFunction::Builder(b);
-    Expression signbPi2 = MultiplicationExplicit::Builder(Rational::Builder(1,2), signb, Constant::Builder(UCodePointGreekSmallLetterPi));
+    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::Builder(UCodePointGreekSmallLetterPi));
     signb.shallowReduce(reductionContext);
     Expression sub = Subtraction::Builder(signbPi2, arcTangent);
     signbPi2.shallowReduce(reductionContext);
@@ -168,7 +168,7 @@ Expression ComplexCartesian::argument(ExpressionNode::ReductionContext reduction
     Expression signa = SignFunction::Builder(a).shallowReduce(reductionContext);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
     signa.shallowReduce(reductionContext);
-    MultiplicationExplicit mul = MultiplicationExplicit::Builder(Rational::Builder(1,2), Constant::Builder(UCodePointGreekSmallLetterPi), sub);
+    Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::Builder(UCodePointGreekSmallLetterPi), sub);
     sub.shallowReduce(reductionContext);
     return mul;
   }
@@ -184,10 +184,10 @@ ComplexCartesian ComplexCartesian::inverse(ExpressionNode::ReductionContext redu
   denominatorReal.shallowReduce(reductionContext);
   Expression denominatorImagInv = Power::Builder(denominatorImag, Rational::Builder(-1));
   denominatorImag.shallowReduce(reductionContext);
-  MultiplicationExplicit A = MultiplicationExplicit::Builder(a, denominatorRealInv);
+  Multiplication A = Multiplication::Builder(a, denominatorRealInv);
   denominatorRealInv.shallowReduce(reductionContext);
-  Expression numeratorImag = MultiplicationExplicit::Builder(Rational::Builder(-1), b);
-  MultiplicationExplicit B = MultiplicationExplicit::Builder(numeratorImag, denominatorImagInv);
+  Expression numeratorImag = Multiplication::Builder(Rational::Builder(-1), b);
+  Multiplication B = Multiplication::Builder(numeratorImag, denominatorImagInv);
   numeratorImag.shallowReduce(reductionContext);
   denominatorImagInv.shallowReduce(reductionContext);
   ComplexCartesian result = ComplexCartesian::Builder(A,B);
@@ -196,13 +196,13 @@ ComplexCartesian ComplexCartesian::inverse(ExpressionNode::ReductionContext redu
   return result.interruptComputationIfManyNodes();
 }
 
-MultiplicationExplicit ComplexCartesian::squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext) {
+Multiplication ComplexCartesian::squareRootHelper(Expression e, ExpressionNode::ReductionContext reductionContext) {
   //(1/2)*sqrt(2*e)
-  MultiplicationExplicit doubleE = MultiplicationExplicit::Builder(Rational::Builder(2), e);
+  Multiplication doubleE = Multiplication::Builder(Rational::Builder(2), e);
   e.shallowReduce(reductionContext);
   Expression sqrt = SquareRoot::Builder(doubleE);
   doubleE.shallowReduce(reductionContext);
-  MultiplicationExplicit result = MultiplicationExplicit::Builder(Rational::Builder(1,2), sqrt);
+  Multiplication result = Multiplication::Builder(Rational::Builder(1,2), sqrt);
   sqrt.shallowReduce(reductionContext);
   return result;
 }
@@ -217,11 +217,11 @@ ComplexCartesian ComplexCartesian::squareRoot(ExpressionNode::ReductionContext r
   // A = (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
   Addition normAdda = Addition::Builder(normA, a.clone());
   normA.shallowReduce(reductionContext);
-  MultiplicationExplicit A = squareRootHelper(normAdda, reductionContext);
+  Multiplication A = squareRootHelper(normAdda, reductionContext);
   // B = B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))
   Subtraction normSuba = Subtraction::Builder(normB, a);
   normB.shallowReduce(reductionContext);
-  MultiplicationExplicit B = squareRootHelper(normSuba, reductionContext);
+  Multiplication B = squareRootHelper(normSuba, reductionContext);
   // B = B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))*sign(b)
   Expression signb = SignFunction::Builder(b);
   B.addChildAtIndexInPlace(signb, B.numberOfChildren(), B.numberOfChildren());
@@ -245,7 +245,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, ExpressionNode::Reduction
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
     if (n/2%2 == 1) {
-      Expression temp = MultiplicationExplicit::Builder(Rational::Builder(-1), bpow);
+      Expression temp = Multiplication::Builder(Rational::Builder(-1), bpow);
       bpow.shallowReduce(reductionContext);
       bpow = temp;
     }
@@ -269,7 +269,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, ExpressionNode::Reduction
     Expression bclone = i == n ? b : b.clone();
     Power apow = Power::Builder(aclone, Rational::Builder(n-i));
     Power bpow = Power::Builder(bclone, Rational::Builder(i));
-    MultiplicationExplicit m = MultiplicationExplicit::Builder(binom, apow, bpow);
+    Multiplication m = Multiplication::Builder(binom, apow, bpow);
     binom.shallowReduce(reductionContext.context());
     apow.shallowReduce(reductionContext);
     bpow.shallowReduce(reductionContext);
@@ -299,14 +299,14 @@ ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, Expression
   Expression d = other.imag();
   // (a+ib) * (c+id) = (ac-bd)+i*(ad+bc)
   // Compute ac-bd
-  Expression ac =  MultiplicationExplicit::Builder(a.clone(), c.clone());
-  Expression bd =  MultiplicationExplicit::Builder(b.clone(), d.clone());
+  Expression ac =  Multiplication::Builder(a.clone(), c.clone());
+  Expression bd =  Multiplication::Builder(b.clone(), d.clone());
   Subtraction A = Subtraction::Builder(ac, bd);
   ac.shallowReduce(reductionContext);
   bd.shallowReduce(reductionContext);
   // Compute ad+bc
-  Expression ad =  MultiplicationExplicit::Builder(a, d);
-  Expression bc =  MultiplicationExplicit::Builder(b, c);
+  Expression ad =  Multiplication::Builder(a, d);
+  Expression bc =  Multiplication::Builder(b, c);
   Addition B = Addition::Builder(ad, bc);
   ad.shallowReduce(reductionContext);
   bc.shallowReduce(reductionContext);
@@ -317,7 +317,7 @@ ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, Expression
 }
 
 Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, ExpressionNode::ReductionContext reductionContext) {
-  MultiplicationExplicit m = MultiplicationExplicit::Builder(norm, trigo);
+  Multiplication m = Multiplication::Builder(norm, trigo);
   norm.shallowReduce(reductionContext);
   trigo.shallowReduce(reductionContext);
   return m;
@@ -333,20 +333,20 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, ExpressionNod
   // R = r^c*e^(-th*d)
   Expression rpowc = Power::Builder(rclone, c.clone());
   rclone.shallowReduce(reductionContext);
-  Expression thmuld = MultiplicationExplicit::Builder(Rational::Builder(-1), thclone, d.clone());
+  Expression thmuld = Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
   thclone.shallowReduce(reductionContext);
   Expression exp = Power::Builder(Constant::Builder(UCodePointScriptSmallE), thmuld);
   thmuld.shallowReduce(reductionContext);
-  MultiplicationExplicit norm = MultiplicationExplicit::Builder(rpowc, exp);
+  Multiplication norm = Multiplication::Builder(rpowc, exp);
   rpowc.shallowReduce(reductionContext);
   exp.shallowReduce(reductionContext);
 
   // TH = d*ln(r)+c*th
   Expression lnr = NaperianLogarithm::Builder(r);
   r.shallowReduce(reductionContext);
-  MultiplicationExplicit dlnr = MultiplicationExplicit::Builder(d, lnr);
+  Multiplication dlnr = Multiplication::Builder(d, lnr);
   lnr.shallowReduce(reductionContext);
-  MultiplicationExplicit thc = MultiplicationExplicit::Builder(th, c);
+  Multiplication thc = Multiplication::Builder(th, c);
   th.shallowReduce(reductionContext);
   Expression argument = Addition::Builder(thc, dlnr);
   thc.shallowReduce(reductionContext);

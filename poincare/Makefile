@@ -91,8 +91,6 @@ poincare_src += $(addprefix poincare/src/,\
   matrix_trace.cpp \
   matrix_transpose.cpp \
   multiplication.cpp \
-  multiplication_explicit.cpp \
-  multiplication_implicit.cpp \
   n_ary_expression.cpp \
   naperian_logarithm.cpp \
   nth_root.cpp \

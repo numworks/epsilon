@@ -1,4 +1,4 @@
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/multiplication_implicit.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>

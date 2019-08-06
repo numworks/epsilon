@@ -196,11 +196,11 @@ void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Times)) {
-    if (leftHandSide.type() == ExpressionNode::Type::MultiplicationExplicit) {
+    if (leftHandSide.type() == ExpressionNode::Type::Multiplication) {
       int childrenCount = leftHandSide.numberOfChildren();
-      static_cast<MultiplicationExplicit &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
+      static_cast<Multiplication &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
     } else {
-      leftHandSide = MultiplicationExplicit::Builder(leftHandSide, rightHandSide);
+      leftHandSide = Multiplication::Builder(leftHandSide, rightHandSide);
     }
   }
 }
@@ -215,7 +215,7 @@ void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
-    leftHandSide = MultiplicationImplicit::Builder(leftHandSide, rightHandSide);
+    leftHandSide = Multiplication::Builder(leftHandSide, rightHandSide);
   }
 }
 

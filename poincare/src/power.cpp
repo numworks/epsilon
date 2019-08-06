@@ -109,8 +109,8 @@ bool PowerNode::childNeedsUserParentheses(const Expression & child) const {
       return true;
     }
     // ^(2+3,4) --> (2+3)^{4}
-    Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::MultiplicationExplicit, Type::MultiplicationImplicit, Type::Division, Type::Addition};
-    return child.isOfType(types, 7);
+    Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
+    return child.isOfType(types, 6);
   }
   return false;
 }
@@ -169,8 +169,8 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * chil
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::MultiplicationExplicit, Type::MultiplicationImplicit, Type::Division, Type::Addition};
-  return static_cast<const ExpressionNode *>(child)->isOfType(types, 7);
+  Type types[] = {Type::Power, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Addition};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 6);
 }
 
 int PowerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -345,7 +345,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Expression result = matrixBase.clone();
     // TODO: implement a quick exponentiation
     for (int k = 1; k < exp; k++) {
-      result = MultiplicationExplicit::Builder(result, matrixBase.clone());
+      result = Multiplication::Builder(result, matrixBase.clone());
       result = result.shallowReduce(reductionContext);
     }
     assert(!result.isUninitialized());
@@ -515,7 +515,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       if (base.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
         // (-inf)^x --> (-1)^x*inf
         Power p = Power::Builder(Rational::Builder(-1), childAtIndex(1));
-        result = MultiplicationExplicit::Builder(p, result);
+        result = Multiplication::Builder(p, result);
         p.shallowReduce(reductionContext);
       }
     }
@@ -553,7 +553,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       replaceChildAtIndexInPlace(0, m0);
       /* m0 doesn't need to be shallowReduce as
        * makePositiveAnyNegativeNumeralFactor returns a reduced expression */
-      MultiplicationExplicit m1 = MultiplicationExplicit::Builder();
+      Multiplication m1 = Multiplication::Builder();
       replaceWithInPlace(m1);
       // Multiply m1 by i complex
       Constant i = Constant::Builder(UCodePointMathematicalBoldSmallI);
@@ -567,14 +567,14 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   // Step 8: e^(r*i*Pi) with r rational --> cos(pi*r) + i*sin(pi*r)
   if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression i = index.childAtIndex(index.numberOfChildren()-2);
-    static_cast<MultiplicationExplicit &>(index).removeChildAtIndexInPlace(index.numberOfChildren()-2);
+    static_cast<Multiplication &>(index).removeChildAtIndexInPlace(index.numberOfChildren()-2);
     if (reductionContext.angleUnit() == Preferences::AngleUnit::Degree) {
       index.replaceChildAtIndexInPlace(index.numberOfChildren()-1, Rational::Builder(180));
     }
     Expression cos = Cosine::Builder(index);
     index = index.shallowReduce(reductionContext);
     Expression sin = Sine::Builder(index.clone());
-    Expression complexPart = MultiplicationExplicit::Builder(sin, i);
+    Expression complexPart = Multiplication::Builder(sin, i);
     sin.shallowReduce(reductionContext);
     Expression a = Addition::Builder(cos, complexPart);
     cos.shallowReduce(reductionContext);
@@ -643,8 +643,8 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     }
   }
   // Step 11: (a*b*c*...)^r ?
-  if (!letPowerAtRoot && baseType == ExpressionNode::Type::MultiplicationExplicit) {
-    MultiplicationExplicit multiplicationBase = static_cast<MultiplicationExplicit &>(base);
+  if (!letPowerAtRoot && baseType == ExpressionNode::Type::Multiplication) {
+    Multiplication multiplicationBase = static_cast<Multiplication &>(base);
     // Case 1: (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
     if (indexType == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()) {
       return simplifyPowerMultiplication(reductionContext);
@@ -674,7 +674,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
 
         // |a|^r*(sign(a)*b*...)^r
         Power thisRef = *this;
-        MultiplicationExplicit root = MultiplicationExplicit::Builder(p);
+        Multiplication root = Multiplication::Builder(p);
         replaceWithInPlace(root);
         root.addChildAtIndexInPlace(thisRef, 1, 1);
         p.shallowReduce(reductionContext);
@@ -718,7 +718,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       additionIndex.removeChildAtIndexInPlace(0); // p2 = a^(c+...)
       // if addition had only 2 children
       additionIndex.squashUnaryHierarchyInPlace();
-      MultiplicationExplicit m = MultiplicationExplicit::Builder(p1);
+      Multiplication m = Multiplication::Builder(p1);
       replaceWithInPlace(m);
       m.addChildAtIndexInPlace(thisRef, 1, 1);
       p1.simplifyRationalRationalPower(reductionContext);
@@ -762,7 +762,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         // We need a 'double' distribution and newA will hold the new expanded form
         Expression newA = Addition::Builder();
         for (int j = 0; j < a.numberOfChildren(); j++) {
-          Expression m = MultiplicationExplicit::Builder(result.clone(), a.childAtIndex(j).clone()).distributeOnOperandAtIndex(0, reductionContext);
+          Expression m = Multiplication::Builder(result.clone(), a.childAtIndex(j).clone()).distributeOnOperandAtIndex(0, reductionContext);
           if (newA.type() == ExpressionNode::Type::Addition) {
             static_cast<Addition &>(newA).addChildAtIndexInPlace(m, newA.numberOfChildren(), newA.numberOfChildren());
           } else {
@@ -774,7 +774,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
         result = newA;
       } else {
         // Just distribute result on a
-        MultiplicationExplicit m = MultiplicationExplicit::Builder(a.clone(), result.clone());
+        Multiplication m = Multiplication::Builder(a.clone(), result.clone());
         Expression distributedM = m.distributeOnOperandAtIndex(0, reductionContext);
         result.replaceWithInPlace(distributedM);
         result = distributedM;
@@ -809,7 +809,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       Power * p0 = new Power::Builder(x0->clone(), new Rational::Builder(i), false);
       Power * p1 = new Power::Builder(x1->clone(), new Rational::Builder(clippedN-i), false);
       const Expression * operands[3] = {r, p0, p1};
-      MultiplicationExplicit * m = new MultiplicationExplicit::Builder(operands, 3, false);
+      Multiplication * m = new Multiplication::Builder(operands, 3, false);
       p0->shallowReduce(reductionContext);
       p1->shallowReduce(reductionContext);
       a->addOperand(m);
@@ -890,7 +890,7 @@ Expression Power::denominator(Context * context, Preferences::ComplexFormat comp
 Expression Power::simplifyPowerPower(ExpressionNode::ReductionContext reductionContext) {
   // this is p^e = (a^b)^e, we want a^(b*e)
   Expression p = childAtIndex(0);
-  MultiplicationExplicit m = MultiplicationExplicit::Builder(p.childAtIndex(1), childAtIndex(1));
+  Multiplication m = Multiplication::Builder(p.childAtIndex(1), childAtIndex(1));
   replaceChildAtIndexInPlace(0, p.childAtIndex(0));
   replaceChildAtIndexInPlace(1, m);
   m.shallowReduce(reductionContext);
@@ -932,7 +932,7 @@ Expression Power::simplifyRationalRationalPower(ExpressionNode::ReductionContext
     n = CreateSimplifiedIntegerRationalPower(a.signedIntegerNumerator(), b, false, reductionContext);
     d = CreateSimplifiedIntegerRationalPower(a.integerDenominator(), b, true, reductionContext);
   }
-  MultiplicationExplicit m = MultiplicationExplicit::Builder(n, d);
+  Multiplication m = Multiplication::Builder(n, d);
   replaceWithInPlace(m);
   return m.shallowReduce(reductionContext);
 }
@@ -975,7 +975,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   }
   Integer one(1);
   Rational r3 = isDenominator ? Rational::Builder(one, r1) : Rational::Builder(r1);
-  MultiplicationExplicit m = MultiplicationExplicit::Builder();
+  Multiplication m = Multiplication::Builder();
   m.addChildAtIndexInPlace(r3, 0, 0);
   if (!r2.isOne()) {
     m.addChildAtIndexInPlace(p, 1, 1);
@@ -1028,9 +1028,9 @@ Expression Power::removeSquareRootsFromDenominator(ExpressionNode::ReductionCont
       Power sqrt = Power::Builder(Rational::Builder(pq), Rational::Builder(1, 2));
       Integer one(1);
       if (castedChild1.isHalf()) {
-        result = MultiplicationExplicit::Builder(Rational::Builder(one, q), sqrt);
+        result = Multiplication::Builder(Rational::Builder(one, q), sqrt);
       } else {
-        result = MultiplicationExplicit::Builder(Rational::Builder(one, p), sqrt); // We use here the assertion that p != 0
+        result = Multiplication::Builder(Rational::Builder(one, p), sqrt); // We use here the assertion that p != 0
       }
       sqrt.shallowReduce(reductionContext);
     }
@@ -1085,11 +1085,11 @@ Expression Power::removeSquareRootsFromDenominator(ExpressionNode::ReductionCont
     Integer factor1 = Integer::Multiplication(
         Integer::Multiplication(n1, d1),
         Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
-    Multiplication m1 = MultiplicationExplicit::Builder(Rational::Builder(factor1), sqrt1);
+    Multiplication m1 = Multiplication::Builder(Rational::Builder(factor1), sqrt1);
     Integer factor2 = Integer::Multiplication(
         Integer::Multiplication(n2, d2),
         Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
-    Multiplication m2 = MultiplicationExplicit::Builder(Rational::Builder(factor2), sqrt2);
+    Multiplication m2 = Multiplication::Builder(Rational::Builder(factor2), sqrt2);
     Expression numerator;
     if (denominator.isNegative()) {
       numerator = Subtraction::Builder(m2, m1);
@@ -1102,7 +1102,7 @@ Expression Power::removeSquareRootsFromDenominator(ExpressionNode::ReductionCont
     }
     numerator = numerator.deepReduce(reductionContext);
     Integer one(1);
-    result = MultiplicationExplicit::Builder(numerator, Rational::Builder(one, denominator));
+    result = Multiplication::Builder(numerator, Rational::Builder(one, denominator));
   }
 
   if (!result.isUninitialized()) {
@@ -1147,7 +1147,7 @@ bool Power::isNthRootOfUnity() const {
   if (childAtIndex(0).type() != ExpressionNode::Type::Constant || !childAtIndex(0).convert<Constant>().isExponential()) {
     return false;
   }
-  if (childAtIndex(1).type() != ExpressionNode::Type::MultiplicationExplicit) {
+  if (childAtIndex(1).type() != ExpressionNode::Type::Multiplication) {
     return false;
   }
   if (childAtIndex(1).numberOfChildren() < 2 || childAtIndex(1).numberOfChildren() > 3) {
@@ -1190,7 +1190,7 @@ Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::Re
   const Constant exp = Constant::Builder(UCodePointScriptSmallE);
   Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
   const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
-  MultiplicationExplicit mExp = MultiplicationExplicit::Builder(iComplex, pi, r.clone());
+  Multiplication mExp = Multiplication::Builder(iComplex, pi, r.clone());
   iComplex.shallowReduce(reductionContext);
   Power p = Power::Builder(exp, mExp);
   mExp.shallowReduce(reductionContext);
@@ -1198,10 +1198,10 @@ Expression Power::CreateComplexExponent(const Expression & r, ExpressionNode::Re
 #if 0
   const Constant iComplex = Constant::Builder(UCodePointMathematicalBoldSmallI);
   const Constant pi = Constant::Builder(UCodePointGreekSmallLetterPi);
-  Expression op = MultiplicationExplicit::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
+  Expression op = Multiplication::Builder(pi, r).shallowReduce(context, complexFormat, angleUnit, false);
   Cosine cos = Cosine(op).shallowReduce(context, complexFormat, angleUnit, false);;
   Sine sin = Sine(op).shallowReduce(context, complexFormat, angleUnit, false);
-  Expression m = MultiplicationExplicit::Builder(iComplex, sin);
+  Expression m = Multiplication::Builder(iComplex, sin);
   Expression a = Addition::Builder(cos, m);
   const Expression * multExpOperands[3] = {pi, r->clone()};
 #endif
@@ -1218,7 +1218,7 @@ bool Power::TermIsARationalSquareRootOrRational(const Expression & e) {
   {
     return true;
   }
-  if (e.type() == ExpressionNode::Type::MultiplicationExplicit
+  if (e.type() == ExpressionNode::Type::Multiplication
       && e.numberOfChildren() == 2
       && e.childAtIndex(0).type() == ExpressionNode::Type::Rational
       && e.childAtIndex(1).type() == ExpressionNode::Type::Power
@@ -1239,7 +1239,7 @@ const Rational Power::RadicandInExpression(const Expression & e) {
     assert(e.childAtIndex(0).type() == ExpressionNode::Type::Rational);
     return e.childAtIndex(0).convert<Rational>();
   } else {
-    assert(e.type() == ExpressionNode::Type::MultiplicationExplicit);
+    assert(e.type() == ExpressionNode::Type::Multiplication);
     assert(e.childAtIndex(1).type() == ExpressionNode::Type::Power);
     assert(e.childAtIndex(1).childAtIndex(0).type() == ExpressionNode::Type::Rational);
     return e.childAtIndex(1).childAtIndex(0).convert<Rational>();
@@ -1252,7 +1252,7 @@ const Rational Power::RationalFactorInExpression(const Expression & e) {
   } else if (e.type() == ExpressionNode::Type::Power) {
     return Rational::Builder(1);
   } else {
-    assert(e.type() == ExpressionNode::Type::MultiplicationExplicit);
+    assert(e.type() == ExpressionNode::Type::Multiplication);
     assert(e.childAtIndex(0).type() == ExpressionNode::Type::Rational);
     return e.childAtIndex(0).convert<Rational>();
   }

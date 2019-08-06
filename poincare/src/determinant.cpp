@@ -1,7 +1,7 @@
 #include <poincare/determinant.h>
 #include <poincare/addition.h>
 #include <poincare/matrix.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>

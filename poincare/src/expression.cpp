@@ -111,7 +111,7 @@ bool Expression::IsRandom(const Expression e, Context * context) {
 }
 
 bool Expression::IsNAry(const Expression e, Context * context) {
-  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::MultiplicationExplicit || e.type() == ExpressionNode::Type::MultiplicationImplicit;
+  return e.type() == ExpressionNode::Type::Addition || e.type() == ExpressionNode::Type::Multiplication;
 }
 
 bool Expression::IsMatrix(const Expression e, Context * context) {
@@ -303,7 +303,7 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(ExpressionNode::Redu
     return setSign(ExpressionNode::Sign::Positive, reductionContext);
   }
   // The expression is a multiplication whose numeral factor is negative
-  if (isMultiplication() && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
     Multiplication m = convert<Multiplication>();
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && m.childAtIndex(0).convert<Rational>().isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
@@ -584,12 +584,12 @@ Expression Expression::mapOnMatrixFirstChild(ExpressionNode::ReductionContext re
 
 Expression Expression::radianToDegree() {
   // e*180/Pi
-  return MultiplicationExplicit::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
+  return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi), Rational::Builder(-1)));
 }
 
 Expression Expression::degreeToRadian() {
   // e*Pi/180
-  return MultiplicationExplicit::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
+  return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder(UCodePointGreekSmallLetterPi));
 }
 
 Expression Expression::reduce(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
@@ -615,10 +615,6 @@ Expression Expression::deepBeautify(ExpressionNode::ReductionContext reductionCo
     if (e.node()->childNeedsUserParentheses(child)) {
       e.replaceChildAtIndexInPlace(i, Parenthesis::Builder(child));
     }
-  }
-  // We choose whether or not to omit multiplication sign after beautifying parent and child
-  if (e.type() == ExpressionNode::Type::MultiplicationExplicit) {
-    e = static_cast<MultiplicationExplicit &>(e).omitMultiplicationWhenPossible();
   }
   return e;
 }
@@ -695,7 +691,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           imag = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          imag = MultiplicationImplicit::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          imag = Multiplication::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
           imag.shallowAddMissingParenthesis();
         }
       }
@@ -730,7 +726,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         if (isOneTb) {
           arg = Constant::Builder(UCodePointMathematicalBoldSmallI);
         } else {
-          arg = MultiplicationImplicit::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
+          arg = Multiplication::Builder(tb, Constant::Builder(UCodePointMathematicalBoldSmallI));
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
@@ -744,7 +740,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       } else if (norm.isUninitialized()) {
         return exp;
       } else {
-        Expression result = MultiplicationImplicit::Builder(norm, exp);
+        Expression result = Multiplication::Builder(norm, exp);
         result.shallowAddMissingParenthesis();
         return result;
       }

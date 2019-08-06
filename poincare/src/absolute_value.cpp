@@ -3,7 +3,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/absolute_value_layout.h>
 #include <poincare/complex_cartesian.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <assert.h>
 #include <cmath>
 
@@ -55,7 +55,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
     } else if (!std::isnan(app) &&
                ((c.isNumber() && app < 0.0f) || app <= -Expression::Epsilon<float>())) {
       // abs(a) = -a with a < 0 (same comment as above to check that a < 0)
-      MultiplicationExplicit m = MultiplicationExplicit::Builder(Rational::Builder(-1), c);
+      Multiplication m = Multiplication::Builder(Rational::Builder(-1), c);
       replaceWithInPlace(m);
       return m.shallowReduce(reductionContext);
     }

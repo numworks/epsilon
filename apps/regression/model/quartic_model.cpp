@@ -9,7 +9,7 @@
 #include <poincare/number.h>
 #include <poincare/symbol.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 
 using namespace Poincare;
@@ -98,25 +98,25 @@ Expression QuarticModel::expression(double * modelCoefficients) {
   double e = modelCoefficients[4];
   Expression addChildren[] = {
     // a*x^4
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(a),
       Power::Builder(
         Symbol::Builder('x'),
         Decimal::Builder(4.0))),
     // b*x^3
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(b),
       Power::Builder(
         Symbol::Builder('x'),
         Decimal::Builder(3.0))),
     // c*x^2
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(c),
       Power::Builder(
         Symbol::Builder('x'),
         Decimal::Builder(2.0))),
     // d*x
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(d),
       Symbol::Builder('x')),
     // e

@@ -9,7 +9,7 @@
 #include <poincare/number.h>
 #include <poincare/symbol.h>
 #include <poincare/addition.h>
-#include <poincare/multiplication_explicit.h>
+#include <poincare/multiplication.h>
 #include <poincare/power.h>
 
 using namespace Poincare;
@@ -83,17 +83,17 @@ Expression CubicModel::expression(double * modelCoefficients) {
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
   Expression addChildren[] = {
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(a),
       Power::Builder(
         Symbol::Builder('x'),
         Decimal::Builder(3.0))),
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(b),
       Power::Builder(
         Symbol::Builder('x'),
         Decimal::Builder(2.0))),
-    MultiplicationExplicit::Builder(
+    Multiplication::Builder(
       Number::DecimalNumber(c),
       Symbol::Builder('x')),
     Number::DecimalNumber(d)

@@ -1,10 +1,9 @@
 #include "app.h"
-#include "../apps_container.h"
 
 namespace HardwareTest {
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {
@@ -12,8 +11,8 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_wizardViewController),
+App::App(Snapshot * snapshot) :
+  ::App(snapshot, &m_wizardViewController),
   m_wizardViewController(&m_modalViewController)
 {
 }

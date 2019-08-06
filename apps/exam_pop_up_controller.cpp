@@ -30,16 +30,16 @@ void ExamPopUpController::viewDidDisappear() {
 }
 
 void ExamPopUpController::didBecomeFirstResponder() {
-  m_contentView.setSelectedButton(0, app());
+  m_contentView.setSelectedButton(0);
 }
 
 bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left && m_contentView.selectedButton() == 1) {
-    m_contentView.setSelectedButton(0, app());
+    m_contentView.setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::Right && m_contentView.selectedButton() == 0) {
-    m_contentView.setSelectedButton(1, app());
+    m_contentView.setSelectedButton(1);
     return true;
   }
   return false;
@@ -47,16 +47,14 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
 
 ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
   m_cancelButton(parentResponder, I18n::Message::Cancel, Invocation([](void * context, void * sender) {
-    ExamPopUpController * controller = (ExamPopUpController *)context;
-    Container * container = (Container *)controller->app()->container();
-    container->activeApp()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }, parentResponder), KDFont::SmallFont),
   m_okButton(parentResponder, I18n::Message::Ok, Invocation([](void * context, void * sender) {
     ExamPopUpController * controller = (ExamPopUpController *)context;
     GlobalPreferences::ExamMode nextExamMode = controller->isActivatingExamMode() ? GlobalPreferences::ExamMode::Activate : GlobalPreferences::ExamMode::Deactivate;
     GlobalPreferences::sharedGlobalPreferences()->setExamMode(nextExamMode);
-    AppsContainer * container = (AppsContainer *)controller->app()->container();
+    AppsContainer * container = AppsContainer::sharedAppsContainer();
     if (controller->isActivatingExamMode()) {
       container->reset();
       Ion::LED::setColor(KDColorRed);
@@ -66,7 +64,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
       Ion::LED::updateColorWithPlugAndCharge();
     }
     container->refreshPreferences();
-    container->activeApp()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }, parentResponder), KDFont::SmallFont),
   m_warningTextView(KDFont::SmallFont, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
@@ -80,14 +78,10 @@ void ExamPopUpController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   ctx->fillRect(bounds(), KDColorBlack);
 }
 
-void ExamPopUpController::ContentView::setSelectedButton(int selectedButton, App * app) {
+void ExamPopUpController::ContentView::setSelectedButton(int selectedButton) {
   m_cancelButton.setHighlighted(selectedButton == 0);
   m_okButton.setHighlighted(selectedButton == 1);
-  if (selectedButton == 0) {
-    app->setFirstResponder(&m_cancelButton);
-  } else {
-    app->setFirstResponder(&m_okButton);
-  }
+  Container::activeApp()->setFirstResponder(selectedButton == 0 ? &m_cancelButton : &m_okButton);
 }
 
 int ExamPopUpController::ContentView::selectedButton() {

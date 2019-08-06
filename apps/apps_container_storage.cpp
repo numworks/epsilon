@@ -14,11 +14,6 @@
 
 constexpr int k_numberOfCommonApps = 1+APPS_CONTAINER_SNAPSHOT_COUNT; // Take the Home app into account
 
-AppsContainerStorage * AppsContainerStorage::sharedContainer() {
-  static AppsContainerStorage appsContainerStorage;
-  return &appsContainerStorage;
-}
-
 AppsContainerStorage::AppsContainerStorage() :
   AppsContainer()
   APPS_CONTAINER_SNAPSHOT_CONSTRUCTORS

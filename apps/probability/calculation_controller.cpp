@@ -1,6 +1,5 @@
 #include "calculation_controller.h"
 #include "../constant.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "app.h"
 #include "calculation/discrete_calculation.h"
@@ -80,15 +79,14 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
 }
 
 void CalculationController::didEnterResponderChain(Responder * previousResponder) {
-  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
-  snapshot->setActivePage(App::Snapshot::Page::Calculations);
+  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Calculations);
   updateTitle();
   reloadLawCurveView();
   m_selectableTableView.reloadData();
 }
 
 void CalculationController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 View * CalculationController::view() {
@@ -194,7 +192,7 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField, boo
     /* We do not reload the responder because the first responder might be the
      * toolbox (or the variable  box) and reloading the responder would corrupt
      * the first responder. */
-    bool shouldUpdateFirstResponder = app()->firstResponder() == textField;
+    bool shouldUpdateFirstResponder = Container::activeApp()->firstResponder() == textField;
     m_selectableTableView.reloadData(shouldUpdateFirstResponder);
     // The textField frame might have increased which forces to reload the textField scroll
     textField->scrollToCursor();
@@ -266,10 +264,6 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
      return;
   }
   m_calculation->setLaw(m_law);
-}
-
-TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
-  return (App *)app();
 }
 
 void CalculationController::updateTitle() {

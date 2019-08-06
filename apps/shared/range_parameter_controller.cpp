@@ -1,6 +1,4 @@
 #include "range_parameter_controller.h"
-#include "text_field_delegate_app.h"
-#include "../apps_container.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -124,4 +122,3 @@ int RangeParameterController::reusableParameterCellCount(int type) {
 }
 
 }
-

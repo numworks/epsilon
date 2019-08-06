@@ -1,6 +1,7 @@
 #include "graph_controller.h"
 #include <cmath>
 #include <limits.h>
+#include "../app.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -10,7 +11,7 @@ namespace Sequence {
 static inline int minInt(int x, int y) { return (x < y ? x : y); }
 static inline int maxInt(int x, int y) { return (x > y ? x : y); }
 
-GraphController::GraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+GraphController::GraphController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
@@ -60,12 +61,13 @@ float GraphController::interestingXHalfRange() const {
 }
 
 bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, floatBody)) {
+  if (myApp->hasUndefinedValue(text, floatBody)) {
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = yValue(selectedCurveIndex(), floatBody, textFieldDelegateApp()->localContext());
+  double y = yValue(selectedCurveIndex(), floatBody, myApp->localContext());
   m_cursor->moveTo(floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   reloadBannerView();
@@ -84,19 +86,15 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (direction < 0 && xCursorPosition <= 0) {
     return false;
   }
-  /* The cursor moves by step of at minimum 1. If the windowRange is to large
-   * compared to the resolution, the cursor takes bigger round step to cross
-   * the window in approximatively resolution steps. */
-  double step = std::ceil((interactiveCurveViewRange()->xMax()-interactiveCurveViewRange()->xMin())/m_view.resolution());
-  step = step < 1.0 ? 1.0 : step;
+  // The cursor moves by step that is larger than 1 and than a pixel's width.
+  const int step = std::ceil(m_view.pixelWidth());
   double x = direction > 0 ? xCursorPosition + step:
     xCursorPosition -  step;
   if (x < 0.0) {
     return false;
   }
   Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double y = s->evaluateAtAbscissa(x, myApp->localContext());
+  double y = s->evaluateAtAbscissa(x, textFieldDelegateApp()->localContext());
   m_cursor->moveTo(x, y);
   return true;
 }

@@ -1,5 +1,5 @@
 #include <escher/input_view_controller.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <assert.h>
 
@@ -11,7 +11,7 @@ InputViewController::ExpressionFieldController::ExpressionFieldController(Respon
 }
 
 void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_expressionField);
+  Container::activeApp()->setFirstResponder(&m_expressionField);
 }
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :

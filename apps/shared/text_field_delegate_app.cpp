@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Shared {
 
 Context * TextFieldDelegateApp::localContext() {
-  return container()->globalContext();
+  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 char TextFieldDelegateApp::XNT() {
@@ -25,7 +25,6 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!isAcceptableText(textField->text())) {
-      textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }
@@ -38,7 +37,11 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 
 bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   Expression exp = Expression::Parse(text);
-  return isAcceptableExpression(exp);
+  bool isAcceptable = isAcceptableExpression(exp);
+  if (!isAcceptable) {
+    displayWarning(I18n::Message::SyntaxError);
+  }
+  return isAcceptable;
 }
 
 bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) {
@@ -52,8 +55,8 @@ bool TextFieldDelegateApp::hasUndefinedValue(const char * text, double & value) 
 
 /* Protected */
 
-TextFieldDelegateApp::TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  InputEventHandlerDelegateApp(container, snapshot, rootViewController),
+TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
+  InputEventHandlerDelegateApp(snapshot, rootViewController),
   TextFieldDelegate()
 {
 }

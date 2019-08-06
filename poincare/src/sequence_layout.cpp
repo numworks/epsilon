@@ -213,7 +213,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the opening parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     LayoutNode * argLayouts[] = {const_cast<SequenceLayoutNode *>(this)->argumentLayout(), const_cast<SequenceLayoutNode *>(this)->variableLayout(), const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(), const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
@@ -228,7 +228,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   }
 
   // Write the closing parenthesis
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
+  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

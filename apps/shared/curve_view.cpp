@@ -12,6 +12,9 @@ namespace Shared {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
 
+static inline float minFloat(float x, float y) { return x < y ? x : y; }
+static inline float maxFloat(float x, float y) { return x > y ? x : y; }
+
 CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveViewCursor, BannerView * bannerView,
     View * cursorView, View * okView, bool displayBanner) :
   View(),
@@ -84,12 +87,53 @@ void CurveView::setOkView(View * okView) {
   layoutSubviews();
 }
 
-float CurveView::resolution() const {
-  return bounds().width()*samplingRatio();
+/* We need to locate physical points on the screen more precisely than pixels,
+ * hence by floating-point coordinates. We agree that the coordinates of the
+ * center of a pixel corresponding to KDPoint(x,y) are precisely (x,y). In
+ * particular, the coordinates of a pixel's corners are not integers but half
+ * integers. Finally, a physical point with floating-point coordinates (x,y)
+ * is located in the pixel with coordinates (std::round(x), std::round(y)).
+ *
+ * Translating CurveViewRange coordinates to pixel coordinates on the screen:
+ *   Along the horizontal axis
+ *     Pixel / physical coordinate     CurveViewRange coordinate
+ *       0                               xMin()
+ *       m_frame.width() - 1             xMax()
+ *   Along the vertical axis
+ *     Pixel / physical coordinate     CurveViewRange coordinate
+ *       0                               yMax()
+ *       m_frame.height() - 1            yMin()
+ */
+
+const float CurveView::pixelWidth() const {
+  return (m_curveViewRange->xMax() - m_curveViewRange->xMin()) / (m_frame.width() - 1);
 }
 
-float CurveView::samplingRatio() const {
-  return 1.1f;
+const float CurveView::pixelHeight() const {
+  return (m_curveViewRange->yMax() - m_curveViewRange->yMin()) / (m_frame.height() - 1);
+}
+
+float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
+  return (axis == Axis::Horizontal) ?
+    m_curveViewRange->xMin() + p * pixelWidth() :
+    m_curveViewRange->yMax() - p * pixelHeight();
+}
+
+float CurveView::floatToPixel(Axis axis, float f) const {
+  float result = (axis == Axis::Horizontal) ?
+    (f - m_curveViewRange->xMin()) / pixelWidth() :
+    (m_curveViewRange->yMax() - f) / pixelHeight();
+  /* Make sure that the returned value is between the maximum and minimum
+   * possible values of KDCoordinate. */
+  if (result == NAN) {
+    return NAN;
+  } else if (result < KDCOORDINATE_MIN) {
+    return KDCOORDINATE_MIN;
+  } else if (result > KDCOORDINATE_MAX) {
+    return KDCOORDINATE_MAX;
+  } else {
+    return result;
+  }
 }
 
 void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const {
@@ -98,20 +142,10 @@ void CurveView::drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float ste
    * account for conversion errors. */
   float otherAxisMin = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.left() - 1 : rect.bottom() + 1);
   float otherAxisMax = pixelToFloat(otherAxis, otherAxis == Axis::Horizontal ? rect.right() + 1 : rect.top() - 1);
-  float start = step * ((int)(min(otherAxis)/step));
-  float boldStart = 2*step * ((int)(min(otherAxis)/(2*step)));
-  bool drawBold = std::fabs(start - boldStart) < FLT_EPSILON;
-
-  for (float x = start; x < max(otherAxis); x+= step) {
-    /* When |start| >> step, start + step = start. In that case, quit the
-     * infinite loop. */
-    if (x == x-step || x == x+step) {
-      return;
-    }
-    if (otherAxisMin <= x && x <= otherAxisMax) {
-      drawLine(ctx, rect, axis, x, drawBold ? boldColor : lightColor);
-    }
-    drawBold = !drawBold;
+  const int start = otherAxisMin/step;
+  const int end = otherAxisMax/step;
+  for (int i = start; i <= end; i++) {
+    drawLine(ctx, rect, axis, i * step, i % 2 == 0 ? boldColor : lightColor);
   }
 }
 
@@ -129,38 +163,11 @@ float CurveView::gridUnit(Axis axis) const {
   return (axis == Axis::Horizontal ? m_curveViewRange->xGridUnit() : m_curveViewRange->yGridUnit());
 }
 
-KDCoordinate CurveView::pixelLength(Axis axis) const {
-  assert(axis == Axis::Horizontal || axis == Axis::Vertical);
-  return (axis == Axis::Horizontal ? m_frame.width() : m_frame.height());
-}
-
 int CurveView::numberOfLabels(Axis axis) const {
   float labelStep = 2.0f * gridUnit(axis);
   float minLabel = std::ceil(min(axis)/labelStep);
   float maxLabel = std::floor(max(axis)/labelStep);
   return maxLabel - minLabel + 1;
-}
-
-float CurveView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  float pixelLen = pixelLength(axis);
-  float minA = min(axis);
-  KDCoordinate pixels = axis == Axis::Horizontal ? p : pixelLen - p;
-  return minA + pixels*(max(axis)-minA)/pixelLen;
-}
-
-float CurveView::floatToPixel(Axis axis, float f) const {
-  float fraction = (f-min(axis))/(max(axis)-min(axis));
-  fraction = axis == Axis::Horizontal ? fraction : 1.0f - fraction;
-  /* Fraction is a float that translates the relative position of f on the axis.
-   * When fraction is between 0 and 1, f is visible. Otherwise, f is out of the
-   * visible window. We need to clip fraction to avoid big float issue (often
-   * due to float to int transformation). However, we cannot clip fraction
-   * between 0 and 1 because drawing a sized stamp on the extern boarder of the
-   * window should still be visible. We thus arbitrarily clip fraction between
-   * -10 and 10. */
-  fraction = fraction < -10.0f ? -10.0f : fraction;
-  fraction = fraction > 10.0f ? 10.0f : fraction;
-  return pixelLength(axis)*fraction;
 }
 
 void CurveView::computeLabels(Axis axis) {
@@ -280,7 +287,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
 
   if (floatingLabels == FloatingPosition::None) {
     for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-      int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
+      KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
       KDRect graduation = axis == Axis::Horizontal ?
         KDRect(
             labelPosition,
@@ -302,7 +309,7 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
 
   // Draw the labels
   for (int i = minDrawnLabel; i < maxDrawnLabel; i++) {
-    int labelPosition = minLabelPixelPosition + (((float)i)/((float)numberLabels-1)) * (maxLabelPixelPosition - minLabelPixelPosition);
+    KDCoordinate labelPosition = std::round(floatToPixel(axis, labelValueAtIndex(axis, i)));
     char * labelI = label(axis, i);
     KDSize textSize = k_font->stringSize(labelI);
     float xPosition = 0.0f;
@@ -374,14 +381,14 @@ void CurveView::drawSegment(KDContext * ctx, KDRect rect, Axis axis, float coord
   switch(axis) {
     case Axis::Horizontal:
       lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, lowerBound)), std::round(floatToPixel(Axis::Vertical, coordinate)),
-          std::round(floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound)), thickness
-          );
+        std::round(floatToPixel(Axis::Horizontal, lowerBound)), std::round(floatToPixel(Axis::Vertical, coordinate)),
+        std::round(floatToPixel(Axis::Horizontal, upperBound)) - std::round(floatToPixel(Axis::Horizontal, lowerBound)), thickness
+      );
       break;
     case Axis::Vertical:
       lineRect = KDRect(
-          std::round(floatToPixel(Axis::Horizontal, coordinate)), std::round(floatToPixel(Axis::Vertical, upperBound)),
-          thickness,  std::round(floatToPixel(Axis::Vertical, lowerBound) - floatToPixel(Axis::Vertical, upperBound))
+        std::round(floatToPixel(Axis::Horizontal, coordinate)), std::round(floatToPixel(Axis::Vertical, upperBound)),
+        thickness, std::round(floatToPixel(Axis::Vertical, lowerBound)) - std::round(floatToPixel(Axis::Vertical, upperBound))
       );
       break;
   }
@@ -411,22 +418,20 @@ const uint8_t oversizeDotMask[oversizeDotDiameter][oversizeDotDiameter] = {
 
 };
 
-KDColor s_dotWorkingBuffer[dotDiameter*dotDiameter];
-KDColor s_oversizeDotWorkingBuffer[oversizeDotDiameter*oversizeDotDiameter];
-
 void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool oversize) const {
+  const KDCoordinate diameter = oversize ? oversizeDotDiameter : dotDiameter;
   KDCoordinate px = std::round(floatToPixel(Axis::Horizontal, x));
   KDCoordinate py = std::round(floatToPixel(Axis::Vertical, y));
-  if ((px + dotDiameter < rect.left() - k_externRectMargin || px - dotDiameter > rect.right() + k_externRectMargin) ||
-      (py + dotDiameter < rect.top() - k_externRectMargin || py - dotDiameter > rect.bottom() + k_externRectMargin)) {
+  KDRect dotRect(px - diameter/2, py - diameter/2, diameter, diameter);
+  if (!rect.intersects(dotRect)) {
     return;
   }
-  KDRect dotRect = KDRect(px - dotDiameter/2, py-dotDiameter/2, dotDiameter, dotDiameter);
-  ctx->blendRectWithMask(dotRect, color, (const uint8_t *)dotMask, s_dotWorkingBuffer);
-  if (oversize) {
-    KDRect oversizeDotRect = KDRect(px - oversizeDotDiameter/2, py-oversizeDotDiameter/2, oversizeDotDiameter, oversizeDotDiameter);
-    ctx->blendRectWithMask(oversizeDotRect, color, (const uint8_t *)oversizeDotMask, s_oversizeDotWorkingBuffer);
-  }
+  KDColor workingBuffer[oversizeDotDiameter*oversizeDotDiameter];
+  ctx->blendRectWithMask(
+    dotRect, color,
+    oversize ? (const uint8_t *)oversizeDotMask : (const uint8_t *)dotMask,
+    workingBuffer
+  );
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
@@ -498,46 +503,28 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
-  float xMin = min(Axis::Horizontal);
-  float xMax = max(Axis::Horizontal);
-  float xStep = (xMax-xMin)/resolution();
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound) const {
+  const float xStep = pixelWidth();
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
 
-  float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, colorLowerBound));
-  float pixelColorUpperBound = std::round(floatToPixel(Axis::Horizontal, colorUpperBound));
-
+  float previousY = NAN;
+  float y = NAN;
   for (float x = rectMin; x < rectMax; x += xStep) {
     /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
      * the infinite loop. */
     if (x == x-xStep || x == x+xStep) {
       return;
     }
-    float y = evaluation(x, model, context);
+    previousY = y;
+    y = evaluation(x, model, context);
     if (std::isnan(y)|| std::isinf(y)) {
       continue;
     }
-    float pxf = floatToPixel(Axis::Horizontal, x);
-    float pyf = floatToPixel(Axis::Vertical, y);
-    if (colorUnderCurve && pxf > pixelColorLowerBound && pxf < pixelColorUpperBound) {
-      KDRect colorRect((int)pxf, std::round(pyf), 1, std::round(floatToPixel(Axis::Vertical, 0.0f)) - std::round(pyf));
-      if (floatToPixel(Axis::Vertical, 0.0f) < std::round(pyf)) {
-        colorRect = KDRect((int)pxf, std::round(floatToPixel(Axis::Vertical, 0.0f)), 1, std::round(pyf) - std::round(floatToPixel(Axis::Vertical, 0.0f)));
-      }
-      ctx->fillRect(colorRect, color);
+    if (colorUnderCurve && colorLowerBound < x && x < colorUpperBound) {
+      drawSegment(ctx, rect, Axis::Vertical, x, minFloat(0.0f, y), maxFloat(0.0f, y), color, 1);
     }
-    stampAtLocation(ctx, rect, pxf, pyf, color);
-    if (x <= rectMin || std::isnan(evaluation(x-xStep, model, context))) {
-      continue;
-    }
-    if (continuously) {
-      float puf = floatToPixel(Axis::Horizontal, x - xStep);
-      float pvf = floatToPixel(Axis::Vertical, evaluation(x-xStep, model, context));
-      straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
-    } else {
-      jointDots(ctx, rect, evaluation, model, context, x - xStep, evaluation(x-xStep, model, context), x, y, color, k_maxNumberOfIterations);
-    }
+    jointDots(ctx, rect, evaluation, model, context, x - xStep, previousY, x, y, color, k_maxNumberOfIterations);
   }
 }
 
@@ -551,10 +538,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   float pHighlightLowerBound = floatToPixel(Axis::Horizontal, highlightLowerBound);
   float pHighlightUpperBound = floatToPixel(Axis::Horizontal, highlightUpperBound);
-  float step = barWidth;
-  if ((rectMaxUpperBound-rectMinLowerBound)/step > resolution()) {
-    step = (rectMaxUpperBound-rectMinLowerBound)/resolution();
-  }
+  const float step = std::fmax(barWidth, pixelWidth());
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
     /* When |rectMinLowerBound| >> step, rectMinLowerBound + step = rectMinLowerBound.
      * In that case, quit the infinite loop. */
@@ -583,24 +567,15 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
 }
 
 void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
+  float pxf = floatToPixel(Axis::Horizontal, x);
   float pyf = floatToPixel(Axis::Vertical, y);
+  float puf = floatToPixel(Axis::Horizontal, u);
   float pvf = floatToPixel(Axis::Vertical, v);
-  if (std::isnan(pyf) || std::isnan(pvf)) {
-    return;
-  }
-  // No need to draw if both dots are outside visible area
-  if ((pyf < -stampSize && pvf < -stampSize) || (pyf > pixelLength(Axis::Vertical)+stampSize && pvf > pixelLength(Axis::Vertical)+stampSize)) {
-    return;
-  }
-  // If one of the dot is infinite, we cap it with a dot outside area
-  if (std::isinf(pyf)) {
-    pyf = pyf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
-  }
-  if (std::isinf(pvf)) {
-    pvf = pvf > 0 ? pixelLength(Axis::Vertical)+stampSize : -stampSize;
-  }
-  if (pyf - ((float)circleDiameter)/2.0f < pvf && pvf < pyf + ((float)circleDiameter)/2.0f) {
+  const float deltaX = pxf - puf;
+  const float deltaY = pyf - pvf;
+  if (std::isnan(y) || deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f) {
     // the dots are already joined
+    stampAtLocation(ctx, rect, puf, pvf, color);
     return;
   }
   // C is the dot whose abscissa is between x and u
@@ -609,60 +584,100 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */
-    float pxf = floatToPixel(Axis::Horizontal, x);
-    float puf = floatToPixel(Axis::Horizontal, u);
-    if (std::isnan(pxf) || std::isnan(puf)) {
-      return;
-    }
     straightJoinDots(ctx, rect, pxf, pyf, puf, pvf, color);
     return;
   }
-  float pcxf = floatToPixel(Axis::Horizontal, cx);
-  float pcyf = floatToPixel(Axis::Vertical, cy);
   if (maxNumberOfRecursion > 0) {
-    stampAtLocation(ctx, rect, pcxf, pcyf, color);
     jointDots(ctx, rect, evaluation, model, context, x, y, cx, cy, color, maxNumberOfRecursion-1);
     jointDots(ctx, rect, evaluation, model, context, cx, cy, u, v, color, maxNumberOfRecursion-1);
   }
 }
 
-void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const {
-  if (pyf <= pvf) {
-    for (float pnf = pyf; pnf<pvf; pnf+= 1.0f) {
-      float pmf = pxf + (pnf - pyf)*(puf - pxf)/(pvf - pyf);
-      stampAtLocation(ctx, rect, pmf, pnf, color);
+static void clipBarycentricCoordinatesBetweenBounds(float & start, float & end, const KDCoordinate * bounds, const float p1f, const float p2f) {
+  static constexpr int lower = 0;
+  static constexpr int upper = 1;
+  if (p1f == p2f) {
+    if (p1f < bounds[lower] || bounds[upper] < p1f) {
+      start = 1;
+      end = 0;
     }
-    return;
+  } else {
+    start = maxFloat(start, (bounds[(p1f > p2f) ? lower : upper] - p2f)/(p1f-p2f));
+    end   = minFloat( end , (bounds[(p1f > p2f) ? upper : lower] - p2f)/(p1f-p2f));
   }
-  straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
+}
+
+void CurveView::straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color) const {
+  {
+    /* Before drawing the line segment, clip it to rect:
+     * start and end are the barycentric coordinates on the line segment (0
+     * corresponding to (u, v) and 1 to (x, y)), of the drawing start and end
+     * points. */
+    float start = 0;
+    float end   = 1;
+    const KDCoordinate xBounds[2] = {
+      static_cast<KDCoordinate>(rect.left() - stampSize),
+      static_cast<KDCoordinate>(rect.right() + stampSize)
+    };
+    const KDCoordinate yBounds[2] = {
+      static_cast<KDCoordinate>(rect.top() - stampSize),
+      static_cast<KDCoordinate>(rect.bottom() + stampSize)
+    };
+    clipBarycentricCoordinatesBetweenBounds(start, end, xBounds, pxf, puf);
+    clipBarycentricCoordinatesBetweenBounds(start, end, yBounds, pyf, pvf);
+    if (start > end) {
+      return;
+    }
+    puf = start * pxf + (1-start) * puf;
+    pvf = start * pyf + (1-start) * pvf;
+    pxf =  end  * pxf + (1- end ) * puf;
+    pyf =  end  * pyf + (1- end ) * pvf;
+  }
+  const float deltaX = pxf - puf;
+  const float deltaY = pyf - pvf;
+  const float normsRatio = std::sqrt(deltaX*deltaX + deltaY*deltaY) / (circleDiameter / 2.0f);
+  const float stepX = deltaX / normsRatio ;
+  const float stepY = deltaY / normsRatio;
+  const int numberOfStamps = std::floor(normsRatio);
+  for (int i = 0; i < numberOfStamps; i++) {
+    stampAtLocation(ctx, rect, puf, pvf, color);
+    puf += stepX;
+    pvf += stepY;
+  }
 }
 
 void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const {
-  // We avoid drawing when no part of the stamp is visible
-  if (pyf < -stampSize - FLT_EPSILON || pyf > pixelLength(Axis::Vertical)+stampSize + FLT_EPSILON) {
-    return;
-  }
-  /* When converting floats to KDCoordinate, we need to add -1 if the float is
-   * negative, otherwise all floats in ]-1.0;1.0[ are converted to 0 and there
-   * is a blob for x = 0. Try for instance f(x)=cos(x), the blob is at the
-   * intersection of the curve with the left of the screen. */
-  KDCoordinate px = pxf + (pxf >= 0 ? 0 : -1);
-  KDCoordinate py = pyf + (pyf >= 0 ? 0 : -1);
-  KDRect stampRect(px-(circleDiameter-2)/2, py-(circleDiameter-2)/2, stampSize, stampSize);
+  /* The (pxf, pyf) coordinates are not generally locating the center of a
+   * pixel. We use stampMask, which is one pixel wider and higher than
+   * stampSize, in order to cover stampRect without aligning the pixels. Then
+   * shiftedMask is computed so that each pixel is the average of the values of
+   * the four pixels of stampMask by which it is covered, proportionally to the
+   * area of the intersection with each of those.
+   *
+   * In order to compute the coordinates (px, py) of the top-left pixel of
+   * stampRect, we consider that stampMask is centered at the provided point
+   * (pxf,pyf) which is then translated to the center of the top-left pixel of
+   * stampMask.
+   */
+  pxf -= (stampSize + 1 - 1)/2.0f;
+  pyf -= (stampSize + 1 - 1)/2.0f;
+  const KDCoordinate px = std::ceil(pxf);
+  const KDCoordinate py = std::ceil(pyf);
+  KDRect stampRect(px, py, stampSize, stampSize);
   if (!rect.intersects(stampRect)) {
     return;
   }
   uint8_t shiftedMask[stampSize][stampSize];
   KDColor workingBuffer[stampSize*stampSize];
-  float dx = pxf - std::floor(pxf);
-  float dy = pyf - std::floor(pyf);
+  const float dx = px - pxf;
+  const float dy = py - pyf;
   /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
    * dx and dy would be rounded to one tenth or one hundredth to choose the
    * right shifted mask. */
   for (int i=0; i<stampSize; i++) {
     for (int j=0; j<stampSize; j++) {
-      shiftedMask[i][j] = dx * (stampMask[i][j]*dy+stampMask[i+1][j]*(1.0f-dy))
-        + (1.0f-dx) * (stampMask[i][j+1]*dy + stampMask[i+1][j+1]*(1.0f-dy));
+      shiftedMask[j][i] = (1.0f - dx) * (stampMask[j][i]*(1.0-dy)+stampMask[j+1][i]*dy)
+        + dx * (stampMask[j][i+1]*(1.0f-dy) + stampMask[j+1][i+1]*dy);
     }
   }
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);

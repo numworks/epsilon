@@ -1,5 +1,4 @@
 #include "interactive_curve_view_controller.h"
-#include "text_field_delegate_app.h"
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -79,14 +78,14 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down) {
       header()->setSelectedButton(-1);
       curveView()->selectMainView(true);
-      app()->setFirstResponder(this);
+      Container::activeApp()->setFirstResponder(this);
       reloadBannerView();
       curveView()->reload();
       return true;
     }
     if (event == Ion::Events::Up) {
       header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
       return true;
     }
     return false;
@@ -277,7 +276,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
 }
 
 float InteractiveCurveViewController::cursorBottomMarginRatio() {
-  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/k_viewHeight;
+  return (curveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2+estimatedBannerHeight())/(k_viewHeight-1);
 }
 
 float InteractiveCurveViewController::estimatedBannerHeight() const {

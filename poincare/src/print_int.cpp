@@ -5,7 +5,7 @@
 namespace Poincare {
 
 int PrintIntInBuffer(uint32_t integer, char * buffer, int bufferLength, bool left) {
-  int wantedLength = std::log10(integer*1.0)+1;
+  int wantedLength = integer == 0 ? 1 : std::log10(integer*1.0)+1;
   assert(wantedLength > 0);
   if (bufferLength == 0 || wantedLength > bufferLength) {
     return wantedLength;

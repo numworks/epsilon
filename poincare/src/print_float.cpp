@@ -1,8 +1,8 @@
 #include <poincare/print_float.h>
 #include <poincare/ieee754.h>
 #include <poincare/infinity.h>
-#include <poincare/integer.h>
 #include <poincare/preferences.h>
+#include <poincare/print_int.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -18,7 +18,70 @@ extern "C" {
 
 namespace Poincare {
 
-void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLength, Integer i, int decimalMarkerPosition) {
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
+PrintFloat::Long::Long(int64_t i) :
+  m_negative(i < 0)
+{
+  m_digits[1] = i % k_base;
+  m_digits[0] = (i - m_digits[1]) / k_base;
+}
+
+PrintFloat::Long::Long(uint32_t d1, uint32_t d2, bool negative) :
+  m_negative(negative)
+{
+  m_digits[1] = d2;
+  m_digits[0] = d1;
+  assert((!negative) || (!isZero()));
+}
+
+void PrintFloat::Long::DivisionByTen(const Long & longToDivide, Long * quotient, Long * digit) {
+  assert(quotient != nullptr && digit != nullptr);
+  if (longToDivide.isZero()) {
+    *quotient = Long(0);
+    *digit = Long(0);
+    return;
+  }
+
+  uint32_t digit0 = longToDivide.digit(0);
+  uint32_t digit1 = longToDivide.digit(1);
+
+  uint32_t d = digit1 % 10;
+  uint32_t digit1DividedByTen = (digit1 - d)/10;
+  *digit = Long(d);
+
+
+  if (digit0 == 0) {
+    *quotient = Long(0, digit1DividedByTen, longToDivide.isNegative());
+  } else {
+    *quotient = Long(digit0/10, digit1DividedByTen + k_base * digit0 % 10, longToDivide.isNegative());
+  }
+}
+
+int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
+  int numberOfChars = m_negative ? 1 : 0; // 1 for the minus sign char
+  if (m_digits[0] != 0) {
+    numberOfChars += PrintInt::Left(m_digits[0], buffer + numberOfChars, bufferSize - numberOfChars - 1);
+    int wantedNumberOfChars = numberOfChars + k_maxNumberOfCharsForDigit + 1;
+    if (wantedNumberOfChars > bufferSize) {
+      /* There is not enough space for serializing the second digit and the null
+       * terminating char. */
+      return wantedNumberOfChars;
+    }
+    numberOfChars+= PrintInt::Right(m_digits[1], buffer + numberOfChars, minInt(k_maxNumberOfCharsForDigit, bufferSize - numberOfChars - 1));
+  } else {
+    numberOfChars+= PrintInt::Left(m_digits[1], buffer + numberOfChars, bufferSize - numberOfChars - 1);
+  }
+  if (m_negative) {
+    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
+    buffer[0] = '-';
+  }
+  assert(numberOfChars <= bufferSize - 1);
+  buffer[numberOfChars] = 0;
+  return numberOfChars;
+}
+
+void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Long & i, int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
    * in first position. When called by convertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */
@@ -60,12 +123,12 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
   constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
   char tempBuffer[tempBufferSize];
   int numberOfZerosRemoved = 0;
-  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
+  int requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
   /* If the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
    * fit the buffer size. */
   if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+    requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   if (requiredLength >= bufferSize) {
     /* If the buffer size is still too small and rounding is allowed, we only
@@ -77,7 +140,7 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
     }
     int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - requiredLength + bufferSize - 1;
     adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, tempBufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
+    requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize-1;
   strlcpy(buffer, tempBuffer, bufferSize);
@@ -85,9 +148,10 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
 }
 
 template <class T>
-int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
+int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
   assert(numberOfSignificantDigits > 0);
   if (std::isinf(f)) {
+    // Infinity
     assert(Infinity::NameSize()+1 < bufferSize);
     int currentChar = 0;
     if (f < 0) {
@@ -98,6 +162,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   }
 
   if (std::isnan(f)) {
+    // Nan
     assert(Undefined::NameSize() < bufferSize);
     strlcpy(buffer, Undefined::Name(), bufferSize);
     return Undefined::NameSize() - 1;
@@ -151,9 +216,10 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   assert(numberOfSignificantDigits < std::log10(std::pow(2.0f, 63.0f)));
 
   // Remove the zeroes on the right side of the mantissa
-  Integer dividend = Integer((int64_t)mantissa);
-  Integer quotient = Integer::Division(dividend, Integer(10)).quotient;
-  Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
+  Long dividend = Long((int64_t)mantissa);
+  Long digit;
+  Long quotient;
+  Long::DivisionByTen(dividend, &quotient, &digit);
   int minimumNumberOfCharsInMantissa = 1;
   int numberOfZerosRemoved = 0;
   while (digit.isZero()
@@ -164,8 +230,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     numberOfCharsForMantissaWithoutSign--;
     dividend = quotient;
-    quotient = Integer::Division(dividend, Integer(10)).quotient;
-    digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
+    Long::DivisionByTen(dividend, &quotient, &digit);
     numberOfZerosRemoved++;
   }
   if (numberOfRemovedZeros != nullptr) {
@@ -202,7 +267,6 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   int numberOfCharsForMantissaWithSign = f >= 0 ? numberOfCharsForMantissaWithoutSign : numberOfCharsForMantissaWithoutSign + 1;
   assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
-  assert(!dividend.isOverflow());
   if (numberOfCharsForMantissaWithSign >= bufferSize) {
     /* Exception 3: if we are about to overflow the buffer, we escape by
      * returning a big int. This will be caught by 'convertFloatToText' which
@@ -211,7 +275,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     return INT_MAX;
   }
   assert(numberOfCharsForMantissaWithSign < bufferSize);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer, numberOfCharsForMantissaWithSign, dividend, decimalMarkerPosition);
+  PrintLongWithDecimalMarker(buffer, numberOfCharsForMantissaWithSign, dividend, decimalMarkerPosition);
   if (mode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {
     buffer[numberOfCharsForMantissaWithSign] = 0;
     return numberOfCharsForMantissaWithSign;
@@ -221,7 +285,8 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   int currentNumberOfChar = numberOfCharsForMantissaWithSign;
   currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, UCodePointLatinLetterSmallCapitalE);
   assert(numberOfCharExponent+currentNumberOfChar < bufferSize);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, Integer(exponentInBase10), -1);
+  dividend = Long(exponentInBase10); // reuse dividend as it is not needed anymore
+  PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, dividend, -1);
   buffer[currentNumberOfChar + numberOfCharExponent] = 0;
   return (currentNumberOfChar + numberOfCharExponent);
 }

@@ -3,10 +3,9 @@
 
 #include <assert.h>
 #include <poincare/preferences.h>
+#include <stdint.h>
 
 namespace Poincare {
-
-class Integer;
 
 class PrintFloat {
 public:
@@ -36,19 +35,43 @@ public:
   static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding = true);
 
 private:
-  /* This function prints the integer i in the buffer with a '.' at the position
-   * specified by the decimalMarkerPosition. It starts printing at the end of the
-   * buffer and print from right to left. The integer given should be of the right
-   * length to be written in bufferLength chars. If the integer is to small, the
-   * empty chars on the left side are completed with '0'. If the integer is too
-   * big, the printing stops when no more empty chars are available without
-   * returning any warning.
+  template <class T>
+  static int ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);
+
+  class Long final {
+  public:
+    Long(int64_t i = 0);
+    Long(uint32_t d1, uint32_t, bool negative);
+    bool isNegative() const { return m_negative; }
+    bool isZero() const { return (m_digits[0] == 0) && (m_digits[1] == 0); }
+    static void DivisionByTen(const Long & longToDivide, Long * quotient, Long * digit);
+
+    int serialize(char * buffer, int bufferSize) const;
+    uint32_t digit(uint8_t i) const {
+      assert(i >= 0 && i < k_numberOfDigits);
+      return m_digits[i];
+    }
+  private:
+    constexpr static int64_t k_base = 1000000000;
+    constexpr static int k_numberOfDigits = 2;
+    constexpr static int k_maxNumberOfCharsForDigit = 8;
+
+    bool m_negative;
+    uint32_t m_digits[k_numberOfDigits];
+  };
+
+  /* This function prints the long i in the buffer with a '.' at the position
+   * specified by the decimalMarkerPosition.
+   * It starts printing at the end of the buffer and prints from right to left.
+   * The given long should be of the right length to be written in bufferLength
+   * chars. If the long is too small, the buffer is padded on the left with '0'.
+   * If the long is too big, the printing stops when no more empty chars are
+   * available, without returning any warning.
    * Warning: the buffer is not null terminated but is ensured to hold
    * bufferLength chars. */
-  static void printBase10IntegerWithDecimalMarker(char * buffer, int bufferLength, Integer i, int decimalMarkerPosition);
+  static void PrintLongWithDecimalMarker(char * buffer, int bufferLength, Long & i, int decimalMarkerPosition);
 
-  template <class T>
-  static int convertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);
+
 };
 
 }

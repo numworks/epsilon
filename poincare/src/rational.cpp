@@ -72,10 +72,10 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = signedNumerator().serialize(buffer, bufferSize);
-  if (isInteger()) {
+  if (numberOfChar >= bufferSize-1) {
     return numberOfChar;
   }
-  if (numberOfChar >= bufferSize-1) {
+  if (isInteger()) {
     return numberOfChar;
   }
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '/');

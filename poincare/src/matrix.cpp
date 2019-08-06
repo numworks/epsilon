@@ -17,6 +17,8 @@
 
 namespace Poincare {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);
@@ -41,11 +43,10 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int currentChar = 0;
-  if (currentChar >= bufferSize-1) {
+  if (bufferSize == 1) {
     return 0;
   }
-  currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '[');
+  int currentChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
   if (currentChar >= bufferSize-1) {
     return currentChar;
   }
@@ -78,11 +79,7 @@ int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
     }
   }
   currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, ']');
-  if (currentChar >= bufferSize-1) {
-    return currentChar;
-  }
-  buffer[currentChar] = 0;
-  return currentChar;
+  return minInt(currentChar, bufferSize-1);
 }
 
 template<typename T>

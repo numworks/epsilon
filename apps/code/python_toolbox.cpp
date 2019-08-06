@@ -370,7 +370,7 @@ bool PythonToolbox::selectLeaf(int selectedRow) {
     editedText = strippedEditedText;
   }
   sender()->handleEventWithText(editedText, true);
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 

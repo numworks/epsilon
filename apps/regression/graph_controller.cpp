@@ -18,7 +18,7 @@ GraphController::GraphController(Responder * parentResponder, InputEventHandlerD
   m_crossCursorView(),
   m_roundCursorView(),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView, this),
+  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
   m_initialisationParameterController(this, m_store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
@@ -97,7 +97,7 @@ void GraphController::selectRegressionCurve() {
 // Private
 
 Poincare::Context * GraphController::globalContext() {
-  return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  return AppsContainer::sharedAppsContainer()->globalContext();
 }
 
 // SimpleInteractiveCurveViewController

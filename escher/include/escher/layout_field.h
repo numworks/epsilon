@@ -21,7 +21,7 @@ public:
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool isEditing() const override { return m_contentView.isEditing(); }
-  void setEditing(bool isEditing, bool reinitDraftBuffer = false) override { m_contentView.setEditing(isEditing); }
+  void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
   void clearLayout() { m_contentView.clearLayout(); }
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());

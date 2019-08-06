@@ -105,7 +105,7 @@ void MicroPython::init(void * heapStart, void * heapEnd) {
 #else
   volatile int stackTop;
   mp_stack_set_top((void *)(&stackTop));
-  mp_stack_set_limit(4000);
+  mp_stack_set_limit(8192);
 #endif
   gc_init(heapStart, heapEnd);
   mp_init();

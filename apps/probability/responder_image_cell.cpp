@@ -21,8 +21,8 @@ KDSize ResponderImageCell::minimalSizeForOptimalDisplay() const {
 
 bool ResponderImageCell::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Down) {
-    KDPoint topLeftAngle = app()->modalView()->pointFromPointInView(this, KDPoint(k_outline, k_outline));
-    app()->displayModalViewController(&m_calculationTypeController, 0.0f, 0.0f, topLeftAngle.y(), topLeftAngle.x());
+    KDPoint topLeftAngle = Container::activeApp()->modalView()->pointFromPointInView(this, KDPoint(k_outline, k_outline));
+    Container::activeApp()->displayModalViewController(&m_calculationTypeController, 0.0f, 0.0f, topLeftAngle.y(), topLeftAngle.x());
     return true;
   }
   return false;

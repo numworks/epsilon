@@ -1,14 +1,14 @@
 #include "expression_field_delegate_app.h"
 #include <escher.h>
 #include <apps/i18n.h>
-#include "../apps_container.h"
+#include <poincare/expression.h>
 
 using namespace Poincare;
 
 namespace Shared {
 
-ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  TextFieldDelegateApp(container, snapshot, rootViewController),
+ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
+  TextFieldDelegateApp(snapshot, rootViewController),
   LayoutFieldDelegate()
 {
 }
@@ -20,7 +20,7 @@ bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * la
 bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutField->hasText()) {
-      layoutField->app()->displayWarning(I18n::Message::SyntaxError);
+      displayWarning(I18n::Message::SyntaxError);
       return true;
     }
     /* An acceptable layout has to be parsable and serialized in a fixed-size

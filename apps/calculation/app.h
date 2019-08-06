@@ -27,6 +27,9 @@ public:
     void tidy() override;
     CalculationStore m_calculationStore;
   };
+  static App * app() {
+    return static_cast<App *>(Container::activeApp());
+  }
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
@@ -34,7 +37,7 @@ public:
   bool storeExpressionAllowed() const override { return true; }
   char XNT() override;
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   HistoryController m_historyController;
   EditExpressionController m_editExpressionController;
 };

@@ -33,7 +33,6 @@ public:
   VariableBoxController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
 
 private:
-  Shared::InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() override;
   static constexpr int k_indentationSpacesNumber = 2; //TODO LEA merge with text area k_indentationSpaces
   StackViewController * stackController();
   void saveScript();

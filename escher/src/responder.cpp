@@ -1,6 +1,5 @@
 #include <escher/responder.h>
-#include <escher/app.h>
-#include <escher/metric.h>
+#include <escher/container.h>
 #include <assert.h>
 
 Responder::Responder(Responder * parentResponder) :
@@ -61,18 +60,4 @@ Responder * Responder::commonAncestorWith(Responder * responder) {
     return r;
   }
   return s;
-}
-
-/* We assume the app is the root parent. */
-App * Responder::app() const {
-  const Responder * rootResponder = this;
-  while (rootResponder->parentResponder() != nullptr) {
-    rootResponder = rootResponder->parentResponder();
-  }
-  /* If we used RTTI we could use a dynamic_cast, which would be a lot more
-   * safe, as such:
-   * return dynamic_cast<App *>(rootResponder); */
-   App * result = (App *)rootResponder;
-   assert(result->m_magic == App::Magic); // Poor man's RTTI
-  return result;
 }

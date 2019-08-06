@@ -22,7 +22,7 @@ View * InitialisationParameterController::view() {
 
 void InitialisationParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {

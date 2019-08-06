@@ -1,4 +1,5 @@
 #include <escher/button_row_controller.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <cmath>
 
@@ -141,7 +142,7 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   }
 }
 
-bool ButtonRowController::ContentView::setSelectedButton(int selectedButton, App * application) {
+bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {
   if (selectedButton < -1 || selectedButton >= numberOfButtons() || selectedButton == m_selectedButton) {
     return false;
   }
@@ -153,7 +154,7 @@ bool ButtonRowController::ContentView::setSelectedButton(int selectedButton, App
   if (m_selectedButton >= 0) {
     Button * button = buttonAtIndex(selectedButton);
     button->setHighlighted(true);
-    application->setFirstResponder(button);
+    Container::activeApp()->setFirstResponder(button);
     return true;
   }
   return false;
@@ -170,7 +171,7 @@ const char * ButtonRowController::title() {
 }
 
 void ButtonRowController::didBecomeFirstResponder(){
-  app()->setFirstResponder(m_contentView.mainViewController());
+  Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
 }
 
 int ButtonRowController::selectedButton() {
@@ -178,8 +179,7 @@ int ButtonRowController::selectedButton() {
 }
 
 bool ButtonRowController::setSelectedButton(int selectedButton) {
-  App * application = app();
-  return m_contentView.setSelectedButton(selectedButton, application);
+  return m_contentView.setSelectedButton(selectedButton);
 }
 
 void ButtonRowController::setMessageOfButtonAtIndex(I18n::Message message, int index) {

@@ -31,7 +31,15 @@ namespace SerializationHelper {
       Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
-      bool writeFirstChild = true);
+      int lastChildIndex = -1);
+
+  int SerializeChild(
+    const TreeNode * childNode,
+    const TreeNode * parentNode,
+    char * buffer,
+    int bufferSize,
+    Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfDigits);
 
   // Write one code point in a buffer and a null-terminating char
   int CodePoint(char * buffer, int bufferSize, CodePoint c);

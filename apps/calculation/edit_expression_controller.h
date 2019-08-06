@@ -53,8 +53,6 @@ private:
   bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
-  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   static constexpr int k_cacheBufferSize = Constant::MaxSerializedExpressionSize;
   char m_cacheBuffer[k_cacheBufferSize];
   HistoryController * m_historyController;

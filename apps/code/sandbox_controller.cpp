@@ -48,7 +48,7 @@ bool SandboxController::handleEvent(Ion::Events::Event event) {
 }
 
 void SandboxController::redrawWindow() {
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->redrawWindow();
+  AppsContainer::sharedAppsContainer()->redrawWindow();
 }
 
 }

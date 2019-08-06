@@ -73,14 +73,13 @@ void Probability::LawController::viewWillAppear() {
 }
 
 void Probability::LawController::didBecomeFirstResponder() {
-  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
-  snapshot->setActivePage(App::Snapshot::Page::Law);
+  App::app()->snapshot()->setActivePage(App::Snapshot::Page::Law);
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool Probability::LawController::handleEvent(Ion::Events::Event event) {

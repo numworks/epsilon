@@ -109,11 +109,11 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int currentChar = 0;
-  if (currentChar >= bufferSize-1) { return bufferSize-1; }
+  if (bufferSize == 1) {
+    return 0;
+  }
   if (unsignedMantissa().isZero()) {
-    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '0'); // This already writes the null terminating char
-    return currentChar;
+    return SerializationHelper::CodePoint(buffer, bufferSize, '0'); // This already writes the null terminating char
   }
   int exponent = m_exponent;
   char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
@@ -135,6 +135,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
      * to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
     removeZeroAtTheEnd(&m);
   }
+  int currentChar = 0;
   if (m_negative) {
     currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '-');
     if (currentChar >= bufferSize-1) { return bufferSize-1; }

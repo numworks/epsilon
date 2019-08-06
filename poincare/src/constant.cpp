@@ -14,6 +14,8 @@
 
 namespace Poincare {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
@@ -66,7 +68,7 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   if (bufferSize == 0) {
     return -1;
   }
-  return strlcpy(buffer, m_name, bufferSize);
+  return minInt(strlcpy(buffer, m_name, bufferSize), bufferSize - 1);
 }
 
 template<typename T>

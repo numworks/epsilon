@@ -77,8 +77,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
     return numberOfChar;
   }
-  numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, '!');
-  buffer[numberOfChar] = 0;
+  numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '!');
   return numberOfChar;
 }
 

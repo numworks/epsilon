@@ -174,32 +174,32 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   abs.setNegative(false);
   IntegerDivision d = udiv(abs, base);
 
-  int size = 0;
+  int length = 0;
   if (isZero()) {
-    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, '0');
+    length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, '0');
   } else if (isNegative()) {
-    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, '-');
+    length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, '-');
   }
 
   while (!(d.remainder.isZero() &&
         d.quotient.isZero())) {
     char c = char_from_digit(d.remainder.isZero() ? 0 : d.remainder.digit(0));
-    if (size >= bufferSize-1) {
+    if (length >= bufferSize-1) {
       return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
     }
-    size += SerializationHelper::CodePoint(buffer + size, bufferSize - size, c);
+    length += SerializationHelper::CodePoint(buffer + length, bufferSize - length, c);
     d = udiv(d.quotient, base);
   }
-  assert(size <= bufferSize - 1);
-  buffer[size] = 0;
+  assert(length <= bufferSize - 1);
+  buffer[length] = 0;
 
   // Flip the string
-  for (int i = m_negative, j=size-1 ; i < j ; i++, j--) {
+  for (int i = m_negative, j=length-1 ; i < j ; i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;
   }
-  return size;
+  return length;
 }
 
 // Layout

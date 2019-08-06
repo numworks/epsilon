@@ -238,7 +238,6 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
 
   // Write the closing system parenthesis
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-  buffer[numberOfChar] = 0;
   return numberOfChar;
 }
 

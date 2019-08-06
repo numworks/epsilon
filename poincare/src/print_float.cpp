@@ -59,6 +59,13 @@ void PrintFloat::Long::DivisionByTen(const Long & longToDivide, Long * quotient,
 }
 
 int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  if (bufferSize == 1) {
+    return 0;
+  }
   int numberOfChars = m_negative ? 1 : 0; // 1 for the minus sign char
   if (m_digits[0] != 0) {
     numberOfChars += PrintInt::Left(m_digits[0], buffer + numberOfChars, bufferSize - numberOfChars - 1);

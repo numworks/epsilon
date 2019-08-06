@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 // MatrixLayoutNode
 
 void MatrixLayoutNode::addGreySquares() {
@@ -98,10 +100,9 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   }
   buffer[bufferSize-1] = 0;
   if (bufferSize == 1) {
-    return 1;
+    return 0;
   }
-  int numberOfChar = 0;
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
+  int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '[');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
   int maxRowIndex = hasGreySquares() ? m_numberOfRows - 1 : m_numberOfRows;
@@ -117,9 +118,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
   numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ']');
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  buffer[numberOfChar] = 0;
-  return numberOfChar;
+  return minInt(numberOfChar, bufferSize-1);
 }
 
 // Protected

@@ -8,6 +8,8 @@
 
 namespace Poincare {
 
+static inline int minInt(int x, int y) { return x < y ? x : y; }
+
 void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Left)
@@ -168,10 +170,9 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '}');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-    return numberOfChar;
+    return minInt(numberOfChar, bufferSize-1);
   }
+
   assert(m_position == Position::Superscript);
   // If the layout is a superscript, write: '^' 'System(' indice 'System)'
   int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '^');
@@ -181,10 +182,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, UCodePointRightSystemParenthesis);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  buffer[numberOfChar] = 0;
-  return numberOfChar;
+  return minInt(numberOfChar, bufferSize-1);
 }
 
 KDSize VerticalOffsetLayoutNode::computeSize() {

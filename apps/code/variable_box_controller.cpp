@@ -33,7 +33,7 @@ void VariableBoxController::didEnterResponderChain(Responder * previousFirstResp
    * environment where Python has already been inited. This way, we do not
    * deinit Python when leaving the VariableBoxController, so we do not lose the
    * environment that was loaded when entering the VariableBoxController. */
-  assert(static_cast<App *>(app())->pythonIsInited());
+  assert(App::app()->pythonIsInited());
 }
 
 static bool shouldAddObject(const char * name, int maxLength) {
@@ -100,7 +100,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
   if (selectedScriptNode.type() == ScriptNode::Type::Function) {
     insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
   }
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 

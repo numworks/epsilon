@@ -22,7 +22,9 @@ TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, s
   m_backgroundColor(backgroundColor)
 {
   assert(m_textBufferSize <= k_maxBufferSize);
-  m_cursorLocation = draftTextBuffer;
+  if (m_draftTextBuffer) {
+    reinitDraftTextBuffer();
+  }
 }
 
 void TextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
@@ -70,14 +72,11 @@ void TextField::ContentView::setAlignment(float horizontalAlignment, float verti
   markRectAsDirty(bounds());
 }
 
-void TextField::ContentView::setEditing(bool isEditing, bool reinitDrafBuffer) {
-  if (m_isEditing == isEditing && !reinitDrafBuffer) {
+void TextField::ContentView::setEditing(bool isEditing) {
+  if (m_isEditing == isEditing) {
     return;
   }
   m_isEditing = isEditing;
-  if (reinitDrafBuffer) {
-    reinitDraftTextBuffer();
-  }
   m_currentDraftTextLength = strlen(m_draftTextBuffer);
   if (m_cursorLocation < m_draftTextBuffer
       || m_cursorLocation > m_draftTextBuffer + m_currentDraftTextLength)
@@ -144,17 +143,16 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   return stringSize;
 }
 
-bool TextField::ContentView::removeCodePoint() {
+bool TextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
   if (m_horizontalAlignment > 0.0f) {
     /* Reload the view. If we do it later, the text beins supposedly shorter, we
-     *  will not clean the first char. */
+     * will not clean the first char. */
     reloadRectFromPosition(m_draftTextBuffer);
   }
-  // Remove the code point if possible
-  CodePoint removedCodePoint = 0;
-  int removedSize = UTF8Helper::RemovePreviousCodePoint(m_draftTextBuffer, const_cast<char *>(cursorLocation()), &removedCodePoint);
+  // Remove the glyph if possible
+  int removedSize = UTF8Helper::RemovePreviousGlyph(m_draftTextBuffer, const_cast<char *>(cursorLocation()));
   if (removedSize == 0) {
     assert(cursorLocation() == m_draftTextBuffer);
     return false;
@@ -246,6 +244,7 @@ void TextField::setTextColor(KDColor textColor) {
 
 void TextField::setDraftTextBuffer(char * draftTextBuffer) {
   m_contentView.setDraftTextBuffer(draftTextBuffer);
+  reinitDraftTextBuffer();
 }
 
 bool TextField::isEditing() const {
@@ -269,26 +268,16 @@ void TextField::setAlignment(float horizontalAlignment, float verticalAlignment)
   m_contentView.setAlignment(horizontalAlignment, verticalAlignment);
 }
 
-void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
-  m_contentView.setEditing(isEditing, reinitDrafBuffer);
-  if (reinitDrafBuffer) {
-    reloadScroll();
-  }
-}
-
 bool TextField::privateHandleEvent(Ion::Events::Event event) {
   // Handle Toolbox or Var event
-  if (handleBoxEvent(app(), event)) {
+  if (handleBoxEvent(event)) {
     if (!isEditing()) {
       setEditing(true);
     }
     return true;
   }
   if (isEditing() && shouldFinishEditing(event)) {
-    char bufferText[ContentView::k_maxBufferSize];
-    const char * cursorLoc = cursorLocation();
     if (m_hasTwoBuffers) {
-      strlcpy(bufferText, m_contentView.textBuffer(), ContentView::k_maxBufferSize);
       strlcpy(m_contentView.textBuffer(), m_contentView.draftTextBuffer(), m_contentView.bufferSize());
     }
     /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
@@ -297,21 +286,18 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
      * which we do not want, as we are not really aborting edition, just
      * displaying a pop-up before returning to edition.
      * We thus set editing to false. */
-    setEditing(false, m_hasTwoBuffers);
+    setEditing(false);
     if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
+      // Clean draft text for next use
+      if (m_hasTwoBuffers) {
+        reinitDraftTextBuffer();
+      }
       /* We allow overscroll to avoid calling layoutSubviews twice because the
        * content might have changed. */
       reloadScroll(true);
       return true;
     }
-    setEditing(true, false);
-    if (m_hasTwoBuffers) {
-      /* If the text was refused (textInputDidFinishEditing returned false, we
-       * reset the textfield in the same state as before */
-      setText(m_contentView.textBuffer());
-      strlcpy(m_contentView.textBuffer(), bufferText, ContentView::k_maxBufferSize);
-      setCursorLocation(cursorLoc);
-    }
+    setEditing(true);
     return true;
   }
   /* If a move event was not caught before, we handle it here to avoid bubbling
@@ -325,10 +311,11 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
-    return removeCodePoint();
+    return removePreviousGlyph();
   }
   if (event == Ion::Events::Back && isEditing()) {
-    setEditing(false, m_hasTwoBuffers);
+    reinitDraftTextBuffer();
+    setEditing(false);
     m_delegate->textFieldDidAbortEditing(this);
     reloadScroll(true);
     return true;
@@ -345,7 +332,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Cut && !isEditing()) {
     Clipboard::sharedClipboard()->store(text());
-    setEditing(true, true);
+    setEditing(true);
     return true;
   }
   return false;
@@ -417,7 +404,9 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
-    return handleEventWithText(m_contentView.textBuffer());
+    setEditing(true);
+    setText(m_contentView.textBuffer());
+    didHandleEvent = true;
   }
   if (!didHandleEvent) {
     didHandleEvent = privateHandleEvent(event);
@@ -433,25 +422,21 @@ void TextField::scrollToCursor() {
 }
 
 bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left && isEditing() && cursorLocation() > m_contentView.draftTextBuffer()) {
-    assert(isEditing());
-    UTF8Decoder decoder(m_contentView.draftTextBuffer(), cursorLocation());
-    decoder.previousCodePoint();
-    return setCursorLocation(decoder.stringPosition());
+  if (!isEditing()) {
+    return false;
   }
-  if (event == Ion::Events::ShiftLeft && isEditing()) {
-    assert(isEditing());
-    return setCursorLocation(m_contentView.draftTextBuffer());
+  const char * draftBuffer = m_contentView.draftTextBuffer();
+  if (event == Ion::Events::Left && cursorLocation() > draftBuffer) {
+    return TextInput::moveCursorLeft();
   }
-  if (event == Ion::Events::Right && isEditing() && cursorLocation() < m_contentView.draftTextBuffer() + draftTextLength()) {
-    assert(isEditing());
-    UTF8Decoder decoder(cursorLocation());
-    decoder.nextCodePoint();
-    return setCursorLocation(decoder.stringPosition());
+  if (event == Ion::Events::Right && cursorLocation() < draftBuffer + draftTextLength()) {
+    return TextInput::moveCursorRight();
   }
-  if (event == Ion::Events::ShiftRight && isEditing()) {
-    assert(isEditing());
-    return setCursorLocation(m_contentView.draftTextBuffer() + draftTextLength());
+  if (event == Ion::Events::ShiftLeft) {
+    return setCursorLocation(draftBuffer);
+  }
+  if (event == Ion::Events::ShiftRight) {
+    return setCursorLocation(draftBuffer + draftTextLength());
   }
   return false;
 }
@@ -494,5 +479,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 }
 
 void TextField::removeWholeText() {
-  setEditing(true, true);
+  reinitDraftTextBuffer();
+  setEditing(true);
+  reloadScroll();
 }

@@ -1,5 +1,5 @@
 #include <escher/editable_text_cell.h>
-#include <escher/app.h>
+#include <escher/container.h>
 #include <escher/palette.h>
 #include <assert.h>
 
@@ -51,7 +51,7 @@ void EditableTextCell::layoutSubviews() {
 }
 
 void EditableTextCell::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
 KDSize EditableTextCell::minimalSizeForOptimalDisplay() const {

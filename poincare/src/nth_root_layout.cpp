@@ -148,42 +148,17 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  // Case: root(x,n)
-  if (m_hasIndex
-      && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
-      && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
-  {
+  if (m_hasIndex) {
+    assert((const_cast<NthRootLayoutNode *>(this))->indexLayout());
+    if ((const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty()) {
+      // Case: root(x,empty): Write "'SquareRootSymbol'('radicandLayout')"
+      return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name(), 0);
+    }
+    // Case: root(x,n)
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.name());
   }
   // Case: squareRoot(x)
-  if (!m_hasIndex) {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name());
-  }
-  // Case: root(x,empty)
-  // Write "'SquareRootSymbol'('radicandLayout')".
-  assert((const_cast<NthRootLayoutNode *>(this))->indexLayout() && (const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty());
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSquareRoot);
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '(');
-  if (numberOfChar >= bufferSize-1) {
-    return bufferSize-1;
-  }
-
-  numberOfChar += (const_cast<NthRootLayoutNode *>(this))->radicandLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-  numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, ')');
-  buffer[numberOfChar] = 0;
-  return numberOfChar;
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.name());
 }
 
 KDSize NthRootLayoutNode::computeSize() {

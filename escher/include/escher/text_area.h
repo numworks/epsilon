@@ -77,7 +77,7 @@ protected:
     void insertText(const char * s, int textLength, char * location);
     void insertSpacesAtLocation(int numberOfSpaces, char * location);
 
-    CodePoint removeCodePoint(char * * position);
+    CodePoint removePreviousGlyph(char * * position);
     size_t removeRemainingLine(const char * position, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
@@ -114,7 +114,7 @@ protected:
     const Text * getText() const { return &m_text; }
     bool insertTextAtLocation(const char * text, const char * location) override;
     void moveCursorGeo(int deltaX, int deltaY);
-    bool removeCodePoint() override;
+    bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
   protected:

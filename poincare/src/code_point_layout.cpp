@@ -59,6 +59,24 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goin
       return false;
     }
   }
+  if (isMultiplicationCodePoint()) {
+    /* We want '*' to be collapsable only if the following brother is not a
+     * fraction, so that the user can write intuitively "1/2 * 3/4". */
+    Layout thisRef = CodePointLayout(this);
+    Layout parent = thisRef.parent();
+    if (!parent.isUninitialized()) {
+      int indexOfThis = parent.indexOfChild(thisRef);
+      Layout brother;
+      if (indexOfThis > 0 && goingLeft) {
+        brother = parent.childAtIndex(indexOfThis-1);
+      } else if (indexOfThis < parent.numberOfChildren() - 1 && !goingLeft) {
+        brother = parent.childAtIndex(indexOfThis+1);
+      }
+      if (!brother.isUninitialized() && brother.type() == LayoutNode::Type::FractionLayout) {
+        return false;
+      }
+    }
+  }
   return true;
 }
 

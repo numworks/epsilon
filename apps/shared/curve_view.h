@@ -36,12 +36,12 @@ public:
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
-  float resolution() const;
+  const float pixelWidth() const;
+  const float pixelHeight() const;
 protected:
-  CurveViewRange * curveViewRange() { return m_curveViewRange; }
+  CurveViewRange * curveViewRange() const { return m_curveViewRange; }
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
-  virtual float samplingRatio() const;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDCoordinate k_okVerticalMargin = 23;
   constexpr static KDCoordinate k_okHorizontalMargin = 10;
@@ -63,7 +63,7 @@ protected:
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const;
-  void drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f, bool continuously = false) const;
+  void drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve = false, float colorLowerBound = 0.0f, float colorUpperBound = 0.0f) const;
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
@@ -79,7 +79,6 @@ private:
   float min(Axis axis) const;
   float max(Axis axis) const;
   float gridUnit(Axis axis) const;
-  KDCoordinate pixelLength(Axis axis) const;
   virtual char * label(Axis axis, int index) const = 0;
   int numberOfLabels(Axis axis) const;
   /* Recursively join two dots (dichotomy). The method stops when the

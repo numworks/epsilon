@@ -5,6 +5,10 @@
 #include "sequence_context.h"
 #include <assert.h>
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace Sequence {
 
 /* WARNING: after calling setType, setInitialRank, setContent, setFirstInitialConditionContent
@@ -70,7 +74,9 @@ private:
   constexpr static double k_maxNumberOfTermsInSum = 100000.0;
 
   /* SequenceRecordDataBuffer is the layout of the data buffer of Record
-   * representing a Sequence. */
+   * representing a Sequence. See comment in
+   * Shared::Function::FunctionRecordDataBuffer about packing. */
+#pragma pack(push,1)
   class SequenceRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
     SequenceRecordDataBuffer(KDColor color) :
@@ -91,13 +97,19 @@ private:
       assert(conditionIndex >= 0 && conditionIndex < 2);
       m_initialConditionSizes[conditionIndex] = size;
     }
-
   private:
     static_assert((1 << 8*sizeof(uint16_t)) > Ion::Storage::k_storageSize, "Potential overflows of Sequence initial condition sizes");
     Type m_type;
     uint8_t m_initialRank;
+#if __EMSCRIPTEN__
+    // See comment about emscripten alignement in Shared::Function::FunctionRecordDataBuffer
+    static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
+    emscripten_align1_short m_initialConditionSizes[2];
+#else
     uint16_t m_initialConditionSizes[2];
+#endif
   };
+#pragma pack(pop)
 
   class SequenceModel : public Shared::ExpressionModel {
   public:

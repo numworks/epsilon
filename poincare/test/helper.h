@@ -18,6 +18,8 @@ constexpr Poincare::Preferences::ComplexFormat Real = Poincare::Preferences::Com
 constexpr Poincare::Preferences::PrintFloatMode DecimalMode = Poincare::Preferences::PrintFloatMode::Decimal;
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode = Poincare::Preferences::PrintFloatMode::Scientific;
 
+int strcmpWithSystemParentheses(const char * s1, const char * s2);
+
 bool expressions_are_equal(Poincare::Expression expected, Poincare::Expression got);
 Poincare::Expression parse_expression(const char * expression, bool canBeUnparsable = false);
 Poincare::Expression parse_and_simplify(const char * expression);

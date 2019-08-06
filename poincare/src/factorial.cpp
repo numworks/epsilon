@@ -67,21 +67,8 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
 }
 
 int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (childNeedsParenthesis(childAtIndex(0))) {
-    numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, '(');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (childNeedsParenthesis(childAtIndex(0))) {
-    numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, ')');
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  }
-  if (numberOfChar >= bufferSize-1) {
+  int numberOfChar = SerializationHelper::SerializeChild(childAtIndex(0), this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
     return numberOfChar;
   }
   numberOfChar += SerializationHelper::CodePoint(&buffer[numberOfChar], bufferSize-numberOfChar, '!');

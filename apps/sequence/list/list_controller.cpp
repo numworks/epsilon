@@ -107,10 +107,9 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
     // Replace UCodePointUnknownN with 'n'
     replaceUnknownSymbolWithReadableSymbol(initialText);
   }
-  App * myApp = (App *)app();
-  InputViewController * inputController = myApp->inputViewController();
+  InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
   // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
       inputController->edit(this, event, this, initialText,
@@ -157,18 +156,6 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
   Sequence * sequence = modelStore()->modelForRecord(record);
   Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text) : sequence->setSecondInitialConditionContent(text);
   return (error == Ion::Storage::Record::ErrorStatus::None);
-}
-
-TextFieldDelegateApp * ListController::textFieldDelegateApp() {
-  return (App *)app();
-}
-
-ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
-  return (App *)app();
-}
-
-InputEventHandlerDelegateApp * ListController::inputEventHandlerDelegateApp() {
-  return (App *)app();
 }
 
 ListParameterController * ListController::parameterController() {
@@ -271,7 +258,7 @@ int ListController::sequenceDefinitionForRow(int j) {
 }
 
 void ListController::addEmptyModel() {
-  app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
+  Container::activeApp()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
@@ -280,7 +267,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 
 void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHandle> model) {
   // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   Sequence * sequence = static_cast<Sequence *>(model.pointer());
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
@@ -308,7 +295,7 @@ void ListController::reinitSelectedExpression(ExpiringPointer<ExpressionModelHan
 bool ListController::removeModelRow(Ion::Storage::Record record) {
   Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache
-  static_cast<App *>(app())->localContext()->resetCache();
+  App::app()->localContext()->resetCache();
   return true;
 }
 

@@ -38,7 +38,7 @@ void ValuesParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {

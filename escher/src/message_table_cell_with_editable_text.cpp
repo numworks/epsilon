@@ -1,6 +1,6 @@
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/palette.h>
-#include <escher/app.h>
+#include <escher/container.h>
 
 MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message) :
   Responder(parentResponder),
@@ -19,7 +19,7 @@ const char * MessageTableCellWithEditableText::editedText() const {
 }
 
 void MessageTableCellWithEditableText::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textField);
+  Container::activeApp()->setFirstResponder(&m_textField);
 }
 
 bool MessageTableCellWithEditableText::isEditing() {

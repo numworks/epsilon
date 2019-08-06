@@ -31,7 +31,7 @@ View * EditorView::subviewAtIndex(int index) {
 }
 
 void EditorView::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textArea);
+  Container::activeApp()->setFirstResponder(&m_textArea);
 }
 
 void EditorView::layoutSubviews() {

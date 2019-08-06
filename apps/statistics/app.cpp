@@ -31,7 +31,7 @@ App::Snapshot::Snapshot() :
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 void App::Snapshot::reset() {
@@ -49,8 +49,8 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  TextFieldDelegateApp(container, snapshot, &m_tabViewController),
+App::App(Snapshot * snapshot) :
+  TextFieldDelegateApp(snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),

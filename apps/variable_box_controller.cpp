@@ -211,7 +211,7 @@ bool VariableBoxController::selectLeaf(int selectedRow) {
 
   // Handle the text
   sender()->handleEventWithText(nameToHandle);
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 

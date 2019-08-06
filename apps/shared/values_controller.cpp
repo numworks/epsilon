@@ -1,7 +1,6 @@
 #include "values_controller.h"
 #include "function_app.h"
 #include "../constant.h"
-#include "../apps_container.h"
 #include "poincare_helpers.h"
 #include <assert.h>
 
@@ -80,7 +79,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(0,0);
-      app()->setFirstResponder(selectableTableView());
+      Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
     return false;
@@ -89,7 +88,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
+      Container::activeApp()->setFirstResponder(tabController());
       return true;
     }
     selectableTableView()->deselectTable();
@@ -328,8 +327,7 @@ int ValuesController::maxNumberOfElements() const {
 
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   ExpiringPointer<Function> function = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return function->evaluateAtAbscissa(abscissa, myApp->localContext());
+  return function->evaluateAtAbscissa(abscissa, textFieldDelegateApp()->localContext());
 }
 
 void ValuesController::updateNumberOfColumns() {
@@ -337,9 +335,7 @@ void ValuesController::updateNumberOfColumns() {
 }
 
 FunctionStore * ValuesController::functionStore() const {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 }
-

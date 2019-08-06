@@ -19,7 +19,7 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
 }
 
 StoreContext * StoreController::storeContext() {
-  m_regressionContext.setParentContext(const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  m_regressionContext.setParentContext(AppsContainer::sharedAppsContainer()->globalContext());
   return &m_regressionContext;
 }
 

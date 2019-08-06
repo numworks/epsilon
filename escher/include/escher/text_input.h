@@ -11,7 +11,7 @@ public:
   TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}
   void setFont(const KDFont * font) { contentView()->setFont(font); }
   const char * text() const { return nonEditableContentView()->text(); }
-  bool removeCodePoint();
+  bool removePreviousGlyph();
   const char * cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
   bool setCursorLocation(const char * location);
   virtual void scrollToCursor();
@@ -30,7 +30,7 @@ protected:
     void setCursorLocation(const char * cursorLocation);
     virtual const char * text() const = 0;
     virtual bool insertTextAtLocation(const char * text, const char * location) = 0;
-    virtual bool removeCodePoint() = 0;
+    virtual bool removePreviousGlyph() = 0;
     virtual bool removeEndOfLine() = 0;
     KDRect cursorRect();
   protected:
@@ -50,7 +50,7 @@ protected:
     virtual const char * editedText() const = 0;
     virtual size_t editedTextLength() const = 0;
   };
-protected:
+
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity) and false is returned. */
@@ -60,6 +60,8 @@ protected:
     return const_cast<ContentView *>(nonEditableContentView());
   }
   virtual const ContentView * nonEditableContentView() const = 0;
+  bool moveCursorLeft();
+  bool moveCursorRight();
 private:
   virtual void willSetCursorLocation(const char * * location) {}
   virtual bool privateRemoveEndOfLine();

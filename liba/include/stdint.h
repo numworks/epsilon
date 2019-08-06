@@ -26,6 +26,9 @@ typedef int64_t int_fast64_t;
 
 typedef uint8_t uint_least8_t;
 
+#define INT16_MAX 0x7fff
+#define INT16_MIN (-INT16_MAX-1)
+
 #define UINT64_C(c) c ## ULL
 #define INT64_C(c) c ## LL
 

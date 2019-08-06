@@ -12,7 +12,7 @@ public:
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
 protected:
-  ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  ExpressionFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
 };
 
 }

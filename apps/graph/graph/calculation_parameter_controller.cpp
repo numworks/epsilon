@@ -33,7 +33,7 @@ View * CalculationParameterController::view() {
 
 void CalculationParameterController::didBecomeFirstResponder() {
   m_selectableTableView.selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {

@@ -23,7 +23,10 @@ ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer,
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
   if (editionIsInTextField()) {
-    m_textField.setEditing(isEditing, reinitDraftBuffer);
+    if (reinitDraftBuffer) {
+      m_textField.reinitDraftTextBuffer();
+    }
+    m_textField.setEditing(isEditing);
   } else {
     if (reinitDraftBuffer) {
       m_layoutField.clearLayout();
@@ -45,6 +48,7 @@ const char * ExpressionField::text() {
 
 void ExpressionField::setText(const char * text) {
   if (editionIsInTextField()) {
+    m_textField.reinitDraftTextBuffer();
     m_textField.setText(text);
   } else {
     m_layoutField.clearLayout();

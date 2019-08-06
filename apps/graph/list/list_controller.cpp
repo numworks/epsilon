@@ -38,10 +38,10 @@ void ListController::renameSelectedFunction() {
   computeTitlesColumnWidth(true);
   selectableTableView()->reloadData();
 
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
   TextFieldFunctionTitleCell * selectedTitleCell = (TextFieldFunctionTitleCell *)(selectableTableView()->selectedCell());
   selectedTitleCell->setHorizontalAlignment(1.0f);
-  app()->setFirstResponder(selectedTitleCell);
+  Container::activeApp()->setFirstResponder(selectedTitleCell);
   selectedTitleCell->setEditing(true);
 }
 
@@ -73,7 +73,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   // Handle any error
   if (error == Ion::Storage::Record::ErrorStatus::None) {
     bool selectTab = false;
-    textField->setEditing(false, false);
+    textField->setEditing(false);
     computeTitlesColumnWidth();
     int currentRow = m_selectableTableView.selectedRow();
     if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
@@ -87,29 +87,29 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
     }
     m_selectableTableView.selectedCell()->setHighlighted(true);
     m_selectableTableView.reloadData();
-    app()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableTableView);
     if (selectTab) {
       m_selectableTableView.parentResponder()->handleEvent(event);
     }
-    static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+    AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else if (error == Ion::Storage::Record::ErrorStatus::NameTaken) {
-    app()->displayWarning(I18n::Message::NameTaken);
+    Container::activeApp()->displayWarning(I18n::Message::NameTaken);
   } else if (error == Ion::Storage::Record::ErrorStatus::NonCompliantName) {
     assert(nameError != Function::NameNotCompliantError::None);
     if (nameError == Function::NameNotCompliantError::CharacterNotAllowed) {
-      app()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
+      Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersAZaz09);
     } else if (nameError == Function::NameNotCompliantError::NameCannotStartWithNumber) {
-      app()->displayWarning(I18n::Message::NameCannotStartWithNumber);
+      Container::activeApp()->displayWarning(I18n::Message::NameCannotStartWithNumber);
     } else {
       assert(nameError == Function::NameNotCompliantError::ReservedName);
-      app()->displayWarning(I18n::Message::ReservedName);
+      Container::activeApp()->displayWarning(I18n::Message::ReservedName);
     }
   } else {
     assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
-    app()->displayWarning(I18n::Message::NameTooLong);
+    Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
   }
-  textField->setEditing(true, false);
+  textField->setEditing(true);
   return false;
 }
 
@@ -121,8 +121,8 @@ bool ListController::textFieldDidAbortEditing(TextField * textField) {
   ExpiringPointer<Function> function = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   setFunctionNameInTextField(function, textField);
   m_selectableTableView.selectedCell()->setHighlighted(true);
-  app()->setFirstResponder(&m_selectableTableView);
-  static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
 }
 

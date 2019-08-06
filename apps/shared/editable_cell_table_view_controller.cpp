@@ -1,8 +1,6 @@
 #include "editable_cell_table_view_controller.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "../constant.h"
-#include "text_field_delegate_app.h"
 #include <assert.h>
 #include <cmath>
 
@@ -29,7 +27,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     return false;
   }
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   /* At this point, a new cell is selected depending on the event, before the
@@ -111,10 +109,6 @@ void EditableCellTableViewController::viewWillAppear() {
     selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
-}
-
-TextFieldDelegateApp * EditableCellTableViewController::textFieldDelegateApp() {
-  return (TextFieldDelegateApp *)app();
 }
 
 }

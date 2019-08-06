@@ -8,12 +8,11 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView, Responder * controller) :
+GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(store, cursor, bannerView, cursorView),
   m_store(store),
   m_xLabels{},
-  m_yLabels{},
-  m_controller(controller)
+  m_yLabels{}
 {
 }
 
@@ -22,11 +21,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawGrid(ctx, rect);
   drawAxes(ctx, rect);
   simpleDrawBothAxesLabels(ctx, rect);
+  Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series)) {
       KDColor color = Palette::DataColor[series];
       Model * seriesModel = m_store->modelForSeries(series);
-      Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(m_controller->app()->container()))->globalContext();
       drawCurve(ctx, rect, [](float abscissa, void * model, void * context) {
           Model * regressionModel = static_cast<Model *>(model);
           double * regressionCoefficients = static_cast<double *>(context);

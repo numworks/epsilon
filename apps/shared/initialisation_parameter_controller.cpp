@@ -29,7 +29,7 @@ if (event == Ion::Events::OK || event == Ion::Events::EXE) {
 
 void InitialisationParameterController::didBecomeFirstResponder() {
   m_selectableTableView.selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 int InitialisationParameterController::numberOfRows() {

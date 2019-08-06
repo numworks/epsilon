@@ -266,29 +266,30 @@ bool CodePointIsNumber(CodePoint c) {
   return c >= '0' && c <= '9';
 }
 
-int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c) {
-  assert(c != nullptr);
+int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
   if (location <= text) {
     assert(location == text);
     return 0;
   }
 
-  // Find the previous code point
+  // Find the previous glyph
   UTF8Decoder decoder(text, location);
-  *c = decoder.previousCodePoint();
+  const char * previousGlyphPos = decoder.previousGlyphPosition();
+  if (c != nullptr) {
+    *c = decoder.nextCodePoint();
+  }
 
   // Shift the buffer
-  int codePointSize = UTF8Decoder::CharSizeOfCodePoint(*c);
-  char * iterator = location - codePointSize;
+  int shiftedSize = location - previousGlyphPos;
+  char * iterator = const_cast<char *>(previousGlyphPos);
   assert(iterator >= text);
   do {
-    *iterator = *(iterator + codePointSize);
+    *iterator = *(iterator + shiftedSize);
     iterator++;
   } while (*(iterator - 1) != 0); // Stop shifting after writing a null terminating char.
 
-  return codePointSize;
+  return shiftedSize;
 }
-
 
 const char * CodePointAtGlyphOffset(const char * buffer, int position) {
   assert(buffer != nullptr);

@@ -1,5 +1,4 @@
 #include "function_app.h"
-#include "../apps_container.h"
 
 using namespace Poincare;
 

@@ -24,8 +24,7 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
     if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
       return false;
     }
-    AppsContainer * container = (AppsContainer *)(app()->container());
-    container->displayExamModePopUp(true);
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(true);
     return true;
   }
   return GenericSubController::handleEvent(event);

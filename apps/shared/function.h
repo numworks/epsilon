@@ -5,6 +5,10 @@
 #include <poincare/symbol.h>
 #include "expression_model_handle.h"
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace Shared {
 
 class Function : public ExpressionModelHandle {
@@ -41,24 +45,36 @@ public:
   virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
 protected:
   /* FunctionRecordDataBuffer is the layout of the data buffer of Record
-   * representing a Function. */
+   * representing a Function. We want to avoid padding which would:
+   * - increase the size of the storage file
+   * - introduce junk memory zone which are then crc-ed in Storage::checksum
+   *   creating dependency on uninitialized values. */
+#pragma pack(push,1)
   class FunctionRecordDataBuffer {
   public:
     FunctionRecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
     KDColor color() const {
-      /* Record::value() is a pointer to an address inside
-       * Ion::Storage::sharedStorage(), and it might be unaligned. In the method
-       * recordData(), we cast Record::value() to the type FunctionRecordDataBuffer.
-       * We must thus do some convolutions to read KDColor, which is a uint16_t
-       * and might produce an alignment error on the emscripten platform. */
-      return KDColor::RGB16(Ion::StorageHelper::unalignedShort(reinterpret_cast<char *>(const_cast<KDColor *>(&m_color))));
+      return KDColor::RGB16(m_color);
     }
     bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
   private:
-    KDColor m_color;
+#if __EMSCRIPTEN__
+    /* Record::value() is a pointer to an address inside
+     * Ion::Storage::sharedStorage(), and it might be unaligned. However, for
+     * emscripten memory representation, loads and stores must be aligned;
+     * performing a normal load or store on an unaligned address can fail
+     * silently. We thus use 'emscripten_align1_short' type, the unaligned
+     * version of uint16_t type to avoid producing an alignment error on the
+     * emscripten platform. */
+    static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
+    emscripten_align1_short m_color;
+#else
+    uint16_t m_color;
+#endif
     bool m_active;
   };
+#pragma pack(pop)
 private:
   template<typename T> T templatedApproximateAtAbscissa(T x, Poincare::Context * context, CodePoint unknownSymbol) const;
   FunctionRecordDataBuffer * recordData() const;

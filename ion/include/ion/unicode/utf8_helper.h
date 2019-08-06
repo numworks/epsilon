@@ -72,7 +72,7 @@ bool CodePointIsUpperCaseLetter(CodePoint c);
 bool CodePointIsNumber(CodePoint c);
 
 // Shift the buffer and return the number of bytes removed.
-int RemovePreviousCodePoint(const char * text, char * location, CodePoint * c);
+int RemovePreviousGlyph(const char * text, char * location, CodePoint * c = nullptr);
 
 /* Return the pointer to the (non combining) code point whose glyph is displayed
  * at the given position, and vice-versa */

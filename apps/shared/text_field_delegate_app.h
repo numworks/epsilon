@@ -2,11 +2,11 @@
 #define SHARED_TEXT_FIELD_DELEGATE_APP_H
 
 #include <poincare/context.h>
-#include <escher.h>
 #include "input_event_handler_delegate_app.h"
+#include <escher/text_field_delegate.h>
 #include <apps/i18n.h>
 
-class AppsContainer;
+class EditableField;
 
 namespace Shared {
 
@@ -20,7 +20,7 @@ public:
   bool isAcceptableText(const char * text);
   bool hasUndefinedValue(const char * text, double & value);
 protected:
-  TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
+  TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController);
   bool fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event);
   bool isFinishingEvent(Ion::Events::Event event);
   virtual bool isAcceptableExpression(const Poincare::Expression expression);

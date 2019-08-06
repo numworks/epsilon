@@ -1,5 +1,4 @@
 #include "histogram_controller.h"
-#include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
 #include "../shared/text_helpers.h"
 #include "app.h"

@@ -6,8 +6,6 @@
 #include "curve_view_cursor.h"
 #include "interval.h"
 
-class AppsContainer;
-
 namespace Shared {
 
 class FunctionApp : public ExpressionFieldDelegateApp {
@@ -32,15 +30,18 @@ public:
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
     Poincare::Preferences::AngleUnit m_angleUnitVersion;
- };
+  };
+  static FunctionApp * app() {
+    return static_cast<FunctionApp *>(Container::activeApp());
+  }
   virtual ~FunctionApp() = default;
   virtual FunctionStore * functionStore() { return static_cast<FunctionApp::Snapshot *>(snapshot())->functionStore(); }
   virtual InputViewController * inputViewController() = 0;
   void willBecomeInactive() override;
 
 protected:
-  FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-    ExpressionFieldDelegateApp(container, snapshot, rootViewController)
+  FunctionApp(Snapshot * snapshot, ViewController * rootViewController) :
+    ExpressionFieldDelegateApp(snapshot, rootViewController)
   {}
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;

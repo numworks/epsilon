@@ -63,6 +63,30 @@ CodePoint UTF8Decoder::previousCodePoint() {
   return CodePoint(result);
 }
 
+const char * UTF8Decoder::nextGlyphPosition() {
+  assert(*m_stringPosition != 0 && (m_stringPosition == m_string || *(m_stringPosition - 1) != 0));
+  CodePoint followingCodePoint = nextCodePoint();
+  const char * resultGlyphPosition = m_stringPosition;
+  followingCodePoint = nextCodePoint();
+  while (followingCodePoint != UCodePointNull && followingCodePoint.isCombining()) {
+    resultGlyphPosition = m_stringPosition;
+    followingCodePoint = nextCodePoint();
+  }
+  m_stringPosition = resultGlyphPosition;
+  return resultGlyphPosition;
+}
+
+const char * UTF8Decoder::previousGlyphPosition() {
+  assert(m_stringPosition > m_string);
+  CodePoint previousCP = previousCodePoint();
+  const char * resultGlyphPosition = m_stringPosition;
+  while (m_stringPosition > m_string && previousCP.isCombining()) {
+    previousCP = previousCodePoint();
+    resultGlyphPosition = m_stringPosition;
+  }
+  return resultGlyphPosition;
+}
+
 size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
   if (c <= 0x7F) {
     return 1;

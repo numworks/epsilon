@@ -12,8 +12,6 @@
 #include "serial_number_controller.h"
 #include "vblank_test_controller.h"
 
-class AppsContainer;
-
 namespace HardwareTest {
 
 class App : public ::App {
@@ -42,7 +40,7 @@ private:
     VBlankTestController m_vBlankTestController;
   };
 
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
   WizardViewController m_wizardViewController;
 };
 

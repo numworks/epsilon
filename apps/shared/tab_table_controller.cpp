@@ -8,7 +8,7 @@ TabTableController::TabTableController(Responder * parentResponder) :
 }
 
 void TabTableController::didBecomeFirstResponder() {
-  app()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 void TabTableController::viewWillAppear() {

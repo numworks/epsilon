@@ -2,6 +2,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <assert.h>
 #include <cmath>
+#include "../app.h"
 
 #include <poincare/integer.h>
 
@@ -92,10 +93,6 @@ bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, con
     m_selectableTableView.handleEvent(event);
   }
   return true;
-}
-
-Shared::TextFieldDelegateApp * DisplayModeController::textFieldDelegateApp() {
-  return (Shared::TextFieldDelegateApp *)app();
 }
 
 }

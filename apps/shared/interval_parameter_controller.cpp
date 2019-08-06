@@ -44,14 +44,14 @@ double IntervalParameterController::parameterAtIndex(int index) {
 
 bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double f) {
   if (f <= 0.0f && parameterIndex == 2) {
-    app()->displayWarning(I18n::Message::ForbiddenValue);
+    Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   double start = parameterIndex == 0 ? f : m_interval->start();
   double end = parameterIndex == 1 ? f : m_interval->end();
   if (start > end) {
     if (parameterIndex == 1) {
-      app()->displayWarning(I18n::Message::ForbiddenValue);
+      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
     double g = f+1.0;

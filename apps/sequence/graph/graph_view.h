@@ -12,7 +12,6 @@ public:
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  float samplingRatio() const override;
   SequenceStore * m_sequenceStore;
 };
 

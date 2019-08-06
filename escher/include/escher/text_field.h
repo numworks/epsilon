@@ -14,13 +14,14 @@ public:
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
+  void reinitDraftTextBuffer() { m_contentView.reinitDraftTextBuffer(); }
   void setDraftTextBuffer(char * draftTextBuffer);
   bool isEditing() const override;
   const char * draftTextBuffer() const { return const_cast<TextField *>(this)->m_contentView.draftTextBuffer(); }
   size_t draftTextLength() const; //TODO keep ?
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true) override;
+  void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -48,14 +49,14 @@ protected:
     int bufferSize() { return k_maxBufferSize; }
     void setText(const char * text);
     void setAlignment(float horizontalAlignment, float verticalAlignment);
-    void setEditing(bool isEditing, bool reinitDraftBuffer);
+    void setEditing(bool isEditing);
     void reinitDraftTextBuffer();
     /* If the text to be appended is too long to be added without overflowing the
      * buffer, nothing is done (not even adding few letters from the text to reach
      * the maximum buffer capacity) and false is returned. */
     bool insertTextAtLocation(const char * text, const char * location) override; // TODO
     KDSize minimalSizeForOptimalDisplay() const override;
-    bool removeCodePoint() override;
+    bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     void willModifyTextBuffer();
     void didModifyTextBuffer();

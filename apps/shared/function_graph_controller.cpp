@@ -31,7 +31,7 @@ void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->isMainViewSelected()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
-    app()->setFirstResponder(bannerView()->abscissaValue());
+    Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
   } else {
     InteractiveCurveViewController::didBecomeFirstResponder();
   }
@@ -42,8 +42,7 @@ void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setAreaHighlight(NAN,NAN);
 
   if (functionGraphView()->context() == nullptr) {
-    FunctionApp * myApp = static_cast<FunctionApp *>(app());
-    functionGraphView()->setContext(myApp->localContext());
+    functionGraphView()->setContext(textFieldDelegateApp()->localContext());
   }
   Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
   if (*m_angleUnitVersion != newAngleUnitVersion) {
@@ -74,7 +73,7 @@ void FunctionGraphController::reloadBannerView() {
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
   float min = FLT_MAX;
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
@@ -85,15 +84,18 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
     range.max = xMax;
     return range;
   }
+  /* In practice, a step smaller than a pixel's width is needed for sampling
+   * the values of a function. Otherwise some relevant extremal values may be
+   * missed. */
+  const float step = curveView()->pixelWidth() / 2;
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-    float y = 0.0f;
-    float res = curveView()->resolution();
     /* Scan x-range from the middle to the extrema in order to get balanced
      * y-range for even functions (y = 1/x). */
-    for (int j = -res/2; j <= res/2; j++) {
-      float x = (xMin+xMax)/2.0+(xMax-xMin)*j/res;
-      y = f->evaluateAtAbscissa(x, myApp->localContext());
+    const int balancedBound = std::floor((xMax-xMin)/2/step);
+    for (int j = -balancedBound; j <= balancedBound ; j++) {
+      float x = (xMin+xMax)/2 + step * j;
+      float y = f->evaluateAtAbscissa(x, context);
       if (!std::isnan(y) && !std::isinf(y)) {
         min = min < y ? min : y;
         max = max > y ? max : y;
@@ -111,18 +113,17 @@ double FunctionGraphController::defaultCursorAbscissa() {
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 void FunctionGraphController::initCursorParameters() {
   double x = defaultCursorAbscissa();
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
   int functionIndex = 0;
   double y = 0;
   do {
     ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex++));
-    y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
+    y = firstFunction->evaluateAtAbscissa(x, context);
   } while ((std::isnan(y) || std::isinf(y)) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
   functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
@@ -134,8 +135,7 @@ void FunctionGraphController::initCursorParameters() {
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
-  Poincare::Context * context = static_cast<FunctionApp *>(app())->localContext();
-
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
   int nextActiveFunctionIndex = InteractiveCurveViewController::closestCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context);
   if (nextActiveFunctionIndex < 0) {
     return false;

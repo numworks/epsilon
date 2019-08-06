@@ -154,7 +154,7 @@ void FunctionListController::didBecomeFirstResponder() {
     selectCellAtLocation(selectedColumn(), numberOfRows()-1);
   }
   footer()->setSelectedButton(-1);
-  app()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
 bool FunctionListController::handleEvent(Ion::Events::Event event) {
@@ -162,12 +162,12 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
       selectableTableView()->selectCellAtLocation(1, numberOfRows()-1);
-      app()->setFirstResponder(selectableTableView());
+      Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
-    app()->setFirstResponder(tabController());
+    Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
   if (event == Ion::Events::Down) {
@@ -249,13 +249,11 @@ TabViewController * FunctionListController::tabController() const {
 }
 
 FunctionStore * FunctionListController::modelStore() {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->functionStore();
+  return FunctionApp::app()->functionStore();
 }
 
 InputViewController * FunctionListController::inputController() {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  return myApp->inputViewController();
+  return FunctionApp::app()->inputViewController();
 }
 
 KDCoordinate FunctionListController::maxFunctionNameWidth() {

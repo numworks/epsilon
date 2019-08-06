@@ -39,21 +39,21 @@ void CalculationTypeController::viewDidDisappear() {
 }
 
 void CalculationTypeController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CalculationTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_calculationController->setCalculationAccordingToIndex(selectedRow());
     m_calculationController->reload();
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }
   if (event == Ion::Events::Back || event == Ion::Events::Right) {
     if (event == Ion::Events::Right) {
       m_calculationController->selectCellAtLocation(1,0);
     }
-    app()->dismissModalViewController();
+    Container::activeApp()->dismissModalViewController();
     return true;
   }
   return false;

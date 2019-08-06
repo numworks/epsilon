@@ -99,7 +99,7 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize);
   sender()->handleEventWithText(buffer);
-  app()->dismissModalViewController();
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 

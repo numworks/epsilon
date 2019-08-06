@@ -14,6 +14,7 @@ namespace Solver {
 void addEquationWithText(EquationStore * equationStore, const char * text) {
   Ion::Storage::Record::ErrorStatus err = equationStore->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
+  (void) err; // Silence warning in DEBUG=0
   Ion::Storage::Record record = equationStore->recordAtIndex(equationStore->numberOfModels()-1);
   Shared::ExpiringPointer<Equation> model = equationStore->modelForRecord(record);
   model->setContent(text);
@@ -40,16 +41,16 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   }
   if (type == EquationStore::Type::LinearSystem) {
     for (int i = 0; i < numberOfSolutions; i++) {
-      quiz_assert(strcmp(equationStore.variableAtIndex(i),variables[i]) == 0);
+      quiz_assert(strcmpWithSystemParentheses(equationStore.variableAtIndex(i),variables[i]) == 0);
     }
   } else {
-    quiz_assert(strcmp(equationStore.variableAtIndex(0), variables[0]) == 0);
+    quiz_assert(strcmpWithSystemParentheses(equationStore.variableAtIndex(0), variables[0]) == 0);
   }
   constexpr int bufferSize = 200;
   char buffer[bufferSize];
   for (int i = 0; i < numberOfSolutions; i++) {
     equationStore.exactSolutionLayoutAtIndex(i, true).serializeForParsing(buffer, bufferSize);
-    quiz_assert(strcmp(buffer, solutions[i]) == 0);
+    quiz_assert(strcmpWithSystemParentheses(buffer, solutions[i]) == 0);
   }
   equationStore.removeAll();
 }
@@ -122,14 +123,14 @@ QUIZ_CASE(equation_solve) {
   const char * solutions10[] = {"1", "0"};
   assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions10, 2);
 
-  quiz_assert(UCodePointLeftSuperscript == '\022');
-  quiz_assert(UCodePointLeftSuperscript == '\x12');
-  quiz_assert(UCodePointRightSuperscript == '\023');
-  quiz_assert(UCodePointRightSuperscript == '\x13');
+  quiz_assert(UCodePointLeftSystemParenthesis == '\022');
+  quiz_assert(UCodePointLeftSystemParenthesis == '\x12');
+  quiz_assert(UCodePointRightSystemParenthesis == '\023');
+  quiz_assert(UCodePointRightSystemParenthesis == '\x13');
 
   // x^2+x+1=3×x^2+pi×x-√(5)
   const char * equations11[] = {"x^2+x+1=3×x^2+π×x-√(5)", 0};
-  const char * solutions11[] = {"(√(π\0222\023-2·π+8·√(5)+9)-π+1)/(4)", "(-√(π\0222\023-2·π+8·√(5)+9)-π+1)/(4)", "π\0222\023-2·π+8·√(5)+9"};
+  const char * solutions11[] = {"(√(π^\0222\023-2·π+8·√(5)+9)-π+1)/(4)", "(-√(π^\0222\023-2·π+8·√(5)+9)-π+1)/(4)", "π^\0222\023-2·π+8·√(5)+9"};
   assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions11, 3);
 
   // TODO
@@ -230,18 +231,18 @@ QUIZ_CASE(equation_solve_complex_format) {
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
   // x+𝐢 = 0 --> x = e^(-π/2×i)
-  const char * solutions0Polar[] = {"ℯ\x12-(π)/(2)·𝐢\x13"};
+  const char * solutions0Polar[] = {"ℯ^\x12-(π)/(2)·𝐢\x13"};
   assert_equation_system_exact_solve_to(equations0,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0Polar, 1);
 
   // x+√(-1) = 0 --> x = e^(-π/2×𝐢)
   assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0Polar, 1);
 
   // x^2+x+1=0
-  const char * solutions2Polar[] = {"ℯ\x12-(2·π)/(3)·𝐢\x13","ℯ\x12(2·π)/(3)·𝐢\x13", "3·ℯ\x12π·𝐢\x13"};
+  const char * solutions2Polar[] = {"ℯ^\x12-(2·π)/(3)·𝐢\x13","ℯ^\x12(2·π)/(3)·𝐢\x13", "3·ℯ^\x12π·𝐢\x13"};
   assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2Polar, 3);
 
   // x^2-√(-1)=0
-  const char * solutions3Polar[] = {"ℯ\x12-(3·π)/(4)·𝐢\x13", "ℯ\x12(π)/(4)·𝐢\x13", "4·ℯ\x12(π)/(2)·𝐢\x13"};
+  const char * solutions3Polar[] = {"ℯ^\x12-(3·π)/(4)·𝐢\x13", "ℯ^\x12(π)/(4)·𝐢\x13", "4·ℯ^\x12(π)/(2)·𝐢\x13"};
   assert_equation_system_exact_solve_to(equations3, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions3Polar, 3);
 
 }

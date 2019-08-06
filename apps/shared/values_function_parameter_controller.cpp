@@ -9,14 +9,13 @@ const char * ValuesFunctionParameterController::title() {
 }
 
 void ValuesFunctionParameterController::viewWillAppear() {
-  FunctionApp * myApp = static_cast<FunctionApp *>(app());
-  myApp->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, Function::k_maxNameWithArgumentSize, m_symbol);
+  FunctionApp::app()->functionStore()->modelForRecord(m_record)->nameWithArgument(m_pageTitle, Function::k_maxNameWithArgumentSize, m_symbol);
 }
 
 void ValuesFunctionParameterController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   selectCellAtLocation(0, 0);
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 }

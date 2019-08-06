@@ -26,7 +26,7 @@ App::Snapshot::Snapshot() :
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  return new (container->currentAppBuffer()) App(container, this);
+  return new (container->currentAppBuffer()) App(this);
 }
 
 void App::Snapshot::reset() {
@@ -53,9 +53,9 @@ void App::Snapshot::tidy() {
   m_graphRange.setDelegate(nullptr);
 }
 
-App::App(Container * container, Snapshot * snapshot) :
-  FunctionApp(container, snapshot, &m_inputViewController),
-  m_sequenceContext(((AppsContainer *)container)->globalContext(), snapshot->functionStore()),
+App::App(Snapshot * snapshot) :
+  FunctionApp(snapshot, &m_inputViewController),
+  m_sequenceContext(AppsContainer::sharedAppsContainer()->globalContext(), snapshot->functionStore()),
   m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(nullptr, &m_listFooter, &m_listController),

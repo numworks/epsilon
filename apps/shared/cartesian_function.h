@@ -32,7 +32,9 @@ public:
   Poincare::Expression::Coordinate2D nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, Poincare::Expression expression) const;
 private:
   /* CartesianFunctionRecordDataBuffer is the layout of the data buffer of Record
-   * representing a CartesianFunction. */
+   * representing a CartesianFunction. See comment on
+   * Shared::Function::FunctionRecordDataBuffer about packing. */
+#pragma pack(push,1)
   class CartesianFunctionRecordDataBuffer : public FunctionRecordDataBuffer {
   public:
     CartesianFunctionRecordDataBuffer(KDColor color) :
@@ -47,6 +49,7 @@ private:
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];
   };
+#pragma pack(pop)
   class Model : public ExpressionModel {
   public:
     void * expressionAddress(const Ion::Storage::Record * record) const override;

@@ -90,7 +90,7 @@ void ConsoleLineCell::layoutSubviews() {
 }
 
 void ConsoleLineCell::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_scrollableView);
+  Container::activeApp()->setFirstResponder(&m_scrollableView);
 }
 
 }

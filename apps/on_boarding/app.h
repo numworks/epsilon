@@ -19,7 +19,8 @@ public:
   bool processEvent(Ion::Events::Event) override;
   void didBecomeActive(Window * window) override;
 private:
-  App(Container * container, Snapshot * snapshot);
+  App(Snapshot * snapshot);
+  void reinitOnBoarding();
   LanguageController m_languageController;
   LogoController m_logoController;
 };

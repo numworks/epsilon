@@ -22,7 +22,7 @@ PreferencesController::PreferencesController(Responder * parentResponder) :
 
 void PreferencesController::didBecomeFirstResponder() {
   selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
-  app()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool PreferencesController::handleEvent(Ion::Events::Event event) {
@@ -30,8 +30,7 @@ bool PreferencesController::handleEvent(Ion::Events::Event event) {
     /* Generic behaviour of preference menu*/
     assert(m_messageTreeModel->label() != I18n::Message::DisplayMode || selectedRow() != numberOfRows()-1); // In that case, events OK and EXE are handled by the cell
     setPreferenceWithValueIndex(m_messageTreeModel->label(), selectedRow());
-    AppsContainer * myContainer = (AppsContainer * )app()->container();
-    myContainer->refreshPreferences();
+    AppsContainer::sharedAppsContainer()->refreshPreferences();
     StackViewController * stack = stackController();
     stack->pop();
     return true;

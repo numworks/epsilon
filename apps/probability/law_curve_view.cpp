@@ -21,13 +21,11 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   if (m_law->type() == Law::Type::Normal) {
     // Special case for the normal law, which has always the same curve
-    float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, lowerBound));
-    float pixelColorUpperBound = std::round(floatToPixel(Axis::Horizontal, upperBound));
-    drawStandardNormal(ctx, rect, pixelColorLowerBound, pixelColorUpperBound);
+    drawStandardNormal(ctx, rect, lowerBound, upperBound);
     return;
   }
   if (m_law->isContinuous()) {
-    drawCurve(ctx, rect, EvaluateAtAbscissa, m_law, nullptr, Palette::YellowDark, true, lowerBound, upperBound, true);
+    drawCurve(ctx, rect, EvaluateAtAbscissa, m_law, nullptr, Palette::YellowDark, true, lowerBound, upperBound);
   } else {
     drawHistogram(ctx, rect, EvaluateAtAbscissa, m_law, nullptr, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
   }
@@ -48,12 +46,12 @@ float LawCurveView::EvaluateAtAbscissa(float abscissa, void * model, void * cont
 void LawCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const {
   // Save the previous curve view range
   LawCurveView * constCastedThis = const_cast<LawCurveView *>(this);
-  CurveViewRange * previousRange = constCastedThis->curveViewRange();
+  CurveViewRange * previousRange = curveViewRange();
 
   // Draw a centered reduced normal curve
   NormalLaw n;
   constCastedThis->setCurveViewRange(&n);
-  drawCurve(ctx, rect, EvaluateAtAbscissa, &n, nullptr, Palette::YellowDark, true, pixelToFloat(Axis::Horizontal, colorLowerBound), pixelToFloat(Axis::Horizontal, colorUpperBound), true);
+  drawCurve(ctx, rect, EvaluateAtAbscissa, &n, nullptr, Palette::YellowDark, true, colorLowerBound, colorUpperBound);
 
   // Put back the previous curve view range
   constCastedThis->setCurveViewRange(previousRange);

@@ -29,7 +29,8 @@ int PrintInt::Left(uint32_t integer, char * buffer, int bufferLength) {
 }
 
 int PrintInt::Right(uint32_t integer, char * buffer, int bufferLength) {
-  return PrintIntInBuffer(integer, buffer, bufferLength, false);
+  PrintIntInBuffer(integer, buffer, bufferLength, false);
+  return bufferLength;
 }
 
 }

@@ -25,11 +25,12 @@ int POSTAndHardwareTests::LCDDataGlyphFailures() {
 
 int POSTAndHardwareTests::LCDTimingGlyphFailures() {
   int numberOfFailures = 0;
+  const int rootNumberTiles = 3; //TODO 1 ?
   for (int i = 0; i < 100; i++) {
-    Ion::Display::POSTPushMulticolor(k_stampSize);
+    Ion::Display::POSTPushMulticolor(rootNumberTiles, k_stampSize);
     KDColor stamp[k_stampSize*k_stampSize];
-    for (int i = 0; i < 3; i++) { // TODO LEA 1?
-      for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < rootNumberTiles; i++) {
+      for (int j = 0; j < rootNumberTiles; j++) {
         Ion::Display::pullRect(KDRect(i * k_stampSize, j * k_stampSize, k_stampSize, k_stampSize), stamp);
         int shift = (i+j) % 16;
         uint16_t color = (uint16_t)(1 << shift);

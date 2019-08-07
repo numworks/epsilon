@@ -63,10 +63,15 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 
     // Display Mode format
     case I18n::Message::Decimal:
-      return LayoutHelper::String("12.34", 5, k_layoutFont);
+      return LayoutHelper::String("123.45", 5, k_layoutFont);
     case I18n::Message::Scientific:
     {
-      const char * text = "1.234ᴇ1";
+      const char * text = "1.2345ᴇ2";
+      return LayoutHelper::String(text, strlen(text), k_layoutFont);
+    }
+    case I18n::Message::Engineering:
+    {
+      const char * text = "12.345ᴇ3";
       return LayoutHelper::String(text, strlen(text), k_layoutFont);
     }
 

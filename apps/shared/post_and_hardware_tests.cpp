@@ -4,8 +4,6 @@
 #include <ion/timing.h>
 #include <kandinsky/font.h>
 #include <kandinsky/ion_context.h>
-#include <ion/src/device/shared/drivers/display.h>
-
 
 namespace Shared {
 
@@ -22,12 +20,10 @@ bool POSTAndHardwareTests::VBlankOK() {
 }
 
 int POSTAndHardwareTests::LCDDataGlyphFailures() {
-  Ion::Device::Display::initPanel();
   return Ion::Display::displayColoredTilingSize10();
 }
 
 int POSTAndHardwareTests::LCDTimingGlyphFailures() {
-  Ion::Device::Display::initPanel();
   int numberOfFailures = 0;
   for (int i = 0; i < 100; i++) {
     Ion::Display::POSTPushMulticolor(k_stampSize);

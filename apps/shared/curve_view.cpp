@@ -192,7 +192,7 @@ void CurveView::computeLabels(Axis axis) {
      * from overprinting one another. */
 
     char * labelBuffer = label(axis, i);
-    PrintFloat::convertFloatToText<float>(
+    PrintFloat::ConvertFloatToText<float>(
         labelValue,
         labelBuffer,
         labelMaxSize,
@@ -785,7 +785,7 @@ void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantD
   int minMax[] = {firstLabel, lastLabel};
   for (int i : minMax) {
     // Compute the minimal and maximal label
-    PrintFloat::convertFloatToText<float>(
+    PrintFloat::ConvertFloatToText<float>(
         labelValueAtIndex(axis, i),
         label(axis, i),
         k_labelBufferMaxSize,

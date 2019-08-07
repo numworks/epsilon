@@ -17,7 +17,7 @@ void ADC(const char * input) {
   constexpr int precision = 8;
   constexpr int bufferSize = Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(precision);
   char responseBuffer[bufferSize+4] = {'A', 'D', 'C', '='}; // ADC=
-  Poincare::PrintFloat::convertFloatToText<float>(result, responseBuffer+4, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+  Poincare::PrintFloat::ConvertFloatToText<float>(result, responseBuffer+4, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
   reply(responseBuffer);
 }
 

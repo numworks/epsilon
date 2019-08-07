@@ -130,20 +130,25 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
 
+  /* Truncate the buffer if needed.
+   * Example: 1+1.234E-30+... in decimal mode, because we do not want the fill
+   * the buffer with the decimal version of 1.234E-30. */
+  int truncatedBufferSize = minInt(PrintFloat::k_maxFloatBufferLength, bufferSize);
+
   int numberOfZerosRemoved = 0;
-  int requiredLength = ConvertFloatToTextPrivate(f, buffer, bufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved, false);
+  int requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved, false);
   /* If the required buffer size overflows the buffer size, we first force the
    * display mode to scientific and decrease the number of significant digits to
    * fit the buffer size. */
-  if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= bufferSize) {
+  if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= truncatedBufferSize) {
     constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
     char tempBuffer[tempBufferSize];
     requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved, true);
-    if (requiredLength < bufferSize) {
-      return strlcpy(buffer, tempBuffer, bufferSize);
+    if (requiredLength < truncatedBufferSize) {
+      return strlcpy(buffer, tempBuffer, truncatedBufferSize);
     }
   }
-  if (requiredLength >= bufferSize) {
+  if (requiredLength >= truncatedBufferSize) {
     /* If the buffer size is still too small and rounding is allowed, we only
      * write the beginning of the float and truncate it (which can result in a
      * non sense text). If no rounding is allowed, we set the text to null. */
@@ -151,13 +156,13 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
       buffer[0] = 0;
       return 0;
     }
-    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - (requiredLength - (bufferSize - 1));
+    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - (requiredLength - (truncatedBufferSize - 1));
     if (adjustedNumberOfSignificantDigits < 1) {
       adjustedNumberOfSignificantDigits = 1;
     }
-    requiredLength = ConvertFloatToTextPrivate(f, buffer, bufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved, false);
+    requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved, false);
   }
-  if (requiredLength >= bufferSize) {
+  if (requiredLength >= truncatedBufferSize) {
     buffer[0] = 0;
     return 0;
   }

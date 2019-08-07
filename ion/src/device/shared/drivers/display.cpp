@@ -86,11 +86,9 @@ bool waitForVBlank() {
   return false;
 }
 
-void POSTPushMulticolor(int tileSize) {
-  const int maxI = 3; // TODO 1 ?
-  const int maxJ = 3;
-  for (int i = 0; i < maxI; i++) {
-    for (int j = 0; j < maxJ; j++) {
+void POSTPushMulticolor(int rootNumberTiles, int tileSize) {
+  for (int i = 0; i < rootNumberTiles; i++) {
+    for (int j = 0; j < rootNumberTiles; j++) {
       uint16_t k = (i+j) % 16;
       uint16_t color = 1 << k;
       setDrawingArea(KDRect(i*tileSize,j*tileSize,tileSize, tileSize), Orientation::Landscape);

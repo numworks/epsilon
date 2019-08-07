@@ -42,7 +42,7 @@ public:
   const char * previousGlyphPosition();
   const char * stringPosition() const { return m_stringPosition; }
   static size_t CharSizeOfCodePoint(CodePoint c);
-  static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferSize);
+  static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferSize); // No null-terminating char
 private:
   const char * const m_string;
   const char * m_stringPosition;

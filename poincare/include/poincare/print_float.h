@@ -31,7 +31,7 @@ public:
    * ConvertFloatToText returns the number of characters that have been written
    * in buffer (excluding the last \0 character). */
   template <class T>
-  static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding = true); //TODO LEA put upperCase
+  static int ConvertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding = true);
 
 private:
   template <class T>

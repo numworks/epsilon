@@ -93,7 +93,7 @@ int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
 
 void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Long & i, int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
-   * in first position. When called by convertFloatToText, the buffer length is
+   * in first position. When called by ConvertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */
   assert(bufferLength > 0 && decimalMarkerPosition != 0);
   constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
@@ -124,7 +124,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Lon
 }
 
 template <class T>
-int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
+int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding)
 {
   assert(numberOfSignificantDigits > 0);
@@ -227,7 +227,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   if (mode == Preferences::PrintFloatMode::Decimal && exponentInBase10 >= numberOfSignificantDigits) {
     /* Exception 1: avoid inventing digits to fill the printed float: when
      * displaying 12345 with 2 significant digis in Decimal mode for instance.
-     * This exception is caught by convertFloatToText and forces the mode to
+     * This exception is caught by ConvertFloatToText and forces the mode to
      * Scientific */
     assert(!returnTrueRequiredLength);
     return bufferSize + 1;
@@ -339,7 +339,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   return currentNumberOfChar + numberOfCharExponent;
 }
 
-template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
-template int PrintFloat::convertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
+template int PrintFloat::ConvertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
+template int PrintFloat::ConvertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
 
 }

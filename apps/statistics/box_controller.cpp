@@ -57,6 +57,7 @@ void BoxController::reloadBannerView() {
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
   int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize - 1, Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ' ';
+  assert(numberOfChar <= bufferSize - 1);
   buffer[numberOfChar] = 0;
   m_view.bannerView()->calculationValue()->setText(buffer);
 

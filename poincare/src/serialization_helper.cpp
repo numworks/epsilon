@@ -59,7 +59,7 @@ int SerializationHelper::SerializeChild(
   // Write the child with parentheses if needed
   bool addParentheses = parentNode->childNeedsSystemParenthesesAtSerialization(childNode);
   if (addParentheses) {
-    numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -70,7 +70,7 @@ int SerializationHelper::SerializeChild(
     return bufferSize-1;
   }
   if (addParentheses) {
-    numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
     if (numberOfChar >= bufferSize-1) {
       assert(buffer[bufferSize - 1] == 0);
       return bufferSize-1;
@@ -112,7 +112,7 @@ int InfixPrefix(
       return bufferSize-1;
     }
     // Add the opening (system or user) parenthesis
-    numberOfChar += UTF8Decoder::CodePointToChars(needsSystemParentheses ? UCodePointLeftSystemParenthesis : CodePoint('('), buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, needsSystemParentheses ? UCodePointLeftSystemParenthesis : CodePoint('('));
     if (numberOfChar >= bufferSize-1) {
       assert(buffer[bufferSize - 1] == 0);
       return bufferSize - 1;
@@ -131,7 +131,7 @@ int InfixPrefix(
       if (i != firstChildIndex) {
         // Write the operator or the comma
         numberOfChar += prefix ?
-          UTF8Decoder::CodePointToChars(',', buffer+numberOfChar, bufferSize - numberOfChar) :
+          SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, ',') :
           strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
         if (numberOfChar >= bufferSize-1) {
           assert(buffer[bufferSize - 1] == 0);
@@ -141,7 +141,7 @@ int InfixPrefix(
       // Write the child, with or without parentheses if needed
       if (prefix) {
         if (needsSystemParentheses && (childrenCount > 1)) {
-          numberOfChar += UTF8Decoder::CodePointToChars(UCodePointLeftSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+          numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
           if (numberOfChar >= bufferSize-1) {
             assert(buffer[bufferSize - 1] == 0);
             return bufferSize - 1;
@@ -153,7 +153,7 @@ int InfixPrefix(
           return bufferSize - 1;
         }
         if (needsSystemParentheses && (childrenCount > 1)) {
-          numberOfChar += UTF8Decoder::CodePointToChars(UCodePointRightSystemParenthesis, buffer+numberOfChar, bufferSize - numberOfChar);
+          numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
           if (numberOfChar >= bufferSize-1) {
             assert(buffer[bufferSize - 1] == 0);
             return bufferSize - 1;
@@ -171,7 +171,7 @@ int InfixPrefix(
 
   if (prefix) {
     // Add the closing system parenthesis
-    numberOfChar += UTF8Decoder::CodePointToChars(needsSystemParentheses ? UCodePointRightSystemParenthesis : CodePoint(')'), buffer+numberOfChar, bufferSize - numberOfChar);
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, needsSystemParentheses ? UCodePointRightSystemParenthesis : CodePoint(')'));
     if (numberOfChar >= bufferSize-1) {
        assert(buffer[bufferSize - 1] == 0);
        return bufferSize - 1;

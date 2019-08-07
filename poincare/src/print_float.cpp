@@ -23,8 +23,9 @@ static inline int minInt(int x, int y) { return x < y ? x : y; }
 PrintFloat::Long::Long(int64_t i) :
   m_negative(i < 0)
 {
-  m_digits[1] = i % k_base;
-  m_digits[0] = (i - m_digits[1]) / k_base;
+  int64_t nonNegativeI = m_negative ? -i : i;
+  m_digits[1] = 0 + (nonNegativeI % k_base);
+  m_digits[0] = (nonNegativeI - m_digits[1]) / k_base;
 }
 
 PrintFloat::Long::Long(uint32_t d1, uint32_t d2, bool negative) :
@@ -50,11 +51,10 @@ void PrintFloat::Long::DivisionByTen(const Long & longToDivide, Long * quotient,
   uint32_t digit1DividedByTen = (digit1 - d)/10;
   *digit = Long(d);
 
-
   if (digit0 == 0) {
     *quotient = Long(0, digit1DividedByTen, longToDivide.isNegative());
   } else {
-    *quotient = Long(digit0/10, digit1DividedByTen + k_base * digit0 % 10, longToDivide.isNegative());
+    *quotient = Long(digit0/10, digit1DividedByTen + (k_base/10) * (digit0 % 10), longToDivide.isNegative());
   }
 }
 

@@ -68,10 +68,10 @@ int Function::nameWithArgument(char * buffer, size_t bufferSize, CodePoint arg) 
   assert(UTF8Decoder::CharSizeOfCodePoint(arg) == 1);
   const char * functionName = fullName();
   size_t baseNameLength = SymbolAbstract::TruncateExtension(buffer, functionName, bufferSize - k_parenthesedArgumentLength);
+  assert(baseNameLength <= bufferSize);
   size_t result = baseNameLength + strlcpy(&buffer[baseNameLength], k_parenthesedArgument, bufferSize-baseNameLength);
-  int bufferRemainingSize = bufferSize - (baseNameLength+1);
-  if (bufferRemainingSize > 0) {
-    UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferRemainingSize);
+  if (baseNameLength + 1 < bufferSize) {
+    UTF8Decoder::CodePointToChars(arg, buffer+baseNameLength+1, bufferSize - (baseNameLength+1));
   }
   return result;
 }

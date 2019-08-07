@@ -312,9 +312,9 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     // The user entered an empty name. Use a numbered default script name.
     bool foundDefaultName = Script::DefaultName(numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
-    assert(defaultNameLength < bufferSize);
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberedDefaultName[defaultNameLength++] = '.';
+    assert(defaultNameLength < bufferSize);
     strlcpy(numberedDefaultName + defaultNameLength, ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
     /* If there are already scripts named script1.py, script2.py,... until
      * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried

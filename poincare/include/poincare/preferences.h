@@ -17,6 +17,7 @@ public:
   enum class PrintFloatMode {
     Decimal = 0,
     Scientific = 1,
+    Engineering = 2,
   };
   enum class ComplexFormat {
     Real = 0,

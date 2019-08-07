@@ -17,19 +17,20 @@ void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMod
   constexpr int tagSize = 8;
   unsigned char tag = 'O';
   char taggedBuffer[250+2*tagSize];
-  memset(taggedBuffer, tag, bufferSize+2*tagSize);
+  int taggedAreaSize = bufferSize+2*tagSize;
+  memset(taggedBuffer, tag, taggedAreaSize);
   char * buffer = taggedBuffer + tagSize;
 
   PrintFloat::ConvertFloatToText<T>(a, buffer, bufferSize, significantDigits, mode);
 
-  for (int i=0; i<tagSize; i++) {
-    quiz_assert(taggedBuffer[i] == tag);
+  for (int i = 0; i < tagSize; i++) {
+    quiz_assert_print_if_failure(taggedBuffer[i] == tag, result);
   }
-  for (int i=tagSize+strlen(buffer)+1; i<bufferSize+2*tagSize; i++) {
-    quiz_assert(taggedBuffer[i] == tag);
+  for (int i = tagSize + strlen(buffer) + 1; i < taggedAreaSize; i++) {
+    quiz_assert_print_if_failure(taggedBuffer[i] == tag, result);
   }
 
-  quiz_assert(strcmp(buffer, result) == 0);
+  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
 
 QUIZ_CASE(assert_print_floats) {

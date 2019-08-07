@@ -53,7 +53,7 @@ private:
   private:
     constexpr static int64_t k_base = 1000000000;
     constexpr static int k_numberOfDigits = 2;
-    constexpr static int k_maxNumberOfCharsForDigit = 8;
+    constexpr static int k_maxNumberOfCharsForDigit = 9;
 
     bool m_negative;
     uint32_t m_digits[k_numberOfDigits];

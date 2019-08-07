@@ -48,7 +48,7 @@ public:
   static const char * Name() {
     return "undef";
   }
-  static int NameSize() {
+  static constexpr int NameSize() {
     return 6;
   }
 };

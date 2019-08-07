@@ -27,16 +27,15 @@ public:
   /* If the buffer size is too small to display the right number of significant
    * digits, the function forces the scientific mode and caps the number of
    * significant digits to fit the buffer. If the buffer is too small to display
-   * any float, the text representing the float is truncated at the end of the
-   * buffer.
+   * any float, the text representing the float is empty.
    * ConvertFloatToText returns the number of characters that have been written
    * in buffer (excluding the last \0 character). */
   template <class T>
-  static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding = true);
+  static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding = true); //TODO LEA put upperCase
 
 private:
   template <class T>
-  static int ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros);
+  static int ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros, bool returnTrueRequiredLength);
 
   class Long final {
   public:

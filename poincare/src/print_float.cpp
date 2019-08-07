@@ -28,12 +28,10 @@ PrintFloat::Long::Long(int64_t i) :
   m_digits[0] = (nonNegativeI - m_digits[1]) / k_base;
 }
 
-PrintFloat::Long::Long(uint32_t d1, uint32_t d2, bool negative) :
-  m_negative(negative)
-{
+PrintFloat::Long::Long(uint32_t d1, uint32_t d2, bool negative) {
   m_digits[1] = d2;
   m_digits[0] = d1;
-  assert((!negative) || (!isZero()));
+  m_negative = negative && !isZero();
 }
 
 void PrintFloat::Long::DivisionByTen(const Long & longToDivide, Long * quotient, Long * digit) {
@@ -62,8 +60,8 @@ int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
   if (bufferSize == 0) {
     return -1;
   }
-  buffer[bufferSize-1] = 0;
   if (bufferSize == 1) {
+    buffer[0] = 0;
     return 0;
   }
   int numberOfChars = m_negative ? 1 : 0; // 1 for the minus sign char
@@ -173,7 +171,6 @@ template <class T>
 int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros, bool returnTrueRequiredLength) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
-  buffer[bufferSize - 1] = 0;
   if (std::isinf(f)) {
     // Infinity
     bool writeMinusSign = f < 0;
@@ -323,20 +320,21 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
 
   assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
-  int neededNumberOfChars = numberOfCharsForMantissaWithSign + (numberOfCharExponent == 0 ? 0 : UTF8Decoder::CharSizeOfCodePoint(UCodePointLatinLetterSmallCapitalE) + numberOfCharExponent);
+  bool doNotWriteExponent = (mode == Preferences::PrintFloatMode::Decimal) || (exponentInBase10 == 0);
+  int neededNumberOfChars = numberOfCharsForMantissaWithSign + (doNotWriteExponent ? 0 : UTF8Decoder::CharSizeOfCodePoint(UCodePointLatinLetterSmallCapitalE) + numberOfCharExponent);
   if (neededNumberOfChars > bufferSize - 1) {
     // Exception 3: We are about to overflow the buffer.
     return neededNumberOfChars;
   }
   PrintLongWithDecimalMarker(buffer, numberOfCharsForMantissaWithSign, dividend, decimalMarkerPosition);
-  if (mode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {
+  if (doNotWriteExponent) {
     buffer[numberOfCharsForMantissaWithSign] = 0;
     return numberOfCharsForMantissaWithSign;
   }
   // Print exponent
   assert(numberOfCharsForMantissaWithSign < bufferSize);
   int currentNumberOfChar = numberOfCharsForMantissaWithSign;
-  currentNumberOfChar+= SerializationHelper::CodePoint(buffer + currentNumberOfChar, bufferSize - currentNumberOfChar, UCodePointLatinLetterSmallCapitalE);
+  currentNumberOfChar+= UTF8Decoder::CodePointToChars(UCodePointLatinLetterSmallCapitalE, buffer + currentNumberOfChar, bufferSize - currentNumberOfChar);
   dividend = Long(exponentInBase10); // reuse dividend as it is not needed anymore
   PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, dividend, -1);
   buffer[currentNumberOfChar + numberOfCharExponent] = 0;

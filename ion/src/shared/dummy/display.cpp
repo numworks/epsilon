@@ -1,6 +1,6 @@
 #include <ion/display.h>
 
-void Ion::Display::POSTPushMulticolor(int tileSize) {
+void Ion::Display::POSTPushMulticolor(int rootNumberTiles, int tileSize) {
 }
 
 int displayUniformTilingSize10(KDColor c) {

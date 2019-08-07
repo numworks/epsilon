@@ -31,7 +31,7 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 template<typename T>
 int FloatNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return PrintFloat::convertFloatToText(m_value, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
+  return PrintFloat::ConvertFloatToText(m_value, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
 }
 
 template<typename T>

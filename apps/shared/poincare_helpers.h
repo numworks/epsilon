@@ -16,7 +16,7 @@ inline Poincare::Layout CreateLayout(const Poincare::Expression e)  {
 
 template <class T>
 inline int ConvertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits) {
-  return Poincare::PrintFloat::convertFloatToText(d, buffer, bufferSize, numberOfSignificantDigits, Poincare::Preferences::sharedPreferences()->displayMode());
+  return Poincare::PrintFloat::ConvertFloatToText(d, buffer, bufferSize, numberOfSignificantDigits, Poincare::Preferences::sharedPreferences()->displayMode());
 }
 
 inline int Serialize(const Poincare::Expression e, char * buffer, int bufferSize, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits) {

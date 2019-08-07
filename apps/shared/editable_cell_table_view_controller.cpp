@@ -78,7 +78,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
     }
     if (!myEditableValueCell->editableTextCell()->textField()->isEditing()) {
       myCell->setEven(j%2 == 0);
-      PrintFloat::convertFloatToText<double>(dataAtLocation(i, j), buffer, cellBufferSize(i), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
+      PrintFloat::ConvertFloatToText<double>(dataAtLocation(i, j), buffer, cellBufferSize(i), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
       myEditableValueCell->editableTextCell()->textField()->setText(buffer);
     }
     return;

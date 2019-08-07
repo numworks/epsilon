@@ -116,7 +116,7 @@ void GraphController::reloadBannerView() {
     legend = I18n::translate(I18n::Message::Reg);
     numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else {
-    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    numberOfChar += PrintFloat::ConvertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
   legend = ")  ";
   strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);

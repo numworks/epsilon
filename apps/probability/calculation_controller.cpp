@@ -184,7 +184,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     constexpr int precision = Constant::LargeNumberOfSignificantDigits;
     constexpr int bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    PrintFloat::convertFloatToText<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    PrintFloat::ConvertFloatToText<double>(m_calculation->parameterAtIndex(i-1), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);
   }
 }
@@ -287,7 +287,7 @@ void CalculationController::updateTitle() {
     constexpr int precision = Constant::ShortNumberOfSignificantDigits;
     constexpr size_t bufferSize = PrintFloat::bufferSizeForFloatsWithPrecision(precision);
     char buffer[bufferSize];
-    PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+    PrintFloat::ConvertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
     currentChar += strlcpy(m_titleBuffer+currentChar, buffer, k_titleBufferSize - currentChar);
     if (currentChar >= k_titleBufferSize) {
       break;

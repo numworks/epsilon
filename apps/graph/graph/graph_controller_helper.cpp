@@ -25,9 +25,11 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   const char * space = " ";
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize, CartesianFunction::Symbol());
   const char * legend = "=";
+  assert(numberOfChar <= bufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, legend, bufferSize-numberOfChar);
   double y = function->approximateDerivative(cursor->x(), App::app()->localContext());
   numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + numberOfChar, bufferSize-numberOfChar, Constant::ShortNumberOfSignificantDigits);
+  assert(numberOfChar <= bufferSize);
   strlcpy(buffer+numberOfChar, space, bufferSize-numberOfChar);
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();

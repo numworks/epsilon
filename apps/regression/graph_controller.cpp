@@ -111,14 +111,17 @@ void GraphController::reloadBannerView() {
   numberOfChar += strlcpy(buffer, legend, bufferSize);
   if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
+    assert(numberOfChar <= bufferSize);
     numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else if (*m_selectedDotIndex < 0) {
     legend = I18n::translate(I18n::Message::Reg);
+    assert(numberOfChar <= bufferSize);
     numberOfChar += strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   } else {
     numberOfChar += PrintFloat::ConvertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer + numberOfChar, bufferSize - numberOfChar, Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
   legend = ")  ";
+  assert(numberOfChar <= bufferSize);
   strlcpy(buffer + numberOfChar, legend, bufferSize - numberOfChar);
   m_bannerView.dotNameView()->setText(buffer);
 

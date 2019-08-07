@@ -41,6 +41,7 @@ Layout IntegralGraphController::createFunctionLayout(ExpiringPointer<Shared::Fun
   char buffer[bufferSize];
   const char * dx = "dx";
   int numberOfChars = function->nameWithArgument(buffer, bufferSize-strlen(dx), CartesianFunction::Symbol());
+  assert(numberOfChars <= bufferSize);
   strlcpy(buffer+numberOfChars, dx, bufferSize-numberOfChars);
   return LayoutHelper::String(buffer, strlen(buffer), KDFont::SmallFont);
 }

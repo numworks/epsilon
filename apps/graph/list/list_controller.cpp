@@ -56,10 +56,12 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
     // The user entered an empty name. Use a default function name.
     CartesianFunction::DefaultName(baseName, maxBaseNameSize);
     size_t defaultNameLength = strlen(baseName);
+    assert(defaultNameLength <= maxBaseNameSize);
     strlcpy(baseName + defaultNameLength, Function::k_parenthesedArgument, maxBaseNameSize - defaultNameLength);
     textField->setText(baseName);
     baseName[defaultNameLength] = 0;
   } else {
+    assert(argumentLength <= textLength + 1);
     strlcpy(baseName, text, textLength - argumentLength + 1);
   }
 

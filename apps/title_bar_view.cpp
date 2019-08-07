@@ -88,6 +88,7 @@ void TitleBarView::refreshPreferences() {
   if (preferences->displayMode() == Preferences::PrintFloatMode::Scientific) {
     numberOfChar += strlcpy(buffer, I18n::translate(I18n::Message::Sci), bufferSize);
   }
+  assert(numberOfChar <= bufferSize);
   if (preferences->angleUnit() == Preferences::AngleUnit::Radian) {
     numberOfChar += strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), bufferSize - numberOfChar);
   } else {

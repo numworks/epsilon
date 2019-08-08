@@ -174,6 +174,11 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
   return requiredLength;
 }
 
+static int engineeringExponentFromExponentBase10(int exponentInBase10) {
+  int exponentInBase10Mod3 = exponentInBase10 % 3;
+  return exponentInBase10 - (exponentInBase10Mod3 + (exponentInBase10Mod3 < 0 ? 3 : 0));
+}
+
 template <class T>
 int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros, bool returnTrueRequiredLength) {
   assert(numberOfSignificantDigits > 0);
@@ -208,7 +213,9 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   }
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);
-  int exponentInEngineeringNotation = mode == Preferences::PrintFloatMode::Engineering ? exponentInBase10 - (exponentInBase10%3) : 0;
+  int exponentInEngineeringNotation = engineeringExponentFromExponentBase10(exponentInBase10);
+  assert(exponentInEngineeringNotation%3 == 0);
+  assert(exponentInEngineeringNotation <= exponentInBase10 && exponentInBase10 < exponentInEngineeringNotation + 3);
 
   /* Part I: Mantissa */
 
@@ -232,6 +239,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
    * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000) */
   if (f != 0 && IEEE754<T>::exponentBase10(mantissa) - exponentInBase10 != numberOfSignificantDigits - 1 - exponentInBase10) {
     exponentInBase10++;
+    exponentInEngineeringNotation = engineeringExponentFromExponentBase10(exponentInBase10);
   }
 
   if (mode == Preferences::PrintFloatMode::Decimal && exponentInBase10 >= numberOfSignificantDigits) {
@@ -271,7 +279,10 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
 
   // Remove/Add the zeroes on the right side of the mantissa
   Long dividend = Long((int64_t)mantissa);
-  if (mode == Preferences::PrintFloatMode::Engineering) {
+  int numberOfZeroesToAddForEngineering = (numberOfSignificantDigits%3) - numberOfSignificantDigits + 1;
+  int minimalNumbersOfMantissaDigitsForEngineering = exponentInBase10 - exponentInEngineeringNotation + 1;
+  assert(mode != Preferences::PrintFloatMode::Engineering || (minimalNumbersOfMantissaDigitsForEngineering > 0 && minimalNumbersOfMantissaDigitsForEngineering <= 3));
+  if (mode == Preferences::PrintFloatMode::Engineering && numberOfZeroesToAddForEngineering > 0) {
     int numberOfZeroesToAdd = (numberOfSignificantDigits%3) - numberOfSignificantDigits + 1;
     if (numberOfZeroesToAdd > 0) {
       assert(numberOfCharsForMantissaWithoutSign - numberOfSignificantDigits < 3);
@@ -282,17 +293,18 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
       if (numberOfRemovedZeros != nullptr) {
         *numberOfRemovedZeros = -numberOfZeroesToAdd;
       }
-    } else {} // TODO LEA Remove zeroes ?
+    }
   } else {
     Long digit;
     Long quotient;
     Long::DivisionByTen(dividend, &quotient, &digit);
-    int minimumNumberOfCharsInMantissa = 1;
+    int minimumNumberOfCharsInMantissa = mode == Preferences::PrintFloatMode::Engineering ? minimalNumbersOfMantissaDigitsForEngineering : 1;
     int numberOfZerosRemoved = 0;
     while (digit.isZero()
         && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa
         && (numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1
-          || mode == Preferences::PrintFloatMode::Scientific))
+          || mode == Preferences::PrintFloatMode::Scientific
+          || mode == Preferences::PrintFloatMode::Engineering))
     {
       assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
       numberOfCharsForMantissaWithoutSign--;
@@ -314,7 +326,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   // Force a decimal marker if there is fractional part
   bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific && numberOfCharsForMantissaWithoutSign > 1)
     || (mode == Preferences::PrintFloatMode::Decimal && numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1)
-    || (mode == Preferences::PrintFloatMode::Engineering && (numberOfCharsForMantissaWithoutSign > exponentInBase10 - exponentInEngineeringNotation));
+    || (mode == Preferences::PrintFloatMode::Engineering && (numberOfCharsForMantissaWithoutSign > minimalNumbersOfMantissaDigitsForEngineering));
   if (decimalMarker) {
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
@@ -332,7 +344,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     decimalMarkerPosition = 1;
   } else {
     assert(mode == Preferences::PrintFloatMode::Engineering);
-    decimalMarkerPosition = 1 + exponentInBase10 - exponentInEngineeringNotation;
+    decimalMarkerPosition = minimalNumbersOfMantissaDigitsForEngineering;
   }
   if (f < 0) {
     decimalMarkerPosition++;

@@ -1,6 +1,8 @@
 #ifndef POINCARE_PREFERENCES_H
 #define POINCARE_PREFERENCES_H
 
+#include <stdint.h>
+
 namespace Poincare {
 
 class Preferences final {
@@ -38,14 +40,14 @@ public:
   void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
   ComplexFormat complexFormat() const { return m_complexFormat; }
   void setComplexFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
-  char numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
-  void setNumberOfSignificantDigits(char numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
+  uint8_t numberOfSignificantDigits() const { return m_numberOfSignificantDigits; }
+  void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
 private:
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
-  char m_numberOfSignificantDigits;
+  uint8_t m_numberOfSignificantDigits;
 };
 
 }

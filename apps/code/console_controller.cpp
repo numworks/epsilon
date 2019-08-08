@@ -400,8 +400,9 @@ void ConsoleController::autoImportScript(Script script, bool force) {
     /* Copy the script name without the extension ".py". The '.' is overwritten
      * by the null terminating char. */
     int copySizeWithNullTerminatingZero = minInt(k_maxImportCommandSize - currentChar, strlen(scriptName) - strlen(ScriptStore::k_scriptExtension));
-    assert(convertFloatToText >= 0);
-    strlcpy(command+currentChar, scriptName, ≈);
+    assert(copySizeWithNullTerminatingZero >= 0);
+    assert(copySizeWithNullTerminatingZero <= k_maxImportCommandSize - currentChar);
+    strlcpy(command+currentChar, scriptName, copySizeWithNullTerminatingZero);
     currentChar += copySizeWithNullTerminatingZero-1;
 
     // Copy " import *"

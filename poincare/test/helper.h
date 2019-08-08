@@ -14,6 +14,7 @@ constexpr Poincare::Preferences::ComplexFormat Polar = Poincare::Preferences::Co
 constexpr Poincare::Preferences::ComplexFormat Real = Poincare::Preferences::ComplexFormat::Real;
 constexpr Poincare::Preferences::PrintFloatMode DecimalMode = Poincare::Preferences::PrintFloatMode::Decimal;
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode = Poincare::Preferences::PrintFloatMode::Scientific;
+constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Preferences::PrintFloatMode::Engineering;
 
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);

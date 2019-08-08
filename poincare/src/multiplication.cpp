@@ -146,10 +146,11 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
         default:
           return 1;
       }
-    case ExpressionNode::LayoutShape::BoundaryPunctuation:
-    case ExpressionNode::LayoutShape::Fraction:
-    case ExpressionNode::LayoutShape::Root:
-    case ExpressionNode::LayoutShape::RightOfPower:
+    default:
+    //case ExpressionNode::LayoutShape::BoundaryPunctuation:
+    //case ExpressionNode::LayoutShape::Fraction:
+    //case ExpressionNode::LayoutShape::Root:
+    //case ExpressionNode::LayoutShape::RightOfPower:
       switch (right) {
         case ExpressionNode::LayoutShape::Decimal:
         case ExpressionNode::LayoutShape::Integer:

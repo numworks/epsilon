@@ -19,6 +19,7 @@ extern "C" {
 namespace Poincare {
 
 static inline int minInt(int x, int y) { return x < y ? x : y; }
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
 PrintFloat::Long::Long(int64_t i) :
   m_negative(i < 0)
@@ -54,6 +55,12 @@ void PrintFloat::Long::DivisionByTen(const Long & longToDivide, Long * quotient,
   } else {
     *quotient = Long(digit0/10, digit1DividedByTen + (k_base/10) * (digit0 % 10), longToDivide.isNegative());
   }
+}
+
+void PrintFloat::Long::MultiplySmallLongByTen(Long & smallLong) {
+  assert(smallLong.digit(0) == 0 && smallLong.digit(1) < (k_base/1000) && !smallLong.isZero());
+  uint32_t newDigit1 = smallLong.digit(1) * 10;
+  smallLong = Long(0, newDigit1, smallLong.isNegative());
 }
 
 int PrintFloat::Long::serialize(char * buffer, int bufferSize) const {
@@ -201,6 +208,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   }
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);
+  int exponentInEngineeringNotation = mode == Preferences::PrintFloatMode::Engineering ? exponentInBase10 - (exponentInBase10%3) : 0;
 
   /* Part I: Mantissa */
 
@@ -241,46 +249,72 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   }
 
   // Number of chars for the mantissa
-  int numberOfCharsForMantissaWithoutSign = (exponentInBase10 >= 0 || mode == Preferences::PrintFloatMode::Scientific) ? numberOfSignificantDigits : (numberOfSignificantDigits - exponentInBase10);
+  int numberOfCharsForMantissaWithoutSign = 0;
+  if (mode == Preferences::PrintFloatMode::Decimal) {
+    if (exponentInBase10 >= 0) {
+      numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
+    } else {
+      numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits - exponentInBase10;
+    }
+  } else if (mode == Preferences::PrintFloatMode::Scientific) {
+    numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
+  } else {
+    assert(mode == Preferences::PrintFloatMode::Engineering);
+    numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits + maxInt(0, (numberOfSignificantDigits%3) - numberOfSignificantDigits + 1);
+    assert(numberOfCharsForMantissaWithoutSign <= numberOfSignificantDigits);
+  }
 
   /* The number of digits in a mantissa is capped because the maximal int64_t is
    * 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
    * that we stay beyond this threshold during computation. */
   assert(numberOfSignificantDigits < std::log10(std::pow(2.0f, 63.0f)));
 
-  // Remove the zeroes on the right side of the mantissa
+  // Remove/Add the zeroes on the right side of the mantissa
   Long dividend = Long((int64_t)mantissa);
-  Long digit;
-  Long quotient;
-  Long::DivisionByTen(dividend, &quotient, &digit);
-  int minimumNumberOfCharsInMantissa = 1;
-  int numberOfZerosRemoved = 0;
-  while (digit.isZero()
-      && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa
-      && (numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1
-        || mode == Preferences::PrintFloatMode::Scientific))
-  {
-    assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
-    numberOfCharsForMantissaWithoutSign--;
-    dividend = quotient;
+  if (mode == Preferences::PrintFloatMode::Engineering) {
+    int numberOfZeroesToAdd = (numberOfSignificantDigits%3) - numberOfSignificantDigits + 1;
+    if (numberOfZeroesToAdd > 0) {
+      assert(numberOfCharsForMantissaWithoutSign - numberOfSignificantDigits < 3);
+      for (int i = 0; i <numberOfZeroesToAdd; i++) {
+        assert(mantissa < 1000);
+        Long::MultiplySmallLongByTen(dividend);
+      }
+      if (numberOfRemovedZeros != nullptr) {
+        *numberOfRemovedZeros = -numberOfZeroesToAdd;
+      }
+    } else {} // TODO LEA Remove zeroes ?
+  } else {
+    Long digit;
+    Long quotient;
     Long::DivisionByTen(dividend, &quotient, &digit);
-    numberOfZerosRemoved++;
-  }
-  if (!returnTrueRequiredLength && numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
-    // Escape now if the true number of needed digits is not required
-    return bufferSize + 1;
-  }
-  if (numberOfRemovedZeros != nullptr) {
-    *numberOfRemovedZeros = numberOfZerosRemoved;
+    int minimumNumberOfCharsInMantissa = 1;
+    int numberOfZerosRemoved = 0;
+    while (digit.isZero()
+        && numberOfCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa
+        && (numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1
+          || mode == Preferences::PrintFloatMode::Scientific))
+    {
+      assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
+      numberOfCharsForMantissaWithoutSign--;
+      dividend = quotient;
+      Long::DivisionByTen(dividend, &quotient, &digit);
+      numberOfZerosRemoved++;
+    }
+    if (!returnTrueRequiredLength && numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
+      // Escape now if the true number of needed digits is not required
+      return bufferSize + 1;
+    }
+    if (numberOfRemovedZeros != nullptr) {
+      *numberOfRemovedZeros = numberOfZerosRemoved;
+    }
   }
 
   /* Part II: Decimal marker */
 
   // Force a decimal marker if there is fractional part
-  bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific
-      && numberOfCharsForMantissaWithoutSign > 1)
-    || (mode == Preferences::PrintFloatMode::Decimal
-        && numberOfCharsForMantissaWithoutSign > exponentInBase10 +1);
+  bool decimalMarker = (mode == Preferences::PrintFloatMode::Scientific && numberOfCharsForMantissaWithoutSign > 1)
+    || (mode == Preferences::PrintFloatMode::Decimal && numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1)
+    || (mode == Preferences::PrintFloatMode::Engineering && (numberOfCharsForMantissaWithoutSign > exponentInBase10 - exponentInEngineeringNotation));
   if (decimalMarker) {
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
@@ -291,7 +325,15 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   }
 
   /* Find the position of the decimal marker position */
-  int decimalMarkerPosition = (exponentInBase10 < 0 || mode == Preferences::PrintFloatMode::Scientific) ? 1 : exponentInBase10+1;
+  int decimalMarkerPosition = 0;
+  if (mode == Preferences::PrintFloatMode::Decimal) {
+    decimalMarkerPosition = (exponentInBase10 < 0) ? 1 : exponentInBase10 + 1;
+  } else if (mode == Preferences::PrintFloatMode::Scientific) {
+    decimalMarkerPosition = 1;
+  } else {
+    assert(mode == Preferences::PrintFloatMode::Engineering);
+    decimalMarkerPosition = 1 + exponentInBase10 - exponentInEngineeringNotation;
+  }
   if (f < 0) {
     decimalMarkerPosition++;
   }
@@ -309,8 +351,9 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
 
   /* Part IV: Exponent */
 
-  int numberOfCharExponent = exponentInBase10 != 0 ? std::log10(std::fabs((T)exponentInBase10)) + 1 : 0;
-  if (exponentInBase10 < 0) {
+  int exponent = mode == Preferences::PrintFloatMode::Engineering ? exponentInEngineeringNotation : exponentInBase10;
+  int numberOfCharExponent = exponent != 0 ? std::log10(std::fabs((T)exponent)) + 1 : 0;
+  if (exponent < 0) {
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;
     assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
@@ -320,7 +363,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
 
   assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
-  bool doNotWriteExponent = (mode == Preferences::PrintFloatMode::Decimal) || (exponentInBase10 == 0);
+  bool doNotWriteExponent = (mode == Preferences::PrintFloatMode::Decimal) || (exponent == 0);
   int neededNumberOfChars = numberOfCharsForMantissaWithSign + (doNotWriteExponent ? 0 : UTF8Decoder::CharSizeOfCodePoint(UCodePointLatinLetterSmallCapitalE) + numberOfCharExponent);
   if (neededNumberOfChars > bufferSize - 1) {
     // Exception 3: We are about to overflow the buffer.
@@ -335,7 +378,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   assert(numberOfCharsForMantissaWithSign < bufferSize);
   int currentNumberOfChar = numberOfCharsForMantissaWithSign;
   currentNumberOfChar+= UTF8Decoder::CodePointToChars(UCodePointLatinLetterSmallCapitalE, buffer + currentNumberOfChar, bufferSize - currentNumberOfChar);
-  dividend = Long(exponentInBase10); // reuse dividend as it is not needed anymore
+  dividend = Long(exponent); // reuse dividend as it is not needed anymore
   PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent, dividend, -1);
   buffer[currentNumberOfChar + numberOfCharExponent] = 0;
   assert(neededNumberOfChars == currentNumberOfChar + numberOfCharExponent);

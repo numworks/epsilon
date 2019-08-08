@@ -196,10 +196,14 @@ public:
   /*!*/ virtual Expression denominator(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* LayoutShape is used to check if the multiplication sign can be omitted between two expressions. It depends on the "layout syle" of the on the right of the left expression */
   enum class LayoutShape {
-    DigitOrLetter,
-    SpecialLetter,
-    BoundaryPunctuation,
-    ShiftedBaseline
+    Decimal,
+    Integer,
+    OneLetter,
+    MoreLetters,
+    BoundaryPunctuation, // ( [ ∫
+    Root,
+    Fraction,
+    RightOfPower
   };
   virtual LayoutShape leftLayoutShape() const = 0;
   virtual LayoutShape rightLayoutShape() const { return leftLayoutShape(); }

@@ -50,8 +50,7 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, complexFormat, angleUnit); }
 private:
   // Simplification
-  LayoutShape leftLayoutShape() const override { assert(m_value >= 0); return LayoutShape::DigitOrLetter; }
-  LayoutShape rightLayoutShape() const override { return LayoutShape::DigitOrLetter; }
+  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::Decimal; }
 
   template<typename U> Evaluation<U> templatedApproximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
     return Complex<U>::Builder((U)m_value);

@@ -12,7 +12,7 @@ public:
   int numberOfChildren() const override { return 1; }
 private:
   // Simplification
-  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
   Expression shallowReduce(ReductionContext reductionContext) override;
 };

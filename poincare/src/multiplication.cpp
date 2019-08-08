@@ -90,10 +90,101 @@ Expression MultiplicationNode::setSign(Sign s, ReductionContext reductionContext
   return Multiplication(this).setSign(s, reductionContext);
 }
 
-Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
+/* Operative symbol between two expressions depends on the layout shape on the
+ * left and the right of the operator:
+ *
+ *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | Fraction
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * Decimal       |    ×    |   x     |    ø      |     ×       |      ×        |  ×   |    ×
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * Integer       |    ×    |   x     |    ø      |     •       |      ø        |  ø   |    ×
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * OneLetter     |    ×    |   •     |    •      |     •       |      •        |  ø   |    ø
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * MoreLetters   |    ×    |   •     |    •      |     •       |      •        |  ø   |    ø
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * BundaryPunct. |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    ×
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * Root          |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    ×
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * Fraction      |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    ×
+ * --------------+---------+---------+-----------+-------------+---------------+------+----------
+ * RightOfPower  |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    ×
+ *
+ * */
+
+static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
+  switch (left) {
+    case ExpressionNode::LayoutShape::Decimal:
+      switch (right) {
+        case ExpressionNode::LayoutShape::OneLetter:
+          return 0;
+        default:
+          return 2;
+      }
+    case ExpressionNode::LayoutShape::Integer:
+      switch (right) {
+        case ExpressionNode::LayoutShape::Integer:
+        case ExpressionNode::LayoutShape::Decimal:
+        case ExpressionNode::LayoutShape::Fraction:
+          return 2;
+        case ExpressionNode::LayoutShape::MoreLetters:
+          return 1;
+        default:
+          return 0;
+      }
+    case ExpressionNode::LayoutShape::OneLetter:
+    case ExpressionNode::LayoutShape::MoreLetters:
+      switch (right) {
+        case ExpressionNode::LayoutShape::Decimal:
+          return 2;
+        case ExpressionNode::LayoutShape::Fraction:
+        case ExpressionNode::LayoutShape::Root:
+          return 0;
+        default:
+          return 1;
+      }
+    case ExpressionNode::LayoutShape::BoundaryPunctuation:
+    case ExpressionNode::LayoutShape::Fraction:
+    case ExpressionNode::LayoutShape::Root:
+    case ExpressionNode::LayoutShape::RightOfPower:
+      switch (right) {
+        case ExpressionNode::LayoutShape::Decimal:
+        case ExpressionNode::LayoutShape::Integer:
+        case ExpressionNode::LayoutShape::Fraction:
+          return 2;
+        default:
+          return 0;
+      }
+  }
+}
+
+CodePoint MultiplicationNode::operatorSymbol() const {
+  /* ø --> 0
+   * · --> 1
+   * × --> 2 */
+  int sign = -1;
+  for (int i = 0; i < numberOfChildren() - 1; i++) {
+    /* The operator symbol must be the same for all operands of the multiplication.
+     * If one operator has to be '×', they will all be '×'. Idem for '·'. */
+    sign = maxInt(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
+  }
+  switch (sign) {
+    case 0:
+      return UCodePointNull;
+    case 1:
+      return UCodePointMiddleDot;
+    default:
+      return UCodePointMultiplicationSign;
+  }
+}
+
+Layout  MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
-  SerializationHelper::CodePoint(string, stringMaxSize, UCodePointMultiplicationSign);
+  SerializationHelper::CodePoint(string, stringMaxSize, operatorSymbol());
   return LayoutHelper::Infix(Multiplication(this), floatDisplayMode, numberOfSignificantDigits, string);
 }
 

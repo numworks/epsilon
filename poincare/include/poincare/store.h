@@ -27,7 +27,7 @@ private:
   // Simplification
   void deepReduceChildren(ExpressionNode::ReductionContext reductionContext) override {}
   Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::DigitOrLetter; };
+  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::MoreLetters; };
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

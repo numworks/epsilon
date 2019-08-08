@@ -26,7 +26,7 @@ public:
   // Simplification
   LayoutShape leftLayoutShape() const override {
     assert(false);
-    return LayoutShape::DigitOrLetter;
+    return LayoutShape::OneLetter;
   };
 private:
   // Layout

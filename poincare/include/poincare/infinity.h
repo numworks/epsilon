@@ -38,8 +38,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   // Simplification
-  LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::DigitOrLetter; }
-  LayoutShape rightLayoutShape() const override { return LayoutShape::DigitOrLetter; }
+  LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::MoreLetters; }
+  LayoutShape rightLayoutShape() const override { return LayoutShape::MoreLetters; }
   template<typename T> Evaluation<T> templatedApproximate() const;
   bool m_negative;
 };

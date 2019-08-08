@@ -44,6 +44,7 @@ private:
     bool isNegative() const { return m_negative; }
     bool isZero() const { return (m_digits[0] == 0) && (m_digits[1] == 0); }
     static void DivisionByTen(const Long & longToDivide, Long * quotient, Long * digit);
+    static void MultiplySmallLongByTen(Long & smallLong);
 
     int serialize(char * buffer, int bufferSize) const;
     uint32_t digit(uint8_t i) const {

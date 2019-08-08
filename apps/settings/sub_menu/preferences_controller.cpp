@@ -12,6 +12,8 @@ using namespace Poincare;
 
 namespace Settings {
 
+static inline int maxInt(int x, int y) { return x > y ? x : y; }
+
 PreferencesController::PreferencesController(Responder * parentResponder) :
   GenericSubController(parentResponder)
 {
@@ -124,7 +126,14 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
-    preferences->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
+    Preferences::PrintFloatMode mode = (Preferences::PrintFloatMode)valueIndex;
+    preferences->setDisplayMode(mode);
+    if (mode == Preferences::PrintFloatMode::Engineering) {
+      /* In Engineering mode, the number of significant digits cannot be lower
+       * than 3, because we need to be able to display 100 for instance. */
+      // TODO: Add warning about signifiant digits change ?
+      preferences->setNumberOfSignificantDigits(maxInt(preferences->numberOfSignificantDigits(), 3));
+    }
   } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((Preferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {

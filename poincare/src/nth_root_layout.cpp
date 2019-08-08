@@ -10,14 +10,15 @@ namespace Poincare {
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode::k_leftRadixWidth] = {
-  {0x00, 0xFF, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0x00, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0x00, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x00, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0x00, 0xFF, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0x00, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0x00, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0xFF, 0x00},
+{0x51, 0xCC, 0xFF, 0xFF, 0xFF},
+{0x96, 0x37, 0xFD, 0xFF, 0xFF},
+{0xFC, 0x34, 0x9A, 0xFF, 0xFF},
+{0xFF, 0xC8, 0x15, 0xEC, 0xFF},
+{0xFF, 0xFF, 0x65, 0x66, 0xFF},
+{0xFF, 0xFF, 0xEC, 0x15, 0xC9},
+{0xFF, 0xFF, 0xFF, 0x99, 0x34},
+{0xFF, 0xFF, 0xFF, 0xFD, 0x36},
+{0xFF, 0xFF, 0xFF, 0xFF, 0xCB}
 };
 
 void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
@@ -165,20 +166,16 @@ KDSize NthRootLayoutNode::computeSize() {
   KDSize radicandSize = radicandLayout()->layoutSize();
   KDSize indexSize = adjustedIndexSize();
   KDSize newSize = KDSize(
-      indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width() + k_radixHorizontalOverflow,
-      baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
+      indexSize.width() + 3*k_widthMargin + k_radixLineThickness + radicandSize.width(),
+      baseline() + radicandSize.height() - radicandLayout()->baseline()
       );
   return newSize;
 }
 
 KDCoordinate NthRootLayoutNode::computeBaseline() {
-  if (indexLayout() != nullptr) {
-    return maxCoordinate(
-        radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
-        indexLayout()->layoutSize().height() + k_indexHeight);
-  } else {
-    return radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin;
-  }
+  return maxCoordinate(
+      radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
+      adjustedIndexSize().height());
 }
 
 KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
@@ -190,7 +187,7 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
     y = baseline() - radicandLayout()->baseline();
   } else if (indexLayout() != nullptr && child == indexLayout()) {
     x = 0;
-    y = baseline() - indexSize.height() -  k_indexHeight;
+    y = baseline() - indexSize.height();
   } else {
     assert(false);
   }
@@ -208,39 +205,30 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   KDSize indexSize = adjustedIndexSize();
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];
   KDRect leftRadixFrame(p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
-    p.y() + baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin - k_leftRadixHeight,
+    p.y() + baseline() + radicandSize.height() - radicandLayout()->baseline() - k_leftRadixHeight,
     k_leftRadixWidth, k_leftRadixHeight);
   ctx->blendRectWithMask(leftRadixFrame, expressionColor, (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
   // If the indice is higher than the root.
-  if (indexSize.height() + k_indexHeight > radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin) {
+  if (indexSize.height() > radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin) {
     // Vertical radix bar
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
-                         p.y() + indexSize.height() + k_indexHeight - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
+                         p.y() + indexSize.height() - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
-                         radicandSize.height() + 2*k_heightMargin + k_radixLineThickness), expressionColor);
+                         radicandSize.height() + k_heightMargin + k_radixLineThickness), expressionColor);
     // Horizontal radix bar
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
-                         p.y() + indexSize.height() + k_indexHeight - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
-                         radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
+                         p.y() + indexSize.height() - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
+                         radicandSize.width() + 2*k_widthMargin+1,
                          k_radixLineThickness), expressionColor);
-    // Right radix bar
-    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
-                         p.y() + indexSize.height() + k_indexHeight - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
-                         k_radixLineThickness,
-                         k_rightRadixHeight + k_radixLineThickness), expressionColor);
   } else {
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
                          p.y(),
                          k_radixLineThickness,
-                         radicandSize.height() + 2*k_heightMargin + k_radixLineThickness), expressionColor);
+                         radicandSize.height() + k_heightMargin + k_radixLineThickness), expressionColor);
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
                          p.y(),
-                         radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
+                         radicandSize.width() + 2*k_widthMargin,
                          k_radixLineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
-                         p.y(),
-                         k_radixLineThickness,
-                         k_rightRadixHeight + k_radixLineThickness), expressionColor);
   }
 }
 

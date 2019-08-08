@@ -11,7 +11,7 @@ class NthRootLayout;
 class NthRootLayoutNode /*final*/ : public LayoutNode {
   friend class NthRootLayout;
 public:
-  constexpr static KDCoordinate k_leftRadixHeight = 8;
+  constexpr static KDCoordinate k_leftRadixHeight = 9;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
 
   NthRootLayoutNode(bool hasIndex) :
@@ -47,9 +47,6 @@ protected:
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
-  constexpr static KDCoordinate k_rightRadixHeight = 2;
-  constexpr static KDCoordinate k_radixHorizontalOverflow = 2;
-  constexpr static KDCoordinate k_indexHeight = 4;
   constexpr static KDCoordinate k_heightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;

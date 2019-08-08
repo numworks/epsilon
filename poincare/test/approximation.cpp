@@ -91,14 +91,14 @@ QUIZ_CASE(poincare_approximation_infinity) {
 
 QUIZ_CASE(poincare_approximation_addition) {
   assert_expression_approximates_to<float>("1+2", "3");
-  assert_expression_approximates_to<float>("𝐢+𝐢", "2𝐢");
-  assert_expression_approximates_to<double>("2+𝐢+4+𝐢", "6+2𝐢");
+  assert_expression_approximates_to<float>("𝐢+𝐢", "2×𝐢");
+  assert_expression_approximates_to<double>("2+𝐢+4+𝐢", "6+2×𝐢");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]+3", "undef");
   assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]+3+𝐢", "undef");
   assert_expression_approximates_to<float>("3+[[1,2][3,4][5,6]]", "undef");
   assert_expression_approximates_to<double>("3+𝐢+[[1,2+𝐢][3,4][5,6]]", "undef");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
-  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2𝐢][6,8][10,12]]");
+  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]+[[1,2+𝐢][3,4][5,6]]", "[[2,4+2×𝐢][6,8][10,12]]");
 
   assert_expression_approximates_to_scalar<float>("1+2", 3.0f);
   assert_expression_approximates_to_scalar<double>("𝐢+𝐢", NAN);
@@ -107,13 +107,13 @@ QUIZ_CASE(poincare_approximation_addition) {
 
 QUIZ_CASE(poincare_approximation_multiplication) {
   assert_expression_approximates_to<float>("1×2", "2");
-  assert_expression_approximates_to<double>("(3+𝐢)×(4+𝐢)", "11+7𝐢");
+  assert_expression_approximates_to<double>("(3+𝐢)×(4+𝐢)", "11+7×𝐢");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]×2", "[[2,4][6,8][10,12]]");
-  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]×(3+𝐢)", "[[3+𝐢,5+5𝐢][9+3𝐢,12+4𝐢][15+5𝐢,18+6𝐢]]");
+  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]×(3+𝐢)", "[[3+𝐢,5+5×𝐢][9+3×𝐢,12+4×𝐢][15+5×𝐢,18+6×𝐢]]");
   assert_expression_approximates_to<float>("2×[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
-  assert_expression_approximates_to<double>("(3+𝐢)×[[1,2+𝐢][3,4][5,6]]", "[[3+𝐢,5+5𝐢][9+3𝐢,12+4𝐢][15+5𝐢,18+6𝐢]]");
+  assert_expression_approximates_to<double>("(3+𝐢)×[[1,2+𝐢][3,4][5,6]]", "[[3+𝐢,5+5×𝐢][9+3×𝐢,12+4×𝐢][15+5×𝐢,18+6×𝐢]]");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]×[[1,2,3,4][5,6,7,8]]", "[[11,14,17,20][23,30,37,44][35,46,57,68]]");
-  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]×[[1,2+𝐢,3,4][5,6+𝐢,7,8]]", "[[11+5𝐢,13+9𝐢,17+7𝐢,20+8𝐢][23,30+7𝐢,37,44][35,46+11𝐢,57,68]]");
+  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]×[[1,2+𝐢,3,4][5,6+𝐢,7,8]]", "[[11+5×𝐢,13+9×𝐢,17+7×𝐢,20+8×𝐢][23,30+7×𝐢,37,44][35,46+11×𝐢,57,68]]");
 
   assert_expression_approximates_to_scalar<float>("1×2", 2.0f);
   assert_expression_approximates_to_scalar<double>("(3+𝐢)×(4+𝐢)", NAN);
@@ -122,15 +122,15 @@ QUIZ_CASE(poincare_approximation_multiplication) {
 
 QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<float>("2^3", "8");
-  assert_expression_approximates_to<double>("(3+𝐢)^4", "28+96𝐢");
-  assert_expression_approximates_to<float>("4^(3+𝐢)", "11.74125+62.91378𝐢");
-  assert_expression_approximates_to<double>("(3+𝐢)^(3+𝐢)", "-11.898191759852+19.592921596609𝐢");
+  assert_expression_approximates_to<double>("(3+𝐢)^4", "28+96×𝐢");
+  assert_expression_approximates_to<float>("4^(3+𝐢)", "11.74125+62.91378×𝐢");
+  assert_expression_approximates_to<double>("(3+𝐢)^(3+𝐢)", "-11.898191759852+19.592921596609×𝐢");
 
   assert_expression_approximates_to<double>("0^0", Undefined::Name());
   assert_expression_approximates_to<double>("0^2", "0");
   assert_expression_approximates_to<double>("0^(-2)", Undefined::Name());
 
-  assert_expression_approximates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384𝐢", Radian, Cartesian, 12);
+  assert_expression_approximates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384×𝐢", Radian, Cartesian, 12);
   assert_expression_approximates_to<double>("(-0.1)^4", "0.0001", Radian, Cartesian, 12);
 
   assert_expression_approximates_to<float>("0^2", "0");
@@ -141,12 +141,12 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<double>("ℯ^(𝐢×π)", "-1");
   assert_expression_approximates_to<float>("ℯ^(𝐢×π+2)", "-7.38906", Radian, Cartesian, 6);
   assert_expression_approximates_to<double>("ℯ^(𝐢×π+2)", "-7.3890560989307");
-  assert_expression_approximates_to<float>("(-1)^(1/3)", "0.5+0.8660254𝐢");
-  assert_expression_approximates_to<double>("(-1)^(1/3)", "0.5+8.6602540378444ᴇ-1𝐢");
-  assert_expression_approximates_to<float>("ℯ^(𝐢×π/3)", "0.5+0.866025𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<double>("ℯ^(𝐢×π/3)", "0.5+8.6602540378444ᴇ-1𝐢");
-  assert_expression_approximates_to<float>("𝐢^(2/3)", "0.5+0.8660254𝐢");
-  assert_expression_approximates_to<double>("𝐢^(2/3)", "0.5+8.6602540378444ᴇ-1𝐢");
+  assert_expression_approximates_to<float>("(-1)^(1/3)", "0.5+0.8660254×𝐢");
+  assert_expression_approximates_to<double>("(-1)^(1/3)", "0.5+8.6602540378444ᴇ-1×𝐢");
+  assert_expression_approximates_to<float>("ℯ^(𝐢×π/3)", "0.5+0.866025×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<double>("ℯ^(𝐢×π/3)", "0.5+8.6602540378444ᴇ-1×𝐢");
+  assert_expression_approximates_to<float>("𝐢^(2/3)", "0.5+0.8660254×𝐢");
+  assert_expression_approximates_to<double>("𝐢^(2/3)", "0.5+8.6602540378444ᴇ-1×𝐢");
 
   assert_expression_approximates_to_scalar<float>("2^3", 8.0f);
   assert_expression_approximates_to_scalar<double>("(3+𝐢)^(4+𝐢)", NAN);
@@ -180,15 +180,15 @@ QUIZ_CASE(poincare_approximation_constant) {
 
 QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to<float>("1/2", "0.5");
-  assert_expression_approximates_to<double>("(3+𝐢)/(4+𝐢)", "7.6470588235294ᴇ-1+5.8823529411765ᴇ-2𝐢");
+  assert_expression_approximates_to<double>("(3+𝐢)/(4+𝐢)", "7.6470588235294ᴇ-1+5.8823529411765ᴇ-2×𝐢");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]/2", "[[0.5,1][1.5,2][2.5,3]]");
-  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]/(1+𝐢)", "[[0.5-0.5𝐢,1.5-0.5𝐢][1.5-1.5𝐢,2-2𝐢][2.5-2.5𝐢,3-3𝐢]]");
+  assert_expression_approximates_to<double>("[[1,2+𝐢][3,4][5,6]]/(1+𝐢)", "[[0.5-0.5×𝐢,1.5-0.5×𝐢][1.5-1.5×𝐢,2-2×𝐢][2.5-2.5×𝐢,3-3×𝐢]]");
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]/2", "[[0.5,1][1.5,2][2.5,3]]");
   assert_expression_approximates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]", "[[-1,6.6666666666667ᴇ-1][1,0]]");
   assert_expression_approximates_to<double>("3/[[3,4][5,6]]", "[[-9,6][7.5,-4.5]]");
-  assert_expression_approximates_to<double>("(3+4𝐢)/[[1,𝐢][3,4]]", "[[4𝐢,1][-3𝐢,𝐢]]");
-  assert_expression_approximates_to<float>("1ᴇ20/(1ᴇ20+1ᴇ20𝐢)", "0.5-0.5𝐢");
-  assert_expression_approximates_to<double>("1ᴇ155/(1ᴇ155+1ᴇ155𝐢)", "0.5-0.5𝐢");
+  assert_expression_approximates_to<double>("(3+4𝐢)/[[1,𝐢][3,4]]", "[[4×𝐢,1][-3×𝐢,𝐢]]");
+  assert_expression_approximates_to<float>("1ᴇ20/(1ᴇ20+1ᴇ20𝐢)", "0.5-0.5×𝐢");
+  assert_expression_approximates_to<double>("1ᴇ155/(1ᴇ155+1ᴇ155𝐢)", "0.5-0.5×𝐢");
 
   assert_expression_approximates_to_scalar<float>("1/2", 0.5f);
   assert_expression_approximates_to_scalar<float>("(3+𝐢)/(4+𝐢)", NAN);
@@ -200,16 +200,16 @@ QUIZ_CASE(poincare_approximation_logarithm) {
   assert_expression_approximates_to<double>("log(6,7)", "0.9207822211616");
   assert_expression_approximates_to<float>("log(5)", "0.69897");
   assert_expression_approximates_to<double>("ln(5)", "1.6094379124341");
-  assert_expression_approximates_to<float>("log(2+5×𝐢,64)", "0.4048317+0.2862042𝐢");
-  assert_expression_approximates_to<double>("log(6,7+4×𝐢)", "8.0843880717528ᴇ-1-2.0108238082167ᴇ-1𝐢");
-  assert_expression_approximates_to<float>("log(5+2×𝐢)", "0.731199+0.1652518𝐢");
-  assert_expression_approximates_to<double>("ln(5+2×𝐢)", "1.6836479149932+3.8050637711236ᴇ-1𝐢");
+  assert_expression_approximates_to<float>("log(2+5×𝐢,64)", "0.4048317+0.2862042×𝐢");
+  assert_expression_approximates_to<double>("log(6,7+4×𝐢)", "8.0843880717528ᴇ-1-2.0108238082167ᴇ-1×𝐢");
+  assert_expression_approximates_to<float>("log(5+2×𝐢)", "0.731199+0.1652518×𝐢");
+  assert_expression_approximates_to<double>("ln(5+2×𝐢)", "1.6836479149932+3.8050637711236ᴇ-1×𝐢");
   assert_expression_approximates_to<double>("log(0,0)", Undefined::Name());
   assert_expression_approximates_to<double>("log(0)", "-inf");
   assert_expression_approximates_to<double>("log(2,0)", "0");
 
   // WARNING: evaluate on branch cut can be multivalued
-  assert_expression_approximates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898𝐢");
+  assert_expression_approximates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898×𝐢");
 }
 
 template<typename T>
@@ -243,8 +243,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_expression_approximates_to<double>("det([[1,23,3][4,5,6][7,8,9]])", "126");
 
-  assert_expression_approximates_to<float>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231𝐢", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
-  assert_expression_approximates_to<double>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231𝐢");
+  assert_expression_approximates_to<float>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231×𝐢", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_expression_approximates_to<double>("det([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "126-231×𝐢");
 
   assert_expression_approximates_to<float>("diff(2×x, x, 2)", "2");
   assert_expression_approximates_to<double>("diff(2×x, x, 2)", "2");
@@ -311,16 +311,16 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
   assert_expression_approximates_to<double>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
 
-  assert_expression_approximates_to<float>("conj(3+2×𝐢)", "3-2𝐢");
-  assert_expression_approximates_to<double>("conj(3+2×𝐢)", "3-2𝐢");
+  assert_expression_approximates_to<float>("conj(3+2×𝐢)", "3-2×𝐢");
+  assert_expression_approximates_to<double>("conj(3+2×𝐢)", "3-2×𝐢");
 
   assert_expression_approximates_to<float>("factor(-23/4)", "-5.75");
   assert_expression_approximates_to<double>("factor(-123/24)", "-5.125");
 
   assert_expression_approximates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
   assert_expression_approximates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333ᴇ-2,0.375][1.0833333333333,1.6666666666667ᴇ-1,-0.25][4.1666666666667ᴇ-2,-8.3333333333333ᴇ-2,4.1666666666667ᴇ-2]]");
-  assert_expression_approximates_to<float>("inverse([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "[[-0.0118-0.0455𝐢,-0.5-0.727𝐢,0.318+0.489𝐢][0.0409+0.00364𝐢,0.04-0.0218𝐢,-0.0255+0.00091𝐢][0.00334-0.00182𝐢,0.361+0.535𝐢,-0.13-0.358𝐢]]", Degree, Cartesian, 3); // inverse is not precise enough to display 7 significative digits
-  assert_expression_approximates_to<double>("inverse([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "[[-0.0118289353958-0.0454959053685𝐢,-0.500454959054-0.727024567789𝐢,0.31847133758+0.488626023658𝐢][0.0409463148317+3.63967242948ᴇ-3𝐢,0.0400363967243-0.0218380345769𝐢,-0.0254777070064+9.0991810737ᴇ-4𝐢][3.33636639369ᴇ-3-1.81983621474ᴇ-3𝐢,0.36093418259+0.534728541098𝐢,-0.130118289354-0.357597816197𝐢]]", Degree, Cartesian, 12); // FIXME: inverse is not precise enough to display 14 significative digits
+  assert_expression_approximates_to<float>("inverse([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "[[-0.0118-0.0455×𝐢,-0.5-0.727×𝐢,0.318+0.489×𝐢][0.0409+0.00364×𝐢,0.04-0.0218×𝐢,-0.0255+0.00091×𝐢][0.00334-0.00182×𝐢,0.361+0.535×𝐢,-0.13-0.358×𝐢]]", Degree, Cartesian, 3); // inverse is not precise enough to display 7 significative digits
+  assert_expression_approximates_to<double>("inverse([[𝐢,23-2𝐢,3×𝐢][4+𝐢,5×𝐢,6][7,8×𝐢+2,9]])", "[[-0.0118289353958-0.0454959053685×𝐢,-0.500454959054-0.727024567789×𝐢,0.31847133758+0.488626023658×𝐢][0.0409463148317+3.63967242948ᴇ-3×𝐢,0.0400363967243-0.0218380345769×𝐢,-0.0254777070064+9.0991810737ᴇ-4×𝐢][3.33636639369ᴇ-3-1.81983621474ᴇ-3×𝐢,0.36093418259+0.534728541098×𝐢,-0.130118289354-0.357597816197×𝐢]]", Degree, Cartesian, 12); // FIXME: inverse is not precise enough to display 14 significative digits
 
   assert_expression_approximates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
   assert_expression_approximates_to<double>("prediction(0.1, 100)", "[[0,0.2]]");
@@ -328,20 +328,20 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
   assert_expression_approximates_to<double>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
 
-  assert_expression_approximates_to<float>("product(2+k×𝐢,k, 1, 5)", "-100-540𝐢");
-  assert_expression_approximates_to<double>("product(2+o×𝐢,o, 1, 5)", "-100-540𝐢");
+  assert_expression_approximates_to<float>("product(2+k×𝐢,k, 1, 5)", "-100-540×𝐢");
+  assert_expression_approximates_to<double>("product(2+o×𝐢,o, 1, 5)", "-100-540×𝐢");
 
-  assert_expression_approximates_to<float>("root(3+𝐢, 3)", "1.459366+0.1571201𝐢");
-  assert_expression_approximates_to<double>("root(3+𝐢, 3)", "1.4593656008684+1.5712012294394ᴇ-1𝐢");
+  assert_expression_approximates_to<float>("root(3+𝐢, 3)", "1.459366+0.1571201×𝐢");
+  assert_expression_approximates_to<double>("root(3+𝐢, 3)", "1.4593656008684+1.5712012294394ᴇ-1×𝐢");
 
-  assert_expression_approximates_to<float>("root(3, 3+𝐢)", "1.382007-0.1524428𝐢");
-  assert_expression_approximates_to<double>("root(3, 3+𝐢)", "1.3820069623326-0.1524427794159𝐢");
+  assert_expression_approximates_to<float>("root(3, 3+𝐢)", "1.382007-0.1524428×𝐢");
+  assert_expression_approximates_to<double>("root(3, 3+𝐢)", "1.3820069623326-0.1524427794159×𝐢");
 
   assert_expression_approximates_to<float>("root(5^((-𝐢)3^9),𝐢)", "3.504", Degree, Cartesian, 4);
   assert_expression_approximates_to<double>("root(5^((-𝐢)3^9),𝐢)", "3.5039410843", Degree, Cartesian, 11);
 
-  assert_expression_approximates_to<float>("√(3+𝐢)", "1.755317+0.2848488𝐢");
-  assert_expression_approximates_to<double>("√(3+𝐢)", "1.7553173018244+2.8484878459314ᴇ-1𝐢");
+  assert_expression_approximates_to<float>("√(3+𝐢)", "1.755317+0.2848488×𝐢");
+  assert_expression_approximates_to<double>("√(3+𝐢)", "1.7553173018244+2.8484878459314ᴇ-1×𝐢");
 
   assert_expression_approximates_to<float>("sign(-23+1)", "-1");
   assert_expression_approximates_to<float>("sign(inf)", "1");
@@ -352,8 +352,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("sign(2+𝐢)", "undef");
   assert_expression_approximates_to<double>("sign(undef)", "undef");
 
-  assert_expression_approximates_to<double>("sum(2+n×𝐢,n,1,5)", "10+15𝐢");
-  assert_expression_approximates_to<double>("sum(2+n×𝐢,n,1,5)", "10+15𝐢");
+  assert_expression_approximates_to<double>("sum(2+n×𝐢,n,1,5)", "10+15×𝐢");
+  assert_expression_approximates_to<double>("sum(2+n×𝐢,n,1,5)", "10+15×𝐢");
 
   assert_expression_approximates_to<float>("transpose([[1,2,3][4,5,-6][7,8,9]])", "[[1,4,7][2,5,8][3,-6,9]]");
   assert_expression_approximates_to<float>("transpose([[1,7,5][4,2,8]])", "[[1,4][7,2][5,8]]");
@@ -371,8 +371,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("√(-1)", "𝐢");
   assert_expression_approximates_to<double>("√(-1)", "𝐢");
 
-  assert_expression_approximates_to<float>("root(-1,3)", "0.5+0.8660254𝐢");
-  assert_expression_approximates_to<double>("root(-1,3)", "0.5+8.6602540378444ᴇ-1𝐢");
+  assert_expression_approximates_to<float>("root(-1,3)", "0.5+0.8660254×𝐢");
+  assert_expression_approximates_to<double>("root(-1,3)", "0.5+8.6602540378444ᴇ-1×𝐢");
 
   assert_expression_approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
   assert_expression_approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");
@@ -406,8 +406,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("cos(2×𝐢)", "3.7621956910836", Radian);
   assert_expression_approximates_to<double>("cos(2×𝐢)", "1.0006092967033", Degree);
   // On C
-  assert_expression_approximates_to<float>("cos(𝐢-4)", "-1.008625-0.8893952𝐢", Radian);
-  assert_expression_approximates_to<float>("cos(𝐢-4)", "0.997716+0.00121754𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("cos(𝐢-4)", "-1.008625-0.8893952×𝐢", Radian);
+  assert_expression_approximates_to<float>("cos(𝐢-4)", "0.997716+0.00121754×𝐢", Degree, Cartesian, 6);
 
   /* sin: R  ->  R (oscillator)
    *      Ri ->  Ri (odd)
@@ -421,14 +421,14 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("sin(3×π)", "0", Radian);
   assert_expression_approximates_to<float>("sin(-540)", "0", Degree);
   // On R×i
-  assert_expression_approximates_to<double>("sin(3×𝐢)", "10.01787492741𝐢", Radian);
-  assert_expression_approximates_to<float>("sin(3×𝐢)", "0.05238381𝐢", Degree);
+  assert_expression_approximates_to<double>("sin(3×𝐢)", "10.01787492741×𝐢", Radian);
+  assert_expression_approximates_to<float>("sin(3×𝐢)", "0.05238381×𝐢", Degree);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("sin(-3×𝐢)", "-10.01787492741𝐢", Radian);
-  assert_expression_approximates_to<float>("sin(-3×𝐢)", "-0.05238381𝐢", Degree);
+  assert_expression_approximates_to<double>("sin(-3×𝐢)", "-10.01787492741×𝐢", Radian);
+  assert_expression_approximates_to<float>("sin(-3×𝐢)", "-0.05238381×𝐢", Degree);
   // On: C
-  assert_expression_approximates_to<float>("sin(𝐢-4)", "1.16781-0.768163𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<float>("sin(𝐢-4)", "-0.0697671+0.0174117𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("sin(𝐢-4)", "1.16781-0.768163×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("sin(𝐢-4)", "-0.0697671+0.0174117×𝐢", Degree, Cartesian, 6);
   assert_expression_approximates_to<float>("sin(1.234567890123456ᴇ-15)", "1.23457ᴇ-15", Radian, Cartesian, 6);
 
   /* tan: R  ->  R (tangent-style)
@@ -443,14 +443,14 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("tan(3×π)", "0", Radian);
   assert_expression_approximates_to<float>("tan(-540)", "0", Degree);
   // On R×i
-  assert_expression_approximates_to<double>("tan(-2×𝐢)", "-9.6402758007582ᴇ-1𝐢", Radian);
-  assert_expression_approximates_to<float>("tan(-2×𝐢)", "-0.03489241𝐢", Degree);
+  assert_expression_approximates_to<double>("tan(-2×𝐢)", "-9.6402758007582ᴇ-1×𝐢", Radian);
+  assert_expression_approximates_to<float>("tan(-2×𝐢)", "-0.03489241×𝐢", Degree);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("tan(2×𝐢)", "9.6402758007582ᴇ-1𝐢", Radian);
-  assert_expression_approximates_to<float>("tan(2×𝐢)", "0.03489241𝐢", Degree);
+  assert_expression_approximates_to<double>("tan(2×𝐢)", "9.6402758007582ᴇ-1×𝐢", Radian);
+  assert_expression_approximates_to<float>("tan(2×𝐢)", "0.03489241×𝐢", Degree);
   // On C
-  assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.273553+1.00281𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.0699054+0.0175368𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.273553+1.00281×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("tan(𝐢-4)", "-0.0699054+0.0175368×𝐢", Degree, Cartesian, 6);
 
   /* acos: [-1,1]    -> R
    *       ]-inf,-1[ -> π+R×i (odd imaginary)
@@ -462,23 +462,23 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("acos(0.03)", "1.5407918249714", Radian);
   assert_expression_approximates_to<double>("acos(0.5)", "60", Degree);
   // On [1, inf[
-  assert_expression_approximates_to<double>("acos(2)", "1.3169578969248𝐢", Radian);
-  assert_expression_approximates_to<double>("acos(2)", "75.456129290217𝐢", Degree);
+  assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×𝐢", Radian);
+  assert_expression_approximates_to<double>("acos(2)", "75.456129290217×𝐢", Degree);
   // Symmetry: odd on imaginary
-  assert_expression_approximates_to<double>("acos(-2)", "3.1415926535898-1.3169578969248𝐢", Radian);
-  assert_expression_approximates_to<double>("acos(-2)", "180-75.456129290217𝐢", Degree);
+  assert_expression_approximates_to<double>("acos(-2)", "3.1415926535898-1.3169578969248×𝐢", Radian);
+  assert_expression_approximates_to<double>("acos(-2)", "180-75.456129290217×𝐢", Degree);
   // On ]-inf, -1[
-  assert_expression_approximates_to<double>("acos(-32)", "3.14159265359-4.158638853279𝐢", Radian, Cartesian, 13);
-  assert_expression_approximates_to<float>("acos(-32)", "180-238.3𝐢", Degree, Cartesian, 4);
+  assert_expression_approximates_to<double>("acos(-32)", "3.14159265359-4.158638853279×𝐢", Radian, Cartesian, 13);
+  assert_expression_approximates_to<float>("acos(-32)", "180-238.3×𝐢", Degree, Cartesian, 4);
   // On R×i
-  assert_expression_approximates_to<float>("acos(3×𝐢)", "1.5708-1.8184𝐢", Radian, Cartesian, 5);
-  assert_expression_approximates_to<float>("acos(3×𝐢)", "90-104.19𝐢", Degree, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(3×𝐢)", "1.5708-1.8184×𝐢", Radian, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(3×𝐢)", "90-104.19×𝐢", Degree, Cartesian, 5);
   // Symmetry: odd on imaginary
-  assert_expression_approximates_to<float>("acos(-3×𝐢)", "1.5708+1.8184𝐢", Radian, Cartesian, 5);
-  assert_expression_approximates_to<float>("acos(-3×𝐢)", "90+104.19𝐢", Degree, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(-3×𝐢)", "1.5708+1.8184×𝐢", Radian, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(-3×𝐢)", "90+104.19×𝐢", Degree, Cartesian, 5);
   // On C
-  assert_expression_approximates_to<float>("acos(𝐢-4)", "2.8894-2.0966𝐢", Radian, Cartesian, 5);
-  assert_expression_approximates_to<float>("acos(𝐢-4)", "165.551-120.126𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("acos(𝐢-4)", "2.8894-2.0966×𝐢", Radian, Cartesian, 5);
+  assert_expression_approximates_to<float>("acos(𝐢-4)", "165.551-120.126×𝐢", Degree, Cartesian, 6);
   // Key values
   assert_expression_approximates_to<double>("acos(0)", "90", Degree);
   assert_expression_approximates_to<float>("acos(-1)", "180", Degree);
@@ -494,21 +494,21 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("asin(0.03)", "3.0004501823477ᴇ-2", Radian);
   assert_expression_approximates_to<double>("asin(0.5)", "30", Degree);
   // On [1, inf[
-  assert_expression_approximates_to<double>("asin(2)", "1.5707963267949-1.3169578969248𝐢", Radian);
-  assert_expression_approximates_to<double>("asin(2)", "90-75.456129290217𝐢", Degree);
+  assert_expression_approximates_to<double>("asin(2)", "1.5707963267949-1.3169578969248×𝐢", Radian);
+  assert_expression_approximates_to<double>("asin(2)", "90-75.456129290217×𝐢", Degree);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("asin(-2)", "-1.5707963267949+1.3169578969248𝐢", Radian);
-  assert_expression_approximates_to<double>("asin(-2)", "-90+75.456129290217𝐢", Degree);
+  assert_expression_approximates_to<double>("asin(-2)", "-1.5707963267949+1.3169578969248×𝐢", Radian);
+  assert_expression_approximates_to<double>("asin(-2)", "-90+75.456129290217×𝐢", Degree);
   // On ]-inf, -1[
-  assert_expression_approximates_to<float>("asin(-32)", "-1.571+4.159𝐢", Radian, Cartesian, 4);
-  assert_expression_approximates_to<float>("asin(-32)", "-90+238𝐢", Degree, Cartesian, 3);
+  assert_expression_approximates_to<float>("asin(-32)", "-1.571+4.159×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<float>("asin(-32)", "-90+238×𝐢", Degree, Cartesian, 3);
   // On R×i
-  assert_expression_approximates_to<double>("asin(3×𝐢)", "1.8184464592321𝐢", Radian);
+  assert_expression_approximates_to<double>("asin(3×𝐢)", "1.8184464592321×𝐢", Radian);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("asin(-3×𝐢)", "-1.8184464592321𝐢", Radian);
+  assert_expression_approximates_to<double>("asin(-3×𝐢)", "-1.8184464592321×𝐢", Radian);
   // On C
-  assert_expression_approximates_to<float>("asin(𝐢-4)", "-1.3186+2.0966𝐢", Radian, Cartesian, 5);
-  assert_expression_approximates_to<float>("asin(𝐢-4)", "-75.551+120.13𝐢", Degree, Cartesian, 5);
+  assert_expression_approximates_to<float>("asin(𝐢-4)", "-1.3186+2.0966×𝐢", Radian, Cartesian, 5);
+  assert_expression_approximates_to<float>("asin(𝐢-4)", "-75.551+120.13×𝐢", Degree, Cartesian, 5);
   // Key values
   assert_expression_approximates_to<double>("asin(0)", "0", Degree);
   assert_expression_approximates_to<float>("asin(-1)", "-90", Degree);
@@ -527,24 +527,24 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Symmetry: odd
   assert_expression_approximates_to<double>("atan(-2)", "-1.1071487177941", Radian);
   // On [-𝐢, 𝐢]
-  assert_expression_approximates_to<float>("atan(0.2×𝐢)", "0.202733𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("atan(0.2×𝐢)", "0.202733×𝐢", Radian, Cartesian, 6);
   // Symmetry: odd
-  assert_expression_approximates_to<float>("atan(-0.2×𝐢)", "-0.202733𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("atan(-0.2×𝐢)", "-0.202733×𝐢", Radian, Cartesian, 6);
   // On [𝐢, inf×𝐢[
-  assert_expression_approximates_to<double>("atan(26×𝐢)", "1.5707963267949+3.8480520568064ᴇ-2𝐢", Radian);
-  assert_expression_approximates_to<double>("atan(26×𝐢)", "90+2.2047714220164𝐢", Degree);
+  assert_expression_approximates_to<double>("atan(26×𝐢)", "1.5707963267949+3.8480520568064ᴇ-2×𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(26×𝐢)", "90+2.2047714220164×𝐢", Degree);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("atan(-26×𝐢)", "-1.5707963267949-3.8480520568064ᴇ-2𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(-26×𝐢)", "-1.5707963267949-3.8480520568064ᴇ-2×𝐢", Radian);
   // On ]-inf×𝐢, -𝐢[
-  assert_expression_approximates_to<float>("atan(-3.4×𝐢)", "-1.570796-0.3030679𝐢", Radian);
-  assert_expression_approximates_to<float>("atan(-3.4×𝐢)", "-90-17.3645𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("atan(-3.4×𝐢)", "-1.570796-0.3030679×𝐢", Radian);
+  assert_expression_approximates_to<float>("atan(-3.4×𝐢)", "-90-17.3645×𝐢", Degree, Cartesian, 6);
   // On C
-  assert_expression_approximates_to<float>("atan(𝐢-4)", "-1.338973+0.05578589𝐢", Radian);
-  assert_expression_approximates_to<float>("atan(𝐢-4)", "-76.7175+3.1963𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("atan(𝐢-4)", "-1.338973+0.05578589×𝐢", Radian);
+  assert_expression_approximates_to<float>("atan(𝐢-4)", "-76.7175+3.1963×𝐢", Degree, Cartesian, 6);
   // Key values
   assert_expression_approximates_to<float>("atan(0)", "0", Degree);
-  assert_expression_approximates_to<double>("atan(-𝐢)", "-inf𝐢", Radian);
-  assert_expression_approximates_to<double>("atan(𝐢)", "inf𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(-𝐢)", "-inf×𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(𝐢)", "inf×𝐢", Radian);
 
   /* cosh: R         -> R (even)
    *       R×𝐢       -> R (oscillator)
@@ -563,8 +563,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("cosh(8×π×𝐢/2)", "1", Radian);
   assert_expression_approximates_to<float>("cosh(9×π×𝐢/2)", "0", Radian);
   // On C
-  assert_expression_approximates_to<float>("cosh(𝐢-4)", "14.7547-22.9637𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<float>("cosh(𝐢-4)", "14.7547-22.9637𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("cosh(𝐢-4)", "14.7547-22.9637×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("cosh(𝐢-4)", "14.7547-22.9637×𝐢", Degree, Cartesian, 6);
 
   /* sinh: R         -> R (odd)
    *       R×𝐢       -> R×𝐢 (oscillator)
@@ -575,7 +575,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Symmetry: odd
   assert_expression_approximates_to<double>("sinh(-2)", "-3.626860407847", Radian);
   // On R×𝐢
-  assert_expression_approximates_to<double>("sinh(43×𝐢)", "-0.8317747426286𝐢", Radian);
+  assert_expression_approximates_to<double>("sinh(43×𝐢)", "-0.8317747426286×𝐢", Radian);
   // Oscillator
   assert_expression_approximates_to<float>("sinh(π×𝐢/2)", "𝐢", Radian);
   assert_expression_approximates_to<float>("sinh(5×π×𝐢/2)", "𝐢", Radian);
@@ -583,8 +583,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("sinh(8×π×𝐢/2)", "0", Radian);
   assert_expression_approximates_to<float>("sinh(9×π×𝐢/2)", "𝐢", Radian);
   // On C
-  assert_expression_approximates_to<float>("sinh(𝐢-4)", "-14.7448+22.9791𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<float>("sinh(𝐢-4)", "-14.7448+22.9791𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("sinh(𝐢-4)", "-14.7448+22.9791×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("sinh(𝐢-4)", "-14.7448+22.9791×𝐢", Degree, Cartesian, 6);
 
   /* tanh: R         -> R (odd)
    *       R×𝐢       -> R×𝐢 (tangent-style)
@@ -594,7 +594,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Symmetry: odd
   assert_expression_approximates_to<double>("tanh(-2)", "-9.6402758007582ᴇ-1", Degree);
   // On R×i
-  assert_expression_approximates_to<double>("tanh(43×𝐢)", "-1.4983873388552𝐢", Radian);
+  assert_expression_approximates_to<double>("tanh(43×𝐢)", "-1.4983873388552×𝐢", Radian);
   // Tangent-style
   // FIXME: this depends on the libm implementation and does not work on travis/appveyor servers
   /*assert_expression_approximates_to<float>("tanh(π×𝐢/2)", Undefined::Name(), Radian);
@@ -603,8 +603,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("tanh(8×π×𝐢/2)", "0", Radian);
   assert_expression_approximates_to<float>("tanh(9×π×𝐢/2)", Undefined::Name(), Radian);*/
   // On C
-  assert_expression_approximates_to<float>("tanh(𝐢-4)", "-1.00028+0.000610241𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<float>("tanh(𝐢-4)", "-1.00028+0.000610241𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("tanh(𝐢-4)", "-1.00028+0.000610241×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("tanh(𝐢-4)", "-1.00028+0.000610241×𝐢", Degree, Cartesian, 6);
 
   /* acosh: [-1,1]       -> R×𝐢
    *        ]-inf,-1[    -> π×𝐢+R (even on real)
@@ -616,24 +616,24 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("acosh(2)", "1.3169578969248", Radian);
   assert_expression_approximates_to<double>("acosh(2)", "1.3169578969248", Degree);
   // On ]-inf, -1[
-  assert_expression_approximates_to<double>("acosh(-4)", "2.0634370688956+3.1415926535898𝐢", Radian);
-  assert_expression_approximates_to<float>("acosh(-4)", "2.06344+3.14159𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<double>("acosh(-4)", "2.0634370688956+3.1415926535898×𝐢", Radian);
+  assert_expression_approximates_to<float>("acosh(-4)", "2.06344+3.14159×𝐢", Radian, Cartesian, 6);
   // On ]1,inf[: Symmetry: even on real
   assert_expression_approximates_to<double>("acosh(4)", "2.0634370688956", Radian);
   assert_expression_approximates_to<float>("acosh(4)", "2.063437", Radian);
   // On ]-inf×𝐢, 0[
-  assert_expression_approximates_to<double>("acosh(-42×𝐢)", "4.4309584920805-1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<float>("acosh(-42×𝐢)", "4.431-1.571𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("acosh(-42×𝐢)", "4.4309584920805-1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<float>("acosh(-42×𝐢)", "4.431-1.571×𝐢", Radian, Cartesian, 4);
   // On ]0, 𝐢×inf[: Symmetry: even on real
-  assert_expression_approximates_to<double>("acosh(42×𝐢)", "4.4309584920805+1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<float>("acosh(42×𝐢)", "4.431+1.571𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<double>("acosh(42×𝐢)", "4.4309584920805+1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<float>("acosh(42×𝐢)", "4.431+1.571×𝐢", Radian, Cartesian, 4);
   // On C
-  assert_expression_approximates_to<float>("acosh(𝐢-4)", "2.0966+2.8894𝐢", Radian, Cartesian, 5);
-  assert_expression_approximates_to<float>("acosh(𝐢-4)", "2.0966+2.8894𝐢", Degree, Cartesian, 5);
+  assert_expression_approximates_to<float>("acosh(𝐢-4)", "2.0966+2.8894×𝐢", Radian, Cartesian, 5);
+  assert_expression_approximates_to<float>("acosh(𝐢-4)", "2.0966+2.8894×𝐢", Degree, Cartesian, 5);
   // Key values
-  //assert_expression_approximates_to<double>("acosh(-1)", "3.1415926535898𝐢", Radian);
+  //assert_expression_approximates_to<double>("acosh(-1)", "3.1415926535898×𝐢", Radian);
   assert_expression_approximates_to<double>("acosh(1)", "0", Radian);
-  assert_expression_approximates_to<float>("acosh(0)", "1.570796𝐢", Radian);
+  assert_expression_approximates_to<float>("acosh(0)", "1.570796×𝐢", Radian);
 
   /* asinh: R            -> R (odd)
    *        [-𝐢,𝐢]       -> R*𝐢 (odd)
@@ -647,20 +647,20 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("asinh(-2)", "-1.4436354751788", Radian);
   assert_expression_approximates_to<double>("asinh(-2)", "-1.4436354751788", Degree);
   // On [-𝐢,𝐢]
-  assert_expression_approximates_to<double>("asinh(0.2×𝐢)", "2.0135792079033ᴇ-1𝐢", Radian);
-  assert_expression_approximates_to<float>("asinh(0.2×𝐢)", "0.2013579𝐢", Degree);
+  assert_expression_approximates_to<double>("asinh(0.2×𝐢)", "2.0135792079033ᴇ-1×𝐢", Radian);
+  assert_expression_approximates_to<float>("asinh(0.2×𝐢)", "0.2013579×𝐢", Degree);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("asinh(-0.2×𝐢)", "-2.0135792079033ᴇ-1𝐢", Radian);
-  assert_expression_approximates_to<float>("asinh(-0.2×𝐢)", "-0.2013579𝐢", Degree);
+  assert_expression_approximates_to<double>("asinh(-0.2×𝐢)", "-2.0135792079033ᴇ-1×𝐢", Radian);
+  assert_expression_approximates_to<float>("asinh(-0.2×𝐢)", "-0.2013579×𝐢", Degree);
   // On ]-inf×𝐢, -𝐢[
-  assert_expression_approximates_to<double>("asinh(-22×𝐢)", "-3.7836727043295-1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<float>("asinh(-22×𝐢)", "-3.784-1.571𝐢", Degree, Cartesian, 4);
+  assert_expression_approximates_to<double>("asinh(-22×𝐢)", "-3.7836727043295-1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<float>("asinh(-22×𝐢)", "-3.784-1.571×𝐢", Degree, Cartesian, 4);
   // On ]𝐢, inf×𝐢[, Symmetry: odd
-  assert_expression_approximates_to<double>("asinh(22×𝐢)", "3.7836727043295+1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<float>("asinh(22×𝐢)", "3.784+1.571𝐢", Degree, Cartesian, 4);
+  assert_expression_approximates_to<double>("asinh(22×𝐢)", "3.7836727043295+1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<float>("asinh(22×𝐢)", "3.784+1.571×𝐢", Degree, Cartesian, 4);
   // On C
-  assert_expression_approximates_to<float>("asinh(𝐢-4)", "-2.123+0.2383𝐢", Radian, Cartesian, 4);
-  assert_expression_approximates_to<float>("asinh(𝐢-4)", "-2.123+0.2383𝐢", Degree, Cartesian, 4);
+  assert_expression_approximates_to<float>("asinh(𝐢-4)", "-2.123+0.2383×𝐢", Radian, Cartesian, 4);
+  assert_expression_approximates_to<float>("asinh(𝐢-4)", "-2.123+0.2383×𝐢", Degree, Cartesian, 4);
 
   /* atanh: [-1,1]       -> R (odd)
    *        ]-inf,-1[    -> π/2*𝐢+R (odd)
@@ -674,31 +674,31 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("atanh(-0.4)", "-0.4236489301936", Radian);
   assert_expression_approximates_to<double>("atanh(-0.4)", "-0.4236489301936", Degree);
   // On ]1, inf[
-  assert_expression_approximates_to<double>("atanh(4)", "0.255412811883-1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<float>("atanh(4)", "0.2554128-1.570796𝐢", Degree);
+  assert_expression_approximates_to<double>("atanh(4)", "0.255412811883-1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<float>("atanh(4)", "0.2554128-1.570796×𝐢", Degree);
   // On ]-inf,-1[, Symmetry: odd
-  assert_expression_approximates_to<double>("atanh(-4)", "-0.255412811883+1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<float>("atanh(-4)", "-0.2554128+1.570796𝐢", Degree);
+  assert_expression_approximates_to<double>("atanh(-4)", "-0.255412811883+1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<float>("atanh(-4)", "-0.2554128+1.570796×𝐢", Degree);
   // On R×𝐢
-  assert_expression_approximates_to<double>("atanh(4×𝐢)", "1.325817663668𝐢", Radian);
-  assert_expression_approximates_to<float>("atanh(4×𝐢)", "1.325818𝐢", Radian);
+  assert_expression_approximates_to<double>("atanh(4×𝐢)", "1.325817663668×𝐢", Radian);
+  assert_expression_approximates_to<float>("atanh(4×𝐢)", "1.325818×𝐢", Radian);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("atanh(-4×𝐢)", "-1.325817663668𝐢", Radian);
-  assert_expression_approximates_to<float>("atanh(-4×𝐢)", "-1.325818𝐢", Radian);
+  assert_expression_approximates_to<double>("atanh(-4×𝐢)", "-1.325817663668×𝐢", Radian);
+  assert_expression_approximates_to<float>("atanh(-4×𝐢)", "-1.325818×𝐢", Radian);
   // On C
-  assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862𝐢", Degree, Cartesian, 6);
+  assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<float>("atanh(𝐢-4)", "-0.238878+1.50862×𝐢", Degree, Cartesian, 6);
 
   // WARNING: evaluate on branch cut can be multivalued
-  assert_expression_approximates_to<double>("acos(2)", "1.3169578969248𝐢", Radian);
-  assert_expression_approximates_to<double>("acos(2)", "75.456129290217𝐢", Degree);
-  assert_expression_approximates_to<double>("asin(2)", "1.5707963267949-1.3169578969248𝐢", Radian);
-  assert_expression_approximates_to<double>("asin(2)", "90-75.456129290217𝐢", Degree);
-  assert_expression_approximates_to<double>("atanh(2)", "5.4930614433405ᴇ-1-1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<double>("atan(2𝐢)", "1.5707963267949+5.4930614433405ᴇ-1𝐢", Radian);
-  assert_expression_approximates_to<double>("atan(2𝐢)", "90+31.472923730945𝐢", Degree);
-  assert_expression_approximates_to<double>("asinh(2𝐢)", "1.3169578969248+1.5707963267949𝐢", Radian);
-  assert_expression_approximates_to<double>("acosh(-2)", "1.3169578969248+3.1415926535898𝐢", Radian);
+  assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×𝐢", Radian);
+  assert_expression_approximates_to<double>("acos(2)", "75.456129290217×𝐢", Degree);
+  assert_expression_approximates_to<double>("asin(2)", "1.5707963267949-1.3169578969248×𝐢", Radian);
+  assert_expression_approximates_to<double>("asin(2)", "90-75.456129290217×𝐢", Degree);
+  assert_expression_approximates_to<double>("atanh(2)", "5.4930614433405ᴇ-1-1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(2𝐢)", "1.5707963267949+5.4930614433405ᴇ-1×𝐢", Radian);
+  assert_expression_approximates_to<double>("atan(2𝐢)", "90+31.472923730945×𝐢", Degree);
+  assert_expression_approximates_to<double>("asinh(2𝐢)", "1.3169578969248+1.5707963267949×𝐢", Radian);
+  assert_expression_approximates_to<double>("acosh(-2)", "1.3169578969248+3.1415926535898×𝐢", Radian);
 }
 
 QUIZ_CASE(poincare_approximation_matrix) {
@@ -764,7 +764,7 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("0.1", "0.1", Radian, Cartesian);
   assert_expression_approximates_to<float>("0.1234567", "0.1234567", Radian, Cartesian);
   assert_expression_approximates_to<double>("0.123456789012345", "1.2345678901235ᴇ-1", Radian, Cartesian);
-  assert_expression_approximates_to<float>("1+2×𝐢", "1+2𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<float>("1+2×𝐢", "1+2×𝐢", Radian, Cartesian);
   assert_expression_approximates_to<double>("1+𝐢-𝐢", "1", Radian, Cartesian);
   assert_expression_approximates_to<float>("1+𝐢-1", "𝐢", Radian, Cartesian);
   assert_expression_approximates_to<double>("1+𝐢", "1+𝐢", Radian, Cartesian);
@@ -774,53 +774,53 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<float>("𝐢", "𝐢", Radian, Cartesian);
   assert_expression_approximates_to<double>("√(-1)", "𝐢", Radian, Cartesian);
   assert_expression_approximates_to<double>("√(-1)×√(-1)", "-1", Radian, Cartesian);
-  assert_expression_approximates_to<double>("ln(-2)", "6.9314718055995ᴇ-1+3.1415926535898𝐢", Radian, Cartesian);
-  assert_expression_approximates_to<double>("(-8)^(1/3)", "1+1.7320508075689𝐢", Radian, Cartesian);
-  assert_expression_approximates_to<float>("(-8)^(2/3)", "-2+3.4641𝐢", Radian, Cartesian, 6);
-  assert_expression_approximates_to<double>("root(-8,3)", "1+1.7320508075689𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<double>("ln(-2)", "6.9314718055995ᴇ-1+3.1415926535898×𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<double>("(-8)^(1/3)", "1+1.7320508075689×𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<float>("(-8)^(2/3)", "-2+3.4641×𝐢", Radian, Cartesian, 6);
+  assert_expression_approximates_to<double>("root(-8,3)", "1+1.7320508075689×𝐢", Radian, Cartesian);
 
   // Polar
   assert_expression_approximates_to<float>("0", "0", Radian, Polar);
   assert_expression_approximates_to<double>("0", "0", Radian, Polar);
   assert_expression_approximates_to<float>("10", "10", Radian, Polar);
-  assert_expression_approximates_to<double>("-10", "10ℯ^\u00123.1415926535898𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("-10", "10×ℯ^\u00123.1415926535898×𝐢\u0013", Radian, Polar);
 
   assert_expression_approximates_to<float>("100", "100", Radian, Polar);
   assert_expression_approximates_to<double>("0.1", "0.1", Radian, Polar);
   assert_expression_approximates_to<float>("0.1234567", "0.1234567", Radian, Polar);
   assert_expression_approximates_to<double>("0.12345678", "0.12345678", Radian, Polar);
 
-  assert_expression_approximates_to<float>("1+2×𝐢", "2.236068ℯ^\u00121.107149𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<float>("1+2×𝐢", "2.236068×ℯ^\u00121.107149×𝐢\u0013", Radian, Polar);
   assert_expression_approximates_to<float>("1+𝐢-𝐢", "1", Radian, Polar);
-  assert_expression_approximates_to<double>("1+𝐢-1", "ℯ^\u00121.57079632679𝐢\u0013", Radian, Polar, 12);
-  assert_expression_approximates_to<float>("1+𝐢", "1.414214ℯ^\u00120.7853982𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("3+𝐢", "3.16227766017ℯ^\u00120.321750554397𝐢\u0013", Radian, Polar,12);
-  assert_expression_approximates_to<float>("3-𝐢", "3.162278ℯ^\u0012-0.3217506𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("3-𝐢-3", "ℯ^\u0012-1.57079632679𝐢\u0013", Radian, Polar,12);
-  assert_expression_approximates_to<float>("2ℯ^(𝐢)", "2ℯ^𝐢", Radian, Polar, 5);
-  assert_expression_approximates_to<double>("2ℯ^(-𝐢)", "2ℯ^\u0012-𝐢\u0013", Radian, Polar, 5);
+  assert_expression_approximates_to<double>("1+𝐢-1", "ℯ^\u00121.57079632679×𝐢\u0013", Radian, Polar, 12);
+  assert_expression_approximates_to<float>("1+𝐢", "1.414214×ℯ^\u00120.7853982×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("3+𝐢", "3.16227766017×ℯ^\u00120.321750554397×𝐢\u0013", Radian, Polar,12);
+  assert_expression_approximates_to<float>("3-𝐢", "3.162278×ℯ^\u0012-0.3217506×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("3-𝐢-3", "ℯ^\u0012-1.57079632679×𝐢\u0013", Radian, Polar,12);
+  assert_expression_approximates_to<float>("2ℯ^(𝐢)", "2×ℯ^𝐢", Radian, Polar, 5);
+  assert_expression_approximates_to<double>("2ℯ^(-𝐢)", "2×ℯ^\u0012-𝐢\u0013", Radian, Polar, 5);
 
-  assert_expression_approximates_to<float>("𝐢", "ℯ^\u00121.570796𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("√(-1)", "ℯ^\u00121.5707963267949𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("√(-1)×√(-1)", "ℯ^\u00123.1415926535898𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("(-8)^(1/3)", "2ℯ^\u00121.0471975511966𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<float>("(-8)^(2/3)", "4ℯ^\u00122.094395𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("root(-8,3)", "2ℯ^\u00121.0471975511966𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<float>("𝐢", "ℯ^\u00121.570796×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("√(-1)", "ℯ^\u00121.5707963267949×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("√(-1)×√(-1)", "ℯ^\u00123.1415926535898×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("(-8)^(1/3)", "2×ℯ^\u00121.0471975511966×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<float>("(-8)^(2/3)", "4×ℯ^\u00122.094395×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("root(-8,3)", "2×ℯ^\u00121.0471975511966×𝐢\u0013", Radian, Polar);
 
   // Cartesian to Polar and vice versa
-  assert_expression_approximates_to<double>("2+3×𝐢", "3.60555127546ℯ^\u00120.982793723247𝐢\u0013", Radian, Polar, 12);
-  assert_expression_approximates_to<double>("3.60555127546ℯ^(0.982793723247×𝐢)", "2+3𝐢", Radian, Cartesian, 12);
-  assert_expression_approximates_to<float>("12.04159457879229548012824103ℯ^(1.4876550949×𝐢)", "1+12𝐢", Radian, Cartesian, 5);
+  assert_expression_approximates_to<double>("2+3×𝐢", "3.60555127546×ℯ^\u00120.982793723247×𝐢\u0013", Radian, Polar, 12);
+  assert_expression_approximates_to<double>("3.60555127546×ℯ^(0.982793723247×𝐢)", "2+3×𝐢", Radian, Cartesian, 12);
+  assert_expression_approximates_to<float>("12.04159457879229548012824103×ℯ^(1.4876550949×𝐢)", "1+12×𝐢", Radian, Cartesian, 5);
 
   // Overflow
-  assert_expression_approximates_to<float>("-2ᴇ20+2ᴇ20×𝐢", "-2ᴇ20+2ᴇ20𝐢", Radian, Cartesian);
-  assert_expression_approximates_to<float>("-2ᴇ20+2ᴇ20×𝐢", "2.828427ᴇ20ℯ^\u00122.356194𝐢\u0013", Radian, Polar);
-  assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1ᴇ155-1ᴇ155𝐢", Radian, Cartesian);
-  assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1.41421356237ᴇ155ℯ^\u0012-0.785398163397𝐢\u0013", Radian, Polar,12);
+  assert_expression_approximates_to<float>("-2ᴇ20+2ᴇ20×𝐢", "-2ᴇ20+2ᴇ20×𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<float>("-2ᴇ20+2ᴇ20×𝐢", "2.828427ᴇ20×ℯ^\u00122.356194×𝐢\u0013", Radian, Polar);
+  assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1ᴇ155-1ᴇ155×𝐢", Radian, Cartesian);
+  assert_expression_approximates_to<double>("1ᴇ155-1ᴇ155×𝐢", "1.41421356237ᴇ155×ℯ^\u0012-0.785398163397×𝐢\u0013", Radian, Polar,12);
   assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ100×𝐢", Undefined::Name());
   assert_expression_approximates_to<double>("-2ᴇ360+2ᴇ360×𝐢", Undefined::Name());
-  assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×𝐢", "-inf+2ᴇ10𝐢");
-  assert_expression_approximates_to<double>("-2ᴇ360+2×𝐢", "-inf+2𝐢");
+  assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×𝐢", "-inf+2ᴇ10×𝐢");
+  assert_expression_approximates_to<double>("-2ᴇ360+2×𝐢", "-inf+2×𝐢");
   assert_expression_approximates_to<float>("undef+2ᴇ100×𝐢", Undefined::Name());
   assert_expression_approximates_to<double>("-2ᴇ360+undef×𝐢", Undefined::Name());
 }

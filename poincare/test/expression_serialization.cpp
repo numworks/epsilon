@@ -134,11 +134,3 @@ QUIZ_CASE(poincare_serialization_factorial) {
   assert_expression_serialize_to(Factorial::Builder(Division::Builder(Constant::Builder(UCodePointGreekSmallLetterPi),Rational::Builder(3))), "\u0012π/3\u0013!");
   assert_expression_serialize_to(Factorial::Builder(Power::Builder(Constant::Builder(UCodePointGreekSmallLetterPi),Rational::Builder(3))), "\u0012π^3\u0013!");
 }
-
-QUIZ_CASE(poincare_serialization_mutiplication_implicite) {
-  assert_expression_serialize_to(Multiplication::Builder(Division::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)),Rational::Builder(3)), "\u00122/π\u00133");
-  assert_expression_serialize_to(Multiplication::Builder(Power::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi)),Rational::Builder(3)), "\u00122^π\u00133");
-
-
-}
-

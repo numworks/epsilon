@@ -38,7 +38,7 @@ public:
 protected:
   template<typename T> Evaluation<T> templatedApproximate() const;
   // Simplification
-  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
 };
 
 class Undefined final : public Number {

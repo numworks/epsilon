@@ -38,7 +38,7 @@ public:
   /* Simplification */
   Expression shallowReduce(ReductionContext reductionContext) override;
   Expression shallowReplaceReplaceableSymbols(Context * context) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape leftLayoutShape() const override { return strlen(m_name) > 1 ? LayoutShape::MoreLetters : LayoutShape::OneLetter; };
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, complexFormat, angleUnit); }

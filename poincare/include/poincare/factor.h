@@ -27,7 +27,7 @@ private:
   /* Simplification */
   Expression shallowBeautify(ReductionContext reductionContext) override;
   Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::DigitOrLetter; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
   /* Evaluation */

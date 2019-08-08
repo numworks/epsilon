@@ -48,7 +48,7 @@ public:
 
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::SpecialLetter; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::OneLetter; };
 
 private:
   char m_name[0]; // MUST be the last member variable

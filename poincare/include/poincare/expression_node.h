@@ -202,6 +202,7 @@ public:
     MoreLetters,
     BoundaryPunctuation, // ( [ ∫
     Root,
+    NthRoot,
     Fraction,
     RightOfPower
   };

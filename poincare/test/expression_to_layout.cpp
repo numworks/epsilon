@@ -69,6 +69,8 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Symbol::Builder('a'), Division::Builder(Rational::Builder(2), Rational::Builder(3))), "a\u0012\u00122\u0013/\u00123\u0013\u0013");
   // (1+π)a
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder(UCodePointGreekSmallLetterPi))), Symbol::Builder('a')), "(1+π)a");
+  // 2·root(2,a)
+  assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), NthRoot::Builder(Rational::Builder(2), Symbol::Builder('a'))), "2·root\u0012\u00122\u0013,\u0012a\u0013\u0013");
 
   // Operator contamination (if two operands needs x, all operands are separated by a x)
   // 1x2xa
@@ -77,7 +79,6 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Constant::Builder(UCodePointGreekSmallLetterPi), Symbol::Builder('a')), "2·π·a");
   // 2(1+a)(1+π)
   assert_expression_layouts_and_serializes_to(Multiplication::Builder(Rational::Builder(2), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Symbol::Builder('a'))), Parenthesis::Builder(Addition::Builder(Rational::Builder(1), Constant::Builder(UCodePointGreekSmallLetterPi)))), "2(1+a)(1+π)");
-
 }
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {

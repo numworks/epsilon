@@ -167,10 +167,10 @@ QUIZ_CASE(assert_print_floats) {
 
   assert_float_prints_to(1E50, "1ᴇ50", ScientificMode, 9);
   assert_float_prints_to(1E50, "1ᴇ50", DecimalMode, 9);
-  assert_float_prints_to(1E50, "1ᴇ50", EngineeringMode, 9);
+  assert_float_prints_to(1E50, "100ᴇ48", EngineeringMode, 9);
   assert_float_prints_to(1E50, "1ᴇ50", ScientificMode, 14);
   assert_float_prints_to(1E50, "1ᴇ50", DecimalMode, 14);
-  assert_float_prints_to(1E50, "1ᴇ50", EngineeringMode, 14);
+  assert_float_prints_to(1E50, "100ᴇ48", EngineeringMode, 14);
 
   assert_float_prints_to(100.0, "1ᴇ2", ScientificMode, 9);
   assert_float_prints_to(100.0, "100", DecimalMode, 9);

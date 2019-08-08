@@ -233,7 +233,7 @@ QUIZ_CASE(equation_solve_complex_format) {
   assert_equation_system_exact_solve_to(equations1,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, (const char **)variablesx, solutions0Polar, 1);
 
   // x^2+x+1=0
-  const char * solutions2Polar[] = {"ℯ^\u0012-\u0012\u00122π\u0013/\u00123\u0013\u0013𝐢\u0013","ℯ^\u0012\u0012\u00122π\u0013/\u00123\u0013\u0013𝐢\u0013", "3ℯ^\u0012π𝐢\u0013"}; // ℯ^(-(2π/3)𝐢), ℯ^((2π/3)𝐢), 3ℯ^(π𝐢)
+  const char * solutions2Polar[] = {"ℯ^\u0012-\u0012\u00122π\u0013/\u00123\u0013\u0013𝐢\u0013","ℯ^\u0012\u0012\u00122π\u0013/\u00123\u0013\u0013𝐢\u0013", "3ℯ^\u0012π·𝐢\u0013"}; // ℯ^(-(2π/3)𝐢), ℯ^((2π/3)𝐢), 3ℯ^(π𝐢)
   assert_equation_system_exact_solve_to(equations2, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, (const char **)variablesx, solutions2Polar, 3);
 
   // x^2-√(-1)=0

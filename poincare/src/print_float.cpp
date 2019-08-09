@@ -183,6 +183,7 @@ template <class T>
 int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros, bool returnTrueRequiredLength) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
+  //TODO: accelerate for f between 0 and 10 ?
   if (std::isinf(f)) {
     // Infinity
     bool writeMinusSign = f < 0;

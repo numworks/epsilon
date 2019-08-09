@@ -35,7 +35,6 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i].setParentResponder(&m_selectableTableView);
     m_abscissaCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_abscissaCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
     m_abscissaCells[i].editableTextCell()->textField()->setFont(k_font);
   }
 }

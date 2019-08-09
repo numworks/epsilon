@@ -15,13 +15,11 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   for (int i = 0; i < k_numberOfEditableTextCell; i++) {
     m_xRangeCells[i].setParentResponder(&m_selectableTableView);
     m_xRangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_xRangeCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
   for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
     m_yRangeCells[i].setParentResponder(&m_selectableTableView);
     m_yRangeCells[i].setInteractiveCurveViewRange(m_interactiveRange);
     m_yRangeCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_yRangeCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 

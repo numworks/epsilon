@@ -35,7 +35,6 @@ private:
   bool hasInitialRankRow() const;
   MessageTableCellWithChevronAndExpression m_typeCell;
   MessageTableCellWithEditableText m_initialRankCell;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   TypeParameterController m_typeParameterController;
 };
 

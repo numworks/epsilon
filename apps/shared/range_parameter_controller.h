@@ -38,7 +38,6 @@ private:
   constexpr static int k_numberOfConvertibleTextCell = 2;
   constexpr static int k_numberOfTextCell = k_numberOfEditableTextCell+k_numberOfConvertibleTextCell;
   InteractiveCurveViewRange * m_interactiveRange;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_xRangeCells[k_numberOfEditableTextCell];
   MessageTableCellWithConvertibleEditableText m_yRangeCells[k_numberOfConvertibleTextCell];
   MessageTableCellWithSwitch m_yAutoCell;

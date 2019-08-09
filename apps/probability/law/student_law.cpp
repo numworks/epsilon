@@ -42,8 +42,8 @@ double StudentLaw::cumulativeDistributiveInverseForProbability(double * probabil
 }
 
 float StudentLaw::coefficient() const {
-  const float d = m_parameter1;
-  const float lnOfResult = std::lgamma((d+1)/2) - std::lgamma(d/2) - (M_PI+d)/2;
+  const float k = m_parameter1;
+  const float lnOfResult = std::lgamma((k+1)/2) - std::lgamma(k/2) - (M_PI+k)/2;
   return std::exp(lnOfResult);
 }
 

@@ -14,12 +14,12 @@ float ChiSquaredLaw::xMax() const {
 }
 
 float ChiSquaredLaw::yMax() const {
-  const float halfD = m_parameter1/2;
+  const float halfk = m_parameter1/2;
   float result;
-  if (halfD <= 1 + FLT_EPSILON) {
+  if (halfk <= 1 + FLT_EPSILON) {
     result = 0.5f;
   } else {
-    result = coefficient() * std::pow(halfD - 1, halfD - 1);
+    result = coefficient() * std::pow(halfk - 1, halfk - 1);
   }
   return result * (1.0f + k_displayTopMarginRatio);
 }
@@ -28,9 +28,9 @@ float ChiSquaredLaw::evaluateAtAbscissa(float x) const {
   if (x < 0) {
     return NAN;
   }
-  const float halfD = m_parameter1/2;
+  const float halfk = m_parameter1/2;
   const float halfX = x/2;
-  return coefficient() * std::pow(halfX, halfD-1) * std::exp(-halfX);
+  return coefficient() * std::pow(halfX, halfk-1) * std::exp(-halfX);
 }
 
 bool ChiSquaredLaw::authorizedValueAtIndex(float x, int index) const {
@@ -57,8 +57,8 @@ double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * proba
 }
 
 float ChiSquaredLaw::coefficient() const {
-  const float halfD = m_parameter1/2;
-  return 1 / (2 * std::exp(std::lgamma(halfD)));
+  const float halfk = m_parameter1/2;
+  return 1 / (2 * std::exp(std::lgamma(halfk)));
 }
 
 }

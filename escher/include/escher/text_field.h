@@ -8,16 +8,19 @@
 
 class TextField : public TextInput, public EditableField {
 public:
-  TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, const KDFont * font = KDFont::LargeFont,
-    float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate = nullptr,
+    const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
+    KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   void reinitDraftTextBuffer() { m_contentView.reinitDraftTextBuffer(); }
-  void setDraftTextBuffer(char * draftTextBuffer);
   bool isEditing() const override;
-  const char * draftTextBuffer() const { return const_cast<TextField *>(this)->m_contentView.draftTextBuffer(); }
+  // Which one is usefull?
+  const char * draftTextBuffer() const { return const_cast<TextField *>(this)->m_contentView.editedText(); }
+  size_t textBufferSize() const { return m_contentView.textBufferSize(); }
+  char * textBuffer() { return m_contentView.textBuffer(); }
   size_t draftTextLength() const; //TODO keep ?
   void setText(const char * text);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
@@ -34,19 +37,17 @@ public:
 protected:
   class ContentView : public TextInput::ContentView {
   public:
-    ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, const KDFont * font, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor);
     void setBackgroundColor(KDColor backgroundColor);
     KDColor backgroundColor() const { return m_backgroundColor; }
     void setTextColor(KDColor textColor);
-    void setDraftTextBuffer(char * draftTextBuffer);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool isEditing() const { return m_isEditing; }
     const char * text() const override;
-    const char * editedText() const override { return m_draftTextBuffer; }
+    const char * editedText() const override;
     size_t editedTextLength() const override { return m_currentDraftTextLength; } //TODO keep ?
+    size_t textBufferSize() const { return m_textBufferSize; }
     char * textBuffer() { return m_textBuffer; }
-    char * draftTextBuffer() { return m_draftTextBuffer; }
-    int bufferSize() { return k_maxBufferSize; }
     void setText(const char * text);
     void setAlignment(float horizontalAlignment, float verticalAlignment);
     void setEditing(bool isEditing);
@@ -74,9 +75,9 @@ protected:
     KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;
     bool m_isEditing;
     char * m_textBuffer;
-    char * m_draftTextBuffer;
-    size_t m_currentDraftTextLength; //TODO keep ?
     size_t m_textBufferSize;
+    size_t m_draftTextBufferSize;
+    size_t m_currentDraftTextLength; //TODO keep ?
     float m_horizontalAlignment;
     float m_verticalAlignment;
     KDColor m_textColor;
@@ -88,7 +89,6 @@ private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   virtual void removeWholeText();
-  bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };
 

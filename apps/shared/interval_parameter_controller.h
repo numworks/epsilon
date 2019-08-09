@@ -24,7 +24,6 @@ private:
   int reusableParameterCellCount(int type) override;
   double parameterAtIndex(int index) override;
   void buttonAction() override;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
 };
 

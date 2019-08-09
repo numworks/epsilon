@@ -52,7 +52,6 @@ IntervalController::IntervalController(Responder * parentResponder, InputEventHa
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i].setParentResponder(&m_selectableTableView);
     m_intervalCell[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_intervalCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 

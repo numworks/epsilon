@@ -7,7 +7,7 @@
 
 class EvenOddEditableTextCell : public EvenOddCell, public Responder {
 public:
-  EvenOddEditableTextCell(Responder * parentResponder = nullptr,InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,  TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr, const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
+  EvenOddEditableTextCell(Responder * parentResponder = nullptr,InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,  TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   EditableTextCell * editableTextCell();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

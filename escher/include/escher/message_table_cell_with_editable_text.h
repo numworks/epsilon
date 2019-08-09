@@ -4,10 +4,11 @@
 #include <escher/editable_text_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/responder.h>
+#include <poincare/print_float.h>
 
 class MessageTableCellWithEditableText : public Responder, public MessageTableCell {
 public:
-  MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, char * draftTextBuffer = nullptr, I18n::Message message = (I18n::Message)0);
+  MessageTableCellWithEditableText(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
   TextField * textField() { return &m_textField; }
   const char * editedText() const;
@@ -26,12 +27,10 @@ public:
   }
   void setAccessoryText(const char * text);
   void setTextColor(KDColor color) override;
-  constexpr static int k_bufferLength = TextField::maxBufferSize();
 private:
   void layoutSubviews() override;
-  constexpr static int k_maxNumberOfEditableCharacters = 14;
   TextField m_textField;
-  char m_textBody[k_bufferLength];
+  char m_textBody[Poincare::PrintFloat::k_maxFloatBufferSize];
 };
 
 #endif

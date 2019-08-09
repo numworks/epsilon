@@ -21,7 +21,6 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   MessageTableCellWithEditableTextWithSeparator m_editableCell;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
 };
 
 }

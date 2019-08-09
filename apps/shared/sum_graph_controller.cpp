@@ -157,11 +157,9 @@ SumGraphController::LegendView::LegendView(SumGraphController * controller, Inpu
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumLayout(),
   m_legend(k_font, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, false, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_editableZone(controller, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumSymbol(sumSymbol)
-{
-  m_draftText[0] = 0;
-}
+{}
 
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::GreyMiddle);

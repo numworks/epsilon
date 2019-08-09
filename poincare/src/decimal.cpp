@@ -131,9 +131,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
   Integer m = unsignedMantissa();
   int numberOfDigitsInMantissa = Integer::NumberOfBase10DigitsWithoutSign(m);
-  bool rounding = false;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
-    rounding = true;
     IntegerDivision d = Integer::Division(m, Integer((int64_t)std::pow(10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
     m = d.quotient;
     if (Integer::NaturalOrder(d.remainder, Integer((int64_t)(5.0*std::pow(10.0, numberOfDigitsInMantissa-numberOfSignificantDigits-1)))) >= 0) {
@@ -153,11 +151,11 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     for (int i = 0; i < numberOfZeroesToAddForEngineering; i ++) {
       m = Integer::Multiplication(m, Integer(10));
     }
-  } else if (rounding) {
-    /* For example 1.999 with 3 significant digits: the mantissa 1999 is rounded
-     * to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
-    removeZeroAtTheEnd(&m, minimalNumberOfMantissaDigits);
   }
+  /* Remove the final 0, that already existed or were created due to tounding.
+   * For example 1.999 with 3 significant digits: the mantissa 1999 is rounded
+   * to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
+  removeZeroAtTheEnd(&m, minimalNumberOfMantissaDigits);
 
   // Print the sign
   int currentChar = 0;

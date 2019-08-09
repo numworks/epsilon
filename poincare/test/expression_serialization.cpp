@@ -30,45 +30,56 @@ QUIZ_CASE(poincare_serialization_decimal) {
   Decimal d0 = Decimal::Builder(Integer("-123456789"),30);
   assert_expression_serialize_to(d0, "-1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serialize_to(d0, "-1.234568ᴇ30", DecimalMode, 7);
+  assert_expression_serialize_to(d0, "-1.23456789ᴇ30", EngineeringMode, 14);
   Decimal d1 = Decimal::Builder(Integer("123456789"),30);
   assert_expression_serialize_to(d1, "1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serialize_to(d1, "1.235ᴇ30", DecimalMode, 4);
+  assert_expression_serialize_to(d1, "1.23456789ᴇ30", EngineeringMode, 14);
   Decimal d2 = Decimal::Builder(Integer("-123456789"),-30);
   assert_expression_serialize_to(d2, "-1.23456789ᴇ-30", DecimalMode, 14);
   assert_expression_serialize_to(d2, "-1.235ᴇ-30", ScientificMode, 4);
+  assert_expression_serialize_to(d2, "-1.235ᴇ-30", EngineeringMode, 4);
   Decimal d3 = Decimal::Builder(Integer("-12345"),-3);
   assert_expression_serialize_to(d3, "-0.0012345", DecimalMode, 7);
   assert_expression_serialize_to(d3, "-0.00123", DecimalMode, 3);
   assert_expression_serialize_to(d3, "-0.001235", DecimalMode, 4);
   assert_expression_serialize_to(d3, "-1.23ᴇ-3", ScientificMode, 3);
+  assert_expression_serialize_to(d3, "-1.23ᴇ-3", EngineeringMode, 3);
   Decimal d4 = Decimal::Builder(Integer("12345"),-3);
   assert_expression_serialize_to(d4, "0.0012345", DecimalMode, 7);
   assert_expression_serialize_to(d4, "1.2ᴇ-3", ScientificMode, 2);
+  assert_expression_serialize_to(d4, "1.23ᴇ-3", EngineeringMode, 3);
   Decimal d5 = Decimal::Builder(Integer("12345"),3);
   assert_expression_serialize_to(d5, "1234.5", DecimalMode, 7);
   assert_expression_serialize_to(d5, "1.23ᴇ3", DecimalMode, 3);
   assert_expression_serialize_to(d5, "1235", DecimalMode, 4);
   assert_expression_serialize_to(d5, "1.235ᴇ3", ScientificMode, 4);
+  assert_expression_serialize_to(d5, "1.235ᴇ3", EngineeringMode, 4);
   Decimal d6 = Decimal::Builder(Integer("-12345"),3);
   assert_expression_serialize_to(d6, "-1234.5", DecimalMode, 7);
   assert_expression_serialize_to(d6, "-1.2345ᴇ3", ScientificMode, 10);
+  assert_expression_serialize_to(d6, "-1.2345ᴇ3", EngineeringMode, 10);
   Decimal d7 = Decimal::Builder(Integer("12345"),6);
   assert_expression_serialize_to(d7, "1234500", DecimalMode, 7);
   assert_expression_serialize_to(d7, "1.2345ᴇ6", DecimalMode, 6);
   assert_expression_serialize_to(d7, "1.2345ᴇ6", ScientificMode);
+  assert_expression_serialize_to(d7, "1.2345ᴇ6", EngineeringMode);
   Decimal d8 = Decimal::Builder(Integer("-12345"),6);
   assert_expression_serialize_to(d8, "-1234500", DecimalMode, 7);
   assert_expression_serialize_to(d8, "-1.2345ᴇ6", DecimalMode, 5);
   assert_expression_serialize_to(d7, "1.235ᴇ6", ScientificMode, 4);
+  assert_expression_serialize_to(d7, "1.235ᴇ6", EngineeringMode, 4);
   Decimal d9 = Decimal::Builder(Integer("-12345"),-1);
   assert_expression_serialize_to(d9, "-0.12345", DecimalMode, 7);
   assert_expression_serialize_to(d9, "-0.1235", DecimalMode, 4);
   assert_expression_serialize_to(d9, "-1.235ᴇ-1", ScientificMode, 4);
+  assert_expression_serialize_to(d9, "-123.5ᴇ-3", EngineeringMode, 4);
   Decimal d10 = Decimal::Builder(Integer("12345"),-1);
   assert_expression_serialize_to(d10, "1.2345ᴇ-1");
   assert_expression_serialize_to(d10, "0.12345", DecimalMode, 7);
   assert_expression_serialize_to(d10, "0.1235", DecimalMode, 4);
   assert_expression_serialize_to(d10, "1.235ᴇ-1", ScientificMode, 4);
+  assert_expression_serialize_to(d10, "123.5ᴇ-3", EngineeringMode, 4);
 
   assert_expression_serialize_to(Decimal::Builder(-1.23456789E30), "-1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serialize_to(Decimal::Builder(1.23456789E30), "1.23456789ᴇ30", ScientificMode, 14);
@@ -92,6 +103,16 @@ QUIZ_CASE(poincare_serialization_decimal) {
   assert_expression_serialize_to(Decimal::Builder(999999999999999.54), "1ᴇ15", DecimalMode, 14);
   assert_expression_serialize_to(Decimal::Builder(9999999999999999.54), "1ᴇ16", DecimalMode, 14);
   assert_expression_serialize_to(Decimal::Builder(-9.702365051313E-297), "-9.702365051313ᴇ-297", DecimalMode, 14);
+
+  // Engineering notation
+  assert_expression_serialize_to(Decimal::Builder(0.0), "0", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(10.0), "10", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(100.0), "100", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(1000.0), "1ᴇ3", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(1234.0), "1.234ᴇ3", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(-0.1), "-100ᴇ-3", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(-0.01), "-10ᴇ-3", EngineeringMode, 7);
+  assert_expression_serialize_to(Decimal::Builder(-0.001), "-1ᴇ-3", EngineeringMode, 7);
 }
 
 QUIZ_CASE(poincare_serialization_float) {

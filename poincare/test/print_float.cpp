@@ -13,7 +13,7 @@
 using namespace Poincare;
 
 template<typename T>
-void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int significantDigits = 7, int bufferSize = PrintFloat::k_maxFloatBufferLength) {
+void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int significantDigits = 7, int bufferSize = PrintFloat::k_maxFloatBufferSize) {
   constexpr int tagSize = 8;
   unsigned char tag = 'O';
   char taggedBuffer[250+2*tagSize];

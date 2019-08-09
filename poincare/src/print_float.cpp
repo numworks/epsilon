@@ -101,7 +101,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Lon
    * in first position. When called by ConvertFloatToText, the buffer length is
    * always > 0 as we asserted a minimal number of available chars. */
   assert(bufferLength > 0 && decimalMarkerPosition != 0);
-  constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
+  constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferSize;
   char tempBuffer[tempBufferSize];
   int intLength = i.serialize(tempBuffer, tempBufferSize);
   int firstDigitChar = UTF8Helper::CodePointIs(tempBuffer, '-') ? 1 : 0;
@@ -138,7 +138,7 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
   /* Truncate the buffer if needed.
    * Example: 1+1.234E-30+... in decimal mode, because we do not want the fill
    * the buffer with the decimal version of 1.234E-30. */
-  int truncatedBufferSize = minInt(PrintFloat::k_maxFloatBufferLength, bufferSize);
+  int truncatedBufferSize = minInt(PrintFloat::k_maxFloatBufferSize, bufferSize);
 
   int numberOfZerosRemoved = 0;
   int requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved, false);
@@ -146,7 +146,7 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
    * display mode to scientific and decrease the number of significant digits to
    * fit the buffer size. */
   if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= truncatedBufferSize) {
-    constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferLength;
+    constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferSize;
     char tempBuffer[tempBufferSize];
     requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved, true);
     if (requiredLength < truncatedBufferSize) {

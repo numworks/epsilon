@@ -436,4 +436,5 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(Rational::Builder(2), Parenthesis::Builder(Opposite::Builder(Rational::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("--2", Opposite::Builder(Parenthesis::Builder(Opposite::Builder(Rational::Builder(2)))));
   assert_parsed_expression_with_user_parentheses_is("\u00122/3\u0013^2", Power::Builder(Parenthesis::Builder(Division::Builder(Rational::Builder(2), Rational::Builder(3))), Rational::Builder(2)));
+  assert_parsed_expression_with_user_parentheses_is("log(1+-2)", CommonLogarithm::Builder(Addition::Builder(Rational::Builder(1),Parenthesis::Builder(Opposite::Builder(Rational::Builder(2))))));
 }

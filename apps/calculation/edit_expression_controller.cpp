@@ -12,9 +12,8 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_expressionField(parentResponder, m_textBody, k_bufferLength, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
-  m_textBody[0] = 0;
 }
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {

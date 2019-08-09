@@ -2,6 +2,7 @@
 #define SHARED_XY_BANNER_VIEW_H
 
 #include "banner_view.h"
+#include <poincare/print_float.h>
 
 namespace Shared {
 
@@ -19,11 +20,12 @@ public:
 protected:
   View * subviewAtIndex(int index) override;
 private:
+  constexpr static KDCoordinate k_abscissaBufferSize = Poincare::PrintFloat::k_maxFloatBufferSize;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   BufferTextView m_abscissaSymbol;
   TextField m_abscissaValue;
+  char m_textBody[k_abscissaBufferSize];
   BufferTextView m_ordinateView;
-  char m_draftTextBuffer[TextField::maxBufferSize()];
 };
 
 }

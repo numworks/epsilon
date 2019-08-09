@@ -36,7 +36,6 @@ private:
   };
   ContentView m_contentView;
   constexpr static int k_maxNumberOfCells = 2;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_intervalCell[k_maxNumberOfCells];
   EquationStore * m_equationStore;
 };

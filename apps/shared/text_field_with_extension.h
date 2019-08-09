@@ -10,17 +10,16 @@ public:
   TextFieldWithExtension(size_t extensionLength,
       Responder * parentResponder,
       char * textBuffer,
-      char * draftTextBuffer,
       size_t textBufferSize,
+      size_t draftTextBufferSize,
       ::InputEventHandlerDelegate * inputEventHandlerDelegate,
       ::TextFieldDelegate * delegate = nullptr,
-      bool hasTwoBuffers = true,
       const KDFont * size = KDFont::LargeFont,
       float horizontalAlignment = 0.0f,
       float verticalAlignment = 0.5f,
       KDColor textColor = KDColorBlack,
       KDColor backgroundColor = KDColorWhite) :
-    TextField(parentResponder, textBuffer, draftTextBuffer, textBufferSize, inputEventHandlerDelegate, delegate, hasTwoBuffers, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+    TextField(parentResponder, textBuffer, textBufferSize, draftTextBufferSize, inputEventHandlerDelegate, delegate, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
     m_extensionLength(extensionLength)
   {}
 private:

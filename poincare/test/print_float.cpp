@@ -210,4 +210,15 @@ QUIZ_CASE(assert_print_floats) {
   assert_float_prints_to(9999999.97, "1ᴇ7", DecimalMode, 7);
   assert_float_prints_to(9999999.97, "10000000", DecimalMode, 8);
   assert_float_prints_to(9999999.97, "10ᴇ6", EngineeringMode, 7);
+
+  // Engineering notation
+  assert_float_prints_to(0.0, "0", EngineeringMode, 7);
+  assert_float_prints_to(10.0, "10", EngineeringMode, 7);
+  assert_float_prints_to(100.0, "100", EngineeringMode, 7);
+  assert_float_prints_to(1000.0, "1ᴇ3", EngineeringMode, 7);
+  assert_float_prints_to(1234.0, "1.234ᴇ3", EngineeringMode, 7);
+  assert_float_prints_to(-0.1, "-100ᴇ-3", EngineeringMode, 7);
+  assert_float_prints_to(-0.01, "-10ᴇ-3", EngineeringMode, 7);
+  assert_float_prints_to(-0.001, "-1ᴇ-3", EngineeringMode, 7);
+
 }

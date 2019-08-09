@@ -69,6 +69,11 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewP
   setHighlighted(isHighlighted());
 }
 
+void ScrollableExactApproximateExpressionsView::ContentCell::setDisplayLeftExpression(bool display) {
+  m_displayLeftExpression = display;
+  reloadTextColor();
+}
+
 Poincare::Layout ScrollableExactApproximateExpressionsView::ContentCell::layout() const {
   if (m_selectedSubviewPosition == SubviewPosition::Left) {
     return m_leftExpressionView.layout();

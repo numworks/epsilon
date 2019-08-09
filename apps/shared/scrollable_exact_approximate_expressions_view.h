@@ -52,7 +52,7 @@ private:
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
-    void setDisplayLeftExpression(bool display) { m_displayLeftExpression = display; }
+    void setDisplayLeftExpression(bool display);
     void layoutSubviews() override;
     int numberOfSubviews() const override;
     Poincare::Layout layout() const override;

@@ -154,6 +154,7 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
     }
   }
   if (requiredLength >= truncatedBufferSize) {
+    //TODO never allow truncating?
     /* If the buffer size is still too small and rounding is allowed, we only
      * write the beginning of the float and truncate it (which can result in a
      * non sense text). If no rounding is allowed, we set the text to null. */

@@ -10,14 +10,18 @@
 #include "law/student_law.h"
 #include "law/uniform_law.h"
 #include "images/binomial_icon.h"
+#include "images/chi_squared_icon.h"
 #include "images/exponential_icon.h"
 #include "images/normal_icon.h"
 #include "images/poisson_icon.h"
+#include "images/student_icon.h"
 #include "images/uniform_icon.h"
 #include "images/focused_binomial_icon.h"
+#include "images/focused_chi_squared_icon.h"
 #include "images/focused_exponential_icon.h"
 #include "images/focused_normal_icon.h"
 #include "images/focused_poisson_icon.h"
+#include "images/focused_student_icon.h"
 #include "images/focused_uniform_icon.h"
 
 namespace Probability {
@@ -119,8 +123,8 @@ void Probability::LawController::willDisplayCellForIndex(HighlightCell * cell, i
     ImageStore::ExponentialIcon,
     ImageStore::NormalIcon,
     ImageStore::PoissonIcon,
-    ImageStore::PoissonIcon, //FIXME
-    ImageStore::PoissonIcon //FIXME
+    ImageStore::ChiSquaredIcon,
+    ImageStore::StudentIcon
   };
   const Image * focusedImages[k_totalNumberOfModels] = {
     ImageStore::FocusedBinomialIcon,
@@ -128,8 +132,8 @@ void Probability::LawController::willDisplayCellForIndex(HighlightCell * cell, i
     ImageStore::FocusedExponentialIcon,
     ImageStore::FocusedNormalIcon,
     ImageStore::FocusedPoissonIcon,
-    ImageStore::FocusedPoissonIcon, //FIXME
-    ImageStore::FocusedPoissonIcon  //FIXME
+    ImageStore::FocusedChiSquaredIcon,
+    ImageStore::FocusedStudentIcon
   };
   myCell->setImage(images[index], focusedImages[index]);
   myCell->reloadCell();

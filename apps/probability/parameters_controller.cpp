@@ -79,7 +79,6 @@ ParametersController::ParametersController(Responder * parentResponder, InputEve
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_menuListCell[i].setParentResponder(&m_selectableTableView);
     m_menuListCell[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_menuListCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 

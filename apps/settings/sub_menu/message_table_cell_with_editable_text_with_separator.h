@@ -7,7 +7,7 @@ namespace Settings {
 
 class MessageTableCellWithEditableTextWithSeparator : public HighlightCell {
 public:
-  MessageTableCellWithEditableTextWithSeparator(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, char * draftTextBuffer = nullptr, I18n::Message message = (I18n::Message)0);
+  MessageTableCellWithEditableTextWithSeparator(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * textFieldDelegate = nullptr, I18n::Message message = (I18n::Message)0);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlighted(bool highlight) override;
   void reloadCell() override { m_cell.reloadCell(); }

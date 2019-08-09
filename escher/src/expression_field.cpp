@@ -5,13 +5,11 @@
 static inline KDCoordinate minCoordinate(KDCoordinate x, KDCoordinate y) { return x < y ? x : y; }
 static inline KDCoordinate maxCoordinate(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
-ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+ExpressionField::ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, inputEventHandlerDelegate, textFieldDelegate, false, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
-  m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate),
-  m_textBuffer(textBuffer),
-  m_textBufferLength(textBufferLength)
+  m_textField(parentResponder, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, textFieldDelegate, KDFont::LargeFont, 0.0f, 0.5f, KDColorBlack, KDColorWhite),
+  m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {
   // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
@@ -41,9 +39,9 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_layoutField.layout().serializeParsedExpression(m_textBuffer, m_textBufferLength);
+    m_layoutField.layout().serializeParsedExpression(m_textField.textBuffer(), m_textField.textBufferSize());
   }
-  return m_textBuffer;
+  return m_textField.textBuffer();
 }
 
 void ExpressionField::setText(const char * text) {

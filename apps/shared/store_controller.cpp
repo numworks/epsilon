@@ -65,7 +65,6 @@ StoreController::StoreController(Responder * parentResponder, InputEventHandlerD
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i].setParentResponder(m_contentView.dataView());
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_editableCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 

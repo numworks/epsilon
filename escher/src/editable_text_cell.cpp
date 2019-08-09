@@ -1,13 +1,14 @@
 #include <escher/editable_text_cell.h>
 #include <escher/container.h>
 #include <escher/palette.h>
+#include <poincare/print_float.h>
 #include <assert.h>
 
-EditableTextCell::EditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, char * draftTextBuffer,
+EditableTextCell::EditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate,
    const KDFont * font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   HighlightCell(),
   Responder(parentResponder),
-  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, true, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_topMargin(topMargin),
   m_rightMargin(rightMargin),
   m_bottomMargin(bottomMargin),

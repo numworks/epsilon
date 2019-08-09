@@ -7,8 +7,8 @@ namespace Shared {
 
 class StoreCell : public HideableEvenOddEditableTextCell {
 public:
-  StoreCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr) :
-    HideableEvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate, draftTextBuffer),
+  StoreCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr) :
+    HideableEvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate),
     m_separatorLeft(false)
   {}
   void setSeparatorLeft(bool separator);

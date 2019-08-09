@@ -48,8 +48,6 @@ private:
     View * view() override { return &m_expressionField; }
     ExpressionField * expressionField() { return &m_expressionField; }
   private:
-    static constexpr int k_bufferLength = TextField::maxBufferSize();
-    char m_textBuffer[k_bufferLength];
     ExpressionField m_expressionField;
   };
   bool inputViewDidFinishEditing();

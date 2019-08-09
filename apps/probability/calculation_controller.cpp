@@ -59,7 +59,6 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
   m_contentView(&m_selectableTableView, law, calculation),
   m_selectableTableView(this),
   m_imageCell(&m_selectableTableView, law, calculation, this),
-  m_draftTextBuffer{},
   m_calculation(calculation),
   m_law(law)
 {
@@ -74,7 +73,6 @@ CalculationController::CalculationController(Responder * parentResponder, InputE
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(&m_selectableTableView);
     m_calculationCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_calculationCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 

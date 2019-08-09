@@ -5,9 +5,8 @@
 
 InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_expressionField(this, m_textBuffer, k_bufferLength, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(this, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
-  m_textBuffer[0] = 0;
 }
 
 void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {

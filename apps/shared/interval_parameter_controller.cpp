@@ -11,7 +11,6 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_intervalCells[i].setParentResponder(&m_selectableTableView);
     m_intervalCells[i].textField()->setDelegates(inputEventHandlerDelegate, this);
-    m_intervalCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
   }
 }
 

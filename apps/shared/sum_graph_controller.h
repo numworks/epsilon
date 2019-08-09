@@ -70,7 +70,6 @@ private:
     Poincare::Layout m_sumLayout;
     MessageTextView m_legend;
     TextField m_editableZone;
-    char m_draftText[TextField::maxBufferSize()];
     CodePoint m_sumSymbol;
   };
   FunctionGraphView * m_graphView;

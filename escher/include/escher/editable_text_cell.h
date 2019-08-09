@@ -5,10 +5,11 @@
 #include <escher/highlight_cell.h>
 #include <escher/text_field_delegate.h>
 #include <escher/text_field.h>
+#include <poincare/print_float.h>
 
 class EditableTextCell : public HighlightCell, public Responder {
 public:
-  EditableTextCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr, const KDFont * font = KDFont::LargeFont,
+  EditableTextCell(Responder * parentResponder = nullptr, InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, TextFieldDelegate * delegate = nullptr, const KDFont * font = KDFont::LargeFont,
      float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   TextField * textField();
   void setMargins(KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
@@ -30,7 +31,7 @@ public:
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
   TextField m_textField;
-  char m_textBody[TextField::maxBufferSize()];
+  char m_textBody[Poincare::PrintFloat::k_maxFloatBufferSize];
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;

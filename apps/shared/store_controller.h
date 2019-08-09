@@ -82,7 +82,6 @@ protected:
   int numberOfElements() override;
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
-  char m_draftTextBuffer[TextField::maxBufferSize()];
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
   virtual StoreParameterController * storeParameterController() = 0;

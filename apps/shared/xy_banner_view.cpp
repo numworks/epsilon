@@ -11,12 +11,11 @@ XYBannerView::XYBannerView(
   m_abscissaSymbol(Font(), 1.0f, 0.5f, TextColor(), BackgroundColor()),
   m_abscissaValue(
     parentResponder,
-    m_draftTextBuffer,
-    m_draftTextBuffer,
-    TextField::maxBufferSize(),
+    m_textBody,
+    k_abscissaBufferSize,
+    k_abscissaBufferSize,
     inputEventHandlerDelegate,
     textFieldDelegate,
-    false,
     Font(),
     0.0f, 0.5f,
     TextColor(),
@@ -24,7 +23,6 @@ XYBannerView::XYBannerView(
   ),
   m_ordinateView(Font(), 0.5f, 0.5f, TextColor(), BackgroundColor())
 {
-  m_draftTextBuffer[0] = 0;
 }
 
 View * XYBannerView::subviewAtIndex(int index) {

@@ -9,7 +9,7 @@
 
 class ExpressionField : public Responder, public View {
 public:
-  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
@@ -45,8 +45,6 @@ private:
   KDCoordinate maximalHeight() const;
   TextField m_textField;
   LayoutField m_layoutField;
-  char *  m_textBuffer;
-  int m_textBufferLength;
 };
 
 #endif

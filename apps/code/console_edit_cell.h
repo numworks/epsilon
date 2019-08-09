@@ -33,7 +33,6 @@ public:
   bool insertText(const char * text);
   void setPrompt(const char * prompt);
 private:
-  char m_textBuffer[TextField::maxBufferSize()];
   PointerTextView m_promptView;
   TextField m_textField;
 };

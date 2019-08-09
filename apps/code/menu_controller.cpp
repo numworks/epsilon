@@ -126,8 +126,11 @@ void MenuController::renameSelectedScript() {
   ScriptNameCell * myCell = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
   Container::activeApp()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
-  myCell->textField()->setEditing(true);
-  myCell->textField()->setCursorLocation(myCell->textField()->text() + strlen(myCell->textField()->text()));
+  TextField * tf = myCell->textField();
+  const char * previousText = tf->text();
+  tf->setEditing(true);
+  tf->setText(previousText);
+  tf->setCursorLocation(tf->text() + strlen(previousText));
 }
 
 void MenuController::deleteScript(Script script) {

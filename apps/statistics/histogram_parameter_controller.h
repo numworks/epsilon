@@ -19,7 +19,6 @@ private:
   int reusableParameterCellCount(int type) override { return k_numberOfCells; }
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   MessageTableCellWithEditableText m_cells[k_numberOfCells];
   Store * m_store;
 };

@@ -7,7 +7,7 @@ GoToParameterController::GoToParameterController(Responder * parentResponder, In
   FloatParameterController(parentResponder),
   m_cursor(cursor),
   m_graphRange(graphRange),
-  m_abscisseCell(&m_selectableTableView, inputEventHandlerDelegate, this, m_draftTextBuffer, symbol)
+  m_abscisseCell(&m_selectableTableView, inputEventHandlerDelegate, this, symbol)
 {
 }
 

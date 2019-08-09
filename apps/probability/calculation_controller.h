@@ -66,7 +66,6 @@ private:
   ContentView m_contentView;
   SelectableTableView m_selectableTableView;
   ResponderImageCell m_imageCell;
-  char m_draftTextBuffer[TextField::maxBufferSize()];
   CalculationCell m_calculationCells[k_numberOfCalculationCells];
   Calculation * m_calculation;
   Law * m_law;

@@ -7,7 +7,7 @@ namespace Probability {
 
 class StudentLaw : public OneParameterLaw {
 public:
-  StudentLaw() : OneParameterLaw(4.0f) {}
+  StudentLaw() : OneParameterLaw(1.0f) {}
   I18n::Message title() override { return I18n::Message::StudentLaw; }
   Type type() const override { return Type::Student; }
   bool isContinuous() const override { return true; }
@@ -16,7 +16,7 @@ public:
   float yMax() const override;
   I18n::Message parameterNameAtIndex(int index) override {
     assert(index == 0);
-    return I18n::Message::D;
+    return I18n::Message::K;
   }
   I18n::Message parameterDefinitionAtIndex(int index) override {
     assert(index == 0);

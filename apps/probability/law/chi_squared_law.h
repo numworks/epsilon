@@ -7,7 +7,7 @@ namespace Probability {
 
 class ChiSquaredLaw : public OneParameterLaw {
 public:
-  ChiSquaredLaw() : OneParameterLaw(4.0f) {}
+  ChiSquaredLaw() : OneParameterLaw(1.0f) {}
   I18n::Message title() override { return I18n::Message::ChiSquaredLaw; }
   Type type() const override { return Type::ChiSquared; }
   bool isContinuous() const override { return true; }
@@ -16,7 +16,7 @@ public:
   float yMax() const override;
   I18n::Message parameterNameAtIndex(int index) override {
     assert(index == 0);
-    return I18n::Message::D;
+    return I18n::Message::K;
   }
   I18n::Message parameterDefinitionAtIndex(int index) override {
     assert(index == 0);

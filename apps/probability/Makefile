@@ -54,14 +54,18 @@ $(eval $(call depends_on_image,apps/probability/app.cpp,apps/probability/probabi
 
 $(eval $(call depends_on_image,apps/probability/law_controller.cpp,$(addprefix apps/probability/images/, \
   binomial_icon.png \
+  chi_squared_icon.png \
   exponential_icon.png \
   focused_binomial_icon.png \
+  focused_chi_squared_icon.png \
   focused_exponential_icon.png \
   focused_normal_icon.png \
   focused_poisson_icon.png \
+  focused_student_icon.png \
   focused_uniform_icon.png \
   normal_icon.png \
   poisson_icon.png \
+  student_icon.png \
   uniform_icon.png \
 )))
 

@@ -223,10 +223,11 @@ void Expression::shallowAddMissingParenthesis() {
 
 Expression Expression::addMissingParentheses() {
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression child = childAtIndex(i);
+    Expression child = childAtIndex(i).addMissingParentheses();
     if (node()->childNeedsUserParentheses(child)) {
-      replaceChildAtIndexInPlace(i, Parenthesis::Builder(child.addMissingParentheses()));
+      child = Parenthesis::Builder(child);
     }
+    replaceChildAtIndexInPlace(i, child);
   }
   return *this;
 }

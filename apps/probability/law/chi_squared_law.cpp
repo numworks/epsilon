@@ -1,4 +1,5 @@
 #include "chi_squared_law.h"
+#include "regularized_gamma.h"
 #include <cmath>
 #include <float.h>
 
@@ -41,8 +42,12 @@ double ChiSquaredLaw::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   if (x < 0) {
     return 0;
   }
-  return 0;
-  //TODO
+  const float halfk = m_parameter1/2;
+  double result = 0;
+  if (regularizedGamma(halfk, x/2, DBL_EPSILON, 1000, &result)) {
+    return result;
+  }
+  return NAN;
 }
 
 double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * probability) {
@@ -58,7 +63,7 @@ double ChiSquaredLaw::cumulativeDistributiveInverseForProbability(double * proba
 
 float ChiSquaredLaw::coefficient() const {
   const float halfk = m_parameter1/2;
-  return 1 / (2 * std::exp(std::lgamma(halfk)));
+  return 1 / (2 * std::tgamma(halfk));
 }
 
 }

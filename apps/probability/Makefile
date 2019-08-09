@@ -23,6 +23,7 @@ app_probability_src = $(addprefix apps/probability/,\
   law/exponential_law.cpp \
   law/normal_law.cpp \
   law/poisson_law.cpp \
+  law/regularized_gamma.cpp \
   law/student_law.cpp \
   law/two_parameter_law.cpp \
   law/uniform_law.cpp \

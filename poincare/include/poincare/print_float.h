@@ -17,7 +17,7 @@ public:
    * At maximum, the number has 15 significant digits so, in the worst case it
    * has the form -1.99999999999999ᴇ-308 (2+15+3+1+3 char) (the auto mode is
    * always shorter. */
-  constexpr static int k_maxFloatBufferLength = 2+k_numberOfStoredSignificantDigits+k_specialECodePointByteLength+1+3+1;
+  constexpr static int k_maxFloatBufferSize = 2+k_numberOfStoredSignificantDigits+k_specialECodePointByteLength+1+3+1;
 
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The worst case is -1.234ᴇ-328

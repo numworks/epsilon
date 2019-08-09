@@ -36,8 +36,8 @@ int FloatNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 template<typename T>
 Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  char buffer[PrintFloat::k_maxFloatBufferLength];
-  int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatBufferLength, floatDisplayMode, numberOfSignificantDigits);
+  char buffer[PrintFloat::k_maxFloatBufferSize];
+  int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatBufferSize, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);
 }
 

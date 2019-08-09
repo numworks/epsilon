@@ -16,13 +16,15 @@ namespace Poincare {
 
 static inline int maxInt(int x, int y) { return x > y ? x : y; }
 
-void removeZeroAtTheEnd(Integer * i) {
+void removeZeroAtTheEnd(Integer * i, int minimalNumbersOfDigits = 1) {
   if (i->isZero()) {
     return;
   }
   Integer base = Integer(10);
+  Integer minimum = Integer((int64_t)std::pow(10.0, minimalNumbersOfDigits-1));
+  Integer minusMinimum = Integer(-(int64_t)std::pow(10.0, minimalNumbersOfDigits-1));
   IntegerDivision d = Integer::Division(*i, base);
-  while (d.remainder.isZero()) {
+  while (d.remainder.isZero() && (Integer::NaturalOrder(*i, minimum) > 0 || Integer::NaturalOrder(*i, minusMinimum) < 0)) {
     *i = d.quotient;
     d = Integer::Division(*i, base);
   }
@@ -104,23 +106,34 @@ int DecimalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
   return convertToText(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
+static int engineeringExponentFromExponent(int exponent) {
+  int exponentMod3 = exponent % 3;
+  return exponent - (exponentMod3 + (exponentMod3 < 0 ? 3 : 0));
+}
+
 int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
-  buffer[bufferSize-1] = 0;
   if (bufferSize == 1) {
+    buffer[0] = 0;
     return 0;
   }
   if (unsignedMantissa().isZero()) {
     return SerializationHelper::CodePoint(buffer, bufferSize, '0'); // This already writes the null terminating char
   }
+
+  // Compute the exponent
   int exponent = m_exponent;
-  char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
+  int exponentForEngineeringNotation = engineeringExponentFromExponent(exponent);
+
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
+  char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
   Integer m = unsignedMantissa();
   int numberOfDigitsInMantissa = Integer::NumberOfBase10DigitsWithoutSign(m);
+  bool rounding = false;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
+    rounding = true;
     IntegerDivision d = Integer::Division(m, Integer((int64_t)std::pow(10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
     m = d.quotient;
     if (Integer::NaturalOrder(d.remainder, Integer((int64_t)(5.0*std::pow(10.0, numberOfDigitsInMantissa-numberOfSignificantDigits-1)))) >= 0) {
@@ -128,24 +141,42 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
       if (Integer::NumberOfBase10DigitsWithoutSign(m) > numberOfSignificantDigits) {
         exponent++;
+        exponentForEngineeringNotation = engineeringExponentFromExponent(exponent);
         m = Integer::Division(m, Integer(10)).quotient;
       }
     }
+  }
+  int minimalNumberOfMantissaDigits = mode != Preferences::PrintFloatMode::Engineering ? 1 : exponent - exponentForEngineeringNotation + 1;
+  int numberOfZeroesToAddForEngineering = maxInt(minimalNumberOfMantissaDigits - Integer::NumberOfBase10DigitsWithoutSign(m), 0);
+  assert(mode != Preferences::PrintFloatMode::Engineering || (minimalNumberOfMantissaDigits > 0 && minimalNumberOfMantissaDigits <= 3));
+  if (mode == Preferences::PrintFloatMode::Engineering && numberOfZeroesToAddForEngineering > 0) {
+    for (int i = 0; i < numberOfZeroesToAddForEngineering; i ++) {
+      m = Integer::Multiplication(m, Integer(10));
+    }
+  } else if (rounding) {
     /* For example 1.999 with 3 significant digits: the mantissa 1999 is rounded
      * to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
-    removeZeroAtTheEnd(&m);
+    removeZeroAtTheEnd(&m, minimalNumberOfMantissaDigits);
   }
+
+  // Print the sign
   int currentChar = 0;
   if (m_negative) {
-    currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, '-');
+    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
+    buffer[0] = '-';
+    buffer[1] = 0;
+    currentChar++;
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
+
+  // Serialize the mantissa
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
 
   // Assert that m is not +/-inf
   assert(strcmp(tempBuffer, Infinity::Name()) != 0);
   assert(!(UTF8Helper::CodePointIs(tempBuffer, '-') && strcmp(&tempBuffer[1], Infinity::Name()) == 0));
 
+  // Stop here if m is undef
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     return currentChar;
@@ -154,24 +185,28 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
-  bool forceScientificMode = mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits;
+  bool forceScientificMode = mode != Preferences::PrintFloatMode::Engineering && (mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits);
   int numberOfRequiredDigits = mantissaLength;
-  if (!forceScientificMode) {
-    numberOfRequiredDigits = mantissaLength > exponent ? mantissaLength : exponent;
-    numberOfRequiredDigits = exponent < 0 ? mantissaLength-exponent : numberOfRequiredDigits;
+  if (mode == Preferences::PrintFloatMode::Decimal && !forceScientificMode) {
+    if (exponent < 0) {
+      numberOfRequiredDigits = mantissaLength-exponent;
+    } else {
+      numberOfRequiredDigits = maxInt(mantissaLength, exponent);
+    }
   }
-  /* Case 0: Scientific mode. Three cases:
+
+  /* Case 1: Engineering and Scientific mode. Three cases:
    * - the user chooses the scientific mode
    * - the exponent is too big compared to the number of significant digits, so
    *   we force the scientific mode to avoid inventing digits
    * - the number would be too long if we print it as a natural decimal */
-  if (numberOfRequiredDigits > PrintFloat::k_numberOfStoredSignificantDigits || forceScientificMode) {
+  if (mode == Preferences::PrintFloatMode::Engineering || numberOfRequiredDigits > PrintFloat::k_numberOfStoredSignificantDigits || forceScientificMode) {
     if (mantissaLength == 1) {
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
-    } else {
-      /* Forward one char: _
+    } else if (mode != Preferences::PrintFloatMode::Engineering || Integer::NumberOfBase10DigitsWithoutSign(m) > minimalNumberOfMantissaDigits) {
+      /* Forward one or more chars: _
        * Write the mantissa _23456
-       * Copy the most significant digit on the forwarded char: 223456
+       * Copy the most significant digits on the forwarded chars: 223456
        * Write the dot : 2.3456
        *
        * We should use the UTF8Helper to manipulate chars, but it is clearer to
@@ -180,22 +215,32 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
       assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       currentChar++;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
-      int decimalMarkerPosition = currentChar;
+      int decimalMarkerPosition = currentChar + (mode == Preferences::PrintFloatMode::Engineering ? minimalNumberOfMantissaDigits - 1 : 0);
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
       assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) == 1);
-      buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
+      int numberOfCharsToShift = (mode == Preferences::PrintFloatMode::Engineering ? minimalNumberOfMantissaDigits : 1);
+      for (int i = 0; i < numberOfCharsToShift; i++) {
+        int charIndex = decimalMarkerPosition - numberOfCharsToShift + i;
+        buffer[charIndex] = buffer[charIndex+1];
+      }
       buffer[decimalMarkerPosition] = '.';
+    } else {
+      currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     }
-    if (exponent == 0) {
+    if ((mode == Preferences::PrintFloatMode::Engineering && exponentForEngineeringNotation == 0) || exponent == 0) {
       return currentChar;
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
     currentChar += SerializationHelper::CodePoint(buffer + currentChar, bufferSize - currentChar, UCodePointLatinLetterSmallCapitalE);
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
-    currentChar += Integer(exponent).serialize(buffer+currentChar, bufferSize-currentChar);
+    if (mode == Preferences::PrintFloatMode::Engineering) {
+      currentChar += Integer(exponentForEngineeringNotation).serialize(buffer+currentChar, bufferSize-currentChar);
+    } else {
+      currentChar += Integer(exponent).serialize(buffer+currentChar, bufferSize-currentChar);
+    }
     return currentChar;
   }
-  /* Case 1: Decimal mode */
+  // Case 3: Decimal mode
   assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
   assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;

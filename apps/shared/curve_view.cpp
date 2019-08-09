@@ -197,8 +197,7 @@ void CurveView::computeLabels(Axis axis) {
         labelBuffer,
         labelMaxSize,
         k_numberSignificantDigits,
-        Preferences::PrintFloatMode::Decimal,
-        axis == Axis::Vertical);
+        Preferences::PrintFloatMode::Decimal);
 
     if (axis == Axis::Horizontal) {
       if (labelBuffer[0] == 0) {
@@ -790,8 +789,7 @@ void CurveView::computeHorizontalExtremaLabels(bool increaseNumberOfSignificantD
         label(axis, i),
         k_labelBufferMaxSize,
         increaseNumberOfSignificantDigits ? k_bigNumberSignificantDigits : k_numberSignificantDigits,
-        Preferences::PrintFloatMode::Decimal,
-        false);
+        Preferences::PrintFloatMode::Decimal);
   }
 }
 

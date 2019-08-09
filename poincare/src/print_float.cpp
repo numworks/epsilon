@@ -130,7 +130,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char * buffer, int bufferLength, Lon
 
 template <class T>
 int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
-    int numberOfSignificantDigits, Preferences::PrintFloatMode mode, bool allowRounding)
+    int numberOfSignificantDigits, Preferences::PrintFloatMode mode)
 {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
@@ -141,33 +141,13 @@ int PrintFloat::ConvertFloatToText(T f, char * buffer, int bufferSize,
   int truncatedBufferSize = minInt(PrintFloat::k_maxFloatBufferSize, bufferSize);
 
   int numberOfZerosRemoved = 0;
-  int requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved, false);
-  /* If the required buffer size overflows the buffer size, we first force the
-   * display mode to scientific and decrease the number of significant digits to
-   * fit the buffer size. */
+  int requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, mode, &numberOfZerosRemoved);
+  /* If the required buffer size overflows the buffer size, we force the display
+   * mode to scientific. */
   if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= truncatedBufferSize) {
-    constexpr int tempBufferSize = PrintFloat::k_maxFloatBufferSize;
-    char tempBuffer[tempBufferSize];
-    requiredLength = ConvertFloatToTextPrivate(f, tempBuffer, tempBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved, true);
-    if (requiredLength < truncatedBufferSize) {
-      return strlcpy(buffer, tempBuffer, truncatedBufferSize);
-    }
+    requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved);
   }
-  if (requiredLength >= truncatedBufferSize) {
-    //TODO never allow truncating?
-    /* If the buffer size is still too small and rounding is allowed, we only
-     * write the beginning of the float and truncate it (which can result in a
-     * non sense text). If no rounding is allowed, we set the text to null. */
-    if (!allowRounding) {
-      buffer[0] = 0;
-      return 0;
-    }
-    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - numberOfZerosRemoved - (requiredLength - (truncatedBufferSize - 1));
-    if (adjustedNumberOfSignificantDigits < 1) {
-      adjustedNumberOfSignificantDigits = 1;
-    }
-    requiredLength = ConvertFloatToTextPrivate(f, buffer, truncatedBufferSize, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific, &numberOfZerosRemoved, false);
-  }
+
   if (requiredLength >= truncatedBufferSize) {
     buffer[0] = 0;
     return 0;
@@ -181,7 +161,7 @@ static int engineeringExponentFromExponentBase10(int exponentInBase10) {
 }
 
 template <class T>
-int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros, bool returnTrueRequiredLength) {
+int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, int numberOfSignificantDigits, Preferences::PrintFloatMode mode, int * numberOfRemovedZeros) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
   //TODO: accelerate for f between 0 and 10 ?
@@ -249,7 +229,6 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
      * displaying 12345 with 2 significant digis in Decimal mode for instance.
      * This exception is caught by ConvertFloatToText and forces the mode to
      * Scientific */
-    assert(!returnTrueRequiredLength);
     return bufferSize + 1;
   }
 
@@ -314,7 +293,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
       Long::DivisionByTen(dividend, &quotient, &digit);
       numberOfZerosRemoved++;
     }
-    if (!returnTrueRequiredLength && numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
+    if (numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
       // Escape now if the true number of needed digits is not required
       return bufferSize + 1;
     }
@@ -333,7 +312,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
     assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
   }
-  if (!returnTrueRequiredLength && numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
+  if (numberOfCharsForMantissaWithoutSign > bufferSize - 1) {
     // Escape now if the true number of needed digits is not required
     return bufferSize + 1;
   }
@@ -359,7 +338,6 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   if (numberOfCharsForMantissaWithSign > bufferSize - 1) {
     // Exception 2: we will overflow the buffer
     assert(mode == Preferences::PrintFloatMode::Decimal);
-    assert(!returnTrueRequiredLength);
     return bufferSize + 1;
   }
 
@@ -399,7 +377,7 @@ int PrintFloat::ConvertFloatToTextPrivate(T f, char * buffer, int bufferSize, in
   return currentNumberOfChar + numberOfCharExponent;
 }
 
-template int PrintFloat::ConvertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
-template int PrintFloat::ConvertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode, bool);
+template int PrintFloat::ConvertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode);
+template int PrintFloat::ConvertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode);
 
 }

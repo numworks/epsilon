@@ -3,19 +3,9 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-<<<<<<< HEAD
-EPSILON_VERSION ?= 11.2.0
-EPSILON_ONBOARDING_APP ?= 1
-=======
-<<<<<<< Updated upstream
-EPSILON_VERSION ?= 11.1.0
-EPSILON_ONBOARDING_APP ?= 0
-=======
 EPSILON_VERSION ?= 11.2.0
 EPSILON_CUSTOM_VERSION ?= 1.0
 EPSILON_ONBOARDING_APP ?= 1
->>>>>>> Stashed changes
->>>>>>> cfba77e1f... Add: LavaOS version in 'about' settings
 # Valid values are "none", "update", "beta"
 EPSILON_BOOT_PROMPT ?= none
 EPSILON_APPS ?= calculation graph code statistics probability solver sequence regression settings

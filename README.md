@@ -21,14 +21,23 @@ If you run into an issue, we would be very happy if you would file a bug on the 
 
 We welcome contributions. For smaller changes just open a pull request straight away. For larger changes we recommend you open an issue first for discussion.
 
-## License
+## Epsilon License
 
 NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). NumWorks is a registered trademark.
-<<<<<<< HEAD
 
-# Personal Changelog
+---
 
-# 1.0
+# LavaOS x Epsilon
 
+LavaOS is an extension to the Numworks Epsilon project, which will bring many features to the calculator. LavaOS is for people who want to add features to the calculator, but can not because it has been rejected by Numworks (and for reasons that are 100% understandable!). For example, there is no point in having a Dark Mode on the calculator. But, it's fun so we add it on LavaOS! In short, LavaOS is a kind of Jailbreak.
+
+If Numworks goes through here and finds a feature they want to implement by default, no problem!
+
+## LavaOS Changelog
+### 1.0
 - Revert: https://github.com/numworks/epsilon/commit/267d27f1145922b61b6171e14284534fa2256f0c
 - Added: LavaOS version number
+
+## LavaOS License
+
+LavaOS is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).

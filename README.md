@@ -24,3 +24,7 @@ We welcome contributions. For smaller changes just open a pull request straight 
 ## License
 
 NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode). NumWorks is a registered trademark.
+
+# Personal Changelog
+
+- Revert: https://github.com/numworks/epsilon/commit/267d27f1145922b61b6171e14284534fa2256f0c

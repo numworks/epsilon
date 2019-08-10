@@ -14,7 +14,7 @@ include ion/src/shared/tools/Makefile
 # char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).
 # Older versions of GCC are not conformant so we resort to an initializer list.
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
-$(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
+$(call object_for,ion/src/shared/platform_info.cpp): SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))" -DEPSILON_CUSTOM_VERSION="$(call initializer_list,$(EPSILON_CUSTOM_VERSION))"
 
 src += $(addprefix ion/src/shared/, \
   crc32_padded.cpp \

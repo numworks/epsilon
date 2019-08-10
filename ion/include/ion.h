@@ -29,6 +29,7 @@ namespace Ion {
 
 const char * serialNumber();
 const char * softwareVersion();
+const char * customSoftwareVersion();
 const char * patchLevel();
 const char * fccId();
 

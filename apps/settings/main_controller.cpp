@@ -12,7 +12,7 @@ const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Me
 const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Decimal), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[3] = {SettingsMessageTree(I18n::Message::Real), SettingsMessageTree(I18n::Message::Cartesian), SettingsMessageTree(I18n::Message::Polar)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
-const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
+const SettingsMessageTree aboutChildren[4] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::CustomSoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 #ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree menu[9] =
@@ -31,7 +31,7 @@ const SettingsMessageTree menu[8] =
 #elif EPSILON_BOOT_PROMPT == EPSILON_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
-  SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
+  SettingsMessageTree(I18n::Message::About, aboutChildren, 4)};
 #ifdef EPSILON_BOOT_PROMPT
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
 #else

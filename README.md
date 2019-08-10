@@ -4,10 +4,15 @@ LavaOS is an extension to the Numworks Epsilon project, which will bring many fe
 
 If Numworks goes through here and finds a feature they want to implement by default, no problem!
 
-## LavaOS Changelog
-### 1.0
-- Revert: https://github.com/numworks/epsilon/commit/267d27f1145922b61b6171e14284534fa2256f0c
-- Added: LavaOS version number
+## Features
+- Symbolic calculation
+
+<details>
+  <summary>Changelog</summary>
+  <h3>1.0</h3>
+  - Revert: https://github.com/numworks/epsilon/commit/267d27f1145922b61b6171e14284534fa2256f0c
+  - Added: LavaOS version number
+</details>
 
 ## LavaOS License
 

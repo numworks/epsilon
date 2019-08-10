@@ -20,7 +20,7 @@ public:
 #endif
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
-  constexpr static int NumberOfBrightnessStates = 5;
+  constexpr static int NumberOfBrightnessStates = 15;
 private:
   GlobalPreferences() :
     m_language(I18n::Language::EN),

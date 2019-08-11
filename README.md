@@ -8,9 +8,14 @@ If Numworks goes through here and finds a feature they want to implement by defa
 - Symbolic calculation
 - Blue LED in exam mode
 - More Brightness steps (16 instead of 5)
+- All molar masses (chemistry)
 
 The complete changelog can be found here:
 https://github.com/quentinguidee/LavaOS/
+
+## Translations
+
+Everything is translated from French to English/Portuguese/Spanish/German with Google Translate; so, everything is translated, but you could come across translation errors. If so, please open an issue on GitHub, I will correct it :smiley:!
 
 ## LavaOS License
 

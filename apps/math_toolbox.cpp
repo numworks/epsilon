@@ -80,16 +80,21 @@ const ToolboxMessageTree predictionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction),
   ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence)};
 
-const ToolboxMessageTree chemistryMolarMasses[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::ElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+const ToolboxMessageTree chemistryMolarMassesByNumber[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+};
+
+const ToolboxMessageTree chemistryMolarMassesByAlpha[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::AlphaElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
 };
 
 const ToolboxMessageTree chemistry[] = {
-  ToolboxMessageTree::Node(I18n::Message::MolarMasses, chemistryMolarMasses)
+  ToolboxMessageTree::Node(I18n::Message::MolarMassesByNumber, chemistryMolarMassesByNumber),
+  ToolboxMessageTree::Node(I18n::Message::MolarMassesByAlpha, chemistryMolarMassesByAlpha)
 };
 
 const ToolboxMessageTree physics[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::ElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
 };
 
 const ToolboxMessageTree menu[] = {

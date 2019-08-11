@@ -4,13 +4,13 @@ LavaOS is an extension to the Numworks Epsilon project, which will bring many fe
 
 If Numworks goes through here and finds a feature they want to implement by default, no problem!
 
-## Features
+## Some new features
 - Symbolic calculation
 - Blue LED in exam mode
 - More Brightness steps (16 instead of 5)
 
 The complete changelog can be found here:
-https://github.com/quentinguidee/LavaOS/
+https://github.com/quentinguidee/LavaOS/wiki/Complete-changelog
 
 ## LavaOS License
 

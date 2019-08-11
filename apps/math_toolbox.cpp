@@ -80,6 +80,18 @@ const ToolboxMessageTree predictionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction),
   ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence)};
 
+const ToolboxMessageTree chemistryMolarMasses[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+};
+
+const ToolboxMessageTree chemistry[] = {
+  ToolboxMessageTree::Node(I18n::Message::MolarMasses, chemistryMolarMasses)
+};
+
+const ToolboxMessageTree physics[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::ElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+};
+
 const ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
@@ -96,7 +108,9 @@ const ToolboxMessageTree menu[] = {
 #endif
   ToolboxMessageTree::Node(I18n::Message::RandomAndApproximation, randomAndApproximationChildren),
   ToolboxMessageTree::Node(I18n::Message::HyperbolicTrigonometry, trigonometryChildren),
-  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren)};
+  ToolboxMessageTree::Node(I18n::Message::Fluctuation, predictionChildren),
+  ToolboxMessageTree::Node(I18n::Message::Chemistry, chemistry),
+  ToolboxMessageTree::Node(I18n::Message::Physics, physics)};
 
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 

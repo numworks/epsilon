@@ -81,7 +81,27 @@ const ToolboxMessageTree predictionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence)};
 
 const ToolboxMessageTree chemistryMolarMassesByNumber[] = {
-  ToolboxMessageTree::Leaf(I18n::Message::NumberElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass)
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementH, I18n::Message::ElementHMass, false, I18n::Message::ElementHMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementHe, I18n::Message::ElementHeMass, false, I18n::Message::ElementHeMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementLi, I18n::Message::ElementLiMass, false, I18n::Message::ElementLiMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementBe, I18n::Message::ElementBeMass, false, I18n::Message::ElementBeMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementB, I18n::Message::ElementBMass, false, I18n::Message::ElementBMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementC, I18n::Message::ElementCMass, false, I18n::Message::ElementCMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementN, I18n::Message::ElementNMass, false, I18n::Message::ElementNMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementO, I18n::Message::ElementOMass, false, I18n::Message::ElementOMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementF, I18n::Message::ElementFMass, false, I18n::Message::ElementFMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementNe, I18n::Message::ElementNeMass, false, I18n::Message::ElementNeMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementNa, I18n::Message::ElementNaMass, false, I18n::Message::ElementNaMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementMg, I18n::Message::ElementMgMass, false, I18n::Message::ElementMgMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementAl, I18n::Message::ElementAlMass, false, I18n::Message::ElementAlMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementSi, I18n::Message::ElementSiMass, false, I18n::Message::ElementSiMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementP, I18n::Message::ElementPMass, false, I18n::Message::ElementPMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementS, I18n::Message::ElementSMass, false, I18n::Message::ElementSMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementCl, I18n::Message::ElementClMass, false, I18n::Message::ElementClMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementAr, I18n::Message::ElementArMass, false, I18n::Message::ElementArMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementK, I18n::Message::ElementKMass, false, I18n::Message::ElementKMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementCa, I18n::Message::ElementCaMass, false, I18n::Message::ElementCaMass),
+  ToolboxMessageTree::Leaf(I18n::Message::NumberElementSc, I18n::Message::ElementScMass, false, I18n::Message::ElementScMass)
 };
 
 const ToolboxMessageTree chemistryMolarMassesByAlpha[] = {
